@@ -461,5 +461,7 @@
   "orientation": "Орієнтація",
   "horizontal": "горизонтальний",
   "vertical": "вертикальний",
-  "flexible": "гнучкий"
+  "flexible": "гнучкий",
+  "Move down": "Рухатися вниз",
+  "Move up": "Рухатися вгору"
 }

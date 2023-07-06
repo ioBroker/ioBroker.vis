@@ -834,7 +834,7 @@ const WidgetField = props => {
             }
             options = options.map(item => ({
                 value: item.wid,
-                label: `${field.all ? `${item.view} / ` : ''}${item.wid} (${item.name || item.tpl})`,
+                label: `${field.all ? `${item.view} / ` : ''}${item.wid} (${item.name || (item.tpl === '_tplGroup' ? t('group') : item.tpl)})`,
             }));
             options.unshift({ id: '', label: t('attr_none') });
         }

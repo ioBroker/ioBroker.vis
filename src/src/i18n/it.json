@@ -461,5 +461,7 @@
   "orientation": "Orientamento",
   "horizontal": "orizzontale",
   "vertical": "verticale",
-  "flexible": "flessibile"
+  "flexible": "flessibile",
+  "Move down": "Abbassati",
+  "Move up": "Andare avanti"
 }
