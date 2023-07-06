@@ -198,10 +198,18 @@ const Widget = props => {
     }, [props.widgetType]);
 
     if (props.widgetType.custom) {
-        return props.widgetType.customPalette(props.socket, props.project, props.changeProject, props.selectedView);
+        if (!props.editMode) {
+            return null;
+        }
+        return props.widgetType.customPalette({
+            socket: props.socket,
+            project: props.project,
+            changeProject: props.changeProject,
+            selectedView: props.selectedView,
+        });
     }
 
-    return <span ref={dragRef} id={`widget_${props.widgetTypeName}`} className={`widget-${props.widgetSet}`}>
+    return <span ref={props.editMode ? dragRef : null} id={`widget_${props.widgetTypeName}`} className={`widget-${props.widgetSet}`}>
         <span ref={widthRef}>
             {result}
         </span>

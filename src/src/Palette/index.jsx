@@ -313,6 +313,7 @@ const Palette = props => {
                                     socket={props.socket}
                                     project={props.project}
                                     changeProject={props.changeProject}
+                                    editMode={props.editMode}
                                 />)) : null}
                         </div>
                     </AccordionDetails>

@@ -1562,6 +1562,7 @@ class App extends Runtime {
                 project={this.state.project}
                 changeProject={this.changeProject}
                 socket={this.socket}
+                editMode={this.state.editMode}
             />
         </div>;
     }
