@@ -272,13 +272,13 @@ async function getSuitableLicenses(all, name) {
                                     decoded.version === '<=1'
                                 ) {
                                     // check the current adapter major version
-                                    if (version !== 0 && version !== 1) {
+                                    if (version !== '0' && version !== '1') {
                                         return;
                                     }
                                 } else if (decoded.version && decoded.version !== version) {
                                     // Licenses for adapter versions >=2 need to match to the adapter major version
                                     // which means that a new major version requires new licenses if it would be "included"
-                                    // in last purchase
+                                    // in the last purchase
 
                                     // decoded.version could be only '<2' or direct version, like "2", "3" and so on
                                     return;
@@ -326,24 +326,27 @@ async function getSuitableLicenses(all, name) {
 }
 
 function checkLicense(license, uuid, originalError, name) {
+    const version = adapter.pack.version.split('.')[0];
+
     if (license && license.expires * 1000 < new Date().getTime()) {
-        adapter.log.error(`Cannot check license: Expired on ${new Date(license.expires * 1000).toString()}`);
+        adapter.log.error(`License error: Expired on ${new Date(license.expires * 1000).toString()}`);
         return true;
     } else if (!license) {
-        adapter.log.error(`Cannot check license: License is empty${originalError ? ` and ${originalError}` : ''}`);
+        adapter.log.error(`License error: License is empty${originalError ? ` and ${originalError}` : ''}`);
         return true;
-    } else if (uuid.length !== 36) {
-        if (license.invoice === 'free') {
-            adapter.log.error('Cannot use free license with commercial device!');
-            return true;
-        } else {
-            return false;
-        }
+    } else if (uuid.length !== 36 && license.invoice === 'free' && !uuid.startsWith('IO')) {
+        adapter.log.error('Cannot use free license with commercial device!');
+        return true;
+    } else if (license.name !== name && license.name !== `iobroker.${name}`) {
+        adapter.log.error(`License is for other adapter "${license.name}". Expected "iobroker.${name}"`);
+        return true;
+    } else if (
+        (version !== '1' && version !== license.version) ||
+        (version === '1' && license.version !== '&lt;2' && license.version !== '<2' && license.version !== '<1' && license.version !== '<=1')
+    ) {
+        adapter.log.error(`License is for other adapter version "${license.name}@${license.version}". Expected "iobroker.${name}@${version}"`);
+        return true;
     } else {
-        if (license.name !== name && license.name !== `iobroker.${name}`) {
-            adapter.log.error(`License is for other adapter "${license.name}". Expected "iobroker.${name}"`);
-            return true;
-        }
         const code = [];
         for (let i = 0; i < license.type.length; i++) {
             code.push('\\u00' + license.type.charCodeAt(i).toString(16));
@@ -381,8 +384,14 @@ function check(license, uuid, originalError, name) {
 }
 
 function doLicense(license, uuid, name) {
+    const version = adapter.pack.version.split('.')[0];
+
     return new Promise((resolve, reject) => {
-        const data = JSON.stringify({json: license, uuid});
+        const data = JSON.stringify({
+            json: license,
+            uuid,
+            version,
+        });
 
         // An object of options to indicate where to post to
         const postOptions = {
@@ -392,7 +401,7 @@ function doLicense(license, uuid, name) {
             headers: {
                 'Content-Type': 'text/plain',
                 'Content-Length': Buffer.byteLength(data),
-            }
+            },
         };
 
         // Set up the request
@@ -427,7 +436,7 @@ function doLicense(license, uuid, name) {
                             resolve(false);
                         }
                     } else {
-                        adapter.log.error(`License is invalid! Nothing updated. Error: ${data ? data.result : 'unknown'}`);
+                        adapter.log.error(`License is invalid! Nothing updated. Error: ${data ? (data.error || data.result) : 'unknown'}`);
                         resolve(true);
                     }
                 } catch (err) {
@@ -812,6 +821,9 @@ async function buildHtmlPages(forceBuild) {
 }
 
 async function checkL(license, useLicenseManager, name) {
+    if (name === 'vis-2-beta') {
+        name = 'vis';
+    }
     const uuidObj = await adapter.getForeignObjectAsync('system.meta.uuid');
     if (!uuidObj || !uuidObj.native || !uuidObj.native.uuid) {
         adapter.log.error('UUID not found!');
@@ -838,7 +850,7 @@ async function checkL(license, useLicenseManager, name) {
 async function main() {
     const visObj = await adapter.getForeignObjectAsync(adapterName);
 
-    // create vis "meta" object if not exists
+    // create a vis "meta" object if not exists
     if (!visObj || visObj.type !== 'meta') {
         await adapter.setForeignObjectAsync(adapterName, {
             type: 'meta',
