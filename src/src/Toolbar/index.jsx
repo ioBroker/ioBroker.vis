@@ -161,8 +161,7 @@ const Toolbar = props => {
                 <HeightNarrowIcon />
             </IconButton>
         </Tooltip>;
-    } else
-    if (props.toolbarHeight === 'veryNarrow') {
+    } else if (props.toolbarHeight === 'veryNarrow') {
         heightButton = <Tooltip title={I18n.t('Full panel')}>
             <IconButton
                 className={classes.heightButton}

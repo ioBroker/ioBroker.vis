@@ -1011,8 +1011,7 @@ const WidgetField = props => {
         let options = field.options;
         if (field.type === 'class') {
             options = window.collectClassesValue.filter(cssClass => cssClass.match(/^vis-style-/));
-        } else
-        if (field.type === 'filters') {
+        } else if (field.type === 'filters') {
             options = window.vis ? window.vis.updateFilter() : [];
             options.unshift('');
         }

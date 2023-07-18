@@ -599,8 +599,7 @@ class VisEngine extends React.Component {
                                 result[roles[r]] = id;
                                 roles.splice(r, 1);
                                 break;
-                            } else
-                            if (!roles.length) {
+                            } else if (!roles.length) {
                                 break;
                             }
                         }
@@ -833,11 +832,9 @@ class VisEngine extends React.Component {
                     const t = typeof val;
                     if (t === 'boolean' || val === 'false' || val === 'true') {
                         value = value === 'true' || value === true || value === 1 || value === '1';
-                    } else
-                    if (t === 'number') {
+                    } else if (t === 'number') {
                         value = parseFloat(value);
-                    } else
-                    if (t === 'object') {
+                    } else if (t === 'object') {
                         val = JSON.stringify(val);
                     }
 

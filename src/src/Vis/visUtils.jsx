@@ -186,16 +186,14 @@ function extractBinding(format) {
                                     operations.push({ op: parse[1], arg: parse[2] });
                                 }
                             }
-                        } else
-                        // date formatting
-                        if (parse[1] === 'date' || parse[1] === 'momentDate') {
+                        } else if (parse[1] === 'date' || parse[1] === 'momentDate') {
+                            // date formatting
                             operations = operations || [];
                             parse[2] = (parse[2] || '').trim();
                             parse[2] = parse[2].substring(1, parse[2].length - 1);
                             operations.push({ op: parse[1], arg: parse[2] });
-                        } else
-                        // returns array[value]. e.g.: {id.ack;array(ack is false,ack is true)}
-                        if (parse[1] === 'array') {
+                        } else if (parse[1] === 'array') {
+                            // returns array[value]. e.g.: {id.ack;array(ack is false,ack is true)}
                             operations = operations || [];
                             let param = (parse[2] || '').trim();
                             param = param.substring(1, param.length - 1);
@@ -203,17 +201,15 @@ function extractBinding(format) {
                             if (Array.isArray(param)) {
                                 operations.push({ op: parse[1], arg: param }); // xxx
                             }
-                        } else
-                        // value formatting
-                        if (parse[1] === 'value') {
+                        } else if (parse[1] === 'value') {
+                            // value formatting
                             operations = operations || [];
                             let param = (parse[2] === undefined) ? '(2)' : (parse[2] || '');
                             param = param.trim();
                             param = param.substring(1, param.length - 1);
                             operations.push({ op: parse[1], arg: param });
-                        } else
-                        // operators have optional parameter
-                        if (parse[1] === 'pow' || parse[1] === 'round' || parse[1] === 'random') {
+                        } else if (parse[1] === 'pow' || parse[1] === 'round' || parse[1] === 'random') {
+                            // operators have optional parameter
                             if (parse[2] === undefined) {
                                 operations = operations || [];
                                 operations.push({ op: parse[1] });
@@ -451,9 +447,7 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
                         }
                     }
                 });
-            } else
-            if (attr !== 'oidTrueValue' &&
-                attr !== 'oidFalseValue' &&
+            } else if (attr !== 'oidTrueValue' && attr !== 'oidFalseValue' &&
                 (
                     (attr.match(/oid\d{0,2}$/) ||
                         attr.startsWith('oid') ||
@@ -530,9 +524,8 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
                     linkContext.lastChanges[lcSid] = linkContext.lastChanges[lcSid] || [];
                     linkContext.lastChanges[lcSid].push({ view, widget: wid });
                 }
-            } else
             // eslint-disable-next-line no-cond-assign
-            if ((m = attr.match(/^attrType(\d+)$/)) && data[attr] === 'id') {
+            } else if ((m = attr.match(/^attrType(\d+)$/)) && data[attr] === 'id') {
                 const _id = `groupAttr${m[1]}`;
                 if (data[_id]) {
                     if (!linkContext.IDs.includes(data[_id])) {
@@ -722,9 +715,9 @@ const getOrLoadRemote = (remote, shareScope, remoteFallbackUrl = undefined) => {
                 if (typeof __webpack_share_scopes__ === 'undefined') {
                     // use the default share scope object, passed in manually
                     await window[remote].init(shareScope.default);
-                } else
-                // otherwise, init share scope as usual
-                if (window[remote].init) {
+                } else if (window[remote].init) {
+                    // otherwise, init share scope as usual
+
                     // eslint-disable-next-line camelcase,no-undef
                     await window[remote].init(__webpack_share_scopes__[shareScope]);
                 } else {
@@ -887,9 +880,9 @@ function getRemoteWidgets(socket) {
                                             return null;
                                         });
                                     promises.push(i18nPromise);
-                                } else
-                                // dynamicWidgetInstance.common.visWidgets.i18n is deprecated
-                                if (visWidgetsCollection.url && (visWidgetsCollection.i18n === 'component' || dynamicWidgetInstance.common.visWidgets.i18n === 'component')) {
+                                } else if (visWidgetsCollection.url && (visWidgetsCollection.i18n === 'component' || dynamicWidgetInstance.common.visWidgets.i18n === 'component')) {
+                                    // dynamicWidgetInstance.common.visWidgets.i18n is deprecated
+
                                     i18nPromiseWait = loadComponent(visWidgetsCollection.name, 'default', './translations', visWidgetsCollection.url)()
                                         .then(translations => {
                                             countRef.count++;
@@ -905,8 +898,7 @@ function getRemoteWidgets(socket) {
                                         })
                                         .catch(error =>
                                             console.log(`Cannot load i18n "${visWidgetsCollection.name}": ${error}`));
-                                } else
-                                if (visWidgetsCollection.i18n && typeof visWidgetsCollection.i18n === 'object') {
+                                } else if (visWidgetsCollection.i18n && typeof visWidgetsCollection.i18n === 'object') {
                                     try {
                                         I18n.extendTranslations(visWidgetsCollection.i18n);
                                     } catch (error) {

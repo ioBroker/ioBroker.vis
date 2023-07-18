@@ -122,8 +122,7 @@ const Palette = props => {
             if (widgetType.setIcon) {
                 _widgetSetProps[widgetTypeName] = _widgetSetProps[widgetTypeName] || {};
                 _widgetSetProps[widgetTypeName].icon = widgetType.setIcon;
-            } else
-            if (widgetType.adapter && !_widgetSetProps[widgetTypeName]?.icon) {
+            } else if (widgetType.adapter && !_widgetSetProps[widgetTypeName]?.icon) {
                 _widgetSetProps[widgetTypeName] = _widgetSetProps[widgetTypeName] || {};
                 if (window.location.port === '3000') {
                     _widgetSetProps[widgetTypeName].icon = `./adapter/${widgetType.adapter}/${widgetType.adapter}.png`;

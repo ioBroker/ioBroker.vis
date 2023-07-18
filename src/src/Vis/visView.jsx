@@ -1409,9 +1409,8 @@ class VisView extends React.Component {
                     // sticky widgets cannot be moved
                     if (unknownWidgets.length) {
                         moveAllowed = false;
-                    } else
-                    // absolute and relative widgets cannot be moved together
-                    if (relativeWidgets.length && absoluteWidgets.length) {
+                    } else if (relativeWidgets.length && absoluteWidgets.length) {
+                        // absolute and relative widgets cannot be moved together
                         moveAllowed = false;
                     }
                 }

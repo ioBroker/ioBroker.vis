@@ -89,8 +89,7 @@ const Widget = props => {
         style.backgroundColor = props.widgetType.color;
     } else if (props.widgetSetProps?.color) {
         style.backgroundColor = props.widgetSetProps.color;
-    } else
-    if (window.visSets && window.visSets[props.widgetSet]?.color) {
+    } else if (window.visSets && window.visSets[props.widgetSet]?.color) {
         style.backgroundColor = window.visSets[props.widgetSet].color;
     }
 
@@ -119,9 +118,7 @@ const Widget = props => {
             className={props.classes.widgetImage}
             ref={imageRef}
             // eslint-disable-next-line react/no-danger
-            dangerouslySetInnerHTML={
-                { __html: props.widgetType.preview }
-            }
+            dangerouslySetInnerHTML={{ __html: props.widgetType.preview }}
         />;
     }
 

@@ -538,11 +538,9 @@ class App extends Runtime {
         let widgetHint;
         if (this.state.widgetHint === 'light') {
             widgetHint = 'dark';
-        } else
-        if (this.state.widgetHint === 'dark') {
+        } else if (this.state.widgetHint === 'dark') {
             widgetHint = 'hide';
-        } else
-        if (this.state.widgetHint === 'hide') {
+        } else if (this.state.widgetHint === 'hide') {
             widgetHint = 'light';
         }
         this.setState({ widgetHint });
@@ -1072,8 +1070,7 @@ class App extends Runtime {
         if (isShow && !openedViews.includes(view)) {
             openedViews.push(view);
             changed = true;
-        } else
-        if (!isShow && openedViews.includes(view)) {
+        } else if (!isShow && openedViews.includes(view)) {
             openedViews.splice(openedViews.indexOf(view), 1);
             changed = true;
         }
@@ -1087,8 +1084,7 @@ class App extends Runtime {
         if (isActivate) {
             this.setViewsManager(false);
             await this.changeView(view);
-        } else
-        if (!openedViews.includes(this.state.selectedView)) {
+        } else if (!openedViews.includes(this.state.selectedView)) {
             await this.changeView(openedViews[0]);
         }
     };

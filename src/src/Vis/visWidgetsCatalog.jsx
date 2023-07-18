@@ -280,8 +280,7 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
                     field.type = 'color';
                 } else if (field.name.match(/nav_view$/)) {
                     field.type = 'views';
-                } else
-                if (field.name === 'sound') {
+                } else if (field.name === 'sound') {
                     field.type = 'sound';
                 } else if (field.name.includes('_effect')) {
                     field.type = 'effect';

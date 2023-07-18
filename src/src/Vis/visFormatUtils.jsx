@@ -294,8 +294,7 @@ class VisFormatUtils {
                                 }
                                 if (value === null) {
                                     string += `const ${oids[t].operations[k].arg[a].name} = null;`;
-                                } else
-                                if (value === undefined) {
+                                } else if (value === undefined) {
                                     string += `const ${oids[t].operations[k].arg[a].name} = undefined;`;
                                 } else {
                                     const type = typeof value;

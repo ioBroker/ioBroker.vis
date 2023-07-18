@@ -262,8 +262,7 @@ class VisCanWidget extends VisBaseWidget {
                     this.refService.current.style.left = `${this.widDiv.offsetLeft}px`;
                     this.refService.current.style.top = `${this.widDiv.offsetTop}px`;
                 }
-            } else
-            if (command === 'updateContainers') {
+            } else if (command === 'updateContainers') {
                 // try to find 'vis-view-container' in it
                 const containers = this.widDiv.querySelectorAll('.vis-view-container');
                 if (containers.length) {
@@ -332,10 +331,8 @@ class VisCanWidget extends VisBaseWidget {
                                     this.widDiv._customHandlers?.onHide(this.widDiv, this.props.id);
                                 }
                             }
-                        } else
-                        // if it was hidden
-                        if (this.filterDisplay !== undefined && this.widDiv.style.display === 'none') {
-                            // restore it
+                        } else if (this.filterDisplay !== undefined && this.widDiv.style.display === 'none') {
+                            // if it was hidden => restore it
                             this.widDiv.style.display = this.filterDisplay;
                             if (this.widDiv._customHandlers?.onShow) {
                                 this.widDiv._customHandlers?.onShow(this.widDiv, this.props.id);
@@ -365,8 +362,7 @@ class VisCanWidget extends VisBaseWidget {
                             // current._originalParent = current.parentNode;
                             // container.appendChild(current);
                         }
-                    } else
-                    if (current?.refView?.current && container && current.refView.current.parentNode !== container) {
+                    } else if (current?.refView?.current && container && current.refView.current.parentNode !== container) {
                         current.refView.current._originalParent = current.refView.current.parentNode;
                         container.appendChild(current.refView.current);
                     }
@@ -675,11 +671,9 @@ class VisCanWidget extends VisBaseWidget {
             const t = typeof val;
             if (t === 'boolean' || val === 'false' || val === 'true') {
                 value = value === 'true' || value === true || value === 1 || value === '1';
-            } else
-            if (t === 'number') {
+            } else if (t === 'number') {
                 value = parseFloat(value);
-            } else
-            if (t === 'object') {
+            } else if (t === 'object') {
                 val = JSON.stringify(val);
             }
 

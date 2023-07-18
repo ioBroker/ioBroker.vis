@@ -978,15 +978,13 @@ class VisBaseWidget extends React.Component {
             const t = typeof val;
             if (t === 'boolean' || val === 'false' || val === 'true') {
                 value = value === 'true' || value === true || value === 1 || value === '1';
-            } else
-            if (t === 'number') {
+            } else if (t === 'number') {
                 value = parseFloat(value);
-            } else
-            if (t === 'object') {
+            } else if (t === 'object') {
                 val = JSON.stringify(val);
             }
 
-            // Take care: return true if widget is hidden!
+            // Take care: return true if the widget is hidden!
             switch (condition) {
                 case '==':
                     value = value.toString();
@@ -1108,8 +1106,7 @@ class VisBaseWidget extends React.Component {
                 singular = 'Tag';
                 plural   = 'Tagen';
             }
-        } else
-        if (this.props.context.lang === 'ru') {
+        } else if (this.props.context.lang === 'ru') {
             if (type === 'seconds') {
                 singular  = 'секунду';
                 plural    = 'секунд';
@@ -1608,12 +1605,12 @@ class VisBaseWidget extends React.Component {
                         if (!this.state.rxStyle[attr].includes('{')) {
                             style[attr] = VisBaseWidget.correctStylePxValue(this.state.rxStyle[attr]);
                         }
-                    } else
-                    // try to steal style by canWidget
-                    if (this.props.context.allWidgets[this.props.id] &&
+                    } else if (this.props.context.allWidgets[this.props.id] &&
                         this.props.context.allWidgets[this.props.id].style &&
                         this.props.context.allWidgets[this.props.id].style[attr] !== undefined
                     ) {
+                        // try to steal style by canWidget
+
                         if (!this.props.context.allWidgets[this.props.id].style[attr].includes('{')) {
                             style[attr] = VisBaseWidget.correctStylePxValue(this.props.context.allWidgets[this.props.id].style[attr]);
                         }

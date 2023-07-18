@@ -13,7 +13,7 @@ import {
     InputAdornment,
     Grid,
     Radio,
-    RadioGroup, TextField, LinearProgress,
+    RadioGroup, TextField, LinearProgress, Pagination,
 } from '@mui/material';
 
 import {
@@ -25,7 +25,12 @@ import {
 
 import { I18n, Utils, Icon } from '@iobroker/adapter-react-v5';
 
+const MAX_ICONS = 250;
+
 const styles = theme => ({
+    dialog: {
+        height: '100%',
+    },
     iconName: {
         fontSize: 10,
         width: 50,
@@ -33,6 +38,7 @@ const styles = theme => ({
         textOverflow: 'ellipsis',
     },
     iconDiv: {
+        margin: 0,
         textAlign: 'center',
         cursor: 'pointer',
         padding: 2,
@@ -40,8 +46,6 @@ const styles = theme => ({
         '&:hover': {
             backgroundColor: theme.palette.secondary.main,
         },
-        paddingLeft: '2px !important',
-        paddingTop: '2px !important',
     },
     icon: {
         width: 48,
@@ -74,6 +78,7 @@ class MaterialIconSelector extends Component {
             iconTypeLoaded: {},
             filtered: [],
             loading: true,
+            page: 1,
         };
     }
 
@@ -89,13 +94,15 @@ class MaterialIconSelector extends Component {
             this.list[type] = true;
             if (type === 'customIcons') {
                 try {
-                    this.list[type] = await fetch(this.props.customIcons).then(res => res.json());
+                    this.list[type] = await fetch(this.props.customIcons)
+                        .then(res => res.json());
                 } catch (e) {
                     this.list[type] = {};
                     console.error(`Cannot load custom icons from ${this.props.customIcons}: ${e}`);
                 }
             } else {
-                this.list[type] = await fetch(`./material-icons/${type}.json`).then(res => res.json());
+                this.list[type] = await fetch(`./material-icons/${type}.json`)
+                    .then(res => res.json());
             }
             const icons = Object.keys(this.list[type]);
             for (let i = 0; i < icons.length; i++) {
@@ -106,9 +113,8 @@ class MaterialIconSelector extends Component {
                 iconTypeLoaded: { ...this.state.iconTypeLoaded, [type]: true },
                 filtered: [],
                 loading: false,
-            }, () => {
-                this.applyFilter(true);
-            });
+            }, () =>
+                this.applyFilter(true));
         }
     }
 
@@ -163,7 +169,11 @@ class MaterialIconSelector extends Component {
                     .map(icon => icon.name);
             }
 
-            this.setState({ filtered });
+            this.setState({
+                filtered,
+                page: 1,
+                maxPages: Math.ceil(filtered.length / MAX_ICONS),
+            });
         }, timeout);
     }
 
@@ -177,12 +187,36 @@ class MaterialIconSelector extends Component {
         }
     }
 
-    render() {
+    renderIcons() {
         const iconStyle = this.props.customColor && this.state.iconType === 'customIcons' ? { color: this.props.customColor } : {};
+        const icons = [];
 
+        for (let i = (this.state.page - 1) * MAX_ICONS; i < this.state.page * MAX_ICONS && i < this.state.filtered.length; i++) {
+            const icon = this.state.filtered[i];
+            icons.push(<div
+                key={icon}
+                className={Utils.clsx(this.props.classes.iconDiv, this.state.selectedIcon === icon && this.props.classes.iconSelected)}
+                onClick={() => this.setState({ selectedIcon: icon })}
+                onDoubleClick={() => this.setState({ selectedIcon: icon }, () => this.onSelect())}
+            >
+                <Icon
+                    src={this.list[this.state.iconType][icon]}
+                    className={this.props.classes.icon}
+                    style={iconStyle}
+                />
+                <div className={this.props.classes.iconName}>{icon.replace(/_/g, ' ')}</div>
+            </div>);
+        }
+
+        return icons;
+    }
+
+    render() {
         return <Dialog
             open={!0}
             maxWidth="lg"
+            fullWidth
+            classes={{ paper: this.props.classes.dialog }}
         >
             <DialogTitle>
                 <span style={{ marginRight: 20 }}>
@@ -217,7 +251,7 @@ class MaterialIconSelector extends Component {
                     helperText={I18n.t('material_icons_result', this.state.filtered.length)}
                 />
             </DialogTitle>
-            <DialogContent>
+            <DialogContent style={{ overflowY: 'hidden', height: '100%' }}>
                 {!this.props.iconType ? <div style={{ width: 140, display: 'inline-block', verticalAlign: 'top' }}>
                     <FormControl>
                         <RadioGroup
@@ -259,7 +293,15 @@ class MaterialIconSelector extends Component {
                         </RadioGroup>
                     </FormControl>
                 </div> : null}
-                <div style={{ width: 'calc(100% - 140px)', display: 'inline-block' }}>
+                <div
+                    style={{
+                        width: 'calc(100% - 150px)',
+                        display: 'inline-block',
+                        height: '100%',
+                        overflowY: 'auto',
+                        paddingLeft: 10,
+                    }}
+                >
                     {this.state.iconType === 'knx-uf' ? <div style={{ paddingBottom: 20 }}>
                         {I18n.t('Source:')}
                         &nbsp;
@@ -281,26 +323,21 @@ class MaterialIconSelector extends Component {
                                 paddingTop: 20,
                             }}
                         >
-                            {this.state.filtered.map(icon =>
-                                <Grid
-                                    item
-                                    key={icon}
-                                    className={Utils.clsx(this.props.classes.iconDiv, this.state.selectedIcon === icon && this.props.classes.iconSelected)}
-                                    onClick={() => this.setState({ selectedIcon: icon })}
-                                    onDoubleClick={() => this.setState({ selectedIcon: icon }, () => this.onSelect())}
-                                >
-                                    <Icon
-                                        src={this.list[this.state.iconType][icon]}
-                                        className={this.props.classes.icon}
-                                        style={iconStyle}
-                                    />
-                                    <div className={this.props.classes.iconName}>{icon.replace(/_/g, ' ')}</div>
-                                </Grid>)}
+                            {this.renderIcons()}
                         </Grid>
                     </div> : <LinearProgress />}
                 </div>
             </DialogContent>
             <DialogActions>
+                {this.state.maxPages > 1 && !this.state.loading ? <div style={{ marginLeft: 140 }}>
+                    <Pagination
+                        count={this.state.maxPages}
+                        color="primary"
+                        page={this.state.page}
+                        onChange={(event, page) => this.setState({ page })}
+                    />
+                </div> : null}
+                {this.state.maxPages > 1 ? <div style={{ flexGrow: 1 }} /> : null}
                 {this.props.value ? <Button
                     variant="outlined"
                     color="grey"
