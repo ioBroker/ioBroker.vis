@@ -220,6 +220,7 @@ body, html {
 
 .vis-view-column-edit {
     border: 1px dashed #888888;
+    box-sizing: border-box;
 }
 
 .vis-editmode-widget-move-buttons {

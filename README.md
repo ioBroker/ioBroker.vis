@@ -208,7 +208,7 @@ Notice that these settings are valid only for reconnection and not for the first
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 2.1.2 (2023-07-01)
+### 2.1.3 (2023-07-18)
 * (bluefox) Allowed to add widgets to widgets
 
 ### 2.0.36 (2023-06-21)

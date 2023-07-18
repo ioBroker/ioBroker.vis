@@ -61,7 +61,10 @@ class Runtime extends GenericApp {
         extendedProps.sentryDSN = window.sentryDSN;
 
         if (window.location.port === '3000') {
-            extendedProps.socket = { port: '8082' };
+            extendedProps.socket = {
+                port: '8082',
+                // host: '192.168.178.45',
+            };
         }
         if (window.socketUrl && window.socketUrl.startsWith(':')) {
             window.socketUrl = `${window.location.protocol}//${window.location.hostname}${window.socketUrl}`;
@@ -163,6 +166,7 @@ class Runtime extends GenericApp {
     fixProject(project) {
         project.___settings = project.___settings || {};
         project.___settings.folders = project.___settings.folders || [];
+        project.___settings.openedViews = project.___settings.openedViews || [];
 
         // fix project
         Object.keys(project).forEach(view => {
@@ -323,40 +327,28 @@ class Runtime extends GenericApp {
                 selectedView = Object.keys(project).find(view => !view.startsWith('__')) || '';
             }
         }
-        let openedViews;
-        if (window.localStorage.getItem('openedViews')) {
-            openedViews = JSON.parse(window.localStorage.getItem('openedViews'));
-        } else {
-            openedViews = [selectedView];
-        }
 
-        const len = openedViews.length;
+        const len = project.___settings.openedViews.length;
 
-        let changed = false;
         for (let i = len - 1; i >= 0; i--) {
-            if (!project[openedViews[i]]) {
-                openedViews.splice(i, 1);
-                changed = true;
+            if (!project[project.___settings.openedViews[i]]) {
+                project.___settings.openedViews.splice(i, 1);
             }
         }
 
-        if (!openedViews.length) {
+        if (!project.___settings.openedViews.length) {
             const view = Object.keys(project).find(_view => _view !== '___settings');
             if (view) {
-                openedViews[0] = view;
-                changed = true;
+                project.___settings.openedViews[0] = view;
             }
-        }
-        if (changed) {
-            window.localStorage.setItem('openedViews', JSON.stringify(openedViews));
         }
 
         // check that selectedView and openedViews exist
         if (!project[selectedView]) {
-            selectedView = openedViews[0] || '';
+            selectedView = project.___settings.openedViews[0] || '';
             window.localStorage.setItem('selectedView', selectedView);
-        } else if (openedViews && !openedViews.includes(selectedView)) {
-            selectedView = openedViews[0];
+        } else if (project.___settings.openedViews && !project.___settings.openedViews.includes(selectedView)) {
+            selectedView = project.___settings.openedViews[0];
             window.localStorage.setItem('selectedView', selectedView);
         }
 
@@ -394,7 +386,6 @@ class Runtime extends GenericApp {
             history: [project],
             historyCursor: 0,
             visProject: project,
-            openedViews,
             projectName,
         });
 
@@ -551,11 +542,10 @@ class Runtime extends GenericApp {
             newState.alignValues = [];
         }
 
-        if (!this.state.openedViews || !this.state.openedViews.includes(selectedView)) {
-            const openedViews = this.state.openedViews ? [...this.state.openedViews] : [];
-            openedViews.push(selectedView);
-            newState.openedViews = openedViews;
-            window.localStorage.setItem('openedViews', JSON.stringify(openedViews));
+        if (!this.state.project.___settings.openedViews.includes(selectedView)) {
+            const project = JSON.parse(JSON.stringify(this.state.project));
+            project.___settings.push(selectedView);
+            await this.changeProject(project, true);
         }
 
         if (!this.state.editMode) {
@@ -628,6 +618,7 @@ class Runtime extends GenericApp {
             const project = {
                 ___settings: {
                     folders: [],
+                    openedViews: [],
                 },
                 default: {
                     name: 'Default',

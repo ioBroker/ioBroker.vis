@@ -983,13 +983,13 @@ class App extends Runtime {
         }, 1000);
     }
 
-    changeProject = async (project, isHistory) => {
+    changeProject = async (project, ignoreHistory) => {
         // remove all special structures
         this.unsyncMultipleWidgets(project);
 
         const newState = { project, needSave: true };
 
-        if (!isHistory) {
+        if (!ignoreHistory) {
             // do not save history too often
             this.saveHistory(project);
         }
@@ -1065,27 +1065,26 @@ class App extends Runtime {
     };
 
     toggleView = async (view, isShow, isActivate) => {
-        const openedViews = JSON.parse(JSON.stringify(this.state.openedViews));
         let changed = false;
-        if (isShow && !openedViews.includes(view)) {
-            openedViews.push(view);
+        const project = JSON.parse(JSON.stringify(this.state.project));
+        const pos = project.___settings.openedViews.indexOf(view);
+        if (isShow && pos === -1) {
+            project.___settings.openedViews.push(view);
             changed = true;
-        } else if (!isShow && openedViews.includes(view)) {
-            openedViews.splice(openedViews.indexOf(view), 1);
+        } else if (!isShow && pos !== -1) {
+            project.___settings.openedViews.splice(pos, 1);
             changed = true;
         }
 
-        window.localStorage.setItem('openedViews', JSON.stringify(openedViews));
-
         if (changed) {
-            await this.setStateAsync({ openedViews });
+            await this.changeProject(project, false);
         }
 
         if (isActivate) {
             this.setViewsManager(false);
             await this.changeView(view);
-        } else if (!openedViews.includes(this.state.selectedView)) {
-            await this.changeView(openedViews[0]);
+        } else if (!project.___settings.openedViews.includes(this.state.selectedView)) {
+            await this.changeView(project.___settings.openedViews[0]);
         }
     };
 
@@ -1414,7 +1413,7 @@ class App extends Runtime {
 
     renderTabs() {
         const views = Object.keys(this.state.project)
-            .filter(view => !view.startsWith('__') && this.state.openedViews.includes(view));
+            .filter(view => !view.startsWith('__') && this.state.project.___settings.openedViews.includes(view));
 
         return <div className={this.props.classes.tabsContainer}>
             {this.state.hidePalette ? <Tooltip title={I18n.t('Show palette')}>
@@ -1508,8 +1507,9 @@ class App extends Runtime {
                     <IconButton
                         size="small"
                         onClick={() => {
-                            window.localStorage.setItem('openedViews', JSON.stringify([this.state.selectedView]));
-                            this.setState({ openedViews: [this.state.selectedView] });
+                            const project = JSON.parse(JSON.stringify(this.state.project));
+                            project.___settings.openedViews = [this.state.selectedView];
+                            this.changeProject(project, true);
                         }}
                     >
                         <ClearAllIcon />
@@ -1559,6 +1559,7 @@ class App extends Runtime {
                 changeProject={this.changeProject}
                 socket={this.socket}
                 editMode={this.state.editMode}
+                themeType={this.state.themeType}
             />
         </div>;
     }
@@ -1632,7 +1633,7 @@ class App extends Runtime {
                 userGroups={this.state.userGroups}
                 project={this.state.project}
                 changeProject={this.changeProject}
-                openedViews={this.state.openedViews}
+                openedViews={this.state.project.___settings.openedViews}
                 projectName={this.state.projectName}
                 themeType={this.state.themeType}
                 selectedWidgets={this.state.editMode ? this.state.selectedWidgets : []}
@@ -1944,7 +1945,7 @@ class App extends Runtime {
                             project={this.state.project}
                             changeView={this.changeView}
                             changeProject={this.changeProject}
-                            openedViews={this.state.openedViews}
+                            openedViews={this.state.project.___settings.openedViews}
                             toggleView={this.toggleView}
                             socket={this.socket}
                             projects={this.state.projects}

@@ -12,6 +12,7 @@ import {
 } from '@mui/icons-material';
 
 import { I18n, Utils } from '@iobroker/adapter-react-v5';
+import helpers from '../Components/WizardHelpers';
 
 const styles = () => ({
     widget: {
@@ -203,6 +204,8 @@ const Widget = props => {
             project: props.project,
             changeProject: props.changeProject,
             selectedView: props.selectedView,
+            themeType: props.themeType,
+            helpers,
         });
     }
 
@@ -225,6 +228,10 @@ Widget.propTypes = {
     marketplaceDeleted: PropTypes.array,
     uninstallWidget: PropTypes.func,
     socket: PropTypes.object,
+    themeType: PropTypes.string,
+    project: PropTypes.object,
+    changeProject: PropTypes.func,
+    editMode: PropTypes.bool,
 };
 
 export default withStyles(styles)(Widget);

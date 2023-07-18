@@ -313,6 +313,7 @@ const Palette = props => {
                                     project={props.project}
                                     changeProject={props.changeProject}
                                     editMode={props.editMode}
+                                    themeType={props.themeType}
                                 />)) : null}
                         </div>
                     </AccordionDetails>
@@ -333,6 +334,7 @@ Palette.propTypes = {
     marketplaceUpdates: PropTypes.array,
     marketplaceDeleted: PropTypes.array,
     socket: PropTypes.object,
+    themeType: PropTypes.string,
 };
 
 export default withStyles(styles)(Palette);
