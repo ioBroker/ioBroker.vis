@@ -170,6 +170,16 @@ class Runtime extends GenericApp {
 
         // fix project
         Object.keys(project).forEach(view => {
+            if (view === '___settings') {
+                return;
+            }
+            if (!project[view]) {
+                delete project[view];
+                return;
+            }
+            project[view].settings = project[view].settings || {};
+            project[view].settings.style = project[view].settings.style || {};
+            project[view].widgets = project[view].widgets || {};
             if (project[view].widgets) {
                 Object.keys(project[view].widgets).forEach(wid => {
                     const widget = project[view].widgets[wid];
@@ -177,12 +187,8 @@ class Runtime extends GenericApp {
                         delete project[view].widgets[wid];
                         return;
                     }
-                    if (!widget.data) {
-                        widget.data = {};
-                    }
-                    if (!widget.style) {
-                        widget.style = {};
-                    }
+                    widget.data = widget.data || {};
+                    widget.style = widget.style || {};
 
                     if (widget.data.members && !Array.isArray(widget.data.members)) {
                         widget.data.members = [];
@@ -198,7 +204,7 @@ class Runtime extends GenericApp {
                         delete project[view].widgets[wid];
                         project[view].widgets[newWid] = widget;
                     }
-                    // If widget is not unique, change its name
+                    // If the widget is not unique, change its name
                     if (Object.keys(project).find(v => v !== view && project[v].widgets && project[v].widgets[wid])) {
                         const _newWid = wid[0] === 'g' ? this.getNewGroupId(project) : this.getNewWidgetId(project);
                         console.log(`Rename widget ${wid} to ${_newWid}`);

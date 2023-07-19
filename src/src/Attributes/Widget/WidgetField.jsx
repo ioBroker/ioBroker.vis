@@ -807,9 +807,9 @@ const WidgetField = props => {
                 Object.keys(props.project).forEach(view =>
                     props.project[view].widgets && Object.keys(props.project[view].widgets)
                         .filter(wid =>
-                            (field.withGroups || !props.project[props.selectedView].widgets[wid].grouped) &&
+                            (field.withGroups || !props.project[view].widgets[wid].grouped) &&
                             (field.withSelf || wid !== widgetId) &&
-                            (!field.hideUsed || !props.project[props.selectedView].widgets[wid].usedInView))
+                            (!field.hideUsed || !props.project[view].widgets[wid].usedInView))
                         .forEach(wid => options.push({
                             wid,
                             view,
@@ -1227,7 +1227,29 @@ const WidgetField = props => {
     }
 
     if (field.type === 'icon64') {
-        return <div style={{ textAlign: 'right', width: '100%' }}>
+        return <div style={{ display: 'flex', width: '100%', alignItems: 'center' }}>
+            <TextField
+                fullWidth
+                size="small"
+                placeholder={isDifferent ? t('different') : null}
+                variant="standard"
+                value={value}
+                error={!!error}
+                disabled={disabled}
+                onChange={e => change(e.target.value)}
+                InputProps={{
+                    endAdornment: value ? <IconButton
+                        disabled={disabled}
+                        size="small"
+                        onClick={() => change('')}
+                    >
+                        <ClearIcon />
+                    </IconButton> : null,
+                    classes: {
+                        input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
+                    },
+                }}
+            />
             <Button
                 variant={value ? 'outlined' : undefined}
                 color={value ? 'grey' : undefined}
