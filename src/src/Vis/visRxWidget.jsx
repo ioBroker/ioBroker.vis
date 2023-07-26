@@ -561,19 +561,24 @@ class VisRxWidget extends VisBaseWidget {
                 this.bindingsTimer = null;
                 await this.onPropertiesUpdated();
 
+                const refs = [];
+                // if widget has included widgets => inform them about the new size or position
+                const oWidget = this.props.context.views[this.props.view].widgets[this.props.id];
+                const attrs = Object.keys(oWidget.data);
+                attrs.forEach(attr => {
+                    if (attr.startsWith('widget') && oWidget.data[attr]) {
+                        const ref = this.props.askView && this.props.askView('getRef', { id: oWidget.data[attr] });
+                        ref && refs.push(ref);
+                    }
+                });
+
                 this.informIncludedWidgets && clearTimeout(this.informIncludedWidgets);
-                this.informIncludedWidgets = setTimeout(() => {
-                    this.informIncludedWidgets = null;
-                    // if widget has included widgets => inform them about the new size or position
-                    const oWidget = this.props.context.views[this.props.view].widgets[this.props.id];
-                    const attrs = Object.keys(oWidget.data);
-                    attrs.forEach(attr => {
-                        if (attr.startsWith('widget') && oWidget.data[attr]) {
-                            const ref = this.props.askView && this.props.askView('getRef', { id: oWidget.data[attr] });
-                            ref && ref.onCommand('updatePosition');
-                        }
-                    });
-                }, 200);
+                if (refs) {
+                    this.informIncludedWidgets = setTimeout(() => {
+                        this.informIncludedWidgets = null;
+                        refs.forEach(ref => ref.onCommand('updatePosition'));
+                    }, 200);
+                }
             }, 10);
         }
 
