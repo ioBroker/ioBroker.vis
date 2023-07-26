@@ -920,8 +920,7 @@ class Vis {
                     if (this.widgetSets[i].widgetSets && !widgetSets.includes(name)) {
                         continue;
                     }
-                } else
-                if (widgetSets && !widgetSets.includes(name)) {
+                } else if (widgetSets && !widgetSets.includes(name)) {
                     widgetSets.push(name);
                 }
 
@@ -1653,11 +1652,9 @@ class Vis {
             const t = typeof val;
             if (t === 'boolean' || val === 'false' || val === 'true') {
                 value = value === 'true' || value === true || value === 1 || value === '1';
-            } else
-            if (t === 'number') {
+            } else if (t === 'number') {
                 value = parseFloat(value);
-            } else
-            if (t === 'object') {
+            } else if (t === 'object') {
                 val = JSON.stringify(val);
             }
 
@@ -2639,11 +2636,9 @@ class Vis {
             const t = typeof val;
             if (t === 'boolean' || val === 'false' || val === 'true') {
                 value = value === 'true' || value === true || value === 1 || value === '1';
-            } else
-            if (t === 'number') {
+            } else if (t === 'number') {
                 value = parseFloat(value);
-            } else
-            if (t === 'object') {
+            } else if (t === 'object') {
                 val = JSON.stringify(val);
             }
 
