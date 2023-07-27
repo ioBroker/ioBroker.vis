@@ -1,1 +1,1 @@
-process.on("unhandledRejection", (r) => { throw r; });
+process.on('unhandledRejection', r => { throw r; });

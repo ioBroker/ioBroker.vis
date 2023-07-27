@@ -398,8 +398,6 @@
   "Add project": "添加项目",
   "Do you want to delete project \"%s\"?": "您要删除项目“%s”吗？",
   "Rename project \"%s\"": "重命名项目“%s”",
-  "Select vis project": "选择“vis”项目",
-  "Create or import new \"vis\" project": "创建或导入新的“vis”项目",
   "welcome_message": "目前还没有一个项目存在。",
   "Browse files": "浏览文件",
   "Text edit": "文本编辑",
@@ -464,5 +462,9 @@
   "flexible": "灵活的",
   "Move down": "下移",
   "Move up": "提升",
-  "Specify filter to see more icons": "指定过滤器以查看更多图标"
+  "Specify filter to see more icons": "指定过滤器以查看更多图标",
+  "Create or import new \"vis-2\" project": "创建或导入新的“vis-2”项目",
+  "Select vis-2 project": "选择“vis-2”项目",
+  "Select vis project": "选择“vis”项目",
+  "Create or import new \"vis\" project": "创建或导入新的“vis”项目"
 }

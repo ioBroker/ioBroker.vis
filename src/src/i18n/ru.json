@@ -398,8 +398,6 @@
   "Add project": "Добавить проект",
   "Do you want to delete project \"%s\"?": "Вы хотите удалить проект \"%s\"?",
   "Rename project \"%s\"": "Переименовать проект \"%s\"",
-  "Select vis project": "Выберите проект \"vis\"",
-  "Create or import new \"vis\" project": "Создать или импортировать новый проект \"vis\"",
   "welcome_message": "Ни одного проекта пока не существует.",
   "Browse files": "Просмотр файлов",
   "Text edit": "Редактировать текст",
@@ -464,5 +462,9 @@
   "flexible": "гибкий",
   "Move down": "Вниз",
   "Move up": "Вверх",
-  "Specify filter to see more icons": "Укажите фильтр, чтобы увидеть больше значков"
+  "Specify filter to see more icons": "Укажите фильтр, чтобы увидеть больше значков",
+  "Create or import new \"vis-2\" project": "Создать или импортировать новый проект \"vis-2\"",
+  "Select vis-2 project": "Выберите проект \"vis-2\"",
+  "Select vis project": "Выберите проект \"vis\"",
+  "Create or import new \"vis\" project": "Создать или импортировать новый проект \"vis\""
 }

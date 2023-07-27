@@ -1,4 +1,4 @@
-![Logo](admin/vis.png)
+![Logo](admin/vis-2.png)
 # Visualisation
 
 ![Number of Installations](http://iobroker.live/badges/vis-installed.svg) ![Number of Installations](http://iobroker.live/badges/vis-stable.svg) [![NPM version](http://img.shields.io/npm/v/iobroker.vis.svg)](https://www.npmjs.com/package/iobroker.vis)
@@ -224,22 +224,11 @@ Notice that these settings are valid only for reconnection and not for the first
 * (bluefox) Improved the error handling
 
 ### 2.0.0 (2022-10-21)
-* (bluefox) Completely new visualization, but compatible with the previous version
-
-### 1.4.15 (2022-04-10)
-* (bluefox) Better check of the offline license
-
-### 1.4.14 (2022-03-31)
-* (bluefox) Corrected GUI bug
-
-### 1.4.13 (2022-03-22)
-* (pascal-hari) The group attributes will be replaced recursively
+* (bluefox) Completely new visualization, but partly compatible with the previous version
 
 ## License
- Copyright (c) 2013-2023 bluefox, https://github.com/GermanBluefox <dogafox@gmail.com>,
- 
- Copyright (c) 2013-2014 hobbyquaker, https://github.com/hobbyquaker <hobbyquaker@gmail.com>,
- 
+ Copyright (c) 2021-2023 bluefox, https://github.com/GermanBluefox <dogafox@gmail.com>,
+  
  Creative Common Attribution-NonCommercial (CC BY-NC)
 
  http://creativecommons.org/licenses/by-nc/4.0/

@@ -710,10 +710,10 @@ class Runtime extends GenericApp {
             <DialogTitle>
                 <img
                     src={this.props.runtime ? './favicon.ico' : './faviconEdit.ico'}
-                    alt="vis"
+                    alt="vis-2"
                     style={{ width: 24, marginRight: 10, marginTop: 4 }}
                 />
-                {!this.state.projects.length ? I18n.t('Create or import new "vis" project') : I18n.t('Select vis project')}
+                {!this.state.projects.length ? I18n.t('Create or import new "vis-2" project') : I18n.t('Select vis-2 project')}
             </DialogTitle>
             <DialogContent>
                 {!this.state.projects ? <LinearProgress /> : <Paper sx={{ width: 320, maxWidth: '100%' }}>

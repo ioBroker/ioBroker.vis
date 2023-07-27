@@ -1415,13 +1415,17 @@ class VisEngine extends React.Component {
 
     static async loadScriptsOfOneWidgetSet(widgetSet) {
         for (let i = 0; i < widgetSet.length; i++) {
-            const { oldScript, newScript } = widgetSet[i];
-            newScript.appendChild(document.createTextNode(oldScript.innerHTML));
-            oldScript.parentNode.replaceChild(newScript, oldScript);
+            try {
+                const { oldScript, newScript } = widgetSet[i];
+                newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                oldScript.parentNode.replaceChild(newScript, oldScript);
 
-            await new Promise(resolve => {
-                newScript.onload = resolve;
-            });
+                await new Promise(resolve => {
+                    newScript.onload = resolve;
+                });
+            } catch (e) {
+                console.error(`Cannot load script: ${e}`);
+            }
         }
     }
 

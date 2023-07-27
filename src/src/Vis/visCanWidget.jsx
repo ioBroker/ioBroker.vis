@@ -747,6 +747,8 @@ class VisCanWidget extends VisBaseWidget {
         if (src) {
             if (src.startsWith('/vis/')) {
                 src = src.substring(5);
+            } else if (src.startsWith('/vis-2/')) {
+                src = src.substring(5);
             } else if (src.startsWith('/vis-2-beta/')) {
                 src = src.substring(12);
             }

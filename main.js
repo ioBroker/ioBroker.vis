@@ -1,15 +1,12 @@
 /**
  *
- *      iobroker vis Adapter
+ *      iobroker vis-2 Adapter
  *
- *      Copyright (c) 2014-2023, bluefox
- *      Copyright (c) 2014, hobbyquaker
+ *      Copyright (c) 2021-2023, bluefox
  *
  *      CC-NC-BY 4.0 License
  *
  */
-'use strict';
-
 const adapterName    = require('./package.json').name.split('.').pop();
 const utils          = require('@iobroker/adapter-core'); // Get common adapter utils
 const fs             = require('fs');
@@ -432,7 +429,7 @@ function doLicense(license, uuid, name) {
                                 resolve(true);
                             }
                         } else {
-                            adapter.log.info('vis license is OK.');
+                            adapter.log.info('vis-2 license is OK.');
                             resolve(false);
                         }
                     } else {
@@ -821,9 +818,6 @@ async function buildHtmlPages(forceBuild) {
 }
 
 async function checkL(license, useLicenseManager, name) {
-    if (name === 'vis-2-beta') {
-        name = 'vis';
-    }
     const uuidObj = await adapter.getForeignObjectAsync('system.meta.uuid');
     if (!uuidObj || !uuidObj.native || !uuidObj.native.uuid) {
         adapter.log.error('UUID not found!');
@@ -835,13 +829,49 @@ async function checkL(license, useLicenseManager, name) {
         }
 
         if (!license) {
-            adapter.log.error('No license found for vis. Please get one on https://iobroker.net !');
+            adapter.log.error('No license found for vis-2. Please get one on https://iobroker.net !');
             return false;
         } else {
             try {
                 return !await doLicense(license, uuidObj.native.uuid, name);
             } catch (err) {
                 return check(license, uuidObj.native.uuid, err, name);
+            }
+        }
+    }
+}
+
+async function exportFormOlderVersions() {
+    // Check if first start of vis-2
+    let files;
+    try {
+        files = await adapter.readDirAsync('vis-2.0', '');
+    } catch (e) {
+
+    }
+
+    // if no files found, try to copy from vis-2-beta.0
+    if (!files || !files.length) {
+        // if vis-2-beta installed, copy files from vis-2-beta to vis-2
+        try {
+            files = await adapter.readDirAsync('vis-2-beta.0', '');
+        } catch (e) {
+
+        }
+
+        if (files && files.length) {
+            // copy recursive all
+            await copyFolder('vis-2-beta.0', '', 'vis-2.0', '');
+        } else {
+            // try to copy from vis.0
+            try {
+                files = await adapter.readDirAsync('vis.0', '');
+            } catch (e) {
+
+            }
+            if (files && files.length) {
+                // copy recursive all
+                await copyFolder('vis.0', '', 'vis-2.0', '');
             }
         }
     }
@@ -855,20 +885,20 @@ async function main() {
         await adapter.setForeignObjectAsync(adapterName, {
             type: 'meta',
             common: {
-                name: 'vis core files',
+                name: 'vis-2 core files',
                 type: 'meta.user',
             },
             native: {},
         });
     }
 
-    // create vis.0 "meta" object if not exists
+    // create vis-2.0 "meta" object if not exists
     const visObjNS = await adapter.getForeignObjectAsync(adapter.namespace);
     if (!visObjNS || visObjNS.type !== 'meta') {
         await adapter.setForeignObjectAsync(adapter.namespace, {
             type: 'meta',
             common: {
-                name: 'user files and images for vis',
+                name: 'user files and images for vis-2',
                 type: 'meta.user',
             },
             native: {},
@@ -898,37 +928,12 @@ async function main() {
     // first check license
     if (!adapter.config.useLicenseManager && (!adapter.config.license || typeof adapter.config.license !== 'string')) {
         isLicenseError = true
-        adapter.log.error('No license found for vis. Please get one on https://iobroker.net !');
+        adapter.log.error('No license found for vis-2. Please get one on https://iobroker.net !');
     } else {
-        isLicenseError = !(await checkL(adapter.config.license, adapter.config.useLicenseManager, 'vis' || adapterName)); // TODO!!!
+        isLicenseError = !(await checkL(adapter.config.license, adapter.config.useLicenseManager, 'vis-2' || adapterName)); // TODO!!!
     }
 
-    if (adapterName.includes('beta')) {
-        const visObj = await adapter.getForeignObjectAsync('vis-2-beta.0');
-        if (!visObj || visObj.type !== 'meta') {
-            await adapter.setForeignObjectAsync('vis-2-beta.0', {
-                type: 'meta',
-                common: {
-                    name: 'user files and images for vis',
-                    type: 'meta.user',
-                },
-                native: {},
-            });
-        }
-
-        // copy vis to vis-2-beta
-        let files;
-        try {
-            files = await adapter.readDirAsync('vis-2-beta.0', '');
-        } catch (e) {
-
-        }
-
-        if (!files || !files.length) {
-            // copy recursive all
-            await copyFolder('vis.0', '', 'vis-2-beta.0', '');
-        }
-    }
+    await exportFormOlderVersions();
 
     await buildHtmlPages(adapter.config.forceBuild);
 

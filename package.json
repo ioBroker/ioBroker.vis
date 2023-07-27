@@ -1,6 +1,6 @@
 {
-  "name": "iobroker.vis",
-  "description": "Graphical user interface for ioBroker.",
+  "name": "iobroker.vis-2",
+  "description": "Next generation graphical user interface for ioBroker.",
   "version": "2.1.4",
   "author": {
     "name": "bluefox",
@@ -10,10 +10,10 @@
     "bluefox <dogafox@gmail.com>",
     "hobbyquaker <hobbyquaker@gmail.com>"
   ],
-  "homepage": "https://github.com/iobroker/iobroker.vis",
+  "homepage": "https://github.com/iobroker/iobroker.vis-2",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ioBroker/ioBroker.vis.git"
+    "url": "git+https://github.com/ioBroker/ioBroker.vis-2.git"
   },
   "keywords": [
     "iobroker",
@@ -21,7 +21,8 @@
     "DashUI",
     "web interface",
     "home automation",
-    "SCADA"
+    "SCADA",
+    "vis-2"
   ],
   "dependencies": {
     "@iobroker/adapter-core": "^2.6.8",
@@ -58,7 +59,6 @@
     "test-gui": "mocha ./test/*.gui.js --exit",
     "prepublishOnly": "gulp",
     "build": "gulp",
-    "build-beta": "gulp beta",
     "release": "release-script",
     "release-patch": "release-script patch --yes --no-update-lockfile",
     "release-minor": "release-script minor --yes --no-update-lockfile",

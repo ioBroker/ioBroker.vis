@@ -4,12 +4,12 @@ describe('vis', () => {
     before(async function (){
         this.timeout(180000);
 
-        // install js-controller, web and vis-2-beta
+        // install js-controller, web and vis-2
         await helper.startIoBroker({
             startOwnAdapter: true,
             additionalAdapters: ['web'],
-            visUploadedId: 'vis.0.info.uploaded',
-            mainGuiProject: 'vis',
+            visUploadedId: 'vis-2.0.info.uploaded',
+            mainGuiProject: 'vis-2',
         });
         await helper.startBrowser(process.env.CI === 'true');
         await helper.createProject();

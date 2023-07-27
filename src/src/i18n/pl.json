@@ -398,8 +398,6 @@
   "Add project": "Dodaj projekt",
   "Do you want to delete project \"%s\"?": "Czy chcesz usunąć projekt „%s”?",
   "Rename project \"%s\"": "Zmień nazwę projektu „%s”",
-  "Select vis project": "Wybierz projekt „vis”.",
-  "Create or import new \"vis\" project": "Utwórz lub zaimportuj nowy projekt „vis”.",
   "welcome_message": "Żaden projekt jeszcze nie istnieje.",
   "Browse files": "Przeglądaj pliki",
   "Text edit": "Edycja tekstu",
@@ -464,5 +462,9 @@
   "flexible": "elastyczny",
   "Move down": "Padnij",
   "Move up": "Podnieść",
-  "Specify filter to see more icons": "Określ filtr, aby zobaczyć więcej ikon"
+  "Specify filter to see more icons": "Określ filtr, aby zobaczyć więcej ikon",
+  "Create or import new \"vis-2\" project": "Utwórz lub zaimportuj nowy projekt „vis-2”.",
+  "Select vis-2 project": "Wybierz projekt „vis-2”.",
+  "Select vis project": "Wybierz projekt „vis”.",
+  "Create or import new \"vis\" project": "Utwórz lub zaimportuj nowy projekt „vis”."
 }

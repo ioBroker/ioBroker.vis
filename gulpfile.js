@@ -143,7 +143,6 @@ gulp.task('runtime-7-patch-dep',  gulp.series('runtime-6-copy-dep', 'runtime-7-p
 gulp.task('0-clean', done => {
     deleteFoldersRecursive(`${__dirname}/src/build`);
     deleteFoldersRecursive(`${__dirname}/www`);
-    deleteFoldersRecursive(`${__dirname}/beta`);
     done();
 });
 
@@ -411,51 +410,5 @@ gulp.task('7-patch', done => {
 gulp.task('7-patch-dep',  gulp.series('6-copy-dep', '7-patch'));
 
 gulp.task('buildReact', gulp.series('7-patch-dep', 'runtime-7-patch-dep'));
-
-gulp.task('8-beta', async () => {
-    !fs.existsSync(path.join(__dirname, 'beta')) && fs.mkdirSync(path.join(__dirname, 'beta'));
-    deleteFoldersRecursive(path.join(__dirname, 'beta/www'));
-
-    copyFolder(path.join(__dirname, 'admin'), path.join(__dirname, 'beta/admin'));
-    copyFolder(path.join(__dirname, 'img'), path.join(__dirname, 'beta/img'));
-    copyFolder(path.join(__dirname, 'lib'), path.join(__dirname, 'beta/lib'));
-    copyFolder(path.join(__dirname, 'www'), path.join(__dirname, 'beta/www'), ['.map']);
-    // delete all other widgets and let only basics
-    const baseWidgets = ['basic', 'jqplot', 'jqui', 'swipe', 'tabs'];
-    const files = fs.readdirSync(path.join(__dirname, 'beta/www/widgets'));
-    files.forEach(file => {
-        if (!baseWidgets.includes(file) && !baseWidgets.includes(file.replace('.html', ''))) {
-            deleteFoldersRecursive(`${__dirname}/beta/www/widgets/${file}`);
-        }
-    });
-
-    fs.writeFileSync(path.join(__dirname, 'beta/io-package.json'), fs.readFileSync(path.join(__dirname, 'io-package.json')));
-    fs.writeFileSync(path.join(__dirname, 'beta/package.json'), fs.readFileSync(path.join(__dirname, 'package.json')));
-    fs.writeFileSync(path.join(__dirname, 'beta/LICENSE'), fs.readFileSync(path.join(__dirname, 'LICENSE')));
-    fs.writeFileSync(path.join(__dirname, 'beta/main.js'), fs.readFileSync(path.join(__dirname, 'main.js')));
-    fs.writeFileSync(path.join(__dirname, 'beta/README.md'), fs.readFileSync(path.join(__dirname, 'README.md')));
-    const ioPack = JSON.parse(fs.readFileSync(path.join(__dirname, 'beta', 'io-package.json')));
-    const pack = JSON.parse(fs.readFileSync(path.join(__dirname, 'beta', 'package.json')));
-    ioPack.common.name = 'vis-2-beta';
-    ioPack.common.welcomeScreen.link = 'vis-2-beta/index.html';
-    ioPack.common.welcomeScreen.name = 'vis 2 Runtime';
-    ioPack.common.welcomeScreen.img = 'vis-2-beta/img/favicon.png';
-    ioPack.common.welcomeScreenPro.link = 'vis-2-beta/edit.html';
-    ioPack.common.welcomeScreenPro.name = 'vis 2 Editor';
-    ioPack.common.welcomeScreenPro.img = 'vis-2-beta/img/faviconEdit.png';
-    ioPack.common.localLinks._default = '%web_protocol%://%ip%:%web_port%/vis-2-beta/edit.html';
-    pack.name = 'iobroker.vis-2-beta';
-    delete pack.scripts;
-    delete pack.devDependencies;
-    fs.writeFileSync(path.join(__dirname, 'beta', 'io-package.json'), JSON.stringify(ioPack, null, 2));
-    fs.writeFileSync(path.join(__dirname, 'beta', 'package.json'), JSON.stringify(pack, null, 2));
-
-    if (fs.existsSync(path.join(__dirname, '../ioBroker.vis-2-beta'))) {
-        deleteFoldersRecursive(`${__dirname}/../ioBroker.vis-2-beta`);
-        copyFolder(path.join(__dirname, 'beta'), path.join(__dirname, '../ioBroker.vis-2-beta'), ['.map']);
-    }
-});
-
-gulp.task('beta', gulp.series('buildReact', '8-beta'));
 
 gulp.task('default', gulp.series('buildReact'));
