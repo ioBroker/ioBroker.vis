@@ -1,10 +1,10 @@
 ![Logo](admin/vis-2.png)
-# Visualisation
+# Next generation visualization for ioBroker: vis-2 
 
-![Number of Installations](http://iobroker.live/badges/vis-installed.svg) ![Number of Installations](http://iobroker.live/badges/vis-stable.svg) [![NPM version](http://img.shields.io/npm/v/iobroker.vis.svg)](https://www.npmjs.com/package/iobroker.vis)
-[![Downloads](https://img.shields.io/npm/dm/iobroker.vis.svg)](https://www.npmjs.com/package/iobroker.vis)
+![Number of Installations](http://iobroker.live/badges/vis-2-installed.svg) ![Number of Installations](http://iobroker.live/badges/vis-2-stable.svg) [![NPM version](http://img.shields.io/npm/v/iobroker.vis-2.svg)](https://www.npmjs.com/package/iobroker.vis-2)
+[![Downloads](https://img.shields.io/npm/dm/iobroker.vis-2.svg)](https://www.npmjs.com/package/iobroker.vis-2)
 
-[![NPM](https://nodei.co/npm/iobroker.vis.png?downloads=true)](https://nodei.co/npm/iobroker.vis/)
+[![NPM](https://nodei.co/npm/iobroker.vis-2.png?downloads=true)](https://nodei.co/npm/iobroker.vis-2/)
 
 WEB visualisation for ioBroker platform.
 
@@ -12,7 +12,7 @@ WEB visualisation for ioBroker platform.
 To use this adapter in `ioBroker` you need to accept the source code license of the adapter. The source code of this adapter is available under the CC BY-NC license.
 
 Additionally, you need a license to use the adapter. The following license editions are available on https://iobroker.net/www/pricing 
-* **Community-License: Free for private use!**: Get a free license by registering an account on [https://iobroker.net](https://iobroker.net). The license if checked online against the ioBroker license server when the vis adapter is started, so an online connection at this time point is required!
+* **Community-License: Free for private use!**: Get a free license by registering an account on [https://iobroker.net](https://iobroker.net). The license if checked online against the ioBroker license server when the vis-2 adapter is started, so an online connection at this time point is required!
 * **Private use Offline-License**: For paying a small support fee, you can get rid of the required online license check on adapter startup. **Only for Private use!**
 * **Commercial License**: When using Vis in a commercial environment or selling Vis as part of ioBroker packages to your customers, this license is for you. License check is also not requiring an online connection.
 
@@ -27,8 +27,36 @@ Additionally, you need a license to use the adapter. The following license editi
 Normally, most of the widgets have ObjectID attribute and this attribute can be bound with some value of object ID.
 But there is another option for how to bind *any* attribute of widget to some ObjectID. 
 
-Just write into attribute `{object.id}` and it will be bound (not in edit mode) to this object's value. 
+Just write into attribute `{object.id}` and it will be bound to this object's value. 
 If you use the special format, you can even make some simple operations with it, e.g., multiplying or formatting.
+
+E.g., to calculate the hypotenuse of a triangle:
+
+`{h:javascript.0.myCustom.height;w:javascript.0.myCustom.width;Math.max(20, Math.sqrt(h*h + w*w))}` will be interpreted as function:
+
+```
+value = await (async function () {
+    var h = (await getState('javascript.0.myCustom.height')).val;
+    var w = (await getState('javascript.0.myCustom.width')).val;
+    return Math.max(20, Math.sqrt(h * h + w * w));
+})();
+```
+
+or 
+
+`{h:javascript.0.myCustom.height;w:javascript.0.myCustom.width;h*w}` will just multiply height with width.
+
+
+You can use *any* javascript (browser) functions. Arguments must be defined with ':', if not, it will be interpreted as formula.
+
+Take care about types. All of them are defined as strings. To be sure, that value will be treated as number use parseFloat function.
+
+So our Hypotenuse calculation will be:
+```
+{h:javascript.0.myCustom.height;w:javascript.0.myCustom.width;Math.max(20, Math.sqrt(Math.pow(parseFloat(h), 2) + Math.pow(parseFloat(w), 2)))}
+```
+
+### Deprecated format
 Patten has the following format:
 
 ```
@@ -40,10 +68,10 @@ The following operations are supported:
 - `\*` - multiplying. Argument must be in brackets, like "*(4)". In this sample, we multiply the value with 4.
 - `\+` - add. Argument must be in brackets, like "+(4.5)". In this sample we add to value 4.5.
 - `\-` - subtract. Argument must be in brackets, like "-(-674.5)". In this sample we subtract from value -674.5.
-- `/` - dividing. Argument must be in brackets, like "/(0.5)". In this sample we divide value by 0.5.
+- `/` - dividing. Argument must be in brackets, like "/(0.5)". In this sample, we divide the value by 0.5.
 - `%` - modulo. Argument must be in brackets, like "%(5)". In this sample, we take modulo of 5.
 - `round` - round the value.
-- `round(N)` - round the value with N places after point, e.g. 34.678;round(1) => 34.7
+- `round(N)` - round the value with N places after point, e.g., 34.678;round(1) => 34.7
 - `hex` - convert value to hexadecimal value. All letters are lower cased.
 - `hex2` - convert value to hexadecimal value. All letters are lower cased. If value less 16, so the leading zero will be added.
 - `HEX` - same as hex, but upper-cased.
@@ -78,30 +106,6 @@ To show timestamp of object write `.ts` or `.lc` (for last change) at the end of
 
 ```
 Last change: {objectRed.lc;date(hh:mm)}
-```
-
-There is another possibility to write the pattern:
-
-```
-Hypotenuse of {height} and {width} = {h:height;w:width;Math.max(20, Math.sqrt(h*h + w*w))}
-```
-
-`{h:height;w:width;h*w}` will be interpreted as function:
-
-```
-value = (function () {
-    var h = "10";
-    var w = "20";
-    return Math.max(20, Math.sqrt(h*h + w*w));
-})();
-```
-
-You can use *any* javascript functions. Arguments must be defined with ':', if not, it will be interpreted as formula.
-
-Take care about types. All of them are defined as strings. To be sure, that value will be treated as number use parseFloat function.
-
-```
-Hypotenuse of {height} and {width} = {h:height;w:width;Math.max(20, Math.sqrt(Math.pow(parseFloat(h), 2) + Math.pow(parseFloat(w), 2)))}
 ```
 
 ### Special bindings
@@ -142,9 +146,9 @@ Vis creates 3 variables:
 
 Commands:
 
-* `alert` - show an alert window in the vis. "control.data" has the following format "message;title;jquery-icon". Title and jquery-icon are optional. Icon names can be found [here](http://jqueryui.com/themeroller/). To show icon "ui-icon-info" write `Message;;info`.
-* `changeView` - switch to desired view. "control.data" must have the name of view. You can specify the project name too as "project/view". The default project is `main`.
-* `refresh` - reload the vis, for instance after the project is changed to reload on all browsers.
+* `alert` - show an alert window in the vis-2. "control.data" has the following format "message;title;jquery-icon". Title and jquery-icon are optional. Icon names can be found [here](http://jqueryui.com/themeroller/). To show icon "ui-icon-info" write `Message;;info`.
+* `changeView` - switch to desired view. "control.data" must have the name of view. You can specify the project name too as `project/view`. The default project is `main`.
+* `refresh` - reload the vis-2, for instance after the project is changed to reload on all browsers.
 * `reload` - same as refresh.
 * `dialog` - Show dialog window. Dialog must exist on view. One of:
 
@@ -157,11 +161,11 @@ Commands:
 
     `control.data` must have id of dialog widget, e.g. `w00056`.
 * `dialogClose`
-* `popup` - opens a new browser window. Link must be specified in `control.data`, e.g. http://google.com
-* `playSound` - play sound file. The link to file is specified in `control.data`, e.g. http://www.modular-planet.de/fx/marsians/Marsiansrev.mp3.
-  You can upload your own file in vis and let it play as for instance `/vis.0/main/img/myFile.mp3`.
+* `popup` - opens a new browser window. Link must be specified in `control.data`, e.g., http://google.com
+* `playSound` - play sound file. The link to file is specified in `control.data`, e.g., http://www.modular-planet.de/fx/marsians/Marsiansrev.mp3.
+  You can upload your own file in vis-2 and let it play as for instance `/vis-2.0/main/img/myFile.mp3`.
 
-If the user changes the view or at the start, the variables will be filled by the vis with
+If the user changes the view or at the start, the variables will be filled by the vis-2 with
 
 - `control.instance`: browser instance and `ack=true`
 - `control.data`: project and view name in form `project/view`, e.g. `main/view` (and `ack=true`)
@@ -172,7 +176,7 @@ You can write the JSON-string or Object into `control.command` as `{instance: 'A
 Example for javascript adapter:
 
 ```
-setState('vis.0.control.command', {"instance": "*", "command": "refresh", "data": ""});
+setState('vis-2.0.control.command', {"instance": "*", "command": "refresh", "data": ""});
 ```
 
 ## Default view
