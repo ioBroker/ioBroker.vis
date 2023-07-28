@@ -11,7 +11,7 @@
   "vis_2_widgets_basic_view_not_defined": "Uitzicht niet gedefinieerd",
   "Project name": "Naam van het project",
   "Project \"%s\" does not exist": "Project \"%s\" bestaat niet",
-  "Select vis project": "Selecteer \"vis\"-project",
-  "Create or import new \"vis\" project": "Maak of importeer een nieuw \"vis\"-project",
-  "welcome_message": "Er is nog geen enkel project."
+  "welcome_message": "Er is nog geen enkel project.",
+  "Select vis-2 project": "Selecteer het \"vis-2\"-project",
+  "Create or import new \"vis-2\" project": "Creëer of importeer een nieuw \"vis-2\" project"
 }

@@ -11,7 +11,7 @@
   "vis_2_widgets_basic_view_not_defined": "Widok niezdefiniowany",
   "Project name": "Nazwa Projektu",
   "Project \"%s\" does not exist": "Projekt \"%s\" nie istnieje",
-  "Select vis project": "Wybierz projekt „vis”.",
-  "Create or import new \"vis\" project": "Utwórz lub zaimportuj nowy projekt „vis”.",
-  "welcome_message": "Żaden projekt jeszcze nie istnieje."
+  "welcome_message": "Żaden projekt jeszcze nie istnieje.",
+  "Select vis-2 project": "Wybierz projekt „vis-2”.",
+  "Create or import new \"vis-2\" project": "Utwórz lub zaimportuj nowy projekt „vis-2”."
 }

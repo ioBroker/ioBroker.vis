@@ -226,8 +226,7 @@ class BasicViewInWidget extends VisRxWidget {
 
 BasicViewInWidget.propTypes = {
     id: PropTypes.string.isRequired,
-    VisView: PropTypes.any.isRequired,
-    views: PropTypes.object.isRequired,
+    context: PropTypes.object.isRequired,
     view: PropTypes.string.isRequired,
     editMode: PropTypes.bool.isRequired,
     onIgnoreMouseEvents: PropTypes.func,

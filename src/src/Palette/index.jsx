@@ -279,21 +279,22 @@ const Palette = props => {
                                 <MarketplacePalette setMarketplaceDialog={props.setMarketplaceDialog} />
                                 {props.project.___settings.marketplace?.map(item => <div key={item.id}>
                                     <Widget
+                                        editMode={props.editMode}
+                                        key={item.id}
+                                        marketplace={item}
+                                        marketplaceDeleted={props.marketplaceDeleted}
+                                        marketplaceUpdates={props.marketplaceUpdates}
+                                        uninstallWidget={props.uninstallWidget}
+                                        updateWidgets={props.updateWidgets}
+                                        widgetSet={category}
+                                        widgetSetProps={widgetSetProps[category]}
                                         widgetType={{
                                             id: item.id,
                                             widget_id: item.widget_id,
                                             label: item.name,
                                             preview: `${window.apiUrl + window.webPrefix}/images/${item.image_id}`,
                                         }}
-                                        key={item.id}
-                                        widgetSet={category}
-                                        widgetSetProps={widgetSetProps[category]}
                                         widgetTypeName={item.name}
-                                        updateWidgets={props.updateWidgets}
-                                        marketplace={item}
-                                        marketplaceUpdates={props.marketplaceUpdates}
-                                        marketplaceDeleted={props.marketplaceDeleted}
-                                        uninstallWidget={props.uninstallWidget}
                                     />
                                 </div>)}
                             </div>
@@ -303,17 +304,17 @@ const Palette = props => {
                         <div>
                             {accordionOpen[category] ? widgetsList[category].map(widgetItem =>
                                 (widgetItem.name === '_tplGroup' ? null : <Widget
-                                    widgetType={widgetItem}
-                                    key={widgetItem.name}
-                                    widgetSet={category}
-                                    widgetSetProps={widgetSetProps[category]}
-                                    widgetTypeName={widgetItem.name}
-                                    selectedView={props.selectedView}
-                                    socket={props.socket}
-                                    project={props.project}
                                     changeProject={props.changeProject}
                                     editMode={props.editMode}
+                                    key={widgetItem.name}
+                                    project={props.project}
+                                    selectedView={props.selectedView}
+                                    socket={props.socket}
                                     themeType={props.themeType}
+                                    widgetSet={category}
+                                    widgetSetProps={widgetSetProps[category]}
+                                    widgetType={widgetItem}
+                                    widgetTypeName={widgetItem.name}
                                 />)) : null}
                         </div>
                     </AccordionDetails>

@@ -246,8 +246,8 @@ class App extends Runtime {
             ignoreMouseEvents: false,
             legacyFileSelector: null,
             marketplaceDialog: false,
-            marketplaceUpdates: [],
-            marketplaceDeleted: [],
+            marketplaceUpdates: null,
+            marketplaceDeleted: null,
             askAboutInclude: null,
         });
     }
@@ -256,15 +256,22 @@ class App extends Runtime {
         super.componentDidMount();
         window.addEventListener('keydown', this.onKeyDown, false);
         window.addEventListener('beforeunload', this.onBeforeUnload, false);
-        try {
-            const translations = await loadComponent('__marketplace', 'default', './translations', `${window.marketplaceClient}/customWidgets.js`)();
-            I18n.extendTranslations(translations.default);
-            const marketplace = await loadComponent('__marketplace', 'default', './VisMarketplace', `${window.marketplaceClient}/customWidgets.js`)();
-            this.setState({ VisMarketplace: marketplace });
-            window.VisMarketplace = marketplace;
-        } catch (e) {
-            console.error(`Cannot load marketplace: ${e}`);
-        }
+
+        // load marketplace
+        this.marketplaceLoaded = new Promise(resolve => {
+            const tPromise = loadComponent('__marketplace', 'default', './translations', `${window.marketplaceClient}/customWidgets.js`)()
+                .then(translations => I18n.extendTranslations(translations.default));
+
+            const mPromise = loadComponent('__marketplace', 'default', './VisMarketplace', `${window.marketplaceClient}/customWidgets.js`)()
+                .then(marketplace => {
+                    this.setState({ VisMarketplace: marketplace });
+                    window.VisMarketplace = marketplace;
+                });
+
+            Promise.all([tPromise, mPromise])
+                .catch(e => console.error(`Cannot load marketplace: ${e}`))
+                .then(() => resolve());
+        });
     }
 
     componentWillUnmount() {
@@ -1251,18 +1258,20 @@ class App extends Runtime {
     setMarketplaceDialog = marketplaceDialog => this.setState({ marketplaceDialog });
 
     installWidget = async (widgetId, id) => {
-        const project = JSON.parse(JSON.stringify(this.state.project));
-        const marketplaceWidget = (await (await window.VisMarketplace.client).getWidgetRevisionById({ id: widgetId, revision: id })).data;
-        if (!project.___settings.marketplace) {
-            project.___settings.marketplace = [];
+        if (window.VisMarketplace?.api) {
+            const project = JSON.parse(JSON.stringify(this.state.project));
+            const marketplaceWidget = await window.VisMarketplace.api.apiGetWidgetRevision(widgetId, id);
+            if (!project.___settings.marketplace) {
+                project.___settings.marketplace = [];
+            }
+            const widgetIndex = project.___settings.marketplace.findIndex(item => item.widget_id === marketplaceWidget.widget_id);
+            if (widgetIndex === -1) {
+                project.___settings.marketplace.push(marketplaceWidget);
+            } else {
+                project.___settings.marketplace[widgetIndex] = marketplaceWidget;
+            }
+            await this.changeProject(project);
         }
-        const widgetIndex = project.___settings.marketplace.findIndex(item => item.widget_id === marketplaceWidget.widget_id);
-        if (widgetIndex === -1) {
-            project.___settings.marketplace.push(marketplaceWidget);
-        } else {
-            project.___settings.marketplace[widgetIndex] = marketplaceWidget;
-        }
-        return this.changeProject(project);
     };
 
     uninstallWidget = async widget => {
@@ -1334,29 +1343,30 @@ class App extends Runtime {
         this.changeProject(project);
     };
 
-    checkForUpdates = async () => {
-        const updates = [];
-        const deleted = [];
-        if (this.state.project?.___settings?.marketplace && window.VisMarketplace?.client) {
-            for (const i in this.state.project.___settings.marketplace) {
-                const widget = this.state.project.___settings.marketplace[i];
-                try {
-                    const { data } = await (await window.VisMarketplace.client).getWidgetById(widget.widget_id);
-                    if (data.version !== widget.version) {
-                        updates.push(data);
-                    }
-                } catch (e) {
-                    if (e.response?.status === 404) {
-                        deleted.push(widget.widget_id);
-                    } else {
-                        console.error(`Cannot check updates for ${widget.widget_id}: ${e}`);
+    checkForUpdates = () => this.marketplaceLoaded
+        .then(async () => {
+            const updates = [];
+            const deleted = [];
+            if (this.state.project?.___settings?.marketplace && window.VisMarketplace?.api) {
+                for (const i in this.state.project.___settings.marketplace) {
+                    const widget = this.state.project.___settings.marketplace[i];
+                    try {
+                        const data = await window.VisMarketplace.api.apiGetWidget(widget.widget_id);
+                        if (data.version !== widget.version) {
+                            updates.push(data);
+                        }
+                    } catch (e) {
+                        if (e.statusCode === 404) {
+                            deleted.push(widget.widget_id);
+                        } else {
+                            console.error(`Cannot check updates for ${widget.widget_id}: ${e}`);
+                        }
                     }
                 }
             }
-        }
 
-        this.setState({ marketplaceUpdates: updates, marketplaceDeleted: deleted });
-    };
+            this.setState({ marketplaceUpdates: updates, marketplaceDeleted: deleted });
+        });
 
     updateWidget = async id => {
         const project = JSON.parse(JSON.stringify(this.state.project));
@@ -1533,6 +1543,9 @@ class App extends Runtime {
     }
 
     renderPalette() {
+        if (!this.state.marketplaceUpdates) {
+            return null;
+        }
         return <div
             style={this.state.hidePalette ? { display: 'none' } : null}
             className={Utils.clsx(

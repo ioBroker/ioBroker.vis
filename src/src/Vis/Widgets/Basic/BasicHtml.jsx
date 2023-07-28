@@ -94,7 +94,7 @@ class BasicHtml extends VisRxWidget {
 
 BasicHtml.propTypes = {
     id: PropTypes.string.isRequired,
-    views: PropTypes.object.isRequired,
+    context: PropTypes.object.isRequired,
     view: PropTypes.string.isRequired,
     editMode: PropTypes.bool.isRequired,
 };

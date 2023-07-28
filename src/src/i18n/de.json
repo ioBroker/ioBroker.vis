@@ -462,9 +462,7 @@
   "flexible": "flexibel",
   "Move down": "Sich abwärts bewegen",
   "Move up": "Bewegen Sie sich nach oben",
-  "Specify filter to see more icons": "Geben Sie einen Filter an, um weitere Symbole anzuzeigen",
-  "Create or import new \"vis-2\" project": "Erstellen oder importieren Sie ein neues \"vis-2\"-Projekt",
-  "Select vis-2 project": "Das Projekt „vis-2“ wählen",
-  "Select vis project": "Das Projekt „vis“ wählen",
-  "Create or import new \"vis\" project": "Erstellen oder importieren Sie ein neues \"vis\"-Projekt"
+  "Specify filter to see more icons": "EinenFilter angeben, um weitere Symbole anzuzeigen",
+  "Create or import new \"vis-2\" project": "Ein neues \"vis-2\"-Projekt erstellen oder importieren ",
+  "Select vis-2 project": "Das Projekt „vis-2“ wählen"
 }

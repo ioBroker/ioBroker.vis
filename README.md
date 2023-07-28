@@ -212,7 +212,7 @@ Notice that these settings are valid only for reconnection and not for the first
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 2.1.5 (2023-07-28)
+### **WORK IN PROGRESS**
 * (bluefox) First beta release
 
 ### 2.1.4 (2023-07-19)

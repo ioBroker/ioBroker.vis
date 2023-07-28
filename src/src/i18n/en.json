@@ -464,7 +464,5 @@
   "Move up": "Move up",
   "Specify filter to see more icons": "Specify filter to see more icons",
   "Create or import new \"vis-2\" project": "Create or import new \"vis-2\" project",
-  "Select vis-2 project": "Select \"vis-2\" project",
-  "Select vis project": "Select \"vis\" project",
-  "Create or import new \"vis\" project": "Create or import new \"vis\" project"
+  "Select vis-2 project": "Select \"vis-2\" project"
 }

@@ -58,7 +58,7 @@ class JQuiIconDialog extends JQuiButton {
 
 JQuiIconDialog.propTypes = {
     id: PropTypes.string.isRequired,
-    views: PropTypes.object.isRequired,
+    context: PropTypes.object.isRequired,
     view: PropTypes.string.isRequired,
     editMode: PropTypes.bool.isRequired,
 };

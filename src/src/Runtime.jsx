@@ -397,10 +397,10 @@ class Runtime extends GenericApp {
 
         await this.changeView(selectedView);
 
-        // only in edit mode
+        // only in edit mode and only after VisMarketplace was loaded
         if (!this.state.runtime && this.checkForUpdates) {
-            // check if some marketplace widgets was updated
-            this.checkForUpdates();
+            // check if some marketplace widgets were updated
+            await this.checkForUpdates();
         }
     };
 
@@ -550,7 +550,7 @@ class Runtime extends GenericApp {
 
         if (!this.state.project.___settings.openedViews.includes(selectedView)) {
             const project = JSON.parse(JSON.stringify(this.state.project));
-            project.___settings.push(selectedView);
+            project.___settings.openedViews.push(selectedView);
             await this.changeProject(project, true);
         }
 
@@ -705,6 +705,7 @@ class Runtime extends GenericApp {
     showSmallProjectsDialog() {
         return <Dialog
             open={!0}
+            maxWidth="sm"
             onClose={() => {}} // do nothing
         >
             <DialogTitle>
@@ -716,14 +717,16 @@ class Runtime extends GenericApp {
                 {!this.state.projects.length ? I18n.t('Create or import new "vis-2" project') : I18n.t('Select vis-2 project')}
             </DialogTitle>
             <DialogContent>
-                {!this.state.projects ? <LinearProgress /> : <Paper sx={{ width: 320, maxWidth: '100%' }}>
-                    {!this.state.projects.length ? <div style={{ width: '100%', fontSize: 20 }}>
+                {!this.state.projects ? <LinearProgress /> : <Paper>
+                    {!this.state.projects.length ? <div style={{ width: '100%', fontSize: 20, padding: 10 }}>
                         {I18n.t('welcome_message')}
                     </div> : null}
                     <MenuList>
                         {this.state.projects.map(project =>
                             <ListItemButton key={project} onClick={() => window.location.href = `?${project}`}>
-                                <ListItemIcon><IconDocument /></ListItemIcon>
+                                <ListItemIcon>
+                                    <IconDocument />
+                                </ListItemIcon>
                                 <ListItemText>{project}</ListItemText>
                             </ListItemButton>)}
                         <ListItemButton
@@ -731,7 +734,9 @@ class Runtime extends GenericApp {
                             onClick={() => this.setState({ showNewProjectDialog: true, newProjectName: this.state.projects.length ? '' : 'main' })}
                             style={{ backgroundColor: '#112233', color: '#ffffff' }}
                         >
-                            <ListItemIcon><IconAdd /></ListItemIcon>
+                            <ListItemIcon>
+                                <IconAdd />
+                            </ListItemIcon>
                             <ListItemText>{I18n.t('Create new project')}</ListItemText>
                         </ListItemButton>
                         {this.renderImportProjectDialog ? <ListItemButton
