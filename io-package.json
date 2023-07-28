@@ -1,234 +1,247 @@
 {
-    "common": {
-        "name": "vis-2",
-        "version": "2.1.4",
-        "news": {
-            "2.1.4": {
-                "en": "Allowed to add widgets to widgets",
-                "de": "Erlaubt, Widgets zu Widgets hinzuzufügen",
-                "ru": "Разрешено добавлять виджеты в виджеты",
-                "pt": "Permite adicionar widgets a widgets",
-                "nl": "Toegestaan om wedgetten toe te voegen aan wedgets",
-                "fr": "Permet d'ajouter des widgets aux widgets",
-                "it": "Permesso di aggiungere widget a widgets",
-                "es": "Permitido añadir widgets a widgets",
-                "pl": "Wszystko, aby dodać widgety do widgetów",
-                "uk": "Додайте віджети до віджетів",
-                "zh-cn": "允许添加令人发指的目标"
-            },
-            "2.0.36": {
-                "en": "Corrected error with connection",
-                "de": "Fehler behoben mit Verbindung",
-                "ru": "Исправлена ошибка с подключением",
-                "pt": "Erro corrigido com conexão",
-                "nl": "Verkeerde fout met connectie",
-                "fr": "Erreur corrigée avec connexion",
-                "it": "Errore corretto con connessione",
-                "es": "Error corregido con conexión",
-                "pl": "Nieprawidłowe błędy z połączeniami",
-                "uk": "Виправлена помилка з підключенням",
-                "zh-cn": "更正的错误"
-            },
-            "2.0.10": {
-                "en": "Added the file browser",
-                "de": "Hinzugefügt die Datei Browser",
-                "ru": "Добавлен браузер файлов",
-                "pt": "Adicionado o navegador de arquivos",
-                "nl": "Voeg de bestanden browser toe",
-                "fr": "Posté le navigateur de fichier",
-                "it": "Aggiunto il file browser",
-                "es": "Añadido el navegador de archivos",
-                "pl": "Added przeglądarka plików",
-                "uk": "Додано браузер файлів",
-                "zh-cn": "增加档案"
-            },
-            "2.0.8": {
-                "en": "Completely new visualization, but compatible with previous version",
-                "de": "Komplett neue Visualisierung, aber mit vorheriger Version kompatibel",
-                "ru": "Полностью новая визуализация, но совместима с предыдущей версией",
-                "pt": "Completamente nova visualização, mas compatível com a versão anterior",
-                "nl": "Volledig nieuwe visualisatie, maar vergelijkbaar met vorige versie",
-                "fr": "Complètement nouvelle visualisation, mais compatible avec la version précédente",
-                "it": "Visualizzazione completamente nuova, ma compatibile con la versione precedente",
-                "es": "Visualización completamente nueva, pero compatible con la versión anterior",
-                "pl": "Ukończona jest nowa wizualna, ale kompatybilna z poprzednią wersją",
-                "uk": "Повністю нова візуалізація, але сумісна з попередньою версією",
-                "zh-cn": "完整的新的视觉,但与以前的版本兼容。"
-            }
-        },
-        "title": "Visualisation Next Generation",
-        "titleLang": {
-            "en": "Visualisation Next Generation",
-            "de": "Visualisierung Next Generation",
-            "ru": "Визуализация Next Generation",
-            "pt": "Visualização Next Generation",
-            "nl": "Visualisatie Next Generation",
-            "fr": "Visualisation Next Generation",
-            "it": "Visualizzazione Next Generation",
-            "es": "Visualización Next Generation",
-            "pl": "Wizualizacja Next Generation",
-            "uk": "Візуалізація Next Generation",
-            "zh-cn": "可视化 Next Generation"
-        },
-        "desc": {
-            "en": "Extended GUI for ioBroker",
-            "de": "Erweiterte GUI für ioBroker",
-            "ru": "Расширенный GUI для ioBroker",
-            "pt": "GUI estendido para ioBroker",
-            "nl": "Uitgebreide GUI voor ioBroker",
-            "fr": "Interface graphique étendue pour ioBroker",
-            "it": "Interfaccia grafica estesa per ioBroker",
-            "es": "Interfaz gráfica extendida para ioBroker",
-            "pl": "Rozszerzone GUI dla ioBroker",
-            "uk": "Розширений GUI для ioBroker",
-            "zh-cn": "ioBroker的扩展GUI"
-        },
-        "platform": "Javascript/Node.js",
-        "loglevel": "info",
-        "icon": "vis-2.png",
-        "enabled": true,
-        "mode": "daemon",
-        "nogit": true,
-        "extIcon": "https://raw.githubusercontent.com/iobroker/iobroker.vis-2/master/admin/vis-2.png",
-        "keywords": [
-            "DashUI",
-            "GUI",
-            "graphical",
-            "scada"
-        ],
-        "messagebox": true,
-        "readme": "https://github.com/iobroker/iobroker.vis-2/blob/master/README.md",
-        "authors": [
-            "bluefox <dogafox@gmail.com>"
-        ],
-        "localLinks": {
-            "_default": "%web_protocol%://%ip%:%web_port%/vis-2/edit.html"
-        },
-        "license": "CC-BY-NC-4.0",
-        "dependencies": [
-            {
-                "web": ">=5.4.0"
-            },
-            {
-                "js-controller": ">=2.0.0"
-            }
-        ],
-        "restartAdapters": [
-            "vis-2"
-        ],
-        "serviceStates": "lib/states.js",
-        "singleton": true,
-        "type": "visualization",
-        "connectionType": "local",
-        "dataSource": "push",
-        "tier": 3,
-        "noConfig": false,
-        "adminUI": {
-            "config": "json"
-        },
-        "compact": true,
-        "materialize": true,
-        "eraseOnUpload": true,
-        "welcomeScreen": {
-            "link": "vis-2/index.html",
-            "name": "vis 2 runtime",
-            "img": "vis-2/img/favicon.png",
-            "color": "#ffe9c8",
-            "order": 0
-        },
-        "welcomeScreenPro": {
-            "link": "vis-2/edit.html",
-            "name": "vis 2 editor",
-            "img": "vis-2/img/faviconEdit.png",
-            "color": "#c8ffe1",
-            "order": 1
-        },
-        "stopBeforeUpdate": true
+  "common": {
+    "name": "vis-2",
+    "version": "2.1.5",
+    "news": {
+      "2.1.5": {
+        "en": "First beta release",
+        "de": "Erste Beta-Version",
+        "ru": "Первый бета-релиз",
+        "pt": "Primeira versão beta",
+        "nl": "First Beta vrij",
+        "fr": "Première version bêta",
+        "it": "Prima versione beta",
+        "es": "Primera versión beta",
+        "pl": "Pierwsza wersja beta",
+        "uk": "Перший випуск бета",
+        "zh-cn": "第一批释放"
+      },
+      "2.1.4": {
+        "en": "Allowed to add widgets to widgets",
+        "de": "Erlaubt, Widgets zu Widgets hinzuzufügen",
+        "ru": "Разрешено добавлять виджеты в виджеты",
+        "pt": "Permite adicionar widgets a widgets",
+        "nl": "Toegestaan om wedgetten toe te voegen aan wedgets",
+        "fr": "Permet d'ajouter des widgets aux widgets",
+        "it": "Permesso di aggiungere widget a widgets",
+        "es": "Permitido añadir widgets a widgets",
+        "pl": "Wszystko, aby dodać widgety do widgetów",
+        "uk": "Додайте віджети до віджетів",
+        "zh-cn": "允许添加令人发指的目标"
+      },
+      "2.0.36": {
+        "en": "Corrected error with connection",
+        "de": "Fehler behoben mit Verbindung",
+        "ru": "Исправлена ошибка с подключением",
+        "pt": "Erro corrigido com conexão",
+        "nl": "Verkeerde fout met connectie",
+        "fr": "Erreur corrigée avec connexion",
+        "it": "Errore corretto con connessione",
+        "es": "Error corregido con conexión",
+        "pl": "Nieprawidłowe błędy z połączeniami",
+        "uk": "Виправлена помилка з підключенням",
+        "zh-cn": "更正的错误"
+      },
+      "2.0.10": {
+        "en": "Added the file browser",
+        "de": "Hinzugefügt die Datei Browser",
+        "ru": "Добавлен браузер файлов",
+        "pt": "Adicionado o navegador de arquivos",
+        "nl": "Voeg de bestanden browser toe",
+        "fr": "Posté le navigateur de fichier",
+        "it": "Aggiunto il file browser",
+        "es": "Añadido el navegador de archivos",
+        "pl": "Added przeglądarka plików",
+        "uk": "Додано браузер файлів",
+        "zh-cn": "增加档案"
+      },
+      "2.0.8": {
+        "en": "Completely new visualization, but compatible with previous version",
+        "de": "Komplett neue Visualisierung, aber mit vorheriger Version kompatibel",
+        "ru": "Полностью новая визуализация, но совместима с предыдущей версией",
+        "pt": "Completamente nova visualização, mas compatível com a versão anterior",
+        "nl": "Volledig nieuwe visualisatie, maar vergelijkbaar met vorige versie",
+        "fr": "Complètement nouvelle visualisation, mais compatible avec la version précédente",
+        "it": "Visualizzazione completamente nuova, ma compatibile con la versione precedente",
+        "es": "Visualización completamente nueva, pero compatible con la versión anterior",
+        "pl": "Ukończona jest nowa wizualna, ale kompatybilna z poprzednią wersją",
+        "uk": "Повністю нова візуалізація, але сумісна з попередньою версією",
+        "zh-cn": "完整的新的视觉,但与以前的版本兼容。"
+      }
     },
-    "native": {
-        "defaultFileMode": 1604,
-        "license": "",
-        "useLicenseManager": 0,
-        "doNotShowProjectDialog": false
+    "title": "Visualisation Next Generation",
+    "titleLang": {
+      "en": "Visualisation Next Generation",
+      "de": "Visualisierung Next Generation",
+      "ru": "Визуализация Next Generation",
+      "pt": "Visualização Next Generation",
+      "nl": "Visualisatie Next Generation",
+      "fr": "Visualisation Next Generation",
+      "it": "Visualizzazione Next Generation",
+      "es": "Visualización Next Generation",
+      "pl": "Wizualizacja Next Generation",
+      "uk": "Візуалізація Next Generation",
+      "zh-cn": "可视化 Next Generation"
     },
-    "instanceObjects": [
-        {
-            "_id": "",
-            "type": "meta",
-            "common": {
-                "name": "user files and images for vis-2",
-                "type": "meta.user"
-            },
-            "native": {}
-        },
-        {
-            "_id": "info",
-            "type": "channel",
-            "common": {
-                "name": "info"
-            },
-            "native": {}
-        },
-        {
-            "_id": "info.uploaded",
-            "type": "state",
-            "common": {
-                "name": "Files were uploaded",
-                "type": "number",
-                "role": "value.time"
-            },
-            "native": {}
-        },
-        {
-            "_id": "control",
-            "type": "channel",
-            "common": {
-                "name": "Control vis-2"
-            },
-            "native": {}
-        },
-        {
-            "_id": "control.instance",
-            "type": "state",
-            "common": {
-                "name": "Control vis-2",
-                "type": "string",
-                "desc": "Write here browser instance ID to control or 'FFFFFFFF' to control all instances"
-            },
-            "native": {}
-        },
-        {
-            "_id": "control.command",
-            "type": "state",
-            "common": {
-                "name": "Command for vis-2",
-                "type": "string",
-                "desc": "Writing this variable act as the trigger. Instance and data must be preset before 'command' will be written. 'changedView' will be signalled too",
-                "role": "state",
-                "states": {
-                    "alert": "alert",
-                    "changeView": "changeView",
-                    "refresh": "refresh",
-                    "reload": "reload",
-                    "dialog": "dialog",
-                    "dialogClose": "dialogClose",
-                    "popup": "popup",
-                    "playSound": "playSound",
-                    "changedView": "changedView",
-                    "tts": "tts"
-                }
-            },
-            "native": {}
-        },
-        {
-            "_id": "control.data",
-            "type": "state",
-            "common": {
-                "name": "Data for control vis-2",
-                "type": "string",
-                "desc": "Used for: alert, changeView, dialog, popup, playSound, changedView"
-            },
-            "native": {}
+    "desc": {
+      "en": "Extended GUI for ioBroker",
+      "de": "Erweiterte GUI für ioBroker",
+      "ru": "Расширенный GUI для ioBroker",
+      "pt": "GUI estendido para ioBroker",
+      "nl": "Uitgebreide GUI voor ioBroker",
+      "fr": "Interface graphique étendue pour ioBroker",
+      "it": "Interfaccia grafica estesa per ioBroker",
+      "es": "Interfaz gráfica extendida para ioBroker",
+      "pl": "Rozszerzone GUI dla ioBroker",
+      "uk": "Розширений GUI для ioBroker",
+      "zh-cn": "ioBroker的扩展GUI"
+    },
+    "platform": "Javascript/Node.js",
+    "loglevel": "info",
+    "icon": "vis-2.png",
+    "enabled": true,
+    "mode": "daemon",
+    "nogit": true,
+    "extIcon": "https://raw.githubusercontent.com/iobroker/iobroker.vis-2/master/admin/vis-2.png",
+    "keywords": [
+      "DashUI",
+      "GUI",
+      "graphical",
+      "scada"
+    ],
+    "messagebox": true,
+    "readme": "https://github.com/iobroker/iobroker.vis-2/blob/master/README.md",
+    "authors": [
+      "bluefox <dogafox@gmail.com>"
+    ],
+    "localLinks": {
+      "_default": "%web_protocol%://%ip%:%web_port%/vis-2/edit.html"
+    },
+    "license": "CC-BY-NC-4.0",
+    "dependencies": [
+      {
+        "web": ">=5.4.0"
+      },
+      {
+        "js-controller": ">=2.0.0"
+      }
+    ],
+    "restartAdapters": [
+      "vis-2"
+    ],
+    "serviceStates": "lib/states.js",
+    "singleton": true,
+    "type": "visualization",
+    "connectionType": "local",
+    "dataSource": "push",
+    "tier": 3,
+    "noConfig": false,
+    "adminUI": {
+      "config": "json"
+    },
+    "compact": true,
+    "materialize": true,
+    "eraseOnUpload": true,
+    "welcomeScreen": {
+      "link": "vis-2/index.html",
+      "name": "vis 2 runtime",
+      "img": "vis-2/img/favicon.png",
+      "color": "#ffe9c8",
+      "order": 0
+    },
+    "welcomeScreenPro": {
+      "link": "vis-2/edit.html",
+      "name": "vis 2 editor",
+      "img": "vis-2/img/faviconEdit.png",
+      "color": "#c8ffe1",
+      "order": 1
+    },
+    "stopBeforeUpdate": true
+  },
+  "native": {
+    "defaultFileMode": 1604,
+    "license": "",
+    "useLicenseManager": 0,
+    "doNotShowProjectDialog": false
+  },
+  "instanceObjects": [
+    {
+      "_id": "",
+      "type": "meta",
+      "common": {
+        "name": "user files and images for vis-2",
+        "type": "meta.user"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info",
+      "type": "channel",
+      "common": {
+        "name": "info"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.uploaded",
+      "type": "state",
+      "common": {
+        "name": "Files were uploaded",
+        "type": "number",
+        "role": "value.time"
+      },
+      "native": {}
+    },
+    {
+      "_id": "control",
+      "type": "channel",
+      "common": {
+        "name": "Control vis-2"
+      },
+      "native": {}
+    },
+    {
+      "_id": "control.instance",
+      "type": "state",
+      "common": {
+        "name": "Control vis-2",
+        "type": "string",
+        "desc": "Write here browser instance ID to control or 'FFFFFFFF' to control all instances"
+      },
+      "native": {}
+    },
+    {
+      "_id": "control.command",
+      "type": "state",
+      "common": {
+        "name": "Command for vis-2",
+        "type": "string",
+        "desc": "Writing this variable act as the trigger. Instance and data must be preset before 'command' will be written. 'changedView' will be signalled too",
+        "role": "state",
+        "states": {
+          "alert": "alert",
+          "changeView": "changeView",
+          "refresh": "refresh",
+          "reload": "reload",
+          "dialog": "dialog",
+          "dialogClose": "dialogClose",
+          "popup": "popup",
+          "playSound": "playSound",
+          "changedView": "changedView",
+          "tts": "tts"
         }
-    ]
+      },
+      "native": {}
+    },
+    {
+      "_id": "control.data",
+      "type": "state",
+      "common": {
+        "name": "Data for control vis-2",
+        "type": "string",
+        "desc": "Used for: alert, changeView, dialog, popup, playSound, changedView"
+      },
+      "native": {}
+    }
+  ]
 }
