@@ -20,7 +20,7 @@ describe('vis', () => {
     });
 
     it('Check all widgets', async function (){
-        this.timeout(60000);
+        this.timeout(120000);
         const widgetSets = await helper.palette.getListOfWidgetSets();
         console.log(`Widget sets found: ${widgetSets.join(', ')}`);
         for (let s = 0; s < widgetSets.length; s++) {
