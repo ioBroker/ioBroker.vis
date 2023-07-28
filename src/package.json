@@ -16,6 +16,7 @@
         "@sentry/browser": "^7.60.1",
         "@sentry/integrations": "^7.60.1",
         "ace-builds": "^1.23.4",
+        "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
         "craco-module-federation": "^1.1.0",
         "echarts": "^5.4.3",
         "echarts-for-react": "^3.0.2",

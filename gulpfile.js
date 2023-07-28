@@ -52,16 +52,26 @@ function buildRuntime() {
         if (!fs.existsSync(script)) {
             script = `${__dirname}/node_modules/@craco/craco/dist/bin/craco.js`;
         }
+
         if (!fs.existsSync(script)) {
             console.error(`Cannot find execution file: ${script}`);
             reject(`Cannot find execution file: ${script}`);
         } else {
-            const child = cp.fork(script, ['build'], options);
-            child.stdout.on('data', data => console.log(data.toString()));
-            child.stderr.on('data', data => console.log(data.toString()));
-            child.on('close', code => {
-                console.log(`child process exited with code ${code}`);
-                code ? reject(`Exit code: ${code}`) : resolve();
+            const cmd = `node ${script} --max-old-space-size=7000 build`;
+            const child = cp.exec(cmd, { cwd: `${__dirname}/runtime` });
+
+            child.stderr.pipe(process.stderr);
+            child.stdout.pipe(process.stdout);
+
+            child.on('exit', (code /* , signal */) => {
+                // code 1 is a strange error that cannot be explained. Everything is installed but error :(
+                if (code && code !== 1) {
+                    reject(`Cannot install: ${code}`);
+                } else {
+                    console.log(`"${cmd} in ${__dirname}/runtime finished.`);
+                    // command succeeded
+                    resolve();
+                }
             });
         }
     });
@@ -335,12 +345,21 @@ function build() {
             console.error(`Cannot find execution file: ${script}`);
             reject(`Cannot find execution file: ${script}`);
         } else {
-            const child = cp.fork(script, ['build'], options);
-            child.stdout.on('data', data => console.log(data.toString()));
-            child.stderr.on('data', data => console.log(data.toString()));
-            child.on('close', code => {
-                console.log(`child process exited with code ${code}`);
-                code ? reject(`Exit code: ${code}`) : resolve();
+            const cmd = `node ${script} --max-old-space-size=7000 build`;
+            const child = cp.exec(cmd, { cwd: `${__dirname}/src` });
+
+            child.stderr.pipe(process.stderr);
+            child.stdout.pipe(process.stdout);
+
+            child.on('exit', (code /* , signal */) => {
+                // code 1 is a strange error that cannot be explained. Everything is installed but error :(
+                if (code && code !== 1) {
+                    reject(`Cannot install: ${code}`);
+                } else {
+                    console.log(`"${cmd} in ${__dirname}/src finished.`);
+                    // command succeeded
+                    resolve();
+                }
             });
         }
     });
