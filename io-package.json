@@ -85,11 +85,11 @@
         },
         "platform": "Javascript/Node.js",
         "loglevel": "info",
-        "icon": "vis.png",
+        "icon": "vis-2.png",
         "enabled": true,
         "mode": "daemon",
         "nogit": true,
-        "extIcon": "https://raw.githubusercontent.com/iobroker/iobroker.vis-2/master/admin/vis.png",
+        "extIcon": "https://raw.githubusercontent.com/iobroker/iobroker.vis-2/master/admin/vis-2.png",
         "keywords": [
             "DashUI",
             "GUI",
@@ -156,7 +156,7 @@
             "_id": "",
             "type": "meta",
             "common": {
-                "name": "user files and images for vis",
+                "name": "user files and images for vis-2",
                 "type": "meta.user"
             },
             "native": {}

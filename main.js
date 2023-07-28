@@ -818,6 +818,9 @@ async function buildHtmlPages(forceBuild) {
 }
 
 async function checkL(license, useLicenseManager, name) {
+    if (name === 'vis-2') {
+        name = 'vis';
+    }
     const uuidObj = await adapter.getForeignObjectAsync('system.meta.uuid');
     if (!uuidObj || !uuidObj.native || !uuidObj.native.uuid) {
         adapter.log.error('UUID not found!');
@@ -829,7 +832,7 @@ async function checkL(license, useLicenseManager, name) {
         }
 
         if (!license) {
-            adapter.log.error('No license found for vis-2. Please get one on https://iobroker.net !');
+            adapter.log.error('No license found for vis, vis-2. Please get one on https://iobroker.net !');
             return false;
         } else {
             try {
@@ -930,7 +933,7 @@ async function main() {
         isLicenseError = true
         adapter.log.error('No license found for vis-2. Please get one on https://iobroker.net !');
     } else {
-        isLicenseError = !(await checkL(adapter.config.license, adapter.config.useLicenseManager, 'vis-2' || adapterName)); // TODO!!!
+        isLicenseError = !(await checkL(adapter.config.license, adapter.config.useLicenseManager, 'vis' || adapterName));
     }
 
     await exportFormOlderVersions();
