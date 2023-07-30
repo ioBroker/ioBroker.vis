@@ -1543,9 +1543,6 @@ class App extends Runtime {
     }
 
     renderPalette() {
-        if (!this.state.marketplaceUpdates) {
-            return null;
-        }
         return <div
             style={this.state.hidePalette ? { display: 'none' } : null}
             className={Utils.clsx(
@@ -1554,8 +1551,8 @@ class App extends Runtime {
                 this.state.toolbarHeight === 'veryNarrow' && this.props.classes.blockVeryNarrow,
             )}
         >
-            {this.state.widgetsLoaded !== Runtime.WIDGETS_LOADING_STEP_ALL_LOADED ? <LinearProgress variant="indeterminate" value={(this.state.loadingProgress.step / this.state.loadingProgress.total) * 100} /> : null}
-            <Palette
+            {!this.state.marketplaceUpdates || this.state.widgetsLoaded !== Runtime.WIDGETS_LOADING_STEP_ALL_LOADED ? <LinearProgress variant="indeterminate" value={(this.state.loadingProgress.step / this.state.loadingProgress.total) * 100} /> : null}
+            {this.state.marketplaceUpdates ? <Palette
                 classes={{}}
                 widgetsLoaded={this.state.widgetsLoaded === Runtime.WIDGETS_LOADING_STEP_ALL_LOADED}
                 onHide={() => {
@@ -1573,7 +1570,7 @@ class App extends Runtime {
                 socket={this.socket}
                 editMode={this.state.editMode}
                 themeType={this.state.themeType}
-            />
+            /> : null}
         </div>;
     }
 

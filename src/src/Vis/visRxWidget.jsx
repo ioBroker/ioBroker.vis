@@ -385,13 +385,14 @@ class VisRxWidget extends VisBaseWidget {
         return value === undefined || value === null ? '' : value.toString();
     }
 
+    // eslint-disable-next-line no-unused-vars
     wrapContent(content, addToHeader, cardContentStyle, headerStyle, onCardClick, components) {
         if (this.props.context.views[this.props.view].widgets[this.props.id].usedInWidget) {
             return content;
         }
 
-        const MyCard = components.Card || Card;
-        const MyCardContent = components.CardContent || CardContent;
+        const MyCard = components?.Card || Card;
+        const MyCardContent = components?.CardContent || CardContent;
 
         const style = {
             width: 'calc(100% - 8px)',

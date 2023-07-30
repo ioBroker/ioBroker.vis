@@ -10,12 +10,12 @@ module.exports = {
     devServer: {
         proxy: {
             '/_socket': 'http://localhost:8082',
-            '/vis.0': 'http://localhost:8082',
+            '/vis-2.0': 'http://localhost:8082',
             '/adapter': 'http://localhost:8082',
             '/habpanel': 'http://localhost:8082',
-            '/vis': 'http://localhost:8082',
-            '/widgets': 'http://localhost:8082/vis',
-            '/widgets.html': 'http://localhost:8082/vis',
+            '/vis-2': 'http://localhost:8082',
+            '/widgets': 'http://localhost:8082/vis-2',
+            '/widgets.html': 'http://localhost:8082/vis-2',
             '/web': 'http://localhost:8082',
             '/state': 'http://localhost:8082',
         },

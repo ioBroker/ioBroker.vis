@@ -802,7 +802,10 @@ function _loadComponentHelper(context) {
                     }
                     window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(context.countRef.count, context.promises.length);
                 })
-                .catch(e => console.error(`Cannot load widget ${context.dynamicWidgetInstance._id}: ${JSON.stringify(e)}`));
+                .catch(e => {
+                    console.error(`Cannot load widget ${context.dynamicWidgetInstance._id}: ${e.toString()}`);
+                    console.error(`Cannot load widget ${context.dynamicWidgetInstance._id}: ${JSON.stringify(e)}`);
+                });
             // .then(() => console.log(`${_visWidgetsCollection.name}_${_componentKey}: ${Date.now() - start}ms`));
 
             promises.push(promise);
