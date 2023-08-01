@@ -24,7 +24,7 @@
     "SCADA"
   ],
   "dependencies": {
-    "@iobroker/adapter-core": "^2.6.8",
+    "@iobroker/adapter-core": "^3.0.3",
     "axios": "^1.4.0",
     "jsonwebtoken": "^9.0.1",
     "mime": "^3.0.0"
