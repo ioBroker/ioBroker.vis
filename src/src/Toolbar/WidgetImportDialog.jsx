@@ -9,12 +9,7 @@ const WidgetImportDialog = props => {
     const [data, setData] = useState('');
     const [errors, setErrors] = useState([]);
 
-    const inputField = useFocus(props.open, true, true);
-
-    useEffect(() => {
-        setErrors([]);
-        setData('[]');
-    }, [props.open]);
+    const inputField = useFocus(true, true, true);
 
     const editor = useRef(null);
 
@@ -71,7 +66,7 @@ const WidgetImportDialog = props => {
     };
 
     return <IODialog
-        open={props.open}
+        open={!0}
         onClose={props.onClose}
         title="Import widgets"
         closeTitle="Close"
@@ -99,7 +94,6 @@ const WidgetImportDialog = props => {
 WidgetImportDialog.propTypes = {
     changeProject: PropTypes.func,
     onClose: PropTypes.func,
-    open: PropTypes.bool,
     project: PropTypes.object,
     themeType: PropTypes.string,
     selectedView: PropTypes.string,

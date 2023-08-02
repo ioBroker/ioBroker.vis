@@ -194,7 +194,7 @@ There is a helper widget "basic - Screen Resolution" that shows actual screen re
 
 ## Settings
 ### Reload if sleep longer than
-There is a rule that after some disconnection period, the whole VIS page will be reloaded to synchronise the project.
+There is a rule that after some disconnection period, the whole VIS page will be reloaded to synchronize the project.
 You can configure it in the menu "Settings...". If you set the interval to "never" so the page will never be reloaded.
 
 ### Reconnect interval
@@ -207,6 +207,9 @@ Notice that these settings are valid only for reconnection and not for the first
 
 ![Dark](img/dark_screen.png)
 
+## Todo
+- Filter in edit mode too
+- 
 <!--
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**

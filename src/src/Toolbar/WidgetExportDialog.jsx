@@ -57,7 +57,7 @@ const WidgetExportDialog = props => {
     }
 
     return <IODialog
-        open={props.open}
+        open={!0}
         onClose={props.onClose}
         title="Export widgets"
         closeTitle="Close"
@@ -81,7 +81,6 @@ const WidgetExportDialog = props => {
 
 WidgetExportDialog.propTypes = {
     onClose: PropTypes.func,
-    open: PropTypes.bool,
     themeType: PropTypes.string,
     widgets: PropTypes.object,
     selectedWidgets: PropTypes.array,

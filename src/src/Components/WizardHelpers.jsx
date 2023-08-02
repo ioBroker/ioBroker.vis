@@ -224,7 +224,7 @@ const detectDevices = async socket => {
                 // read channel
                 const parentObject = devicesObject[idArray.join('.')];
                 if (parentObject && (parentObject.type === 'channel' || parentObject.type === 'device' || parentObject.type === 'folder')) {
-                    deviceObj.common.name = parentObject.common.name || parentObject.common.name;
+                    deviceObj.common.name = parentObject.common?.name || deviceObj.common.name;
                     if (parentObject.common.icon) {
                         deviceObj.common.icon = getObjectIcon(parentObject, parentObject._id, '../..');
                     }

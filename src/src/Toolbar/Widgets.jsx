@@ -2,7 +2,8 @@ import PropTypes from 'prop-types';
 import { useState, useMemo } from 'react';
 
 import {
-    MdAlignHorizontalCenter, MdAlignHorizontalLeft, MdAlignHorizontalRight, MdAlignVerticalBottom, MdAlignVerticalCenter, MdAlignVerticalTop,
+    MdAlignHorizontalCenter, MdAlignHorizontalLeft, MdAlignHorizontalRight,
+    MdAlignVerticalBottom, MdAlignVerticalCenter, MdAlignVerticalTop,
 } from 'react-icons/md';
 import { CgArrowAlignH, CgArrowAlignV } from 'react-icons/cg';
 import { AiOutlineColumnWidth, AiOutlineColumnHeight } from 'react-icons/ai';
@@ -12,13 +13,16 @@ import {
 import {
     RiBringToFront, RiSendToBack,
 } from 'react-icons/ri';
-import DeleteIcon from '@mui/icons-material/Delete';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import UndoIcon from '@mui/icons-material/Undo';
-import RedoIcon from '@mui/icons-material/Redo';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import {
+    Delete as DeleteIcon,
+    FilterAlt as FilterIcon,
+    FileCopy as FileCopyIcon,
+    OpenInNew as OpenInNewIcon,
+    Undo as UndoIcon,
+    Redo as RedoIcon,
+    Visibility as VisibilityIcon,
+    VisibilityOff as VisibilityOffIcon,
+} from '@mui/icons-material';
 
 import { I18n } from '@iobroker/adapter-react-v5';
 
@@ -26,10 +30,12 @@ import ToolbarItems from './ToolbarItems';
 import { getWidgetTypes } from '../Vis/visWidgetsCatalog';
 import WidgetImportDialog from './WidgetImportDialog';
 import WidgetExportDialog from './WidgetExportDialog';
+import WidgetFilterDialog from './WidgetFilterDialog';
 
 const Widgets = props => {
     const [exportDialog, setExportDialog] = useState(false);
     const [importDialog, setImportDialog] = useState(false);
+    const [filterDialog, setFilterDialog] = useState(false);
 
     const toolbar = useMemo(() => {
         if (!props.widgetsLoaded) {
@@ -52,6 +58,14 @@ const Widgets = props => {
         return {
             name: 'Widgets',
             items: [
+                {
+                    type: 'icon-button',
+                    Icon: FilterIcon,
+                    name: 'Filter widgets',
+                    color: props.project[props.selectedView].filterWidgets?.length ? '#930202' : undefined,
+                    disabled: !props.editMode,
+                    onClick: () => setFilterDialog(true),
+                },
                 {
                     type: 'multiselect',
                     name: I18n.t('Active widget(s) from %s', shownWidgets.length),
@@ -126,23 +140,26 @@ const Widgets = props => {
                     value: props.selectedWidgets,
                     onChange: value => props.setSelectedWidgets(value),
                 },
-                [[
-                    {
-                        type: 'icon-button',
-                        Icon: DeleteIcon,
-                        name: 'Delete widgets',
-                        disabled: !props.selectedWidgets.length || (props.selectedGroup && props.selectedWidgets.includes(props.selectedGroup)),
-                        onClick: () => props.deleteWidgets(),
-                    },
-                ], [
-                    {
-                        type: 'icon-button',
-                        Icon: FileCopyIcon,
-                        name: 'Clone widget',
-                        disabled: !props.selectedWidgets.length || (props.selectedGroup && props.selectedWidgets.includes(props.selectedGroup)),
-                        onClick: () => props.cloneWidgets(),
-                    },
-                ]],
+                [
+                    [
+                        {
+                            type: 'icon-button',
+                            Icon: DeleteIcon,
+                            name: 'Delete widgets',
+                            disabled: !props.selectedWidgets.length || (props.selectedGroup && props.selectedWidgets.includes(props.selectedGroup)),
+                            onClick: () => props.deleteWidgets(),
+                        },
+                    ],
+                    [
+                        {
+                            type: 'icon-button',
+                            Icon: FileCopyIcon,
+                            name: 'Clone widget',
+                            disabled: !props.selectedWidgets.length || (props.selectedGroup && props.selectedWidgets.includes(props.selectedGroup)),
+                            onClick: () => props.cloneWidgets(),
+                        },
+                    ],
+                ],
 
                 { type: 'divider' },
 
@@ -357,7 +374,6 @@ const Widgets = props => {
     return <>
         <ToolbarItems group={toolbar} {...props} classes={{}} />
         {importDialog ? <WidgetImportDialog
-            open={importDialog}
             onClose={() => setImportDialog(false)}
             changeProject={props.changeProject}
             selectedView={props.selectedView}
@@ -366,11 +382,16 @@ const Widgets = props => {
             getNewWidgetIdNumber={props.getNewWidgetIdNumber}
         /> : null}
         {exportDialog ? <WidgetExportDialog
-            open={exportDialog}
             onClose={() => setExportDialog(false)}
             widgets={props.project[props.selectedView].widgets}
             selectedWidgets={props.selectedWidgets}
             themeName={props.themeName}
+        /> : null}
+        {filterDialog ? <WidgetFilterDialog
+            onClose={() => setFilterDialog(false)}
+            changeProject={props.changeProject}
+            selectedView={props.selectedView}
+            project={props.project}
         /> : null}
     </>;
 };

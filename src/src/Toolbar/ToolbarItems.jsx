@@ -165,6 +165,7 @@ const getItem = (item, key, props, full) => {
                         borderRadius: 4,
                         height: '100%',
                         justifyContent: 'start',
+                        color: item.color || undefined,
                     }}
                 >
                     <div><item.Icon fontSize={item.size && props.toolbarHeight !== 'veryNarrow' ? item.size : 'small'} /></div>
