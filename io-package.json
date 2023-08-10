@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.1.6",
+    "version": "2.1.7",
     "news": {
+      "2.1.7": {
+        "en": "Optimized the rendering of the widgets",
+        "de": "Optimierte das Rendern der Widgets",
+        "ru": "Оптимизировано рендеринг виджетов",
+        "pt": "Otimizou a renderização dos widgets",
+        "nl": "Optimistisch de rendering van de wigt",
+        "fr": "Optimisé le rendu des widgets",
+        "it": "Ottimizzato il rendering dei widget",
+        "es": "Optimizado el renderizado de los widgets",
+        "pl": "Optymizował renderowanie widgetów",
+        "uk": "Оптимізований рендеринг віджетів",
+        "zh-cn": "实现令人发指的目标"
+      },
       "2.1.6": {
         "en": "First beta release",
         "de": "Erste Beta-Version",
