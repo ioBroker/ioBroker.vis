@@ -195,7 +195,7 @@ const Widget = props => {
         preview(getEmptyImage(), { captureDraggingState: true });
     }, [props.widgetType]);
 
-    if (props.widgetType.custom) {
+    if (typeof props.widgetType.customPalette === 'function') {
         if (!props.editMode) {
             return null;
         }

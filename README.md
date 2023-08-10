@@ -215,6 +215,9 @@ Notice that these settings are valid only for reconnection and not for the first
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Optimized the rendering of the widgets
+
 ### 2.1.6 (2023-07-30)
 * (bluefox) First beta release
 

@@ -358,14 +358,10 @@ class VisRxWidget extends VisBaseWidget {
 
         // subscribe on some new IDs and remove old IDs
         const unsubscribe = oldIDs.filter(id => !this.linkContext.IDs.includes(id));
-        for (let i = 0; i < unsubscribe.length; i++) {
-            await context.socket.unsubscribeState(unsubscribe[i], this.onStateChangedBind);
-        }
+        await context.socket.unsubscribeState(unsubscribe, this.onStateChangedBind);
 
         const subscribe = this.linkContext.IDs.filter(id => !oldIDs.includes(id));
-        for (let i = 0; i < subscribe.length; i++) {
-            await context.socket.subscribeState(subscribe[i], this.onStateChangedBind);
-        }
+        await context.socket.subscribeState(subscribe, this.onStateChangedBind);
 
         this.onStateChanged();
     }
