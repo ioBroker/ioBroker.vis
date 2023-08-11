@@ -96,8 +96,22 @@ gulp.task('runtime-1-copy-src', done => {
         fs.writeFileSync(`${__dirname}/runtime/public/index.html`, runtimeText);
     }
 
-    copyFolder(`${__dirname}/src/src/Vis`, `${__dirname}/runtime/src/Vis`,  ['visContextMenu.jsx', 'oldVis.jsx']);
+    copyFolder(`${__dirname}/src/src/Vis`, `${__dirname}/runtime/src/Vis`,  ['visContextMenu.jsx', 'oldVis.jsx', 'visOrderMenu.jsx']);
     copyFolder(`${__dirname}/src/src/img`, `${__dirname}/runtime/src/img`);
+
+    fs.writeFileSync(`${__dirname}/runtime/src/Vis/visOrderMenu.jsx`, `
+import React from 'react';
+
+class VisOrderMenu extends React.Component {
+    render() {
+        return null;
+    }
+}
+
+export default VisOrderMenu;
+
+`);
+
     const pack = JSON.parse(fs.readFileSync(`${__dirname}/src/package.json`).toString());
     delete pack.dependencies['@devbookhq/splitter'];
     delete pack.dependencies['ace-builds'];

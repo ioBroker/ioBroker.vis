@@ -32,6 +32,9 @@ import {
     replaceGroupAttr,
 } from './visUtils';
 
+// eslint-disable-next-line import/no-cycle
+import VisOrderMenu from './visOrderMenu';
+
 class VisBaseWidget extends React.Component {
     static FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~]+/g; // from https://github.com/ioBroker/ioBroker.js-controller/blob/master/packages/common/lib/common/tools.js
 
@@ -118,6 +121,9 @@ class VisBaseWidget extends React.Component {
     componentWillUnmount() {
         this.updateInterval && clearInterval(this.updateInterval);
         this.updateInterval = null;
+
+        this.pressTimeout && clearTimeout(this.pressTimeout);
+        this.pressTimeout = null;
 
         // delete service ref from view only in edit mode
         this.props.askView && this.props.askView('unregister', { id: this.props.id, uuid: this.uuid });
@@ -1481,6 +1487,26 @@ class VisBaseWidget extends React.Component {
         return value;
     }
 
+    renderRelativeMoveMenu() {
+        if (this.props.context.runtime || !this.state.editMode) {
+            return null;
+        }
+
+        return <VisOrderMenu
+            anchorEl={this.state.showRelativeMoveMenu}
+            order={this.props.relativeWidgetOrder}
+            wid={this.props.id}
+            view={this.props.view}
+            views={this.props.context.views}
+            themeType={this.props.context.themeType}
+            onClose={order => {
+                this.props.onIgnoreMouseEvents(false);
+                this.setState({ showRelativeMoveMenu: null });
+                order && this.props.context.onWidgetsChanged(null, this.props.view, { order });
+            }}
+        />;
+    }
+
     render() {
         const widget = this.props.context.views[this.props.view].widgets[this.props.id];
         if (!widget || typeof widget !== 'object') {
@@ -1683,8 +1709,35 @@ class VisBaseWidget extends React.Component {
                         style={{ width: !showUp || !showDown ? 30 : undefined }}
                     >
                         <div className="vis-editmode-widget-number">{this.props.relativeWidgetOrder.indexOf(this.props.id) + 1}</div>
-                        {showUp   ? <UpIcon onMouseDown={e => this.changeOrder(e, -1)} className="vis-editmode-move-button" /> : null}
-                        {showDown ? <DownIcon onMouseDown={e => this.changeOrder(e, 1)} className="vis-editmode-move-button" style={{ left: showUp ? 30 : undefined }} /> : null}
+                        {showUp ? <UpIcon
+                            title={I18n.t('Move widget up or press longer to open re-order menu')}
+                            onMouseDown={e => {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                this.pressTimeout = setTimeout(target => {
+                                    this.props.onIgnoreMouseEvents(true);
+                                    this.setState({ showRelativeMoveMenu: target });
+                                    this.pressTimeout = null;
+                                }, 300, e.currentTarget);
+                            }}
+                            onMouseUp={e => this.changeOrder(e, -1)}
+                            className="vis-editmode-move-button"
+                        /> : null}
+                        {showDown ? <DownIcon
+                            title={I18n.t('Move widget down or press longer to open re-order menu')}
+                            onMouseDown={e => {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                this.pressTimeout = setTimeout(target => {
+                                    this.props.onIgnoreMouseEvents(true);
+                                    this.setState({ showRelativeMoveMenu: target });
+                                    this.pressTimeout = null;
+                                }, 300, e.currentTarget);
+                            }}
+                            onMouseUp={e => this.changeOrder(e, 1)}
+                            className="vis-editmode-move-button"
+                            style={{ left: showUp ? 30 : undefined }}
+                        /> : null}
                     </div>;
                 }
             }
@@ -1701,7 +1754,7 @@ class VisBaseWidget extends React.Component {
 
         const overlay =
             !this.state.hideHelper &&                        // if the helper not hidden
-            !widget.usedInWidget &&                          // not used in other widget, that has own overlay
+            !widget.usedInWidget &&                          // not used in another widget, that has own overlay
             this.state.editMode &&                           // if edit mode
             !widget.data.locked &&                           // if not locked
             (!widget.groupid || this.props.selectedGroup) && // if not in group or in the edit group mode
@@ -1749,6 +1802,7 @@ class VisBaseWidget extends React.Component {
             {this.getResizeHandlers(selected, widget)}
             {rxWidget}
             {groupInstructions}
+            {this.state.showRelativeMoveMenu && this.renderRelativeMoveMenu()}
         </div>;
     }
 }

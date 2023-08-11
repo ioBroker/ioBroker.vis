@@ -362,7 +362,7 @@
   "not-specified": "nicht definiert",
   "Files": "Dateien",
   "custom_icons": "Special",
-  "Close all but current view": "Schließen Sie alle außer der aktuellen Ansicht",
+  "Close all but current view": "Alle außer der aktuellen Ansicht schließen",
   "One parameter": "Ein Parameter",
   "Width x height (px)": "Breite x Höhe (px)",
   "Message": "Nachricht",
@@ -451,7 +451,7 @@
   "version": "Ausführung",
   "Add new or update existing widget": "Neues Widget hinzufügen oder vorhandenes aktualisieren\n",
   "Widget was deleted in widgeteria": "Das Widget wurde in der Widgeteria gelöscht",
-  "Keep on old place": "Bleiben Sie am alten Ort",
+  "Keep on old place": "Am alten Ort lassen",
   "Move to new place": "An einen neuen Ort ziehen",
   "Should it be moved to new place?": "Sollte es an einen neuen Ort verlegt werden?",
   "Usage of widget %s": "Verwendung des Widgets %s",
@@ -460,9 +460,10 @@
   "horizontal": "horizontal",
   "vertical": "Vertikale",
   "flexible": "flexibel",
-  "Move down": "Sich abwärts bewegen",
-  "Move up": "Bewegen Sie sich nach oben",
+  "Move down": "Nach unten schieben",
+  "Move up": "Nach oben schieben",
   "Specify filter to see more icons": "EinenFilter angeben, um weitere Symbole anzuzeigen",
   "Create or import new \"vis-2\" project": "Ein neues \"vis-2\"-Projekt erstellen oder importieren ",
-  "Select vis-2 project": "Das Projekt „vis-2“ wählen"
+  "Select vis-2 project": "Das Projekt „vis-2“ wählen",
+  "Browse the widgeteria": "Die Widgeteria durchsuchen "
 }
