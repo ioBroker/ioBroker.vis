@@ -115,9 +115,11 @@ class VisRxWidget extends VisBaseWidget {
     static findField(widgetInfo, name) {
         for (let g = 0; g < widgetInfo.visAttrs.length; g++) {
             const group = widgetInfo.visAttrs[g];
-            for (let f = 0; f < group.fields.length; f++) {
-                if (group.fields[f].name === name) {
-                    return group.fields[f];
+            if (group.fields) {
+                for (let f = 0; f < group.fields.length; f++) {
+                    if (group.fields[f].name === name) {
+                        return group.fields[f];
+                    }
                 }
             }
         }
