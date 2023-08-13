@@ -88,7 +88,7 @@ gulp.task('runtime-1-copy-src', done => {
     !fs.existsSync(`${__dirname}/runtime/src/Vis`) && fs.mkdirSync(`${__dirname}/runtime/src/Vis`);
     !fs.existsSync(`${__dirname}/runtime/src/i18n`) && fs.mkdirSync(`${__dirname}/runtime/src/i18n`);
     !fs.existsSync(`${__dirname}/runtime/public`) && fs.mkdirSync(`${__dirname}/runtime/public`);
-    copyFolder(`${__dirname}/src/public`, `${__dirname}/runtime/public`, ['ace', 'visEditWords.js']);
+    copyFolder(`${__dirname}/src/public`, `${__dirname}/runtime/public`, ['ace', 'visEditWords.js', 'marketplaceConfig.sample.js']);
     let text = fs.readFileSync(`${__dirname}/runtime/public/index.html`).toString('utf-8');
     let runtimeText = text.replace('<title>Editor.vis</title>', '<title>ioBroker.vis</title>');
     runtimeText = runtimeText.replace('faviconEdit.ico', 'favicon.ico');
@@ -437,6 +437,7 @@ gulp.task('7-patch', done => {
     patchFile(`${__dirname}/www/edit.html`);
     patchFile(`${__dirname}/src/build/index.html`);
     patchFile(`${__dirname}/src/build/edit.html`);
+    fs.existsSync(`${__dirname}/www/marketplaceConfig.sample.js`) && fs.unlinkSync(`${__dirname}/www/marketplaceConfig.sample.js`);
     done();
 });
 
