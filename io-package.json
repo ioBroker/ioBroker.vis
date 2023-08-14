@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.1.7",
+    "version": "2.2.0",
     "news": {
+      "2.2.0": {
+        "en": "Release candidate 1",
+        "de": "Release Kandidat 1",
+        "ru": "Выпуск кандидата 1",
+        "pt": "Candidato de lançamento 1",
+        "nl": "Laat de kandidaat vrij. 1",
+        "fr": "Candidat à la libération 1",
+        "it": "Candidato di rilascio 1",
+        "es": "El candidato a la liberación 1",
+        "pl": "Kandydatka 1",
+        "uk": "Видача кандидата 1 час",
+        "zh-cn": "释放候选人 导 言"
+      },
       "2.1.7": {
         "en": "Optimized the rendering of the widgets",
         "de": "Optimierte das Rendern der Widgets",
