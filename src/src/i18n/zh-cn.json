@@ -465,5 +465,16 @@
   "Specify filter to see more icons": "指定过滤器以查看更多图标",
   "Create or import new \"vis-2\" project": "创建或导入新的“vis-2”项目",
   "Select vis-2 project": "选择“vis-2”项目",
-  "Browse the widgeteria": "浏览widgeteria"
+  "Browse the widgeteria": "浏览widgeteria",
+  "Set widgets filter for edit mode": "在编辑模式下隐藏小部件（具有过滤键）",
+  "To use it, define by some widget the filter key": "要使用它，请通过某些小部件定义过滤器键",
+  "Filter widgets": "过滤器小部件",
+  "Move widget down or press longer to open re-order menu": "向下移动小部件或长按打开重新排序菜单",
+  "Move widget up or press longer to open re-order menu": "向上移动小部件或长按打开重新排序菜单",
+  "order_help": "您可以拖放任何项目或单击将与所选小部件交换的项目",
+  "Apply": "申请",
+  "Select all": "全选",
+  "Unselect all": "全部取消选择",
+  "Clear filter": "清除过滤器",
+  "%s widgets": "%s 个小部件"
 }

@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2022-2023 bluefox https://github.com/GermanBluefox,
+ *  Copyright (c) 2022-2023 Denis Haev https://github.com/GermanBluefox,
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -1417,6 +1417,7 @@ class VisView extends React.Component {
 
                 const listRelativeWidgetsOrder = [];
                 const listAbsoluteWidgetsOrder = [];
+                const filterWidgets = this.props.context.views[this.props.view].filterWidgets;
 
                 // calculate the order of relative widgets
                 Object.keys(widgets).forEach(id => {
@@ -1441,6 +1442,17 @@ class VisView extends React.Component {
                         widget.groupid !== this.props.selectedGroup
                     ) {
                         return;
+                    }
+
+                    // filter out the widgets in edit mode
+                    if (this.props.editMode && filterWidgets?.length && widget.data?.filterkey) {
+                        let filterValues = widget.data.filterkey;
+                        if (filterValues && typeof filterValues === 'string') {
+                            filterValues = filterValues.split(',').map(f => f.trim()).filter(f => f);
+                        }
+                        if (filterWidgets.find(f => filterValues.includes(f))) {
+                            return;
+                        }
                     }
 
                     const isRelative = widget.style && (

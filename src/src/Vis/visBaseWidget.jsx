@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2022-2023 bluefox https://github.com/GermanBluefox,
+ *  Copyright (c) 2022-2023 Denis Haev https://github.com/GermanBluefox,
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -1709,35 +1709,42 @@ class VisBaseWidget extends React.Component {
                         style={{ width: !showUp || !showDown ? 30 : undefined }}
                     >
                         <div className="vis-editmode-widget-number">{this.props.relativeWidgetOrder.indexOf(this.props.id) + 1}</div>
-                        {showUp ? <UpIcon
-                            title={I18n.t('Move widget up or press longer to open re-order menu')}
-                            onMouseDown={e => {
-                                e.stopPropagation();
-                                e.preventDefault();
-                                this.pressTimeout = setTimeout(target => {
-                                    this.props.onIgnoreMouseEvents(true);
-                                    this.setState({ showRelativeMoveMenu: target });
-                                    this.pressTimeout = null;
-                                }, 300, e.currentTarget);
-                            }}
-                            onMouseUp={e => this.changeOrder(e, -1)}
+                        {showUp ? <div
                             className="vis-editmode-move-button"
-                        /> : null}
-                        {showDown ? <DownIcon
-                            title={I18n.t('Move widget down or press longer to open re-order menu')}
-                            onMouseDown={e => {
-                                e.stopPropagation();
-                                e.preventDefault();
-                                this.pressTimeout = setTimeout(target => {
-                                    this.props.onIgnoreMouseEvents(true);
-                                    this.setState({ showRelativeMoveMenu: target });
-                                    this.pressTimeout = null;
-                                }, 300, e.currentTarget);
-                            }}
-                            onMouseUp={e => this.changeOrder(e, 1)}
+                            title={I18n.t('Move widget up or press longer to open re-order menu')}
+                        >
+                            <UpIcon
+                                onMouseDown={e => {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                    this.pressTimeout = setTimeout(target => {
+                                        this.props.onIgnoreMouseEvents(true);
+                                        this.setState({ showRelativeMoveMenu: target });
+                                        this.pressTimeout = null;
+                                    }, 300, e.currentTarget);
+                                }}
+                                onMouseUp={e => this.changeOrder(e, -1)}
+
+                            />
+                        </div> : null}
+                        {showDown ? <div
                             className="vis-editmode-move-button"
                             style={{ left: showUp ? 30 : undefined }}
-                        /> : null}
+                            title={I18n.t('Move widget down or press longer to open re-order menu')}
+                        >
+                            <DownIcon
+                                onMouseDown={e => {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                    this.pressTimeout = setTimeout(target => {
+                                        this.props.onIgnoreMouseEvents(true);
+                                        this.setState({ showRelativeMoveMenu: target });
+                                        this.pressTimeout = null;
+                                    }, 300, e.currentTarget);
+                                }}
+                                onMouseUp={e => this.changeOrder(e, 1)}
+                            />
+                        </div> : null}
                     </div>;
                 }
             }

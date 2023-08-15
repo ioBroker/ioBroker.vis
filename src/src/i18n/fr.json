@@ -465,5 +465,16 @@
   "Specify filter to see more icons": "Spécifiez le filtre pour voir plus d'icônes",
   "Create or import new \"vis-2\" project": "Créer ou importer un nouveau projet \"vis-2\"",
   "Select vis-2 project": "Sélectionnez le projet \"vis-2\"",
-  "Browse the widgeteria": "Parcourir la widgeteria"
+  "Browse the widgeteria": "Parcourir la widgeteria",
+  "Set widgets filter for edit mode": "Masquer les widgets (qui ont une clé de filtre) en mode édition",
+  "To use it, define by some widget the filter key": "Pour l'utiliser, définissez par un widget la clé de filtre",
+  "Filter widgets": "Filtrer les widgets",
+  "Move widget down or press longer to open re-order menu": "Déplacez le widget vers le bas ou appuyez plus longtemps pour ouvrir le menu de réorganisation",
+  "Move widget up or press longer to open re-order menu": "Déplacez le widget vers le haut ou appuyez plus longtemps pour ouvrir le menu de réorganisation",
+  "order_help": "Vous pouvez faire glisser et déposer n'importe quel élément ou cliquer sur l'élément avec lequel le widget sélectionné sera échangé",
+  "Apply": "Appliquer",
+  "Select all": "Tout sélectionner",
+  "Unselect all": "Tout déselectionner",
+  "Clear filter": "Effacer le filtre",
+  "%s widgets": "%s widgets"
 }

@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2013-2022 bluefox https://github.com/GermanBluefox,
+ *  Copyright (c) 2013-2022 Denis Haev https://github.com/GermanBluefox,
  *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
@@ -1449,7 +1449,7 @@ class Vis {
             }
 
             try {
-                // get array of bound OIDs
+                // get an array of bound OIDs
                 const bound = $widget.data('bound');
                 if (bound) {
                     const bindHandler = $widget.data('bindHandler');

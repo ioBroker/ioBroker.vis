@@ -465,5 +465,16 @@
   "Specify filter to see more icons": "Укажите фильтр, чтобы увидеть больше значков",
   "Create or import new \"vis-2\" project": "Создать или импортировать новый проект \"vis-2\"",
   "Select vis-2 project": "Выберите проект \"vis-2\"",
-  "Browse the widgeteria": "Просмотрите виджетерию"
+  "Browse the widgeteria": "Просмотрите виджетерию",
+  "Set widgets filter for edit mode": "Скрыть виджеты (с ключом фильтра) в режиме редактирования",
+  "To use it, define by some widget the filter key": "Чтобы использовать его, определите каким-либо виджетом ключ фильтра",
+  "Filter widgets": "Фильтровать виджеты",
+  "Move widget down or press longer to open re-order menu": "Переместите виджет вниз или нажмите дольше, чтобы открыть меню изменения порядка",
+  "Move widget up or press longer to open re-order menu": "Переместите виджет вверх или нажмите дольше, чтобы открыть меню изменения порядка",
+  "order_help": "Вы можете перетащить любой элемент или щелкнуть элемент, с которым выбранный виджет будет заменен",
+  "Apply": "Применить",
+  "Select all": "Скрыть все",
+  "Unselect all": "Показать все",
+  "Clear filter": "Очистить фильтр",
+  "%s widgets": "%s виджетов"
 }

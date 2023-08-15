@@ -465,5 +465,16 @@
   "Specify filter to see more icons": "EinenFilter angeben, um weitere Symbole anzuzeigen",
   "Create or import new \"vis-2\" project": "Ein neues \"vis-2\"-Projekt erstellen oder importieren ",
   "Select vis-2 project": "Das Projekt „vis-2“ wählen",
-  "Browse the widgeteria": "Die Widgeteria durchsuchen "
+  "Browse the widgeteria": "Die Widgeteria durchsuchen ",
+  "Set widgets filter for edit mode": "Widgets (mit Filterschlüssel) im Bearbeitungsmodus ausblenden",
+  "To use it, define by some widget the filter key": "Um es zu verwenden, definieren Sie über ein Widget den Filterschlüssel",
+  "Filter widgets": "Widgets filtern",
+  "Move widget down or press longer to open re-order menu": "Sas Widget nach unten bewegen oder länger drücken, um das Sortierungsmenü zu öffnen",
+  "Move widget up or press longer to open re-order menu": "Das Widget nach oben bewegen oder länger drücken, um das Sortierungsmenü zu öffnen",
+  "order_help": "Sie können jedes Element per Drag-and-Drop verschieben oder auf das Element klicken, mit dem das ausgewählte Widget ausgetauscht werden soll",
+  "Apply": "Anwenden",
+  "Select all": "Alle verbergen",
+  "Unselect all": "Alle zeigen",
+  "Clear filter": "Filter löschen",
+  "%s widgets": "%s Widgets"
 }

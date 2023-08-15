@@ -11,7 +11,11 @@ import {
     DialogTitle,
     DialogActions, ListItemText,
 } from '@mui/material';
-import { Close, FilterAlt } from '@mui/icons-material';
+import {
+    Close,
+    FilterAlt,
+    LayersClear as Clear,
+} from '@mui/icons-material';
 
 import { I18n } from '@iobroker/adapter-react-v5';
 
@@ -27,8 +31,11 @@ const WidgetFilterDialog = props => {
             if (widget.data && widget.data.filterkey) {
                 widget.data.filterkey.split(',').forEach(filter => {
                     filter = filter.trim();
-                    if (!_filters.includes(filter)) {
-                        _filters.push(filter);
+                    const pos = _filters.indexOf(filter);
+                    if (pos === -1) {
+                        _filters.push({ key: filter, count: 1 });
+                    } else {
+                        _filters[pos].count++;
                     }
                 });
             }
@@ -39,47 +46,76 @@ const WidgetFilterDialog = props => {
     return <Dialog
         open={!0}
         onClose={props.onClose}
-        title="Import widgets"
-        closeTitle="Close"
-        actionTitle="Import"
     >
         <DialogTitle>{I18n.t('Set widgets filter for edit mode')}</DialogTitle>
         <DialogContent>
             {filters.length ? <Button
-                onClick={() => setFilterWidgets([...filters])}
+                disabled={filters.length === filterWidgets.length}
+                color="primary"
+                onClick={() => setFilterWidgets([...filters.map(f => f.key)])}
                 variant="contained"
             >
                 {I18n.t('Select all')}
             </Button> : null}
             {filters.length ? <Button
+                disabled={!filterWidgets.length}
+                color="grey"
+                style={{ marginLeft: 10 }}
                 onClick={() => setFilterWidgets([])}
-                variant="outllined"
+                variant="contained"
             >
                 {I18n.t('Unselect all')}
             </Button> : null}
             <div>
                 {!filters.length ? I18n.t('To use it, define by some widget the filter key') : null}
                 {filters.map(filter => <ListItemButton
-                    key={filter}
+                    key={filter.key}
                     onClick={() => {
                         const _filterWidgets = [...filterWidgets];
-                        const pos = _filterWidgets.indexOf(filter);
+                        const pos = _filterWidgets.indexOf(filter.key);
                         if (pos !== -1) {
                             _filterWidgets.splice(pos, 1);
                         } else {
-                            _filterWidgets.push(filter);
+                            _filterWidgets.push(filter.key);
                         }
                         setFilterWidgets(_filterWidgets);
                     }}
                 >
                     <ListItemAvatar>
-                        <Checkbox checked={filterWidgets.includes(filter)} />
+                        <Checkbox checked={filterWidgets.includes(filter.key)} />
                     </ListItemAvatar>
-                    <ListItemText primary={filter} />
+                    <ListItemText primary={<>
+                        <span>{filter.key}</span>
+                        {filter.count > 1 ? <span
+                            style={{
+                                marginLeft: 10,
+                                opacity: 0.7,
+                                fontStyle: 'italic',
+                                fontSize: '0.8em',
+                            }}
+                        >
+                            {I18n.t('%s widgets', filter.count)}
+                        </span> : null}
+                    </>}
+                    />
                 </ListItemButton>)}
             </div>
         </DialogContent>
         <DialogActions>
+            {props.project[props.selectedView].filterWidgets?.length ? <Button
+                disabled={!filters.length}
+                variant="outlined"
+                onClick={() => {
+                    const project = JSON.parse(JSON.stringify(props.project));
+                    project[props.selectedView].filterWidgets = [];
+                    props.changeProject(project);
+                    props.onClose();
+                }}
+                color="primary"
+                startIcon={<Clear />}
+            >
+                {I18n.t('Clear filter')}
+            </Button> : null}
             <Button
                 disabled={!filters.length}
                 variant="contained"
@@ -101,7 +137,7 @@ const WidgetFilterDialog = props => {
                 color="grey"
                 startIcon={<Close />}
             >
-                {I18n.t('Cancel')}
+                {I18n.t('ra_Cancel')}
             </Button>
         </DialogActions>
     </Dialog>;

@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2022-2023 bluefox https://github.com/GermanBluefox,
+ *  Copyright (c) 2022-2023 Denis Haev https://github.com/GermanBluefox,
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -18,6 +18,7 @@ import PropTypes from 'prop-types';
 
 import { Icon } from '@iobroker/adapter-react-v5';
 
+// eslint-disable-next-line import/no-cycle
 import VisRxWidget from '../../visRxWidget';
 
 class BasicValueString extends VisRxWidget {

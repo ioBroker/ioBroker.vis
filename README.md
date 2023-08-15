@@ -215,6 +215,10 @@ Notice that these settings are valid only for reconnection and not for the first
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Added possibility to filter widgets in edit mode
+* (bluefox) Added possibility to change the order of relative widgets with drag&drop
+
 ### 2.2.0 (2023-08-14)
 * (bluefox) Release candidate 1
 
@@ -243,7 +247,7 @@ Notice that these settings are valid only for reconnection and not for the first
 * (bluefox) Completely new visualization, but partly compatible with the previous version
 
 ## License
- Copyright (c) 2021-2023 bluefox, https://github.com/GermanBluefox <dogafox@gmail.com>,
+ Copyright (c) 2021-2023 Denis Haev, https://github.com/GermanBluefox <dogafox@gmail.com>,
   
  Creative Common Attribution-NonCommercial (CC BY-NC)
 

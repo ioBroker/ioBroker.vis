@@ -287,6 +287,18 @@ class VisOrderMenu extends React.Component {
             open={!0}
             onClose={() => this.props.onClose()}
         >
+            <div
+                style={{
+                    padding: 21,
+                    fontWeight: 'normal',
+                    width: 250,
+                    fontSize: 12,
+                    fontStyle: 'italic',
+                    textAlign: 'center',
+                }}
+            >
+                {I18n.t('order_help')}
+            </div>
             <DndProvider backend={HTML5Backend}>
                 {this.state.order.map((id, i) => this.getWidgetDiv(id, i))}
             </DndProvider>

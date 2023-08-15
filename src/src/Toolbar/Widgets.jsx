@@ -62,7 +62,7 @@ const Widgets = props => {
                     type: 'icon-button',
                     Icon: FilterIcon,
                     name: 'Filter widgets',
-                    color: props.project[props.selectedView].filterWidgets?.length ? '#930202' : undefined,
+                    color: props.project[props.selectedView].filterWidgets?.length ? '#c00000' : undefined,
                     disabled: !props.editMode,
                     onClick: () => setFilterDialog(true),
                 },

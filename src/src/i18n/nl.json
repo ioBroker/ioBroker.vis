@@ -465,5 +465,16 @@
   "Specify filter to see more icons": "Geef een filter op om meer pictogrammen te zien",
   "Create or import new \"vis-2\" project": "Maak of importeer een nieuw \"vis-2\"-project",
   "Select vis-2 project": "Selecteer \"vis-2\"-project",
-  "Browse the widgeteria": "Blader door de widgeteria"
+  "Browse the widgeteria": "Blader door de widgeteria",
+  "Set widgets filter for edit mode": "Verberg widgets (die een filtersleutel hebben) in de bewerkingsmodus",
+  "To use it, define by some widget the filter key": "Om het te gebruiken, definieert u door een widget de filtersleutel",
+  "Filter widgets": "Filterwidgets",
+  "Move widget down or press longer to open re-order menu": "Verplaats de widget naar beneden of druk langer om het menu voor opnieuw bestellen te openen",
+  "Move widget up or press longer to open re-order menu": "Beweeg de widget omhoog of druk langer om het bestelmenu te openen",
+  "order_help": "U kunt elk item slepen en neerzetten of klikken op het item waarmee de geselecteerde widget wordt verwisseld",
+  "Apply": "Toepassen",
+  "Select all": "Selecteer alles",
+  "Unselect all": "Alles deselecteren",
+  "Clear filter": "Filter wissen",
+  "%s widgets": "%s widgets"
 }
