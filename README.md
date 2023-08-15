@@ -215,7 +215,7 @@ Notice that these settings are valid only for reconnection and not for the first
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.2.1 (2023-08-15)
 * (bluefox) Added possibility to filter widgets in edit mode
 * (bluefox) Added possibility to change the order of relative widgets with drag&drop
 
