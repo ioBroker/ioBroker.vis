@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.2.1",
+    "version": "2.2.2",
     "news": {
+      "2.2.2": {
+        "en": "Changed sentry settings",
+        "de": "Geänderte Einstellungen für die Versendung",
+        "ru": "Измененные настройки судоходства",
+        "pt": "Definições de envio alteradas",
+        "nl": "Veranderde schildwachting",
+        "fr": "Réglages de sentinelle modifiés",
+        "it": "Impostazioni di invio modificate",
+        "es": "Ajustes de centry cambiados",
+        "pl": "Changed sentry place",
+        "uk": "Змінені налаштування відправлень",
+        "zh-cn": "B. 转送环境的变化"
+      },
       "2.2.1": {
         "en": "Added possibility to filter widgets in edit mode\nAdded possibility to change the order of relative widgets with drag&drop",
         "de": "Möglichkeit hinzugefügt, Widgets im Bearbeitungsmodus zu filtern\nZusätzliche Möglichkeit, die Reihenfolge der relativen Widgets mit Drag &drop zu ändern",
@@ -80,19 +93,6 @@
         "pl": "Nieprawidłowe błędy z połączeniami",
         "uk": "Виправлена помилка з підключенням",
         "zh-cn": "更正的错误"
-      },
-      "2.0.10": {
-        "en": "Added the file browser",
-        "de": "Hinzugefügt die Datei Browser",
-        "ru": "Добавлен браузер файлов",
-        "pt": "Adicionado o navegador de arquivos",
-        "nl": "Voeg de bestanden browser toe",
-        "fr": "Posté le navigateur de fichier",
-        "it": "Aggiunto il file browser",
-        "es": "Añadido el navegador de archivos",
-        "pl": "Added przeglądarka plików",
-        "uk": "Додано браузер файлів",
-        "zh-cn": "增加档案"
       }
     },
     "title": "Visualisation Next Generation",
