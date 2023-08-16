@@ -69,16 +69,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Use Node.js 16.x
+      - name: Use Node.js 18.x
         uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 18.x
 
       - name: Install Dependencies
-        run: npm i
+        run: npm install
 
       - name: Build
-        run: npm run build
+        run: NODE_OPTIONS=--max_old_space_size=8192 npm run build
 
       - name: Run local tests
         run: npm run test-gui
@@ -100,20 +100,20 @@ jobs:
       contains(github.event.head_commit.message, '[skip ci]') == false &&
       github.event_name == 'push' &&
       startsWith(github.ref, 'refs/tags/')
-    runs-on: ubuntu-latest
+    runs-on: macos-latest # ubuntu-latest has too few RAM
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Use Node.js 16.x
+      - name: Use Node.js 18.x
         uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 18.x
 
       - name: Extract the version and commit body from the tag
         id: extract_release
-        # The body may be multiline, therefore we need to escape some characters
+        # The body may be multiline, therefore, we need to escape some characters
         run: |
           VERSION="${{ github.ref }}"
           VERSION=${VERSION##*/}
@@ -154,10 +154,13 @@ jobs:
           export SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
           export SENTRY_URL=https://sentry.iobroker.net
           export SENTRY_ORG=iobroker
-          export SENTRY_PROJECT=iobroker-vis
-          export SENTRY_VERSION=iobroker.vis@${{ env.VERSION }}
+          export SENTRY_PROJECT=iobroker-vis-2
+          export SENTRY_VERSION=iobroker.vis-2@${{ steps.extract_release.outputs.VERSION }}
+          export SENTRY_RELEASE=${{ steps.extract_release.outputs.VERSION }}
           sentry-cli releases new $SENTRY_VERSION
           sentry-cli releases finalize $SENTRY_VERSION
+          sentry-cli sourcemaps inject ./www
+          sentry-cli sourcemaps upload ./www
 
         # Add the following line BEFORE finalize if repositories are connected in Sentry
         # sentry-cli releases set-commits $SENTRY_VERSION --auto
