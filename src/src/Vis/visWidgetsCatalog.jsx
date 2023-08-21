@@ -1,4 +1,5 @@
 import { getRemoteWidgets } from './visUtils';
+// eslint-disable-next-line import/no-cycle
 import WIDGETS from './Widgets';
 
 const DEFAULT_SET_COLORS = {
@@ -101,7 +102,7 @@ export const getWidgetTypes = () => {
                         .join(''),
                     setLabel: info?.visSetLabel || undefined,
                     setColor: info?.visSetColor || undefined,
-                    order: info?.visOrder || undefined,
+                    order: info?.visOrder === undefined || info?.visOrder === null ? 1000 : parseInt(info.visOrder, 10),
                     hidden: script.attributes['data-vis-no-palette']?.value === 'true',
                 };
 
@@ -133,9 +134,10 @@ export const getWidgetTypes = () => {
                 adapter: widget.adapter || undefined,
                 version: widget.version || undefined,
                 hidden: widget.visHidden,
-                order: widgetInfo.visOrder,
+                order: widgetInfo.visOrder === undefined ? 1000 : widgetInfo.visOrder,
                 custom: widgetInfo.custom,
                 customPalette: widgetInfo.customPalette,
+                rx: true,
                 i18nPrefix,
             };
             VisWidgetsCatalog.allWidgetsList.push(widgetObj.name);

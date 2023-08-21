@@ -704,7 +704,7 @@ const View = props => {
                 if (result) {
                     const project = JSON.parse(JSON.stringify(props.project));
                     if (showAllViewDialog.groupApply) {
-                        // find all fields with applyToAll flag and if any is not equal show button
+                        // find all fields with applyToAll flag, and if any is not equal show button
                         for (let f = 0; f < showAllViewDialog.group.fields.length; f++) {
                             const field = showAllViewDialog.group.fields[f];
                             if (field.applyToAll && !field.groupApply) {

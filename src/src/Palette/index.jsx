@@ -91,7 +91,7 @@ const Palette = props => {
     );
 
     const { widgetsList, widgetSetProps } = useMemo(() => {
-        const _widgetsList = window.VisMarketplace && props.marketplaceUpdates ? {
+        let _widgetsList = window.VisMarketplace && props.marketplaceUpdates ? {
             __marketplace: {},
         } : {};
         const _widgetSetProps = window.VisMarketplace && props.marketplaceUpdates ? {
@@ -130,13 +130,49 @@ const Palette = props => {
                     _widgetSetProps[widgetTypeName].icon = `../adapter/${widgetType.adapter}/${widgetType.adapter}.png`;
                 }
             }
-
+            if (widgetType.rx) {
+                _widgetSetProps[widgetTypeName] = _widgetSetProps[widgetTypeName] || {};
+                _widgetSetProps[widgetTypeName].rx = true;
+            }
             if (widgetType.version) {
+                _widgetSetProps[widgetTypeName] = _widgetSetProps[widgetTypeName] || {};
                 _widgetSetProps[widgetTypeName].version = widgetType.version;
             }
 
             _widgetsList[widgetTypeName][widgetType.name] = widgetType;
         });
+
+        // sort widget sets: __marketplace, basic, rx, jqui, other
+        const sets = Object.keys(_widgetsList);
+        const posBasic = sets.indexOf('basic');
+        if (posBasic !== -1) {
+            sets.splice(posBasic, 1);
+        }
+        const posMarket = sets.indexOf('__marketplace');
+        if (posMarket !== -1) {
+            sets.splice(posMarket, 1);
+        }
+        const posJQui = sets.indexOf('jqui');
+        if (posJQui !== -1) {
+            sets.splice(posJQui, 1);
+        }
+        const rxSets = sets.filter(set => _widgetSetProps[set]?.rx).sort();
+        const nonRxSets = sets.filter(set => !_widgetSetProps[set]?.rx).sort();
+
+        if (posJQui !== -1) {
+            nonRxSets.unshift('jqui');
+        }
+        const resultSet = [...rxSets, ...nonRxSets];
+
+        if (posBasic !== -1) {
+            resultSet.unshift('basic');
+        }
+        if (posMarket !== -1) {
+            resultSet.unshift('__marketplace');
+        }
+        const sorted = {};
+        resultSet.forEach(key => sorted[key] = _widgetsList[key]);
+        _widgetsList = sorted;
 
         if (filter) {
             Object.keys(_widgetsList).forEach(widgetType => {
@@ -150,15 +186,7 @@ const Palette = props => {
         Object.keys(_widgetsList).forEach(widgetType => {
             _widgetsList[widgetType] = Object.values(_widgetsList[widgetType]);
             // sort items
-            _widgetsList[widgetType].sort((a, b) => {
-                if (a.order === undefined) {
-                    a.order = 1000;
-                }
-                if (b.order === undefined) {
-                    b.order = 1000;
-                }
-                return a.order - b.order;
-            });
+            _widgetsList[widgetType].sort((a, b) => a.order - b.order);
         });
 
         return { widgetsList: _widgetsList, widgetSetProps: _widgetSetProps };

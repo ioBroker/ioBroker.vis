@@ -16,6 +16,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+// eslint-disable-next-line import/no-cycle
 import VisRxWidget from '../../visRxWidget';
 
 class BasicHtml extends VisRxWidget {

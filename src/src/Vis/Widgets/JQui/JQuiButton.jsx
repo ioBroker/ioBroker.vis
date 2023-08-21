@@ -30,6 +30,7 @@ import Close from '@mui/icons-material/Close';
 
 import { Icon } from '@iobroker/adapter-react-v5';
 
+// eslint-disable-next-line import/no-cycle
 import VisRxWidget from '../../visRxWidget';
 
 class JQuiButton extends VisRxWidget {

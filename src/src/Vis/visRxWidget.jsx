@@ -285,9 +285,7 @@ class VisRxWidget extends VisBaseWidget {
 
     async componentDidMount() {
         super.componentDidMount();
-        for (let i = 0; i < this.linkContext.IDs.length; i++) {
-            await this.props.context.socket.subscribeState(this.linkContext.IDs[i], this.onStateChangedBind);
-        }
+        await this.props.context.socket.subscribeState(this.linkContext.IDs, this.onStateChangedBind);
     }
 
     // eslint-disable-next-line no-unused-vars,class-methods-use-this
@@ -312,9 +310,7 @@ class VisRxWidget extends VisBaseWidget {
     }
 
     async componentWillUnmount() {
-        for (let i = 0; i < this.linkContext.IDs.length; i++) {
-            await this.props.context.socket.unsubscribeState(this.linkContext.IDs[i], this.onStateChangedBind);
-        }
+        await this.props.context.socket.unsubscribeState(this.linkContext.IDs, this.onStateChangedBind);
         super.componentWillUnmount();
     }
 

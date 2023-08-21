@@ -208,8 +208,7 @@ Notice that these settings are valid only for reconnection and not for the first
 ![Dark](img/dark_screen.png)
 
 ## Todo
-- Filter in edit mode too
-- 
+- Horizontal navigation
 <!--
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**

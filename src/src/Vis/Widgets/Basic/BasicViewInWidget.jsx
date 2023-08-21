@@ -32,6 +32,7 @@ import { FaFolderOpen as FolderOpenedIcon } from 'react-icons/fa';
 
 import { I18n } from '@iobroker/adapter-react-v5';
 
+// eslint-disable-next-line import/no-cycle
 import VisRxWidget from '../../visRxWidget';
 
 class BasicViewInWidget extends VisRxWidget {
