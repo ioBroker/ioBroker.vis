@@ -183,7 +183,7 @@ if (typeof exports !== 'undefined') {
     try {
         currentConfigJs = await adapter.readFileAsync(adapterName, 'config.js');
     } catch (err) {
-
+        // ignore
     }
     if (typeof currentConfigJs === 'object') {
         currentConfigJs = currentConfigJs.file;
@@ -886,6 +886,11 @@ async function exportFormOlderVersions() {
 
 async function main() {
     const visObj = await adapter.getForeignObjectAsync(adapterName);
+
+    if (!fs.existsSync(`${__dirname}/www`)) {
+        adapter.log.error('Cannot find www folder. Looks like adapter was installed from github! Please install it from npm!');
+        return;
+    }
 
     // create a vis "meta" object if not exists
     if (!visObj || visObj.type !== 'meta') {
