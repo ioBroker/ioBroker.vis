@@ -722,8 +722,9 @@ const getOrLoadRemote = (remote, shareScope, remoteFallbackUrl = undefined) => {
                     try {
                         await window[remote].init(__webpack_share_scopes__[shareScope]);
                     } catch (e) {
-                        console.error(`Cannot init remote ${remote} with shareScope ${shareScope}`);
+                        console.error(`Cannot init remote "${remote}" with "${shareScope}"`);
                         console.error(e);
+                        reject(new Error(`Cannot init remote "${remote}" with "${shareScope}"`));
                         reject(e);
                         return;
                     }
