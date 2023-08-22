@@ -411,7 +411,11 @@ function doLicense(license, uuid, name) {
                 try {
                     const data = JSON.parse(result);
                     if (data.result === 'OK') {
-                        if (data.name !== `iobroker.${name}` && data.name !== name) {
+                        if (data.name !== `iobroker.${name}` &&
+                            data.name !== name &&
+                            data.name !== `iobroker.${name}.offline` &&
+                            data.name !== `iobroker.${name}.offline.action`
+                        ) {
                             adapter.log.error(`License is for other adapter "${data.name}". Expected "iobroker.${name}"`);
                             resolve(true);
                         } else

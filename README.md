@@ -214,6 +214,9 @@ Notice that these settings are valid only for reconnection and not for the first
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Corrected license checking
+
 ### 2.2.2 (2023-08-16)
 * (bluefox) Changed sentry settings
 
