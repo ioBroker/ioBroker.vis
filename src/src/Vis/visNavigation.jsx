@@ -2,17 +2,21 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
 
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import Tooltip from '@mui/material/Tooltip';
+import {
+    Divider,
+    IconButton,
+    List,
+    ListItem,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    Tooltip,
+} from '@mui/material';
 
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import DashboardIcon from '@mui/icons-material/Dashboard';
+import {
+    ChevronLeft as ChevronLeftIcon,
+    Dashboard as DashboardIcon,
+} from '@mui/icons-material';
 
 import { Utils, Icon, I18n } from '@iobroker/adapter-react-v5';
 
