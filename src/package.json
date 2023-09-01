@@ -13,7 +13,7 @@
         "@mui/icons-material": "^5.14.1",
         "@mui/material": "^5.14.2",
         "@mui/styles": "^5.14.1",
-        "@sentry/browser": "^7.60.1",
+        "@sentry/browser": "^7.66.0",
         "@sentry/integrations": "^7.60.1",
         "ace-builds": "^1.23.4",
         "craco-module-federation": "^1.1.0",
