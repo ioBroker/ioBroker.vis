@@ -7,7 +7,7 @@
         "@devbookhq/splitter": "^1.4.0",
         "@emotion/react": "^11.11.1",
         "@emotion/styled": "^11.11.0",
-        "@iobroker/adapter-react-v5": "^4.3.0",
+        "@iobroker/adapter-react-v5": "^4.5.3",
         "@iobroker/vis-2-widgets-react-dev": "^0.4.4",
         "@material-icons/svg": "^1.0.33",
         "@mui/icons-material": "^5.14.1",
