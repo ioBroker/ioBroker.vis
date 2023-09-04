@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.2.3",
+    "version": "2.2.4",
     "news": {
+      "2.2.4": {
+        "en": "Corrected license checking",
+        "de": "Korrigierte Lizenzprüfung",
+        "ru": "Исправлена проверка лицензии",
+        "pt": "Verificação de licença correta",
+        "nl": "Vertaling:",
+        "fr": "Vérification de la licence corrigée",
+        "it": "Controllo della licenza corretto",
+        "es": "Verificación de licencias corregidas",
+        "pl": "Kwalifikacja przepisowa",
+        "uk": "Виправлена перевірка ліцензії",
+        "zh-cn": "更正的许可证检查"
+      },
       "2.2.2": {
         "en": "Changed sentry settings",
         "de": "Geänderte Einstellungen für die Versendung",
