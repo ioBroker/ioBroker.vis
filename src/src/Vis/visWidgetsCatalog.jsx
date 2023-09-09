@@ -182,7 +182,7 @@ const deepClone = obj => {
         if (obj[key] !== undefined) {
             if (Array.isArray(obj[key]) || typeof obj[key] === 'object') {
                 // If it is ReactJS object
-                if (Object.hasOwn(obj, '$$typeof')) {
+                if (Object.prototype.hasOwnProperty.call(obj, '$$typeof')) {
                     newObj[key] = obj[key];
                 } else {
                     newObj[key] = deepClone(obj[key]);
