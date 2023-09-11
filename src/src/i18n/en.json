@@ -476,5 +476,6 @@
   "Select all": "Hide all",
   "Unselect all": "Show all",
   "Clear filter": "Clear filter",
-  "%s widgets": "%s widgets"
+  "%s widgets": "%s widgets",
+  "Default: auto": "Default: \"auto\""
 }

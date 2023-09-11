@@ -1176,8 +1176,12 @@ const Widget = props => {
                                                                 onClick={() => props.cssClone(field.name, newValue => {
                                                                     if (newValue !== null && newValue !== undefined) {
                                                                         const project = JSON.parse(JSON.stringify(props.project));
-                                                                        props.selectedWidgets.forEach(selectedWidget =>
-                                                                            project[props.selectedView].widgets[selectedWidget].style[field.name] = newValue);
+                                                                        props.selectedWidgets.forEach(selectedWidget => {
+                                                                            if (project[props.selectedView].widgets[selectedWidget]) {
+                                                                                project[props.selectedView].widgets[selectedWidget].style = project[props.selectedView].widgets[selectedWidget].style || {};
+                                                                                project[props.selectedView].widgets[selectedWidget].style[field.name] = newValue;
+                                                                            }
+                                                                        });
                                                                         props.changeProject(project);
                                                                     }
                                                                 })}

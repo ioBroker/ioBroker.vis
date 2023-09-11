@@ -476,5 +476,6 @@
   "Select all": "Скрыть все",
   "Unselect all": "Показать все",
   "Clear filter": "Очистить фильтр",
-  "%s widgets": "%s виджетов"
+  "%s widgets": "%s виджетов",
+  "Default: auto": "По умолчанию: «auto»"
 }

@@ -204,12 +204,15 @@ class Runtime extends GenericApp {
                         delete project[view].widgets[wid];
                         project[view].widgets[newWid] = widget;
                     }
-                    // If the widget is not unique, change its name
-                    if (Object.keys(project).find(v => v !== view && project[v].widgets && project[v].widgets[wid])) {
-                        const _newWid = wid[0] === 'g' ? this.getNewGroupId(project) : this.getNewWidgetId(project);
-                        console.log(`Rename widget ${wid} to ${_newWid}`);
-                        delete project[view].widgets[wid];
-                        project[view].widgets[_newWid] = widget;
+
+                    if (!this.state.runtime && this.getNewWidgetId) {
+                        // If the widget is not unique, change its name (only in editor mode)
+                        if (Object.keys(project).find(v => v !== view && project[v].widgets && project[v].widgets[wid])) {
+                            const _newWid = wid[0] === 'g' ? this.getNewGroupId(project) : this.getNewWidgetId(project);
+                            console.log(`Rename widget ${wid} to ${_newWid}`);
+                            delete project[view].widgets[wid];
+                            project[view].widgets[_newWid] = widget;
+                        }
                     }
 
                     // fix Groups
@@ -548,7 +551,7 @@ class Runtime extends GenericApp {
             newState.alignValues = [];
         }
 
-        if (!this.state.project.___settings.openedViews.includes(selectedView)) {
+        if (!this.state.runtime && !this.state.project.___settings.openedViews.includes(selectedView)) {
             const project = JSON.parse(JSON.stringify(this.state.project));
             project.___settings.openedViews.push(selectedView);
             await this.changeProject(project, true);

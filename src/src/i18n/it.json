@@ -476,5 +476,6 @@
   "Select all": "Seleziona tutto",
   "Unselect all": "Deseleziona tutto",
   "Clear filter": "Filtro pulito",
-  "%s widgets": "%s widget"
+  "%s widgets": "%s widget",
+  "Default: auto": "Predefinito: \"auto\""
 }

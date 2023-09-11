@@ -12,6 +12,7 @@ import {
     Select,
     Switch,
     TextField,
+    FormHelperText,
 } from '@mui/material';
 
 import SaveIcon from '@mui/icons-material/Save';
@@ -148,6 +149,7 @@ const Settings = props => {
             type: 'select',
             name: 'Body overflow',
             field: 'bodyOverflow',
+            help: 'Default: auto',
             noTranslate: true,
             items: [
                 { value: 'auto', name: 'auto' },
@@ -192,7 +194,10 @@ const Settings = props => {
                         label={I18n.t(field.name)}
                     />;
                 } else if (field.type === 'select') {
-                    result = <FormControl variant="standard" fullWidth>
+                    result = <FormControl
+                        variant="standard"
+                        fullWidth
+                    >
                         <InputLabel>{I18n.t(field.name)}</InputLabel>
                         <Select variant="standard" value={value || ''} onChange={e => change(e.target.value)}>
                             {field.items.map(selectItem => <MenuItem
@@ -202,6 +207,7 @@ const Settings = props => {
                                 {field.noTranslate ? selectItem.name : I18n.t(selectItem.name)}
                             </MenuItem>)}
                         </Select>
+                        {field.help ? <FormHelperText>{I18n.t(field.help)}</FormHelperText> : null}
                     </FormControl>;
                 } else if (field.type === 'raw') {
                     result = field.Node;
@@ -239,6 +245,7 @@ const Settings = props => {
                         value={value || ''}
                         onChange={e => change(e.target.value)}
                         label={I18n.t(field.name)}
+                        helperText={field.help ? I18n.t(field.help) : null}
                         type={field.type}
                     />;
                 }

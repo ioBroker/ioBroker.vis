@@ -476,5 +476,6 @@
   "Select all": "Вибрати все",
   "Unselect all": "Скасувати вибір усіх",
   "Clear filter": "Очистити фільтр",
-  "%s widgets": "Віджети %s"
+  "%s widgets": "Віджети %s",
+  "Default: auto": "Типове значення: \"auto\""
 }

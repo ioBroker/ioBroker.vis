@@ -1580,7 +1580,7 @@ class App extends Runtime {
         return <div key="engine">
             {this.renderTabs()}
             <div
-                style={{ overflow: this.state.editMode ? 'auto' : (this.state.project.___settings?.bodyOverflow || undefined) }}
+                style={{ overflow: this.state.editMode ? 'auto' : (this.state.project.___settings?.bodyOverflow || 'auto') }}
                 className={Utils.clsx(
                     this.props.classes.canvas,
                     this.state.toolbarHeight === 'narrow' && this.props.classes.canvasNarrow,

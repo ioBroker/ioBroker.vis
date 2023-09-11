@@ -476,5 +476,6 @@
   "Select all": "Zaznacz wszystko",
   "Unselect all": "Odznacz wszystko",
   "Clear filter": "Czysty filtr",
-  "%s widgets": "%s widżetów"
+  "%s widgets": "%s widżetów",
+  "Default: auto": "Wartość domyślna: „auto”"
 }
