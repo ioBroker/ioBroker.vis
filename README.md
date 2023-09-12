@@ -214,6 +214,9 @@ Notice that these settings are valid only for reconnection and not for the first
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Implemented horizontal navigation
+
 ### 2.2.4 (2023-09-04)
 * (bluefox) Corrected license checking
 

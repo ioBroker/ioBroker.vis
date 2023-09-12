@@ -11,6 +11,8 @@ import {
     ListItemIcon,
     ListItemText,
     Tooltip,
+    Tabs,
+    Tab,
 } from '@mui/material';
 
 import {
@@ -22,7 +24,7 @@ import { Utils, Icon, I18n } from '@iobroker/adapter-react-v5';
 
 const MENU_WIDTH_FULL = 200;
 const MENU_WIDTH_NARROW = 56;
-const TOOLBAR_HEIGHT = 48;
+const TOOLBAR_SIZE = 48;
 
 const styles = theme => ({
     root: {
@@ -32,23 +34,38 @@ const styles = theme => ({
         position: 'relative',
         // overflow: 'hidden',
     },
+    rootHorizontal: {
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        position: 'relative',
+        flexDirection: 'column',
+        // overflow: 'hidden',
+    },
     toolBar: {
         width: '100%',
-        height: TOOLBAR_HEIGHT,
+        height: TOOLBAR_SIZE,
         overflow: 'hidden',
-        lineHeight: `${TOOLBAR_HEIGHT}px`,
+        lineHeight: `${TOOLBAR_SIZE}px`,
         paddingLeft: 16,
         fontSize: 20,
         backgroundColor: theme.palette.primary.main,
         color: theme.palette.primary.contrastText,
         transition: 'padding-left 0.4s ease-in-out',
     },
+    verticalMenu: {
+        width: '100%',
+        height: TOOLBAR_SIZE,
+        overflow: 'hidden',
+        lineHeight: `${TOOLBAR_SIZE}px`,
+        backgroundColor: theme.palette.primary.secondary,
+    },
     toolBarWithClosedMenu: {
-        paddingLeft: 16 + TOOLBAR_HEIGHT,
+        paddingLeft: 16 + TOOLBAR_SIZE,
     },
     viewContentWithToolbar: {
         position: 'relative',
-        height: `calc(100% - ${TOOLBAR_HEIGHT}px)`,
+        height: `calc(100% - ${TOOLBAR_SIZE}px)`,
         width: '100%',
     },
     viewContentWithoutToolbar: {
@@ -59,13 +76,13 @@ const styles = theme => ({
     openMenuButton: {
         position: 'absolute',
         top: 5,
-        width: TOOLBAR_HEIGHT,
-        height: TOOLBAR_HEIGHT,
+        width: TOOLBAR_SIZE,
+        height: TOOLBAR_SIZE,
         zIndex: 999,
         transition: 'all 0.3s ease-in-out',
     },
     openMenuButtonFull: {
-        left: MENU_WIDTH_FULL - TOOLBAR_HEIGHT,
+        left: MENU_WIDTH_FULL - TOOLBAR_SIZE,
     },
     openMenuButtonNarrow: {
         left: 8,
@@ -127,7 +144,7 @@ const styles = theme => ({
         overflowX: 'hidden',
     },
     menuItem: {
-        minHeight: TOOLBAR_HEIGHT,
+        minHeight: TOOLBAR_SIZE,
     },
     listItemIcon: {
         width: 24,
@@ -157,9 +174,9 @@ const styles = theme => ({
         pointerEvents: 'none',
     },
     menuToolbar: {
-        height: TOOLBAR_HEIGHT,
+        height: TOOLBAR_SIZE,
         display: 'flex',
-        lineHeight: `${TOOLBAR_HEIGHT}px`,
+        lineHeight: `${TOOLBAR_SIZE}px`,
         verticalAlign: 'middle',
         paddingLeft: 16,
         fontSize: 20,
@@ -188,9 +205,10 @@ class VisNavigation extends React.Component {
             const viewSettings = this.props.context.views[view].settings;
             if (viewSettings.navigation) {
                 const item = {
-                    text: viewSettings.navigationTitle || view,
+                    text: viewSettings.navigationOnlyIcon ? null : (viewSettings.navigationTitle || view),
                     color: viewSettings.navigationColor,
                     icon: viewSettings.navigationIcon || viewSettings.navigationImage,
+                    noText: viewSettings.navigationOnlyIcon,
                     view,
                 };
 
@@ -202,7 +220,34 @@ class VisNavigation extends React.Component {
             }
         });
 
+        if (settings.navigationOrientation === 'horizontal') {
+            return <div
+                className={this.props.classes.verticalMenu}
+                style={{
+                    backgroundColor: settings.navigationBarColor,
+                    opacity: this.props.editMode ? 0.4 : 1,
+                }}
+            >
+                <Tabs
+                    value={this.props.activeView}
+                >
+                    {items.map((item, index) => <Tab
+                        iconPosition="start"
+                        key={index}
+                        style={{ minHeight: 48, minWidth: item.noText ? 20 : undefined }}
+                        icon={item.icon ? <Icon src={item.icon} className={this.props.classes.listItemIcon} /> : null}
+                        onClick={() => this.navigate(item.view)}
+                        value={item.view}
+                        label={item.text}
+                    />)}
+                </Tabs>
+            </div>;
+        }
+
         return <div
+            style={{
+                opacity: this.props.editMode ? 0.4 : 1,
+            }}
             className={Utils.clsx(
                 this.props.classes.menu,
                 this.props.menuWidth === 'full' && this.props.classes.menuFull,
@@ -302,6 +347,7 @@ class VisNavigation extends React.Component {
                 color: Utils.getInvertedColor(settings.navigationBarColor, this.props.context.themeType, true),
             };
         }
+        style.opacity = this.props.editMode ? 0.4 : 1;
 
         return <div
             className={Utils.clsx(
@@ -319,6 +365,15 @@ class VisNavigation extends React.Component {
             return null;
         }
         const settings = this.props.context.views[this.props.view].settings;
+
+        if (settings.navigationOrientation === 'horizontal') {
+            return <div className={this.props.classes.rootHorizontal}>
+                {this.renderMenu(settings)}
+                <div className={this.props.classes.viewContentWithToolbar}>
+                    {this.props.children}
+                </div>
+            </div>;
+        }
 
         return <div className={this.props.classes.root}>
             <div

@@ -37,10 +37,11 @@ import {
     IconPicker,
     SelectFile as SelectFileDialog,
     Confirm as ConfirmDialog,
-    TextWithIcon,
+    TextWithIcon, Icon,
 } from '@iobroker/adapter-react-v5';
 
 import { theme, background } from './ViewData';
+import MaterialIconSelector from "../Components/MaterialIconSelector";
 
 const styles = _theme => ({
     backgroundClass: {
@@ -511,25 +512,41 @@ const View = props => {
                     type: 'text', name: 'Title', field: 'navigationTitle', notStyle: true, hidden: '!data.navigation',
                 },
                 {
-                    type: 'checkbox', name: 'Show app bar', field: 'navigationBar', notStyle: true, default: true, hidden: '!data.navigation', applyToAll: true,
-                },
-                {
-                    type: 'color', name: 'Bar color', field: 'navigationBarColor', notStyle: true, hidden: '!data.navigation || !data.navigationBar', applyToAll: true,
-                },
-                {
-                    type: 'icon', name: 'Icon', field: 'navigationIcon', notStyle: true, hidden: '!data.navigation || data.navigationImage',
+                    type: 'icon64', name: 'Icon', field: 'navigationIcon', notStyle: true, hidden: '!data.navigation || data.navigationImage',
                 },
                 {
                     type: 'image', name: 'Image', field: 'navigationImage', notStyle: true, hidden: '!data.navigation || data.navigationIcon',
                 },
                 {
-                    type: 'text', name: 'Menu header text', field: 'navigationHeaderText', notStyle: true, hidden: '!data.navigation', applyToAll: true,
+                    type: 'select',
+                    name: 'Orientation',
+                    field: 'navigationOrientation',
+                    notStyle: true,
+                    default: 'vertical',
+                    hidden: '!data.navigation',
+                    applyToAll: true,
+                    items: [
+                        { value: 'vertical', name: 'Vertical' },
+                        { value: 'horizontal', name: 'Horizontal' },
+                    ],
                 },
                 {
-                    type: 'checkbox', name: 'Do not hide menu', field: 'navigationNoHide', notStyle: true, hidden: '!data.navigation', applyToAll: true,
+                    type: 'checkbox', name: 'Only icon', field: 'navigationOnlyIcon', notStyle: true, default: true, hidden: '!data.navigation || data.navigationOrientation !== "horizontal"', applyToAll: true,
                 },
                 {
-                    type: 'checkbox', name: 'Show background of button', field: 'navigationButtonBackground', notStyle: true, hidden: '!data.navigation || data.navigationNoHide', applyToAll: true,
+                    type: 'checkbox', name: 'Show app bar', field: 'navigationBar', notStyle: true, default: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
+                },
+                {
+                    type: 'color', name: 'Bar color', field: 'navigationBarColor', notStyle: true, hidden: '!data.navigation || (!data.navigationBar && data.navigationOrientation !== "horizontal")', applyToAll: true,
+                },
+                {
+                    type: 'text', name: 'Menu header text', field: 'navigationHeaderText', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
+                },
+                {
+                    type: 'checkbox', name: 'Do not hide menu', field: 'navigationNoHide', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
+                },
+                {
+                    type: 'checkbox', name: 'Show background of button', field: 'navigationButtonBackground', notStyle: true, hidden: '!data.navigation || data.navigationNoHide || data.navigationOrientation === "horizontal"', applyToAll: true,
                 },
             ],
         },
@@ -637,6 +654,7 @@ const View = props => {
             : fields.map(() => false),
     );
     const [showDialog, setShowDialog] = useState(false);
+    const [showDialog64, setShowDialog64] = useState(false);
     const [textDialogFocused, setTextDialogFocused] = useState(false);
     const [textDialogEnabled, setTextDialogEnabled] = useState(true);
     const textRef = useRef();
@@ -673,7 +691,7 @@ const View = props => {
     if (showAllViewDialog) {
         const viewsToChange = [];
         if (showAllViewDialog.groupApply) {
-            // find all fields with applyToAll flag and if any is not equal show button
+            // find all fields with applyToAll flag, and if any is not equal show button
             for (let f = 0; f < showAllViewDialog.group.fields.length; f++) {
                 const field = showAllViewDialog.group.fields[f];
                 if (field.applyToAll && !field.groupApply) {
@@ -1067,6 +1085,47 @@ const View = props => {
                                             }}
                                         />
                                         <IconButton disabled={!props.editMode || disabled} onClick={() => change(null)}><ClearIcon /></IconButton>
+                                    </div>;
+                                } else if (field.type === 'icon64') {
+                                    result = <div style={{ display: 'flex', width: '100%', alignItems: 'center' }}>
+                                        <TextField
+                                            fullWidth
+                                            size="small"
+                                            variant="standard"
+                                            value={value}
+                                            error={!!error}
+                                            disabled={disabled}
+                                            onChange={e => change(e.target.value)}
+                                            InputProps={{
+                                                endAdornment: value ? <IconButton
+                                                    disabled={disabled}
+                                                    size="small"
+                                                    onClick={() => change('')}
+                                                >
+                                                    <ClearIcon />
+                                                </IconButton> : null,
+                                                classes: {
+                                                    input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
+                                                },
+                                            }}
+                                        />
+                                        <Button
+                                            variant={value ? 'outlined' : undefined}
+                                            color={value ? 'grey' : undefined}
+                                            onClick={() => setShowDialog64(true)}
+                                        >
+                                            {value ? <Icon src={value} style={{ width: 36, height: 36 }} /> : '...'}
+                                        </Button>
+                                        {showDialog64 &&
+                                            <MaterialIconSelector
+                                                value={value}
+                                                onClose={icon => {
+                                                    setShowDialog64(false);
+                                                    if (icon !== null) {
+                                                        change(icon);
+                                                    }
+                                                }}
+                                            />}
                                     </div>;
                                 } else {
                                     result = <TextField

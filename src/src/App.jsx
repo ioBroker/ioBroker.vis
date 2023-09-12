@@ -30,7 +30,7 @@ import {
     Loader,
     Confirm as ConfirmDialog,
     Message as MessageDialog,
-    SelectFile as SelectFileDialog,
+    SelectFile as SelectFileDialog, Icon,
 } from '@iobroker/adapter-react-v5';
 
 import Attributes from './Attributes';
@@ -97,6 +97,8 @@ const styles = theme => ({
     },
     tabsName: {
         whiteSpace: 'nowrap',
+        display: 'flex',
+        alignItems: 'center',
     },
     viewTabs: {
         display: 'inline-block',
@@ -136,6 +138,11 @@ const styles = theme => ({
         animationName: '$colorBlink',
         animationDuration: '1.5s',
         animationIterationCount: 'infinite',
+    },
+    listItemIcon: {
+        width: 24,
+        height: 24,
+        marginRight: 8,
     },
 });
 
@@ -1468,12 +1475,14 @@ class App extends Runtime {
                 {
                     views.map(view => {
                         const isGroupEdited = !!this.state.selectedGroup && view === this.state.selectedView;
+                        const viewSettings = isGroupEdited ? {} : (this.state.project[view].settings || {});
 
                         return <Tab
                             component="span"
                             disabled={!!this.state.selectedGroup && view !== this.state.selectedView}
                             label={<span className={Utils.clsx(isGroupEdited && this.props.classes.groupEditTab, this.props.classes.tabsName)}>
-                                {isGroupEdited ? `${I18n.t('Group %s', this.state.selectedGroup)}` : view}
+                                {viewSettings.navigationIcon || viewSettings.navigationImage ? <Icon src={viewSettings.navigationIcon || viewSettings.navigationImage} className={this.props.classes.listItemIcon} /> : null}
+                                {isGroupEdited ? `${I18n.t('Group %s', this.state.selectedGroup)}` : (viewSettings.navigationTitle || view)}
                                 <Tooltip title={isGroupEdited ? I18n.t('Close group editor') : I18n.t('Hide')}>
                                     <span>
                                         <IconButton
