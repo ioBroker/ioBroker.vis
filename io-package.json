@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.2.4",
+    "version": "2.2.5",
     "news": {
+      "2.2.5": {
+        "en": "Implemented horizontal navigation",
+        "de": "Ergänzte horizontale Navigation",
+        "ru": "Внедренная горизонтальная навигация",
+        "pt": "Navegação horizontal implementada",
+        "nl": "Vertaling:",
+        "fr": "Mise en œuvre de la navigation horizontale",
+        "it": "Navigazione orizzontale",
+        "es": "Navegación horizontal aplicada",
+        "pl": "Poprawa horyzontalna",
+        "uk": "Реалізовано горизонтальну навігацію",
+        "zh-cn": "执行横向导航"
+      },
       "2.2.4": {
         "en": "Corrected license checking",
         "de": "Korrigierte Lizenzprüfung",
@@ -80,19 +93,6 @@
         "pl": "Pierwsza wersja beta",
         "uk": "Перший випуск бета",
         "zh-cn": "第一批释放"
-      },
-      "2.1.4": {
-        "en": "Allowed to add widgets to widgets",
-        "de": "Erlaubt, Widgets zu Widgets hinzuzufügen",
-        "ru": "Разрешено добавлять виджеты в виджеты",
-        "pt": "Permite adicionar widgets a widgets",
-        "nl": "Toegestaan om wedgetten toe te voegen aan wedgets",
-        "fr": "Permet d'ajouter des widgets aux widgets",
-        "it": "Permesso di aggiungere widget a widgets",
-        "es": "Permitido añadir widgets a widgets",
-        "pl": "Wszystko, aby dodać widgety do widgetów",
-        "uk": "Додайте віджети до віджетів",
-        "zh-cn": "允许添加令人发指的目标"
       }
     },
     "title": "Visualisation Next Generation",
