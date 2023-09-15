@@ -215,7 +215,7 @@
   "Radial blue": "Strahlend blau",
   "Reconnect interval": "Wiederverbindungsintervall",
   "Reload all runtimes": "Alle Browser mit vis neuladen",
-  "Reload if sleep longer than": "Browser erneut laden, falls Ruhemodus länger ist als",
+  "Reload if sleep longer than": "Browser erneut laden, falls Ruhemodus länger aktiv war als",
   "Rename": "Umbenennen",
   "Rename view \"%s\"": "Seite „%s“ umbenennen",
   "Render always": "Immer rendern",
