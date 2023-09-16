@@ -210,12 +210,10 @@ class VisFormatUtils {
         const type = typeof dateObj;
         if (type === 'string') {
             dateObj = new Date(dateObj);
-        }
-
-        if (type !== 'object') {
+        } else if (type !== 'object') {
             const j = parseInt(dateObj, 10);
             if (j === dateObj) {
-                // may this is interval
+                // maybe this is an interval
                 if (j < 946681200) {
                     isDuration = true;
                     dateObj = new Date(dateObj);
@@ -237,14 +235,15 @@ class VisFormatUtils {
 
         for (let i = 0; i < format.length; i++) {
             if (validFormatChars.includes(format[i])) {
+                // combine format character
                 s += format[i];
             } else {
-                VisFormatUtils._put(s, dateObj, result);
+                result = VisFormatUtils._put(s, dateObj, result);
                 s = '';
                 result += format[i];
             }
         }
-        VisFormatUtils._put(s, dateObj, result);
+        result = VisFormatUtils._put(s, dateObj, result);
         return result;
     }
 
