@@ -55,7 +55,6 @@ const styles = theme => ({
     },
     verticalMenu: {
         width: '100%',
-        position: 'fixed',
         top: 0,
         left: 0,
         height: TOOLBAR_SIZE,
@@ -230,6 +229,7 @@ class VisNavigation extends React.Component {
                 style={{
                     backgroundColor: settings.navigationBarColor || this.props.context.theme.palette.background.paper,
                     opacity: this.props.editMode ? 0.4 : 1,
+                    position: this.props.editMode ? 'relative' : 'fixed',
                 }}
             >
                 <Tabs
@@ -376,7 +376,7 @@ class VisNavigation extends React.Component {
                 <div
                     className={this.props.classes.viewContentWithToolbar}
                     style={{
-                        marginTop: TOOLBAR_SIZE,
+                        marginTop: this.props.editMode ? undefined : TOOLBAR_SIZE,
                     }}
                 >
                     {this.props.children}
