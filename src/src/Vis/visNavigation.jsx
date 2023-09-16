@@ -55,10 +55,14 @@ const styles = theme => ({
     },
     verticalMenu: {
         width: '100%',
+        position: 'fixed',
+        top: 0,
+        left: 0,
         height: TOOLBAR_SIZE,
         overflow: 'hidden',
         lineHeight: `${TOOLBAR_SIZE}px`,
         backgroundColor: theme.palette.primary.secondary,
+        zIndex: 450,
     },
     toolBarWithClosedMenu: {
         paddingLeft: 16 + TOOLBAR_SIZE,
@@ -224,7 +228,7 @@ class VisNavigation extends React.Component {
             return <div
                 className={this.props.classes.verticalMenu}
                 style={{
-                    backgroundColor: settings.navigationBarColor,
+                    backgroundColor: settings.navigationBarColor || this.props.context.theme.palette.background.paper,
                     opacity: this.props.editMode ? 0.4 : 1,
                 }}
             >
@@ -369,7 +373,12 @@ class VisNavigation extends React.Component {
         if (settings.navigationOrientation === 'horizontal') {
             return <div className={this.props.classes.rootHorizontal}>
                 {this.renderMenu(settings)}
-                <div className={this.props.classes.viewContentWithToolbar}>
+                <div
+                    className={this.props.classes.viewContentWithToolbar}
+                    style={{
+                        marginTop: TOOLBAR_SIZE,
+                    }}
+                >
                     {this.props.children}
                 </div>
             </div>;

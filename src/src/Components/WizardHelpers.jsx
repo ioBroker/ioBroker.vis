@@ -10,8 +10,15 @@ import {
     Water,
     Lock,
     Window,
-    Palette, PlayArrowRounded, Power, TipsAndUpdates, Tune, WaterDrop,
+    Palette,
+    PlayArrowRounded,
+    Power,
+    TipsAndUpdates,
+    Tune,
+    WaterDrop,
 } from '@mui/icons-material';
+
+import { TbVacuumCleaner } from 'react-icons/tb';
 
 import { ChannelDetector } from 'iobroker.type-detector';
 
@@ -27,8 +34,13 @@ const deviceIcons = {
     lock: <Lock />,
     media: <PlayArrowRounded />,
     motion: <DirectionsRun />,
-    rgp: <Palette />,
+    rgb: <Palette />,
+    rgbSingle: <Palette />,
+    rgbwSingle: <Palette />,
+    ct: <Palette />,
+    hue: <Palette />,
     socket: <Power />,
+    vacuumCleaner: <TbVacuumCleaner />,
     temperature: <Thermostat />,
     thermostat: <Thermostat />,
     volume: <VolumeUp />,
@@ -164,6 +176,7 @@ const detectDevices = async socket => {
                     states: control.states
                         .filter(state => state.id)
                         .map(state => {
+                            devicesObject[state.id].name = state.name;
                             devicesObject[state.id].common.role = state.defaultRole;
                             return devicesObject[state.id];
                         }),
