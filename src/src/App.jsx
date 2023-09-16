@@ -43,7 +43,7 @@ import { getWidgetTypes, parseAttributes } from './Vis/visWidgetsCatalog';
 import VisContextMenu from './Vis/visContextMenu';
 import Runtime from './Runtime';
 import ImportProjectDialog from './Toolbar/ProjectsManager/ImportProjectDialog';
-import { findWidgetUsages, loadComponent } from './Vis/visUtils';
+import { findWidgetUsages } from './Vis/visUtils';
 import MarketplaceDialog from './Marketplace/MarketplaceDialog';
 
 const generateClassName = createGenerateClassName({
@@ -252,9 +252,6 @@ class App extends Runtime {
             showProjectUpdateDialog: false,
             ignoreMouseEvents: false,
             legacyFileSelector: null,
-            marketplaceDialog: false,
-            marketplaceUpdates: null,
-            marketplaceDeleted: null,
             askAboutInclude: null,
         });
     }
@@ -263,22 +260,6 @@ class App extends Runtime {
         super.componentDidMount();
         window.addEventListener('keydown', this.onKeyDown, false);
         window.addEventListener('beforeunload', this.onBeforeUnload, false);
-
-        // load marketplace
-        this.marketplaceLoaded = new Promise(resolve => {
-            const tPromise = loadComponent('__marketplace', 'default', './translations', `${window.marketplaceClient}/customWidgets.js`)()
-                .then(translations => I18n.extendTranslations(translations.default));
-
-            const mPromise = loadComponent('__marketplace', 'default', './VisMarketplace', `${window.marketplaceClient}/customWidgets.js`)()
-                .then(marketplace => {
-                    this.setState({ VisMarketplace: marketplace });
-                    window.VisMarketplace = marketplace;
-                });
-
-            Promise.all([tPromise, mPromise])
-                .catch(e => console.error(`Cannot load marketplace: ${e}`))
-                .then(() => resolve());
-        });
     }
 
     componentWillUnmount() {
@@ -514,7 +495,6 @@ class App extends Runtime {
             });
         });
         await this.changeProject(project);
-        await this.checkForUpdates();
     };
 
     deleteWidgetsAction = async () => {
@@ -1287,7 +1267,7 @@ class App extends Runtime {
         if (widgetIndex !== -1) {
             project.___settings.marketplace.splice(widgetIndex, 1);
         }
-        this.changeProject(project);
+        await this.changeProject(project);
     };
 
     importMarketplaceWidget = (project, view, widgets, id, x, y, widgetId, oldData, oldStyle) => {
@@ -1347,33 +1327,8 @@ class App extends Runtime {
         const project = JSON.parse(JSON.stringify(this.state.project));
         const widgets = JSON.parse(JSON.stringify(this.state.project.___settings.marketplace.find(item => item.id === id).widget));
         this.importMarketplaceWidget(project, this.state.selectedView, widgets, id, x, y, widgetId, oldData, oldStyle);
-        this.changeProject(project);
+        await this.changeProject(project);
     };
-
-    checkForUpdates = () => this.marketplaceLoaded
-        .then(async () => {
-            const updates = [];
-            const deleted = [];
-            if (this.state.project?.___settings?.marketplace && window.VisMarketplace?.api) {
-                for (const i in this.state.project.___settings.marketplace) {
-                    const widget = this.state.project.___settings.marketplace[i];
-                    try {
-                        const data = await window.VisMarketplace.api.apiGetWidget(widget.widget_id);
-                        if (data.version !== widget.version) {
-                            updates.push(data);
-                        }
-                    } catch (e) {
-                        if (e.statusCode === 404) {
-                            deleted.push(widget.widget_id);
-                        } else {
-                            console.error(`Cannot check updates for ${widget.widget_id}: ${e}`);
-                        }
-                    }
-                }
-            }
-
-            this.setState({ marketplaceUpdates: updates, marketplaceDeleted: deleted });
-        });
 
     updateWidget = async id => {
         const project = JSON.parse(JSON.stringify(this.state.project));
@@ -1381,7 +1336,7 @@ class App extends Runtime {
         if (widget && widget.marketplace) {
             const marketplace = JSON.parse(JSON.stringify(this.state.project.___settings.marketplace.find(item => item.widget_id === widget.marketplace.widget_id)));
             await this.deleteWidgetsAction();
-            this.addMarketplaceWidget(marketplace.id, null, null, id, widget.data, widget.style);
+            await this.addMarketplaceWidget(marketplace.id, null, null, id, widget.data, widget.style);
         }
     };
 
@@ -1560,8 +1515,8 @@ class App extends Runtime {
                 this.state.toolbarHeight === 'veryNarrow' && this.props.classes.blockVeryNarrow,
             )}
         >
-            {!this.state.marketplaceUpdates || this.state.widgetsLoaded !== Runtime.WIDGETS_LOADING_STEP_ALL_LOADED ? <LinearProgress variant="indeterminate" value={(this.state.loadingProgress.step / this.state.loadingProgress.total) * 100} /> : null}
-            {this.state.marketplaceUpdates ? <Palette
+            {this.state.widgetsLoaded !== Runtime.WIDGETS_LOADING_STEP_ALL_LOADED ? <LinearProgress variant="indeterminate" value={(this.state.loadingProgress.step / this.state.loadingProgress.total) * 100} /> : null}
+            <Palette
                 classes={{}}
                 widgetsLoaded={this.state.widgetsLoaded === Runtime.WIDGETS_LOADING_STEP_ALL_LOADED}
                 onHide={() => {
@@ -1570,8 +1525,6 @@ class App extends Runtime {
                 }}
                 uninstallWidget={this.uninstallWidget}
                 setMarketplaceDialog={this.setMarketplaceDialog}
-                marketplaceUpdates={this.state.marketplaceUpdates}
-                marketplaceDeleted={this.state.marketplaceDeleted}
                 updateWidgets={this.updateWidgets}
                 selectedView={this.state.selectedView}
                 project={this.state.project}
@@ -1579,7 +1532,7 @@ class App extends Runtime {
                 socket={this.socket}
                 editMode={this.state.editMode}
                 themeType={this.state.themeType}
-            /> : null}
+            />
         </div>;
     }
 

@@ -175,10 +175,10 @@ const detectDevices = async socket => {
                 if (devicesObject[stateId].type === 'channel' || devicesObject[stateId].type === 'state') {
                     parts.pop();
                     channelId = parts.join('.');
-                    if (devicesObject[channelId] && (devicesObject[channelId].type === 'channel' || devicesObject[stateId].type === 'folder')) {
+                    if (devicesObject[channelId] && (devicesObject[channelId].type === 'channel' || devicesObject[channelId].type === 'folder')) {
                         parts.pop();
                         deviceId = parts.join('.');
-                        if (!devicesObject[deviceId] || (devicesObject[deviceId].type !== 'device' && devicesObject[stateId].type !== 'folder')) {
+                        if (!devicesObject[deviceId] || (devicesObject[deviceId].type !== 'device' && devicesObject[deviceId].type !== 'folder')) {
                             deviceId = null;
                         }
                     } else {

@@ -46,9 +46,7 @@ const MarketplaceDialog = props => {
         open={!0}
         fullScreen
         onClose={props.onClose}
-        PaperProps={{
-            color: 'primary',
-        }}
+        PaperProps={{ color: 'primary' }}
     >
         <DialogTitle>{props.addPage ? I18n.t('Add new or update existing widget') : I18n.t('Browse the widgeteria')}</DialogTitle>
         <DialogContent>

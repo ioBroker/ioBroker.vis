@@ -1,27 +1,30 @@
 import PropTypes from 'prop-types';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import withStyles from '@mui/styles/withStyles';
 
 import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
-    IconButton,
+    IconButton, LinearProgress,
     TextField,
     Tooltip,
     Typography,
 } from '@mui/material';
 
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ClearIcon from '@mui/icons-material/Clear';
-import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
-import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
+import {
+    ExpandMore as ExpandMoreIcon,
+    Clear as ClearIcon,
+    UnfoldMore as UnfoldMoreIcon,
+    UnfoldLess as UnfoldLessIcon,
+} from '@mui/icons-material';
 
 import { I18n, Utils, Icon } from '@iobroker/adapter-react-v5';
 
 import Widget from './Widget';
 import { getWidgetTypes } from '../Vis/visWidgetsCatalog';
 import MarketplacePalette from '../Marketplace/MarketplacePalette';
+import { loadComponent } from '../Vis/visUtils';
 
 const styles = theme => ({
     widgets: { textAlign: 'center', overflowY: 'auto', height: 'calc(100% - 84px)' },
@@ -83,6 +86,9 @@ const styles = theme => ({
 
 const Palette = props => {
     const [filter, setFilter] = useState('');
+    const [marketplaceUpdates, setMarketplaceUpdates] = useState(null);
+    const [marketplaceDeleted, setMarketplaceDeleted] = useState(null);
+    const [marketplaceLoading, setMarketplaceLoading] = useState(false);
 
     const [accordionOpen, setAccordionOpen] = useState(
         window.localStorage.getItem('widgets')
@@ -91,14 +97,14 @@ const Palette = props => {
     );
 
     const { widgetsList, widgetSetProps } = useMemo(() => {
-        let _widgetsList = window.VisMarketplace && props.marketplaceUpdates ? {
+        let _widgetsList = {
             __marketplace: {},
-        } : {};
-        const _widgetSetProps = window.VisMarketplace && props.marketplaceUpdates ? {
+        };
+        const _widgetSetProps = {
             __marketplace: {
                 icon: 'img/marketplace.png',
             },
-        } : {};
+        };
         if (!props.widgetsLoaded) {
             return { widgetsList: _widgetsList, widgetSetProps: _widgetSetProps };
         }
@@ -192,6 +198,46 @@ const Palette = props => {
         return { widgetsList: _widgetsList, widgetSetProps: _widgetSetProps };
     }, [filter, props.widgetsLoaded]);
 
+    useEffect(() => {
+        if (accordionOpen.__marketplace && window.marketplaceClient && !marketplaceUpdates && !marketplaceLoading) {
+            // load marketplace
+            setMarketplaceLoading(true);
+            const tPromise = loadComponent('__marketplace', 'default', './translations', `${window.marketplaceClient}/customWidgets.js`)()
+                .then(translations => I18n.extendTranslations(translations.default));
+
+            const mPromise = loadComponent('__marketplace', 'default', './VisMarketplace', `${window.marketplaceClient}/customWidgets.js`)()
+                .then(marketplace => window.VisMarketplace = marketplace);
+
+            Promise.all([tPromise, mPromise])
+                .then(async () => {
+                    const updates = [];
+                    const deleted = [];
+                    if (props.project?.___settings?.marketplace && window.VisMarketplace?.api) {
+                        for (const i in props.project.___settings.marketplace) {
+                            const widget = props.project.___settings.marketplace[i];
+                            try {
+                                const data = await window.VisMarketplace.api.apiGetWidget(widget.widget_id);
+                                if (data.version !== widget.version) {
+                                    updates.push(data);
+                                }
+                            } catch (e) {
+                                if (e.statusCode === 404) {
+                                    deleted.push(widget.widget_id);
+                                } else {
+                                    console.error(`Cannot check updates for ${widget.widget_id}: ${e}`);
+                                }
+                            }
+                        }
+                    }
+
+                    setMarketplaceUpdates(updates);
+                    setMarketplaceDeleted(deleted);
+                    setMarketplaceLoading(false);
+                })
+                .catch(e => console.error(`Cannot load marketplace: ${e}`));
+        }
+    }, [accordionOpen.__marketplace]);
+
     if (!props.widgetsLoaded) {
         return null;
     }
@@ -235,8 +281,7 @@ const Palette = props => {
             <Tooltip title={I18n.t('Hide palette')}>
                 <IconButton
                     size="small"
-                    onClick={() =>
-                        props.onHide(true)}
+                    onClick={() => props.onHide(true)}
                 >
                     <ClearIcon />
                 </IconButton>
@@ -265,89 +310,86 @@ const Palette = props => {
             />
         </div>
         <div className={props.classes.widgets}>
-            {
-                Object.keys(widgetsList).map((category, categoryKey) => <Accordion
-                    key={categoryKey}
-                    elevation={0}
-                    expanded={accordionOpen[category] || false}
-                    onChange={(e, expanded) => {
-                        const newAccordionOpen = JSON.parse(JSON.stringify(accordionOpen));
-                        newAccordionOpen[category] = expanded;
-                        window.localStorage.setItem('widgets', JSON.stringify(newAccordionOpen));
-                        setAccordionOpen(newAccordionOpen);
+            {Object.keys(widgetsList).map((category, categoryKey) => <Accordion
+                key={categoryKey}
+                elevation={0}
+                expanded={accordionOpen[category] || false}
+                onChange={(e, expanded) => {
+                    const newAccordionOpen = JSON.parse(JSON.stringify(accordionOpen));
+                    newAccordionOpen[category] = expanded;
+                    window.localStorage.setItem('widgets', JSON.stringify(newAccordionOpen));
+                    setAccordionOpen(newAccordionOpen);
+                }}
+            >
+                <AccordionSummary
+                    id={`summary_${category}`}
+                    expandIcon={<ExpandMoreIcon />}
+                    className={Utils.clsx('vis-palette-widget-set', accordionOpen[category] && 'vis-palette-summary-expanded')}
+                    classes={{
+                        root: Utils.clsx(
+                            props.classes.clearPadding,
+                            accordionOpen[category] ? props.classes.groupSummaryExpanded : props.classes.groupSummary,
+                            props.classes.lightedPanel,
+                        ),
+                        content: props.classes.clearPadding,
+                        expandIcon: props.classes.clearPadding,
                     }}
                 >
-                    <AccordionSummary
-                        id={`summary_${category}`}
-                        expandIcon={<ExpandMoreIcon />}
-                        className={Utils.clsx('vis-palette-widget-set', accordionOpen[category] && 'vis-palette-summary-expanded')}
-                        classes={{
-                            root: Utils.clsx(
-                                props.classes.clearPadding,
-                                accordionOpen[category] ? props.classes.groupSummaryExpanded : props.classes.groupSummary,
-                                props.classes.lightedPanel,
-                            ),
-                            content: props.classes.clearPadding,
-                            expandIcon: props.classes.clearPadding,
-                        }}
-                    >
-                        {widgetSetProps[category]?.icon ?
-                            <Icon className={props.classes.groupIcon} src={widgetSetProps[category].icon} />
-                            :
-                            null}
-                        {widgetSetProps[category]?.label ?
-                            (widgetSetProps[category].label.startsWith('Vis 2 - ') ?
-                                widgetSetProps[category].label.substring(8) : widgetSetProps[category].label)
-                            :
-                            I18n.t(category)}
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        {
-                            category === '__marketplace' && props.marketplaceUpdates && <div>
-                                <MarketplacePalette setMarketplaceDialog={props.setMarketplaceDialog} />
-                                {props.project.___settings.marketplace?.map(item => <div key={item.id}>
-                                    <Widget
-                                        editMode={props.editMode}
-                                        key={item.id}
-                                        marketplace={item}
-                                        marketplaceDeleted={props.marketplaceDeleted}
-                                        marketplaceUpdates={props.marketplaceUpdates}
-                                        uninstallWidget={props.uninstallWidget}
-                                        updateWidgets={props.updateWidgets}
-                                        widgetSet={category}
-                                        widgetSetProps={widgetSetProps[category]}
-                                        widgetType={{
-                                            id: item.id,
-                                            widget_id: item.widget_id,
-                                            label: item.name,
-                                            preview: `${window.apiUrl + window.webPrefix}/images/${item.image_id}`,
-                                        }}
-                                        widgetTypeName={item.name}
-                                    />
-                                </div>)}
-                            </div>
-                        }
-                        {widgetSetProps[category]?.version ?
-                            <div className={props.classes.version}>{widgetSetProps[category]?.version}</div> : null}
-                        <div>
-                            {accordionOpen[category] ? widgetsList[category].map(widgetItem =>
-                                (widgetItem.name === '_tplGroup' ? null : <Widget
-                                    changeProject={props.changeProject}
-                                    editMode={props.editMode}
-                                    key={widgetItem.name}
-                                    project={props.project}
-                                    selectedView={props.selectedView}
-                                    socket={props.socket}
-                                    themeType={props.themeType}
-                                    widgetSet={category}
-                                    widgetSetProps={widgetSetProps[category]}
-                                    widgetType={widgetItem}
-                                    widgetTypeName={widgetItem.name}
-                                />)) : null}
-                        </div>
-                    </AccordionDetails>
-                </Accordion>)
-            }
+                    {widgetSetProps[category]?.icon ?
+                        <Icon className={props.classes.groupIcon} src={widgetSetProps[category].icon} />
+                        :
+                        null}
+                    {widgetSetProps[category]?.label ?
+                        (widgetSetProps[category].label.startsWith('Vis 2 - ') ?
+                            widgetSetProps[category].label.substring(8) : widgetSetProps[category].label)
+                        :
+                        I18n.t(category)}
+                </AccordionSummary>
+                <AccordionDetails>
+                    {accordionOpen.__marketplace && marketplaceLoading && category === '__marketplace' && <LinearProgress />}
+                    {accordionOpen.__marketplace && category === '__marketplace' && marketplaceUpdates && <div>
+                        <MarketplacePalette setMarketplaceDialog={props.setMarketplaceDialog} />
+                        {props.project.___settings.marketplace?.map(item => <div key={item.id}>
+                            <Widget
+                                editMode={props.editMode}
+                                key={item.id}
+                                marketplace={item}
+                                marketplaceDeleted={marketplaceDeleted}
+                                marketplaceUpdates={marketplaceUpdates}
+                                uninstallWidget={props.uninstallWidget}
+                                updateWidgets={props.updateWidgets}
+                                widgetSet={category}
+                                widgetSetProps={widgetSetProps[category]}
+                                widgetType={{
+                                    id: item.id,
+                                    widget_id: item.widget_id,
+                                    label: item.name,
+                                    preview: `${window.apiUrl + window.webPrefix}/images/${item.image_id}`,
+                                }}
+                                widgetTypeName={item.name}
+                            />
+                        </div>)}
+                    </div>}
+                    {widgetSetProps[category]?.version ?
+                        <div className={props.classes.version}>{widgetSetProps[category]?.version}</div> : null}
+                    <div>
+                        {accordionOpen[category] ? widgetsList[category].map(widgetItem =>
+                            (widgetItem.name === '_tplGroup' ? null : <Widget
+                                changeProject={props.changeProject}
+                                editMode={props.editMode}
+                                key={widgetItem.name}
+                                project={props.project}
+                                selectedView={props.selectedView}
+                                socket={props.socket}
+                                themeType={props.themeType}
+                                widgetSet={category}
+                                widgetSetProps={widgetSetProps[category]}
+                                widgetType={widgetItem}
+                                widgetTypeName={widgetItem.name}
+                            />)) : null}
+                    </div>
+                </AccordionDetails>
+            </Accordion>)}
         </div>
     </>;
 };
@@ -360,8 +402,6 @@ Palette.propTypes = {
     updateWidgets: PropTypes.func,
     project: PropTypes.object,
     widgetsLoaded: PropTypes.bool,
-    marketplaceUpdates: PropTypes.array,
-    marketplaceDeleted: PropTypes.array,
     socket: PropTypes.object,
     themeType: PropTypes.string,
 };

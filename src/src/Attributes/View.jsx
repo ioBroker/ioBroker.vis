@@ -41,7 +41,7 @@ import {
 } from '@iobroker/adapter-react-v5';
 
 import { theme, background } from './ViewData';
-import MaterialIconSelector from "../Components/MaterialIconSelector";
+import MaterialIconSelector from '../Components/MaterialIconSelector';
 
 const styles = _theme => ({
     backgroundClass: {

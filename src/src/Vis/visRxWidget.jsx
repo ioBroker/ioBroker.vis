@@ -367,7 +367,9 @@ class VisRxWidget extends VisBaseWidget {
 
     formatValue(value, round) {
         if (typeof value === 'number') {
-            if (round === 0) {
+            if (round === 1) {
+                value = Math.round(value * 10) / 10;
+            } else if (round === 0) {
                 value = Math.round(value);
             } else {
                 value = Math.round(value * 100) / 100;
