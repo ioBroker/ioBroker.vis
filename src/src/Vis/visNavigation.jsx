@@ -251,6 +251,7 @@ class VisNavigation extends React.Component {
         return <div
             style={{
                 opacity: this.props.editMode ? 0.4 : 1,
+                backgroundColor: settings.navigationBackground || undefined,
             }}
             className={Utils.clsx(
                 this.props.classes.menu,

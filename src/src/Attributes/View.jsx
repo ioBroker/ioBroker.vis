@@ -540,6 +540,9 @@ const View = props => {
                     type: 'color', name: 'Bar color', field: 'navigationBarColor', notStyle: true, hidden: '!data.navigation || (!data.navigationBar && data.navigationOrientation !== "horizontal")', applyToAll: true,
                 },
                 {
+                    type: 'color', name: 'Background color', field: 'navigationBackground', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
+                },
+                {
                     type: 'text', name: 'Menu header text', field: 'navigationHeaderText', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
                 },
                 {

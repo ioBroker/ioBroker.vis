@@ -477,5 +477,6 @@
   "Unselect all": "Показать все",
   "Clear filter": "Очистить фильтр",
   "%s widgets": "%s виджетов",
-  "Default: auto": "По умолчанию: «auto»"
+  "Default: auto": "По умолчанию: «auto»",
+  "Background color": "Фоновый цвет"
 }

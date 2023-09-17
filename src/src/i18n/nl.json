@@ -477,5 +477,6 @@
   "Unselect all": "Alles deselecteren",
   "Clear filter": "Filter wissen",
   "%s widgets": "%s widgets",
-  "Default: auto": "Standaard: \"auto\""
+  "Default: auto": "Standaard: \"auto\"",
+  "Background color": "Achtergrond kleur"
 }

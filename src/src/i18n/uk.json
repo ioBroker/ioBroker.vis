@@ -477,5 +477,6 @@
   "Unselect all": "Скасувати вибір усіх",
   "Clear filter": "Очистити фільтр",
   "%s widgets": "Віджети %s",
-  "Default: auto": "Типове значення: \"auto\""
+  "Default: auto": "Типове значення: \"auto\"",
+  "Background color": "Колір фону"
 }

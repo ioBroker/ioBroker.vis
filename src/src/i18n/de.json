@@ -477,5 +477,6 @@
   "Unselect all": "Alle zeigen",
   "Clear filter": "Filter löschen",
   "%s widgets": "%s Widgets",
-  "Default: auto": "Standard: „auto“"
+  "Default: auto": "Standard: „auto“",
+  "Background color": "Hintergrundfarbe"
 }

@@ -477,5 +477,6 @@
   "Unselect all": "Deselecciona todo",
   "Clear filter": "Filtro claro",
   "%s widgets": "%s widgets",
-  "Default: auto": "Predeterminado: \"auto\""
+  "Default: auto": "Predeterminado: \"auto\"",
+  "Background color": "Color de fondo"
 }

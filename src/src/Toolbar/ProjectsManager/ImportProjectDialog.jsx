@@ -80,7 +80,7 @@ const ImportProjectDialog = props => {
                     window.alert(I18n.t('Cannot upload project: %s', result.error));
                 } else if (props.projectName !== projectName || props.openNewProjectOnCreate) {
                     if (props.openNewProjectOnCreate) {
-                        props.onClose(true, projectName); // open new project immediately
+                        props.onClose(true, projectName); // open the new project immediately
                     } else {
                         await props.refreshProjects(false);
                         setAskOpenProject(true);
@@ -155,7 +155,12 @@ const ImportProjectDialog = props => {
             }}
         >
             {working ? null : <input {...getInputProps()} />}
-            <p style={{ textAlign: 'center', olor: isDragActive ? (props.themeType === 'dark' ? 'lightgreen' : 'green') : 'inherit' }}>
+            <p
+                style={{
+                    textAlign: 'center',
+                    color: isDragActive ? (props.themeType === 'dark' ? 'lightgreen' : 'green') : 'inherit',
+                }}
+            >
                 {files && files.length ? <>
                     <span>{files[0].name}</span>
                     <span style={{ fontSize: 10, opacity: 0.5, display: 'block' }}>

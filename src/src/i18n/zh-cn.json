@@ -477,5 +477,6 @@
   "Unselect all": "全部取消选择",
   "Clear filter": "清除过滤器",
   "%s widgets": "%s 个小部件",
-  "Default: auto": "默认值：“auto”"
+  "Default: auto": "默认值：“auto”",
+  "Background color": "背景颜色"
 }

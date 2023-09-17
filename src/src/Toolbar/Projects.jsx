@@ -2,10 +2,12 @@ import PropTypes from 'prop-types';
 import { useState } from 'react';
 import withStyles from '@mui/styles/withStyles';
 
-import MenuIcon from '@mui/icons-material/Menu';
-import SettingsIcon from '@mui/icons-material/Settings';
-import ListIcon from '@mui/icons-material/List';
-import FilesIcon from '@mui/icons-material/FileCopy';
+import {
+    Menu as MenuIcon,
+    Settings as SettingsIcon,
+    List as ListIcon,
+    FileCopy as FilesIcon,
+} from '@mui/icons-material';
 
 import {
     SelectID,

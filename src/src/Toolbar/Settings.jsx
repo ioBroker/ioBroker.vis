@@ -15,7 +15,7 @@ import {
     FormHelperText,
 } from '@mui/material';
 
-import SaveIcon from '@mui/icons-material/Save';
+import { Save as SaveIcon } from '@mui/icons-material';
 
 import { I18n } from '@iobroker/adapter-react-v5';
 
