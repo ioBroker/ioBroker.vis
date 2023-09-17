@@ -478,5 +478,8 @@
   "Clear filter": "Filtro limpo",
   "%s widgets": "%s widgets",
   "Default: auto": "Padrão: \"auto\"",
-  "Background color": "Cor de fundo"
+  "Background color": "Cor de fundo",
+  "material_icons_upload": "Carregar",
+  "icon_upload_hint": "Você pode fazer upload de seu próprio ícone de até 10k bytes como base64. Ele será salvo diretamente no projeto. Se você deseja fazer upload do arquivo SVG, não se esqueça de definir o atributo currentColor.",
+  "Read about currentColor in SVG": "Leia sobre currentColor em SVG"
 }

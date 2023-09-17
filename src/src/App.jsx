@@ -1431,12 +1431,16 @@ class App extends Runtime {
                     views.map(view => {
                         const isGroupEdited = !!this.state.selectedGroup && view === this.state.selectedView;
                         const viewSettings = isGroupEdited ? {} : (this.state.project[view].settings || {});
+                        let icon = viewSettings.navigationIcon || viewSettings.navigationImage;
+                        if (icon && icon.startsWith('_PRJ_NAME/')) {
+                            icon = `../${this.adapterName}.${this.instance}/${this.state.projectName}${icon.substring(9)}`;  // "_PRJ_NAME".length = 9
+                        }
 
                         return <Tab
                             component="span"
                             disabled={!!this.state.selectedGroup && view !== this.state.selectedView}
                             label={<span className={Utils.clsx(isGroupEdited && this.props.classes.groupEditTab, this.props.classes.tabsName)}>
-                                {viewSettings.navigationIcon || viewSettings.navigationImage ? <Icon src={viewSettings.navigationIcon || viewSettings.navigationImage} className={this.props.classes.listItemIcon} /> : null}
+                                {icon ? <Icon src={icon} className={this.props.classes.listItemIcon} /> : null}
                                 {isGroupEdited ? `${I18n.t('Group %s', this.state.selectedGroup)}` : (viewSettings.navigationTitle || view)}
                                 <Tooltip title={isGroupEdited ? I18n.t('Close group editor') : I18n.t('Hide')}>
                                     <span>

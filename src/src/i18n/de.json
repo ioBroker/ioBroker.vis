@@ -478,5 +478,8 @@
   "Clear filter": "Filter löschen",
   "%s widgets": "%s Widgets",
   "Default: auto": "Standard: „auto“",
-  "Background color": "Hintergrundfarbe"
+  "Background color": "Hintergrundfarbe",
+  "material_icons_upload": "Hochladen",
+  "icon_upload_hint": "Sie können Ihr eigenes Symbol mit bis zu 10 KB als Base64 hochladen. Es wird direkt im Projekt gespeichert. Wenn Sie eine SVG-Datei hochladen möchten, vergessen Sie nicht, das Attribut currentColor festzulegen.",
+  "Read about currentColor in SVG": "Lesen Sie mehr über currentColor in SVG"
 }

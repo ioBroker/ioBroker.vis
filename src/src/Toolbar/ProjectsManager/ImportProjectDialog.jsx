@@ -1,14 +1,14 @@
 import PropTypes from 'prop-types';
-import { useState, useCallback } from 'react';
-import { useDropzone } from 'react-dropzone';
+import { useState } from 'react';
 import {
     TextField,
 } from '@mui/material';
 
 import { BiImport } from 'react-icons/bi';
 
-import { I18n, Confirm as ConfirmDialog, Utils } from '@iobroker/adapter-react-v5';
+import { I18n, Confirm as ConfirmDialog } from '@iobroker/adapter-react-v5';
 
+import UploadFile from '../../Components/UploadFile';
 import IODialog from '../../Components/IODialog';
 
 export const getLiveHost = async socket => {
@@ -28,22 +28,11 @@ export const getLiveHost = async socket => {
 };
 
 const ImportProjectDialog = props => {
-    const [files, setFiles] = useState(null);
     const [projectName, setProjectName] = useState('');
+    const [projectData, setProjectData] = useState(null);
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [askOpenProject, setAskOpenProject] = useState(false);
     const [working, setWorking] = useState(false);
-
-    const onDrop = useCallback(acceptedFiles => {
-        setFiles(acceptedFiles);
-        if (acceptedFiles?.length) {
-            if (acceptedFiles[0].name.match(/^\d\d\d\d-\d\d-\d\d-/)) {
-                setProjectName(acceptedFiles[0].name.substring(11).replace(/\.zip$|\.json$/i, ''));
-            } else {
-                setProjectName(acceptedFiles[0].name.replace(/\.zip$|\.json$/i, ''));
-            }
-        }
-    }, []);
 
     const importProject = () => {
         if (props.projects.includes(projectName) && !showConfirmation) {
@@ -53,57 +42,46 @@ const ImportProjectDialog = props => {
 
         setWorking(true);
 
-        const reader = new FileReader();
-
-        reader.onload = async evt => {
-            const host = await getLiveHost(props.socket);
-            if (!host) {
-                window.alert(I18n.t('No live hosts found!'));
-                return;
-            }
-
-            let timeout = setTimeout(() => {
-                timeout = null;
-                setWorking(false);
-                window.alert(I18n.t('Cannot upload project: timeout'));
-            }, 40000);
-
-            props.socket.getRawSocket().emit('sendToHost', host, 'writeDirAsZip', {
-                id: `${props.adapterName}.${props.instance}`,
-                name: projectName || 'main',
-                data: evt.target.result.split(',')[1],
-            }, async result => {
-                setWorking(false);
-                timeout && clearTimeout(timeout);
-                timeout = null;
-                if (result.error) {
-                    window.alert(I18n.t('Cannot upload project: %s', result.error));
-                } else if (props.projectName !== projectName || props.openNewProjectOnCreate) {
-                    if (props.openNewProjectOnCreate) {
-                        props.onClose(true, projectName); // open the new project immediately
-                    } else {
-                        await props.refreshProjects(false);
-                        setAskOpenProject(true);
-                    }
-                } else {
-                    await props.refreshProjects(true);
-                    props.onClose(true, projectName);
+        getLiveHost(props.socket)
+            .then(host => {
+                if (!host) {
+                    window.alert(I18n.t('No live hosts found!'));
+                    setWorking(false);
+                    return;
                 }
-            });
-        };
 
-        reader.readAsDataURL(files[0]);
+                let timeout = setTimeout(() => {
+                    timeout = null;
+                    setWorking(false);
+                    window.alert(I18n.t('Cannot upload project: timeout'));
+                }, 40000);
+
+                props.socket.getRawSocket().emit('sendToHost', host, 'writeDirAsZip', {
+                    id: `${props.adapterName}.${props.instance}`,
+                    name: projectName || 'main',
+                    data: projectData.split(',')[1],
+                }, async result => {
+                    setWorking(false);
+                    timeout && clearTimeout(timeout);
+                    timeout = null;
+                    if (result.error) {
+                        window.alert(I18n.t('Cannot upload project: %s', result.error));
+                    } else if (props.projectName !== projectName || props.openNewProjectOnCreate) {
+                        if (props.openNewProjectOnCreate) {
+                            props.onClose(true, projectName); // open the new project immediately
+                        } else {
+                            await props.refreshProjects(false);
+                            setAskOpenProject(true);
+                        }
+                    } else {
+                        await props.refreshProjects(true);
+                        props.onClose(true, projectName);
+                    }
+                });
+            });
+
         return false;
     };
-
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({
-        onDrop,
-        maxFiles: 1,
-        accept: {
-            'application/zip': ['.zip'],
-            'application/json': ['.json'],
-        },
-    });
 
     const confirmDialog = showConfirmation ? <ConfirmDialog
         title={I18n.t('Project already exists.')}
@@ -136,41 +114,25 @@ const ImportProjectDialog = props => {
         action={importProject}
         actionTitle="Import"
         ActionIcon={BiImport}
-        actionDisabled={!projectName?.length || !files?.length || working}
+        actionDisabled={!projectName?.length || !projectData || working}
         closeDisabled={working}
     >
-        <div
-            {...getRootProps()}
-            style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '100%',
-                height: 200,
-                borderRadius: 4,
-                boxSizing: 'border-box',
-                borderStyle: 'dashed',
-                borderWidth: 1,
-                borderColor: isDragActive ? (props.themeType === 'dark' ? 'lightgreen' : 'green') : 'inherit',
+        <UploadFile
+            disabled={working}
+            themeType={props.themeType}
+            onUpload={(name, data) => {
+                if (name.match(/^\d\d\d\d-\d\d-\d\d-/)) {
+                    setProjectName(name.substring(11).replace(/\.zip$|\.json$/i, ''));
+                } else {
+                    setProjectName(name.replace(/\.zip$|\.json$/i, ''));
+                }
+                setProjectData(data);
             }}
-        >
-            {working ? null : <input {...getInputProps()} />}
-            <p
-                style={{
-                    textAlign: 'center',
-                    color: isDragActive ? (props.themeType === 'dark' ? 'lightgreen' : 'green') : 'inherit',
-                }}
-            >
-                {files && files.length ? <>
-                    <span>{files[0].name}</span>
-                    <span style={{ fontSize: 10, opacity: 0.5, display: 'block' }}>
-                        (
-                        {Utils.formatBytes(files[0].size)}
-                        )
-                    </span>
-                </> : I18n.t('Drop the files here ...')}
-            </p>
-        </div>
+            accept={{
+                'application/zip': ['.zip'],
+                'application/json': ['.json'],
+            }}
+        />
         <div style={{ marginTop: 10 }}>
             <TextField
                 variant="standard"

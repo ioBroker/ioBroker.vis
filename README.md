@@ -223,7 +223,9 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 
 
 ## Todo
-- Horizontal navigation
+- Ignore not used widgets in runtime
+- Allow by default upload of files only in the current project directory
+ 
 <!--
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**

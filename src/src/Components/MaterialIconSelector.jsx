@@ -24,6 +24,7 @@ import {
 } from '@mui/icons-material';
 
 import { I18n, Utils, Icon } from '@iobroker/adapter-react-v5';
+import UploadFile from "./UploadFile";
 
 const MAX_ICONS = 250;
 
@@ -63,22 +64,24 @@ const styles = theme => ({
     },
 });
 
-const ICON_TYPES = ['baseline', 'outline', 'round', 'sharp', 'twotone', 'knx-uf'];
+const ICON_TYPES = ['baseline', 'outline', 'round', 'sharp', 'twotone', 'knx-uf', 'upload'];
 
 class MaterialIconSelector extends Component {
     constructor(props) {
         super(props);
         this.list = {};
         this.index = null;
+        const iconType = this.props.iconType || window.localStorage.getItem('vis.icon.type') || ICON_TYPES[0];
         this.state = {
             listLoaded: false,
             selectedIcon: '',
             filter: this.props.filter || window.localStorage.getItem('vis.icon.filter') || '',
-            iconType: this.props.iconType || window.localStorage.getItem('vis.icon.type') || ICON_TYPES[0],
+            iconType,
             iconTypeLoaded: {},
             filtered: [],
-            loading: true,
+            loading: iconType !== 'upload',
             page: 1,
+            maxPages: 0,
         };
     }
 
@@ -182,7 +185,9 @@ class MaterialIconSelector extends Component {
     }
 
     onSelect() {
-        if (this.list[this.state.iconType] && this.list[this.state.iconType] !== true) {
+        if (this.state.selectedIcon && this.state.selectedIcon.startsWith('data:')) {
+            this.props.onClose(this.state.selectedIcon);
+        } else if (this.list[this.state.iconType] && this.list[this.state.iconType] !== true) {
             this.props.onClose(this.list[this.state.iconType][this.state.selectedIcon]);
         }
     }
@@ -220,11 +225,11 @@ class MaterialIconSelector extends Component {
         >
             <DialogTitle>
                 <span style={{ marginRight: 20 }}>
-                    {this.state.iconType === 'knx-uf' ? 'KNX UF' : 'Material'}
+                    {this.state.iconType === 'knx-uf' ? 'KNX UF' : (this.state.iconType !== 'upload' ? 'Material' : '')}
                     &nbsp;
                     Icon Selector
                 </span>
-                <TextField
+                {this.state.iconType !== 'upload' ? <TextField
                     value={this.state.filter}
                     InputProps={{
                         startAdornment:
@@ -249,7 +254,7 @@ class MaterialIconSelector extends Component {
                             this.applyFilter());
                     }}
                     helperText={I18n.t('material_icons_result', this.state.filtered.length)}
-                />
+                /> : null}
             </DialogTitle>
             <DialogContent style={{ overflowY: 'hidden', height: '100%' }}>
                 {!this.props.iconType ? <div style={{ width: 140, display: 'inline-block', verticalAlign: 'top' }}>
@@ -261,10 +266,15 @@ class MaterialIconSelector extends Component {
                             {ICON_TYPES.map(type => <FormControlLabel
                                 onClick={async () => {
                                     window.localStorage.setItem('vis.icon.type', type);
-                                    await this.loadIconSet(type);
                                     const newState = { iconType: type };
-                                    if (this.state.selectedIcon && !this.list[type][this.state.selectedIcon]) {
+                                    if (type !== 'upload') {
+                                        await this.loadIconSet(type);
+                                        if (this.state.selectedIcon && !this.list[type][this.state.selectedIcon]) {
+                                            newState.selectedIcon = '';
+                                        }
+                                    } else {
                                         newState.selectedIcon = '';
+                                        newState.maxPages = 0;
                                     }
                                     this.setState(newState);
                                 }}
@@ -314,7 +324,7 @@ class MaterialIconSelector extends Component {
                             https://github.com/OpenAutomationProject/knx-uf-iconset
                         </a>
                     </div> : null}
-                    {!this.state.loading && this.list[this.state.iconType] && this.list[this.state.iconType] !== true ? <div style={{ width: '100%' }}>
+                    {this.state.iconType !== 'upload' && !this.state.loading && this.list[this.state.iconType] && this.list[this.state.iconType] !== true ? <div style={{ width: '100%' }}>
                         <Grid
                             container
                             spacing={2}
@@ -325,7 +335,29 @@ class MaterialIconSelector extends Component {
                         >
                             {this.renderIcons()}
                         </Grid>
-                    </div> : <LinearProgress />}
+                    </div> : (this.state.iconType !== 'upload' ? <LinearProgress /> : null)}
+                    {this.state.iconType === 'upload' ? <div>
+                        <div style={{ width: '100%', textAlign: 'center' }}>
+                            {I18n.t('icon_upload_hint')}
+                            <br />
+                            <Button
+                                variant="outlined"
+                                onClick={() => window.open('https://github.com/ioBroker/ioBroker.vis-2#svg-and-currentcolor', '_blank')}
+                            >
+                                {I18n.t('Read about currentColor in SVG')}
+                            </Button>
+                        </div>
+                        <UploadFile
+                            themeType={this.props.themeType}
+                            onUpload={(name, data) => this.setState({ selectedIcon: data })}
+                            maxSize={10000}
+                            accept={{
+                                'image/png': ['.png'],
+                                'image/jpg': ['.jpg'],
+                                'image/svg+xml': ['.svg'],
+                            }}
+                        />
+                    </div> : null}
                 </div>
             </DialogContent>
             <DialogActions>
@@ -375,6 +407,7 @@ MaterialIconSelector.propTypes = {
     onClose: PropTypes.func.isRequired, // close dialog
     customIcons: PropTypes.string, // path to additional icons file
     customColor: PropTypes.string, // additional icons color
+    themeType: PropTypes.string,
 };
 
 const _MaterialIconSelector = withStyles(styles)(MaterialIconSelector);

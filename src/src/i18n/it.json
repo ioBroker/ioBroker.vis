@@ -478,5 +478,8 @@
   "Clear filter": "Filtro pulito",
   "%s widgets": "%s widget",
   "Default: auto": "Predefinito: \"auto\"",
-  "Background color": "Colore di sfondo"
+  "Background color": "Colore di sfondo",
+  "material_icons_upload": "Caricamento",
+  "icon_upload_hint": "Puoi caricare la tua icona fino a 10k byte come base64. Verrà salvato direttamente nel progetto. Se desideri caricare il file SVG, non dimenticare di impostare l'attributo currentColor.",
+  "Read about currentColor in SVG": "Leggi informazioni su currentColor in SVG"
 }

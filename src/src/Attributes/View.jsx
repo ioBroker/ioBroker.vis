@@ -1097,11 +1097,11 @@ const View = props => {
                                             variant="standard"
                                             value={value}
                                             error={!!error}
-                                            disabled={disabled}
+                                            disabled={!props.editMode || disabled}
                                             onChange={e => change(e.target.value)}
                                             InputProps={{
                                                 endAdornment: value ? <IconButton
-                                                    disabled={disabled}
+                                                    disabled={!props.editMode || disabled}
                                                     size="small"
                                                     onClick={() => change('')}
                                                 >
@@ -1113,6 +1113,7 @@ const View = props => {
                                             }}
                                         />
                                         <Button
+                                            disabled={!props.editMode || disabled}
                                             variant={value ? 'outlined' : undefined}
                                             color={value ? 'grey' : undefined}
                                             onClick={() => setShowDialog64(true)}
@@ -1121,6 +1122,7 @@ const View = props => {
                                         </Button>
                                         {showDialog64 &&
                                             <MaterialIconSelector
+                                                themeType={props.themeType}
                                                 value={value}
                                                 onClose={icon => {
                                                     setShowDialog64(false);
@@ -1156,7 +1158,7 @@ const View = props => {
                                 if (field.applyToAll) {
                                     if (field.groupApply) {
                                         let isShow = false;
-                                        // find all fields with applyToAll flag and if any is not equal show button
+                                        // find all fields with applyToAll flag, and if any is not equal show button
                                         for (let f = 0; f < group.fields.length; f++) {
                                             if (group.fields[f].applyToAll &&
                                                 !group.fields[f].groupApply &&
@@ -1172,9 +1174,15 @@ const View = props => {
                                                     {result}
                                                 </div>
                                                 <Tooltip title={I18n.t('Apply ALL navigation properties to all views')}>
-                                                    <Button variant="contained" onClick={() => setShowAllViewDialog({ ...field, group })}>
-                                                        {I18n.t('apply_to_all')}
-                                                    </Button>
+                                                    <span>
+                                                        <Button
+                                                            disabled={!props.editMode || disabled}
+                                                            variant="contained"
+                                                            onClick={() => setShowAllViewDialog({ ...field, group })}
+                                                        >
+                                                            {I18n.t('apply_to_all')}
+                                                        </Button>
+                                                    </span>
                                                 </Tooltip>
                                             </div>;
                                         }
@@ -1184,9 +1192,15 @@ const View = props => {
                                                 {result}
                                             </div>
                                             <Tooltip title={I18n.t('Apply to all views')}>
-                                                <Button variant="outlined" onClick={() => setShowAllViewDialog(field)}>
-                                                    {I18n.t('apply_to_all')}
-                                                </Button>
+                                                <span>
+                                                    <Button
+                                                        disabled={!props.editMode || disabled}
+                                                        variant="outlined"
+                                                        onClick={() => setShowAllViewDialog(field)}
+                                                    >
+                                                        {I18n.t('apply_to_all')}
+                                                    </Button>
+                                                </span>
                                             </Tooltip>
                                         </div>;
                                     }
@@ -1215,6 +1229,7 @@ View.propTypes = {
     userGroups: PropTypes.object,
     project: PropTypes.object,
     selectedView: PropTypes.string,
+    themeType: PropTypes.string,
 
     setIsAllOpened: PropTypes.func,
     setIsAllClosed: PropTypes.func,

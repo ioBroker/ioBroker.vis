@@ -478,5 +478,8 @@
   "Clear filter": "Очистить фильтр",
   "%s widgets": "%s виджетов",
   "Default: auto": "По умолчанию: «auto»",
-  "Background color": "Фоновый цвет"
+  "Background color": "Фоновый цвет",
+  "material_icons_upload": "Загрузить",
+  "icon_upload_hint": "Вы можете загрузить свой собственный значок размером до 10 КБ в формате base64. Он будет сохранен непосредственно в проекте. Если вы хотите загрузить SVG-файл, не забудьте установить атрибут currentColor.",
+  "Read about currentColor in SVG": "Прочтите о currentColor в SVG."
 }

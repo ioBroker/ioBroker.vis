@@ -208,7 +208,7 @@ class VisNavigation extends React.Component {
             const viewSettings = this.props.context.views[view].settings;
             if (viewSettings.navigation) {
                 const item = {
-                    text: viewSettings.navigationOnlyIcon ? null : (viewSettings.navigationTitle || view),
+                    text: settings.navigationOrientation === 'horizontal' && viewSettings.navigationOnlyIcon ? null : (viewSettings.navigationTitle || view),
                     color: viewSettings.navigationColor,
                     icon: viewSettings.navigationIcon || viewSettings.navigationImage,
                     noText: viewSettings.navigationOnlyIcon,
@@ -296,7 +296,7 @@ class VisNavigation extends React.Component {
                                                     this.props.menuWidth !== 'full' && this.props.classes.transparent,
                                                 )}
                                             />
-                                            <span
+                                            {item.text ? <span
                                                 className={Utils.clsx(
                                                     this.props.classes.listItemIconText,
                                                     this.props.activeView === item.view && this.props.classes.selectedMenu,
@@ -304,7 +304,7 @@ class VisNavigation extends React.Component {
                                                 )}
                                             >
                                                 {item.text[0].toUpperCase()}
-                                            </span>
+                                            </span> : null}
                                         </>}
                                 </ListItemIcon>
                                 <ListItemText

@@ -478,5 +478,8 @@
   "Clear filter": "Effacer le filtre",
   "%s widgets": "%s widgets",
   "Default: auto": "Par défaut : \"auto\"",
-  "Background color": "Couleur de l'arrière plan"
+  "Background color": "Couleur de l'arrière plan",
+  "material_icons_upload": "Télécharger",
+  "icon_upload_hint": "Vous pouvez télécharger votre propre icône jusqu'à 10 000 octets en base64. Il sera enregistré directement dans le projet. Si vous souhaitez télécharger un fichier SVG, n'oubliez pas de définir l'attribut currentColor.",
+  "Read about currentColor in SVG": "En savoir plus sur currentColor en SVG"
 }

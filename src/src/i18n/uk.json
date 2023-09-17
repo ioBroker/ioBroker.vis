@@ -478,5 +478,8 @@
   "Clear filter": "Очистити фільтр",
   "%s widgets": "Віджети %s",
   "Default: auto": "Типове значення: \"auto\"",
-  "Background color": "Колір фону"
+  "Background color": "Колір фону",
+  "material_icons_upload": "Завантажити",
+  "icon_upload_hint": "Ви можете завантажити власну піктограму розміром до 10 Кбайт як base64. Він буде збережений безпосередньо в проекті. Якщо ви хочете завантажити файл SVG, не забудьте встановити атрибут currentColor.",
+  "Read about currentColor in SVG": "Прочитайте про currentColor у SVG"
 }

@@ -478,5 +478,8 @@
   "Clear filter": "清除过滤器",
   "%s widgets": "%s 个小部件",
   "Default: auto": "默认值：“auto”",
-  "Background color": "背景颜色"
+  "Background color": "背景颜色",
+  "material_icons_upload": "上传",
+  "icon_upload_hint": "您可以上传自己的图标（最多 10k 字节）作为 base64。它将直接保存在项目中。如果您想上传 SVG 文件，请不要忘记设置 currentColor 属性。",
+  "Read about currentColor in SVG": "了解 SVG 中的 currentColor"
 }

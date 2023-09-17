@@ -478,5 +478,8 @@
   "Clear filter": "Clear filter",
   "%s widgets": "%s widgets",
   "Default: auto": "Default: \"auto\"",
-  "Background color": "Background color"
+  "Background color": "Background color",
+  "material_icons_upload": "Upload",
+  "icon_upload_hint": "You can upload your own icon up to 10k bytes as base64. It will be saved in project directly. If you want to upload SVG file do not forget to set currentColor attribute.",
+  "Read about currentColor in SVG": "Read about currentColor in SVG"
 }
