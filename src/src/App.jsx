@@ -1799,6 +1799,8 @@ class App extends Runtime {
         return this.state.legacyFileSelector ? <SelectFileDialog
             title={I18n.t('Select file')}
             onClose={() => this.setState({ legacyFileSelector: false })}
+            restrictToFolder={`${this.adapterName}.${this.instance}/${this.state.projectName}`}
+            allowNonRestricted
             allowUpload
             allowDownload
             allowCreateFolder

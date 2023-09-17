@@ -24,7 +24,8 @@ import {
 } from '@mui/icons-material';
 
 import { I18n, Utils, Icon } from '@iobroker/adapter-react-v5';
-import UploadFile from "./UploadFile";
+
+import UploadFile from './UploadFile';
 
 const MAX_ICONS = 250;
 

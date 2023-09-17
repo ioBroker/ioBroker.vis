@@ -640,6 +640,8 @@ const WidgetField = props => {
             {idDialog ? <SelectFileDialog
                 title={t('Select file')}
                 onClose={() => setIdDialog(false)}
+                restrictToFolder={`${adapterName}.${instance}/${projectName}`}
+                allowNonRestricted
                 allowUpload
                 allowDownload
                 allowCreateFolder

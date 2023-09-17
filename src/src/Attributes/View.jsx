@@ -1023,6 +1023,8 @@ const View = props => {
                                         {showDialog ? <SelectFileDialog
                                             title={I18n.t('Select file')}
                                             onClose={() => setShowDialog(false)}
+                                            restrictToFolder={`${props.adapterName}.${props.instance}/${props.projectName}`}
+                                            allowNonRestricted
                                             allowUpload
                                             allowDownload
                                             allowCreateFolder

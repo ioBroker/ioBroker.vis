@@ -91,6 +91,8 @@ const Tools = props => {
             filesDialog ? <SelectFileDialog
                 title={I18n.t('Browse files')}
                 onClose={() => setFilesDialog(false)}
+                restrictToFolder={`${props.adapterName}.${props.instance}/${props.projectName}`}
+                allowNonRestricted
                 ready
                 allowUpload
                 allowDownload
