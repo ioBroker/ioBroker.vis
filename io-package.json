@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.2.5",
+    "version": "2.2.6",
     "news": {
+      "2.2.6": {
+        "en": "Date binding corrected\nOptimized loading of widgeteria\nHorizontal navigation is fixed",
+        "de": "Datum verbindlich berichtigt\nOptimierte Beladung von Widgeteria\nHorizontale Navigation ist fixiert",
+        "ru": "Дата привязки исправлены\nОптимизированная загрузка виджетерии\nГоризонтальная навигация фиксируется",
+        "pt": "Data de vinculação corrigida\nCarregamento otimizado de widgeteria\nA navegação horizontal é fixa",
+        "nl": "Vertaling:\nOptimaal geladen widgeteria\nHorizontale navigatie is opgelost",
+        "fr": "Date corrigée\nChargement optimisé de widgeteria\nLa navigation horizontale est fixe",
+        "it": "Data binding corretto\nCaricamento ottimizzato di widgeteria\nLa navigazione orizzontale è fissata",
+        "es": "Fecha de fijación corregida\nCarga optimizada de widgeteria\nNavegación horizontal es fija",
+        "pl": "Date binding poprawił\nOptymizowane obciążenie widgeteria\nNawigacja lotnicza",
+        "uk": "Дата обов'язкове виправлення\nОптимальне завантаження віджетів\nГоризонтальна навігація фіксована",
+        "zh-cn": "具有约束力的\nB. 强制实施目标\n横向导航"
+      },
       "2.2.5": {
         "en": "Implemented horizontal navigation",
         "de": "Ergänzte horizontale Navigation",
@@ -80,19 +93,6 @@
         "pl": "Optymizował renderowanie widgetów",
         "uk": "Оптимізований рендеринг віджетів",
         "zh-cn": "实现令人发指的目标"
-      },
-      "2.1.6": {
-        "en": "First beta release",
-        "de": "Erste Beta-Version",
-        "ru": "Первый бета-релиз",
-        "pt": "Primeira versão beta",
-        "nl": "First Beta vrij",
-        "fr": "Première version bêta",
-        "it": "Prima versione beta",
-        "es": "Primera versión beta",
-        "pl": "Pierwsza wersja beta",
-        "uk": "Перший випуск бета",
-        "zh-cn": "第一批释放"
       }
     },
     "title": "Visualisation Next Generation",

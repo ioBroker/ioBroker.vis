@@ -214,7 +214,7 @@ Notice that these settings are valid only for reconnection and not for the first
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.2.6 (2023-09-17)
 * (bluefox) Date binding corrected
 * (bluefox) Optimized loading of widgeteria
 * (bluefox) Horizontal navigation is fixed
