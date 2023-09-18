@@ -1607,15 +1607,23 @@ class VisView extends React.Component {
                 setTimeout(() => this.loadJqueryTheme(this.getJQueryThemeName()), this.state.loadedjQueryTheme ? 50 : 0);
             }
         }
+        const backgroundStyle = {};
+        const backgroundClass = settings.style.background_class || '';
 
         settings.style && Object.keys(settings.style).forEach(attr => {
             if (attr === 'background_class') {
                 className = addClass(className, settings.style.background_class);
-            } else if (!settings['bg-image'] || !attr.startsWith('background')) {
-                const value = settings.style[attr];
-                // convert background-color => backgroundColor
-                attr = attr.replace(/(-\w)/g, text => text[1].toUpperCase());
-                style[attr] = value;
+            } else {
+                const isBg = attr.startsWith('background');
+                if (!settings['bg-image'] || !isBg) {
+                    const value = settings.style[attr];
+                    // convert background-color => backgroundColor
+                    attr = attr.replace(/(-\w)/g, text => text[1].toUpperCase());
+                    style[attr] = value;
+                    if (isBg) {
+                        backgroundStyle[attr] = value;
+                    }
+                }
             }
         });
 
@@ -1633,11 +1641,11 @@ class VisView extends React.Component {
 
         if (!style.backgroundColor && !style.background) {
             if (this.props.customSettings?.viewStyle?.backgroundColor) {
-                style.backgroundColor = this.props.customSettings.viewStyle.backgroundColor;
+                backgroundStyle.backgroundColor = this.props.customSettings.viewStyle.backgroundColor;
             } else if (this.props.customSettings?.themeType === 'dark') {
-                style.backgroundColor = '#000';
+                backgroundStyle.backgroundColor = '#000';
             } else {
-                style.backgroundColor = theme.palette.mode === 'dark' ? '#000' : '#fff';
+                backgroundStyle.backgroundColor = theme.palette.mode === 'dark' ? '#000' : '#fff';
             }
         }
 
@@ -1680,35 +1688,36 @@ class VisView extends React.Component {
 
         // apply image
         if (settings['bg-image']) {
-            style.backgroundImage = `url("../${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}${settings['bg-image'].substring(9)}")`;  // "_PRJ_NAME".length = 9
-            style.backgroundRepeat = 'no-repeat';
-            style.backgroundPosition = 'top left';
+            backgroundStyle.backgroundImage = `url("../${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}${settings['bg-image'].substring(9)}")`;  // "_PRJ_NAME".length = 9
+            backgroundStyle.backgroundRepeat = 'no-repeat';
+            backgroundStyle.backgroundPosition = 'top left';
             if (settings['bg-color']) {
-                style.backgroundColor = settings['bg-color'];
+                backgroundStyle.backgroundColor = settings['bg-color'];
             }
             if (settings['bg-position-x']) {
                 // eslint-disable-next-line no-restricted-properties
-                style.backgroundPositionX = window.isFinite(settings['bg-position-x']) ? `${settings['bg-position-x']}px` : settings['bg-position-x'];
+                backgroundStyle.backgroundPositionX = window.isFinite(settings['bg-position-x']) ? `${settings['bg-position-x']}px` : settings['bg-position-x'];
             }
             if (settings['bg-position-y']) {
                 // eslint-disable-next-line no-restricted-properties
-                style.backgroundPositionY = window.isFinite(settings['bg-position-y']) ? `${settings['bg-position-y']}px` : settings['bg-position-y'];
+                backgroundStyle.backgroundPositionY = window.isFinite(settings['bg-position-y']) ? `${settings['bg-position-y']}px` : settings['bg-position-y'];
             }
             if (settings['bg-width'] && settings['bg-height']) {
                 // eslint-disable-next-line no-restricted-properties
                 const w = window.isFinite(settings['bg-width']) ? `${settings['bg-width']}px` : settings['bg-width'];
                 // eslint-disable-next-line no-restricted-properties
                 const h = window.isFinite(settings['bg-height']) ? `${settings['bg-height']}px` : settings['bg-height'];
-                style.backgroundSize = `${w} ${h}`;
+                backgroundStyle.backgroundSize = `${w} ${h}`;
             } else if (settings['bg-width']) {
                 // eslint-disable-next-line no-restricted-properties
-                style.backgroundSize = `${window.isFinite(settings['bg-width']) ? `${settings['bg-width']}px` : settings['bg-width']} auto`;
+                backgroundStyle.backgroundSize = `${window.isFinite(settings['bg-width']) ? `${settings['bg-width']}px` : settings['bg-width']} auto`;
             } else if (settings['bg-height']) {
                 // eslint-disable-next-line no-restricted-properties
                 const w = window.isFinite(settings['bg-height']) ? `${settings['bg-height']}px` : settings['bg-height'];
-                style.backgroundSize = `auto ${w}`;
+                backgroundStyle.backgroundSize = `auto ${w}`;
             }
         }
+        Object.assign(style, backgroundStyle);
 
         let renderedWidgets;
 
@@ -1773,6 +1782,20 @@ class VisView extends React.Component {
 
         if (settings.navigation && !this.props.visInWidget) {
             renderedView = this.renderNavigation(renderedView);
+        }
+
+        // apply a view background to a whole document
+        if (!this.props.visInWidget && this.props.activeView === this.props.view) {
+            const bgStyle = JSON.stringify(backgroundStyle);
+            if (!window._lastAppliedStyle || window._lastAppliedStyle !== bgStyle) {
+                window._lastAppliedStyle = bgStyle;
+                window.document.documentElement.removeAttribute('style');
+                // apply background style to html
+                Object.keys(backgroundStyle).forEach(attr => {
+                    window.document.documentElement.style[attr] = backgroundStyle[attr];
+                });
+            }
+            window.document.documentElement.className = backgroundClass;
         }
 
         return <StylesProvider generateClassName={generateClassNameEngine}>
