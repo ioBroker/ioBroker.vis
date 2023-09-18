@@ -453,6 +453,8 @@ class App extends Runtime {
         data && Object.assign(widgets[newKey].data, data);
         style && Object.assign(widgets[newKey].style, style);
 
+        widgets[newKey].widgetSet = tplWidget.set;
+
         // Custom init of widgets
         if (tplWidget.init) {
             if (window.vis && window.vis.binds[tplWidget.set] && window.vis.binds[tplWidget.set][tplWidget.init]) {
@@ -864,7 +866,7 @@ class App extends Runtime {
         const widgets = project[this.state.selectedView].widgets;
         const group = {
             tpl: '_tplGroup',
-            widgetSet: null,
+            widgetSet: 'basic',
             data: {
                 members: this.state.selectedWidgets,
             },

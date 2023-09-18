@@ -171,6 +171,16 @@ class Runtime extends GenericApp {
         // fix project
         Object.keys(project).forEach(view => {
             if (view === '___settings') {
+                // rename all "set" to "widgetSet" in marketplace
+                project.___settings.marketplace?.forEach(group => {
+                    group.widget?.forEach(widget => {
+                        if (widget.set) {
+                            widget.widgetSet = widget.set;
+                            delete widget.set;
+                        }
+                    });
+                });
+
                 return;
             }
             if (!project[view]) {
@@ -460,7 +470,7 @@ class Runtime extends GenericApp {
     async onConnectionReady() {
         // preload all widgets first
         if (this.state.widgetsLoaded === Runtime.WIDGETS_LOADING_STEP_HTML_LOADED) {
-            await VisWidgetsCatalog.collectRxInformation(this.socket);
+            await VisWidgetsCatalog.collectRxInformation(this.socket, this.state.project, this.changeProject);
             await this.setStateAsync({ widgetsLoaded: Runtime.WIDGETS_LOADING_STEP_ALL_LOADED });
         }
 
@@ -616,7 +626,7 @@ class Runtime extends GenericApp {
     async onWidgetsLoaded() {
         let widgetsLoaded = Runtime.WIDGETS_LOADING_STEP_HTML_LOADED;
         if (this.socket.isConnected()) {
-            await VisWidgetsCatalog.collectRxInformation(this.socket);
+            await VisWidgetsCatalog.collectRxInformation(this.socket, this.state.project, this.changeProject);
             widgetsLoaded = Runtime.WIDGETS_LOADING_STEP_ALL_LOADED;
         }
         this.setState({ widgetsLoaded });

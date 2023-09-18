@@ -823,7 +823,7 @@ function _loadComponentHelper(context) {
     return Promise.all(promises);
 }
 
-function getRemoteWidgets(socket) {
+function getRemoteWidgets(socket, onlyWidgetSets) {
     return socket.getObjectViewSystem(
         'instance',
         'system.adapter.',
@@ -833,7 +833,8 @@ function getRemoteWidgets(socket) {
             const result = [];
             const countRef = { count: 0 };
             const instances = Object.values(objects);
-            const dynamicWidgetInstances = instances.filter(obj => obj.common.visWidgets);
+            const dynamicWidgetInstances = instances.filter(obj =>
+                obj.common.visWidgets && (!onlyWidgetSets || onlyWidgetSets.includes(obj.common.name)));
 
             const promises = [];
             for (let i = 0; i < dynamicWidgetInstances.length; i++) {

@@ -20,7 +20,14 @@
     <script type="text/javascript" src="./lib/js/quo.standalone.js"></script>
     <script type="text/javascript" src="_socket/info.js"></script>
     <script type="text/javascript" src="config.js"></script> <!-- this file must be before vis.js -->
-    <script type="text/javascript" src="marketplaceConfig.js"></script>
+    <script>
+        // window.apiUrl = 'http://localhost:3009'; // Marketplace server
+        // window.webPrefix = ''; // Prefix for marketplace client
+        // window.marketplaceClient = 'http://localhost:3002';
+        window.apiUrl = 'https://iobroker.net'; // Marketplace server
+        window.webPrefix = '/market'; // Prefix for the marketplace client
+        window.marketplaceClient = 'https://iobroker.net/market';
+    </script>
     <script>
       var script = document.createElement('script');
       window.registerSocketOnLoad = function (cb) {

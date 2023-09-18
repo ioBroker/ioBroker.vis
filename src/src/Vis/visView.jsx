@@ -43,8 +43,7 @@ class VisView extends React.Component {
 
     constructor(props) {
         super(props);
-
-        this.promiseToCollect = VisWidgetsCatalog.collectRxInformation(props.context.socket);
+        this.promiseToCollect = VisWidgetsCatalog.collectRxInformation(props.context.socket, props.context.views, props.context.changeProject);
 
         this.state = {
             mounted: false,

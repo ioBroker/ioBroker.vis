@@ -22,12 +22,93 @@ class VisWidgetsCatalog {
 
     static allWidgetsList = null;
 
-    static collectRxInformation(socket) {
+    static getUsedWidgetSets(project) {
+        let anyWithoutSet = false;
+        const widgetSets = [];
+
+        // load in runtime only used widget sets
+        const views = Object.keys(project);
+        for (let v = 0; v < views.length; v++) {
+            if (views[v] === '___settings') {
+                continue;
+            }
+            const widgets = project[views[v]].widgets;
+            const keys = Object.keys(widgets);
+            for (let w = 0; w < keys.length; w++) {
+                const widgetSet = widgets[keys[w]].widgetSet;
+                if (!widgetSet || widgets[keys[w]].set || widgets[keys[w]].wSet) {
+                    anyWithoutSet = true;
+                    break;
+                }
+                if (!widgetSets.includes(widgetSet)) {
+                    widgetSets.push(widgetSet);
+                }
+            }
+            if (anyWithoutSet) {
+                console.warn('Found widgets without widget set. Will load all widget sets');
+                break;
+            }
+        }
+        !anyWithoutSet && widgetSets.sort();
+
+        return anyWithoutSet ? false : widgetSets;
+    }
+
+    static setUsedWidgetSets(project) {
+        // provide for all widgets the widget set and set
+        let views;
+        const widgetTypes = window.visWidgetTypes; // getWidgetTypes();
+        const viewKeys = Object.keys(project);
+
+        for (let v = 0; v < viewKeys.length; v++) {
+            if (viewKeys[v] === '___settings') {
+                continue;
+            }
+            const widgets = project[viewKeys[v]].widgets;
+            const keys = Object.keys(widgets);
+            for (let w = 0; w < keys.length; w++) {
+                // remove deprecated attributes
+                if (widgets[keys[w]].set) {
+                    views = views || JSON.parse(JSON.stringify(project));
+                    delete views[viewKeys[v]].widgets[keys[w]].set;
+                }
+                if (widgets[keys[w]].wSet) {
+                    views = views || JSON.parse(JSON.stringify(project));
+                    delete views[viewKeys[v]].widgets[keys[w]].wSet;
+                }
+                if (widgets[keys[w]].widgetSet) {
+                    continue;
+                }
+                const tpl = widgets[keys[w]].tpl;
+
+                if (tpl === '_tplGroup') {
+                    views = views || JSON.parse(JSON.stringify(project));
+                    views[viewKeys[v]].widgets[keys[w]].widgetSet = 'basic';
+                } else {
+                    const tplWidget = widgetTypes.find(item => item.name === tpl);
+                    if (tplWidget) {
+                        views = views || JSON.parse(JSON.stringify(project));
+                        views[viewKeys[v]].widgets[keys[w]].widgetSet = tplWidget.set;
+                    }
+                }
+            }
+        }
+
+        return views;
+    }
+
+    static collectRxInformation(socket, project, changeProject) {
         if (!VisWidgetsCatalog.rxWidgets) {
             VisWidgetsCatalog.rxWidgets = {};
+            // collect all widget sets used in a project
+            let usedWidgetSets = null;
+            if (project) {
+                usedWidgetSets = VisWidgetsCatalog.getUsedWidgetSets(project);
+            }
+
             return new Promise(resolve => {
                 setTimeout(() =>
-                    getRemoteWidgets(socket)
+                    getRemoteWidgets(socket, !changeProject && usedWidgetSets)
                         .then(widgetSets => {
                             const collectedWidgets = [...WIDGETS, ...widgetSets];
                             collectedWidgets.forEach(Widget => {
@@ -49,7 +130,16 @@ class VisWidgetsCatalog {
 
                             // init all widgets
                             // eslint-disable-next-line no-use-before-define
-                            getWidgetTypes(socket);
+                            getWidgetTypes(!changeProject && usedWidgetSets);
+
+                            if (usedWidgetSets === false && changeProject) {
+                                // some widgets without set found
+                                const newProject = VisWidgetsCatalog.setUsedWidgetSets(project);
+                                if (newProject) {
+                                    console.warn('Found widgets without widget set. Project updated');
+                                    changeProject(newProject);
+                                }
+                            }
 
                             resolve(VisWidgetsCatalog.rxWidgets);
                         }), 0);
@@ -60,7 +150,7 @@ class VisWidgetsCatalog {
     }
 }
 
-export const getWidgetTypes = () => {
+export const getWidgetTypes = usedWidgetSets => {
     if (!window.visWidgetTypes) {
         window.visSets = {};
         VisWidgetsCatalog.allWidgetsList = [];
@@ -79,6 +169,11 @@ export const getWidgetTypes = () => {
                 }
 
                 const widgetSet = script.attributes['data-vis-set'] ? script.attributes['data-vis-set'].value : 'basic';
+                if (usedWidgetSets && !usedWidgetSets.includes(widgetSet)) {
+                    console.log(`Ignored ${widgetSet}/${name} because not used in project`);
+                    return null;
+                }
+
                 const color = script.attributes['data-vis-color']?.value;
                 window.visSets[widgetSet] = window.visSets[widgetSet] || {};
                 if (color) {

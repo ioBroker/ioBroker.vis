@@ -39,6 +39,7 @@ import './visWords';
 import VisView from './visView';
 import VisFormatUtils from './visFormatUtils';
 import { getUrlParameter, extractBinding } from './visUtils';
+import VisWidgetsCatalog from './visWidgetsCatalog';
 
 function _translateWord(text, lang, dictionary) {
     if (!text) {
@@ -1431,7 +1432,7 @@ class VisEngine extends React.Component {
 
     static loadedSources = [];
 
-    static async setInnerHTML(elm, html) {
+    static async setInnerHTML(elm, html, usedWidgetSets) {
         elm.innerHTML = html;
         // we must load script one after another, to keep the order
         const scripts = Array.from(elm.querySelectorAll('script'));
@@ -1463,16 +1464,23 @@ class VisEngine extends React.Component {
                     }
                 });
 
-            if (src) {
-                groups[widgetSet] = groups[widgetSet] || [];
-                groups[widgetSet].push({ newScript, oldScript });
-            } else {
-                try {
-                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
-                    oldScript.parentNode.replaceChild(newScript, oldScript);
-                } catch (error) {
-                    console.error(`Cannot set inner HTML of ${oldScript.text?.substring(0, 500)}: ${error}`);
+            // do not load scripts of the unused widgets in runtime mode
+            if (!usedWidgetSets || widgetSet === 'default' || usedWidgetSets.includes(widgetSet)) {
+                if (src) {
+                    // ejs script
+                    groups[widgetSet] = groups[widgetSet] || [];
+                    groups[widgetSet].push({ newScript, oldScript });
+                } else {
+                    // inline script
+                    try {
+                        newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                        oldScript.parentNode.replaceChild(newScript, oldScript);
+                    } catch (error) {
+                        console.error(`Cannot set inner HTML of ${oldScript.text?.substring(0, 500)}: ${error}`);
+                    }
                 }
+            } else {
+                console.log(`Skip script "${widgetSet}" ${src || 'inline'}`);
             }
         }
 
@@ -1501,7 +1509,7 @@ class VisEngine extends React.Component {
             const div = document.createElement('div');
             document.body.appendChild(div);
 
-            await VisEngine.setInnerHTML(div, text);
+            await VisEngine.setInnerHTML(div, text, this.props.runtime && VisWidgetsCatalog.getUsedWidgetSets(this.props.views));
 
             this.props.onLoaded && this.props.onLoaded();
         } catch (error) {

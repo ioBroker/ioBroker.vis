@@ -223,7 +223,6 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 
 
 ## Todo
-- Ignore not used widgets in runtime
  
 <!--
     Placeholder for the next version (at the beginning of the line):
@@ -232,6 +231,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 ## Changelog
 ### **WORK IN PROGRESS**
 * (bluefox) Improved icon selector: you can upload your own icon directly
+* (bluefox) Optimized loading: do not load unused widget sets
 
 ### 2.2.6 (2023-09-17)
 * (bluefox) Date binding corrected

@@ -130,7 +130,7 @@ const VisContextMenu = props => {
                         w._id = wid;
                         w.isRoot = true;
                         delete w.marketplace;
-                        w.set = window.visWidgetTypes.find(type => type.name === w.tpl).set;
+                        w.widgetSet = window.visWidgetTypes.find(type => type.name === w.tpl).set;
                         return w;
                     });
 
@@ -141,7 +141,7 @@ const VisContextMenu = props => {
                     const len = widgets.length;
                     for (let w = 0; w < len; w++) {
                         const widget = widgets[w];
-                        // if we are creating the group of groups (only 2 groups could be leveled)
+                        // if we are creating the group of groups (only two groups could be leveled)
                         if (widget.tpl === '_tplGroup') {
                             const newId = `f${gIdx.toString().padStart(6, '0')}`;
                             gIdx++;
@@ -154,7 +154,7 @@ const VisContextMenu = props => {
                                     }
                                     const memberWidget = JSON.parse(JSON.stringify(props.project[props.selectedView].widgets[member]));
                                     memberWidget._id = `i${wIdx.toString().padStart(6, '0')}`;
-                                    memberWidget.set = window.visWidgetTypes.find(type => type.name === memberWidget.tpl).set;
+                                    memberWidget.widgetSet = window.visWidgetTypes.find(type => type.name === memberWidget.tpl).set;
                                     wIdx++;
                                     members.push(memberWidget._id);
                                     memberWidget.groupid = newId;
