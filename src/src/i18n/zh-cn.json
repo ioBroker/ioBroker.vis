@@ -490,5 +490,11 @@
   "Tabs": "选项卡",
   "jqui_html_dialog": "HTML对话框",
   "jqui_icon_dialog": "图标对话框",
-  "jqui_container_dialog": "容器对话框"
+  "jqui_container_dialog": "容器对话框",
+  "jqui_navigation_button": "导航按钮",
+  "jqui_button_nav_blank_note": "已弃用。使用带有“转到查看”选项的第一个小部件。保留只是为了与 vis.1 兼容",
+  "jqui_view_group": "导航视图",
+  "jqui_nav_view": "前往查看",
+  "jqui_buttontext_view": "使用视图名称作为标题",
+  "jqui_button_color": "按钮颜色"
 }

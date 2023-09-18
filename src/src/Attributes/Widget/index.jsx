@@ -58,6 +58,13 @@ const styles = theme => ({
             minHeight: 'initial',
         },
     },
+    menuItem: {
+        cursor: 'pointer',
+    },
+    selected: {
+        backgroundColor: theme.palette.primary.main,
+        color: theme.palette.primary.contrastText,
+    },
     checkBox: {
         marginTop: '-4px !important',
     },

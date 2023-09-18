@@ -181,6 +181,7 @@ const getViewOptions = (project, options = [], parentId = null, level = 0) => {
         options.push({
             type: 'view',
             view,
+            label: project[view].settings?.navigationTitle ? `${project[view].settings.navigationTitle} (${view})` : view,
             level: level + 1,
         });
     });
@@ -954,7 +955,7 @@ const WidgetField = props => {
                 >
                     <FileIcon style={{ verticalAlign: 'middle', marginRight: 4 }} />
                     <span style={{ verticalAlign: 'middle' }}>{field.multiple !== false ? <Checkbox checked={(value || []).includes(option.view)} /> : null}</span>
-                    <ListItemText primary={option.view} style={{ verticalAlign: 'middle' }} />
+                    <ListItemText primary={option.label} style={{ verticalAlign: 'middle' }} />
                 </MenuItem>
                 :
                 <ListSubheader key={key} style={{ paddingLeft: option.level * 16 }} className={props.classes.listFolder}>
@@ -1070,7 +1071,7 @@ const WidgetField = props => {
                 if (typeof option === 'string') {
                     return option;
                 }
-                return option.type === 'view' ? option.view : option.folder.name;
+                return option.type === 'view' ? option.label : option.folder.name;
             }}
             getOptionDisabled={option => option.type === 'folder'}
             renderOption={(optionProps, option) =>
@@ -1079,10 +1080,11 @@ const WidgetField = props => {
                         component="li"
                         style={{ paddingLeft: option.level * 16 }}
                         {...optionProps}
+                        className={Utils.clsx(props.classes.menuItem, value === option.view ? props.classes.selected : null)}
                         key={`view${option.view}`}
                     >
                         <FileIcon />
-                        {option.view}
+                        {option.label}
                     </Box>
                     :
                     <Box

@@ -490,5 +490,11 @@
   "Tabs": "Guias",
   "jqui_html_dialog": "Caixa de diálogo HTML",
   "jqui_icon_dialog": "Caixa de diálogo de ícones",
-  "jqui_container_dialog": "Caixa de diálogo do contêiner"
+  "jqui_container_dialog": "Caixa de diálogo do contêiner",
+  "jqui_navigation_button": "Botão de navegação",
+  "jqui_button_nav_blank_note": "Descontinuada. Use o primeiro widget com a opção \"Ir para visualizar\". Mantido apenas para compatibilidade com vis.1",
+  "jqui_view_group": "Visualização de navegação",
+  "jqui_nav_view": "Ir para ver",
+  "jqui_buttontext_view": "Use o nome da visualização como título",
+  "jqui_button_color": "Cor do botao"
 }

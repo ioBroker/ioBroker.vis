@@ -490,5 +490,11 @@
   "Tabs": "Tabs",
   "jqui_html_dialog": "HTML Dialog",
   "jqui_icon_dialog": "Icon Dialog",
-  "jqui_container_dialog": "Container dialog"
+  "jqui_container_dialog": "Container dialog",
+  "jqui_navigation_button": "Navigaion Button",
+  "jqui_button_nav_blank_note": "Deprecated. Use first widget with \"Go to view\" option. Keeped just for compatibility with vis.1",
+  "jqui_view_group": "Navigation view",
+  "jqui_nav_view": "Go to view",
+  "jqui_buttontext_view": "Use view name as title",
+  "jqui_button_color": "Button color"
 }

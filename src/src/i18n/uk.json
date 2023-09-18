@@ -490,5 +490,11 @@
   "Tabs": "Вкладки",
   "jqui_html_dialog": "Діалог HTML",
   "jqui_icon_dialog": "Діалогове вікно піктограм",
-  "jqui_container_dialog": "Діалог контейнера"
+  "jqui_container_dialog": "Діалог контейнера",
+  "jqui_navigation_button": "Кнопка навігації",
+  "jqui_button_nav_blank_note": "Застаріле. Використовуйте перший віджет із опцією «Перейти до перегляду». Збережено тільки для сумісності з vis.1",
+  "jqui_view_group": "Перегляд навігації",
+  "jqui_nav_view": "Перейти до перегляду",
+  "jqui_buttontext_view": "Використовуйте назву перегляду як назву",
+  "jqui_button_color": "Колір кнопки"
 }

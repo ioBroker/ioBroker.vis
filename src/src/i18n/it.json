@@ -490,5 +490,11 @@
   "Tabs": "Schede",
   "jqui_html_dialog": "Finestra di dialogo HTML",
   "jqui_icon_dialog": "Finestra di dialogo delle icone",
-  "jqui_container_dialog": "Finestra di dialogo del contenitore"
+  "jqui_container_dialog": "Finestra di dialogo del contenitore",
+  "jqui_navigation_button": "Pulsante di navigazione",
+  "jqui_button_nav_blank_note": "Deprecato. Utilizza il primo widget con l'opzione \"Vai a visualizzare\". Mantenuto solo per compatibilità con vis.1",
+  "jqui_view_group": "Visualizzazione navigazione",
+  "jqui_nav_view": "Vai a vedere",
+  "jqui_buttontext_view": "Utilizza il nome della vista come titolo",
+  "jqui_button_color": "Colore del pulsante"
 }

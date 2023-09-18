@@ -60,7 +60,7 @@ class JQuiButton extends VisRxWidget {
                             name: 'buttontext',
                             type: 'text',
                             default: 'URL',
-                            hidden: data => !!data.html,
+                            hidden: data => !!data.html || !!(data.buttontext_view && data.nav_view),
                         },
                         {
                             name: 'html',
@@ -72,8 +72,27 @@ class JQuiButton extends VisRxWidget {
                     ],
                 },
                 {
+                    name: 'view',
+                    label: 'jqui_view_group',
+                    hidden: data => !!data.url || !!data.href || !!data.html_dialog || !!data.contains_view,
+                    fields: [
+                        {
+                            name: 'nav_view',
+                            label: 'jqui_nav_view',
+                            type: 'views',
+                        },
+                        {
+                            name: 'buttontext_view',
+                            label: 'jqui_buttontext_view',
+                            type: 'checkbox',
+                            hidden: data => !data.nav_view,
+                        },
+                    ],
+                },
+                {
                     name: 'URL',
                     label: 'jqui_url_group',
+                    hidden: data => !!data.html_dialog || !!data.contains_view || !!data.nav_view,
                     fields: [
                         {
                             name: 'href',
@@ -124,6 +143,15 @@ class JQuiButton extends VisRxWidget {
                             default: 'contained',
                             hidden: data => data.jquery_style || data.no_style,
                         },
+                        {
+                            name: 'color',
+                            label: 'jqui_button_color',
+                            type: 'select',
+                            noTranslation: true,
+                            options: ['', 'primary', 'secondary'],
+                            default: '',
+                            hidden: data => data.jquery_style || data.no_style,
+                        },
                         { name: 'html_prepend', type: 'html' },
                         { name: 'html_append', type: 'html' },
                         {
@@ -168,6 +196,7 @@ class JQuiButton extends VisRxWidget {
                 },
                 {
                     name: 'dialog',
+                    hidden: data => !!data.url || !!data.href || !!data.nav_view,
                     fields: [
                         {
                             name: 'html_dialog',
@@ -556,7 +585,20 @@ class JQuiButton extends VisRxWidget {
             buttonStyle.padding = this.state.rxData.padding;
         }
 
-        return <div className="vis-widget-body">
+        let onClick;
+        let buttonText;
+        if (this.state.rxData.html) {
+            onClick = () => this.onClick();
+        } else if (this.state.rxData.nav_view && this.state.rxData.buttontext_view) {
+            buttonText = this.props.context.views[this.state.rxData.nav_view]?.settings?.navigationTitle || this.state.rxData.nav_view;
+        } else {
+            buttonText = this.state.rxData.buttontext;
+        }
+
+        return <div
+            className="vis-widget-body"
+            onClick={onClick}
+        >
             {this.state.rxData.html_prepend ? <span
                 // eslint-disable-next-line react/no-danger
                 dangerouslySetInnerHTML={{ __html: this.state.rxData.html_prepend }}
@@ -569,23 +611,27 @@ class JQuiButton extends VisRxWidget {
                 :
                 (this.state.rxData.no_style || this.state.rxData.jquery_style ?
                     <button
+                        className={this.state.rxData.nav_view && this.state.rxData.nav_view === window.location.hash.slice(1) ? 'ui-state-active' : undefined}
                         ref={this.refButton}
                         type="button"
                         style={buttonStyle}
                         onClick={() => this.onClick()}
                     >
                         {icon}
-                        {this.state.rxData.buttontext}
+                        {buttonText}
                     </button>
                     :
                     <Button
                         ref={this.refButton}
                         style={buttonStyle}
+                        color={this.state.rxData.nav_view && this.state.rxData.nav_view === window.location.hash.slice(1) ?
+                            (this.state.rxData.color === 'primary' ? 'secondary' : 'primary') :
+                            (this.state.rxData.color || 'grey')}
                         variant={this.state.rxData.variant === undefined ? 'contained' : this.state.rxData.variant}
                         onClick={() => this.onClick()}
                     >
                         {icon}
-                        {this.state.rxData.buttontext}
+                        {buttonText}
                     </Button>)}
             {this.state.rxData.html_append ? <span
                 // eslint-disable-next-line react/no-danger

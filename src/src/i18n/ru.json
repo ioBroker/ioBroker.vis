@@ -490,5 +490,11 @@
   "Tabs": "Вкладки",
   "jqui_html_dialog": "HTML-диалог",
   "jqui_icon_dialog": "Диалоговое окно со значками",
-  "jqui_container_dialog": "Диалог контейнера"
+  "jqui_container_dialog": "Диалог контейнера",
+  "jqui_navigation_button": "Кнопка навигации",
+  "jqui_button_nav_blank_note": "Устарело. Используйте первый виджет с опцией «Перейти к просмотру». Сохранено только для совместимости с vis.1.",
+  "jqui_view_group": "Просмотр навигации",
+  "jqui_nav_view": "Перейти к странице",
+  "jqui_buttontext_view": "Использовать имя представления в качестве заголовка",
+  "jqui_button_color": "Цвет кнопки"
 }

@@ -490,5 +490,11 @@
   "Tabs": "Onglets",
   "jqui_html_dialog": "Boîte de dialogue HTML",
   "jqui_icon_dialog": "Boîte de dialogue d'icône",
-  "jqui_container_dialog": "Boîte de dialogue Conteneur"
+  "jqui_container_dialog": "Boîte de dialogue Conteneur",
+  "jqui_navigation_button": "Bouton de navigation",
+  "jqui_button_nav_blank_note": "Obsolète. Utilisez le premier widget avec l'option \"Aller à la vue\". Conservé uniquement pour des raisons de compatibilité avec vis.1",
+  "jqui_view_group": "Vue de navigation",
+  "jqui_nav_view": "Aller voir",
+  "jqui_buttontext_view": "Utiliser le nom de la vue comme titre",
+  "jqui_button_color": "Couleur du bouton"
 }

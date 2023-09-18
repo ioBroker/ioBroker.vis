@@ -490,5 +490,11 @@
   "Tabs": "Tabbladen",
   "jqui_html_dialog": "HTML-dialoogvenster",
   "jqui_icon_dialog": "Pictogramdialoog",
-  "jqui_container_dialog": "Containerdialoogvenster"
+  "jqui_container_dialog": "Containerdialoogvenster",
+  "jqui_navigation_button": "Navigatieknop",
+  "jqui_button_nav_blank_note": "Verouderd. Gebruik de eerste widget met de optie \"Ga naar weergave\". Alleen bewaard voor compatibiliteit met vis.1",
+  "jqui_view_group": "Navigatieweergave",
+  "jqui_nav_view": "Ga naar bekijken",
+  "jqui_buttontext_view": "Gebruik de weergavenaam als titel",
+  "jqui_button_color": "Knop kleur"
 }

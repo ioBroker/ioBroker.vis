@@ -490,5 +490,11 @@
   "Tabs": "Pestañas",
   "jqui_html_dialog": "Diálogo HTML",
   "jqui_icon_dialog": "Diálogo de iconos",
-  "jqui_container_dialog": "Diálogo de contenedor"
+  "jqui_container_dialog": "Diálogo de contenedor",
+  "jqui_navigation_button": "Botón de navegación",
+  "jqui_button_nav_blank_note": "Obsoleto. Utilice el primer widget con la opción \"Ir a ver\". Mantenido solo por compatibilidad con vis.1",
+  "jqui_view_group": "Vista de navegación",
+  "jqui_nav_view": "Ir a ver",
+  "jqui_buttontext_view": "Usar el nombre de la vista como título",
+  "jqui_button_color": "Color del boton"
 }

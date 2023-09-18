@@ -490,5 +490,11 @@
   "Tabs": "Tabs",
   "jqui_html_dialog": "HTML-Dialog",
   "jqui_icon_dialog": "Symboldialog",
-  "jqui_container_dialog": "Container-Dialog"
+  "jqui_container_dialog": "Container-Dialog",
+  "jqui_navigation_button": "Navigationstaste",
+  "jqui_button_nav_blank_note": "Veraltet. Verwenden Sie das erste Widget mit der Option „Zur Ansicht gehen“. Wird nur aus Kompatibilitätsgründen mit vis.1 beibehalten",
+  "jqui_view_group": "Navigationsansicht",
+  "jqui_nav_view": "Zur Seite gehen",
+  "jqui_buttontext_view": "Verwenden Sie den Ansichtsnamen als Titel",
+  "jqui_button_color": "Knopffarbe"
 }

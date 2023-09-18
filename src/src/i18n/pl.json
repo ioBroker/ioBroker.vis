@@ -490,5 +490,11 @@
   "Tabs": "Zakładki",
   "jqui_html_dialog": "Okno HTML",
   "jqui_icon_dialog": "Ikona okna dialogowego",
-  "jqui_container_dialog": "Okno dialogowe kontenera"
+  "jqui_container_dialog": "Okno dialogowe kontenera",
+  "jqui_navigation_button": "Przycisk nawigacji",
+  "jqui_button_nav_blank_note": "Przestarzałe. Użyj pierwszego widgetu z opcją „Przejdź do widoku”. Zachowane tylko ze względu na kompatybilność z vis.1",
+  "jqui_view_group": "Widok nawigacji",
+  "jqui_nav_view": "Przejdź do widoku",
+  "jqui_buttontext_view": "Użyj nazwy widoku jako tytułu",
+  "jqui_button_color": "Kolor przycisku"
 }
