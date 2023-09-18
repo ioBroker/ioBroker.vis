@@ -28,9 +28,10 @@ class TabsSliderTabs extends VisRxWidget {
             id: 'tplSTab',
             visSet: 'tabs',
             visName: 'SliderTabs',
+            visSetLabel: 'Tabs',
             visPrev: 'widgets/tabs/img/Prev_SliderTabs.png',
             visWidgetLabel: 'vis_2_widgets_widgets_tabs_label',  // Label of widget
-            visSetIcon: 'widgets/tabs/img/Prev_SliderTabs.png',  // Icon of widget set
+            visSetIcon: 'widgets/tabs/img/Prev_SliderTabs.png',  // Icon of a widget set
             visAttrs: [
                 {
                     name: 'common',
@@ -41,6 +42,7 @@ class TabsSliderTabs extends VisRxWidget {
                             min: 1,
                             max: 20,
                             label: 'vis_2_widgets_widgets_tabs_show_tabs',
+                            default: 2,
                         },
                         {
                             name: 'vertical',
@@ -103,6 +105,20 @@ class TabsSliderTabs extends VisRxWidget {
                             label: 'vis_2_widgets_widgets_tabs_tab_icon_color',
                             hidden: (data, index) => !data[`icon_tab_${index}`],
                         },
+                        {
+                            name: 'overflow_x_',
+                            label: 'vis_2_widgets_widgets_tabs_tab_overflow_x',
+                            type: 'select',
+                            noTranslation: true,
+                            options: ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'],
+                        },
+                        {
+                            name: 'overflow_y_',
+                            label: 'vis_2_widgets_widgets_tabs_tab_overflow_y',
+                            type: 'select',
+                            noTranslation: true,
+                            options: ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'],
+                        },
                     ],
                 },
             ],
@@ -129,16 +145,33 @@ class TabsSliderTabs extends VisRxWidget {
 
     getWidgetView() {
         const view = this.state.rxData[`contains_view_${this.state.tabIndex + 1}`];
+        const style = {
+            flex: 1,
+            position: 'relative',
+        };
+        const overflowX = this.state.rxData[`overflow_x_${this.state.tabIndex + 1}`];
+        const overflowY = this.state.rxData[`overflow_y_${this.state.tabIndex + 1}`];
+
+        if (overflowX && overflowY) {
+            if (overflowY === overflowX) {
+                style.overflow = overflowX;
+            } else {
+                style.overflowX = overflowX;
+                style.overflowY = overflowY;
+            }
+        } else if (overflowX) {
+            style.overflowX = overflowX;
+        } else if (overflowY) {
+            style.overflowY = overflowY;
+        } else {
+            style.overflow = 'hidden';
+        }
 
         return <div
             className="vis-widget-body"
-            style={{
-                overflow: 'hidden',
-                flex: 1,
-                position: 'relative',
-            }}
+            style={style}
         >
-            {this.state.editMode ? <div className="editmode-helper" /> : null}
+            {this.state.editMode ? <div className="vis-editmode-helper" /> : null}
             {view ? super.getWidgetView(view) : null}
         </div>;
     }

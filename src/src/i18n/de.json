@@ -481,5 +481,14 @@
   "Background color": "Hintergrundfarbe",
   "material_icons_upload": "Hochladen",
   "icon_upload_hint": "Sie können Ihr eigenes Symbol mit bis zu 10 KB als Base64 hochladen. Es wird direkt im Projekt gespeichert. Wenn Sie eine SVG-Datei hochladen möchten, vergessen Sie nicht, das Attribut currentColor festzulegen.",
-  "Read about currentColor in SVG": "Lesen Sie mehr über currentColor in SVG"
+  "Read about currentColor in SVG": "Lesen Sie mehr über currentColor in SVG",
+  "vis_2_widgets_widgets_tabs_tab_overflow_x": "Überlauf X",
+  "vis_2_widgets_widgets_tabs_tab_overflow_y": "Überlauf Y",
+  "Orientation": "Orientierung",
+  "Horizontal": "Horizontal",
+  "Vertical": "Vertikal",
+  "Tabs": "Tabs",
+  "jqui_html_dialog": "HTML-Dialog",
+  "jqui_icon_dialog": "Symboldialog",
+  "jqui_container_dialog": "Container-Dialog"
 }

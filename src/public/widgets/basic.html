@@ -2374,7 +2374,7 @@
     <div class="vis-widget <%== this.data.attr('class') %>" style="top: 0; left: 0; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <% if (vis.editMode) { %>
-            <div class="editmode-helper" />
+                <div class="vis-editmode-helper" />
             <% } %>
             <iframe src="<%= this.data.attr('src') %>" <%= this.data.attr('noSandbox') ? '' : 'sandbox="allow-modals allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts"' %> style="position: absolute; border: 0; padding: 0; margin: 0; width: 100%; height: 100%;<%= this.data.attr('scrollX') == true ? 'overflow-x: scroll;' : 'overflow-x: hidden;' %><%= this.data.attr('scrollY') == true ? 'overflow-y: scroll;' : 'overflow-y: hidden;' %>" <%= this.data.attr('seamless') == true ? 'seamless' : '' %>></iframe>
             <div <%= (el) -> vis.binds.basic.iframeRefresh(el, data, this.view) %>></div>
@@ -2394,7 +2394,7 @@
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <% if (vis.editMode) { %>
-                <div class="editmode-helper" />
+                <div class="vis-editmode-helper" />
             <% } %>
             <img class="<%= this.data.attr('stretch') ? 'vis-image' : '' %> <%= this.data.attr('allowUserInteractions') ? '' : 'vis-no-user-select vis-no-pointer-events' %>" style="top:0; left: 0; position: absolute; width: 100%; <%= this.data.attr('stretch') ? 'height: 100%;' : '' %>" <%= this.data.attr('src') ? 'src="' + this.data.attr('src') + '"' : '' %> />
             <div <%= (el) -> vis.binds.basic.imgRefresh(el, data, this.view) %> />
@@ -2446,11 +2446,11 @@
         data-vis-attrs="oid;refreshInterval[0]/slider,0,180000,100;count[1]/number;group.frames;src_(0-count);noSandbox/checkbox">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0; left: 0; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
         <% if (vis.editMode) { %>
-            <div class="editmode-helper"/>
+            <div class="vis-editmode-helper"/>
         <% } %>
         <div class="vis-widget-body">
             <% if (vis.editMode) { %>
-                <div class="editmode-helper"/>
+                <div class="vis-editmode-helper"/>
             <% } %>
             <%
                 var srcArr = [];
@@ -2477,7 +2477,7 @@
         data-vis-attrs="contains_view/views">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:400px; height: 270px;" id="<%= this.data.attr('wid') %>">
         <% if (vis.editMode) { %>
-            <div class="editmode-helper"></div>
+            <div class="vis-editmode-helper"></div>
         <% } %>
         <div data-vis-contains="<%= this.data.attr('contains_view') %>" class="vis-widget-body vis-view-container">
         </div>
@@ -2495,7 +2495,7 @@
         data-vis-attrs="oid;persistent/checkbox;notIfInvisible/checkbox;count[1]/number;group.views;contains_view_(0-count)/views">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:400px; height: 270px;" id="<%= this.data.attr('wid') %>">
         <% if (vis.editMode) { %>
-            <div class="editmode-helper" />
+            <div class="vis-editmode-helper" />
         <% } %>
         <%
             var viewArr = [];
@@ -2515,11 +2515,11 @@
 <script type="text/ejs" id="tplStatefulIFrame8Persistent" class="vis-tpl" data-vis-set="basic" data-vis-name="stateful - iFrame 8 (persistent)" data-vis-attrs="oid;refreshInterval;src_(0-1)">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0; left: 0; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
             <% if (vis.editMode) { %>
-                <div class="editmode-helper" />
+                <div class="vis-editmode-helper" />
             <% } %>
           <div class="vis-widget-body">
             <% if (vis.editMode) { %>
-                <div class="editmode-helper" />
+                <div class="vis-editmode-helper" />
             <% } %>
             <iframe class="vis-widget-element" src="<%= this.data.attr('src_0') %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
             <iframe class="vis-widget-element" src="<%= this.data.attr('src_1') %>" style="position: absolute; border:0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
@@ -2545,11 +2545,11 @@
         data-vis-attrs="oid;refreshInterval[0]/slider,0,180000,100;count[1]/number;group.images;src_(0-count)/image">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
         <% if (vis.editMode) { %>
-            <div class="editmode-helper" />
+            <div class="vis-editmode-helper" />
         <% } %>
         <div class="vis-widget-body">
             <% if (vis.editMode) { %>
-                <div class="editmode-helper" />
+                <div class="vis-editmode-helper" />
             <% } %>
             <%
                 var srcArr = [];

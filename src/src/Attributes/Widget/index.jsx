@@ -655,9 +655,10 @@ const Widget = props => {
     fields = [...fieldsBefore, ...fields, ...fieldsAfter, ...[fieldsSignals]];
 
     widgets && fields.forEach(group => {
+        const type = group.isStyle ? 'style' : 'data';
         const found = props.selectedWidgets.find(selectedWidget => {
             const fieldFound = group.fields.find(field => {
-                const fieldValue = widgets[selectedWidget][group.isStyle ? 'style' : 'data'][field.name];
+                const fieldValue = widgets[selectedWidget][type][field.name];
                 if (fieldValue === undefined) {
                     return false;
                 }
@@ -820,6 +821,18 @@ const Widget = props => {
         });
         props.changeProject(project);
     }, [props.project, fields]);
+
+    const onGroupDelete = group => {
+        const project = JSON.parse(JSON.stringify(props.project));
+        const type = group.isStyle ? 'style' : 'data';
+        props.selectedWidgets.forEach(selectedWidget => {
+            group.fields.forEach(field => {
+                delete project[props.selectedView].widgets[selectedWidget][type][field.name];
+            });
+            delete project[props.selectedView].widgets[selectedWidget].data[`g_${group.name}`];
+        });
+        props.changeProject(project);
+    };
 
     if (!widgets) {
         return null;
@@ -1062,13 +1075,31 @@ const Widget = props => {
                                     checked={group.hasValues}
                                     onClick={e => {
                                         if (group.hasValues) {
-                                            setClearGroup(group);
+                                            const type = group.isStyle ? 'style' : 'data';
+                                            // check is any attribute from this group is used
+                                            let found = false;
+                                            for (let w = 0; w < props.selectedWidgets.length; w++) {
+                                                for (let f = 0; f < group.fields.length; f++) {
+                                                    const value = props.project[props.selectedView].widgets[props.selectedWidgets[w]][type][group.fields[f].name];
+                                                    if (value !== null && value !== undefined) {
+                                                        found = true;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+
+                                            if (found) {
+                                                setClearGroup(group);
+                                            } else {
+                                                onGroupDelete(group);
+                                            }
                                         } else {
                                             const project = JSON.parse(JSON.stringify(props.project));
+                                            const type = group.isStyle ? 'style' : 'data';
                                             props.selectedWidgets.forEach(selectedWidget => {
                                                 group.fields.forEach(field => {
-                                                    if (project[props.selectedView].widgets[selectedWidget][group.isStyle ? 'style' : 'data'][field.name] === undefined) {
-                                                        project[props.selectedView].widgets[selectedWidget][group.isStyle ? 'style' : 'data'][field.name] = field.default || null;
+                                                    if (project[props.selectedView].widgets[selectedWidget][type][field.name] === undefined) {
+                                                        project[props.selectedView].widgets[selectedWidget][type][field.name] = field.default || null;
                                                     }
                                                 });
                                                 project[props.selectedView].widgets[selectedWidget].data[`g_${group.name}`] = true;
@@ -1219,17 +1250,7 @@ const Widget = props => {
                 title="Are you sure"
                 onClose={() => setClearGroup(null)}
                 open={!0}
-                action={() => {
-                    const project = JSON.parse(JSON.stringify(props.project));
-                    const group = clearGroup;
-                    props.selectedWidgets.forEach(selectedWidget => {
-                        group.fields.forEach(field => {
-                            delete project[props.selectedView].widgets[selectedWidget][group.isStyle ? 'style' : 'data'][field.name];
-                        });
-                        delete project[props.selectedView].widgets[selectedWidget].data[`g_${group.name}`];
-                    });
-                    props.changeProject(project);
-                }}
+                action={() => onGroupDelete(clearGroup)}
                 actionTitle="Clear"
             >
                 {I18n.t('Fields of group will be cleaned')}

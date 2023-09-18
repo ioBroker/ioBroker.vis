@@ -481,5 +481,14 @@
   "Background color": "Фоновый цвет",
   "material_icons_upload": "Загрузить",
   "icon_upload_hint": "Вы можете загрузить свой собственный значок размером до 10 КБ в формате base64. Он будет сохранен непосредственно в проекте. Если вы хотите загрузить SVG-файл, не забудьте установить атрибут currentColor.",
-  "Read about currentColor in SVG": "Прочтите о currentColor в SVG."
+  "Read about currentColor in SVG": "Прочтите о currentColor в SVG.",
+  "vis_2_widgets_widgets_tabs_tab_overflow_x": "Переполнение X",
+  "vis_2_widgets_widgets_tabs_tab_overflow_y": "Переполнение Y",
+  "Orientation": "Ориентация",
+  "Horizontal": "Горизонтальный",
+  "Vertical": "Вертикальный",
+  "Tabs": "Вкладки",
+  "jqui_html_dialog": "HTML-диалог",
+  "jqui_icon_dialog": "Диалоговое окно со значками",
+  "jqui_container_dialog": "Диалог контейнера"
 }

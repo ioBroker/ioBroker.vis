@@ -370,6 +370,8 @@ class JQuiButton extends VisRxWidget {
     renderRxDialog(dialogStyle, content) {
         if (this.state.rxData.modal) {
             return <Dialog
+                // fullWidth
+                maxWidth="xl"
                 id={`${this.props.id}_dialog`}
                 ref={this.refDialog}
                 open={this.state.dialogVisible}
@@ -379,7 +381,7 @@ class JQuiButton extends VisRxWidget {
                     }
                 }}
             >
-                {this.state.rxData.title ? <DialogTitle><div>{this.state.rxData.title}</div></DialogTitle> : null}
+                {this.state.rxData.title ? <DialogTitle>{this.state.rxData.title}</DialogTitle> : null}
                 {!this.state.rxData.hideCloseButton || !this.state.rxData.closeOnClick ? <IconButton
                     style={{
                         position: 'absolute',
@@ -475,8 +477,8 @@ class JQuiButton extends VisRxWidget {
         const height = window.isFinite(this.state.rxData.dialog_height) ? parseFloat(this.state.rxData.dialog_height) : this.state.rxData.dialog_height;
 
         const dialogStyle = {
-            minWidth: width || undefined,
-            minHeight: height || undefined,
+            minWidth: width || (window.innerWidth - 50),
+            minHeight: height || (window.innerHeight - 50),
             // top: top || top === 0 ? top : undefined,
             // left: left || left === 0 ? left : undefined,
             overflowX: this.state.rxData.overflowX,

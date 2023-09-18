@@ -481,5 +481,14 @@
   "Background color": "Kolor tła",
   "material_icons_upload": "Wgrywać",
   "icon_upload_hint": "Możesz przesłać własną ikonę o rozmiarze do 10 KB w formacie base64. Zostanie on zapisany bezpośrednio w projekcie. Jeśli chcesz przesłać plik SVG, nie zapomnij ustawić atrybutu currentColor.",
-  "Read about currentColor in SVG": "Przeczytaj o bieżącym kolorze w SVG"
+  "Read about currentColor in SVG": "Przeczytaj o bieżącym kolorze w SVG",
+  "vis_2_widgets_widgets_tabs_tab_overflow_x": "Przepełnienie X",
+  "vis_2_widgets_widgets_tabs_tab_overflow_y": "Przepełnienie Y",
+  "Orientation": "Orientacja",
+  "Horizontal": "Poziomy",
+  "Vertical": "Pionowy",
+  "Tabs": "Zakładki",
+  "jqui_html_dialog": "Okno HTML",
+  "jqui_icon_dialog": "Ikona okna dialogowego",
+  "jqui_container_dialog": "Okno dialogowe kontenera"
 }

@@ -1082,7 +1082,7 @@ const WidgetField = props => {
                         key={`view${option.view}`}
                     >
                         <FileIcon />
-                        {t(option.view)}
+                        {option.view}
                     </Box>
                     :
                     <Box

@@ -1039,6 +1039,7 @@ class VisBaseWidget extends React.Component {
 
     // eslint-disable-next-line class-methods-use-this,no-unused-vars
     renderWidgetBody(props) {
+        // Default render method. Normally it should be overwritten
         return <div
             style={{
                 width: '100%',

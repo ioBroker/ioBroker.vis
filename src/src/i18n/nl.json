@@ -481,5 +481,14 @@
   "Background color": "Achtergrond kleur",
   "material_icons_upload": "Uploaden",
   "icon_upload_hint": "U kunt uw eigen pictogram tot 10k bytes uploaden als base64. Het wordt direct in het project opgeslagen. Als u een SVG-bestand wilt uploaden, vergeet dan niet het currentColor-kenmerk in te stellen.",
-  "Read about currentColor in SVG": "Lees meer over currentColor in SVG"
+  "Read about currentColor in SVG": "Lees meer over currentColor in SVG",
+  "vis_2_widgets_widgets_tabs_tab_overflow_x": "Overloop X",
+  "vis_2_widgets_widgets_tabs_tab_overflow_y": "Overloop Y",
+  "Orientation": "Oriëntatie",
+  "Horizontal": "Horizontaal",
+  "Vertical": "Verticaal",
+  "Tabs": "Tabbladen",
+  "jqui_html_dialog": "HTML-dialoogvenster",
+  "jqui_icon_dialog": "Pictogramdialoog",
+  "jqui_container_dialog": "Containerdialoogvenster"
 }

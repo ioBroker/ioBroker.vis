@@ -481,5 +481,14 @@
   "Background color": "Cor de fundo",
   "material_icons_upload": "Carregar",
   "icon_upload_hint": "Você pode fazer upload de seu próprio ícone de até 10k bytes como base64. Ele será salvo diretamente no projeto. Se você deseja fazer upload do arquivo SVG, não se esqueça de definir o atributo currentColor.",
-  "Read about currentColor in SVG": "Leia sobre currentColor em SVG"
+  "Read about currentColor in SVG": "Leia sobre currentColor em SVG",
+  "vis_2_widgets_widgets_tabs_tab_overflow_x": "Estouro X",
+  "vis_2_widgets_widgets_tabs_tab_overflow_y": "Estouro Y",
+  "Orientation": "Orientação",
+  "Horizontal": "Horizontal",
+  "Vertical": "Vertical",
+  "Tabs": "Guias",
+  "jqui_html_dialog": "Caixa de diálogo HTML",
+  "jqui_icon_dialog": "Caixa de diálogo de ícones",
+  "jqui_container_dialog": "Caixa de diálogo do contêiner"
 }

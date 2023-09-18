@@ -218,8 +218,34 @@ class BasicViewInWidget extends VisRxWidget {
             </div>;
         }
 
-        return <div className="vis-widget-body" style={{ overflow: 'hidden', position: 'absolute' }}>
-            {this.state.editMode ? <div className="editmode-helper" /> : null}
+        const style = {
+            position: 'absolute',
+        };
+        if (this.state.rxStyle['overflow-x'] && this.state.rxStyle['overflow-y']) {
+            delete props.style.overflow;
+            if (this.state.rxStyle['overflow-y'] === this.state.rxStyle['overflow-x']) {
+                style.overflow = this.state.rxStyle['overflow-x'];
+            } else {
+                style.overflowX = this.state.rxStyle['overflow-x'];
+                style.overflowY = this.state.rxStyle['overflow-y'];
+            }
+        } else if (this.state.rxStyle['overflow-x']) {
+            style.overflowX = this.state.rxStyle['overflow-x'];
+            delete props.style.overflow;
+        } else if (this.state.rxStyle['overflow-y']) {
+            style.overflowY = this.state.rxStyle['overflow-y'];
+            delete props.style.overflow;
+        } else if (this.state.rxStyle.overflow) {
+            style.overflow = this.state.rxStyle.overflow;
+        } else {
+            style.overflow = 'hidden';
+        }
+        delete props.style.overflow;
+        delete props.style.overflowX;
+        delete props.style.overflowY;
+
+        return <div className="vis-widget-body" style={style}>
+            {this.state.editMode ? <div className="vis-editmode-helper" /> : null}
             {super.getWidgetView(view)}
         </div>;
     }

@@ -481,5 +481,14 @@
   "Background color": "背景颜色",
   "material_icons_upload": "上传",
   "icon_upload_hint": "您可以上传自己的图标（最多 10k 字节）作为 base64。它将直接保存在项目中。如果您想上传 SVG 文件，请不要忘记设置 currentColor 属性。",
-  "Read about currentColor in SVG": "了解 SVG 中的 currentColor"
+  "Read about currentColor in SVG": "了解 SVG 中的 currentColor",
+  "vis_2_widgets_widgets_tabs_tab_overflow_x": "溢出X",
+  "vis_2_widgets_widgets_tabs_tab_overflow_y": "溢出Y",
+  "Orientation": "方向",
+  "Horizontal": "水平的",
+  "Vertical": "垂直的",
+  "Tabs": "选项卡",
+  "jqui_html_dialog": "HTML对话框",
+  "jqui_icon_dialog": "图标对话框",
+  "jqui_container_dialog": "容器对话框"
 }

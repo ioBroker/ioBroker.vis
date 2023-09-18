@@ -481,5 +481,14 @@
   "Background color": "Колір фону",
   "material_icons_upload": "Завантажити",
   "icon_upload_hint": "Ви можете завантажити власну піктограму розміром до 10 Кбайт як base64. Він буде збережений безпосередньо в проекті. Якщо ви хочете завантажити файл SVG, не забудьте встановити атрибут currentColor.",
-  "Read about currentColor in SVG": "Прочитайте про currentColor у SVG"
+  "Read about currentColor in SVG": "Прочитайте про currentColor у SVG",
+  "vis_2_widgets_widgets_tabs_tab_overflow_x": "Переповнення X",
+  "vis_2_widgets_widgets_tabs_tab_overflow_y": "Перелив Y",
+  "Orientation": "Орієнтація",
+  "Horizontal": "Горизонтальний",
+  "Vertical": "Вертикальний",
+  "Tabs": "Вкладки",
+  "jqui_html_dialog": "Діалог HTML",
+  "jqui_icon_dialog": "Діалогове вікно піктограм",
+  "jqui_container_dialog": "Діалог контейнера"
 }

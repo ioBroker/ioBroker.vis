@@ -481,5 +481,14 @@
   "Background color": "Colore di sfondo",
   "material_icons_upload": "Caricamento",
   "icon_upload_hint": "Puoi caricare la tua icona fino a 10k byte come base64. Verrà salvato direttamente nel progetto. Se desideri caricare il file SVG, non dimenticare di impostare l'attributo currentColor.",
-  "Read about currentColor in SVG": "Leggi informazioni su currentColor in SVG"
+  "Read about currentColor in SVG": "Leggi informazioni su currentColor in SVG",
+  "vis_2_widgets_widgets_tabs_tab_overflow_x": "Traboccamento X",
+  "vis_2_widgets_widgets_tabs_tab_overflow_y": "Traboccamento Y",
+  "Orientation": "Orientamento",
+  "Horizontal": "Orizzontale",
+  "Vertical": "Verticale",
+  "Tabs": "Schede",
+  "jqui_html_dialog": "Finestra di dialogo HTML",
+  "jqui_icon_dialog": "Finestra di dialogo delle icone",
+  "jqui_container_dialog": "Finestra di dialogo del contenitore"
 }
