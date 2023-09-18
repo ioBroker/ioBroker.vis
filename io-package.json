@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.2.6",
+    "version": "2.2.7",
     "news": {
+      "2.2.7": {
+        "en": "Improved icon selector: you can upload your own icon directly\nOptimized loading: do not load unused widget sets",
+        "de": "Verbesserte Symbolauswahl: Sie können Ihr eigenes Icon direkt hochladen\nOptimierte Belastung: nicht geladene Widget-Sets",
+        "ru": "Улучшенный выбор иконки: вы можете загрузить свой собственный иконку напрямую\nОптимизированная загрузка: не загружайте неиспользуемые наборы виджетов",
+        "pt": "Seletor de ícone melhorado: você pode carregar seu próprio ícone diretamente\nCarga otimizada: não carregar conjuntos de widget não utilizados",
+        "nl": "Improved icon selector, je kunt je eigen icon uploaden\nOptimaal laden, niet ongebruikte widget sets laden",
+        "fr": "Sélecteur d'icônes amélioré: vous pouvez télécharger votre propre icône directement\nCharge optimisée: ne pas charger des jeux de widget inutilisés",
+        "it": "Selettore icona migliorato: è possibile caricare la propria icona direttamente\nCaricamento ottimizzato: non caricare inutilizzati widget set",
+        "es": "Selector de iconos mejorado: puede subir su propio icono directamente\nCarga optimizada: no cargue conjuntos de widget no utilizados",
+        "pl": "Poprawa ikon selekcjonera: Możesz uwolnić swoje ikony bezpośrednio\nOptymizowane obciążenie: nie ładowanie nieużywanych zestawów widgetowych",
+        "uk": "Удосконалено вибір ікони: ви можете завантажити свою іконку безпосередньо\nОптимізоване завантаження: не завантажуйте невикористані комплекти віджетів",
+        "zh-cn": "改进一轮选择:你可以直接卸下你自己的一线。\n肥沃的装载:没有装卸未用的植物"
+      },
       "2.2.6": {
         "en": "Date binding corrected\nOptimized loading of widgeteria\nHorizontal navigation is fixed",
         "de": "Datum verbindlich berichtigt\nOptimierte Beladung von Widgeteria\nHorizontale Navigation ist fixiert",
@@ -80,19 +93,6 @@
         "pl": "Kandydatka 1",
         "uk": "Видача кандидата 1 час",
         "zh-cn": "释放候选人 导 言"
-      },
-      "2.1.7": {
-        "en": "Optimized the rendering of the widgets",
-        "de": "Optimierte das Rendern der Widgets",
-        "ru": "Оптимизировано рендеринг виджетов",
-        "pt": "Otimizou a renderização dos widgets",
-        "nl": "Optimistisch de rendering van de wigt",
-        "fr": "Optimisé le rendu des widgets",
-        "it": "Ottimizzato il rendering dei widget",
-        "es": "Optimizado el renderizado de los widgets",
-        "pl": "Optymizował renderowanie widgetów",
-        "uk": "Оптимізований рендеринг віджетів",
-        "zh-cn": "实现令人发指的目标"
       }
     },
     "title": "Visualisation Next Generation",
