@@ -512,5 +512,10 @@
   "jqui_password": "Пароль",
   "Copied %s": "Скопійовано %s",
   "jqui_button_dialog_close": "Кнопка закриття діалогового вікна",
-  "jqui_Close": "Закрити"
+  "jqui_Close": "Закрити",
+  "jqui_container_icon_dialog": "Icon=>Діалог сторінки",
+  "jqui_container_button_dialog": "Кнопка=>Діалог сторінки",
+  "jqui_with_enter_button": "З кнопкою введення",
+  "jqui_select_all_on_focus": "Вибрати все у фокусі",
+  "jqui_select_all_on_focus_tooltip": "У фокусі буде виділено весь текст, тому його можна швидко видалити або змінити, не натискаючи кнопку Backspace"
 }

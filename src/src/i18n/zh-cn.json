@@ -512,5 +512,10 @@
   "jqui_password": "密码",
   "Copied %s": "已复制 %s",
   "jqui_button_dialog_close": "对话框关闭按钮",
-  "jqui_Close": "关闭"
+  "jqui_Close": "关闭",
+  "jqui_container_icon_dialog": "图标=>页面对话框",
+  "jqui_container_button_dialog": "按钮=>页面对话框",
+  "jqui_with_enter_button": "带输入按钮",
+  "jqui_select_all_on_focus": "选择所有焦点",
+  "jqui_select_all_on_focus_tooltip": "焦点上所有文本都将被选择，因此可以快速删除或更改文本，而无需按退格按钮"
 }

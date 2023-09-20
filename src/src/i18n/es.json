@@ -512,5 +512,10 @@
   "jqui_password": "Contraseña",
   "Copied %s": "%s copiado",
   "jqui_button_dialog_close": "Botón de cerrar diálogo",
-  "jqui_Close": "Cerca"
+  "jqui_Close": "Cerca",
+  "jqui_container_icon_dialog": "Icono=>Diálogo de página",
+  "jqui_container_button_dialog": "Botón=>Diálogo de página",
+  "jqui_with_enter_button": "Con botón de entrada",
+  "jqui_select_all_on_focus": "Seleccionar todo en foco",
+  "jqui_select_all_on_focus_tooltip": "Al enfocar, se seleccionará todo el texto, por lo que se puede eliminar o cambiar rápidamente sin presionar el botón de retroceso"
 }

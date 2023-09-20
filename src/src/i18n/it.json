@@ -512,5 +512,10 @@
   "jqui_password": "Parola d'ordine",
   "Copied %s": "Copiato %s",
   "jqui_button_dialog_close": "Pulsante di chiusura della finestra di dialogo",
-  "jqui_Close": "Vicino"
+  "jqui_Close": "Vicino",
+  "jqui_container_icon_dialog": "Icona=>Finestra di dialogo Pagina",
+  "jqui_container_button_dialog": "Pulsante => Finestra di dialogo Pagina",
+  "jqui_with_enter_button": "Con il pulsante Invio",
+  "jqui_select_all_on_focus": "Seleziona tutto a fuoco",
+  "jqui_select_all_on_focus_tooltip": "Al fuoco verrà selezionato tutto il testo, quindi può essere eliminato o modificato rapidamente senza premere il pulsante Backspace"
 }

@@ -35,7 +35,6 @@ import {
 
 // eslint-disable-next-line import/no-cycle
 import VisRxWidget from '../../visRxWidget';
-import {setExtras} from "@sentry/browser";
 
 class JQuiButton extends VisRxWidget {
     constructor(props) {
@@ -417,7 +416,7 @@ class JQuiButton extends VisRxWidget {
             this.setState({ showPassword: false }, () => this.onClick(true));
         } else {
             window.alert(I18n.t('Wrong password'));
-            this.setState({ passwordError: true}, () => {
+            this.setState({ passwordError: true }, () => {
                 setTimeout(() => this.setState({ passwordError: false }), 3000);
             });
         }
@@ -473,8 +472,7 @@ class JQuiButton extends VisRxWidget {
                     {I18n.t('Cancel')}
                 </Button>
             </DialogActions>
-        </Dialog>
-
+        </Dialog>;
     }
 
     onClick(passwordChecked) {

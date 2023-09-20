@@ -42,7 +42,7 @@ class JQuiButtonDialogClose extends VisRxWidget {
             visName: 'Button dialog close',
             visWidgetLabel: 'jqui_button_dialog_close',
             visPrev: 'widgets/jqui/img/Prev_ButtonDialogClose.png',
-            visOrder: 11,
+            visOrder: 13,
             visAttrs: [
                 {
                     name: 'common',

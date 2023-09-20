@@ -266,7 +266,7 @@ class VisBaseWidget extends React.Component {
             gap !== state.gap ||
             isHidden !== state.isHidden
         ) {
-            if (!this.props.runtime) {
+            if (!props.runtime) {
                 _style = JSON.parse(_style);
                 Object.keys(_style).forEach(attr => {
                     if (_style[attr] !== widget.style[attr]) {

@@ -512,5 +512,10 @@
   "jqui_password": "Wachtwoord",
   "Copied %s": "%s gekopieerd",
   "jqui_button_dialog_close": "Dialoogvenster sluitknop",
-  "jqui_Close": "Dichtbij"
+  "jqui_Close": "Dichtbij",
+  "jqui_container_icon_dialog": "Icon=>Paginadialoogvenster",
+  "jqui_container_button_dialog": "Button=>Paginadialoogvenster",
+  "jqui_with_enter_button": "Met enterknop",
+  "jqui_select_all_on_focus": "Selecteer alles met focus",
+  "jqui_select_all_on_focus_tooltip": "Bij focus wordt alle tekst geselecteerd, zodat deze snel kan worden verwijderd of gewijzigd zonder op de backspace-knop te drukken"
 }

@@ -511,6 +511,11 @@
   "You can open dialog with following script:": "Sie können den Dialog mit dem folgenden Skript öffnen:",
   "jqui_password": "Passwort",
   "Copied %s": "%s kopiert",
-  "jqui_button_dialog_close": "Schaltfläche zum Schließen des Dialogs",
-  "jqui_Close": "Schließen"
+  "jqui_button_dialog_close": "Knopf zum Schließen des Dialogs",
+  "jqui_Close": "Schließen",
+  "jqui_container_icon_dialog": "Symbol=>Seitendialog",
+  "jqui_container_button_dialog": "Schaltfläche=>Seitendialog",
+  "jqui_with_enter_button": "Mit Enter-Taste",
+  "jqui_select_all_on_focus": "Wählen Sie alle im Fokus",
+  "jqui_select_all_on_focus_tooltip": "Beim Fokussieren wird der gesamte Text ausgewählt, sodass er schnell gelöscht oder geändert werden kann, ohne die Rücktaste drücken zu müssen"
 }
