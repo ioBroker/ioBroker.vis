@@ -496,5 +496,21 @@
   "jqui_view_group": "Перегляд навігації",
   "jqui_nav_view": "Перейти до перегляду",
   "jqui_buttontext_view": "Використовуйте назву перегляду як назву",
-  "jqui_button_color": "Колір кнопки"
+  "jqui_button_color": "Колір кнопки",
+  "jqui_navigation_icon": "Значок навігації",
+  "Wrong password": "Неправильний пароль",
+  "Enter password": "Введіть пароль",
+  "Enter": "Введіть",
+  "jqui_password_tooltip": "Користувач повинен ввести пароль, щоб відкрити діалогове вікно, перейти на сторінку або URL",
+  "jqui_dialog_name": "Назва діалогу",
+  "jqui_external_dialog": "Зовнішній діалог",
+  "jqui_external_dialog_tooltip": "Це діалогове вікно не відображається на сторінці, але його можна відкрити зовнішньою командою \"dialogOpen\" із назвою діалогового вікна або ідентифікатором віджета як параметром.",
+  "jqui_html_external_dialog": "Зовнішній діалог",
+  "jqui_navigation_password": "Навігація з паролем",
+  "External dialog": "Зовнішній діалог",
+  "You can open dialog with following script:": "Ви можете відкрити діалогове вікно за допомогою наступного сценарію:",
+  "jqui_password": "Пароль",
+  "Copied %s": "Скопійовано %s",
+  "jqui_button_dialog_close": "Кнопка закриття діалогового вікна",
+  "jqui_Close": "Закрити"
 }

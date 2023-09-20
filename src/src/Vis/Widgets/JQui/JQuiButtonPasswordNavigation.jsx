@@ -17,17 +17,17 @@ import PropTypes from 'prop-types';
 // eslint-disable-next-line import/no-cycle
 import JQuiButton from './JQuiButton';
 
-class JQuiButtonNavigation extends JQuiButton {
+class JQuiButtonPasswordNavigation extends JQuiButton {
     static getWidgetInfo() {
         const widgetInfo = JQuiButton.getWidgetInfo();
 
         const newWidgetInfo = {
-            id: 'tplJquiButtonNav',
+            id: 'tplJquiNavPw',
             visSet: 'jqui',
-            visName: 'Navigation Button',
-            visWidgetLabel: 'jqui_navigation_button',
-            visPrev: 'widgets/jqui/img/Prev_ButtonNav.png',
-            visOrder: 8,
+            visName: 'Navigation with password',
+            visWidgetLabel: 'jqui_navigation_password',
+            visPrev: 'widgets/jqui/img/Prev_ButtonNavPw.png',
+            visOrder: 10,
             visAttrs: widgetInfo.visAttrs,
         };
 
@@ -41,11 +41,14 @@ class JQuiButtonNavigation extends JQuiButton {
         const modal = JQuiButton.findField(newWidgetInfo, 'modal');
         delete modal.default;
 
+        const text = JQuiButton.findField(newWidgetInfo, 'buttontext');
+        text.default = 'Password';
+
         const navView = JQuiButton.findField(newWidgetInfo, 'nav_view');
         navView.default = '';
 
-        const text = JQuiButton.findField(newWidgetInfo, 'buttontext');
-        text.default = 'View';
+        const password = JQuiButton.findField(newWidgetInfo, 'Password');
+        password.default = '';
 
         // set resizable to true
         const visResizable = JQuiButton.findField(newWidgetInfo, 'visResizable');
@@ -56,11 +59,11 @@ class JQuiButtonNavigation extends JQuiButton {
 
     // eslint-disable-next-line class-methods-use-this
     getWidgetInfo() {
-        return JQuiButtonNavigation.getWidgetInfo();
+        return JQuiButtonPasswordNavigation.getWidgetInfo();
     }
 }
 
-JQuiButtonNavigation.propTypes = {
+JQuiButtonPasswordNavigation.propTypes = {
     id: PropTypes.string.isRequired,
     context: PropTypes.object.isRequired,
     view: PropTypes.string.isRequired,
@@ -68,4 +71,4 @@ JQuiButtonNavigation.propTypes = {
     tpl: PropTypes.string.isRequired,
 };
 
-export default JQuiButtonNavigation;
+export default JQuiButtonPasswordNavigation;

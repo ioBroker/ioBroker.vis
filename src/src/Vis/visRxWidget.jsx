@@ -285,7 +285,7 @@ class VisRxWidget extends VisBaseWidget {
 
     async componentDidMount() {
         super.componentDidMount();
-        await this.props.context.socket.subscribeState(this.linkContext.IDs, this.onStateChangedBind);
+        this.linkContext.IDs.length && (await this.props.context.socket.subscribeState(this.linkContext.IDs, this.onStateChangedBind));
     }
 
     // eslint-disable-next-line no-unused-vars,class-methods-use-this
@@ -310,7 +310,7 @@ class VisRxWidget extends VisBaseWidget {
     }
 
     async componentWillUnmount() {
-        await this.props.context.socket.unsubscribeState(this.linkContext.IDs, this.onStateChangedBind);
+        this.linkContext.IDs.length && (await this.props.context.socket.unsubscribeState(this.linkContext.IDs, this.onStateChangedBind));
         super.componentWillUnmount();
     }
 
@@ -357,10 +357,10 @@ class VisRxWidget extends VisBaseWidget {
 
         // subscribe on some new IDs and remove old IDs
         const unsubscribe = oldIDs.filter(id => !this.linkContext.IDs.includes(id));
-        await context.socket.unsubscribeState(unsubscribe, this.onStateChangedBind);
+        unsubscribe.length && (await context.socket.unsubscribeState(unsubscribe, this.onStateChangedBind));
 
         const subscribe = this.linkContext.IDs.filter(id => !oldIDs.includes(id));
-        await context.socket.subscribeState(subscribe, this.onStateChangedBind);
+        subscribe.length && (await context.socket.subscribeState(subscribe, this.onStateChangedBind));
 
         this.onStateChanged();
     }

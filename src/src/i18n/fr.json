@@ -496,5 +496,21 @@
   "jqui_view_group": "Vue de navigation",
   "jqui_nav_view": "Aller voir",
   "jqui_buttontext_view": "Utiliser le nom de la vue comme titre",
-  "jqui_button_color": "Couleur du bouton"
+  "jqui_button_color": "Couleur du bouton",
+  "jqui_navigation_icon": "Icône de navigation",
+  "Wrong password": "Mauvais mot de passe",
+  "Enter password": "Entrer le mot de passe",
+  "Enter": "Entrer",
+  "jqui_password_tooltip": "L'utilisateur doit saisir un mot de passe pour ouvrir la boîte de dialogue, accéder à la page ou à l'URL",
+  "jqui_dialog_name": "Nom de la boîte de dialogue",
+  "jqui_external_dialog": "Boîte de dialogue externe",
+  "jqui_external_dialog_tooltip": "Cette boîte de dialogue n'est pas visible sur la page, mais elle peut être ouverte par la commande externe \"dialogOpen\" avec le nom de la boîte de dialogue ou l'ID du widget en paramètre.",
+  "jqui_html_external_dialog": "Boîte de dialogue externe",
+  "jqui_navigation_password": "Navigation avec mot de passe",
+  "External dialog": "Boîte de dialogue externe",
+  "You can open dialog with following script:": "Vous pouvez ouvrir la boîte de dialogue avec le script suivant :",
+  "jqui_password": "Mot de passe",
+  "Copied %s": "%s copié",
+  "jqui_button_dialog_close": "Bouton de fermeture de la boîte de dialogue",
+  "jqui_Close": "Fermer"
 }

@@ -496,5 +496,21 @@
   "jqui_view_group": "Navigationsansicht",
   "jqui_nav_view": "Zur Seite gehen",
   "jqui_buttontext_view": "Verwenden Sie den Ansichtsnamen als Titel",
-  "jqui_button_color": "Knopffarbe"
+  "jqui_button_color": "Knopffarbe",
+  "jqui_navigation_icon": "Navigationssymbol",
+  "Wrong password": "Falsches Passwort",
+  "Enter password": "Passwort eingeben",
+  "Enter": "Eingeben",
+  "jqui_password_tooltip": "Der Benutzer muss ein Passwort eingeben, um den Dialog zu öffnen und zur Seite oder URL zu gelangen",
+  "jqui_dialog_name": "Dialogname",
+  "jqui_external_dialog": "Externer Dialog",
+  "jqui_external_dialog_tooltip": "Dieser Dialog ist auf der Seite nicht sichtbar, kann aber mit dem externen Befehl „dialogOpen“ mit dem Dialognamen oder der Widget-ID als Parameter geöffnet werden.",
+  "jqui_html_external_dialog": "Externer Dialog",
+  "jqui_navigation_password": "Navigation mit Passwort",
+  "External dialog": "Externer Dialog",
+  "You can open dialog with following script:": "Sie können den Dialog mit dem folgenden Skript öffnen:",
+  "jqui_password": "Passwort",
+  "Copied %s": "%s kopiert",
+  "jqui_button_dialog_close": "Schaltfläche zum Schließen des Dialogs",
+  "jqui_Close": "Schließen"
 }

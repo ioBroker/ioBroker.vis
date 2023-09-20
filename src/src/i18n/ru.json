@@ -496,5 +496,21 @@
   "jqui_view_group": "Просмотр навигации",
   "jqui_nav_view": "Перейти к странице",
   "jqui_buttontext_view": "Использовать имя представления в качестве заголовка",
-  "jqui_button_color": "Цвет кнопки"
+  "jqui_button_color": "Цвет кнопки",
+  "jqui_navigation_icon": "Значок навигации",
+  "Wrong password": "Неправильный пароль",
+  "Enter password": "Введите пароль",
+  "Enter": "Применить",
+  "jqui_password_tooltip": "Пользователь должен ввести пароль, чтобы открыть диалоговое окно, перейти на страницу или URL-адрес.",
+  "jqui_dialog_name": "Имя диалога",
+  "jqui_external_dialog": "Внешний диалог",
+  "jqui_external_dialog_tooltip": "Этот диалог не виден на странице, но его можно открыть внешней командой «dialogOpen» с именем диалога или идентификатором виджета в качестве параметра.",
+  "jqui_html_external_dialog": "Внешний диалог",
+  "jqui_navigation_password": "Навигация с паролем",
+  "External dialog": "Внешний диалог",
+  "You can open dialog with following script:": "Вы можете открыть диалог с помощью следующего скрипта:",
+  "jqui_password": "Пароль",
+  "Copied %s": "Скопировано %s",
+  "jqui_button_dialog_close": "Кнопка закрытия диалога",
+  "jqui_Close": "Закрыть"
 }

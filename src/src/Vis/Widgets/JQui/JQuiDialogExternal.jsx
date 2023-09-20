@@ -17,17 +17,17 @@ import PropTypes from 'prop-types';
 // eslint-disable-next-line import/no-cycle
 import JQuiButton from './JQuiButton';
 
-class JQuiButtonNavigation extends JQuiButton {
+class JQuiDialogExternal extends JQuiButton {
     static getWidgetInfo() {
         const widgetInfo = JQuiButton.getWidgetInfo();
 
         const newWidgetInfo = {
-            id: 'tplJquiButtonNav',
+            id: 'tplContainerDialogExternal',
             visSet: 'jqui',
-            visName: 'Navigation Button',
-            visWidgetLabel: 'jqui_navigation_button',
-            visPrev: 'widgets/jqui/img/Prev_ButtonNav.png',
-            visOrder: 8,
+            visName: 'External Dialog',
+            visWidgetLabel: 'jqui_html_external_dialog',
+            visPrev: 'widgets/jqui/img/Prev_JquiExternalDialog.png',
+            visOrder: 11,
             visAttrs: widgetInfo.visAttrs,
         };
 
@@ -35,37 +35,29 @@ class JQuiButtonNavigation extends JQuiButton {
         newWidgetInfo.visAttrs[0].fields.unshift({
             name: '_note',
             type: 'help',
-            text: 'jqui_button_nav_blank_note',
+            text: 'jqui_button_link_blank_note',
         });
 
-        const modal = JQuiButton.findField(newWidgetInfo, 'modal');
-        delete modal.default;
+        const externalDialog = JQuiButton.findField(newWidgetInfo, 'externalDialog');
+        externalDialog.default = true;
 
-        const navView = JQuiButton.findField(newWidgetInfo, 'nav_view');
-        navView.default = '';
-
-        const text = JQuiButton.findField(newWidgetInfo, 'buttontext');
-        text.default = 'View';
-
-        // set resizable to true
-        const visResizable = JQuiButton.findField(newWidgetInfo, 'visResizable');
-        visResizable.default = true;
+        const htmlDialog = JQuiButton.findField(newWidgetInfo, 'html_dialog');
+        htmlDialog.default = '<div>HTML Dialog</div>';
 
         return newWidgetInfo;
     }
 
     // eslint-disable-next-line class-methods-use-this
     getWidgetInfo() {
-        return JQuiButtonNavigation.getWidgetInfo();
+        return JQuiDialogExternal.getWidgetInfo();
     }
 }
 
-JQuiButtonNavigation.propTypes = {
+JQuiDialogExternal.propTypes = {
     id: PropTypes.string.isRequired,
     context: PropTypes.object.isRequired,
     view: PropTypes.string.isRequired,
     editMode: PropTypes.bool.isRequired,
-    tpl: PropTypes.string.isRequired,
 };
 
-export default JQuiButtonNavigation;
+export default JQuiDialogExternal;

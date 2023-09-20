@@ -20,7 +20,7 @@ import {
     Dashboard as DashboardIcon,
 } from '@mui/icons-material';
 
-import { Utils, Icon, I18n } from '@iobroker/adapter-react-v5';
+import { Utils, Icon } from '@iobroker/adapter-react-v5';
 
 const MENU_WIDTH_FULL = 200;
 const MENU_WIDTH_NARROW = 56;
@@ -240,7 +240,7 @@ class VisNavigation extends React.Component {
                         key={index}
                         style={{ minHeight: 48, minWidth: item.noText ? 20 : undefined }}
                         icon={item.icon ? <Icon src={item.icon} className={this.props.classes.listItemIcon} /> : null}
-                        onClick={() => this.navigate(item.view)}
+                        onClick={() => this.props.context.changeView(item.view)}
                         value={item.view}
                         label={item.text}
                     />)}
@@ -278,7 +278,7 @@ class VisNavigation extends React.Component {
                             key={index}
                             disablePadding
                             className={Utils.clsx(this.props.classes.menuItem, this.props.activeView === item.view && this.props.classes.selectedMenu)}
-                            onClick={() => this.navigate(item.view)}
+                            onClick={() => this.props.context.changeView(item.view)}
                         >
                             <ListItemButton>
                                 <ListItemIcon>
@@ -331,14 +331,6 @@ class VisNavigation extends React.Component {
                 </List>
             </div>
         </div>;
-    }
-
-    navigate(view) {
-        if (this.props.editMode) {
-            window.alert(I18n.t('Ignored in edit mode'));
-        } else {
-            window.vis.changeView(view, view);
-        }
     }
 
     renderToolbar(settings) {

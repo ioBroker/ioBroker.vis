@@ -496,5 +496,21 @@
   "jqui_view_group": "导航视图",
   "jqui_nav_view": "前往查看",
   "jqui_buttontext_view": "使用视图名称作为标题",
-  "jqui_button_color": "按钮颜色"
+  "jqui_button_color": "按钮颜色",
+  "jqui_navigation_icon": "导航图标",
+  "Wrong password": "密码错误",
+  "Enter password": "输入密码",
+  "Enter": "进入",
+  "jqui_password_tooltip": "用户必须输入密码才能打开对话框、转到页面或 URL",
+  "jqui_dialog_name": "对话框名称",
+  "jqui_external_dialog": "外部对话",
+  "jqui_external_dialog_tooltip": "该对话框在页面上不可见，但可以通过外部命令“dialogOpen”以对话框名称或小部件 ID 作为参数打开它。",
+  "jqui_html_external_dialog": "外部对话",
+  "jqui_navigation_password": "使用密码导航",
+  "External dialog": "外部对话",
+  "You can open dialog with following script:": "您可以使用以下脚本打开对话框：",
+  "jqui_password": "密码",
+  "Copied %s": "已复制 %s",
+  "jqui_button_dialog_close": "对话框关闭按钮",
+  "jqui_Close": "关闭"
 }

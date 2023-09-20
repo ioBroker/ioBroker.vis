@@ -59,10 +59,7 @@ class BasicViewInWidget extends VisRxWidget {
                                 field,
                                 data,
                                 onDataChange,
-                                // socket,
-                                // widgetID,
-                                // view,
-                                // project,
+                                options, // {context: {adapterName, instance, projectName, socket, views}, selectedView, selectedWidget, selectedWidgets}
                             ) => <TextField
                                 fullWidth
                                 value={data[field.name]}
@@ -195,15 +192,6 @@ class BasicViewInWidget extends VisRxWidget {
             props.style.height = 270;
         }
 
-        /*
-        <div className="vis-widget <%== this.data.attr('class') %>" style="width:400px; height: 270px;" id="<%= this.data.attr('wid') %>">
-            <% if (vis.editMode) {%>
-                <div class="editmode-helper"></div>
-            <%} %>
-            <div data-vis-contains="<%= this.data.attr('contains_view') %>" className="vis-widget-body vis-view-container">
-            </div>
-        </div>
-         */
         const view = this.state.rxData.contains_view;
 
         if (view === this.props.view) {

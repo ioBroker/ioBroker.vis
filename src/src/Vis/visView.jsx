@@ -620,8 +620,8 @@ class VisView extends React.Component {
                 widgetsRefs[wid].onMove(this.movement.x, this.movement.y, false, this.calculateRelativeWidgetPosition);
             }
 
-            // if widget has included widgets => inform them about the new size or position
-            // this code could be disabled, as at the end the widgets will be informed anyway
+            // If widget has included widgets => inform them about the new size or position.
+            // This code could be disabled; as in the end, the widgets will be informed anyway.
             const oWidget = this.props.context.views[this.props.view].widgets[wid];
             const attrs = Object.keys(oWidget.data);
             attrs.forEach(attr => {
@@ -657,7 +657,7 @@ class VisView extends React.Component {
                     // we can add only to one widget
                     widgetsRefs[wid].onCommand('includePossible');
                 } else {
-                    // ifnform all other widgets that they do not have inclusion
+                    // inform all other widgets that they do not have inclusion
                     widgetsRefs[wid].onCommand('includePossibleNOT');
                 }
             }

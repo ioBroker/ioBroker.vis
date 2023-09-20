@@ -266,18 +266,27 @@ class VisBaseWidget extends React.Component {
             gap !== state.gap ||
             isHidden !== state.isHidden
         ) {
-            _style = JSON.parse(_style);
-            Object.keys(_style).forEach(attr => {
-                if (_style[attr] !== widget.style[attr]) {
-                    console.log(`[${Date.now()}] Rerender because of style.${attr}: ${_style[attr]} !== ${widget.style[attr]}`);
-                }
-            });
-            _data = JSON.parse(_data);
-            Object.keys(_data).forEach(attr => {
-                if (JSON.stringify(_data[attr]) !== JSON.stringify(widget.data[attr])) {
-                    console.log(`[${Date.now()}] Rerender because of data.${attr}: ${_data[attr]} !== ${widget.data[attr]}`);
-                }
-            });
+            if (!this.props.runtime) {
+                _style = JSON.parse(_style);
+                Object.keys(_style).forEach(attr => {
+                    if (_style[attr] !== widget.style[attr]) {
+                        console.log(`[${Date.now()} / ${props.id}] Rerender because of style.${attr}: ${_style[attr]} !== ${widget.style[attr]}`);
+                    }
+                });
+                Object.keys(widget.style).forEach(attr => {
+                    if (_style[attr] !== widget.style[attr]) {
+                        console.log(`[${Date.now()} / ${props.id}] Rerender because of style.${attr}: ${_style[attr]} !== ${widget.style[attr]}`);
+                    }
+                });
+
+                _data = JSON.parse(_data);
+                Object.keys(_data).forEach(attr => {
+                    if (JSON.stringify(_data[attr]) !== JSON.stringify(widget.data[attr])) {
+                        console.log(`[${Date.now()} / ${props.id}] Rerender because of data.${attr}: ${_data[attr]} !== ${widget.data[attr]}`);
+                    }
+                });
+            }
+
             let data;
             let style;
             // restore original data
@@ -1580,34 +1589,39 @@ class VisBaseWidget extends React.Component {
         };
 
         // If the resizable flag can be controlled dynamically by settings, and it is now not resizable
+        let doNotTakeWidth = false;
+        let doNotTakeHeight = false;
         if (this.visDynamicResizable && !this.isResizable()) {
             if (this.visDynamicResizable.desiredSize === false) {
-                delete this.state.style.width;
-                delete this.state.style.height;
+                doNotTakeWidth = true;
+                doNotTakeHeight = true;
                 delete style.width;
                 delete style.height;
             } else if (typeof this.visDynamicResizable.desiredSize === 'object') {
                 if (this.state.style.width) {
                     style.width = VisBaseWidget.correctStylePxValue(this.visDynamicResizable.desiredSize.width);
-                    // eslint-disable-next-line react/no-direct-mutation-state
-                    this.state.style.width = style.width;
                 } else {
-                    delete this.state.style.width;
+                    doNotTakeWidth = true;
                     delete style.width;
                 }
 
                 if (this.state.style.height) {
                     style.height = VisBaseWidget.correctStylePxValue(this.visDynamicResizable.desiredSize.height);
-                    // eslint-disable-next-line react/no-direct-mutation-state
-                    this.state.style.height = style.height;
                 } else {
-                    delete this.state.style.height;
+                    doNotTakeHeight = true;
                     delete style.height;
                 }
             }
         }
 
         const rxWidget = this.renderWidgetBody(props);
+
+        if (doNotTakeWidth) {
+            delete style.width;
+        }
+        if (doNotTakeHeight) {
+            delete style.height;
+        }
 
         // in group edit mode show it in the top left corner
         if (this.props.id === this.props.selectedGroup) {

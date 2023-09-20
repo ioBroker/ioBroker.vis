@@ -496,5 +496,21 @@
   "jqui_view_group": "Widok nawigacji",
   "jqui_nav_view": "Przejdź do widoku",
   "jqui_buttontext_view": "Użyj nazwy widoku jako tytułu",
-  "jqui_button_color": "Kolor przycisku"
+  "jqui_button_color": "Kolor przycisku",
+  "jqui_navigation_icon": "Ikona nawigacji",
+  "Wrong password": "Złe hasło",
+  "Enter password": "Wprowadź hasło",
+  "Enter": "Wchodzić",
+  "jqui_password_tooltip": "Użytkownik musi wprowadzić hasło, aby otworzyć okno dialogowe, przejść do strony lub adresu URL",
+  "jqui_dialog_name": "Nazwa okna dialogowego",
+  "jqui_external_dialog": "Okno zewnętrzne",
+  "jqui_external_dialog_tooltip": "To okno dialogowe nie jest widoczne na stronie, ale można je otworzyć za pomocą zewnętrznego polecenia „dialogOpen” z nazwą okna dialogowego lub identyfikatorem widżetu jako parametrem.",
+  "jqui_html_external_dialog": "Okno zewnętrzne",
+  "jqui_navigation_password": "Nawigacja z hasłem",
+  "External dialog": "Okno zewnętrzne",
+  "You can open dialog with following script:": "Możesz otworzyć okno dialogowe za pomocą następującego skryptu:",
+  "jqui_password": "Hasło",
+  "Copied %s": "Skopiowano %s",
+  "jqui_button_dialog_close": "Przycisk zamykania okna dialogowego",
+  "jqui_Close": "Zamknąć"
 }

@@ -496,5 +496,21 @@
   "jqui_view_group": "Navigation view",
   "jqui_nav_view": "Go to view",
   "jqui_buttontext_view": "Use view name as title",
-  "jqui_button_color": "Button color"
+  "jqui_button_color": "Button color",
+  "jqui_navigation_icon": "Navigation icon",
+  "Wrong password": "Wrong password",
+  "Enter password": "Enter password",
+  "Enter": "Enter",
+  "jqui_password_tooltip": "User must enter password to open dialog, go to page or URL",
+  "jqui_dialog_name": "Dialog name",
+  "jqui_external_dialog": "External dialog",
+  "jqui_external_dialog_tooltip": "This dialog is not visible on page, but it can be opened by external command \"dialogOpen\" with dialog name or widget ID as parameter.",
+  "jqui_html_external_dialog": "External dialog",
+  "jqui_navigation_password": "Navigation with password",
+  "External dialog": "External dialog",
+  "You can open dialog with following script:": "You can open dialog with following script:",
+  "jqui_password": "Password",
+  "Copied %s": "Copied %s",
+  "jqui_button_dialog_close": "Dialog close button",
+  "jqui_Close": "Close"
 }

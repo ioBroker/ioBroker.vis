@@ -23,15 +23,19 @@ import {
     DialogTitle,
     IconButton,
     Popper,
-    Paper,
+    Paper, TextField, DialogActions,
 } from '@mui/material';
 
-import Close from '@mui/icons-material/Close';
+import { Close, Check } from '@mui/icons-material';
 
-import { Icon } from '@iobroker/adapter-react-v5';
+import {
+    I18n, Icon,
+    Utils, IconCopy,
+} from '@iobroker/adapter-react-v5';
 
 // eslint-disable-next-line import/no-cycle
 import VisRxWidget from '../../visRxWidget';
+import {setExtras} from "@sentry/browser";
 
 class JQuiButton extends VisRxWidget {
     constructor(props) {
@@ -39,6 +43,8 @@ class JQuiButton extends VisRxWidget {
         this.state.width = 0;
         this.state.height = 0;
         this.state.dialogVisible = false;
+        this.state.showPassword = false;
+        this.state.password = '';
         this.refButton = React.createRef();
         this.refDialog = React.createRef();
     }
@@ -60,14 +66,21 @@ class JQuiButton extends VisRxWidget {
                             name: 'buttontext',
                             type: 'text',
                             default: 'URL',
-                            hidden: data => !!data.html || !!(data.buttontext_view && data.nav_view),
+                            hidden: data => !!data.html || !!(data.buttontext_view && data.nav_view) || !!data.externalDialog,
                         },
                         {
                             name: 'html',
                             type: 'html',
                             default: '',
                             tooltip: 'jqui_html_tooltip',
-                            disabled: data => !!data.buttontext || !!data.icon || !!data.src,
+                            disabled: data => !!data.buttontext || !!data.icon || !!data.src || !!data.externalDialog,
+                        },
+                        {
+                            name: 'Password',
+                            type: 'password',
+                            label: 'password',
+                            tooltip: 'jqui_password_tooltip',
+                            disabled: data => !data.nav_view && !data.url && !data.href && !data.html_dialog && !data.contains_view,
                         },
                     ],
                 },
@@ -118,6 +131,7 @@ class JQuiButton extends VisRxWidget {
                 },
                 {
                     name: 'style',
+                    hidden: data => !!data.externalDialog,
                     fields: [
                         { name: 'no_style', type: 'checkbox', hidden: data => data.jquery_style },
                         {
@@ -165,7 +179,7 @@ class JQuiButton extends VisRxWidget {
                 },
                 {
                     name: 'icon',
-                    hidden: data => !!data.html,
+                    hidden: data => !!data.externalDialog,
                     fields: [
                         {
                             name: 'src',
@@ -300,6 +314,19 @@ class JQuiButton extends VisRxWidget {
                             type: 'text',
                             hidden: data => !data.setId || (!data.html_dialog && !data.contains_view),
                         },
+                        {
+                            name: 'dialogName',
+                            label: 'jqui_dialog_name',
+                            type: 'text',
+                            hidden: data => !data.html_dialog && !data.contains_view,
+                        },
+                        {
+                            name: 'externalDialog',
+                            label: 'jqui_external_dialog',
+                            tooltip: 'jqui_external_dialog_tooltip',
+                            type: 'checkbox',
+                            hidden: data => !data.html_dialog && !data.contains_view,
+                        },
                     ],
                 },
             ],
@@ -337,17 +364,27 @@ class JQuiButton extends VisRxWidget {
             }
         }
         // from base class
+        if (this.refService.current && (this.state.rxData.html_dialog || this.state.rxData.contains_view) && !this.refService.current._showDialog) {
+            this.refService.current._showDialog = this.showDialog;
+        }
         if (this.refService.current) {
-            if ((this.state.rxData.html_dialog || this.state.rxData.contains_view) && !this.refService.current._showDialog) {
-                this.refService.current._showDialog = this.showDialog;
+            const dialogName = this.refService.current.dataset.dialogName;
+            if ((dialogName || '') !== (this.state.rxData.dialogName || '')) {
+                if (!this.state.rxData.dialogName) {
+                    delete this.refService.current.dataset.dialogName;
+                } else {
+                    this.refService.current.dataset.dialogName = this.state.rxData.dialogName;
+                }
             }
         }
     }
 
     showDialog = show => {
-        this.setState({ dialogVisible: show });
+        const that = this;
 
-        // Autoclose
+        that.setState({ dialogVisible: show });
+
+        // Auto-close
         let timeout = this.state.rxData.autoclose;
         if (timeout === true || timeout === 'true') {
             timeout = 10000;
@@ -357,26 +394,106 @@ class JQuiButton extends VisRxWidget {
         }
         timeout = parseInt(timeout, 10);
         if (timeout < 60) {
-            // may be this is seconds
+            // maybe this is seconds
             timeout *= 1000;
         }
         timeout = timeout || 1000;
 
         if (timeout) {
             if (show) {
-                this.hideTimeout = setTimeout(() => {
-                    this.hideTimeout = null;
-                    this.showDialog(false);
+                that.hideTimeout = setTimeout(() => {
+                    that.hideTimeout = null;
+                    that.showDialog(false);
                 }, timeout);
-            } else if (this.hideTimeout) {
-                clearTimeout(this.hideTimeout);
-                this.hideTimeout = null;
+            } else if (that.hideTimeout) {
+                clearTimeout(that.hideTimeout);
+                that.hideTimeout = null;
             }
         }
     };
 
-    onClick() {
-        if (!this.props.editMode && this.state.rxData.href) {
+    onPasswordEnter() {
+        if (this.state.password === this.state.rxData.Password) {
+            this.setState({ showPassword: false }, () => this.onClick(true));
+        } else {
+            window.alert(I18n.t('Wrong password'));
+            this.setState({ passwordError: true}, () => {
+                setTimeout(() => this.setState({ passwordError: false }), 3000);
+            });
+        }
+    }
+
+    renderPasswordDialog() {
+        if (!this.state.showPassword) {
+            return null;
+        }
+        return <Dialog
+            open={!0}
+            onClose={() => this.setState({ showPassword: false })}
+        >
+            <DialogTitle>{I18n.t('Enter password')}</DialogTitle>
+            <DialogContent>
+                <TextField
+                    label={I18n.t('Password')}
+                    error={this.state.passwordError}
+                    helperText={this.state.passwordError ? I18n.t('Wrong password') : null}
+                    type="password"
+                    autoFocus
+                    fullWidth
+                    variant="standard"
+                    value={this.state.password || ''}
+                    onChange={e => this.setState({ password: e.target.value })}
+                    onKeyUp={e => e.keyCode === 13 && this.onPasswordEnter()}
+                />
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    disabled={!this.state.password}
+                    startIcon={<Check />}
+                    onClick={e => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        this.onPasswordEnter();
+                    }}
+                    color="primary"
+                    variant="contained"
+                >
+                    {I18n.t('Enter')}
+                </Button>
+                <Button
+                    startIcon={<Close />}
+                    onClick={e => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        this.setState({ showPassword: false });
+                    }}
+                    color="grey"
+                    variant="contained"
+                >
+                    {I18n.t('Cancel')}
+                </Button>
+            </DialogActions>
+        </Dialog>
+
+    }
+
+    onClick(passwordChecked) {
+        if (this.state.dialogVisible) {
+            return;
+        }
+
+        if (!passwordChecked && this.state.rxData.Password) {
+            if (this.props.editMode) {
+                window.alert(I18n.t('Ignored in edit mode'));
+            } else {
+                this.setState({ showPassword: true, password: '' });
+            }
+            return;
+        }
+
+        if (this.state.rxData.nav_view) {
+            this.props.context.changeView(this.state.rxData.nav_view);
+        } else if (!this.props.editMode && this.state.rxData.href) {
             if (this.state.rxData.target ||
                 (this.props.tpl === 'tplJquiButtonLinkBlank' && this.state.rxData.target === undefined)
             ) {
@@ -385,9 +502,8 @@ class JQuiButton extends VisRxWidget {
                 window.location.href = this.state.rxData.href;
             }
         } else if (this.state.rxData.url) {
-            this.props.socket.getRawSocket().emit('httpGet', this.state.rxData.url, data => {
-                console.log('httpGet', this.state.rxData.url, data);
-            });
+            this.props.socket.getRawSocket().emit('httpGet', this.state.rxData.url, data =>
+                console.log('httpGet', this.state.rxData.url, data));
         }
 
         if (this.state.rxData.html_dialog || this.state.rxData.contains_view) {
@@ -492,7 +608,10 @@ class JQuiButton extends VisRxWidget {
     }
 
     renderDialog() {
-        if (this.props.editMode || (!this.state.dialogVisible && !this.state.persistent) || (!this.state.rxData.html_dialog && !this.state.rxData.contains_view)) {
+        if (this.props.editMode ||
+            (!this.state.dialogVisible && !this.state.rxData.persistent && !this.state.rxData.externalDialog) ||
+            (!this.state.rxData.html_dialog && !this.state.rxData.contains_view)
+        ) {
             return null;
         }
 
@@ -585,59 +704,106 @@ class JQuiButton extends VisRxWidget {
             buttonStyle.padding = this.state.rxData.padding;
         }
 
-        let onClick;
         let buttonText;
         if (this.state.rxData.html) {
-            onClick = () => this.onClick();
+            // ignore
         } else if (this.state.rxData.nav_view && this.state.rxData.buttontext_view) {
             buttonText = this.props.context.views[this.state.rxData.nav_view]?.settings?.navigationTitle || this.state.rxData.nav_view;
         } else {
             buttonText = this.state.rxData.buttontext;
         }
 
+        let content;
+        if (this.state.rxData.externalDialog) {
+            content = this.props.editMode ? <div
+                style={{
+                    width: '100%',
+                    height: '100%',
+                    border: '2px dashed red',
+                    backgroundColor: 'grey',
+                    color: 'white',
+                    boxSizing: 'border-box',
+                }}
+            >
+                <IconButton
+                    style={{
+                        position: 'absolute',
+                        bottom: 0,
+                        right: 0,
+                        opacity: 0.4,
+                    }}
+                    className={this.props.context.editModeComponentClass}
+                    onClick={e => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        const text = `setState('${this.props.context.adapterName}.${this.props.context.instance}.control.command', '${JSON.stringify({ command: 'dialog', instance: window.localStorage.getItem('visInstance'), data: this.state.rxData.dialogName || this.props.id })}')`;
+                        window.alert(I18n.t('Copied %s', text));
+                        Utils.copyToClipboard(text);
+                    }}
+                >
+                    <IconCopy />
+                </IconButton>
+                <div>{I18n.t('External dialog')}</div>
+                <div>{this.state.rxData.html_dialog ? 'HTML' : `View: ${this.state.rxData.contains_view}`}</div>
+                <div>{`Name: ${this.state.rxData.dialogName ? `${this.state.rxData.dialogName} (${this.props.id})` : this.props.id}`}</div>
+                <div style={{ fontSize: 10 }}>{I18n.t('You can open dialog with following script:')}</div>
+                <div style={{ fontSize: 10 }}>{`setState('${this.props.context.adapterName}.${this.props.context.instance}.control.command', '${JSON.stringify({ command: 'dialog', instance: window.localStorage.getItem('visInstance'), data: this.state.rxData.dialogName || this.props.id })}')`}</div>
+            </div> : null;
+        } else {
+            content = [
+                this.state.rxData.html_prepend ? <span
+                    key="prepend"
+                    // eslint-disable-next-line react/no-danger
+                    dangerouslySetInnerHTML={{ __html: this.state.rxData.html_prepend }}
+                /> : null,
+                this.state.rxData.html ?
+                    <span
+                        key="content"
+                        // eslint-disable-next-line react/no-danger
+                        dangerouslySetInnerHTML={{ __html: this.state.rxData.html }}
+                    />
+                    :
+                    (this.state.rxData.no_style || this.state.rxData.jquery_style ?
+                        <button
+                            key="content"
+                            className={this.state.rxData.nav_view && this.state.rxData.nav_view === window.location.hash.slice(1) ? 'ui-state-active' : undefined}
+                            ref={this.refButton}
+                            type="button"
+                            style={buttonStyle}
+                            onClick={() => this.onClick()}
+                        >
+                            {icon}
+                            {buttonText}
+                        </button>
+                        :
+                        <Button
+                            key="content"
+                            ref={this.refButton}
+                            style={buttonStyle}
+                            color={this.state.rxData.nav_view && this.state.rxData.nav_view === window.location.hash.slice(1) ?
+                                (this.state.rxData.color === 'primary' ? 'secondary' : 'primary') :
+                                (this.state.rxData.color || 'grey')}
+                            variant={this.state.rxData.variant === undefined ? 'contained' : this.state.rxData.variant}
+                            onClick={() => this.onClick()}
+                        >
+                            {icon}
+                            {buttonText}
+                        </Button>),
+                this.state.rxData.html_append ? <span
+                    key="append"
+                    // eslint-disable-next-line react/no-danger
+                    dangerouslySetInnerHTML={{ __html: this.state.rxData.html_append }}
+                /> : null,
+            ];
+        }
+
         return <div
             className="vis-widget-body"
-            onClick={onClick}
+            onClick={this.state.rxData.html ? () => this.onClick() : undefined}
         >
-            {this.state.rxData.html_prepend ? <span
-                // eslint-disable-next-line react/no-danger
-                dangerouslySetInnerHTML={{ __html: this.state.rxData.html_prepend }}
-            /> : null}
-            {this.state.rxData.html ?
-                <span
-                    // eslint-disable-next-line react/no-danger
-                    dangerouslySetInnerHTML={{ __html: this.state.rxData.html }}
-                />
-                :
-                (this.state.rxData.no_style || this.state.rxData.jquery_style ?
-                    <button
-                        className={this.state.rxData.nav_view && this.state.rxData.nav_view === window.location.hash.slice(1) ? 'ui-state-active' : undefined}
-                        ref={this.refButton}
-                        type="button"
-                        style={buttonStyle}
-                        onClick={() => this.onClick()}
-                    >
-                        {icon}
-                        {buttonText}
-                    </button>
-                    :
-                    <Button
-                        ref={this.refButton}
-                        style={buttonStyle}
-                        color={this.state.rxData.nav_view && this.state.rxData.nav_view === window.location.hash.slice(1) ?
-                            (this.state.rxData.color === 'primary' ? 'secondary' : 'primary') :
-                            (this.state.rxData.color || 'grey')}
-                        variant={this.state.rxData.variant === undefined ? 'contained' : this.state.rxData.variant}
-                        onClick={() => this.onClick()}
-                    >
-                        {icon}
-                        {buttonText}
-                    </Button>)}
-            {this.state.rxData.html_append ? <span
-                // eslint-disable-next-line react/no-danger
-                dangerouslySetInnerHTML={{ __html: this.state.rxData.html_append }}
-            /> : null}
+            {content}
             {this.renderDialog()}
+            {this.renderPasswordDialog()}
         </div>;
     }
 }

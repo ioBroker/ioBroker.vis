@@ -12,6 +12,10 @@ import JQuiDialog from './JQui/JQuiDialog';
 import JQuiIconDialog from './JQui/JQuiIconDialog';
 import JQuiContainerDialog from './JQui/JQuiContainerDialog';
 import JQuiButtonNavigation from './JQui/JQuiButtonNavigation';
+import JQuiIconNavigation from './JQui/JQuiIconNavigation';
+import JQuiButtonPasswordNavigation from './JQui/JQuiButtonPasswordNavigation';
+import JQuiDialogExternal from './JQui/JQuiDialogExternal';
+import JQuiButtonDialogClose from './JQui/JQuiButtonDialogClose';
 
 import TabsSliderTabs from './Tabs/TabsSliderTabs';
 
@@ -29,6 +33,10 @@ const WIDGETS = [
     JQuiIconDialog,
     JQuiContainerDialog,
     JQuiButtonNavigation,
+    JQuiIconNavigation,
+    JQuiButtonPasswordNavigation,
+    JQuiDialogExternal,
+    JQuiButtonDialogClose,
 
     TabsSliderTabs,
 ];

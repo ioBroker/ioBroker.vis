@@ -496,5 +496,21 @@
   "jqui_view_group": "Visualizzazione navigazione",
   "jqui_nav_view": "Vai a vedere",
   "jqui_buttontext_view": "Utilizza il nome della vista come titolo",
-  "jqui_button_color": "Colore del pulsante"
+  "jqui_button_color": "Colore del pulsante",
+  "jqui_navigation_icon": "Icona di navigazione",
+  "Wrong password": "Password errata",
+  "Enter password": "Inserire la password",
+  "Enter": "accedere",
+  "jqui_password_tooltip": "L'utente deve inserire la password per aprire la finestra di dialogo, andare alla pagina o all'URL",
+  "jqui_dialog_name": "Nome della finestra di dialogo",
+  "jqui_external_dialog": "Dialogo esterno",
+  "jqui_external_dialog_tooltip": "Questa finestra di dialogo non è visibile nella pagina, ma può essere aperta tramite il comando esterno \"dialogOpen\" con il nome della finestra di dialogo o l'ID widget come parametro.",
+  "jqui_html_external_dialog": "Dialogo esterno",
+  "jqui_navigation_password": "Navigazione con password",
+  "External dialog": "Dialogo esterno",
+  "You can open dialog with following script:": "È possibile aprire la finestra di dialogo con il seguente script:",
+  "jqui_password": "Parola d'ordine",
+  "Copied %s": "Copiato %s",
+  "jqui_button_dialog_close": "Pulsante di chiusura della finestra di dialogo",
+  "jqui_Close": "Vicino"
 }

@@ -498,7 +498,7 @@ class VisEngine extends React.Component {
                     cb = sync;
                 }
 
-                window.location.hash = VisEngine.buildPath(view);
+                this.changeView(view);
                 cb && cb(viewDiv, view);
             },
             getCurrentPath() {
@@ -1105,12 +1105,24 @@ class VisEngine extends React.Component {
                     };
                 }
             },
-            getStates: (IDs, cb) => this.props.socket.getForeignStates(IDs)
-                .then(data => cb(null, data))
-                .catch(error => cb(error || 'Authentication required')),
-            setState: (id, val, cb) => this.props.socket.setState(id, val)
-                .then(() => cb && cb())
-                .catch(error => cb && cb(error)),
+            getStates: (IDs, cb) => {
+                if (!IDs || !IDs.length) {
+                    cb && cb(null, {});
+                    return;
+                }
+                this.props.socket.getForeignStates(IDs)
+                    .then(data => cb(null, data))
+                    .catch(error => cb(error || 'Authentication required'));
+            },
+            setState: (id, val, cb) => {
+                if (!id) {
+                    cb && cb('No id');
+                    return;
+                }
+                this.props.socket.setState(id, val)
+                    .then(() => cb && cb())
+                    .catch(error => cb && cb(error));
+            },
             setReloadTimeout: () => {
 
             },
@@ -1573,7 +1585,7 @@ class VisEngine extends React.Component {
                     }
                 }
 
-                window.vis.changeView(view || project, view || project);
+                this.changeView(view || project);
                 break;
             }
             case 'refresh':
@@ -1583,7 +1595,7 @@ class VisEngine extends React.Component {
                 break;
             case 'dialog':
             case 'dialogOpen': {
-                const el = window.document.getElementById(data);
+                const el = window.document.getElementById(data) || window.document.querySelector(`[data-dialog-name="${data}"]`);
                 if (el?._showDialog) {
                     el._showDialog(true);
                 } else {
@@ -1593,7 +1605,7 @@ class VisEngine extends React.Component {
                 break;
             }
             case 'dialogClose': {
-                const el = window.document.getElementById(data);
+                const el = window.document.getElementById(data) || window.document.querySelector(`[data-dialog-name="${data}"]`);
                 if (el?._showDialog) {
                     el._showDialog(false);
                 } else {
@@ -1929,6 +1941,14 @@ ${this.scripts}
         }
     }
 
+    changeView = view => {
+        if (this.props.editMode) {
+            window.alert(I18n.t('Ignored in edit mode'));
+        } else {
+            window.location.hash = VisEngine.buildPath(view);
+        }
+    };
+
     render() {
         if (!this.state.ready || this.props.widgetsLoaded < 2) {
             if (this.props.renderAlertDialog && this.props.runtime) {
@@ -1971,6 +1991,7 @@ ${this.scripts}
             can: this.can,
             canStates: this.canStates,
             changeProject: this.props.changeProject,
+            changeView: this.changeView,
             dateFormat: this.vis.dateFormat,
             editModeComponentClass: this.props.editModeComponentClass,
             formatUtils: this.formatUtils,

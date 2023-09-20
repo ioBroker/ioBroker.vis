@@ -496,5 +496,21 @@
   "jqui_view_group": "Visualização de navegação",
   "jqui_nav_view": "Ir para ver",
   "jqui_buttontext_view": "Use o nome da visualização como título",
-  "jqui_button_color": "Cor do botao"
+  "jqui_button_color": "Cor do botao",
+  "jqui_navigation_icon": "Ícone de navegação",
+  "Wrong password": "Senha incorreta",
+  "Enter password": "Digite a senha",
+  "Enter": "Digitar",
+  "jqui_password_tooltip": "O usuário deve inserir a senha para abrir a caixa de diálogo, ir para a página ou URL",
+  "jqui_dialog_name": "Nome da caixa de diálogo",
+  "jqui_external_dialog": "Diálogo externo",
+  "jqui_external_dialog_tooltip": "Esta caixa de diálogo não é visível na página, mas pode ser aberta pelo comando externo \"dialogOpen\" com o nome da caixa de diálogo ou ID do widget como parâmetro.",
+  "jqui_html_external_dialog": "Diálogo externo",
+  "jqui_navigation_password": "Navegação com senha",
+  "External dialog": "Diálogo externo",
+  "You can open dialog with following script:": "Você pode abrir a caixa de diálogo com o seguinte script:",
+  "jqui_password": "Senha",
+  "Copied %s": "Copiado %s",
+  "jqui_button_dialog_close": "Botão fechar caixa de diálogo",
+  "jqui_Close": "Fechar"
 }

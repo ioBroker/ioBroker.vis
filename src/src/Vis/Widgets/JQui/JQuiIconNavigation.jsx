@@ -17,17 +17,17 @@ import PropTypes from 'prop-types';
 // eslint-disable-next-line import/no-cycle
 import JQuiButton from './JQuiButton';
 
-class JQuiButtonNavigation extends JQuiButton {
+class JQuiIconNavigation extends JQuiButton {
     static getWidgetInfo() {
         const widgetInfo = JQuiButton.getWidgetInfo();
 
         const newWidgetInfo = {
-            id: 'tplJquiButtonNav',
+            id: 'tplJquiIconNav',
             visSet: 'jqui',
-            visName: 'Navigation Button',
-            visWidgetLabel: 'jqui_navigation_button',
-            visPrev: 'widgets/jqui/img/Prev_ButtonNav.png',
-            visOrder: 8,
+            visName: 'Navigation Icon',
+            visWidgetLabel: 'jqui_navigation_icon',
+            visPrev: 'widgets/jqui/img/Prev_IconNav.png',
+            visOrder: 9,
             visAttrs: widgetInfo.visAttrs,
         };
 
@@ -38,14 +38,17 @@ class JQuiButtonNavigation extends JQuiButton {
             text: 'jqui_button_nav_blank_note',
         });
 
+        const buttonText = JQuiButton.findField(newWidgetInfo, 'buttontext');
+        delete buttonText.default;
+
         const modal = JQuiButton.findField(newWidgetInfo, 'modal');
         delete modal.default;
 
         const navView = JQuiButton.findField(newWidgetInfo, 'nav_view');
         navView.default = '';
 
-        const text = JQuiButton.findField(newWidgetInfo, 'buttontext');
-        text.default = 'View';
+        const icon = JQuiButton.findField(newWidgetInfo, 'icon');
+        icon.default = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSJjdXJyZW50Q29sb3IiIGQ9Ik0yMSAzTDMgMTAuNTN2Ljk4bDYuODQgMi42NUwxMi40OCAyMWguOThMMjEgM3oiLz48L3N2Zz4=';
 
         // set resizable to true
         const visResizable = JQuiButton.findField(newWidgetInfo, 'visResizable');
@@ -56,11 +59,11 @@ class JQuiButtonNavigation extends JQuiButton {
 
     // eslint-disable-next-line class-methods-use-this
     getWidgetInfo() {
-        return JQuiButtonNavigation.getWidgetInfo();
+        return JQuiIconNavigation.getWidgetInfo();
     }
 }
 
-JQuiButtonNavigation.propTypes = {
+JQuiIconNavigation.propTypes = {
     id: PropTypes.string.isRequired,
     context: PropTypes.object.isRequired,
     view: PropTypes.string.isRequired,
@@ -68,4 +71,4 @@ JQuiButtonNavigation.propTypes = {
     tpl: PropTypes.string.isRequired,
 };
 
-export default JQuiButtonNavigation;
+export default JQuiIconNavigation;

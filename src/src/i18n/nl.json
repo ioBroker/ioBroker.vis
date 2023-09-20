@@ -496,5 +496,21 @@
   "jqui_view_group": "Navigatieweergave",
   "jqui_nav_view": "Ga naar bekijken",
   "jqui_buttontext_view": "Gebruik de weergavenaam als titel",
-  "jqui_button_color": "Knop kleur"
+  "jqui_button_color": "Knop kleur",
+  "jqui_navigation_icon": "Navigatiepictogram",
+  "Wrong password": "Verkeerd wachtwoord",
+  "Enter password": "Voer wachtwoord in",
+  "Enter": "Binnenkomen",
+  "jqui_password_tooltip": "De gebruiker moet een wachtwoord invoeren om het dialoogvenster te openen en naar de pagina of URL te gaan",
+  "jqui_dialog_name": "Dialoognaam",
+  "jqui_external_dialog": "Externe dialoog",
+  "jqui_external_dialog_tooltip": "Dit dialoogvenster is niet zichtbaar op de pagina, maar kan worden geopend via het externe commando \"dialogOpen\" met de dialoognaam of widget-ID als parameter.",
+  "jqui_html_external_dialog": "Externe dialoog",
+  "jqui_navigation_password": "Navigatie met wachtwoord",
+  "External dialog": "Externe dialoog",
+  "You can open dialog with following script:": "U kunt een dialoogvenster openen met het volgende script:",
+  "jqui_password": "Wachtwoord",
+  "Copied %s": "%s gekopieerd",
+  "jqui_button_dialog_close": "Dialoogvenster sluitknop",
+  "jqui_Close": "Dichtbij"
 }
