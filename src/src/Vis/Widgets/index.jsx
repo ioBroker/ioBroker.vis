@@ -19,6 +19,7 @@ import JQuiButtonDialogClose from './JQui/JQuiButtonDialogClose';
 import JQuiContainerButtonDialog from './JQui/JQuiContainerButtonDialog';
 import JQuiContainerIconDialog from './JQui/JQuiContainerIconDialog';
 import JQuiInput from './JQui/JQuiInput';
+import JQuiBinaryState from './JQui/JQuiBinaryState';
 
 import TabsSliderTabs from './Tabs/TabsSliderTabs';
 
@@ -43,6 +44,7 @@ const WIDGETS = [
     JQuiContainerIconDialog,
     JQuiButtonDialogClose,
     JQuiInput,
+    JQuiBinaryState,
 
     TabsSliderTabs,
 ];

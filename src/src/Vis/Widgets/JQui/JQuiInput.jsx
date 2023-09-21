@@ -52,7 +52,7 @@ class JQuiInput extends VisRxWidget {
                         {
                             name: 'label',
                             type: 'text',
-                            default: I18n.t('jqui_Input').replace('jqui_', ''),
+                            default: I18n.t('jqui_input').replace('jqui_', ''),
                         },
                         {
                             name: 'oid',

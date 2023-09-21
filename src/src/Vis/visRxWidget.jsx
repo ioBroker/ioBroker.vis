@@ -215,7 +215,8 @@ class VisRxWidget extends VisBaseWidget {
 
         if (id && state) {
             Object.keys(state).forEach(attr => this.newState.values[`${id}.${attr}`] = state[attr]);
-            this.onStateUpdated(id, state);
+            // wait till the state is saved in this.newState.values
+            setTimeout(() => this.onStateUpdated(id, state), 60);
         }
 
         Object.keys(this.linkContext.bindings).forEach(_id => this.applyBinding(_id, this.newState));
