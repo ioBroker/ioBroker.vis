@@ -411,7 +411,7 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
                 OIDs.forEach(item => {
                     const systemOid = item.systemOid;
                     if (systemOid) {
-                        // Save id for subscribe
+                        // Save id for subscribing
                         !linkContext.IDs.includes(systemOid) && linkContext.IDs.push(systemOid);
 
                         if (linkContext.byViews && !linkContext.byViews[view].includes(systemOid)) {
@@ -447,92 +447,97 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
                         }
                     }
                 });
-            } else if (attr !== 'oidTrueValue' && attr !== 'oidFalseValue' &&
-                (
-                    (attr.match(/oid\d{0,2}$/) ||
-                        attr.startsWith('oid') ||
-                        attr.startsWith('signals-oid-') ||
-                        (linkContext.widgetAttrInfo && linkContext.widgetAttrInfo[attr.replace(/\d{0,2}$/, '')] && linkContext.widgetAttrInfo[attr.replace(/\d{0,2}$/, '')].type === 'id')
-                    ) && data[attr]
-                )
-            ) {
-                if (data[attr] && data[attr] !== 'nothing_selected' && !data[attr].startsWith('"')) {
-                    if (!linkContext.IDs.includes(data[attr])) {
-                        linkContext.IDs.push(data[attr]);
-                    }
-                    if (linkContext.byViews && !linkContext.byViews[view].includes(data[attr])) {
-                        linkContext.byViews[view].push(data[attr]);
+            } else if (attr !== 'oidTrueValue' && attr !== 'oidFalseValue' && data[attr] && data[attr] !== 'nothing_selected') {
+                let isID = attr.match(/oid\d{0,2}$/);
+                if (attr.startsWith('oid')) {
+                    isID = true;
+                } else if (attr.startsWith('signals-oid-')) {
+                    isID = true;
+                } else if (linkContext.widgetAttrInfo) {
+                    const _attr = attr.replace(/\d{0,2}$/, '');
+                    if (linkContext.widgetAttrInfo[_attr]?.type === 'id' && linkContext.widgetAttrInfo[_attr].noSubscribe !== true) {
+                        isID = true;
                     }
                 }
 
-                // Visibility binding
-                if (attr === 'visibility-oid' && data['visibility-oid']) {
-                    let vid = data['visibility-oid'];
+                if (isID) {
+                    if (!data[attr].startsWith('"')) {
+                        if (!linkContext.IDs.includes(data[attr])) {
+                            linkContext.IDs.push(data[attr]);
+                        }
+                        if (linkContext.byViews && !linkContext.byViews[view].includes(data[attr])) {
+                            linkContext.byViews[view].push(data[attr]);
+                        }
+                    }
 
-                    if (widget.grouped) {
-                        const vGroup = getWidgetGroup(views, view, wid);
-                        if (vGroup) {
-                            if (views[view].widgets[vGroup]) {
-                                const result1 = replaceGroupAttr(vid, views[view].widgets[vGroup].data);
-                                if (result1.doesMatch) {
-                                    vid = result1.newString;
+                    // Visibility binding
+                    if (attr === 'visibility-oid') {
+                        let vid = data['visibility-oid'];
+
+                        if (widget.grouped) {
+                            const vGroup = getWidgetGroup(views, view, wid);
+                            if (vGroup) {
+                                if (views[view].widgets[vGroup]) {
+                                    const result1 = replaceGroupAttr(vid, views[view].widgets[vGroup].data);
+                                    if (result1.doesMatch) {
+                                        vid = result1.newString;
+                                    }
+                                } else {
+                                    console.warn(`Invalid group: ${vGroup} in ${view} / ${wid}`);
                                 }
-                            } else {
-                                console.warn(`Invalid group: ${vGroup} in ${view} / ${wid}`);
                             }
                         }
-                    }
 
-                    linkContext.visibility[vid] = linkContext.visibility[vid] || [];
-                    linkContext.visibility[vid].push({ view, widget: wid });
-                }
-
-                // Signal binding
-                if (attr.startsWith('signals-oid-') && data[attr]) {
-                    let sid = data[attr];
-                    if (widget.grouped) {
-                        const group = getWidgetGroup(views, view, wid);
-                        if (group) {
-                            const result2 = replaceGroupAttr(sid, views[view].widgets[group].data);
-                            if (result2.doesMatch) {
-                                sid = result2.newString;
+                        linkContext.visibility[vid] = linkContext.visibility[vid] || [];
+                        linkContext.visibility[vid].push({ view, widget: wid });
+                    } else if (attr.startsWith('signals-oid-')) {
+                        // Signal binding
+                        let sid = data[attr];
+                        if (widget.grouped) {
+                            const group = getWidgetGroup(views, view, wid);
+                            if (group) {
+                                const result2 = replaceGroupAttr(sid, views[view].widgets[group].data);
+                                if (result2.doesMatch) {
+                                    sid = result2.newString;
+                                }
                             }
                         }
-                    }
 
-                    linkContext.signals[sid] = linkContext.signals[sid] || [];
+                        linkContext.signals[sid] = linkContext.signals[sid] || [];
 
-                    linkContext.signals[sid].push({
-                        view,
-                        widget: wid,
-                        index: parseInt(attr.substring(12), 10), // 'signals-oid-'.length = 12
-                    });
-                }
-                if (attr === 'lc-oid') {
-                    let lcSid = data[attr];
+                        linkContext.signals[sid].push({
+                            view,
+                            widget: wid,
+                            index: parseInt(attr.substring(12), 10), // 'signals-oid-'.length = 12
+                        });
+                    } else if (attr === 'lc-oid') {
+                        let lcSid = data[attr];
 
-                    if (widget.grouped) {
-                        const gGroup = getWidgetGroup(views, view, wid);
-                        if (gGroup) {
-                            const result3 = replaceGroupAttr(lcSid, views[view].widgets[gGroup].data);
-                            if (result3.doesMatch) {
-                                lcSid = result3.newString;
+                        if (widget.grouped) {
+                            const gGroup = getWidgetGroup(views, view, wid);
+                            if (gGroup) {
+                                const result3 = replaceGroupAttr(lcSid, views[view].widgets[gGroup].data);
+                                if (result3.doesMatch) {
+                                    lcSid = result3.newString;
+                                }
                             }
                         }
-                    }
 
-                    linkContext.lastChanges[lcSid] = linkContext.lastChanges[lcSid] || [];
-                    linkContext.lastChanges[lcSid].push({ view, widget: wid });
-                }
-            // eslint-disable-next-line no-cond-assign
-            } else if ((m = attr.match(/^attrType(\d+)$/)) && data[attr] === 'id') {
-                const _id = `groupAttr${m[1]}`;
-                if (data[_id]) {
-                    if (!linkContext.IDs.includes(data[_id])) {
-                        linkContext.IDs.push(data[_id]);
+                        linkContext.lastChanges[lcSid] = linkContext.lastChanges[lcSid] || [];
+                        linkContext.lastChanges[lcSid].push({ view, widget: wid });
                     }
-                    if (linkContext.byViews && !linkContext.byViews[view].includes(data[_id])) {
-                        linkContext.byViews[view].push(data[_id]);
+                } else if (data[attr] === 'id') {
+                    m = attr.match(/^attrType(\d+)$/);
+                    if (m) {
+                        const _id = `groupAttr${m[1]}`;
+                        if (data[_id]) {
+                            if (!linkContext.IDs.includes(data[_id])) {
+                                linkContext.IDs.push(data[_id]);
+                            }
+                            if (linkContext.byViews && !linkContext.byViews[view].includes(data[_id])) {
+                                linkContext.byViews[view].push(data[_id]);
+                            }
+                        }
                     }
                 }
             }

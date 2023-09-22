@@ -66,6 +66,12 @@ class JQuiBinaryState extends VisRxWidget {
                             type: 'checkbox',
                         },
                         {
+                            name: 'click_id',
+                            type: 'id',
+                            noSubscribe: true,
+                            hidden: data => !!data.readOnly,
+                        },
+                        {
                             name: 'invert',
                             label: 'Invert value',
                             type: 'checkbox',
@@ -280,6 +286,16 @@ class JQuiBinaryState extends VisRxWidget {
         }
     }
 
+    getControlOid() {
+        if (this.state.rxData.click_id && this.state.rxData.click_id !== 'nothing_selected') {
+            return this.state.rxData.click_id;
+        }
+        if (this.state.rxData.oid && this.state.rxData.oid !== 'nothing_selected') {
+            return this.state.rxData.oid;
+        }
+        return '';
+    }
+
     onClick(isOn) {
         if (this.state.rxData.readOnly || this.props.editMode) {
             return;
@@ -288,9 +304,11 @@ class JQuiBinaryState extends VisRxWidget {
             isOn = !this.isOn(); // toggle
         }
 
-        if (this.state.rxData.oid && this.state.rxData.oid !== 'nothing_selected') {
-            this.props.context.socket.setState(this.state.rxData.oid, isOn);
+        const oid = this.getControlOid();
+        if (oid) {
+            this.props.context.socket.setState(oid, isOn);
         }
+
         this.setState({ isOn });
     }
 

@@ -149,7 +149,8 @@ onChange: async (field, data, changeData, socket) => {
   - `icon` - 
   - `id` - Object ID
     - `noInit` - [optional] Do not write 'nothing_selected' into the field by creation
-    - `filter` - [optional] Filter of objects (not JSON string, it is object), like:
+    - `noSubscribe` - [optional] Do not subscribe on changes of the object
+    - `filter` - [optional] Filter of objects (not JSON string, it is an object), like:
       - `{common: {custom: true}}` - show only objects with some custom settings
       - `{common: {custom: 'sql.0'}}` - show only objects with sql.0 custom settings (only of the specific instance)
       - `{common: {custom: '_dataSources'}}` - show only objects of adapters `influxdb' or 'sql' or 'history'
@@ -182,7 +183,7 @@ onChange: async (field, data, changeData, socket) => {
     - `all` - [optional] if true, all widgets of all views will be shown, not only from the current view. Default is false.
     - `withGroups` - [optional] if true, grouped widgets will be shown too. Default is false.
     - `withSelf` - [optional] if true, current widget will be shown in the list too.
-    - `checkUsage` - [optional] if true, it will be checked if the widget is used somewere else and user will be asked.
+    - `checkUsage` - [optional] if true, it will be checked if the widget is used somewhere else and user will be asked.
     - `hideUsed` - [optional] if true, only widgets will be shown, which are not used in some view. Default is false.
   - `select-views` - Select view via the drop-down menu with folders.
     - `multiple` - [optional] if false, only one view can be selected. Default is true. 

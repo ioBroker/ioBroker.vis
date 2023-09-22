@@ -60,12 +60,46 @@ class JQuiWriteState extends VisRxWidget {
                             name: 'oid',
                             type: 'id',
                             onChange: async (field, data, changeData, socket) => {
-                                if (data[field.name]) {
-                                    if (await BulkEditor.generateFields(data, socket)) {
-                                        changeData(data);
+                                if (data[field.name] && data[field.name] !== 'nothing_selected') {
+                                    const obj = await socket.getObject(data[field.name]);
+                                    let changed = false;
+                                    if (obj?.common?.min !== undefined && obj?.common?.min !== null) {
+                                        if (data.min !== obj.common.min) {
+                                            data.min = obj.common.min;
+                                            changed = true;
+                                        }
                                     }
+                                    if (obj?.common?.max !== undefined && obj?.common?.max !== null) {
+                                        if (data.max !== obj.common.max) {
+                                            data.max = obj.common.max;
+                                            changed = true;
+                                        }
+                                        if (data.step > 0) {
+                                            if (data.minmax !== obj.common.max) {
+                                                data.minmax = obj.common.max;
+                                                changed = true;
+                                            }
+                                        } else {
+                                            if (data.minmax !== obj.common.min) {
+                                                data.minmax = obj.common.min;
+                                                changed = true;
+                                            }
+                                        }
+                                    }
+                                    if (obj?.common?.step !== undefined && obj?.common?.step !== null) {
+                                        if (data.step !== obj.common.step) {
+                                            data.step = obj.common.step;
+                                            changed = true;
+                                        }
+                                    }
+                                    changed && changeData(data);
                                 }
                             },
+                        },
+                        {
+                            name: 'click_id',
+                            type: 'id',
+                            noSubscribe: true,
                         },
                         {
                             name: 'type',
@@ -90,142 +124,92 @@ class JQuiWriteState extends VisRxWidget {
                             hidden: data => data.type !== 'value',
                         },
                         {
-                            name: 'readOnly',
-                            type: 'checkbox',
-                        },
-                        {
-                            name: 'count',
-                            type: 'slider',
-                            min: 0,
-                            default: 1,
-                            max: 10,
-                            hidden: data => !!data.percents,
-                        },
-                        {
-                            name: 'generate',
-                            type: 'custom',
-                            component: (
-                                field,
-                                data,
-                                onDataChange,
-                                props, // {context: {views, view, socket, themeType, projectName, adapterName, instance, id, widget}, selectedView, selectedWidget, selectedWidgets}
-                            ) => <BulkEditor
-                                data={data}
-                                onDataChange={onDataChange}
-                                socket={props.context.socket}
-                                themeType={props.context.themeType}
-                                adapterName={props.context.adapterName}
-                                instance={props.context.instance}
-                                projectName={props.context.projectName}
-                            />,
-                        },
-                        {
                             name: 'variant',
                             label: 'jqui_variant',
                             type: 'select',
                             noTranslation: true,
-                            options: ['contained', 'outlined', 'text', 'standard'],
+                            options: ['contained', 'outlined', 'standard'],
                             default: 'contained',
-                            hidden: data => data.type !== 'button' && data.type !== 'select',
                         },
                         {
-                            name: 'orientation',
-                            label: 'orientation',
-                            type: 'select',
-                            options: ['horizontal', 'vertical'],
-                            default: 'horizontal',
-                            hidden: data => data.type !== 'button' && data.type !== 'slider',
-                        },
-                        {
-                            name: 'widgetTitle',
-                            label: 'name',
-                            type: 'text',
-                        },
-                        {
-                            name: 'timeout',
-                            label: 'jqui_set_timeout',
+                            name: 'minmax',
                             type: 'number',
-                            hidden: data => data.type !== 'slider',
+                            hidden: data => data.type !== 'change',
+                            default: 1,
+                        },
+                        {
+                            name: 'step',
+                            type: 'number',
+                            hidden: data => data.type !== 'change',
+                            default: 1,
+                        },
+                        {
+                            name: 'repeat_delay',
+                            type: 'number',
+                            hidden: data => data.type !== 'change',
+                            default: 800,
+                        },
+                        {
+                            name: 'repeat_interval',
+                            type: 'number',
+                            hidden: data => data.type !== 'change',
+                            default: 300,
+                        },
+                        {
+                            name: 'min',
+                            type: 'number',
+                            hidden: data => data.type !== 'toggle',
+                            default: 0,
+                        },
+                        {
+                            name: 'max',
+                            type: 'number',
+                            hidden: data => data.type !== 'toggle',
+                            default: 100,
                         },
                     ],
                 },
                 {
-                    name: 'states',
-                    label: 'group_value',
-                    indexFrom: 1,
-                    indexTo: 'count',
-                    hidden: data => !!data.percents,
+                    name: 'style',
                     fields: [
                         {
-                            name: 'value',
-                            type: 'text',
-                            label: 'value',
-                            default: '0',
-                        },
-                        {
-                            name: 'test',
-                            type: 'checkbox',
-                            label: 'test',
-                            onChange: async (field, data, changeData, socket, index) => {
-                                if (data[field.name]) {
-                                    let changed = false;
-                                    // deactivate all other tests
-                                    for (let i = 1; i <= data.count; i++) {
-                                        if (i !== index) {
-                                            if (data[`test${i}`]) {
-                                                changed = true;
-                                                data[`test${i}`] = false;
-                                            }
-                                        }
-                                    }
-                                    changed && changeData(data);
-                                }
-                            },
-                            hidden: (data, index) => data.type !== 'slider' || data[`value${index}`] === '' || data[`value${index}`] === null || data[`value${index}`] === undefined,
-                        },
-                        {
                             name: 'text',
-                            default: I18n.t('Value'),
                             type: 'text',
-                            label: 'text',
-                            hidden: (data, index) => data[`value${index}`] === '' || data[`value${index}`] === null || data[`value${index}`] === undefined,
-                        },
-                        {
-                            name: 'color',
-                            type: 'color',
-                            label: 'color',
-                            hidden: (data, index) => data.type !== 'slider' || data[`value${index}`] === '' || data[`value${index}`] === null || data[`value${index}`] === undefined,
-                        },
-                        {
-                            name: 'activeColor',
-                            type: 'color',
-                            label: 'active_color',
-                            hidden: (data, index) => data.type !== 'slider' || data[`value${index}`] === '' || data[`value${index}`] === null || data[`value${index}`] === undefined,
-
+                            default: 'Write state',
                         },
                         {
                             name: 'image',
-                            label: 'jqui_image',
                             type: 'image',
-                            hidden: (data, index) => data.type !== 'slider' || !!data.icon || data[`value${index}`] === '' || data[`value${index}`] === null || data[`value${index}`] === undefined,
+                            label: 'image',
+                            hidden: data => !!data.icon,
                         },
                         {
                             name: 'icon',
-                            label: 'jqui_icon',
                             type: 'icon64',
-                            hidden: (data, index) => data.type !== 'slider' || !!data.image || data[`value${index}`] === '' || data[`value${index}`] === null || data[`value${index}`] === undefined,
+                            label: 'icon',
+                            hidden: data => !!data.image,
                         },
                         {
-                            name: 'tooltip',
-                            label: 'tooltip',
+                            name: 'text_active',
                             type: 'text',
-                            hidden: (data, index) => data.type !== 'slider' || data[`value${index}`] === '' || data[`value${index}`] === null || data[`value${index}`] === undefined,
+                        },
+                        {
+                            name: 'image_active',
+                            type: 'image',
+                            label: 'image',
+                            hidden: data => !!data.icon_active,
+                        },
+                        {
+                            name: 'icon_active',
+                            type: 'icon64',
+                            label: 'icon',
+                            hidden: data => !!data.image_active,
                         },
                     ],
                 },
             ],
             visDefaultStyle: {
-                width: 300,
+                width: 100,
                 height: 40,
             },
         };
@@ -258,59 +242,70 @@ class JQuiWriteState extends VisRxWidget {
         }
     }
 
-    async onClick(indexOrValue, immediately) {
-        if (this.state.rxData.readOnly || this.props.editMode) {
+    getControlOid() {
+        if (this.state.rxData.click_id && this.state.rxData.click_id !== 'nothing_selected') {
+            return this.state.rxData.click_id;
+        }
+        if (this.state.rxData.oid && this.state.rxData.oid !== 'nothing_selected') {
+            return this.state.rxData.oid;
+        }
+        return '';
+    }
+
+    async onClick(indexOrValue) {
+        if (this.props.editMode) {
             return;
         }
 
-        if (this.state.rxData.type === 'slider') {
-            if (this.state.rxData.oid && this.state.rxData.oid !== 'nothing_selected') {
-                this.setTimeout && clearTimeout(this.setTimeout);
-                this.setTimeout = setTimeout(() => {
-                    this.setTimeout = null;
-                    this.props.context.socket.setState(this.state.rxData.oid, parseFloat(indexOrValue));
-                }, immediately ? 0 : parseInt(this.state.rxData.timeout, 10) || 300);
-            }
-            this.setState({ value: indexOrValue });
-        } else {
-            if (this.state.rxData.oid && this.state.rxData.oid !== 'nothing_selected') {
-                if (this.state.valueType === 'number') {
-                    this.props.context.socket.setState(this.state.rxData.oid, parseFloat(this.state.rxData[`value${indexOrValue}`]));
-                } else {
-                    this.props.context.socket.setState(this.state.rxData.oid, this.state.rxData[`value${indexOrValue}`]);
+        let value;
+        switch (this.state.rxData.type) {
+            case 'value':
+                value = this.state.rxData.value.toString();
+                break;
+            case 'oid': {
+                value = this.state.values[`${this.state.rxData.value_oid}.val`];
+                if (value === undefined || value === null) {
+                    return;
                 }
+                break;
             }
-            this.setState({ value: this.state.rxData[`value${indexOrValue}`] });
+            case 'toggle':
+                value = this.state.value.toString() === (this.state.rxData.max || 0).toString() ? this.state.rxData.min : this.state.rxData.max;
+                break;
+            case 'change':
+                value = parseFloat(this.state.rxData.value) || 0;
+                value += parseFloat(this.state.rxData.step) || 0;
+                if (this.state.rxData.step > 0) {
+                    if (value > parseFloat(this.state.rxData.minmax)) {
+                        value = parseFloat(this.state.rxData.minmax);
+                    }
+                } else if (value < parseFloat(this.state.rxData.minmax)) {
+                    value = parseFloat(this.state.rxData.minmax);
+                }
+
+                break;
+            default:
+                return;
         }
+
+        const oid = this.getControlOid();
+        if (oid) {
+            if (this.state.valueType === 'number') {
+                this.props.context.socket.setState(oid, parseFloat(this.state.rxData[`value${indexOrValue}`]));
+            } else {
+                this.props.context.socket.setState(oid, this.state.rxData[`value${indexOrValue}`]);
+            }
+        }
+        this.setState({ value: this.state.rxData[`value${indexOrValue}`] });
     }
 
-    getSelectedIndex(value) {
-        if (value === undefined) {
-            value = this.state.value;
-        }
-
-        if (this.props.editMode) {
-            for (let i = 1; i <= this.state.rxData.count; i++) {
-                if (this.state.rxData[`test${i}`]) {
-                    return i;
-                }
-            }
-        }
-        for (let i = 1; i <= this.state.rxData.count; i++) {
-            if (this.state.rxData[`value${i}`] === value) {
-                return i;
-            }
-        }
-        return 0;
-    }
-
-    renderIcon(i, selectedIndex) {
+    renderIcon(isActive) {
         let color;
-        const icon = this.state.rxData[`icon${i}`];
-        if (icon && this.state.rxData[`color${i}`]) {
-            color = this.state.rxData[`color${i}`];
-            if (i === selectedIndex && this.state.rxData[`activeColor${i}`]) {
-                color = this.state.rxData[`activeColor${i}`];
+        const icon = this.state.rxData.icon;
+        if (icon && this.state.rxData.color) {
+            color = this.state.rxData.color;
+            if (isActive && this.state.rxData.color_active) {
+                color = this.state.rxData.color_active;
             }
         }
 
@@ -324,112 +319,49 @@ class JQuiWriteState extends VisRxWidget {
         return null;
     }
 
-    renderText(i, selectedIndex) {
-        let text = this.state.rxData[`text${i}`];
-        let color = this.state.rxData[`color${i}`];
-        if (i === selectedIndex && this.state.rxData[`activeColor${i}`]) {
-            color = this.state.rxData[`activeColor${i}`];
+    renderText(isActive) {
+        let text = this.state.rxData.text;
+        let color = this.state.rxData.color;
+        if (isActive && this.state.rxData.color_active) {
+            color = this.state.rxData.color_active;
         }
 
-        text = text || this.state.rxData[`value${i}`];
+        if (!text && this.state.rxData.type === 'oid') {
+            text = this.state.values[`${this.state.rxData.value_oid}.val`];
+        }
 
         return <span style={{ color }}>{text}</span>;
     }
 
-    renderButton(i, selectedIndex, buttonStyle) {
-        const icon = this.renderIcon(i, selectedIndex);
-        const text = this.renderText(i, selectedIndex);
-
-        // Button
-        const button = <Button
-            key={i}
-            style={buttonStyle}
-            startIcon={icon}
-            color={selectedIndex === i ? 'primary' : 'grey'}
-            onClick={() => this.onClick(i)}
-        >
-            {text}
-        </Button>;
-
-        if (this.state.rxData[`tooltip${i}`]) {
-            return <Tooltip key={i} title={this.state.rxData[`tooltip${i}`]}>
-                {button}
-            </Tooltip>;
+    getIsActive() {
+        switch (this.state.rxData.type) {
+            case 'value':
+                return this.state.value.toString() === this.state.rxData.value.toString();
+            case 'oid': {
+                let oidValue = this.state.values[`${this.state.rxData.value_oid}.val`];
+                if (oidValue === undefined || oidValue === null) {
+                    oidValue = '';
+                }
+                return this.state.value.toString() === oidValue.toString();
+            }
+            case 'toggle':
+                return this.state.value.toString() === (this.state.rxData.max || 0).toString();
+            default:
+                return false;
         }
-        return button;
     }
 
-    renderRadio(i, selectedIndex, buttonStyle) {
-        const icon = this.renderIcon(i, selectedIndex);
-        let text = this.renderText(i, selectedIndex);
-
-        if (icon && text) {
-            text = <div style={{ display: 'flex', gap: 4 }}>
-                {icon}
-                {text}
-            </div>;
-        }
-
-        // Button
-        const button = <FormControlLabel
-            key={i}
-            style={buttonStyle}
-            control={<Radio
-                onClick={() => this.onClick(i)}
-                checked={selectedIndex === i}
-            />}
-            labelPlacement="end"
-            label={text || icon}
-        />;
-
-        if (this.state.rxData[`tooltip${i}`]) {
-            return <Tooltip key={i} title={this.state.rxData[`tooltip${i}`]}>
-                {button}
-            </Tooltip>;
-        }
-        return button;
-    }
-
-    renderMenuItem(i, selectedIndex, buttonStyle) {
-        const icon = this.renderIcon(i, selectedIndex);
-        let text = this.renderText(i, selectedIndex);
-
-        if (icon && text) {
-            text = <div style={{ display: 'flex', gap: 4 }}>
-                {icon}
-                {text}
-            </div>;
-        }
-
-        // Button
-        return <MenuItem
-            title={this.state.rxData[`tooltip${i}`]}
-            key={i}
-            selected={selectedIndex === i}
-            style={buttonStyle}
-            value={this.state.rxData[`value${i}`]}
-        >
-            {text || icon}
-        </MenuItem>;
+    async componentWillUnmount() {
+        super.componentWillUnmount();
+        this.iterateInterval && clearInterval(this.iterateInterval);
+        this.iterateInterval = null;
+        this.iterateTimeout && clearTimeout(this.iterateTimeout);
+        this.iterateTimeout = null;
     }
 
     renderWidgetBody(props) {
         super.renderWidgetBody(props);
-        const selectedIndex = this.getSelectedIndex();
-
-        if (this.state.object?._id !== this.state.rxData.oid && this.state.object !== false) {
-            this.state.object = false;
-            setTimeout(async () => {
-                if (this.state.rxData.oid && this.state.rxData.oid !== 'nothing_selected') {
-                    const obj = await this.props.context.socket.getObject(this.state.rxData.oid);
-                    if (obj?.common?.type) {
-                        this.setState({ object: { _id: obj._id, common: { type: obj.common.type } } });
-                        return;
-                    }
-                }
-                this.setState({ object: { _id: this.state.rxData.oid, common: { type: 'string' } } });
-            }, 0);
-        }
+        const isActive = this.getIsActive();
 
         const buttonStyle = {};
         // apply style from the element
@@ -447,111 +379,36 @@ class JQuiWriteState extends VisRxWidget {
             }
         });
 
-        let content;
-        if (
-            (!this.state.rxData.count ||
-                (this.state.rxData.count === 1 && !this.state.rxData.text0 && !this.state.rxData.icon0 && !this.state.rxData.image0)) &&
-            (!this.state.rxData.oid || this.state.rxData.oid === 'nothing_selected')
-        ) {
-            content = <Button
-                variant="outlined"
-                style={{ width: '100%', height: '100%' }}
-            >
-                {I18n.t('Select object ID')}
-            </Button>;
-        } else if (!this.state.rxData.count) {
-            content = <Button
-                variant="outlined"
-                style={{ width: '100%', height: '100%' }}
-            >
-                {I18n.t('Please define states')}
-            </Button>;
-        }  else if (this.state.rxData.type === 'radio') {
-            const buttons = [];
-            for (let i = 1; i <= this.state.rxData.count; i++) {
-                buttons.push(this.renderRadio(i, selectedIndex, buttonStyle));
-            }
-
-            content = <RadioGroup
-                style={{ width: '100%', height: '100%' }}
-                variant={this.state.rxData.variant === undefined ? 'contained' : this.state.rxData.variant}
-            >
-                {buttons}
-            </RadioGroup>;
-        } else if (this.state.rxData.type === 'select') {
-            const buttons = [];
-            for (let i = 1; i <= this.state.rxData.count; i++) {
-                buttons.push(this.renderMenuItem(i, selectedIndex, buttonStyle));
-            }
-
-            let variant = 'standard';
-            if (this.state.rxData.variant === 'contained') {
-                variant = 'filled';
-            } else if (this.state.rxData.variant === 'outlined') {
-                variant = 'outlined';
-            }
-
-            content = <Select
-                style={{ width: '100%', height: '100%', marginTop: 4 }}
-                value={this.state.value}
-                onChange={e => this.onClick(this.getSelectedIndex(e.target.value))}
-                variant={variant}
-            >
-                {buttons}
-            </Select>;
-        } else if (this.state.rxData.type === 'slider') {
-            props.style.overflow = 'visible';
-            const marks = [];
-            for (let i = 1; i <= this.state.rxData.count; i++) {
-                marks.push({
-                    value: this.state.rxData[`value${i}`] || 0,
-                    label: this.state.rxData[`text${i}`] || 0,
-                });
-            }
-
-            content = <Slider
-                style={!this.state.rxData.orientation || this.state.rxData.orientation === 'horizontal' ?
-                    { marginLeft: 20, marginRight: 20, width: 'calc(100% - 40px)' } :
-                    { marginTop: 10, marginBottom: 10 }}
-                value={this.state.value}
-                valueLabelDisplay="auto"
-                min={marks[0].value}
-                max={marks[marks.length - 1].value}
-                orientation={this.state.rxData.orientation || 'horizontal'}
-                marks={marks}
-                onChangeCommitted={(e, value) => this.onClick(value, true)}
-                onChange={(e, value) => this.onClick(value)}
-            />;
-        } else {
-            const buttons = [];
-            for (let i = 1; i <= this.state.rxData.count; i++) {
-                buttons.push(this.renderButton(i, selectedIndex, buttonStyle));
-            }
-
-            content = <ButtonGroup
-                style={{ width: '100%', height: '100%' }}
-                orientation={this.state.rxData.orientation || 'horizontal'}
-                variant={this.state.rxData.variant === undefined ? 'contained' : this.state.rxData.variant}
-            >
-                {buttons}
-            </ButtonGroup>;
-        }
-
-        if (this.state.rxData.widgetTitle) {
-            content = <FormControl
-                fullWidth
-                style={{
-                    marginTop: this.state.rxData.type === 'select' ? 5 : undefined,
-                    width: '100%',
-                    height: '100%',
-                }}
-            >
-                {this.state.rxData.type === 'select' ?
-                    <InputLabel>{this.state.rxData.widgetTitle}</InputLabel> :
-                    <FormLabel style={this.state.rxData.type === 'slider' ? { marginLeft: 10 } : undefined}>{this.state.rxData.widgetTitle}</FormLabel>}
-                {content}
-            </FormControl>;
-        }
+        const content = <Button
+            startIcon={this.renderIcon(isActive)}
+            onClick={() => this.onClick()}
+            onMouseDown={() => {
+                if (this.props.editMode) {
+                    return;
+                }
+                const delay = parseInt(this.state.rxData.repeat_delay, 10);
+                if (delay) {
+                    this.iterateTimeout && clearTimeout(this.iterateTimeout);
+                    this.iterateTimeout = setTimeout(async () => {
+                        this.iterateTimeout = null;
+                        this.iterateInterval = setInterval(() => this.onClick(), parseInt(this.state.rxData.repeat_interval, 10) || 500);
+                        await this.onClick();
+                    }, delay);
+                }
+            }}
+            onMouseUp={() => {
+                if (this.props.editMode) {
+                    return;
+                }
+                this.iterateInterval && clearInterval(this.iterateInterval);
+                this.iterateInterval = null;
+                this.iterateTimeout && clearTimeout(this.iterateTimeout);
+                this.iterateTimeout = null;
+            }}
+            variant={this.state.rxData.variant || 'contained'}
+        >
+            {this.renderText(isActive)}
+        </Button>;
 
         return <div className="vis-widget-body">
             {content}

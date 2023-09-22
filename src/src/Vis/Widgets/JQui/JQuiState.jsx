@@ -80,6 +80,12 @@ class JQuiState extends VisRxWidget {
                             type: 'checkbox',
                         },
                         {
+                            name: 'click_id',
+                            type: 'id',
+                            noSubscribe: true,
+                            hidden: data => !!data.readOnly,
+                        },
+                        {
                             name: 'count',
                             type: 'slider',
                             min: 0,
@@ -244,26 +250,38 @@ class JQuiState extends VisRxWidget {
         }
     }
 
+    getControlOid() {
+        if (this.state.rxData.click_id && this.state.rxData.click_id !== 'nothing_selected') {
+            return this.state.rxData.click_id;
+        }
+        if (this.state.rxData.oid && this.state.rxData.oid !== 'nothing_selected') {
+            return this.state.rxData.oid;
+        }
+        return '';
+    }
+
     async onClick(indexOrValue, immediately) {
         if (this.state.rxData.readOnly || this.props.editMode) {
             return;
         }
 
         if (this.state.rxData.type === 'slider') {
-            if (this.state.rxData.oid && this.state.rxData.oid !== 'nothing_selected') {
-                this.setTimeout && clearTimeout(this.setTimeout);
-                this.setTimeout = setTimeout(() => {
-                    this.setTimeout = null;
-                    this.props.context.socket.setState(this.state.rxData.oid, parseFloat(indexOrValue));
-                }, immediately ? 0 : parseInt(this.state.rxData.timeout, 10) || 300);
-            }
+            this.setTimeout && clearTimeout(this.setTimeout);
+            this.setTimeout = setTimeout(() => {
+                this.setTimeout = null;
+                const oid = this.getControlOid();
+                if (oid) {
+                    this.props.context.socket.setState(oid, parseFloat(indexOrValue));
+                }
+            }, immediately ? 0 : parseInt(this.state.rxData.timeout, 10) || 300);
             this.setState({ value: indexOrValue });
         } else {
-            if (this.state.rxData.oid && this.state.rxData.oid !== 'nothing_selected') {
+            const oid = this.getControlOid();
+            if (oid) {
                 if (this.state.valueType === 'number') {
-                    this.props.context.socket.setState(this.state.rxData.oid, parseFloat(this.state.rxData[`value${indexOrValue}`]));
+                    this.props.context.socket.setState(oid, parseFloat(this.state.rxData[`value${indexOrValue}`]));
                 } else {
-                    this.props.context.socket.setState(this.state.rxData.oid, this.state.rxData[`value${indexOrValue}`]);
+                    this.props.context.socket.setState(oid, this.state.rxData[`value${indexOrValue}`]);
                 }
             }
             this.setState({ value: this.state.rxData[`value${indexOrValue}`] });
