@@ -21,6 +21,7 @@ import {
     Fab, FormControlLabel,
     Tooltip,
     Checkbox, Switch, ButtonGroup,
+    FormControl, FormLabel,
 } from '@mui/material';
 
 import {
@@ -66,7 +67,13 @@ class JQuiBinaryState extends VisRxWidget {
                         },
                         {
                             name: 'invert',
+                            label: 'Invert value',
                             type: 'checkbox',
+                        },
+                        {
+                            name: 'widgetTitle',
+                            label: 'name',
+                            type: 'text',
                         },
                         {
                             name: 'test',
@@ -627,6 +634,13 @@ class JQuiBinaryState extends VisRxWidget {
         } else if (this.state.rxData.type === 'image') {
             bodyStyle.cursor = !this.state.rxData.readOnly ? 'pointer' : undefined;
             content = this.renderIcon(isOn, buttonStyle);
+        }
+
+        if (this.state.rxData.widgetTitle) {
+            content = <FormControl>
+                <FormLabel>{this.state.rxData.widgetTitle}</FormLabel>
+                {content}
+            </FormControl>;
         }
 
         const result = <div

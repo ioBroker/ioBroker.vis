@@ -196,7 +196,7 @@ class JQuiInput extends VisRxWidget {
         if (!this.state.rxData.jquery_style && !this.state.rxData.no_style) {
             content = <TextField
                 fullWidth
-                value={this.state.input || ''}
+                value={this.state.input === null || this.state.input === undefined ? '' : (this.state.rxData.asString ? this.state.input.toString() : this.state.input)}
                 type={this.state.rxData.asString ? 'text' : 'number'}
                 onFocus={e => {
                     this.focused = true;

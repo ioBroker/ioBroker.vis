@@ -6,6 +6,7 @@ const path     = require('path');
 const cp       = require('child_process');
 const axios    = require('axios');
 const unzipper = require('unzipper');
+const BulkEditor = require("./src/src/Vis/Widgets/JQui/BulkEditor");
 
 function deleteFoldersRecursive(path, exceptions) {
     if (fs.existsSync(path)) {
@@ -88,7 +89,7 @@ gulp.task('runtime-1-copy-src', done => {
     !fs.existsSync(`${__dirname}/runtime/src/Vis`) && fs.mkdirSync(`${__dirname}/runtime/src/Vis`);
     !fs.existsSync(`${__dirname}/runtime/src/i18n`) && fs.mkdirSync(`${__dirname}/runtime/src/i18n`);
     !fs.existsSync(`${__dirname}/runtime/public`) && fs.mkdirSync(`${__dirname}/runtime/public`);
-    copyFolder(`${__dirname}/src/public`, `${__dirname}/runtime/public`, ['ace', 'visEditWords.js', 'marketplaceConfig.sample.js']);
+    copyFolder(`${__dirname}/src/public`, `${__dirname}/runtime/public`, ['ace', 'visEditWords.js']);
     let text = fs.readFileSync(`${__dirname}/runtime/public/index.html`).toString('utf-8');
     let runtimeText = text.replace('<title>Editor.vis</title>', '<title>ioBroker.vis</title>');
     runtimeText = runtimeText.replace('faviconEdit.ico', 'favicon.ico');
@@ -96,7 +97,7 @@ gulp.task('runtime-1-copy-src', done => {
         fs.writeFileSync(`${__dirname}/runtime/public/index.html`, runtimeText);
     }
 
-    copyFolder(`${__dirname}/src/src/Vis`, `${__dirname}/runtime/src/Vis`,  ['visContextMenu.jsx', 'oldVis.jsx', 'visOrderMenu.jsx']);
+    copyFolder(`${__dirname}/src/src/Vis`, `${__dirname}/runtime/src/Vis`,  ['visContextMenu.jsx', 'oldVis.jsx', 'visOrderMenu.jsx', 'BulkEditor.jsx']);
     copyFolder(`${__dirname}/src/src/img`, `${__dirname}/runtime/src/img`);
 
     fs.writeFileSync(`${__dirname}/runtime/src/Vis/visOrderMenu.jsx`, `
@@ -109,6 +110,23 @@ class VisOrderMenu extends React.Component {
 }
 
 export default VisOrderMenu;
+
+`);
+
+    fs.writeFileSync(`${__dirname}/runtime/src/Vis/Widgets/JQui/BulkEditor.js`, `
+import React from 'react';
+
+class BulkEditor extends React.Component {
+    render() {
+        return null;
+    }
+    
+    static async generateFields() {
+        return false;
+    }
+}
+
+export default BulkEditor;
 
 `);
 
