@@ -73,12 +73,12 @@ class JQuiBinaryState extends VisRxWidget {
                         },
                         {
                             name: 'invert',
-                            label: 'Invert value',
+                            label: 'jqui_inverted',
                             type: 'checkbox',
                         },
                         {
                             name: 'widgetTitle',
-                            label: 'name',
+                            label: 'jqui_name',
                             type: 'text',
                         },
                         {
@@ -88,8 +88,8 @@ class JQuiBinaryState extends VisRxWidget {
                             noTranslation: true,
                             options: [
                                 { value: '', label: 'none' },
-                                { value: true, label: 'true' },
-                                { value: false, label: 'false' },
+                                { value: true, label: 'jqui_true' },
+                                { value: false, label: 'jqui_false' },
                             ],
                         },
                     ],

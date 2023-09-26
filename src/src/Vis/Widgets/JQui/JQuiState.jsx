@@ -130,7 +130,7 @@ class JQuiState extends VisRxWidget {
                         },
                         {
                             name: 'widgetTitle',
-                            label: 'name',
+                            label: 'jqui_name',
                             type: 'text',
                         },
                         {

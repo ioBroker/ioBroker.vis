@@ -114,37 +114,48 @@ class JQuiWriteState extends VisRxWidget {
                             hidden: data => data.type !== 'value',
                         },
                         {
-                            name: 'minmax',
-                            type: 'number',
-                            hidden: data => data.type !== 'change',
-                            default: 1,
-                        },
-                        {
                             name: 'step',
                             type: 'number',
                             hidden: data => data.type !== 'change',
                             default: 1,
                         },
                         {
+                            name: 'minmax',
+                            label: 'jqui_max',
+                            type: 'number',
+                            hidden: data => data.type !== 'change' || (parseFloat(data.step) || 0) < 0,
+                            default: 1,
+                        },                        {
+                            name: 'minmax',
+                            label: 'jqui_min',
+                            type: 'number',
+                            hidden: data => data.type !== 'change' || (parseFloat(data.step) || 0) >= 0,
+                            default: 1,
+                        },
+                        {
                             name: 'repeat_delay',
                             type: 'number',
+                            label: 'jqui_repeat_delay',
                             hidden: data => data.type !== 'change',
                             default: 800,
                         },
                         {
                             name: 'repeat_interval',
                             type: 'number',
+                            label: 'jqui_repeat_interval',
                             hidden: data => data.type !== 'change',
                             default: 300,
                         },
                         {
                             name: 'min',
                             type: 'number',
+                            label: 'jqui_min',
                             hidden: data => data.type !== 'toggle',
                             default: 0,
                         },
                         {
                             name: 'max',
+                            label: 'jqui_max',
                             type: 'number',
                             hidden: data => data.type !== 'toggle',
                             default: 100,
@@ -181,6 +192,7 @@ class JQuiWriteState extends VisRxWidget {
                         },
                         {
                             name: 'text_active',
+                            label: 'jqui_text_active',
                             type: 'text',
                         },
                         {

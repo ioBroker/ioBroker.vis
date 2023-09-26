@@ -180,7 +180,7 @@ class JQuiSlider extends VisRxWidget {
                     fields: [
                         {
                             name: 'widgetTitle',
-                            label: 'name',
+                            label: 'jqui_name',
                             type: 'text',
                         },
                         {
@@ -192,7 +192,7 @@ class JQuiSlider extends VisRxWidget {
                         },
                         {
                             name: 'text',
-                            label: 'text',
+                            label: 'jqui_text',
                             hidden: data => !!data.icon || !!data.image,
                         },
                         {

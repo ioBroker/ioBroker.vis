@@ -61,7 +61,7 @@ class JQuiInput extends VisRxWidget {
                         {
                             name: 'asString',
                             type: 'checkbox',
-                            label: 'asString',
+                            label: 'jqui_as_string',
                         },
                         /* {
                             name: 'digits',
