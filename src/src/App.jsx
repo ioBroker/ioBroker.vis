@@ -995,13 +995,12 @@ class App extends Runtime {
         this.savingTimer && clearTimeout(this.savingTimer);
         this.savingTimer = setTimeout(async () => {
             this.savingTimer = null;
-            this.lastProjectJSONfile = JSON.stringify(this.state.project, null, 2);
             if ('TextEncoder' in window) {
                 const encoder = new TextEncoder();
-                const data = encoder.encode(JSON.stringify(this.state.project, null, 2));
+                const data = encoder.encode(this.lastProjectJSONfile);
                 await this.socket.writeFile64(this.adapterId, `${this.state.projectName}/vis-views.json`, data);
             } else {
-                await this.socket.writeFile64(this.adapterId, `${this.state.projectName}/vis-views.json`, JSON.stringify(this.state.project, null, 2));
+                await this.socket.writeFile64(this.adapterId, `${this.state.projectName}/vis-views.json`, this.lastProjectJSONfile);
             }
 
             this.setState({ needSave: false });
@@ -1012,6 +1011,7 @@ class App extends Runtime {
 
         this.syncMultipleWidgets(project);
 
+        this.lastProjectJSONfile = JSON.stringify(project, null, 2);
         newState.visProject = project;
         await this.setStateAsync(newState);
     };

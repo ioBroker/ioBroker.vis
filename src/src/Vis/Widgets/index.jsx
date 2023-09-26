@@ -22,6 +22,8 @@ import JQuiInput from './JQui/JQuiInput';
 import JQuiBinaryState from './JQui/JQuiBinaryState';
 import JQuiState from './JQui/JQuiState';
 import JQuiWriteState from './JQui/JQuiWriteState';
+import JQuiSlider from './JQui/JQuiSlider';
+import JQuiSliderVertical from './JQui/JQuiSliderVertical';
 
 import TabsSliderTabs from './Tabs/TabsSliderTabs';
 
@@ -49,6 +51,8 @@ const WIDGETS = [
     JQuiBinaryState,
     JQuiState,
     JQuiWriteState,
+    JQuiSlider,
+    JQuiSliderVertical,
 
     TabsSliderTabs,
 ];

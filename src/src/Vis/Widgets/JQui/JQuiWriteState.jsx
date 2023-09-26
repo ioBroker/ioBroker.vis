@@ -350,7 +350,7 @@ class JQuiWriteState extends VisRxWidget {
             }
         }
 
-        return <span style={{ color }}>{text}</span>;
+        return text ? <span style={{ color }}>{text}</span> : null;
     }
 
     getIsActive() {
@@ -409,13 +409,15 @@ class JQuiWriteState extends VisRxWidget {
             }
         });
 
+        const text = this.renderText(isActive);
+
         const content = <Button
             style={{
                 width: '100%',
                 height: '100%',
             }}
             color={isActive ? 'primary' : 'grey'}
-            startIcon={this.renderIcon(isActive)}
+            startIcon={text ? this.renderIcon(isActive) : null}
             onClick={() => this.onClick()}
             onMouseDown={() => {
                 if (this.props.editMode) {
@@ -443,7 +445,7 @@ class JQuiWriteState extends VisRxWidget {
             }}
             variant={this.state.rxData.variant || 'contained'}
         >
-            {this.renderText(isActive)}
+            {text || this.renderIcon(isActive)}
         </Button>;
 
         return <div className="vis-widget-body">

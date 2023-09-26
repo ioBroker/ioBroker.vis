@@ -31,7 +31,7 @@ const WidgetFilterDialog = props => {
             if (widget.data && widget.data.filterkey) {
                 widget.data.filterkey.split(',').forEach(filter => {
                     filter = filter.trim();
-                    const pos = _filters.indexOf(filter);
+                    const pos = _filters.findIndex(a => a.key === filter);
                     if (pos === -1) {
                         _filters.push({ key: filter, count: 1 });
                     } else {

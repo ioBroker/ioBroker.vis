@@ -131,12 +131,22 @@ class Runtime extends GenericApp {
         this.setState(newState);
 
         window.addEventListener('hashchange', this.onHashChange, false);
+
+        if (!this.state.runtime) {
+            // Listen for resize changes
+            window.addEventListener('orientationchange', this.orientationChange, false);
+            window.addEventListener('resize', this.orientationChange, false);
+        }
     }
 
     componentWillUnmount() {
         super.componentWillUnmount();
         super.componentWillUnmount();
         window.removeEventListener('hashchange', this.onHashChange, false);
+        if (!this.state.runtime) {
+            window.removeEventListener('orientationchange', this.orientationChange, false);
+            window.removeEventListener('resize', this.orientationChange, false);
+        }
         window.alert = this.alert;
     }
 
@@ -291,6 +301,63 @@ class Runtime extends GenericApp {
         });
     }
 
+    static findViewWithNearestResolution(project, resultRequired) {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+
+        let result = null;
+        const views = [];
+        let difference = 10000;
+
+        // First, find all with the best fitting width
+        Object.keys(project).forEach(view => {
+            if (view === '___settings') {
+                return;
+            }
+            if (project[view].settings?.useAsDefault
+                // If difference less than 20%
+                && Math.abs(project[view].settings.sizex - w) / project[view].settings.sizex < 0.2
+            ) {
+                views.push(view);
+            }
+        });
+
+        for (let i = 0; i < views.length; i++) {
+            if (Math.abs(project[views[i]].settings.sizey - h) < difference) {
+                result = views[i];
+                difference = Math.abs(parseInt(project[views[i]].settings.sizey, 10) - h);
+            }
+        }
+
+        // try to find by ratio
+        if (!result) {
+            const ratio = w / h;
+            difference = 10000;
+
+            Object.keys(project).forEach(view => {
+                if (view === '___settings') {
+                    return;
+                }
+                if (project[view].settings?.useAsDefault &&
+                    // If difference less than 20%
+                    parseInt(project[view].settings.sizey, 10) &&
+                    Math.abs(ratio - (parseInt(project[view].settings.sizex, 10) / parseInt(project[view].settings.sizey, 10)) < difference)
+                ) {
+                    result = view;
+                    difference = Math.abs(ratio - (parseInt(project[view].settings.sizex, 10) / parseInt(project[view].settings.sizey, 10)));
+                }
+            });
+        }
+        if (!result && resultRequired) {
+            result = Object.keys(project).find(view => !view.startsWith('__') && project[view].settings?.useAsDefault);
+        }
+        if (!result && resultRequired) {
+            return Object.keys(project).find(view => !view.startsWith('__')) || '';
+        }
+
+        return result;
+    }
+
     loadProject = async (projectName, file) => {
         if (!file) {
             try {
@@ -313,6 +380,8 @@ class Runtime extends GenericApp {
             }
             return;
         }
+
+        file = file.toString();
 
         if (!this.state.runtime) {
             // remember the last loaded project file
@@ -337,13 +406,17 @@ class Runtime extends GenericApp {
         const currentPath = VisEngine.getCurrentPath();
         let selectedView = currentPath.view;
         if (!selectedView || !project[selectedView]) {
-            // take from local storage
-            if (Object.keys(project).includes(window.localStorage.getItem('selectedView'))) {
-                selectedView = window.localStorage.getItem('selectedView');
-            }
-            // take first view
-            if (!selectedView || !project[selectedView]) {
-                selectedView = Object.keys(project).find(view => !view.startsWith('__')) || '';
+            if (this.state.runtime) {
+                selectedView = Runtime.findViewWithNearestResolution(project, true);
+            } else {
+                // take from local storage
+                if (Object.keys(project).includes(window.localStorage.getItem('selectedView'))) {
+                    selectedView = window.localStorage.getItem('selectedView');
+                }
+                // take first view
+                if (!selectedView || !project[selectedView]) {
+                    selectedView = Object.keys(project).find(view => !view.startsWith('__')) || '';
+                }
             }
         }
 
@@ -415,6 +488,17 @@ class Runtime extends GenericApp {
             // check if some marketplace widgets were updated
             await this.checkForUpdates();
         }
+    };
+
+    orientationChange = () => {
+        this.resolutionTimer && clearTimeout(this.resolutionTimer);
+        this.resolutionTimer = setTimeout(async () => {
+            this.resolutionTimer = null;
+            const view = Runtime.findViewWithNearestResolution(this.state.project);
+            if (view && view !== this.state.selectedView) {
+                await this.changeView(view);
+            }
+        }, 200);
     };
 
     // this function is required here if the project not defined

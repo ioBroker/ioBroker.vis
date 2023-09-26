@@ -1000,7 +1000,7 @@ class Vis {
 
         // View selected?
         if (!hash) {
-            // Take first view in the list
+            // Take the first view in the list
             this.activeView = this.findNearestResolution(true);
             this.activeViewDiv = this.activeView;
 
@@ -3133,7 +3133,7 @@ class Vis {
         const views = [];
         let difference = 10000;
 
-        // First find all with best fitting width
+        // First, find all with the best fitting width
         for (const view in this.views) {
             if (!this.views.hasOwnProperty(view) || view === '___settings') {
                 continue;
