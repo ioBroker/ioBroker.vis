@@ -540,5 +540,14 @@
   "invert_icon_false": "Інвертувати значок",
   "invert_icon_true": "Інвертувати значок",
   "imageHeight_false": "Висота зображення",
-  "imageHeight_true": "Висота зображення"
+  "imageHeight_true": "Висота зображення",
+  "jqui_from_value": "Від статичного значення",
+  "jqui_from_oid": "З іншого об'єкта",
+  "jqui_toggle": "Перемикач",
+  "jqui_increment_decrement": "Приріст/Зменшення",
+  "jqui_states_control": "Державний контроль",
+  "Value": "Значення",
+  "Write value": "Напишіть значення",
+  "jqui_image_active": "Активне зображення",
+  "jqui_icon_active": "Активний значок"
 }

@@ -540,5 +540,14 @@
   "invert_icon_false": "Symbol umkehren",
   "invert_icon_true": "Symbol umkehren",
   "imageHeight_false": "Bildhöhe",
-  "imageHeight_true": "Bildhöhe"
+  "imageHeight_true": "Bildhöhe",
+  "jqui_from_value": "Vom statischen Wert",
+  "jqui_from_oid": "Von einem Objekt",
+  "jqui_toggle": "Umschalten",
+  "jqui_increment_decrement": "Inkrementieren/Dekrementieren",
+  "jqui_states_control": "Staaten kontrollieren",
+  "Value": "Wert",
+  "Write value": "Wert schreiben",
+  "jqui_image_active": "Aktives Bild",
+  "jqui_icon_active": "Aktives Symbol"
 }

@@ -540,5 +540,14 @@
   "invert_icon_false": "Icono de invertir",
   "invert_icon_true": "Icono de invertir",
   "imageHeight_false": "Altura de imagen",
-  "imageHeight_true": "Altura de imagen"
+  "imageHeight_true": "Altura de imagen",
+  "jqui_from_value": "De valor estático",
+  "jqui_from_oid": "De otro objeto",
+  "jqui_toggle": "Palanca",
+  "jqui_increment_decrement": "Incremento/Decremento",
+  "jqui_states_control": "control de los estados",
+  "Value": "Valor",
+  "Write value": "Escribir valor",
+  "jqui_image_active": "Imagen activa",
+  "jqui_icon_active": "Icono activo"
 }

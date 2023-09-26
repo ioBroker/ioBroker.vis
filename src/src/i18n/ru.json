@@ -540,5 +540,14 @@
   "invert_icon_false": "Инвертировать значок",
   "invert_icon_true": "Инвертировать значок",
   "imageHeight_false": "Высота изображения",
-  "imageHeight_true": "Высота изображения"
+  "imageHeight_true": "Высота изображения",
+  "jqui_from_value": "Из статического значения",
+  "jqui_from_oid": "С другого объекта",
+  "jqui_toggle": "Переключать",
+  "jqui_increment_decrement": "Увеличение/Уменьшение",
+  "jqui_states_control": "Штаты контролируют",
+  "Value": "Значение",
+  "Write value": "Запись значения",
+  "jqui_image_active": "Активное изображение",
+  "jqui_icon_active": "Активный значок"
 }

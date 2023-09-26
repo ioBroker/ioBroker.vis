@@ -540,5 +540,14 @@
   "invert_icon_false": "反转图标",
   "invert_icon_true": "反转图标",
   "imageHeight_false": "图像高度",
-  "imageHeight_true": "图像高度"
+  "imageHeight_true": "图像高度",
+  "jqui_from_value": "从静态值",
+  "jqui_from_oid": "来自其他对象",
+  "jqui_toggle": "切换",
+  "jqui_increment_decrement": "递增/递减",
+  "jqui_states_control": "国家控制",
+  "Value": "价值",
+  "Write value": "写入值",
+  "jqui_image_active": "活动图像",
+  "jqui_icon_active": "活动图标"
 }

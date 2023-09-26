@@ -508,7 +508,7 @@ class JQuiState extends VisRxWidget {
             const marks = [];
             for (let i = 1; i <= this.state.rxData.count; i++) {
                 marks.push({
-                    value: this.state.rxData[`value${i}`] || 0,
+                    value: parseFloat(this.state.rxData[`value${i}`] || 0),
                     label: this.state.rxData[`text${i}`] || 0,
                 });
             }
@@ -517,7 +517,7 @@ class JQuiState extends VisRxWidget {
                 style={!this.state.rxData.orientation || this.state.rxData.orientation === 'horizontal' ?
                     { marginLeft: 20, marginRight: 20, width: 'calc(100% - 40px)' } :
                     { marginTop: 10, marginBottom: 10 }}
-                value={this.state.value}
+                value={parseFloat(this.state.value) || 0}
                 valueLabelDisplay="auto"
                 min={marks[0].value}
                 max={marks[marks.length - 1].value}

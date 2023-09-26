@@ -18,24 +18,14 @@ import PropTypes from 'prop-types';
 
 import {
     Button,
-    Tooltip,
-    ButtonGroup, Radio,
-    RadioGroup,
-    FormControlLabel, MenuItem,
-    Select,
-    FormControl,
-    InputLabel,
-    FormLabel, Slider,
 } from '@mui/material';
 
 import {
-    I18n,
     Icon,
 } from '@iobroker/adapter-react-v5';
 
 // eslint-disable-next-line import/no-cycle
 import VisRxWidget from '../../visRxWidget';
-import BulkEditor from './BulkEditor';
 
 class JQuiWriteState extends VisRxWidget {
     constructor(props) {
@@ -46,12 +36,12 @@ class JQuiWriteState extends VisRxWidget {
 
     static getWidgetInfo() {
         return {
-            id: 'tplJquiButtonState',
+            id: 'tplIconState',
             visSet: 'jqui',
-            visName: 'States control',
-            visWidgetLabel: 'jqui_states_control',
-            visPrev: 'widgets/jqui/img/Prev_ButtonState.png',
-            visOrder: 14,
+            visName: 'Icon State',
+            visWidgetLabel: 'Write value',
+            visPrev: 'widgets/jqui/img/Prev_WriteState.png',
+            visOrder: 26,
             visAttrs: [
                 {
                     name: 'common',
@@ -79,17 +69,17 @@ class JQuiWriteState extends VisRxWidget {
                                                 data.minmax = obj.common.max;
                                                 changed = true;
                                             }
-                                        } else {
-                                            if (data.minmax !== obj.common.min) {
-                                                data.minmax = obj.common.min;
-                                                changed = true;
-                                            }
+                                        } else if (data.minmax !== obj.common.min) {
+                                            data.minmax = obj.common.min;
+                                            changed = true;
                                         }
                                     }
-                                    if (obj?.common?.step !== undefined && obj?.common?.step !== null) {
-                                        if (data.step !== obj.common.step) {
-                                            data.step = obj.common.step;
-                                            changed = true;
+                                    if (!data.step) {
+                                        if (obj?.common?.step !== undefined && obj?.common?.step !== null) {
+                                            if (data.step !== obj.common.step) {
+                                                data.step = obj.common.step;
+                                                changed = true;
+                                            }
                                         }
                                     }
                                     changed && changeData(data);
@@ -107,10 +97,10 @@ class JQuiWriteState extends VisRxWidget {
                             type: 'select',
                             default: 'value',
                             options: [
-                                { value: 'value', title: 'jqui_from_value' },
-                                { value: 'oid', title: 'jqui_from_oid' },
-                                { value: 'toggle', title: 'jqui_toggle' },
-                                { value: 'change', title: 'jqui_increment_decrement' },
+                                { value: 'value', label: 'jqui_from_value' },
+                                { value: 'oid', label: 'jqui_from_oid' },
+                                { value: 'toggle', label: 'jqui_toggle' },
+                                { value: 'change', label: 'jqui_increment_decrement' },
                             ],
                         },
                         {
@@ -120,16 +110,8 @@ class JQuiWriteState extends VisRxWidget {
                         },
                         {
                             name: 'value',
-                            type: 'id',
+                            type: 'text',
                             hidden: data => data.type !== 'value',
-                        },
-                        {
-                            name: 'variant',
-                            label: 'jqui_variant',
-                            type: 'select',
-                            noTranslation: true,
-                            options: ['contained', 'outlined', 'standard'],
-                            default: 'contained',
                         },
                         {
                             name: 'minmax',
@@ -173,37 +155,55 @@ class JQuiWriteState extends VisRxWidget {
                     name: 'style',
                     fields: [
                         {
+                            name: 'variant',
+                            label: 'jqui_variant',
+                            type: 'select',
+                            noTranslation: true,
+                            options: ['contained', 'outlined', 'standard'],
+                            default: 'contained',
+                        },
+                        {
                             name: 'text',
                             type: 'text',
                             default: 'Write state',
                         },
                         {
-                            name: 'image',
+                            name: 'src',
                             type: 'image',
-                            label: 'image',
+                            label: 'jqui_image',
                             hidden: data => !!data.icon,
                         },
                         {
                             name: 'icon',
                             type: 'icon64',
-                            label: 'icon',
-                            hidden: data => !!data.image,
+                            label: 'jqui_icon',
+                            hidden: data => !!data.src,
                         },
                         {
                             name: 'text_active',
                             type: 'text',
                         },
                         {
-                            name: 'image_active',
+                            name: 'src_active',
                             type: 'image',
-                            label: 'image',
+                            label: 'jqui_image_active',
                             hidden: data => !!data.icon_active,
                         },
                         {
                             name: 'icon_active',
                             type: 'icon64',
-                            label: 'icon',
-                            hidden: data => !!data.image_active,
+                            label: 'jqui_icon_active',
+                            hidden: data => !!data.src_active,
+                        },
+                        {
+                            name: 'invert_icon',
+                            type: 'checkbox',
+                            hidden: data => !data.icon || !data.src,
+                        },
+                        {
+                            name: 'invert_icon_active',
+                            type: 'checkbox',
+                            hidden: data => !data.icon_active || !data.src_active,
                         },
                     ],
                 },
@@ -252,7 +252,7 @@ class JQuiWriteState extends VisRxWidget {
         return '';
     }
 
-    async onClick(indexOrValue) {
+    async onClick() {
         if (this.props.editMode) {
             return;
         }
@@ -270,10 +270,11 @@ class JQuiWriteState extends VisRxWidget {
                 break;
             }
             case 'toggle':
-                value = this.state.value.toString() === (this.state.rxData.max || 0).toString() ? this.state.rxData.min : this.state.rxData.max;
+                value = parseFloat(this.state.values[`${this.state.rxData.oid}.val`]) || 0;
+                value = value.toString() === (this.state.rxData.max || 0).toString() ? this.state.rxData.min : this.state.rxData.max;
                 break;
             case 'change':
-                value = parseFloat(this.state.rxData.value) || 0;
+                value = parseFloat(this.state.values[`${this.state.rxData.oid}.val`]) || 0;
                 value += parseFloat(this.state.rxData.step) || 0;
                 if (this.state.rxData.step > 0) {
                     if (value > parseFloat(this.state.rxData.minmax)) {
@@ -291,28 +292,38 @@ class JQuiWriteState extends VisRxWidget {
         const oid = this.getControlOid();
         if (oid) {
             if (this.state.valueType === 'number') {
-                this.props.context.socket.setState(oid, parseFloat(this.state.rxData[`value${indexOrValue}`]));
+                this.props.context.socket.setState(oid, parseFloat(value));
             } else {
-                this.props.context.socket.setState(oid, this.state.rxData[`value${indexOrValue}`]);
+                this.props.context.socket.setState(oid, value);
             }
         }
-        this.setState({ value: this.state.rxData[`value${indexOrValue}`] });
+        this.setState({ value });
     }
 
     renderIcon(isActive) {
         let color;
-        const icon = this.state.rxData.icon;
-        if (icon && this.state.rxData.color) {
+        let icon;
+        let invertIcon = null;
+        if (isActive) {
+            invertIcon = this.state.rxData.invert_icon_active;
+            icon = this.state.rxData.icon_active || this.state.rxData.src_active;
+            color = this.state.rxData.color_active;
+        }
+        if (!icon) {
+            icon = this.state.rxData.icon || this.state.rxData.src;
+            invertIcon = this.state.rxData.invert_icon;
             color = this.state.rxData.color;
-            if (isActive && this.state.rxData.color_active) {
-                color = this.state.rxData.color_active;
-            }
         }
 
         if (icon) {
             return <Icon
                 key="icon"
-                style={{ color }}
+                style={{
+                    color,
+                    filter: invertIcon ? 'invert(100%)' : undefined,
+                    width: '100%',
+                    height: '100%',
+                }}
                 src={icon}
             />;
         }
@@ -326,26 +337,45 @@ class JQuiWriteState extends VisRxWidget {
             color = this.state.rxData.color_active;
         }
 
-        if (!text && this.state.rxData.type === 'oid') {
-            text = this.state.values[`${this.state.rxData.value_oid}.val`];
+        if (!text) {
+            if (this.state.rxData.type === 'oid') {
+                text = this.state.values[`${this.state.rxData.value_oid}.val`];
+            } else if (this.state.rxData.type === 'value') {
+                text = this.state.rxData.value;
+            } else if (this.state.rxData.type === 'change') {
+                text = this.state.rxData.step;
+                if (text > 0) {
+                    text = `+${text}`;
+                }
+            }
         }
 
         return <span style={{ color }}>{text}</span>;
     }
 
     getIsActive() {
+        let actualValue = this.state.value;
+        if (actualValue === undefined || actualValue === null) {
+            actualValue = '';
+        }
+
         switch (this.state.rxData.type) {
-            case 'value':
-                return this.state.value.toString() === this.state.rxData.value.toString();
+            case 'value': {
+                let desiredValue = this.state.rxData.value;
+                if (desiredValue === undefined || desiredValue === null) {
+                    desiredValue = '';
+                }
+                return actualValue.toString() === desiredValue.toString();
+            }
             case 'oid': {
                 let oidValue = this.state.values[`${this.state.rxData.value_oid}.val`];
                 if (oidValue === undefined || oidValue === null) {
                     oidValue = '';
                 }
-                return this.state.value.toString() === oidValue.toString();
+                return actualValue.toString() === oidValue.toString();
             }
             case 'toggle':
-                return this.state.value.toString() === (this.state.rxData.max || 0).toString();
+                return actualValue.toString() === (this.state.rxData.max || 0).toString();
             default:
                 return false;
         }
@@ -380,6 +410,11 @@ class JQuiWriteState extends VisRxWidget {
         });
 
         const content = <Button
+            style={{
+                width: '100%',
+                height: '100%',
+            }}
+            color={isActive ? 'primary' : 'grey'}
             startIcon={this.renderIcon(isActive)}
             onClick={() => this.onClick()}
             onMouseDown={() => {
@@ -391,6 +426,7 @@ class JQuiWriteState extends VisRxWidget {
                     this.iterateTimeout && clearTimeout(this.iterateTimeout);
                     this.iterateTimeout = setTimeout(async () => {
                         this.iterateTimeout = null;
+                        this.iterateInterval && clearInterval(this.iterateInterval);
                         this.iterateInterval = setInterval(() => this.onClick(), parseInt(this.state.rxData.repeat_interval, 10) || 500);
                         await this.onClick();
                     }, delay);

@@ -540,5 +540,14 @@
   "invert_icon_false": "Pictogram omkeren",
   "invert_icon_true": "Pictogram omkeren",
   "imageHeight_false": "Hoogte afbeelding",
-  "imageHeight_true": "Hoogte afbeelding"
+  "imageHeight_true": "Hoogte afbeelding",
+  "jqui_from_value": "Van statische waarde",
+  "jqui_from_oid": "Van ander voorwerp",
+  "jqui_toggle": "Schakelaar",
+  "jqui_increment_decrement": "Verhogen/verlagen",
+  "jqui_states_control": "Controle door staten",
+  "Value": "Waarde",
+  "Write value": "Schrijf waarde",
+  "jqui_image_active": "Actief beeld",
+  "jqui_icon_active": "Actief icoon"
 }

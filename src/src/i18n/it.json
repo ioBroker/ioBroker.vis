@@ -540,5 +540,14 @@
   "invert_icon_false": "Icona inverti",
   "invert_icon_true": "Icona inverti",
   "imageHeight_false": "Altezza dell'immagine",
-  "imageHeight_true": "Altezza dell'immagine"
+  "imageHeight_true": "Altezza dell'immagine",
+  "jqui_from_value": "Dal valore statico",
+  "jqui_from_oid": "Da altro oggetto",
+  "jqui_toggle": "Attiva/disattiva",
+  "jqui_increment_decrement": "Incremento/Decremento",
+  "jqui_states_control": "Controllo degli Stati",
+  "Value": "Valore",
+  "Write value": "Scrivi valore",
+  "jqui_image_active": "Immagine attiva",
+  "jqui_icon_active": "Icona attiva"
 }

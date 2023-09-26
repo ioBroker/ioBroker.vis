@@ -540,5 +540,14 @@
   "invert_icon_false": "Icône Inverser",
   "invert_icon_true": "Icône Inverser",
   "imageHeight_false": "Hauteur de l'image",
-  "imageHeight_true": "Hauteur de l'image"
+  "imageHeight_true": "Hauteur de l'image",
+  "jqui_from_value": "À partir d'une valeur statique",
+  "jqui_from_oid": "Depuis un autre objet",
+  "jqui_toggle": "Basculer",
+  "jqui_increment_decrement": "Incrémenter/Décrémenter",
+  "jqui_states_control": "Contrôle des États",
+  "Value": "Valeur",
+  "Write value": "Écrire la valeur",
+  "jqui_image_active": "Image active",
+  "jqui_icon_active": "Icône active"
 }
