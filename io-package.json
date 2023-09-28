@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.2.7",
+    "version": "2.3.0",
     "news": {
+      "2.3.0": {
+        "en": "jQui widgets (many of them) were improved",
+        "de": "jQui Widgets (viele davon) wurden verbessert",
+        "ru": "jQui виджеты (много из них) были улучшены",
+        "pt": "widgets jQui (muitos deles) foram melhorados",
+        "nl": "jQui Widgets (tal van hen) werden verbeterd",
+        "fr": "jQui widgets (bien d'entre eux) ont été améliorés",
+        "it": "jQui widgets (molti di loro) sono stati migliorati",
+        "es": "jQui widgets (muchos de ellos) fueron mejorados",
+        "pl": "jQui widgets (wielu z nich) zostały ulepszone",
+        "uk": "jQui віджети (many з них) були покращені",
+        "zh-cn": "jQui widget(其中many)得到了改善。"
+      },
       "2.2.7": {
         "en": "Improved icon selector: you can upload your own icon directly\nOptimized loading: do not load unused widget sets",
         "de": "Verbesserte Symbolauswahl: Sie können Ihr eigenes Icon direkt hochladen\nOptimierte Belastung: nicht geladene Widget-Sets",
@@ -80,19 +93,6 @@
         "pl": "Wstępna możliwość filtrowania w trybie edycyjnym\nDodała możliwość zmiany porządku względnych widgetów z drag&drop",
         "uk": "Додано можливість фільтрувати віджети в режимі редагування\nДодана можливість змінити порядок відносних віджетів з перетягуванням",
         "zh-cn": "添加可能在被动模式中过滤成目标\n增加有可能改变相对植物群的秩序,拖拉和耕种。"
-      },
-      "2.2.0": {
-        "en": "Release candidate 1",
-        "de": "Release Kandidat 1",
-        "ru": "Выпуск кандидата 1",
-        "pt": "Candidato de lançamento 1",
-        "nl": "Laat de kandidaat vrij. 1",
-        "fr": "Candidat à la libération 1",
-        "it": "Candidato di rilascio 1",
-        "es": "El candidato a la liberación 1",
-        "pl": "Kandydatka 1",
-        "uk": "Видача кандидата 1 час",
-        "zh-cn": "释放候选人 导 言"
       }
     },
     "title": "Visualisation Next Generation",

@@ -228,7 +228,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.3.0 (2023-09-28)
 * (bluefox) jQui widgets (many of them) were improved
 
 ### 2.2.7 (2023-09-18)
