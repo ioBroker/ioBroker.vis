@@ -570,5 +570,21 @@
   "jqui_text": "Tekst",
   "jqui_text_active": "Actieve tekst",
   "jqui_repeat_delay": "Herhalingsvertraging",
-  "jqui_repeat_interval": "Herhaal interval"
+  "jqui_repeat_interval": "Herhaal interval",
+  "jqui_only_icon": "Alleen icoon",
+  "jqui_generate": "Genereer",
+  "jqui_Are you sure?": "Weet je het zeker?",
+  "jqui_Select file": "Selecteer afbeelding",
+  "jqui_Add new value": "Voeg nieuwe waarde toe",
+  "jqui_Replace to": "Vervangen door",
+  "jqui_Number settings": "Nummerinstellingen",
+  "jqui_Percents": "Procenten",
+  "jqui_Minimum value": "Minimale waarde",
+  "jqui_Maximum value": "Maximale waarde",
+  "jqui_Bulk edit": "Bulkbewerking",
+  "jqui_Generate states": "Genereer staten",
+  "jqui_Generate steps": "Genereer stappen",
+  "jqui_Example": "Voorbeeld",
+  "jqui_active_color": "Actieve kleur",
+  "jqui_tooltip": "Tooltip"
 }

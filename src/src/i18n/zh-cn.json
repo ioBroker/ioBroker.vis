@@ -570,5 +570,21 @@
   "jqui_text": "文本",
   "jqui_text_active": "活动文本",
   "jqui_repeat_delay": "重复延迟",
-  "jqui_repeat_interval": "重复间隔"
+  "jqui_repeat_interval": "重复间隔",
+  "jqui_only_icon": "仅图标",
+  "jqui_generate": "产生",
+  "jqui_Are you sure?": "你确定吗？",
+  "jqui_Select file": "选择图片",
+  "jqui_Add new value": "增加新价值",
+  "jqui_Replace to": "用。。。来代替",
+  "jqui_Number settings": "号码设置",
+  "jqui_Percents": "百分比",
+  "jqui_Minimum value": "最小值",
+  "jqui_Maximum value": "最大值",
+  "jqui_Bulk edit": "批量编辑",
+  "jqui_Generate states": "生成状态",
+  "jqui_Generate steps": "生成步骤",
+  "jqui_Example": "例子",
+  "jqui_active_color": "活性颜色",
+  "jqui_tooltip": "工具提示"
 }

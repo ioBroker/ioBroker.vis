@@ -165,9 +165,16 @@ class Runtime extends GenericApp {
                 // compare last executed file with new one
                 readFile(this.socket, this.adapterId, fileName)
                     .then(file => {
-                        if (!file || this.lastProjectJSONfile !== file) { // adapter-react-v5@4.x delivers file.file
-                            this.setState({ showProjectUpdateDialog: true });
+                        try {
+                            const ts = JSON.parse(file.file || file).___settings.ts;
+                            if (ts === this.state.visProject.___settings.ts) {
+                                return;
+                            }
+                        } catch (e) {
+                            console.warn(`Cannot parse project file "${fileName}": ${e}`);
                         }
+
+                        this.setState({ showProjectUpdateDialog: true });
                     });
             }
         }
@@ -474,7 +481,6 @@ class Runtime extends GenericApp {
         await this.setStateAsync({
             visCommonCss: null,
             visUserCss: null,
-            project,
             history: [project],
             historyCursor: 0,
             visProject: project,
@@ -494,7 +500,7 @@ class Runtime extends GenericApp {
         this.resolutionTimer && clearTimeout(this.resolutionTimer);
         this.resolutionTimer = setTimeout(async () => {
             this.resolutionTimer = null;
-            const view = Runtime.findViewWithNearestResolution(this.state.project);
+            const view = Runtime.findViewWithNearestResolution(this.state.visProject);
             if (view && view !== this.state.selectedView) {
                 await this.changeView(view);
             }
@@ -554,7 +560,7 @@ class Runtime extends GenericApp {
     async onConnectionReady() {
         // preload all widgets first
         if (this.state.widgetsLoaded === Runtime.WIDGETS_LOADING_STEP_HTML_LOADED) {
-            await VisWidgetsCatalog.collectRxInformation(this.socket, this.state.project, this.changeProject);
+            await VisWidgetsCatalog.collectRxInformation(this.socket, this.state.visProject, this.changeProject);
             await this.setStateAsync({ widgetsLoaded: Runtime.WIDGETS_LOADING_STEP_ALL_LOADED });
         }
 
@@ -628,7 +634,7 @@ class Runtime extends GenericApp {
 
         // Check that all selectedWidgets exist
         for (let i = selectedWidgets.length - 1; i >= 0; i--) {
-            if (!this.state.project[selectedView] || !this.state.project[selectedView].widgets || !this.state.project[selectedView].widgets[selectedWidgets[i]]) {
+            if (!this.state.visProject[selectedView] || !this.state.visProject[selectedView].widgets || !this.state.visProject[selectedView].widgets[selectedWidgets[i]]) {
                 selectedWidgets = selectedWidgets.splice(i, 1);
             }
         }
@@ -645,8 +651,8 @@ class Runtime extends GenericApp {
             newState.alignValues = [];
         }
 
-        if (!this.state.runtime && !this.state.project.___settings.openedViews.includes(selectedView)) {
-            const project = JSON.parse(JSON.stringify(this.state.project));
+        if (!this.state.runtime && !this.state.visProject.___settings.openedViews.includes(selectedView)) {
+            const project = JSON.parse(JSON.stringify(this.state.visProject));
             project.___settings.openedViews.push(selectedView);
             await this.changeProject(project, true);
         }
@@ -710,7 +716,7 @@ class Runtime extends GenericApp {
     async onWidgetsLoaded() {
         let widgetsLoaded = Runtime.WIDGETS_LOADING_STEP_HTML_LOADED;
         if (this.socket.isConnected()) {
-            await VisWidgetsCatalog.collectRxInformation(this.socket, this.state.project, this.changeProject);
+            await VisWidgetsCatalog.collectRxInformation(this.socket, this.state.visProject, this.changeProject);
             widgetsLoaded = Runtime.WIDGETS_LOADING_STEP_ALL_LOADED;
         }
         this.setState({ widgetsLoaded });
@@ -934,7 +940,7 @@ class Runtime extends GenericApp {
             <StyledEngineProvider injectFirst>
                 <ThemeProvider theme={this.state.theme}>
                     {
-                        !this.state.loaded || !this.state.project ?
+                        !this.state.loaded || !this.state.visProject ?
                             <Loader theme={this.state.themeType} /> :
                             this.getVisEngine()
                     }

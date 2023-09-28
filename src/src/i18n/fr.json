@@ -570,5 +570,21 @@
   "jqui_text": "Texte",
   "jqui_text_active": "Texte actif",
   "jqui_repeat_delay": "Délai de répétition",
-  "jqui_repeat_interval": "Répéter l'intervalle"
+  "jqui_repeat_interval": "Répéter l'intervalle",
+  "jqui_only_icon": "Seule icône",
+  "jqui_generate": "Générer",
+  "jqui_Are you sure?": "Es-tu sûr?",
+  "jqui_Select file": "Sélectionner une image",
+  "jqui_Add new value": "Ajouter une nouvelle valeur",
+  "jqui_Replace to": "Remplacer par",
+  "jqui_Number settings": "Paramètres numériques",
+  "jqui_Percents": "Pourcentages",
+  "jqui_Minimum value": "Valeur minimum",
+  "jqui_Maximum value": "Valeur maximum",
+  "jqui_Bulk edit": "Modification groupée",
+  "jqui_Generate states": "Générer des états",
+  "jqui_Generate steps": "Générer des étapes",
+  "jqui_Example": "Exemple",
+  "jqui_active_color": "Couleur active",
+  "jqui_tooltip": "Info-bulle"
 }

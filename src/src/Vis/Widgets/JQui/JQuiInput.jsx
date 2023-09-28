@@ -192,6 +192,8 @@ class JQuiInput extends VisRxWidget {
     renderWidgetBody(props) {
         super.renderWidgetBody(props);
 
+        props.style.overflow = 'visible';
+
         let content;
         if (!this.state.rxData.jquery_style && !this.state.rxData.no_style) {
             content = <TextField

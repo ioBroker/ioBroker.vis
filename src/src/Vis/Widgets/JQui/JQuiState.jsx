@@ -94,7 +94,6 @@ class JQuiState extends VisRxWidget {
                             hidden: data => !!data.percents,
                         },
                         {
-                            name: 'generate',
                             type: 'custom',
                             component: (
                                 field,
@@ -173,45 +172,49 @@ class JQuiState extends VisRxWidget {
                                     changed && changeData(data);
                                 }
                             },
-                            hidden: (data, index) => data.type !== 'slider' || data[`value${index}`] === '' || data[`value${index}`] === null || data[`value${index}`] === undefined,
+                            hidden: (data, index) => data.type === 'slider' || data[`value${index}`] === '' || data[`value${index}`] === null || data[`value${index}`] === undefined,
+                        },
+                        {
+                            name: 'onlyIcon',
+                            type: 'checkbox',
+                            label: 'jqui_only_icon',
                         },
                         {
                             name: 'text',
                             default: I18n.t('Value'),
                             type: 'text',
                             label: 'text',
-                            hidden: (data, index) => data[`value${index}`] === '' || data[`value${index}`] === null || data[`value${index}`] === undefined,
+                            hidden: (data, index) => !!data[`onlyIcon${index}`] || data[`value${index}`] === '' || data[`value${index}`] === null || data[`value${index}`] === undefined,
                         },
                         {
                             name: 'color',
                             type: 'color',
                             label: 'color',
-                            hidden: (data, index) => data.type !== 'slider' || data[`value${index}`] === '' || data[`value${index}`] === null || data[`value${index}`] === undefined,
+                            hidden: (data, index) => data.type === 'slider' || data[`value${index}`] === '' || data[`value${index}`] === null || data[`value${index}`] === undefined,
                         },
                         {
                             name: 'activeColor',
                             type: 'color',
-                            label: 'active_color',
-                            hidden: (data, index) => data.type !== 'slider' || data[`value${index}`] === '' || data[`value${index}`] === null || data[`value${index}`] === undefined,
-
+                            label: 'jqui_active_color',
+                            hidden: (data, index) => data.type === 'slider' || data[`value${index}`] === '' || data[`value${index}`] === null || data[`value${index}`] === undefined,
                         },
                         {
                             name: 'image',
                             label: 'jqui_image',
                             type: 'image',
-                            hidden: (data, index) => data.type !== 'slider' || !!data.icon || data[`value${index}`] === '' || data[`value${index}`] === null || data[`value${index}`] === undefined,
+                            hidden: (data, index) => data.type === 'slider' || !!data.icon || data[`value${index}`] === '' || data[`value${index}`] === null || data[`value${index}`] === undefined,
                         },
                         {
                             name: 'icon',
                             label: 'jqui_icon',
                             type: 'icon64',
-                            hidden: (data, index) => data.type !== 'slider' || !!data.image || data[`value${index}`] === '' || data[`value${index}`] === null || data[`value${index}`] === undefined,
+                            hidden: (data, index) => data.type === 'slider' || !!data.image || data[`value${index}`] === '' || data[`value${index}`] === null || data[`value${index}`] === undefined,
                         },
                         {
                             name: 'tooltip',
-                            label: 'tooltip',
+                            label: 'jqui_tooltip',
                             type: 'text',
-                            hidden: (data, index) => data.type !== 'slider' || data[`value${index}`] === '' || data[`value${index}`] === null || data[`value${index}`] === undefined,
+                            hidden: (data, index) => data.type === 'slider' || data[`value${index}`] === '' || data[`value${index}`] === null || data[`value${index}`] === undefined,
                         },
                     ],
                 },
@@ -329,6 +332,9 @@ class JQuiState extends VisRxWidget {
     }
 
     renderText(i, selectedIndex) {
+        if (this.state.rxData[`onlyIcon${i}`]) {
+            return null;
+        }
         let text = this.state.rxData[`text${i}`];
         let color = this.state.rxData[`color${i}`];
         if (i === selectedIndex && this.state.rxData[`activeColor${i}`]) {
@@ -348,11 +354,11 @@ class JQuiState extends VisRxWidget {
         const button = <Button
             key={i}
             style={buttonStyle}
-            startIcon={icon}
+            startIcon={text ? icon : undefined}
             color={selectedIndex === i ? 'primary' : 'grey'}
             onClick={() => this.onClick(i)}
         >
-            {text}
+            {text || icon}
         </Button>;
 
         if (this.state.rxData[`tooltip${i}`]) {
@@ -360,6 +366,7 @@ class JQuiState extends VisRxWidget {
                 {button}
             </Tooltip>;
         }
+
         return button;
     }
 

@@ -1404,7 +1404,7 @@ class VisEngine extends React.Component {
                 state: null,
             };
         } else {
-            // If some de-bounce running, change last value
+            // If some debounce running, change last value
             this.statesDebounce[id].state = val;
         }
     };
@@ -1572,20 +1572,30 @@ class VisEngine extends React.Component {
                 // Do nothing
                 return false;
             case 'changeView': {
-                const [project, view] = data.split('/');
-                if (view) {
+                // there are two types of data
+                // "ProjectName/ViewName" or "ViewName/subViewName" or "ViewName"
+                const parts = data.split('/');
+
+                // it is "ProjectName/ViewName"
+                if (!this.props.views[parts[0]] && parts[1]) {
+                    const projectName = parts.shift();
                     // detect actual project
-                    if (project !== this.props.projectName) {
+                    if (projectName !== this.props.projectName) {
+                        const viewName = parts.join('/');
                         if (window.location.search.includes('runtime=')) {
-                            document.location.href = `./?${project}&runtime=true#${view}`;
+                            document.location.href = `./?${projectName}&runtime=true#${viewName}`;
                         } else {
-                            document.location.href = `./?${project}#${view}`;
+                            document.location.href = `./?${projectName}#${viewName}`;
                         }
                         return true;
                     }
+                    const viewName = parts.shift();
+                    this.changeView(viewName, parts.join('/'));
+                } else {
+                    // it is "ViewName/subViewName" or "ViewName"
+                    const viewName = parts.shift();
+                    this.changeView(viewName, parts.join('/'));
                 }
-
-                this.changeView(view || project);
                 break;
             }
             case 'refresh':
@@ -1941,11 +1951,11 @@ ${this.scripts}
         }
     }
 
-    changeView = view => {
+    changeView = (view, subView) => {
         if (this.props.editMode) {
             window.alert(I18n.t('Ignored in edit mode'));
         } else {
-            window.location.hash = VisEngine.buildPath(view);
+            window.location.hash = VisEngine.buildPath(view, subView);
         }
     };
 

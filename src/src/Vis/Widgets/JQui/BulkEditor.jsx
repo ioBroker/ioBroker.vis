@@ -289,7 +289,7 @@ class BulkEditor extends React.Component {
             onClose={() => this.setState({ dialogDelete: null })}
         >
             <DialogContent>
-                {I18n.t('Are you sure')}
+                {I18n.t('jqui_Are you sure?')}
             </DialogContent>
             <DialogActions>
                 <Button
@@ -385,7 +385,7 @@ class BulkEditor extends React.Component {
 
         return <SelectFileDialog
             key="imageDialog"
-            title={I18n.t('Select file')}
+            title={I18n.t('jqui_Select file')}
             onClose={() => this.setState({ imageDialog: null })}
             restrictToFolder={`${this.props.adapterName}.${this.props.instance}/${this.props.projectName}`}
             allowNonRestricted
@@ -455,7 +455,7 @@ class BulkEditor extends React.Component {
             open={!0}
             onClose={() => this.setState({ editDialog: null })}
         >
-            <DialogTitle>{this.state.editDialog.add ? I18n.t('Add new value') : I18n.t('Edit')}</DialogTitle>
+            <DialogTitle>{this.state.editDialog.add ? I18n.t('jqui_Add new value') : I18n.t('Edit')}</DialogTitle>
             <DialogContent>
                 <TextField
                     onKeyDown={e => e.keyCode === 13 && isUnique && this.state.editDialog.value && onEnter()}
@@ -512,8 +512,8 @@ class BulkEditor extends React.Component {
                                 this.setState({ images });
                             }}
                         >
-                            {I18n.t('Replace to ')}
-                            {`.${value.toString().slice(window.location.origin.length)}`}
+                            {I18n.t('jqui_Replace to')}
+                            {` .${value.toString().slice(window.location.origin.length)}`}
                         </Button>
                         <IconButton
                             size="small"
@@ -739,7 +739,7 @@ class BulkEditor extends React.Component {
             open={!0}
             onClose={() => this.setState({ minMaxDialog: false })}
         >
-            <DialogTitle>{I18n.t('Number settings')}</DialogTitle>
+            <DialogTitle>{I18n.t('jqui_Number settings')}</DialogTitle>
             <DialogContent>
                 {this.state.min !== 0 || this.state.max !== 100 ? <div style={{ width: '100%' }}>
                     <FormControlLabel
@@ -755,14 +755,14 @@ class BulkEditor extends React.Component {
                                 this.setState({ usePercents: e.target.checked, unit: this.state.unit || (e.target.checked ? '%' : '') });
                             }}
                         />}
-                        label={I18n.t('Percents')}
+                        label={I18n.t('jqui_Percents')}
                     />
                 </div> : null}
                 <TextField
                     fullWidth
                     type="number"
                     variant="standard"
-                    label={I18n.t('Minimum value')}
+                    label={I18n.t('jqui_Minimum value')}
                     value={this.state.min}
                     onChange={e => this.setState({ min: e.target.value })}
                 />
@@ -770,7 +770,7 @@ class BulkEditor extends React.Component {
                     fullWidth
                     type="number"
                     variant="standard"
-                    label={I18n.t('Maximum value')}
+                    label={I18n.t('jqui_Maximum value')}
                     value={this.state.max}
                     onChange={e => this.setState({ max: e.target.value })}
                 />
@@ -877,7 +877,7 @@ class BulkEditor extends React.Component {
             open={!0}
             onClose={() => this.setState({ dialog: false })}
         >
-            <DialogTitle>{I18n.t('Bulk edit')}</DialogTitle>
+            <DialogTitle>{I18n.t('jqui_Bulk edit')}</DialogTitle>
             <DialogContent>
                 <Button
                     variant="contained"
@@ -907,13 +907,13 @@ class BulkEditor extends React.Component {
                         this.setState(newState);
                     }}
                 >
-                    {I18n.t('Generate steps')}
+                    {I18n.t('jqui_Generate steps')}
                 </Button>
                 {this.state.states ? <Button
                     variant="contained"
                     onClick={() => this.calculateFirst(true)}
                 >
-                    {I18n.t('Generate states')}
+                    {I18n.t('jqui_Generate states')}
                 </Button> : null}
                 <Table>
                     <TableHead>
@@ -924,9 +924,9 @@ class BulkEditor extends React.Component {
                             <TableCell>{I18n.t('Text')}</TableCell>
                             <TableCell>{I18n.t('Icon')}</TableCell>
                             <TableCell>{I18n.t('Image')}</TableCell>
-                            <TableCell>{I18n.t('Color')}</TableCell>
-                            <TableCell>{I18n.t('Active color')}</TableCell>
-                            <TableCell>{I18n.t('Tooltip')}</TableCell>
+                            <TableCell>{I18n.t('color')}</TableCell>
+                            <TableCell>{I18n.t('jqui_active_color')}</TableCell>
+                            <TableCell>{I18n.t('jqui_tooltip')}</TableCell>
                             <TableCell>
                                 <Fab
                                     size="small"
@@ -937,7 +937,7 @@ class BulkEditor extends React.Component {
                                 </Fab>
                             </TableCell>
                             <TableCell>
-                                {I18n.t('Example')}
+                                {I18n.t('jqui_Example')}
                             </TableCell>
                         </TableRow>
                     </TableHead>

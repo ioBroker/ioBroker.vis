@@ -311,11 +311,11 @@ class App extends Runtime {
             if (controlKey && e.key === 'a') {
                 e.preventDefault();
                 if (this.state.selectedGroup) {
-                    this.setSelectedWidgets(Object.keys(this.state.project[this.state.selectedView].widgets)
-                        .filter(widget => !this.state.project[this.state.selectedView].widgets[widget].data.locked && this.state.project[this.state.selectedView].widgets[widget].groupid === this.state.selectedGroup));
+                    this.setSelectedWidgets(Object.keys(this.state.visProject[this.state.selectedView].widgets)
+                        .filter(widget => !this.state.visProject[this.state.selectedView].widgets[widget].data.locked && this.state.visProject[this.state.selectedView].widgets[widget].groupid === this.state.selectedGroup));
                 } else {
-                    this.setSelectedWidgets(Object.keys(this.state.project[this.state.selectedView].widgets)
-                        .filter(widget => !this.state.project[this.state.selectedView].widgets[widget].data.locked && !this.state.project[this.state.selectedView].widgets[widget].grouped));
+                    this.setSelectedWidgets(Object.keys(this.state.visProject[this.state.selectedView].widgets)
+                        .filter(widget => !this.state.visProject[this.state.selectedView].widgets[widget].data.locked && !this.state.visProject[this.state.selectedView].widgets[widget].grouped));
                 }
             }
             if (e.key === 'Escape') {
@@ -357,7 +357,7 @@ class App extends Runtime {
 
         // Check that all selectedWidgets exist
         for (let i = selectedWidgets.length - 1; i >= 0; i--) {
-            if (!this.state.project[selectedView] || !this.state.project[selectedView].widgets || !this.state.project[selectedView].widgets[selectedWidgets[i]]) {
+            if (!this.state.visProject[selectedView] || !this.state.visProject[selectedView].widgets || !this.state.visProject[selectedView].widgets[selectedWidgets[i]]) {
                 selectedWidgets.splice(i, 1);
             }
         }
@@ -367,7 +367,7 @@ class App extends Runtime {
 
     getNewWidgetIdNumber = (isGroup, project) => {
         const widgets = [];
-        project = project || this.state.project;
+        project = project || this.state.visProject;
         Object.keys(project).forEach(view =>
             project[view].widgets && Object.keys(project[view].widgets).forEach(widget =>
                 widgets.push(widget)));
@@ -402,7 +402,7 @@ class App extends Runtime {
     };
 
     addWidget = async (widgetType, x, y, data, style) => {
-        const project = JSON.parse(JSON.stringify(this.state.project));
+        const project = JSON.parse(JSON.stringify(this.state.visProject));
         const widgets = project[this.state.selectedView].widgets;
         const newKey = this.getNewWidgetId();
         widgets[newKey] = {
@@ -473,7 +473,7 @@ class App extends Runtime {
 
     updateWidgetsAction = async (marketplace, widgets) => {
         await this.installWidget(marketplace.widget_id, marketplace.id);
-        const project = JSON.parse(JSON.stringify(this.state.project));
+        const project = JSON.parse(JSON.stringify(this.state.visProject));
         widgets.forEach(view => {
             view.widgets.forEach(widget => {
                 const widgetData = project[view.name].widgets[widget];
@@ -500,7 +500,7 @@ class App extends Runtime {
     };
 
     deleteWidgetsAction = async () => {
-        const project = JSON.parse(JSON.stringify(this.state.project));
+        const project = JSON.parse(JSON.stringify(this.state.visProject));
         const widgets = project[this.state.selectedView].widgets;
         this.state.selectedWidgets.forEach(selectedWidget => {
             if (widgets[selectedWidget].tpl === '_tplGroup') {
@@ -523,7 +523,7 @@ class App extends Runtime {
     };
 
     lockWidgets = async type => {
-        const project = JSON.parse(JSON.stringify(this.state.project));
+        const project = JSON.parse(JSON.stringify(this.state.visProject));
         const widgets = project[this.state.selectedView].widgets;
         this.state.selectedWidgets.forEach(selectedWidget =>
             widgets[selectedWidget].data.locked = type === 'lock');
@@ -553,10 +553,10 @@ class App extends Runtime {
 
     cutCopyWidgets = async type => {
         const widgets = {};
-        const project = JSON.parse(JSON.stringify(this.state.project));
+        const project = JSON.parse(JSON.stringify(this.state.visProject));
 
         this.state.selectedWidgets.forEach(selectedWidget => {
-            widgets[selectedWidget] = this.state.project[this.state.selectedView].widgets[selectedWidget];
+            widgets[selectedWidget] = this.state.visProject[this.state.selectedView].widgets[selectedWidget];
             if (type === 'cut' && project[this.state.selectedView]) {
                 delete project[this.state.selectedView].widgets[selectedWidget];
             }
@@ -605,7 +605,7 @@ class App extends Runtime {
     };
 
     pasteWidgets = async () => {
-        const project = JSON.parse(JSON.stringify(this.state.project));
+        const project = JSON.parse(JSON.stringify(this.state.visProject));
         const widgets = project[this.state.selectedView].widgets;
 
         const newKeys = [];
@@ -628,7 +628,7 @@ class App extends Runtime {
     };
 
     cloneWidgets = async () => {
-        const project = JSON.parse(JSON.stringify(this.state.project));
+        const project = JSON.parse(JSON.stringify(this.state.visProject));
         const widgets = project[this.state.selectedView].widgets;
 
         const newKeys = [];
@@ -649,7 +649,7 @@ class App extends Runtime {
     };
 
     alignWidgets = type => {
-        const project = JSON.parse(JSON.stringify(this.state.project));
+        const project = JSON.parse(JSON.stringify(this.state.visProject));
         const widgets = project[this.state.selectedView].widgets;
         const newCoordinates = {
             left: 0, top: 0, width: 0, height: 0, right: 0, bottom: 0,
@@ -810,7 +810,7 @@ class App extends Runtime {
     };
 
     orderWidgets = type => {
-        const project = JSON.parse(JSON.stringify(this.state.project));
+        const project = JSON.parse(JSON.stringify(this.state.visProject));
         const widgets = project[this.state.selectedView].widgets;
         let minZ = 0;
         let maxZ = 0;
@@ -862,7 +862,7 @@ class App extends Runtime {
     }
 
     groupWidgets = () => {
-        const project = JSON.parse(JSON.stringify(this.state.project));
+        const project = JSON.parse(JSON.stringify(this.state.visProject));
         const widgets = project[this.state.selectedView].widgets;
         const group = {
             tpl: '_tplGroup',
@@ -911,7 +911,7 @@ class App extends Runtime {
     };
 
     ungroupWidgets = () => {
-        const project = JSON.parse(JSON.stringify(this.state.project));
+        const project = JSON.parse(JSON.stringify(this.state.visProject));
         const widgets = project[this.state.selectedView].widgets;
         const group = widgets[this.state.selectedWidgets[0]];
         group.data.members.forEach(member => {
@@ -930,7 +930,7 @@ class App extends Runtime {
     };
 
     setSelectedGroup = groupId => {
-        if (this.state.project[this.state.selectedView].widgets[groupId].marketplace) {
+        if (this.state.visProject[this.state.selectedView].widgets[groupId].marketplace) {
             return;
         }
         this.setState({ selectedGroup: groupId });
@@ -983,6 +983,8 @@ class App extends Runtime {
         // remove all special structures
         this.unsyncMultipleWidgets(project);
 
+        // set timestamp
+        project.___settings.ts = `${Date.now()}.${Math.random().toString(36).substring(7)}`;
         const newState = { project, needSave: true };
 
         if (!ignoreHistory) {
@@ -990,28 +992,28 @@ class App extends Runtime {
             this.saveHistory(project);
         }
 
+        const projectStr = JSON.stringify(project, null, 2);
         // save changes after 1 second
         // eslint-disable-next-line no-unused-expressions
         this.savingTimer && clearTimeout(this.savingTimer);
-        this.savingTimer = setTimeout(async () => {
+        this.savingTimer = setTimeout(async _projectStr => {
             this.savingTimer = null;
             if ('TextEncoder' in window) {
                 const encoder = new TextEncoder();
-                const data = encoder.encode(this.lastProjectJSONfile);
+                const data = encoder.encode(_projectStr);
                 await this.socket.writeFile64(this.adapterId, `${this.state.projectName}/vis-views.json`, data);
             } else {
-                await this.socket.writeFile64(this.adapterId, `${this.state.projectName}/vis-views.json`, this.lastProjectJSONfile);
+                await this.socket.writeFile64(this.adapterId, `${this.state.projectName}/vis-views.json`, _projectStr);
             }
 
             this.setState({ needSave: false });
             if (this.needRestart) {
                 window.location.reload();
             }
-        }, 1000);
+        }, 1000, projectStr);
 
         this.syncMultipleWidgets(project);
 
-        this.lastProjectJSONfile = JSON.stringify(project, null, 2);
         newState.visProject = project;
         await this.setStateAsync(newState);
     };
@@ -1062,7 +1064,7 @@ class App extends Runtime {
 
     toggleView = async (view, isShow, isActivate) => {
         let changed = false;
-        const project = JSON.parse(JSON.stringify(this.state.project));
+        const project = JSON.parse(JSON.stringify(this.state.visProject));
         const pos = project.___settings.openedViews.indexOf(view);
         if (isShow && pos === -1) {
             project.___settings.openedViews.push(view);
@@ -1119,7 +1121,7 @@ class App extends Runtime {
     };
 
     onWidgetsChanged = (changedData, view, viewSettings) => {
-        this.tempProject = this.tempProject || JSON.parse(JSON.stringify(this.state.project));
+        this.tempProject = this.tempProject || JSON.parse(JSON.stringify(this.state.visProject));
         changedData && changedData.forEach(item => {
             if (item.style) {
                 const currentStyle = this.tempProject[item.view].widgets[item.wid].style;
@@ -1248,7 +1250,7 @@ class App extends Runtime {
 
     installWidget = async (widgetId, id) => {
         if (window.VisMarketplace?.api) {
-            const project = JSON.parse(JSON.stringify(this.state.project));
+            const project = JSON.parse(JSON.stringify(this.state.visProject));
             const marketplaceWidget = await window.VisMarketplace.api.apiGetWidgetRevision(widgetId, id);
             if (!project.___settings.marketplace) {
                 project.___settings.marketplace = [];
@@ -1264,7 +1266,7 @@ class App extends Runtime {
     };
 
     uninstallWidget = async widget => {
-        const project = JSON.parse(JSON.stringify(this.state.project));
+        const project = JSON.parse(JSON.stringify(this.state.visProject));
         const widgetIndex = project.___settings.marketplace.findIndex(item => item.id === widget);
         if (widgetIndex !== -1) {
             project.___settings.marketplace.splice(widgetIndex, 1);
@@ -1279,7 +1281,7 @@ class App extends Runtime {
 
         widgets.forEach(_widget => {
             if (_widget.isRoot) {
-                _widget.marketplace = JSON.parse(JSON.stringify(this.state.project.___settings.marketplace.find(item => item.id === id)));
+                _widget.marketplace = JSON.parse(JSON.stringify(this.state.visProject.___settings.marketplace.find(item => item.id === id)));
             }
             if (_widget.tpl === '_tplGroup') {
                 let newKey = `g${newGroupKeyNumber.toString().padStart(6, '0')}`;
@@ -1326,17 +1328,17 @@ class App extends Runtime {
     };
 
     addMarketplaceWidget = async (id, x, y, widgetId, oldData, oldStyle) => {
-        const project = JSON.parse(JSON.stringify(this.state.project));
-        const widgets = JSON.parse(JSON.stringify(this.state.project.___settings.marketplace.find(item => item.id === id).widget));
+        const project = JSON.parse(JSON.stringify(this.state.visProject));
+        const widgets = JSON.parse(JSON.stringify(this.state.visProject.___settings.marketplace.find(item => item.id === id).widget));
         this.importMarketplaceWidget(project, this.state.selectedView, widgets, id, x, y, widgetId, oldData, oldStyle);
         await this.changeProject(project);
     };
 
     updateWidget = async id => {
-        const project = JSON.parse(JSON.stringify(this.state.project));
+        const project = JSON.parse(JSON.stringify(this.state.visProject));
         const widget = project[this.state.selectedView].widgets[id];
         if (widget && widget.marketplace) {
-            const marketplace = JSON.parse(JSON.stringify(this.state.project.___settings.marketplace.find(item => item.widget_id === widget.marketplace.widget_id)));
+            const marketplace = JSON.parse(JSON.stringify(this.state.visProject.___settings.marketplace.find(item => item.widget_id === widget.marketplace.widget_id)));
             await this.deleteWidgetsAction();
             await this.addMarketplaceWidget(marketplace.id, null, null, id, widget.data, widget.style);
         }
@@ -1386,8 +1388,8 @@ class App extends Runtime {
     askAboutInclude = (wid, toWid, cb) => this.setState({ askAboutInclude: { wid, toWid, cb } });
 
     renderTabs() {
-        const views = Object.keys(this.state.project)
-            .filter(view => !view.startsWith('__') && this.state.project.___settings.openedViews.includes(view));
+        const views = Object.keys(this.state.visProject)
+            .filter(view => !view.startsWith('__') && this.state.visProject.___settings.openedViews.includes(view));
 
         return <div className={this.props.classes.tabsContainer}>
             {this.state.hidePalette ? <Tooltip title={I18n.t('Show palette')}>
@@ -1432,7 +1434,7 @@ class App extends Runtime {
                 {
                     views.map(view => {
                         const isGroupEdited = !!this.state.selectedGroup && view === this.state.selectedView;
-                        const viewSettings = isGroupEdited ? {} : (this.state.project[view].settings || {});
+                        const viewSettings = isGroupEdited ? {} : (this.state.visProject[view].settings || {});
                         let icon = viewSettings.navigationIcon || viewSettings.navigationImage;
                         if (icon && icon.startsWith('_PRJ_NAME/')) {
                             icon = `../${this.adapterName}.${this.instance}/${this.state.projectName}${icon.substring(9)}`;  // "_PRJ_NAME".length = 9
@@ -1487,7 +1489,7 @@ class App extends Runtime {
                     <IconButton
                         size="small"
                         onClick={() => {
-                            const project = JSON.parse(JSON.stringify(this.state.project));
+                            const project = JSON.parse(JSON.stringify(this.state.visProject));
                             project.___settings.openedViews = [this.state.selectedView];
                             this.changeProject(project, true);
                         }}
@@ -1533,7 +1535,7 @@ class App extends Runtime {
                 setMarketplaceDialog={this.setMarketplaceDialog}
                 updateWidgets={this.updateWidgets}
                 selectedView={this.state.selectedView}
-                project={this.state.project}
+                project={this.state.visProject}
                 changeProject={this.changeProject}
                 socket={this.socket}
                 editMode={this.state.editMode}
@@ -1548,7 +1550,7 @@ class App extends Runtime {
         return <div key="engine">
             {this.renderTabs()}
             <div
-                style={{ overflow: this.state.editMode ? 'auto' : (this.state.project.___settings?.bodyOverflow || 'auto') }}
+                style={{ overflow: this.state.editMode ? 'auto' : (this.state.visProject.___settings?.bodyOverflow || 'auto') }}
                 className={Utils.clsx(
                     this.props.classes.canvas,
                     this.state.toolbarHeight === 'narrow' && this.props.classes.canvasNarrow,
@@ -1557,7 +1559,7 @@ class App extends Runtime {
             >
                 {this.state.showCode
                     ? <pre>
-                        {JSON.stringify(this.state.project, null, 2)}
+                        {JSON.stringify(this.state.visProject, null, 2)}
                     </pre> : null}
                 <ViewDrop addWidget={this.addWidget} addMarketplaceWidget={this.addMarketplaceWidget} editMode={this.state.editMode}>
                     <div
@@ -1579,7 +1581,7 @@ class App extends Runtime {
                             pasteWidgets={this.pasteWidgets}
                             orderWidgets={this.orderWidgets}
                             widgetsClipboard={this.state.widgetsClipboard}
-                            project={this.state.project}
+                            project={this.state.visProject}
                             selectedView={this.state.selectedView}
                             changeProject={this.changeProject}
                             getNewWidgetIdNumber={this.getNewWidgetIdNumber}
@@ -1609,9 +1611,9 @@ class App extends Runtime {
                 classes={{}}
                 selectedView={this.state.selectedView}
                 userGroups={this.state.userGroups}
-                project={this.state.project}
+                project={this.state.visProject}
                 changeProject={this.changeProject}
-                openedViews={this.state.project.___settings.openedViews}
+                openedViews={this.state.visProject.___settings.openedViews}
                 projectName={this.state.projectName}
                 themeType={this.state.themeType}
                 selectedWidgets={this.state.editMode ? this.state.selectedWidgets : []}
@@ -1697,15 +1699,15 @@ class App extends Runtime {
             return null;
         }
         const widgets = [];
-        Object.keys(this.state.project).forEach(view => {
+        Object.keys(this.state.visProject).forEach(view => {
             if (view !== '___settings') {
                 const viewWidgets = {
                     name: view,
                     widgets: [],
                 };
-                Object.keys(this.state.project[view].widgets).forEach(widget => {
-                    if (this.state.project[view].widgets[widget].marketplace?.widget_id === this.state.updateWidgetsDialog.widget_id &&
-                        this.state.project[view].widgets[widget].marketplace?.version !== this.state.updateWidgetsDialog.version) {
+                Object.keys(this.state.visProject[view].widgets).forEach(widget => {
+                    if (this.state.visProject[view].widgets[widget].marketplace?.widget_id === this.state.updateWidgetsDialog.widget_id &&
+                        this.state.visProject[view].widgets[widget].marketplace?.version !== this.state.updateWidgetsDialog.version) {
                         viewWidgets.widgets.push(widget);
                     }
                 });
@@ -1860,7 +1862,7 @@ class App extends Runtime {
             </StylesProvider>;
         }
 
-        // console.log(this.state.project);
+        // console.log(this.state.visProject);
 
         if (this.state.showProjectsDialog) {
             return <StylesProvider generateClassName={generateClassName}>
@@ -1872,7 +1874,7 @@ class App extends Runtime {
             </StylesProvider>;
         }
 
-        if (!this.state.loaded || !this.state.project || !this.state.userGroups) {
+        if (!this.state.loaded || !this.state.visProject || !this.state.userGroups) {
             return <StylesProvider generateClassName={generateClassName}>
                 <StyledEngineProvider injectFirst>
                     <ThemeProvider theme={this.state.theme}>
@@ -1887,7 +1889,7 @@ class App extends Runtime {
         }
 
         for (const i in this.state.selectedWidgets) {
-            if (!this.state.project[this.state.selectedView]?.widgets[this.state.selectedWidgets[i]]) {
+            if (!this.state.visProject[this.state.selectedView]?.widgets[this.state.selectedWidgets[i]]) {
                 this.setSelectedWidgets([]);
                 return null;
             }
@@ -1922,10 +1924,10 @@ class App extends Runtime {
                         <Toolbar
                             classes={{}}
                             selectedView={this.state.selectedView}
-                            project={this.state.project}
+                            project={this.state.visProject}
                             changeView={this.changeView}
                             changeProject={this.changeProject}
-                            openedViews={this.state.project.___settings.openedViews}
+                            openedViews={this.state.visProject.___settings.openedViews}
                             toggleView={this.toggleView}
                             socket={this.socket}
                             projects={this.state.projects}
@@ -2027,10 +2029,10 @@ class App extends Runtime {
                     {this.state.marketplaceDialog ? <MarketplaceDialog
                         fullScreen
                         onClose={() => this.setState({ marketplaceDialog: false })}
-                        project={this.state.project}
+                        project={this.state.visProject}
                         installWidget={this.installWidget}
                         updateWidgets={this.updateWidgets}
-                        installedWidgets={this.state.project?.___settings.marketplace}
+                        installedWidgets={this.state.visProject?.___settings.marketplace}
                         {...this.state.marketplaceDialog}
                         themeName={this.state.themeName}
                     /> : null}

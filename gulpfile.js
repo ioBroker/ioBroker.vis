@@ -6,7 +6,6 @@ const path     = require('path');
 const cp       = require('child_process');
 const axios    = require('axios');
 const unzipper = require('unzipper');
-const BulkEditor = require("./src/src/Vis/Widgets/JQui/BulkEditor");
 
 function deleteFoldersRecursive(path, exceptions) {
     if (fs.existsSync(path)) {
@@ -113,7 +112,7 @@ export default VisOrderMenu;
 
 `);
 
-    fs.writeFileSync(`${__dirname}/runtime/src/Vis/Widgets/JQui/BulkEditor.js`, `
+    fs.writeFileSync(`${__dirname}/runtime/src/Vis/Widgets/JQui/BulkEditor.jsx`, `
 import React from 'react';
 
 class BulkEditor extends React.Component {

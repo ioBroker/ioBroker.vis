@@ -570,5 +570,21 @@
   "jqui_text": "текст",
   "jqui_text_active": "Активний текст",
   "jqui_repeat_delay": "Повторити затримку",
-  "jqui_repeat_interval": "Інтервал повторення"
+  "jqui_repeat_interval": "Інтервал повторення",
+  "jqui_only_icon": "Тільки значок",
+  "jqui_generate": "Генерувати",
+  "jqui_Are you sure?": "Ти впевнений?",
+  "jqui_Select file": "Виберіть зображення",
+  "jqui_Add new value": "Додати нове значення",
+  "jqui_Replace to": "Замінити",
+  "jqui_Number settings": "Налаштування номера",
+  "jqui_Percents": "Відсотки",
+  "jqui_Minimum value": "Мінімальна вартість",
+  "jqui_Maximum value": "Максимальне значення",
+  "jqui_Bulk edit": "Масове редагування",
+  "jqui_Generate states": "Генеруйте стани",
+  "jqui_Generate steps": "Створення кроків",
+  "jqui_Example": "приклад",
+  "jqui_active_color": "Активний колір",
+  "jqui_tooltip": "Підказка"
 }

@@ -35,6 +35,8 @@ class JQuiBinaryState extends VisRxWidget {
     constructor(props) {
         super(props);
         this.state.isOn = false;
+        this.state.height = 0;
+        this.state.width = 0;
     }
 
     static getWidgetInfo() {
