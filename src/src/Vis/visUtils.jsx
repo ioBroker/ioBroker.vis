@@ -806,6 +806,7 @@ function _loadComponentHelper(context) {
                     if (Component.default) {
                         Component.default.adapter = context.dynamicWidgetInstance._id.substring('system.adapter.'.length).replace(/\.\d*$/, '');
                         Component.default.version = context.dynamicWidgetInstance.common.version;
+                        Component.default.url = _visWidgetsCollection.url;
                         if (context.i18nPrefix) {
                             Component.default.i18nPrefix = context.i18nPrefix;
                         }

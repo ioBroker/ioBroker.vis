@@ -233,6 +233,7 @@ export const getWidgetTypes = usedWidgetSets => {
                 custom: widgetInfo.custom,
                 customPalette: widgetInfo.customPalette,
                 rx: true,
+                developerMode: widget.url?.startsWith('http://'),
                 i18nPrefix,
             };
             VisWidgetsCatalog.allWidgetsList.push(widgetObj.name);

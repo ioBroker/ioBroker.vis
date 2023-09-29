@@ -22,7 +22,7 @@ import {
 import { I18n, Utils, Icon } from '@iobroker/adapter-react-v5';
 
 import Widget from './Widget';
-import { getWidgetTypes } from '../Vis/visWidgetsCatalog';
+import VisWidgetsCatalog, { getWidgetTypes } from '../Vis/visWidgetsCatalog';
 import MarketplacePalette from '../Marketplace/MarketplacePalette';
 import { loadComponent } from '../Vis/visUtils';
 
@@ -84,6 +84,8 @@ const styles = theme => ({
     },
 });
 
+const DEVELOPER_MODE = window.localStorage.getItem('developerMode') === 'true';
+
 const Palette = props => {
     const [filter, setFilter] = useState('');
     const [marketplaceUpdates, setMarketplaceUpdates] = useState(null);
@@ -115,6 +117,10 @@ const Palette = props => {
             const title = widgetType.label ? I18n.t(widgetType.label) : window.vis._(widgetType.title) || '';
             if (widgetType.hidden || (filter && !title.toLowerCase().includes(filter.toLowerCase()))) {
                 return;
+            }
+            if (widgetType.developerMode) {
+                _widgetSetProps[widgetTypeName] = _widgetSetProps[widgetTypeName] || {};
+                _widgetSetProps[widgetTypeName].developerMode = true;
             }
 
             if (widgetType.setLabel) {
@@ -309,87 +315,148 @@ const Palette = props => {
                 }}
             />
         </div>
-        <div className={props.classes.widgets}>
-            {Object.keys(widgetsList).map((category, categoryKey) => <Accordion
-                key={categoryKey}
-                elevation={0}
-                expanded={accordionOpen[category] || false}
-                onChange={(e, expanded) => {
-                    const newAccordionOpen = JSON.parse(JSON.stringify(accordionOpen));
-                    newAccordionOpen[category] = expanded;
-                    window.localStorage.setItem('widgets', JSON.stringify(newAccordionOpen));
-                    setAccordionOpen(newAccordionOpen);
-                }}
-            >
-                <AccordionSummary
-                    id={`summary_${category}`}
-                    expandIcon={<ExpandMoreIcon />}
-                    className={Utils.clsx('vis-palette-widget-set', accordionOpen[category] && 'vis-palette-summary-expanded')}
-                    classes={{
-                        root: Utils.clsx(
-                            props.classes.clearPadding,
-                            accordionOpen[category] ? props.classes.groupSummaryExpanded : props.classes.groupSummary,
-                            props.classes.lightedPanel,
-                        ),
-                        content: props.classes.clearPadding,
-                        expandIcon: props.classes.clearPadding,
+        <div className={props.classes.widgets} style={!props.editMode ? { opacity: 0.3 } : null}>
+            {Object.keys(widgetsList).map((category, categoryKey) => {
+                let version = null;
+                if (widgetSetProps[category]?.version) {
+                    if (DEVELOPER_MODE) {
+                        version = <div
+                            className={props.classes.version}
+                            style={{
+                                cursor: 'pointer',
+                                color: widgetSetProps[category].developerMode ? '#ff4242' : 'inherit',
+                                fontWeight: widgetSetProps[category].developerMode ? 'bold' : 'inherit',
+                            }}
+                            onClick={async () => {
+                                const objects = await props.socket.getObjectViewSystem(
+                                    'instance',
+                                    'system.adapter.',
+                                    'system.adapter.\u9999',
+                                );
+                                const instances = Object.values(objects);
+
+                                // find widgetSet
+                                const wSetObj = instances.find(obj => obj.common.visWidgets && obj.common.name === category);
+                                if (widgetSetProps[category].developerMode) {
+                                    if (wSetObj) {
+                                        if (Object.keys(wSetObj.common.visWidgets).find(key => wSetObj.common.visWidgets[key].url?.startsWith('http'))) {
+                                            Object.keys(wSetObj.common.visWidgets).forEach(key => wSetObj.common.visWidgets[key].url = `${wSetObj.common.name}/customWidgets.js`);
+                                            await props.socket.setObject(wSetObj._id, wSetObj);
+                                        }
+                                    }
+                                } else {
+                                    const dynamicWidgetInstances = instances.filter(obj => obj.common.visWidgets);
+                                    // disable all widget sets
+                                    for (let i = 0; i < dynamicWidgetInstances.length; i++) {
+                                        const visWidgets = dynamicWidgetInstances[i].common.visWidgets;
+                                        if (dynamicWidgetInstances[i] !== wSetObj) {
+                                            if (Object.keys(visWidgets).find(key => visWidgets[key].url?.startsWith('http'))) {
+                                                Object.keys(visWidgets).forEach(key => visWidgets[key].url = `${dynamicWidgetInstances[i].common.name}/customWidgets.js`);
+                                                await props.socket.setObject(dynamicWidgetInstances[i]._id, dynamicWidgetInstances[i]);
+                                            }
+                                        } else {
+                                            // check if http://localhost:4173/customWidgets.js available
+                                            try {
+                                                await fetch('http://localhost:4173/customWidgets.js');
+                                                Object.keys(visWidgets).forEach(key => visWidgets[key].url = 'http://localhost:4173/customWidgets.js');
+                                                await props.socket.setObject(wSetObj._id, wSetObj);
+                                            } catch (e) {
+                                                window.alert('Please start the widget development first');
+                                            }
+                                        }
+                                    }
+                                }
+                                setTimeout(() => window.location.reload(), 1000);
+                            }}
+                        >
+                            {widgetSetProps[category]?.version}
+                        </div>;
+                    } else {
+                        version = <div className={props.classes.version}>{widgetSetProps[category]?.version}</div>;
+                    }
+                }
+
+                return <Accordion
+                    key={categoryKey}
+                    elevation={0}
+                    expanded={accordionOpen[category] || false}
+                    onChange={(e, expanded) => {
+                        const newAccordionOpen = JSON.parse(JSON.stringify(accordionOpen));
+                        newAccordionOpen[category] = expanded;
+                        window.localStorage.setItem('widgets', JSON.stringify(newAccordionOpen));
+                        setAccordionOpen(newAccordionOpen);
                     }}
                 >
-                    {widgetSetProps[category]?.icon ?
-                        <Icon className={props.classes.groupIcon} src={widgetSetProps[category].icon} />
-                        :
-                        null}
-                    {widgetSetProps[category]?.label ?
-                        (widgetSetProps[category].label.startsWith('Vis 2 - ') ?
-                            widgetSetProps[category].label.substring(8) : widgetSetProps[category].label)
-                        :
-                        I18n.t(category)}
-                </AccordionSummary>
-                <AccordionDetails>
-                    {accordionOpen.__marketplace && marketplaceLoading && category === '__marketplace' && <LinearProgress />}
-                    {accordionOpen.__marketplace && category === '__marketplace' && marketplaceUpdates && <div>
-                        <MarketplacePalette setMarketplaceDialog={props.setMarketplaceDialog} />
-                        {props.project.___settings.marketplace?.map(item => <div key={item.id}>
-                            <Widget
-                                editMode={props.editMode}
-                                key={item.id}
-                                marketplace={item}
-                                marketplaceDeleted={marketplaceDeleted}
-                                marketplaceUpdates={marketplaceUpdates}
-                                uninstallWidget={props.uninstallWidget}
-                                updateWidgets={props.updateWidgets}
-                                widgetSet={category}
-                                widgetSetProps={widgetSetProps[category]}
-                                widgetType={{
-                                    id: item.id,
-                                    widget_id: item.widget_id,
-                                    label: item.name,
-                                    preview: `${window.apiUrl + window.webPrefix}/images/${item.image_id}`,
-                                }}
-                                widgetTypeName={item.name}
-                            />
-                        </div>)}
-                    </div>}
-                    {widgetSetProps[category]?.version ?
-                        <div className={props.classes.version}>{widgetSetProps[category]?.version}</div> : null}
-                    <div>
-                        {accordionOpen[category] ? widgetsList[category].map(widgetItem =>
-                            (widgetItem.name === '_tplGroup' ? null : <Widget
-                                changeProject={props.changeProject}
-                                editMode={props.editMode}
-                                key={widgetItem.name}
-                                project={props.project}
-                                selectedView={props.selectedView}
-                                socket={props.socket}
-                                themeType={props.themeType}
-                                widgetSet={category}
-                                widgetSetProps={widgetSetProps[category]}
-                                widgetType={widgetItem}
-                                widgetTypeName={widgetItem.name}
-                            />)) : null}
-                    </div>
-                </AccordionDetails>
-            </Accordion>)}
+                    <AccordionSummary
+                        id={`summary_${category}`}
+                        expandIcon={<ExpandMoreIcon/>}
+                        className={Utils.clsx('vis-palette-widget-set', accordionOpen[category] && 'vis-palette-summary-expanded')}
+                        classes={{
+                            root: Utils.clsx(
+                                props.classes.clearPadding,
+                                accordionOpen[category] ? props.classes.groupSummaryExpanded : props.classes.groupSummary,
+                                props.classes.lightedPanel,
+                            ),
+                            content: props.classes.clearPadding,
+                            expandIcon: props.classes.clearPadding,
+                        }}
+                    >
+                        {widgetSetProps[category]?.icon ?
+                            <Icon className={props.classes.groupIcon} src={widgetSetProps[category].icon}/>
+                            :
+                            null}
+                        {widgetSetProps[category]?.label ?
+                            (widgetSetProps[category].label.startsWith('Vis 2 - ') ?
+                                widgetSetProps[category].label.substring(8) : widgetSetProps[category].label)
+                            :
+                            I18n.t(category)}
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        {accordionOpen.__marketplace && marketplaceLoading && category === '__marketplace' &&
+                            <LinearProgress/>}
+                        {accordionOpen.__marketplace && category === '__marketplace' && marketplaceUpdates && <div>
+                            <MarketplacePalette setMarketplaceDialog={props.setMarketplaceDialog}/>
+                            {props.project.___settings.marketplace?.map(item => <div key={item.id}>
+                                <Widget
+                                    editMode={props.editMode}
+                                    key={item.id}
+                                    marketplace={item}
+                                    marketplaceDeleted={marketplaceDeleted}
+                                    marketplaceUpdates={marketplaceUpdates}
+                                    uninstallWidget={props.uninstallWidget}
+                                    updateWidgets={props.updateWidgets}
+                                    widgetSet={category}
+                                    widgetSetProps={widgetSetProps[category]}
+                                    widgetType={{
+                                        id: item.id,
+                                        widget_id: item.widget_id,
+                                        label: item.name,
+                                        preview: `${window.apiUrl + window.webPrefix}/images/${item.image_id}`,
+                                    }}
+                                    widgetTypeName={item.name}
+                                />
+                            </div>)}
+                        </div>}
+                        {version}
+                        <div>
+                            {accordionOpen[category] ? widgetsList[category].map(widgetItem =>
+                                (widgetItem.name === '_tplGroup' ? null : <Widget
+                                    changeProject={props.changeProject}
+                                    editMode={props.editMode}
+                                    key={widgetItem.name}
+                                    project={props.project}
+                                    selectedView={props.selectedView}
+                                    socket={props.socket}
+                                    themeType={props.themeType}
+                                    widgetSet={category}
+                                    widgetSetProps={widgetSetProps[category]}
+                                    widgetType={widgetItem}
+                                    widgetTypeName={widgetItem.name}
+                                />)) : null}
+                        </div>
+                    </AccordionDetails>
+                </Accordion>;
+            })}
         </div>
     </>;
 };
