@@ -1578,10 +1578,6 @@ class VisBaseWidget extends React.Component {
             }
         }
 
-        if (style.position === 'relative' && Number.isFinite(this.props.context.views[this.props.view].settings.rowGap)) {
-            style.marginBottom = parseFloat(this.props.context.views[this.props.view].settings.rowGap);
-        }
-
         const props = {
             className: '',
             style,
@@ -1614,6 +1610,10 @@ class VisBaseWidget extends React.Component {
                     delete style.height;
                 }
             }
+        }
+
+        if (this.props.isRelative && Number.isFinite(this.props.context.views[this.props.view].settings.rowGap)) {
+            style.marginBottom = parseFloat(this.props.context.views[this.props.view].settings.rowGap);
         }
 
         const rxWidget = this.renderWidgetBody(props);

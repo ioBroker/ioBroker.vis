@@ -143,6 +143,12 @@ class Runtime extends GenericApp {
         super.componentWillUnmount();
         super.componentWillUnmount();
         window.removeEventListener('hashchange', this.onHashChange, false);
+        this.checkTimeout && clearTimeout(this.checkTimeout);
+        this.checkTimeout = null;
+
+        this.resolutionTimer && clearTimeout(this.resolutionTimer);
+        this.resolutionTimer = null;
+
         if (!this.state.runtime) {
             window.removeEventListener('orientationchange', this.orientationChange, false);
             window.removeEventListener('resize', this.orientationChange, false);
@@ -158,24 +164,37 @@ class Runtime extends GenericApp {
 
     onProjectChange = (id, fileName) => {
         if (fileName.endsWith('.json')) {
+            this.checkTimeout && clearTimeout(this.checkTimeout);
             // if runtime => just update project
             if (this.state.runtime) {
-                this.loadProject(this.state.projectName);
+                this.checkTimeout = setTimeout(() => {
+                    this.checkTimeout = null;
+                    this.loadProject(this.state.projectName);
+                }, 500);
             } else if (fileName.endsWith(`${this.state.projectName}/vis-views.json`)) {
-                // compare last executed file with new one
-                readFile(this.socket, this.adapterId, fileName)
-                    .then(file => {
-                        try {
-                            const ts = JSON.parse(file.file || file).___settings.ts;
-                            if (ts === this.state.visProject.___settings.ts) {
-                                return;
+                // wait a little bit to avoid multiple calls
+                this.checkTimeout = setTimeout(() => {
+                    this.checkTimeout = null;
+                    // compare last executed file with new one
+                    readFile(this.socket, this.adapterId, fileName)
+                        .then(file => {
+                            try {
+                                const ts = JSON.parse(file.file || file).___settings.ts;
+                                if (ts === this.state.visProject.___settings.ts) {
+                                    return;
+                                }
+                                const tsInt = parseInt(ts.split('.'), 10);
+                                if (tsInt < parseInt(this.state.visProject.___settings.ts.split('.'), 10)) {
+                                    // ignore older files
+                                    return;
+                                }
+                            } catch (e) {
+                                console.warn(`Cannot parse project file "${fileName}": ${e}`);
                             }
-                        } catch (e) {
-                            console.warn(`Cannot parse project file "${fileName}": ${e}`);
-                        }
 
-                        this.setState({ showProjectUpdateDialog: true });
-                    });
+                            this.setState({ showProjectUpdateDialog: true });
+                        });
+                }, 500);
             }
         }
     };

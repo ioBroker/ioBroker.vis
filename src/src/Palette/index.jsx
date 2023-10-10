@@ -22,7 +22,7 @@ import {
 import { I18n, Utils, Icon } from '@iobroker/adapter-react-v5';
 
 import Widget from './Widget';
-import VisWidgetsCatalog, { getWidgetTypes } from '../Vis/visWidgetsCatalog';
+import { getWidgetTypes } from '../Vis/visWidgetsCatalog';
 import MarketplacePalette from '../Marketplace/MarketplacePalette';
 import { loadComponent } from '../Vis/visUtils';
 
@@ -334,14 +334,17 @@ const Palette = props => {
                                     'system.adapter.\u9999',
                                 );
                                 const instances = Object.values(objects);
+                                let reload = false;
 
                                 // find widgetSet
                                 const wSetObj = instances.find(obj => obj.common.visWidgets && obj.common.name === category);
                                 if (widgetSetProps[category].developerMode) {
                                     if (wSetObj) {
+                                        // find any set with http://localhost:4173/customWidgets.js
                                         if (Object.keys(wSetObj.common.visWidgets).find(key => wSetObj.common.visWidgets[key].url?.startsWith('http'))) {
                                             Object.keys(wSetObj.common.visWidgets).forEach(key => wSetObj.common.visWidgets[key].url = `${wSetObj.common.name}/customWidgets.js`);
                                             await props.socket.setObject(wSetObj._id, wSetObj);
+                                            reload = true;
                                         }
                                     }
                                 } else {
@@ -350,9 +353,12 @@ const Palette = props => {
                                     for (let i = 0; i < dynamicWidgetInstances.length; i++) {
                                         const visWidgets = dynamicWidgetInstances[i].common.visWidgets;
                                         if (dynamicWidgetInstances[i] !== wSetObj) {
+                                            // find any set with http://localhost:4173/customWidgets.js
                                             if (Object.keys(visWidgets).find(key => visWidgets[key].url?.startsWith('http'))) {
+                                                // disable the load over http
                                                 Object.keys(visWidgets).forEach(key => visWidgets[key].url = `${dynamicWidgetInstances[i].common.name}/customWidgets.js`);
                                                 await props.socket.setObject(dynamicWidgetInstances[i]._id, dynamicWidgetInstances[i]);
+                                                reload = true;
                                             }
                                         } else {
                                             // check if http://localhost:4173/customWidgets.js available
@@ -360,13 +366,14 @@ const Palette = props => {
                                                 await fetch('http://localhost:4173/customWidgets.js');
                                                 Object.keys(visWidgets).forEach(key => visWidgets[key].url = 'http://localhost:4173/customWidgets.js');
                                                 await props.socket.setObject(wSetObj._id, wSetObj);
+                                                reload = true;
                                             } catch (e) {
-                                                window.alert('Please start the widget development first');
+                                                window.alert(`Please start the widget development of ${wSetObj._id.split('.')[2]} first`);
                                             }
                                         }
                                     }
                                 }
-                                setTimeout(() => window.location.reload(), 1000);
+                                reload && setTimeout(() => window.location.reload(), 1000);
                             }}
                         >
                             {widgetSetProps[category]?.version}
@@ -389,7 +396,7 @@ const Palette = props => {
                 >
                     <AccordionSummary
                         id={`summary_${category}`}
-                        expandIcon={<ExpandMoreIcon/>}
+                        expandIcon={<ExpandMoreIcon />}
                         className={Utils.clsx('vis-palette-widget-set', accordionOpen[category] && 'vis-palette-summary-expanded')}
                         classes={{
                             root: Utils.clsx(
@@ -402,7 +409,7 @@ const Palette = props => {
                         }}
                     >
                         {widgetSetProps[category]?.icon ?
-                            <Icon className={props.classes.groupIcon} src={widgetSetProps[category].icon}/>
+                            <Icon className={props.classes.groupIcon} src={widgetSetProps[category].icon} />
                             :
                             null}
                         {widgetSetProps[category]?.label ?
@@ -413,9 +420,9 @@ const Palette = props => {
                     </AccordionSummary>
                     <AccordionDetails>
                         {accordionOpen.__marketplace && marketplaceLoading && category === '__marketplace' &&
-                            <LinearProgress/>}
+                            <LinearProgress />}
                         {accordionOpen.__marketplace && category === '__marketplace' && marketplaceUpdates && <div>
-                            <MarketplacePalette setMarketplaceDialog={props.setMarketplaceDialog}/>
+                            <MarketplacePalette setMarketplaceDialog={props.setMarketplaceDialog} />
                             {props.project.___settings.marketplace?.map(item => <div key={item.id}>
                                 <Widget
                                     editMode={props.editMode}
