@@ -1323,15 +1323,25 @@ const WidgetField = props => {
                 disabled={disabled}
                 helperText={typeof error === 'string' ? I18n.t(error) : null}
                 onFocus={() => setTextDialogFocused(true)}
-                onBlur={() => setTextDialogFocused(false)}
-                placeholder={isDifferent ? t('different') : null}
-                InputProps={{
-                    classes: { input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) },
-                }}
-                value={value}
-                onChange={e => {
-                    if (field.type === 'number') {
-                        const _value = parseFloat(e.target.value);
+                onBlur={() => {
+                    setTextDialogFocused(false);
+                    if (field.type === 'number' && value) {
+                        let _value = value;
+                        if (typeof _value === 'string') {
+                            _value = parseFloat(_value);
+                            if (field.min !== undefined) {
+                                if (_value < field.min) {
+                                    _value = field.min;
+                                }
+                            }
+                            if (field.max !== undefined) {
+                                if (_value > field.max) {
+                                    _value = field.max;
+                                }
+                            }
+                            change(_value);
+                            return;
+                        }
                         if (field.min !== undefined) {
                             if (_value < field.min) {
                                 change(field.min);
@@ -1341,14 +1351,16 @@ const WidgetField = props => {
                         if (field.max !== undefined) {
                             if (_value > field.max) {
                                 change(field.max);
-                                return;
                             }
                         }
-                        change(_value);
-                    } else {
-                        change(e.target.value);
                     }
                 }}
+                placeholder={isDifferent ? t('different') : null}
+                InputProps={{
+                    classes: { input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) },
+                }}
+                value={value}
+                onChange={e => change(e.target.value)}
                 type={field.type ? field.type : 'text'}
                 // eslint-disable-next-line react/jsx-no-duplicate-props
                 inputProps={{

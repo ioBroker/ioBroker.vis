@@ -228,6 +228,10 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Corrected vertical gap between relative widgets
+* (bluefox) Better input of numbers with min/max in attribute dialog
+
 ### 2.3.0 (2023-09-28)
 * (bluefox) jQui widgets (many of them) were improved
 

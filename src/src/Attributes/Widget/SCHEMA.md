@@ -154,7 +154,7 @@ onChange: async (field, data, changeData, socket) => {
       - `{common: {custom: true}}` - show only objects with some custom settings
       - `{common: {custom: 'sql.0'}}` - show only objects with sql.0 custom settings (only of the specific instance)
       - `{common: {custom: '_dataSources'}}` - show only objects of adapters `influxdb' or 'sql' or 'history'
-      - `{common: {custom: 'adapterName.'}}` - show only objects of custom settings of specific adapter (all instances)
+      - `{common: {custom: 'adapterName.'}}` - show only objects of the custom settings for specific adapter (all instances)
       - `{type: 'channel'}` - show only channels
       - `{type: ['channel', 'device']}` - show only channels and devices
       - `{common: {type: 'number'}` - show only states of type 'number
