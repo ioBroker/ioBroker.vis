@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.3.0",
+    "version": "2.3.1",
     "news": {
+      "2.3.1": {
+        "en": "Corrected vertical gap between relative widgets\nBetter input of numbers with min/max in attribute dialog",
+        "de": "Korrigierte vertikale Lücke zwischen relativen Widgets\nBessere Eingabe von Zahlen mit min/max im Attributdialog",
+        "ru": "Исправлен вертикальный разрыв между относительными виджетами\nЛучший ввод номеров с мин/макс в диалоге атрибутов",
+        "pt": "Intervalo vertical corrigido entre widgets relativos\nMelhor entrada de números com min/max no atributo diálogo",
+        "nl": "Verticale gat tussen verwante wijdgetten\nBeter input met min/max in Attribute dialog",
+        "fr": "Échelle verticale corrigée entre les widgets relatifs\nMeilleure entrée des nombres avec min/max dans le dialogue d'attribut",
+        "it": "Corretto divario verticale tra widget relativi\nMigliore input dei numeri con la finestra di dialogo di attributo min/max",
+        "es": "Pasillo vertical corregido entre widgets relativos\nMejor entrada de números con min/max en el diálogo de atributo",
+        "pl": "Zaklęcie pionowe różnice pomiędzy względnymi widgetami\nLepsze dane wejściowe do liczb min/max w atrybutach dialogowych",
+        "uk": "Виправлено вертикальний проміжок між відносними віджетами\nКращий вхід чисел з min/max в діалоговому вікні атрибутів",
+        "zh-cn": "相对目标之间的垂直差距\n具有微量/米特色数字的更佳投入"
+      },
       "2.3.0": {
         "en": "jQui widgets (many of them) were improved",
         "de": "jQui Widgets (viele davon) wurden verbessert",
@@ -80,19 +93,6 @@
         "pl": "Changed sentry place",
         "uk": "Змінені налаштування відправлень",
         "zh-cn": "B. 转送环境的变化"
-      },
-      "2.2.1": {
-        "en": "Added possibility to filter widgets in edit mode\nAdded possibility to change the order of relative widgets with drag&drop",
-        "de": "Möglichkeit hinzugefügt, Widgets im Bearbeitungsmodus zu filtern\nZusätzliche Möglichkeit, die Reihenfolge der relativen Widgets mit Drag &drop zu ändern",
-        "ru": "Добавлена возможность фильтровать виджеты в режиме редактирования\nДобавлена возможность изменить порядок относительного виджета с drag&drop",
-        "pt": "Adicionado possibilidade de filtrar widgets no modo de edição\nAdicionado possibilidade de mudar a ordem de widgets relativos com drag &drop",
-        "nl": "Toegevoegd de mogelijkheid tot filter widgetten in edit mode\nToegevoegd om de orde te veranderen van relatieve wedgets met tranen",
-        "fr": "Possibilité de filtrer les widgets en mode édition\nPossibilité de modifier l'ordre des widgets relatifs avec glisser-déposer",
-        "it": "Aggiunta possibilità di filtrare i widget in modalità modifica\nAggiunta possibilità di cambiare l'ordine dei widget relativi con drag&drop",
-        "es": "Añadido posibilidad de filtrar widgets en modo de edición\nAñadido posibilidad de cambiar el orden de los widgets relativos con drag drop",
-        "pl": "Wstępna możliwość filtrowania w trybie edycyjnym\nDodała możliwość zmiany porządku względnych widgetów z drag&drop",
-        "uk": "Додано можливість фільтрувати віджети в режимі редагування\nДодана можливість змінити порядок відносних віджетів з перетягуванням",
-        "zh-cn": "添加可能在被动模式中过滤成目标\n增加有可能改变相对植物群的秩序,拖拉和耕种。"
       }
     },
     "title": "Visualisation Next Generation",
