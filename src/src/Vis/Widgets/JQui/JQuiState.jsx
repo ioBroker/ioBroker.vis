@@ -353,7 +353,7 @@ class JQuiState extends VisRxWidget {
         // Button
         const button = <Button
             key={i}
-            style={buttonStyle}
+            style={{ ...buttonStyle, flexGrow: 1 }}
             startIcon={text ? icon : undefined}
             color={selectedIndex === i ? 'primary' : 'grey'}
             onClick={() => this.onClick(i)}
@@ -503,7 +503,7 @@ class JQuiState extends VisRxWidget {
             }
 
             content = <Select
-                style={{ width: '100%', height: '100%', marginTop: 4 }}
+                style={{ width: '100%', height: '100%' }}
                 value={this.state.value}
                 onChange={e => this.onClick(this.getSelectedIndex(e.target.value))}
                 variant={variant}

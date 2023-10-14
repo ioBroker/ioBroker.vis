@@ -515,6 +515,11 @@ class App extends Runtime {
                     project[usage.view].widgets[usage.wid].data[usage.attr] = '';
                 });
             }
+            // If this widget is a member of a group, remove it from the group too
+            if (widgets[selectedWidget].groupid) {
+                const group = widgets[widgets[selectedWidget].groupid];
+                group?.data?.members && group.data.members.splice(group.data.members.indexOf(selectedWidget), 1);
+            }
 
             delete widgets[selectedWidget];
         });
