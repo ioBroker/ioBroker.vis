@@ -228,6 +228,10 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Allowed showing only selected widgets in edit mode
+* (bluefox) Corrected the visibility calculation for old (CanJS) widgets
+
 ### 2.3.1 (2023-10-13)
 * (bluefox) Corrected vertical gap between relative widgets
 * (bluefox) Better input of numbers with min/max in attribute dialog

@@ -586,5 +586,8 @@
   "jqui_Generate steps": "Genera passaggi",
   "jqui_Example": "Esempio",
   "jqui_active_color": "Colore attivo",
-  "jqui_tooltip": "Descrizione comando"
+  "jqui_tooltip": "Descrizione comando",
+  "Hide selected widgets": "Nascondi i widget selezionati",
+  "Show only selected widgets": "Mostra solo i widget selezionati",
+  "Group widgets": "Raggruppa i widget insieme"
 }

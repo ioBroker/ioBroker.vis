@@ -586,5 +586,8 @@
   "jqui_Generate steps": "Gerar etapas",
   "jqui_Example": "Exemplo",
   "jqui_active_color": "Cor ativa",
-  "jqui_tooltip": "Dica"
+  "jqui_tooltip": "Dica",
+  "Hide selected widgets": "Ocultar widgets selecionados",
+  "Show only selected widgets": "Mostrar apenas widgets selecionados",
+  "Group widgets": "Agrupar widgets"
 }

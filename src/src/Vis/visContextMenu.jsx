@@ -102,7 +102,7 @@ const VisContextMenu = props => {
             },
             {
                 leftIcon: <AiOutlineGroup />,
-                label: 'Group',
+                label: 'Group widgets',
                 onClick: () => props.groupWidgets(),
                 hide: props.selectedWidgets.length < 2,
             },

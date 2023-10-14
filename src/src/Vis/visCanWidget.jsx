@@ -461,7 +461,7 @@ class VisCanWidget extends VisBaseWidget {
                         this.widDiv._customHandlers.onHide(this.widDiv, this.props.id);
                     }
                 } else {
-                    this.widDiv.style.display = this.widDiv._storedDisplay;
+                    this.widDiv.style.display = this.widDiv._storedDisplay || '';
                     this.widDiv._storedDisplay = '';
 
                     if (this.widDiv &&

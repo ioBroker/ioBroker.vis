@@ -473,8 +473,8 @@
   "Move widget up or press longer to open re-order menu": "Das Widget nach oben bewegen oder länger drücken, um das Sortierungsmenü zu öffnen",
   "order_help": "Sie können jedes Element per Drag-and-Drop verschieben oder auf das Element klicken, mit dem das ausgewählte Widget ausgetauscht werden soll",
   "Apply": "Anwenden",
-  "Select all": "Alle verbergen",
-  "Unselect all": "Alle zeigen",
+  "Select all": "Alle selektieren",
+  "Unselect all": "Alles deselektieren",
   "Clear filter": "Filter löschen",
   "%s widgets": "%s Widgets",
   "Default: auto": "Standard: „auto“",
@@ -586,5 +586,8 @@
   "jqui_Generate steps": "Schritte generieren",
   "jqui_Example": "Beispiel",
   "jqui_active_color": "Aktive Farbe",
-  "jqui_tooltip": "Tooltip"
+  "jqui_tooltip": "Tooltip",
+  "Hide selected widgets": "Ausgewählte Widgets ausblenden",
+  "Show only selected widgets": "Nur ausgewählte Widgets anzeigen",
+  "Group widgets": "Gruppieren"
 }

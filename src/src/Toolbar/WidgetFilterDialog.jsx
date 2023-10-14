@@ -9,12 +9,16 @@ import {
     Dialog,
     DialogContent,
     DialogTitle,
-    DialogActions, ListItemText,
+    DialogActions,
+    ListItemText,
+    Switch, Box,
 } from '@mui/material';
 import {
     Close,
     FilterAlt,
     LayersClear as Clear,
+    Visibility,
+    VisibilityOff,
 } from '@mui/icons-material';
 
 import { I18n } from '@iobroker/adapter-react-v5';
@@ -22,6 +26,7 @@ import { I18n } from '@iobroker/adapter-react-v5';
 const WidgetFilterDialog = props => {
     const [filters, setFilters] = useState([]);
     const [filterWidgets, setFilterWidgets] = useState(props.project[props.selectedView].filterWidgets || []);
+    const [filterInvert, setFilterInvert] = useState(props.project[props.selectedView].filterInvert || false);
 
     useEffect(() => {
         // Collect all filters of all widgets
@@ -49,7 +54,7 @@ const WidgetFilterDialog = props => {
     >
         <DialogTitle>{I18n.t('Set widgets filter for edit mode')}</DialogTitle>
         <DialogContent>
-            {filters.length ? <Button
+            {filters.length > 1 ? <Button
                 disabled={filters.length === filterWidgets.length}
                 color="primary"
                 onClick={() => setFilterWidgets([...filters.map(f => f.key)])}
@@ -57,7 +62,7 @@ const WidgetFilterDialog = props => {
             >
                 {I18n.t('Select all')}
             </Button> : null}
-            {filters.length ? <Button
+            {filters.length > 1 ? <Button
                 disabled={!filterWidgets.length}
                 color="grey"
                 style={{ marginLeft: 10 }}
@@ -66,6 +71,27 @@ const WidgetFilterDialog = props => {
             >
                 {I18n.t('Unselect all')}
             </Button> : null}
+            <div
+                style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                }}
+            >
+                <Box style={{ opacity: !filterInvert ? 1 : 0.5, display: 'flex', alignItems: 'center' }}>
+                    {I18n.t('Hide selected widgets')}
+                    <VisibilityOff style={{ marginLeft: 8 }} />
+                </Box>
+                <Switch
+                    checked={filterInvert}
+                    onChange={e => setFilterInvert(e.target.checked)}
+                />
+                <Box style={{ opacity: filterInvert ? 1 : 0.5, display: 'flex', alignItems: 'center' }}>
+                    <Visibility style={{ marginRight: 8 }} />
+                    {I18n.t('Show only selected widgets')}
+                </Box>
+            </div>
             <div>
                 {!filters.length ? I18n.t('To use it, define by some widget the filter key') : null}
                 {filters.map(filter => <ListItemButton
@@ -123,6 +149,7 @@ const WidgetFilterDialog = props => {
                 onClick={() => {
                     const project = JSON.parse(JSON.stringify(props.project));
                     project[props.selectedView].filterWidgets = filterWidgets;
+                    project[props.selectedView].filterInvert = filterInvert;
                     props.changeProject(project);
                     props.onClose();
                 }}

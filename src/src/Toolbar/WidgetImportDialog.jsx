@@ -1,27 +1,24 @@
 import PropTypes from 'prop-types';
+import { useRef, useState } from 'react';
 
-import { useEffect, useRef, useState } from 'react';
-import IODialog from '../Components/IODialog';
-import CustomAceEditor from '../Components/CustomAceEditor';
+import {
+    Button, Dialog, DialogActions, DialogContent, DialogTitle,
+} from '@mui/material';
+
+import { Close as CloseIcon, ImportExport } from '@mui/icons-material';
+
+import { I18n } from '@iobroker/adapter-react-v5';
+
 import { useFocus } from '../Utils';
+import CustomAceEditor from '../Components/CustomAceEditor';
 
 const WidgetImportDialog = props => {
     const [data, setData] = useState('');
-    const [errors, setErrors] = useState([]);
+    const [error, setError] = useState(false);
 
     const inputField = useFocus(true, true, true);
 
     const editor = useRef(null);
-
-    useEffect(() => {
-        if (editor.current) {
-            editor.current.editor.getSession().on('changeAnnotation', () => {
-                if (editor.current) {
-                    setErrors(editor.current.editor.getSession().getAnnotations());
-                }
-            });
-        }
-    }, [editor.current]);
 
     const importWidgets = () => {
         const project = JSON.parse(JSON.stringify(props.project));
@@ -65,30 +62,71 @@ const WidgetImportDialog = props => {
         props.changeProject(project);
     };
 
-    return <IODialog
-        open={!0}
+    return <Dialog
         onClose={props.onClose}
-        title="Import widgets"
-        closeTitle="Close"
-        actionTitle="Import"
-        action={() => {
-            importWidgets();
-            props.onClose();
-        }}
-        actionDisabled={!!errors.length}
+        fullWidth
+        open={!0}
+        maxWidth="lg"
     >
-        <CustomAceEditor
-            type="json"
-            themeType={props.themeType}
-            refEditor={node => {
-                editor.current = node;
-                inputField.current = node;
+        <DialogTitle>{I18n.t('Import widgets')}</DialogTitle>
+        <DialogContent
+            onKeyUp={e => {
+                if (props.action) {
+                    if (!props.actionDisabled && !props.keyboardDisabled) {
+                        if (e.keyCode === 13) {
+                            props.action();
+                            if (!props.actionNoClose) {
+                                props.onClose();
+                            }
+                        }
+                    }
+                }
             }}
-            value={data}
-            onChange={newValue => setData(newValue)}
-            height={200}
-        />
-    </IODialog>;
+        >
+            <CustomAceEditor
+                type="json"
+                error={error}
+                themeType={props.themeType}
+                refEditor={node => {
+                    editor.current = node;
+                    inputField.current = node;
+                }}
+                value={data}
+                onChange={newValue => {
+                    try {
+                        newValue && JSON.parse(newValue);
+                        setError(false);
+                    } catch (e) {
+                        setError(true);
+                    }
+                    setData(newValue);
+                }}
+                height={300}
+            />
+        </DialogContent>
+        <DialogActions>
+            <Button
+                variant="contained"
+                onClick={() => {
+                    importWidgets();
+                    props.onClose();
+                }}
+                color="primary"
+                disabled={!data || error}
+                startIcon={<ImportExport />}
+            >
+                {I18n.t('Import')}
+            </Button>
+            <Button
+                variant="contained"
+                color="grey"
+                onClick={props.onClose}
+                startIcon={<CloseIcon />}
+            >
+                {I18n.t('Close')}
+            </Button>
+        </DialogActions>
+    </Dialog>;
 };
 
 WidgetImportDialog.propTypes = {

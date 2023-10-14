@@ -586,5 +586,8 @@
   "jqui_Generate steps": "Створення кроків",
   "jqui_Example": "приклад",
   "jqui_active_color": "Активний колір",
-  "jqui_tooltip": "Підказка"
+  "jqui_tooltip": "Підказка",
+  "Hide selected widgets": "Приховати вибрані віджети",
+  "Show only selected widgets": "Показати лише вибрані віджети",
+  "Group widgets": "Згрупуйте віджети разом"
 }

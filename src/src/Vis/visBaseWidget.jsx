@@ -388,6 +388,7 @@ class VisBaseWidget extends React.Component {
     onMouseDown(e) {
         e.stopPropagation();
         if (this.stealCursor && !this.state.multiViewWidget) {
+            e.stopPropagation();
             this.props.mouseDownOnView(e, this.props.id, this.props.isRelative);
             return;
         }
@@ -395,16 +396,22 @@ class VisBaseWidget extends React.Component {
             return;
         }
 
-        // detect double click for multi-view widgets
-        if (this.state.multiViewWidget) {
-            if (Date.now() - this.lastClick < 300) {
-                // change view
-                const [multiView, multiId] = this.props.id.split('_');
-                this.props.context.setSelectedWidgets([multiId], multiView);
-            }
+        if (Date.now() - this.lastClick < 250) {
+            console.log('AAA');
+        }
 
-            this.lastClick = Date.now();
-            return;
+        // detect double click for multi-view widgets
+        if (this.lastClick) {
+            if (this.state.multiViewWidget) {
+                if (Date.now() - this.lastClick < 250) {
+                    // change view
+                    const [multiView, multiId] = this.props.id.split('_');
+                    this.props.context.setSelectedWidgets([multiId], multiView);
+                }
+
+                this.lastClick = Date.now();
+                return;
+            }
         }
 
         if (!this.props.selectedWidgets.includes(this.props.id)) {
@@ -420,15 +427,23 @@ class VisBaseWidget extends React.Component {
                     this.props.context.setSelectedWidgets(selectedWidgets);
                 }
             } else {
-                this.lastClick = Date.now();
                 // set select
                 this.props.context.setSelectedWidgets([this.props.id]);
             }
-        } else if (this.props.moveAllowed && this.state.draggable !== false && !this.props.isRelative) {
-            // User can drag only objects of the same type
-            this.props.mouseDownOnView(e, this.props.id, this.props.isRelative, false, Date.now() - this.lastClick < 300);
-            this.lastClick = Date.now();
+        } else if (this.props.moveAllowed && this.state.draggable !== false) {
+            if (!this.props.isRelative) {
+                // User can drag only objects of the same type
+                this.props.mouseDownOnView(e, this.props.id, this.props.isRelative, false, Date.now() - this.lastClick < 300);
+            } else if (this.lastClick && Date.now() - this.lastClick < 250) {
+                // if double-click on a group
+                if (this.props.selectedWidgets.length === 1 &&
+                    this.props.context.views[this.props.view].widgets[this.props.selectedWidgets[0]].tpl === '_tplGroup'
+                ) {
+                    this.props.context.setSelectedGroup(this.props.selectedWidgets[0]);
+                }
+            }
         }
+        this.lastClick = Date.now();
     }
 
     createWidgetMovementShadow() {

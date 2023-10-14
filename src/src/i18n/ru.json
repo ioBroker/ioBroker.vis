@@ -473,8 +473,8 @@
   "Move widget up or press longer to open re-order menu": "Переместите виджет вверх или нажмите дольше, чтобы открыть меню изменения порядка",
   "order_help": "Вы можете перетащить любой элемент или щелкнуть элемент, с которым выбранный виджет будет заменен",
   "Apply": "Применить",
-  "Select all": "Скрыть все",
-  "Unselect all": "Показать все",
+  "Select all": "Выбрать все",
+  "Unselect all": "Снять все",
   "Clear filter": "Очистить фильтр",
   "%s widgets": "%s виджетов",
   "Default: auto": "По умолчанию: «auto»",
@@ -586,5 +586,8 @@
   "jqui_Generate steps": "Создание шагов",
   "jqui_Example": "Пример",
   "jqui_active_color": "Активный цвет",
-  "jqui_tooltip": "Подсказка"
+  "jqui_tooltip": "Подсказка",
+  "Hide selected widgets": "Скрыть выбранные виджеты",
+  "Show only selected widgets": "Показать только выбранные виджеты",
+  "Group widgets": "Сгруппировать виджеты"
 }

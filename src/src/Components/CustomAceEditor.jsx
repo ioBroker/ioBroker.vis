@@ -112,7 +112,14 @@ const CustomAceEditor = props => {
         };
     }, []);
 
-    return <div style={{ width: props.width || '100%', height: props.height || '100%' }} ref={refEditor}>
+    return <div
+        style={{
+            width: props.width || '100%',
+            height: props.height || '100%',
+            border: props.error ? '1px solid #800' : '1px solid transparent',
+        }}
+        ref={refEditor}
+    >
         <AceEditor
             mode={props.type === 'text' ? 'html' : props.type}
             theme={props.themeType === 'dark' ? 'clouds_midnight' : 'chrome'}
@@ -140,6 +147,7 @@ CustomAceEditor.propTypes = {
     height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     refEditor: PropTypes.func,
+    error: PropTypes.bool,
 };
 
 export default CustomAceEditor;

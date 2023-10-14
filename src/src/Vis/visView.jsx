@@ -254,7 +254,8 @@ class VisView extends React.Component {
         if (this.props.editMode &&
             this.props.selectedWidgets &&
             this.props.selectedWidgets.length === 1 &&
-            this.props.context.views[this.props.view].widgets[this.props.selectedWidgets[0]].tpl === '_tplGroup') {
+            this.props.context.views[this.props.view].widgets[this.props.selectedWidgets[0]].tpl === '_tplGroup'
+        ) {
             this.props.context.setSelectedGroup(this.props.selectedWidgets[0]);
         }
     };
@@ -515,39 +516,42 @@ class VisView extends React.Component {
             return;
         }
 
-        this.refView.current.addEventListener('mousemove', this.onMouseWidgetMove);
-        window.document.addEventListener('mouseup', this.onMouseWidgetUp);
+        if (true || !isRelative) {
+            this.refView.current.addEventListener('mousemove', this.onMouseWidgetMove);
+            window.document.addEventListener('mouseup', this.onMouseWidgetUp);
 
-        this.movement = {
-            moved: false,
-            startX: e.pageX,
-            startY: e.pageY,
-            isResize,
-            x: 0,
-            y: 0,
-        };
+            this.movement = {
+                moved: false,
+                startX: e.pageX,
+                startY: e.pageY,
+                isResize,
+                x: 0,
+                y: 0,
+            };
 
-        const widgetsRefs = this.widgetsRefs;
+            const widgetsRefs = this.widgetsRefs;
 
-        this.props.selectedWidgets.forEach(selectedWidget => {
-            const widgetRect = widgetsRefs[selectedWidget].refService.current.getBoundingClientRect();
-            if (e.pageX <= widgetRect.right && e.pageX >= widgetRect.left && e.pageY <= widgetRect.bottom && e.pageY >= widgetRect.top) {
-                this.movement.startWidget = widgetsRefs[selectedWidget].refService.current.getBoundingClientRect();
-            }
-        });
+            this.props.selectedWidgets.forEach(selectedWidget => {
+                const widgetRect = widgetsRefs[selectedWidget].refService.current.getBoundingClientRect();
+                if (e.pageX <= widgetRect.right && e.pageX >= widgetRect.left && e.pageY <= widgetRect.bottom && e.pageY >= widgetRect.top) {
+                    this.movement.startWidget = widgetsRefs[selectedWidget].refService.current.getBoundingClientRect();
+                }
+            });
 
-        this.props.selectedWidgets.forEach(_wid => {
-            if (widgetsRefs[_wid]?.onMove) {
-                widgetsRefs[_wid].onMove(); // indicate the start of movement
-            }
-        });
+            this.props.selectedWidgets.forEach(_wid => {
+                if (widgetsRefs[_wid]?.onMove) {
+                    widgetsRefs[_wid].onMove(); // indicate the start of movement
+                }
+            });
 
-        // Indicate about movement start
-        Object.keys(widgetsRefs).forEach(_wid => {
-            if (widgetsRefs[_wid]?.onCommand) {
-                widgetsRefs[_wid].onCommand('startMove');
-            }
-        });
+            // Indicate about movement start
+            Object.keys(widgetsRefs).forEach(_wid => {
+                if (widgetsRefs[_wid]?.onCommand) {
+                    widgetsRefs[_wid].onCommand('startMove');
+                }
+            });
+        }
+
     };
 
     onIgnoreMouseEvents = ignore => {
@@ -1417,6 +1421,7 @@ class VisView extends React.Component {
                 const listRelativeWidgetsOrder = [];
                 const listAbsoluteWidgetsOrder = [];
                 const filterWidgets = this.props.context.views[this.props.view].filterWidgets;
+                const filterInvert = this.props.context.views[this.props.view].filterInvert;
 
                 // calculate the order of relative widgets
                 Object.keys(widgets).forEach(id => {
@@ -1444,12 +1449,22 @@ class VisView extends React.Component {
                     }
 
                     // filter out the widgets in edit mode
-                    if (this.props.editMode && filterWidgets?.length && widget.data?.filterkey) {
-                        let filterValues = widget.data.filterkey;
-                        if (filterValues && typeof filterValues === 'string') {
-                            filterValues = filterValues.split(',').map(f => f.trim()).filter(f => f);
-                        }
-                        if (filterWidgets.find(f => filterValues.includes(f))) {
+                    if (this.props.editMode && filterWidgets?.length) {
+                        if (widget.data?.filterkey) {
+                            let filterValues = widget.data.filterkey;
+                            if (filterValues && typeof filterValues === 'string') {
+                                filterValues = filterValues.split(',').map(f => f.trim()).filter(f => f);
+                            }
+                            // if filterInvert, then show only widgets with filterkey
+                            if (filterInvert) {
+                                if (!filterWidgets.find(f => filterValues.includes(f))) {
+                                    return;
+                                }
+                            } else if (filterWidgets.find(f => filterValues.includes(f))) {
+                                // Else hide widgets with filterkey in filterWidgets
+                                return;
+                            }
+                        } else if (filterInvert) {
                             return;
                         }
                     }

@@ -586,5 +586,8 @@
   "jqui_Generate steps": "Generuj kroki",
   "jqui_Example": "Przykład",
   "jqui_active_color": "Aktywny kolor",
-  "jqui_tooltip": "Etykietka"
+  "jqui_tooltip": "Etykietka",
+  "Hide selected widgets": "Ukryj wybrane widżety",
+  "Show only selected widgets": "Pokaż tylko wybrane widżety",
+  "Group widgets": "Grupuj widżety razem"
 }

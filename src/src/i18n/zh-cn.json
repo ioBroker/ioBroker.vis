@@ -586,5 +586,8 @@
   "jqui_Generate steps": "生成步骤",
   "jqui_Example": "例子",
   "jqui_active_color": "活性颜色",
-  "jqui_tooltip": "工具提示"
+  "jqui_tooltip": "工具提示",
+  "Hide selected widgets": "隐藏选定的小部件",
+  "Show only selected widgets": "仅显示选定的小部件",
+  "Group widgets": "将小部件分组在一起"
 }

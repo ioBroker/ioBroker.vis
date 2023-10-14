@@ -474,7 +474,7 @@
   "order_help": "U kunt elk item slepen en neerzetten of klikken op het item waarmee de geselecteerde widget wordt verwisseld",
   "Apply": "Toepassen",
   "Select all": "Selecteer alles",
-  "Unselect all": "Alles deselecteren",
+  "Unselect all": "Deselecteer alles",
   "Clear filter": "Filter wissen",
   "%s widgets": "%s widgets",
   "Default: auto": "Standaard: \"auto\"",
@@ -586,5 +586,8 @@
   "jqui_Generate steps": "Genereer stappen",
   "jqui_Example": "Voorbeeld",
   "jqui_active_color": "Actieve kleur",
-  "jqui_tooltip": "Tooltip"
+  "jqui_tooltip": "Tooltip",
+  "Hide selected widgets": "Verberg geselecteerde widgets",
+  "Show only selected widgets": "Toon alleen geselecteerde widgets",
+  "Group widgets": "Groepeer widgets samen"
 }

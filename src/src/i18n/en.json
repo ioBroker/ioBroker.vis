@@ -473,8 +473,8 @@
   "Move widget up or press longer to open re-order menu": "Move widget up or press longer to open re-order menu",
   "order_help": "You can drag and drop any item or click on the item with which the selected widget will be swapped",
   "Apply": "Apply",
-  "Select all": "Hide all",
-  "Unselect all": "Show all",
+  "Select all": "Select all",
+  "Unselect all": "Unselect all",
   "Clear filter": "Clear filter",
   "%s widgets": "%s widgets",
   "Default: auto": "Default: \"auto\"",
@@ -586,5 +586,8 @@
   "jqui_Generate steps": "Generate steps",
   "jqui_Example": "Example",
   "jqui_active_color": "Active color",
-  "jqui_tooltip": "Tooltip"
+  "jqui_tooltip": "Tooltip",
+  "Hide selected widgets": "Hide selected widgets",
+  "Show only selected widgets": "Show only selected widgets",
+  "Group widgets": "Group widgets"
 }

@@ -378,14 +378,14 @@ const Widgets = props => {
             changeProject={props.changeProject}
             selectedView={props.selectedView}
             project={props.project}
-            themeName={props.themeName}
+            themeType={props.themeType}
             getNewWidgetIdNumber={props.getNewWidgetIdNumber}
         /> : null}
         {exportDialog ? <WidgetExportDialog
             onClose={() => setExportDialog(false)}
             widgets={props.project[props.selectedView].widgets}
             selectedWidgets={props.selectedWidgets}
-            themeName={props.themeName}
+            themeType={props.themeType}
         /> : null}
         {filterDialog ? <WidgetFilterDialog
             onClose={() => setFilterDialog(false)}
