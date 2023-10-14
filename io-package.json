@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.3.1",
+    "version": "2.3.2",
     "news": {
+      "2.3.2": {
+        "en": "Allowed showing only selected widgets in edit mode\nCorrected the visibility calculation for old (CanJS) widgets",
+        "de": "Erlaubt, nur ausgewählte Widgets im Bearbeitungsmodus anzuzeigen\nKorrektur der Sichtberechnung für alte (CanJS) Widgets",
+        "ru": "Разрешено показывать только выбранные виджеты в режиме редактирования\nИсправлена оценка видимости для старых (CanJS) виджетов",
+        "pt": "Permitido mostrando apenas widgets selecionados no modo de edição\nCorrigido o cálculo de visibilidade para widgets antigos (CanJS)",
+        "nl": "Laat zien dat alleen geselecteerde wedgetten in edit mode\nBerekende de visibiliteit voor oud (CanJS) Widgets",
+        "fr": "Permet de ne montrer que les widgets sélectionnés en mode édition\nCorrection du calcul de visibilité des widgets anciens (CanJS)",
+        "it": "Consente di visualizzare solo i widget selezionati in modalità di modifica\nCorretto il calcolo della visibilità per i widget vecchi (CanJS)",
+        "es": "Permitido mostrar sólo widgets seleccionados en modo de edición\nCorregido el cálculo de visibilidad para los widgets antiguos (CanJS)",
+        "pl": "Wykazywał tylko wybrane widżety w trybie edytowanym\nPoprawione obliczenia widoczności dla starych (CanJS)",
+        "uk": "Дозволяє показувати тільки вибрані віджети в режимі редагування\nВиправлено розрахунок видимості для старих (CanJS) віджетів",
+        "zh-cn": "允许在被包围模式中只展示特定的植物。\n修改旧(JS)的可见度计算"
+      },
       "2.3.1": {
         "en": "Corrected vertical gap between relative widgets\nBetter input of numbers with min/max in attribute dialog",
         "de": "Korrigierte vertikale Lücke zwischen relativen Widgets\nBessere Eingabe von Zahlen mit min/max im Attributdialog",
@@ -80,19 +93,6 @@
         "pl": "Kwalifikacja przepisowa",
         "uk": "Виправлена перевірка ліцензії",
         "zh-cn": "更正的许可证检查"
-      },
-      "2.2.2": {
-        "en": "Changed sentry settings",
-        "de": "Geänderte Einstellungen für die Versendung",
-        "ru": "Измененные настройки судоходства",
-        "pt": "Definições de envio alteradas",
-        "nl": "Veranderde schildwachting",
-        "fr": "Réglages de sentinelle modifiés",
-        "it": "Impostazioni di invio modificate",
-        "es": "Ajustes de centry cambiados",
-        "pl": "Changed sentry place",
-        "uk": "Змінені налаштування відправлень",
-        "zh-cn": "B. 转送环境的变化"
       }
     },
     "title": "Visualisation Next Generation",
