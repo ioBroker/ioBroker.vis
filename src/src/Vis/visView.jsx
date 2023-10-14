@@ -551,7 +551,6 @@ class VisView extends React.Component {
                 }
             });
         }
-
     };
 
     onIgnoreMouseEvents = ignore => {
