@@ -27,7 +27,12 @@ import GenericApp from '@iobroker/adapter-react-v5/GenericApp';
 import { I18n, Loader, LegacyConnection } from '@iobroker/adapter-react-v5';
 
 import VisEngine from './Vis/visEngine';
-import { findWidgetUsages, readFile, registerWidgetsLoadIndicator } from './Vis/visUtils';
+import {
+    extractBinding,
+    findWidgetUsages,
+    readFile,
+    registerWidgetsLoadIndicator,
+} from './Vis/visUtils';
 import VisWidgetsCatalog from './Vis/visWidgetsCatalog';
 
 const generateClassName = createGenerateClassName({
@@ -238,6 +243,27 @@ class Runtime extends GenericApp {
 
                     if (widget.data.members && !Array.isArray(widget.data.members)) {
                         widget.data.members = [];
+                    }
+
+                    // collect all attributes with bindings
+                    if (!widget.data.bindings && !Array.isArray(widget.data.bindings)) {
+                        widget.data.bindings = [];
+                        Object.keys(widget.data).forEach(attr => {
+                            if (attr === 'bindings') {
+                                return;
+                            }
+                            if (attr.startsWith('g_')) {
+                                return;
+                            }
+                            if (typeof attr !== 'string') {
+                                return;
+                            }
+                            // Process bindings in data attributes
+                            const OIDs = extractBinding(widget.data[attr]);
+                            if (OIDs) {
+                                widget.data.bindings.push(attr);
+                            }
+                        });
                     }
 
                     if (widget.data.members) {

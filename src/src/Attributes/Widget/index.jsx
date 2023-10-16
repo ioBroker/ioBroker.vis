@@ -527,55 +527,17 @@ const Widget = props => {
                 });
             }
 
-            // if (widget.tpl === '_tplGroup') {
-            //     const groupFields = [{
-            //         name: 'common',
-            //         singleName: 'common',
-            //         fields: [],
-            //     }, {
-            //         name: 'objects',
-            //         singleName: 'objects',
-            //         fields: [{
-            //             name: 'attrCount',
-            //             type: 'slider',
-            //             min: 1,
-            //             max: 19,
-            //             step: 1,
-            //         }],
-            //     }];
-            //
-            //     for (let i = 1; i <= widget.data.attrCount; i++) {
-            //         groupFields[0].fields.push({
-            //             name: `groupAttr${i}`,
-            //             title: widget.data[`attrName${i}`],
-            //             type: widget.data[`attrType${i}`],
-            //         });
-            //         groupFields[1].fields.push({
-            //             name: `attrName${i}`,
-            //             singleName: 'attrName',
-            //             index: i,
-            //         });
-            //     }
-            //     for (let i = 1; i <= widget.data.attrCount; i++) {
-            //         groupFields[1].fields.push({
-            //             name: `attrType${i}`,
-            //             singleName: 'attrType',
-            //             index: i,
-            //             type: 'select',
-            //             options: ['', 'checkbox', 'image', 'color', 'views', 'html', 'widget', 'history'],
-            //         });
-            //     }
-            //     selectedWidgetsFields.push(groupFields);
-            //     return;
-            // }
-
             const fields = parseAttributes(params, widgetIndex, commonGroups, commonFields, widgetType.set, widget.data);
 
             selectedWidgetsFields.push(fields);
         });
 
         return {
-            widget, widgetType, commonFields, commonGroups, selectedWidgetsFields,
+            widget,
+            widgetType,
+            commonFields,
+            commonGroups,
+            selectedWidgetsFields,
         };
     }, [props.selectedWidgets, props.project, props.selectedView]);
 
