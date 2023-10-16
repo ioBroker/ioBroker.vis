@@ -249,15 +249,14 @@ class Runtime extends GenericApp {
                     if (!widget.data.bindings && !Array.isArray(widget.data.bindings)) {
                         widget.data.bindings = [];
                         Object.keys(widget.data).forEach(attr => {
-                            if (attr === 'bindings') {
+                            if (attr === 'bindings' ||
+                                !widget.data[attr] ||
+                                attr.startsWith('g_') ||
+                                typeof widget.data[attr] !== 'string'
+                            ) {
                                 return;
                             }
-                            if (attr.startsWith('g_')) {
-                                return;
-                            }
-                            if (typeof attr !== 'string') {
-                                return;
-                            }
+
                             // Process bindings in data attributes
                             const OIDs = extractBinding(widget.data[attr]);
                             if (OIDs) {

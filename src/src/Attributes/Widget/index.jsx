@@ -1,11 +1,5 @@
+import { Component } from 'react';
 import PropTypes from 'prop-types';
-import React, {
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-    useCallback,
-} from 'react';
 import { withStyles } from '@mui/styles';
 
 import {
@@ -223,291 +217,358 @@ const styles = theme => ({
     },
 });
 
-const getFieldsBefore = () => [
-    {
-        name: 'fixed',
-        fields: [
-            { name: 'name' },
-            { name: 'comment' },
-            { name: 'class', type: 'class' },
-            { name: 'filterkey', type: 'filters' },
-            { name: 'multi-views', type: 'select-views' },
-            { name: 'locked', type: 'checkbox' },
-        ],
-    },
-    {
-        name: 'visibility',
-        fields: [{ name: 'visibility-oid', type: 'id' },
-            {
-                name: 'visibility-cond', type: 'select', options: ['==', '!=', '<=', '>=', '<', '>', 'consist', 'not consist', 'exist', 'not exist'], default: '==',
-            },
-            { name: 'visibility-val', default: 1 },
-            { name: 'visibility-groups', type: 'groups' },
-            {
-                name: 'visibility-groups-action', type: 'select', options: ['hide', 'disabled'], default: 'hide',
-            }],
-    },
-];
-
-const getSignals = (count, adapterName) => {
-    const result = {
-        name: 'signals',
-        fields: [
-            {
-                name: 'signals-count',
-                type: 'select',
-                options: ['1', '2', '3'],
-                default: '1',
-                immediateChange: true,
-            },
-        ],
-    };
-    for (let i = 0; i < count; i++) {
-        result.fields = result.fields.concat([
-            { name: `signals-oid-${i}`, type: 'id' },
-            {
-                name: `signals-cond-${i}`,
-                type: 'select',
-                options: ['==', '!=', '<=', '>=', '<', '>', 'consist', 'not consist', 'exist', 'not exist'],
-                default: '==',
-            },
-            { name: `signals-val-${i}`, default: true },
-            { name: `signals-icon-${i}`, type: 'image', default: `${adapterName}/signals/lowbattery.png` },
-            {
-                name: `signals-icon-size-${i}`, type: 'slider', options: { min: 1, max: 120, step: 1 }, default: 0,
-            },
-            { name: `signals-icon-style-${i}` },
-            { name: `signals-text-${i}` },
-            { name: `signals-text-style-${i}` },
-            { name: `signals-text-class-${i}` },
-            { name: `signals-blink-${i}`, type: 'checkbox', default: false },
-            {
-                name: `signals-horz-${i}`, type: 'slider', options: { min: -20, max: 120, step: 1 }, default: 0,
-            },
-            {
-                name: `signals-vert-${i}`, type: 'slider', options: { min: -20, max: 120, step: 1 }, default: 0,
-            },
-            { name: `signals-hide-edit-${i}`, type: 'checkbox', default: false },
-            { type: 'delimiter' },
-        ]);
-    }
-
-    return result;
-};
-
-const getFieldsAfter = (widget, widgets, fonts) => [
-    {
-        name: 'css_common',
-        isStyle: true,
-        fields: [
-            { name: 'position', type: 'nselect', options: ['', 'relative', 'sticky'] },
-            { name: 'display', type: 'nselect', options: ['', 'inline-block'] },
-            ...(['relative', 'sticky'].includes(widget.style.position) ? [] :
-                [
-                    { name: 'left', type: 'dimension' },
-                    { name: 'top', type: 'dimension' },
-                ]),
-            { name: 'width', type: 'dimension' },
-            { name: 'height', type: 'dimension' },
-            {
-                name: 'z-index', type: 'number', min: -200, max: 200,
-            },
-            { name: 'overflow-x', type: 'nselect', options: ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'] },
-            { name: 'overflow-y', type: 'nselect', options: ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'] },
-            { name: 'opacity' },
-            { name: 'cursor', type: 'auto' },
-            { name: 'transform' },
-        ],
-    },
-    {
-        name: 'css_font_text',
-        isStyle: true,
-        fields: [{ name: 'color', type: 'color' },
-            { name: 'text-align', type: 'nselect', options: ['', 'left', 'right', 'center', 'justify', 'initial', 'inherit'] },
-            { name: 'text-shadow' },
-            {
-                name: 'font-family',
-                type: 'auto',
-                options: fonts,
-            },
-            { name: 'font-style', type: 'nselect', options: ['', 'normal', 'italic', 'oblique', 'initial', 'inherit'] },
-            { name: 'font-variant', type: 'nselect', options: ['', 'normal', 'small-caps', 'initial', 'inherit'] },
-            { name: 'font-weight', type: 'auto', options: ['normal', 'bold', 'bolder', 'lighter', 'initial', 'inherit'] },
-            { name: 'font-size', type: 'auto', options: ['medium', 'xx-small', 'x-small', 'small', 'large', 'x-large', 'xx-large', 'smaller', 'larger', 'initial', 'inherit'] },
-            { name: 'line-height' },
-            { name: 'letter-spacing' },
-            { name: 'word-spacing' }],
-    },
-    {
-        name: 'css_background',
-        isStyle: true,
-        fields: [{ name: 'background' },
-            { name: 'background-color', type: 'color' },
-            { name: 'background-image' },
-            { name: 'background-repeat', type: 'nselect', options: ['', 'repeat', 'repeat-x', 'repeat-y', 'no-repeat', 'initial', 'inherit'] },
-            { name: 'background-attachment', type: 'nselect', options: ['', 'scroll', 'fixed', 'local', 'initial', 'inherit'] },
-            { name: 'background-position' },
-            { name: 'background-size' },
-            { name: 'background-clip', type: 'nselect', options: ['', 'border-box', 'padding-box', 'content-box', 'initial', 'inherit'] },
-            { name: 'background-origin', type: 'nselect', options: ['', 'padding-box', 'border-box', 'content-box', 'initial', 'inherit'] }],
-    },
-    {
-        name: 'css_border',
-        isStyle: true,
-        fields: [
-            { name: 'box-sizing', type: 'nselect', options: ['', 'border-box', 'content-box']  },
-            { name: 'border-width' },
-            { name: 'border-style', type: 'nselect', options: ['', 'none', 'dotted', 'dashed', 'solid', 'double', 'groove', 'ridge', 'inset', 'outset', 'hidden'] },
-            { name: 'border-color', type: 'color' },
-            { name: 'border-radius' }],
-    },
-    {
-        name: 'css_shadow_padding',
-        isStyle: true,
-        fields: [{ name: 'padding' },
-            { name: 'padding-left' },
-            { name: 'padding-top' },
-            { name: 'padding-right' },
-            { name: 'padding-bottom' },
-            { name: 'box-shadow' },
-            { name: 'margin-left' },
-            { name: 'margin-top' },
-            { name: 'margin-right' },
-            { name: 'margin-bottom' }],
-    },
-    {
-        name: 'gestures',
-        fields: [
-            {
-                name: 'gestures-indicator',
-                type: 'auto',
-                options: Object.keys(widgets).filter(wid => widgets[wid].tpl === 'tplValueGesture'),
-            },
-            { name: 'gestures-offsetX', default: 0, type: 'number' },
-            { name: 'gestures-offsetY', default: 0, type: 'number' },
-            { type: 'delimiter' },
-            ...(['swiping', 'rotating', 'pinching'].flatMap(gesture => [
-                { name: `gestures-${gesture}-oid`,        type: 'id' },
-                { name: `gestures-${gesture}-value`,      default: '' },
-                { name: `gestures-${gesture}-minimum`,    type: 'number' },
-                { name: `gestures-${gesture}-maximum`,    type: 'number' },
-                { name: `gestures-${gesture}-delta`,      type: 'number' },
-                { type: 'delimiter' },
-            ])),
-            ...(['swipeRight', 'swipeLeft', 'swipeUp', 'swipeDown', 'rotateLeft', 'rotateRight', 'pinchIn', 'pinchOut'].flatMap(gesture => [
-                { name: `gestures-${gesture}-oid`,    type: 'id' },
-                { name: `gestures-${gesture}-value`,  default: '' },
-                { name: `gestures-${gesture}-limit`,  type: 'number' },
-                { type: 'delimiter' },
-            ])),
-        ],
-    },
-    {
-        name: 'last_change',
-        fields: [
-            { name: 'lc-oid', type: 'id' },
-            {
-                name: 'lc-type', type: 'select', options: ['last-change', 'timestamp'], default: 'last-change',
-            },
-            { name: 'lc-is-interval', type: 'checkbox', default: true },
-            { name: 'lc-is-moment', type: 'checkbox', default: false },
-            {
-                name: 'lc-format', type: 'auto', options: ['YYYY.MM.DD hh:mm:ss', 'DD.MM.YYYY hh:mm:ss', 'YYYY.MM.DD', 'DD.MM.YYYY', 'YYYY/MM/DD hh:mm:ss', 'YYYY/MM/DD', 'hh:mm:ss'], default: '',
-            },
-            {
-                name: 'lc-position-vert', type: 'select', options: ['top', 'middle', 'bottom'], default: 'top',
-            },
-            {
-                name: 'lc-position-horz', type: 'select', options: ['left', /* 'middle', */'right'], default: 'right',
-            },
-            {
-                name: 'lc-offset-vert', type: 'slider', options: { min: -120, max: 120, step: 1 }, default: 0,
-            },
-            {
-                name: 'lc-offset-horz', type: 'slider', options: { min: -120, max: 120, step: 1 }, default: 0,
-            },
-            {
-                name: 'lc-font-size', type: 'auto', options: ['', 'medium', 'xx-small', 'x-small', 'small', 'large', 'x-large', 'xx-large', 'smaller', 'larger', 'initial', 'inherit'], default: '12px',
-            },
-            { name: 'lc-font-family', type: 'fontname', default: '' },
-            {
-                name: 'lc-font-style', type: 'auto', options: ['', 'normal', 'italic', 'oblique', 'initial', 'inherit'], default: '',
-            },
-            { name: 'lc-bkg-color', type: 'color', default: '' },
-            { name: 'lc-color', type: 'color', default: '' },
-            { name: 'lc-border-width', default: '0' },
-            {
-                name: 'lc-border-style', type: 'auto', options: ['', 'none', 'hidden', 'dotted', 'dashed', 'solid', 'double', 'groove', 'ridge', 'inset', 'outset', 'initial', 'inherit'], default: '',
-            },
-            { name: 'lc-border-color', type: 'color', default: '' },
-            {
-                name: 'lc-border-radius', type: 'slider', options: { min: 0, max: 20, step: 1 }, default: 10,
-            },
-            { name: 'lc-padding' },
-            {
-                name: 'lc-zindex', type: 'slider', options: { min: -10, max: 20, step: 1 }, default: 0,
-            },
-        ],
-    },
-];
-
-const checkFunction = (funcText, project, selectedView, selectedWidgets, index) => {
-    try {
-        let _func;
-        if (typeof funcText === 'function') {
-            _func = funcText;
-        } else {
-            // eslint-disable-next-line no-new-func
-            _func = new Function('data', 'index', 'style', `return ${funcText}`);
-        }
-        const isHidden = [];
-        for (let i = 0; i < selectedWidgets.length; i++) {
-            const widget = project[selectedView].widgets[selectedWidgets[i]];
-            const data = widget?.data;
-            const style = widget?.style;
-            if (!widget) {
-                // strange error
-                console.warn(`Strange error, that widget ${selectedWidgets[i]} does not exists`);
-                continue;
-            }
-            isHidden.push(_func(data || {}, index, style || {}));
-        }
-        let _isHdn = isHidden[0];
-        if (_isHdn && isHidden.find((hidden, i) => i > 0 && !hidden)) {
-            _isHdn = false;
-        }
-        if (_isHdn) {
-            return true;
-        }
-    } catch (e) {
-        console.error(`Cannot execute hidden on "${funcText}": ${e}`);
-    }
-    return false;
-};
-
 const WIDGET_ICON_HEIGHT = 34;
 
-const Widget = props => {
-    const widgetTypes = props.widgetTypes;
-    const widgets = props.project[props.selectedView]?.widgets;
-    const imageRef = useRef();
-    const [cssDialogOpened, setCssDialogOpened] = useState(false);
-    const [jsDialogOpened, setJsDialogOpened] = useState(false);
+class Widget extends Component {
+    constructor(props) {
+        super(props);
 
-    const fieldsData = useMemo(() => {
+        this.state = {
+            cssDialogOpened: false,
+            jsDialogOpened: false,
+            clearGroup: null,
+            showWidgetCode: window.localStorage.getItem('showWidgetCode') === 'true',
+            triggerAllOpened: 0,
+            triggerAllClosed: 0,
+            accordionOpen: window.localStorage.getItem('attributesWidget') && window.localStorage.getItem('attributesWidget')[0] === '{'
+                ? JSON.parse(window.localStorage.getItem('attributesWidget'))
+                : {},
+            widgetsLoaded: props.widgetsLoaded,
+            widgetTypes: null,
+            fields: null,
+            dataImage: Widget.buildDataImage(props.project, props.selectedView, props.selectedWidgets),
+        };
+
+        this.fieldsBefore = Widget.getFieldsBefore();
+        this.fieldsSignals = [];
+        for (let i = 0; i <= 3; i++) {
+            this.fieldsSignals.push(Widget.getSignals(i, props.adapterName));
+        }
+
+        this.imageRef = React.createRef();
+    }
+
+    static getFieldsBefore() {
+        return [
+            {
+                name: 'fixed',
+                fields: [
+                    { name: 'name' },
+                    { name: 'comment' },
+                    { name: 'class', type: 'class' },
+                    { name: 'filterkey', type: 'filters' },
+                    { name: 'multi-views', type: 'select-views' },
+                    { name: 'locked', type: 'checkbox' },
+                ],
+            },
+            {
+                name: 'visibility',
+                fields: [{ name: 'visibility-oid', type: 'id' },
+                    {
+                        name: 'visibility-cond', type: 'select', options: ['==', '!=', '<=', '>=', '<', '>', 'consist', 'not consist', 'exist', 'not exist'], default: '==',
+                    },
+                    { name: 'visibility-val', default: 1 },
+                    { name: 'visibility-groups', type: 'groups' },
+                    {
+                        name: 'visibility-groups-action', type: 'select', options: ['hide', 'disabled'], default: 'hide',
+                    }],
+            },
+        ];
+    }
+
+    static getSignals(count, adapterName){
+        const result = {
+            name: 'signals',
+            fields: [
+                {
+                    name: 'signals-count',
+                    type: 'select',
+                    noTranslation: true,
+                    options: ['1', '2', '3'],
+                    default: '1',
+                    immediateChange: true,
+                },
+            ],
+        };
+
+        for (let i = 0; i < count; i++) {
+            result.fields = result.fields.concat([
+                { name: `signals-oid-${i}`, type: 'id' },
+                {
+                    name: `signals-cond-${i}`,
+                    type: 'select',
+                    options: ['==', '!=', '<=', '>=', '<', '>', 'consist', 'not consist', 'exist', 'not exist'],
+                    default: '==',
+                },
+                { name: `signals-val-${i}`, default: true },
+                { name: `signals-icon-${i}`, type: 'image', default: `${adapterName}/signals/lowbattery.png` },
+                {
+                    name: `signals-icon-size-${i}`, type: 'slider', options: { min: 1, max: 120, step: 1 }, default: 0,
+                },
+                { name: `signals-icon-style-${i}` },
+                { name: `signals-text-${i}` },
+                { name: `signals-text-style-${i}` },
+                { name: `signals-text-class-${i}` },
+                { name: `signals-blink-${i}`, type: 'checkbox', default: false },
+                {
+                    name: `signals-horz-${i}`, type: 'slider', options: { min: -20, max: 120, step: 1 }, default: 0,
+                },
+                {
+                    name: `signals-vert-${i}`, type: 'slider', options: { min: -20, max: 120, step: 1 }, default: 0,
+                },
+                { name: `signals-hide-edit-${i}`, type: 'checkbox', default: false },
+                { type: 'delimiter' },
+            ]);
+        }
+
+        return result;
+    }
+
+    static getFieldsAfter(widget, widgets, fonts) {
+        return [
+            {
+                name: 'css_common',
+                isStyle: true,
+                fields: [
+                    { name: 'position', type: 'nselect', options: ['', 'relative', 'sticky'] },
+                    { name: 'display', type: 'nselect', options: ['', 'inline-block'] },
+                    ...(['relative', 'sticky'].includes(widget.style.position) ? [] :
+                        [
+                            { name: 'left', type: 'dimension' },
+                            { name: 'top', type: 'dimension' },
+                        ]),
+                    { name: 'width', type: 'dimension' },
+                    { name: 'height', type: 'dimension' },
+                    {
+                        name: 'z-index', type: 'number', min: -200, max: 200,
+                    },
+                    { name: 'overflow-x', type: 'nselect', options: ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'] },
+                    { name: 'overflow-y', type: 'nselect', options: ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'] },
+                    { name: 'opacity' },
+                    { name: 'cursor', type: 'auto' },
+                    { name: 'transform' },
+                ],
+            },
+            {
+                name: 'css_font_text',
+                isStyle: true,
+                fields: [{ name: 'color', type: 'color' },
+                    { name: 'text-align', type: 'nselect', options: ['', 'left', 'right', 'center', 'justify', 'initial', 'inherit'] },
+                    { name: 'text-shadow' },
+                    {
+                        name: 'font-family',
+                        type: 'auto',
+                        options: fonts,
+                    },
+                    { name: 'font-style', type: 'nselect', options: ['', 'normal', 'italic', 'oblique', 'initial', 'inherit'] },
+                    { name: 'font-variant', type: 'nselect', options: ['', 'normal', 'small-caps', 'initial', 'inherit'] },
+                    { name: 'font-weight', type: 'auto', options: ['normal', 'bold', 'bolder', 'lighter', 'initial', 'inherit'] },
+                    { name: 'font-size', type: 'auto', options: ['medium', 'xx-small', 'x-small', 'small', 'large', 'x-large', 'xx-large', 'smaller', 'larger', 'initial', 'inherit'] },
+                    { name: 'line-height' },
+                    { name: 'letter-spacing' },
+                    { name: 'word-spacing' }],
+            },
+            {
+                name: 'css_background',
+                isStyle: true,
+                fields: [{ name: 'background' },
+                    { name: 'background-color', type: 'color' },
+                    { name: 'background-image' },
+                    { name: 'background-repeat', type: 'nselect', options: ['', 'repeat', 'repeat-x', 'repeat-y', 'no-repeat', 'initial', 'inherit'] },
+                    { name: 'background-attachment', type: 'nselect', options: ['', 'scroll', 'fixed', 'local', 'initial', 'inherit'] },
+                    { name: 'background-position' },
+                    { name: 'background-size' },
+                    { name: 'background-clip', type: 'nselect', options: ['', 'border-box', 'padding-box', 'content-box', 'initial', 'inherit'] },
+                    { name: 'background-origin', type: 'nselect', options: ['', 'padding-box', 'border-box', 'content-box', 'initial', 'inherit'] }],
+            },
+            {
+                name: 'css_border',
+                isStyle: true,
+                fields: [
+                    { name: 'box-sizing', type: 'nselect', options: ['', 'border-box', 'content-box']  },
+                    { name: 'border-width' },
+                    { name: 'border-style', type: 'nselect', options: ['', 'none', 'dotted', 'dashed', 'solid', 'double', 'groove', 'ridge', 'inset', 'outset', 'hidden'] },
+                    { name: 'border-color', type: 'color' },
+                    { name: 'border-radius' }],
+            },
+            {
+                name: 'css_shadow_padding',
+                isStyle: true,
+                fields: [{ name: 'padding' },
+                    { name: 'padding-left' },
+                    { name: 'padding-top' },
+                    { name: 'padding-right' },
+                    { name: 'padding-bottom' },
+                    { name: 'box-shadow' },
+                    { name: 'margin-left' },
+                    { name: 'margin-top' },
+                    { name: 'margin-right' },
+                    { name: 'margin-bottom' }],
+            },
+            {
+                name: 'gestures',
+                fields: [
+                    {
+                        name: 'gestures-indicator',
+                        type: 'auto',
+                        options: Object.keys(widgets).filter(wid => widgets[wid].tpl === 'tplValueGesture'),
+                    },
+                    { name: 'gestures-offsetX', default: 0, type: 'number' },
+                    { name: 'gestures-offsetY', default: 0, type: 'number' },
+                    { type: 'delimiter' },
+                    ...(['swiping', 'rotating', 'pinching'].flatMap(gesture => [
+                        { name: `gestures-${gesture}-oid`,        type: 'id' },
+                        { name: `gestures-${gesture}-value`,      default: '' },
+                        { name: `gestures-${gesture}-minimum`,    type: 'number' },
+                        { name: `gestures-${gesture}-maximum`,    type: 'number' },
+                        { name: `gestures-${gesture}-delta`,      type: 'number' },
+                        { type: 'delimiter' },
+                    ])),
+                    ...(['swipeRight', 'swipeLeft', 'swipeUp', 'swipeDown', 'rotateLeft', 'rotateRight', 'pinchIn', 'pinchOut'].flatMap(gesture => [
+                        { name: `gestures-${gesture}-oid`,    type: 'id' },
+                        { name: `gestures-${gesture}-value`,  default: '' },
+                        { name: `gestures-${gesture}-limit`,  type: 'number' },
+                        { type: 'delimiter' },
+                    ])),
+                ],
+            },
+            {
+                name: 'last_change',
+                fields: [
+                    { name: 'lc-oid', type: 'id' },
+                    {
+                        name: 'lc-type', type: 'select', options: ['last-change', 'timestamp'], default: 'last-change',
+                    },
+                    { name: 'lc-is-interval', type: 'checkbox', default: true },
+                    { name: 'lc-is-moment', type: 'checkbox', default: false },
+                    {
+                        name: 'lc-format', type: 'auto', options: ['YYYY.MM.DD hh:mm:ss', 'DD.MM.YYYY hh:mm:ss', 'YYYY.MM.DD', 'DD.MM.YYYY', 'YYYY/MM/DD hh:mm:ss', 'YYYY/MM/DD', 'hh:mm:ss'], default: '',
+                    },
+                    {
+                        name: 'lc-position-vert', type: 'select', options: ['top', 'middle', 'bottom'], default: 'top',
+                    },
+                    {
+                        name: 'lc-position-horz', type: 'select', options: ['left', /* 'middle', */'right'], default: 'right',
+                    },
+                    {
+                        name: 'lc-offset-vert', type: 'slider', options: { min: -120, max: 120, step: 1 }, default: 0,
+                    },
+                    {
+                        name: 'lc-offset-horz', type: 'slider', options: { min: -120, max: 120, step: 1 }, default: 0,
+                    },
+                    {
+                        name: 'lc-font-size', type: 'auto', options: ['', 'medium', 'xx-small', 'x-small', 'small', 'large', 'x-large', 'xx-large', 'smaller', 'larger', 'initial', 'inherit'], default: '12px',
+                    },
+                    { name: 'lc-font-family', type: 'fontname', default: '' },
+                    {
+                        name: 'lc-font-style', type: 'auto', options: ['', 'normal', 'italic', 'oblique', 'initial', 'inherit'], default: '',
+                    },
+                    { name: 'lc-bkg-color', type: 'color', default: '' },
+                    { name: 'lc-color', type: 'color', default: '' },
+                    { name: 'lc-border-width', default: '0' },
+                    {
+                        name: 'lc-border-style', type: 'auto', options: ['', 'none', 'hidden', 'dotted', 'dashed', 'solid', 'double', 'groove', 'ridge', 'inset', 'outset', 'initial', 'inherit'], default: '',
+                    },
+                    { name: 'lc-border-color', type: 'color', default: '' },
+                    {
+                        name: 'lc-border-radius', type: 'slider', options: { min: 0, max: 20, step: 1 }, default: 10,
+                    },
+                    { name: 'lc-padding' },
+                    {
+                        name: 'lc-zindex', type: 'slider', options: { min: -10, max: 20, step: 1 }, default: 0,
+                    },
+                ],
+            },
+        ];
+    }
+
+    static checkFunction(funcText, project, selectedView, selectedWidgets, index) {
+        try {
+            let _func;
+            if (typeof funcText === 'function') {
+                _func = funcText;
+            } else {
+                // eslint-disable-next-line no-new-func
+                _func = new Function('data', 'index', 'style', `return ${funcText}`);
+            }
+            const isHidden = [];
+            for (let i = 0; i < selectedWidgets.length; i++) {
+                const widget = project[selectedView].widgets[selectedWidgets[i]];
+                const data = widget?.data;
+                const style = widget?.style;
+                if (!widget) {
+                    // strange error
+                    console.warn(`Strange error, that widget ${selectedWidgets[i]} does not exists`);
+                    continue;
+                }
+                isHidden.push(_func(data || {}, index, style || {}));
+            }
+            let _isHdn = isHidden[0];
+            if (_isHdn && isHidden.find((hidden, i) => i > 0 && !hidden)) {
+                _isHdn = false;
+            }
+            if (_isHdn) {
+                return true;
+            }
+        } catch (e) {
+            console.error(`Cannot execute hidden on "${funcText}": ${e}`);
+        }
+        return false;
+    }
+
+    componentDidMount() {
+        if (this.state.widgetsLoaded) {
+            this.setState({ widgetTypes: getWidgetTypes() });
+        }
+        this.setAccordionState();
+    }
+
+    static buildDataImage(project, selectedView, selectedWidgets) {
+        const result = {};
+        (selectedWidgets || []).sort().forEach(wid => result[wid] = project[selectedView].widgets[wid]);
+        return JSON.stringify(result);
+    }
+
+    static getDerivedStateFromProps(props, state) {
+        let newState = null;
+        if (props.widgetsLoaded && !state.widgetsLoaded) {
+            newState = {};
+            newState.widgetsLoaded = true;
+            newState.widgetTypes = getWidgetTypes();
+            newState.recalculate = true;
+        }
+
+        const dataImage = Widget.buildDataImage(props.project, props.selectedView, props.selectedWidgets);
+        // detect changes of view
+        if (dataImage !== state.dataImage) {
+            newState = newState || {};
+            newState.dataImage = true;
+            newState.recalculate = true;
+        }
+
+        return newState;
+    }
+
+    recalculateFields() {
+        if (!this.state.widgetTypes) {
+            return;
+        }
+        const newState = { recalculate: false };
+        const widgets = this.props.project[this.props.selectedView]?.widgets;
+
         let widget;
         let widgetType;
         const commonFields = {};
-        const commonGroups = { common: props.selectedWidgets.length };
+        const commonGroups = { common: this.props.selectedWidgets.length };
         const selectedWidgetsFields = [];
 
-        widgets && props.selectedWidgets.forEach((selectedWidget, widgetIndex) => {
-            widget = widgets[selectedWidget];
+        widgets && this.props.selectedWidgets.forEach((wid, widgetIndex) => {
+            widget = widgets[wid];
             if (!widget) {
                 return;
             }
 
-            widgetType = widgetTypes.find(type => type.name === widget.tpl);
+            widgetType = this.state.widgetTypes.find(type => type.name === widget.tpl);
             if (!widgetType) {
                 return;
             }
@@ -515,14 +576,14 @@ const Widget = props => {
             let params = widgetType.params;
             if (typeof widgetType.params === 'function') {
                 params = widgetType.params(widget.data, null, {
-                    views: props.project,
-                    view: props.selectedView,
-                    socket: props.socket,
-                    themeType: props.themeType,
-                    projectName: props.projectName,
-                    adapterName: props.adapterName,
-                    instance: props.instance,
-                    id: selectedWidget,
+                    views: this.props.project,
+                    view: this.state.props.selectedView,
+                    socket: this.props.socket,
+                    themeType: this.props.themeType,
+                    projectName: this.props.projectName,
+                    adapterName: this.props.adapterName,
+                    instance: this.props.instance,
+                    id: wid,
                     widget,
                 });
             }
@@ -532,169 +593,287 @@ const Widget = props => {
             selectedWidgetsFields.push(fields);
         });
 
-        return {
-            widget,
-            widgetType,
-            commonFields,
-            commonGroups,
-            selectedWidgetsFields,
-        };
-    }, [props.selectedWidgets, props.project, props.selectedView]);
+        let fields;
+        const commonValues = {};
+        const isDifferent = {};
 
-    const {
-        widget, commonFields, commonGroups, selectedWidgetsFields, widgetType,
-    } = fieldsData;
-
-    let fields;
-    const commonValues = {};
-    const isDifferent = {};
-
-    if (props.selectedWidgets.length > 1) {
-        fields = selectedWidgetsFields[0].filter(group => {
-            if (commonGroups[group.name] < props.selectedWidgets.length) {
-                return false;
-            }
-            group.fields = group.fields.filter(field =>
-                commonFields[`${group.name}.${field.name}`] === props.selectedWidgets.length);
-            return true;
-        });
-
-        props.selectedWidgets.forEach((selectedWidget, widgetIndex) => {
-            const currentWidget = widgets[selectedWidget];
-            if (!currentWidget) {
-                return;
-            }
-            if (widgetIndex === 0) {
-                commonValues.data = { ...currentWidget.data };
-                commonValues.style = { ...currentWidget.style };
-            } else {
-                Object.keys(commonValues.data).forEach(field => {
-                    if (commonValues.data[field] !== currentWidget.data[field]) {
-                        commonValues.data[field] = null;
-                        isDifferent[field] = true;
-                    }
-                });
-                Object.keys(commonValues.style).forEach(field => {
-                    if (commonValues.style[field] !== currentWidget.style[field]) {
-                        commonValues.style[field] = null;
-                        isDifferent[field] = true;
-                    }
-                });
-            }
-        });
-    } else {
-        fields = selectedWidgetsFields[0];
-    }
-
-    let signalsCount = 3;
-
-    if (props.selectedWidgets.length === 1) {
-        const widgetData = widgets[props.selectedWidgets[0]].data;
-        signalsCount = 0;
-        // detect signals count
-        if (!widgetData['signals-count']) {
-            let i = 0;
-            while (widgetData[`signals-oid-${i}`]) {
-                i++;
-            }
-            signalsCount = i + 1;
-            if (signalsCount > 1) {
-                widgetData['signals-count'] = signalsCount;
-            }
-        } else {
-            signalsCount = parseInt(widgetData['signals-count'], 10);
-        }
-    }
-
-    const fieldsBefore = useMemo(getFieldsBefore, []);
-    const fieldsAfter = useMemo(
-        () => getFieldsAfter(
-            props.selectedWidgets.length === 1 ? widget : commonValues,
-            props.project[props.selectedView].widgets,
-            props.fonts,
-        ),
-        [props.project, props.selectedView, props.fonts],
-    );
-    const fieldsSignals = useMemo(() => getSignals(signalsCount, props.adapterName), [signalsCount]);
-    const customFields = fields;
-    if (!fields) {
-        return null;
-    }
-
-    fields = [...fieldsBefore, ...fields, ...fieldsAfter, ...[fieldsSignals]];
-
-    widgets && fields.forEach(group => {
-        const type = group.isStyle ? 'style' : 'data';
-        const found = props.selectedWidgets.find(selectedWidget => {
-            const fieldFound = group.fields.find(field => {
-                const fieldValue = widgets[selectedWidget][type][field.name];
-                if (fieldValue === undefined) {
+        if (this.props.selectedWidgets.length > 1) {
+            fields = selectedWidgetsFields[0].filter(group => {
+                if (commonGroups[group.name] < this.props.selectedWidgets.length) {
                     return false;
                 }
-                // if ((field.default || field.default === 0 || field.default === false || field.default === '') && fieldValue === field.default) {
-                //     return false;
-                // }
-                // console.log(`Group "${group.name}" is not empty because of ${field.name}: [${JSON.stringify(field.default)}/${typeof field.default}] !== [${JSON.stringify(fieldValue)}/${typeof fieldValue}]`);
+                group.fields = group.fields.filter(field =>
+                    commonFields[`${group.name}.${field.name}`] === this.props.selectedWidgets.length);
                 return true;
             });
-            return fieldFound !== undefined;
-        });
-        group.hasValues = found !== undefined;
-    });
 
-    const [accordionOpen, setAccordionOpen] = useState(
-        window.localStorage.getItem('attributesWidget') && window.localStorage.getItem('attributesWidget')[0] === '{'
-            ? JSON.parse(window.localStorage.getItem('attributesWidget'))
-            : {},
-    );
-
-    const [clearGroup, setClearGroup] = useState(null);
-    const [showWidgetCode, setShowWidgetCode] = useState(window.localStorage.getItem('showWidgetCode') === 'true');
-    const [triggerAllOpened, setTriggerAllOpened] = useState(0);
-    const [triggerAllClosed, setTriggerAllClosed] = useState(0);
-
-    useEffect(() => {
-        const newAccordionOpen = {};
-        if (props.triggerAllOpened !== triggerAllOpened) {
-            fields.forEach(group => newAccordionOpen[group.name] = true);
-            setTriggerAllOpened(props.triggerAllOpened);
-            window.localStorage.setItem('attributesWidget', JSON.stringify(newAccordionOpen));
-            setAccordionOpen(newAccordionOpen);
+            this.props.selectedWidgets.forEach((wid, widgetIndex) => {
+                const currentWidget = widgets[wid];
+                if (!currentWidget) {
+                    return;
+                }
+                if (widgetIndex === 0) {
+                    commonValues.data = { ...currentWidget.data };
+                    commonValues.style = { ...currentWidget.style };
+                } else {
+                    Object.keys(commonValues.data).forEach(field => {
+                        if (commonValues.data[field] !== currentWidget.data[field]) {
+                            commonValues.data[field] = null;
+                            isDifferent[field] = true;
+                        }
+                    });
+                    Object.keys(commonValues.style).forEach(field => {
+                        if (commonValues.style[field] !== currentWidget.style[field]) {
+                            commonValues.style[field] = null;
+                            isDifferent[field] = true;
+                        }
+                    });
+                }
+            });
+        } else {
+            fields = selectedWidgetsFields[0];
         }
-        if (props.triggerAllClosed !== triggerAllClosed) {
-            fields.forEach(group => newAccordionOpen[group.name] = false);
-            setTriggerAllClosed(props.triggerAllClosed);
-            window.localStorage.setItem('attributesWidget', JSON.stringify(newAccordionOpen));
-            setAccordionOpen(newAccordionOpen);
-        }
-    }, [props.triggerAllOpened, props.triggerAllClosed]);
 
-    useEffect(() => {
-        if (imageRef.current?.children[0]) {
-            const height = imageRef.current.children[0].clientHeight;
-            if (height > WIDGET_ICON_HEIGHT) {
-                imageRef.current.style.transform = `scale(${WIDGET_ICON_HEIGHT / height})`;
+        newState.customFields = fields;
+        newState.isDifferent = isDifferent;
+        newState.commonValues = commonValues;
+        newState.widget = widget;
+        newState.widgetType = widgetType;
+
+        let signalsCount = 3;
+
+        if (this.props.selectedWidgets.length === 1) {
+            const widgetData = widgets[this.props.selectedWidgets[0]].data;
+            signalsCount = 0;
+            // detect signals count
+            if (!widgetData['signals-count']) {
+                let i = 0;
+                while (widgetData[`signals-oid-${i}`]) {
+                    i++;
+                }
+                signalsCount = i + 1;
+                if (signalsCount > 1) {
+                    widgetData['signals-count'] = signalsCount;
+                }
+            } else {
+                signalsCount = parseInt(widgetData['signals-count'], 10);
             }
         }
-    }, [imageRef]);
 
-    // change groups
-    const onGroupMove = useCallback((e, index, iterable, direction) => {
+        newState.signalsCount = signalsCount;
+
+        const fieldsAfter = Widget.getFieldsAfter(
+            this.props.selectedWidgets.length === 1 ? widget : commonValues,
+            this.props.project[this.props.selectedView].widgets,
+            this.props.fonts,
+        );
+        const fieldsSignals = this.fieldsSignals[signalsCount] || this.fieldsSignals[3];
+        if (fields) {
+            fields = [...this.fieldsBefore, ...fields, ...fieldsAfter, ...[fieldsSignals]];
+        }
+        newState.fields = fields;
+
+        widgets && fields.forEach(group => {
+            const type = group.isStyle ? 'style' : 'data';
+            const found = this.props.selectedWidgets.find(selectedWidget => {
+                const fieldFound = group.fields.find(field => {
+                    const fieldValue = widgets[selectedWidget][type][field.name];
+                    if (fieldValue === undefined) {
+                        return false;
+                    }
+                    // if ((field.default || field.default === 0 || field.default === false || field.default === '') && fieldValue === field.default) {
+                    //     return false;
+                    // }
+                    // console.log(`Group "${group.name}" is not empty because of ${field.name}: [${JSON.stringify(field.default)}/${typeof field.default}] !== [${JSON.stringify(fieldValue)}/${typeof fieldValue}]`);
+                    return true;
+                });
+                return fieldFound !== undefined;
+            });
+            group.hasValues = found !== undefined;
+        });
+
+        this.setState(newState, () => this.setAccordionState());
+    }
+
+    componentWillUnmount() {
+        this.recalculateTimer && clearTimeout(this.recalculateTimer);
+        this.recalculateTimer = null;
+
+        this.triggerTimer && clearTimeout(this.triggerTimer);
+        this.triggerTimer = null;
+    }
+
+    renderHeader(widgets) {
+        let list;
+        // If selected only one widget, show its icon
+        if (this.props.selectedWidgets.length === 1) {
+            const tpl = widgets[this.props.selectedWidgets[0]].tpl;
+            const _widgetType = this.state.widgetTypes.find(foundWidgetType => foundWidgetType.name === tpl);
+            let widgetLabel = _widgetType?.title || '';
+            let widgetColor = _widgetType?.setColor;
+            if (_widgetType?.label) {
+                widgetLabel = I18n.t(_widgetType.label);
+            }
+            // remove legacy stuff
+            widgetLabel = widgetLabel.split('<br')[0];
+            widgetLabel = widgetLabel.split('<span')[0];
+            widgetLabel = widgetLabel.split('<div')[0];
+
+            let setLabel = _widgetType?.set;
+            if (_widgetType?.setLabel) {
+                setLabel = I18n.t(_widgetType.setLabel);
+            } else if (setLabel) {
+                const widgetWithSetLabel = this.state.widgetTypes.find(w => w.set === setLabel && w.setLabel);
+                if (widgetWithSetLabel) {
+                    widgetColor = widgetWithSetLabel.setColor;
+                    setLabel = I18n.t(widgetWithSetLabel.setLabel);
+                }
+            }
+
+            let widgetIcon = _widgetType?.preview || '';
+            if (widgetIcon.startsWith('<img')) {
+                const prev = widgetIcon.match(/src="([^"]+)"/);
+                if (prev && prev[1]) {
+                    widgetIcon = prev[1];
+                }
+            }
+
+            let img;
+            if (_widgetType?.preview?.startsWith('<img')) {
+                const m = _widgetType?.preview.match(/src="([^"]+)"/) || _widgetType?.preview.match(/src='([^']+)'/);
+                if (m) {
+                    img = <img src={m[1]} className={this.props.classes.icon} alt={this.props.selectedWidgets[0]} />;
+                }
+            } else if (_widgetType?.preview && (_widgetType?.preview.endsWith('.svg') || _widgetType?.preview.endsWith('.png') || _widgetType?.preview.endsWith('.jpg'))) {
+                img = <img src={_widgetType?.preview} className={this.props.classes.icon} alt={this.props.selectedWidgets[0]} />;
+            }
+
+            if (!img) {
+                img = <span
+                    className={this.props.classes.widgetImage}
+                    ref={this.imageRef}
+                    // eslint-disable-next-line react/no-danger
+                    dangerouslySetInnerHTML={
+                        { __html: _widgetType?.preview }
+                    }
+                />;
+            }
+
+            let widgetBackColor;
+            if (widgetColor) {
+                widgetBackColor = Utils.getInvertedColor(widgetColor, this.props.themeType, false);
+                if (widgetBackColor === '#DDD') {
+                    widgetBackColor = '#FFF';
+                } else if (widgetBackColor === '#111') {
+                    widgetBackColor = '#000';
+                }
+            }
+            if (tpl === '_tplGroup') {
+                widgetLabel = I18n.t('group');
+            }
+            if (widgets[this.props.selectedWidgets[0]].marketplace) {
+                setLabel = `${widgets[this.props.selectedWidgets[0]].marketplace.name}`;
+                widgetLabel = `${I18n.t('version')} ${widgets[this.props.selectedWidgets[0]].marketplace.version}`;
+            }
+            list = <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                {widgetIcon ? <div className={this.props.classes.widgetIcon}>{img}</div> : null}
+                <div className={this.props.classes.widgetName}>{this.props.selectedWidgets[0]}</div>
+                <div className={this.props.classes.widgetType}>
+                    <div
+                        style={{
+                            fontWeight: 'bold',
+                            color: widgetColor,
+                            backgroundColor: widgetBackColor,
+                        }}
+                        className={Utils.clsx(this.props.classes.widgetNameText, widgetBackColor && this.props.classes.coloredWidgetSet)}
+                    >
+                        {setLabel}
+                    </div>
+                    <div className={this.props.classes.widgetNameText}>{widgetLabel}</div>
+                </div>
+                {!widgets[this.props.selectedWidgets[0]].marketplace && <>
+                    {window.location.port === '3000' ? <Button onClick={() => this.setState({ cssDialogOpened: true })}>CSS</Button> : null}
+                    {window.location.port === '3000' ? <Button onClick={() => this.setState({ jsDialogOpened: true })}>JS</Button> : null}
+                    {this.state.cssDialogOpened ? <WidgetCSS
+                        onClose={() => this.setState({ cssDialogOpened: false })}
+                        widget={widgets[this.props.selectedWidgets[0]]}
+                        onChange={value => {
+                            const project = JSON.parse(JSON.stringify(this.props.project));
+                            project[this.props.selectedView].widgets[this.props.selectedWidgets[0]].css = value;
+                            this.props.changeProject(project);
+                        }}
+                        editMode={this.props.editMode}
+                    /> : null}
+                    {this.state.jsDialogOpened ? <WidgetJS
+                        onClose={() => this.setState({ jsDialogOpened: false })}
+                        widget={widgets[this.props.selectedWidgets[0]]}
+                        onChange={value => {
+                            const project = JSON.parse(JSON.stringify(this.props.project));
+                            project[this.props.selectedView].widgets[this.props.selectedWidgets[0]].js = value;
+                            this.props.changeProject(project);
+                        }}
+                        editMode={this.props.editMode}
+                    /> : null}
+                </>}
+            </div>;
+        } else {
+            list = this.props.selectedWidgets.join(', ');
+        }
+        return <div key="header" style={{ width: '100%', overflow: 'hidden' }}>
+            {list}
+        </div>;
+    }
+
+    setAccordionState(accordionOpen, cb) {
+        if (!this.state.fields) {
+            return;
+        }
+
+        const _accordionOpen = accordionOpen || this.state.accordionOpen;
+        const allOpened = !this.state.fields.find(group => !_accordionOpen[group.name]);
+        const allClosed = !this.state.fields.find(group => _accordionOpen[group.name]);
+
+        if (this.props.isAllClosed !== allClosed) {
+            setTimeout(() => this.props.setIsAllClosed(allClosed), 50);
+        }
+        if (this.props.isAllOpened !== allOpened) {
+            setTimeout(() => this.props.setIsAllOpened(allOpened), 50);
+        }
+
+        if (accordionOpen && JSON.stringify(accordionOpen) !== JSON.stringify(this.state.accordionOpen)) {
+            window.localStorage.setItem('attributesWidget', JSON.stringify(accordionOpen));
+            this.setState({ accordionOpen }, cb ? () => cb() : undefined);
+        } else {
+            cb && cb();
+        }
+    }
+
+    componentDidUpdate(/* prevProps, prevState, snapshot */) {
+        // scale the old style HTML widget icon
+        if (this.imageRef.current?.children[0]) {
+            const height = this.imageRef.current.children[0].clientHeight;
+            if (height > WIDGET_ICON_HEIGHT) {
+                this.imageRef.current.style.transform = `scale(${WIDGET_ICON_HEIGHT / height})`;
+            }
+        }
+    }
+
+    onGroupMove(e, index, iterable, direction) {
         e.stopPropagation();
-        const project = JSON.parse(JSON.stringify(props.project));
-        const oldGroup = fields.find(f => f.name === `${iterable.group}-${index}`);
-        const _widgets = project[props.selectedView].widgets;
+        const project = JSON.parse(JSON.stringify(this.props.project));
+        const oldGroup = this.state.fields.find(f => f.name === `${iterable.group}-${index}`);
+        const _widgets = project[this.props.selectedView].widgets;
+        const accordionOpen = { ...this.state.accordionOpen };
 
         // if deletion
         if (!direction) {
             if (iterable.indexTo) {
-                const lastGroup = fields.find(f => f.singleName  === iterable.group && f.iterable?.isLast);
-                const newAccordionOpen = { ...accordionOpen };
+                const lastGroup = this.state.fields.find(f => f.singleName  === iterable.group && f.iterable?.isLast);
                 for (let idx = index; idx < lastGroup.index; idx++) {
-                    const idxGroup = fields.find(f => f.name === `${iterable.group}-${idx}`);
-                    const idxGroupPlus = fields.find(f => f.name === `${iterable.group}-${idx + 1}`);
+                    const idxGroup = this.state.fields.find(f => f.name === `${iterable.group}-${idx}`);
+                    const idxGroupPlus = this.state.fields.find(f => f.name === `${iterable.group}-${idx + 1}`);
                     // for every selected widget
-                    props.selectedWidgets.forEach(wid => {
+                    this.props.selectedWidgets.forEach(wid => {
                         const widgetData = _widgets[wid].data;
                         // move all fields of the group to -1
                         idxGroup.fields.forEach((attr, i) =>
@@ -704,12 +883,12 @@ const Widget = props => {
                         widgetData[`g_${iterable.group}-${idx}`] = widgetData[`g_${iterable.group}-${idx + 1}`];
 
                         // move the opened flag
-                        newAccordionOpen[`${iterable.group}-${idx}`] = newAccordionOpen[`${iterable.group}-${idx + 1}`];
+                        accordionOpen[`${iterable.group}-${idx}`] = accordionOpen[`${iterable.group}-${idx + 1}`];
                     });
                 }
 
                 // delete last group
-                props.selectedWidgets.forEach(wid => {
+                this.props.selectedWidgets.forEach(wid => {
                     // order all attributes for better readability
                     const widgetData = _widgets[wid].data;
 
@@ -722,20 +901,20 @@ const Widget = props => {
                     delete widgetData[`g_${iterable.group}-${lastGroup.index}`];
 
                     // delete the opened flag
-                    delete newAccordionOpen[`${iterable.group}-${lastGroup.index}`];
+                    delete accordionOpen[`${iterable.group}-${lastGroup.index}`];
                     widgetData[iterable.indexTo]--;
                 });
-                setAccordionOpen(newAccordionOpen);
-                props.changeProject(project);
+
+                this.setAccordionState(accordionOpen, () => this.props.changeProject(project));
             }
             return;
         }
+
         if (direction === true) {
-            const newAccordionOpen = { ...accordionOpen };
-            const lastGroup = fields.find(f => f.singleName  === iterable.group && f.iterable?.isLast);
+            const lastGroup = this.state.fields.find(f => f.singleName  === iterable.group && f.iterable?.isLast);
             // add one line
             const newIndex = lastGroup.index + 1;
-            props.selectedWidgets.forEach(wid => {
+            this.props.selectedWidgets.forEach(wid => {
                 // order all attributes for better readability
                 const widgetData = _widgets[wid].data;
 
@@ -748,518 +927,423 @@ const Widget = props => {
                 widgetData[`g_${iterable.group}-${newIndex}`] = true;
 
                 // enable the opened flag
-                newAccordionOpen[`${iterable.group}-${newIndex}`] = true;
+                accordionOpen[`${iterable.group}-${newIndex}`] = true;
                 widgetData[iterable.indexTo] = newIndex;
-                setAccordionOpen(newAccordionOpen);
-                props.changeProject(project);
             });
-            return;
-        }
+            this.setAccordionState(accordionOpen, () => this.props.changeProject(project));
+        } else {
+            const newIndex = index + direction;
+            const newGroup = this.state.fields.find(f => f.name === `${iterable.group}-${newIndex}`);
 
-        const newIndex = index + direction;
-        const newGroup = fields.find(f => f.name === `${iterable.group}-${newIndex}`);
+            // for every selected widget
+            this.props.selectedWidgets.forEach(wid => {
+                // order all attributes for better readability
+                const oldWidgetData = _widgets[wid].data;
+                const widgetData = {};
+                Object.keys(oldWidgetData).sort().forEach(key => widgetData[key] = oldWidgetData[key]);
+                _widgets[wid].data = widgetData;
 
-        // for every selected widget
-        props.selectedWidgets.forEach(wid => {
-            // order all attributes for better readability
-            const oldWidgetData = _widgets[wid].data;
-            const widgetData = {};
-            Object.keys(oldWidgetData).sort().forEach(key => widgetData[key] = oldWidgetData[key]);
-            _widgets[wid].data = widgetData;
+                // switch all fields of the group
+                oldGroup.fields.forEach((attr, i) => {
+                    const value = widgetData[newGroup.fields[i].name];
+                    widgetData[newGroup.fields[i].name] = widgetData[attr.name];
+                    widgetData[attr.name] = value;
+                });
 
-            // switch all fields of the group
-            oldGroup.fields.forEach((attr, i) => {
-                const value = widgetData[newGroup.fields[i].name];
-                widgetData[newGroup.fields[i].name] = widgetData[attr.name];
-                widgetData[attr.name] = value;
-            });
+                // switch group-used flag
+                let value = widgetData[`g_${iterable.group}-${newIndex}`];
+                widgetData[`g_${iterable.group}-${newIndex}`] = widgetData[`g_${iterable.group}-${index}`];
+                widgetData[`g_${iterable.group}-${index}`] = value;
 
-            // switch group-used flag
-            let value = widgetData[`g_${iterable.group}-${newIndex}`];
-            widgetData[`g_${iterable.group}-${newIndex}`] = widgetData[`g_${iterable.group}-${index}`];
-            widgetData[`g_${iterable.group}-${index}`] = value;
-
-            if (accordionOpen[`${iterable.group}-${newIndex}`] !== accordionOpen[`${iterable.group}-${index}`]) {
-                const newAccordionOpen = { ...accordionOpen };
-                // copy the opened flag
-                value = newAccordionOpen[`${iterable.group}-${newIndex}`];
-                newAccordionOpen[`${iterable.group}-${newIndex}`] = newAccordionOpen[`${iterable.group}-${index}`];
-                newAccordionOpen[`${iterable.group}-${index}`] = value;
-                setAccordionOpen(newAccordionOpen);
-            }
-        });
-        props.changeProject(project);
-    }, [props.project, fields]);
-
-    const onGroupDelete = group => {
-        const project = JSON.parse(JSON.stringify(props.project));
-        const type = group.isStyle ? 'style' : 'data';
-        props.selectedWidgets.forEach(selectedWidget => {
-            group.fields.forEach(field => {
-                delete project[props.selectedView].widgets[selectedWidget][type][field.name];
-            });
-            delete project[props.selectedView].widgets[selectedWidget].data[`g_${group.name}`];
-        });
-        props.changeProject(project);
-    };
-
-    if (!widgets) {
-        return null;
-    }
-
-    const allOpened = !fields.find(group => !accordionOpen[group.name]);
-    const allClosed = !fields.find(group => accordionOpen[group.name]);
-
-    if (props.isAllClosed !== allClosed) {
-        setTimeout(() => props.setIsAllClosed(allClosed), 50);
-    }
-    if (props.isAllOpened !== allOpened) {
-        setTimeout(() => props.setIsAllOpened(allOpened), 50);
-    }
-
-    let list;
-    // If selected only one widget, show its icon
-    if (props.selectedWidgets.length === 1) {
-        const tpl = widgets[props.selectedWidgets[0]].tpl;
-        const _widgetType = getWidgetTypes().find(foundWidgetType => foundWidgetType.name === tpl);
-        let widgetLabel = _widgetType?.title || '';
-        let widgetColor = _widgetType?.setColor;
-        if (_widgetType?.label) {
-            widgetLabel = I18n.t(_widgetType.label);
-        }
-        // remove legacy stuff
-        widgetLabel = widgetLabel.split('<br')[0];
-        widgetLabel = widgetLabel.split('<span')[0];
-        widgetLabel = widgetLabel.split('<div')[0];
-
-        let setLabel = _widgetType?.set;
-        if (_widgetType?.setLabel) {
-            setLabel = I18n.t(_widgetType.setLabel);
-        } else if (setLabel) {
-            const widgetWithSetLabel = widgetTypes.find(w => w.set === setLabel && w.setLabel);
-            if (widgetWithSetLabel) {
-                widgetColor = widgetWithSetLabel.setColor;
-                setLabel = I18n.t(widgetWithSetLabel.setLabel);
-            }
-        }
-
-        let widgetIcon = _widgetType?.preview || '';
-        if (widgetIcon.startsWith('<img')) {
-            const prev = widgetIcon.match(/src="([^"]+)"/);
-            if (prev && prev[1]) {
-                widgetIcon = prev[1];
-            }
-        }
-
-        let img;
-        if (_widgetType?.preview?.startsWith('<img')) {
-            const m = _widgetType?.preview.match(/src="([^"]+)"/) || _widgetType?.preview.match(/src='([^']+)'/);
-            if (m) {
-                img = <img src={m[1]} className={props.classes.icon} alt={props.selectedWidgets[0]} />;
-            }
-        } else if (_widgetType?.preview && (_widgetType?.preview.endsWith('.svg') || _widgetType?.preview.endsWith('.png') || _widgetType?.preview.endsWith('.jpg'))) {
-            img = <img src={_widgetType?.preview} className={props.classes.icon} alt={props.selectedWidgets[0]} />;
-        }
-
-        if (!img) {
-            img = <span
-                className={props.classes.widgetImage}
-                ref={imageRef}
-                // eslint-disable-next-line react/no-danger
-                dangerouslySetInnerHTML={
-                    { __html: _widgetType?.preview }
+                if (accordionOpen[`${iterable.group}-${newIndex}`] !== accordionOpen[`${iterable.group}-${index}`]) {
+                    // copy the opened flag
+                    value = accordionOpen[`${iterable.group}-${newIndex}`];
+                    accordionOpen[`${iterable.group}-${newIndex}`] = accordionOpen[`${iterable.group}-${index}`];
+                    accordionOpen[`${iterable.group}-${index}`] = value;
+                    this.setState({ accordionOpen });
                 }
-            />;
-        }
+            });
 
-        let widgetBackColor;
-        if (widgetColor) {
-            widgetBackColor = Utils.getInvertedColor(widgetColor, props.themeType, false);
-            if (widgetBackColor === '#DDD') {
-                widgetBackColor = '#FFF';
-            } else if (widgetBackColor === '#111') {
-                widgetBackColor = '#000';
-            }
-        }
-        if (tpl === '_tplGroup') {
-            widgetLabel = I18n.t('group');
-        }
-        if (widgets[props.selectedWidgets[0]].marketplace) {
-            setLabel = `${widgets[props.selectedWidgets[0]].marketplace.name}`;
-            widgetLabel = `${I18n.t('version')} ${widgets[props.selectedWidgets[0]].marketplace.version}`;
-        }
-        list = <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-            {widgetIcon ? <div className={props.classes.widgetIcon}>{img}</div> : null}
-            <div className={props.classes.widgetName}>{props.selectedWidgets[0]}</div>
-            <div className={props.classes.widgetType}>
-                <div
-                    style={{
-                        fontWeight: 'bold',
-                        color: widgetColor,
-                        backgroundColor: widgetBackColor,
-                    }}
-                    className={Utils.clsx(props.classes.widgetNameText, widgetBackColor && props.classes.coloredWidgetSet)}
-                >
-                    {setLabel}
-                </div>
-                <div className={props.classes.widgetNameText}>{widgetLabel}</div>
-            </div>
-            {!widgets[props.selectedWidgets[0]].marketplace && <>
-                {window.location.port === '3000' ? <Button onClick={() => setCssDialogOpened(true)}>CSS</Button> : null}
-                {window.location.port === '3000' ? <Button onClick={() => setJsDialogOpened(true)}>JS</Button> : null}
-                {cssDialogOpened ? <WidgetCSS
-                    onClose={() => setCssDialogOpened(false)}
-                    widget={widgets[props.selectedWidgets[0]]}
-                    onChange={value => {
-                        const project = JSON.parse(JSON.stringify(props.project));
-                        project[props.selectedView].widgets[props.selectedWidgets[0]].css = value;
-                        props.changeProject(project);
-                    }}
-                    editMode={props.editMode}
-                /> : null}
-                {jsDialogOpened ? <WidgetJS
-                    onClose={() => setJsDialogOpened(false)}
-                    widget={widgets[props.selectedWidgets[0]]}
-                    onChange={value => {
-                        const project = JSON.parse(JSON.stringify(props.project));
-                        project[props.selectedView].widgets[props.selectedWidgets[0]].js = value;
-                        props.changeProject(project);
-                    }}
-                    editMode={props.editMode}
-                /> : null}
-            </>}
-        </div>;
-    } else {
-        list = props.selectedWidgets.join(', ');
-    }
-
-    let jsonCustomFields = null;
-    if (showWidgetCode) {
-        try {
-            jsonCustomFields = JSON.stringify(customFields, null, 2);
-        } catch (e) {
-            // ignore
+            this.setAccordionState(accordionOpen, () => this.props.changeProject(project));
         }
     }
 
-    return <>
-        <div style={{ width: '100%', overflow: 'hidden' }}>
-            {list}
-        </div>
-
-        <div style={{ height: 'calc(100% - 34px)', overflowY: 'auto' }}>
-            {fields.map(group => {
-                if (group.hidden) {
-                    if (checkFunction(group.hidden, props.project, props.selectedView, props.selectedWidgets)) {
-                        return null;
-                    }
-                }
-
-                return <Accordion
-                    classes={{
-                        root: props.classes.clearPadding,
-                        expanded: props.classes.clearPadding,
-                    }}
-                    square
-                    key={group.name}
-                    elevation={0}
-                    expanded={!!(accordionOpen[group.name] && group.hasValues)}
-                    onChange={(e, expanded) => {
-                        const newAccordionOpen = JSON.parse(JSON.stringify(accordionOpen));
-                        newAccordionOpen[group.name] = expanded;
-                        window.localStorage.setItem('attributesWidget', JSON.stringify(newAccordionOpen));
-                        setAccordionOpen(newAccordionOpen);
-                    }}
-                >
-                    <AccordionSummary
-                        classes={{
-                            root: Utils.clsx(props.classes.clearPadding, accordionOpen[group.name]
-                                ? props.classes.groupSummaryExpanded : props.classes.groupSummary, props.classes.lightedPanel),
-                            content: props.classes.clearPadding,
-                            expanded: props.classes.clearPadding,
-                            expandIcon: props.classes.clearPadding,
-                        }}
-                        expandIcon={group.hasValues ? <ExpandMoreIcon /> : <div className={props.classes.emptyMoreIcon} />}
-                    >
-                        <div
-                            style={{
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                width: '100%',
-                                alignItems: 'center',
-                            }}
-                        >
-                            <div>
-                                {ICONS[`group.${group.singleName || group.name}`] ? ICONS[`group.${group.singleName || group.name}`] : null}
-                                {group.label ?
-                                    I18n.t(group.label) + (group.index !== undefined ? ` [${group.index}]` : '')
-                                    :
-                                    (window.vis._(`group_${group.singleName || group.name}`) + (group.index !== undefined ? ` [${group.index}]` : ''))}
-                            </div>
-                            {group.iterable ? <>
-                                <div className={props.classes.grow} />
-                                {group.iterable.indexTo ? <Tooltip title={I18n.t('Delete')}>
-                                    <IconButton
-                                        className={props.classes.groupButton}
-                                        size="small"
-                                        onClick={e => onGroupMove(e, group.index, group.iterable, 0)}
-                                    >
-                                        <Delete />
-                                    </IconButton>
-                                </Tooltip> : null}
-                                {group.iterable.isFirst ?
-                                    <div className={props.classes.groupButton} /> :
-                                    <Tooltip title={I18n.t('Move up')}>
-                                        <IconButton
-                                            className={props.classes.groupButton}
-                                            size="small"
-                                            onClick={e => onGroupMove(e, group.index, group.iterable, -1)}
-                                        >
-                                            <ArrowUpward />
-                                        </IconButton>
-                                    </Tooltip>}
-                                {group.iterable.isLast ?
-                                    (group.iterable.indexTo ? <Tooltip title={I18n.t('Add')}>
-                                        <IconButton
-                                            className={props.classes.groupButton}
-                                            size="small"
-                                            onClick={e => onGroupMove(e, group.index, group.iterable, true)}
-                                        >
-                                            <Add />
-                                        </IconButton>
-                                    </Tooltip> : <div className={props.classes.groupButton} />)
-                                    :
-                                    <Tooltip title={I18n.t('Move down')}>
-                                        <IconButton
-                                            className={props.classes.groupButton}
-                                            size="small"
-                                            onClick={e => onGroupMove(e, group.index, group.iterable, 1)}
-                                        >
-                                            <ArrowDownward />
-                                        </IconButton>
-                                    </Tooltip>}
-                            </> : null}
-                            <div>
-                                <Checkbox
-                                    checked={group.hasValues}
-                                    onClick={e => {
-                                        if (group.hasValues) {
-                                            const type = group.isStyle ? 'style' : 'data';
-                                            // check is any attribute from this group is used
-                                            let found = false;
-                                            for (let w = 0; w < props.selectedWidgets.length; w++) {
-                                                for (let f = 0; f < group.fields.length; f++) {
-                                                    const value = props.project[props.selectedView].widgets[props.selectedWidgets[w]][type][group.fields[f].name];
-                                                    if (value !== null && value !== undefined) {
-                                                        found = true;
-                                                        break;
-                                                    }
-                                                }
-                                            }
-
-                                            if (found) {
-                                                setClearGroup(group);
-                                            } else {
-                                                onGroupDelete(group);
-                                            }
-                                        } else {
-                                            const project = JSON.parse(JSON.stringify(props.project));
-                                            const type = group.isStyle ? 'style' : 'data';
-                                            props.selectedWidgets.forEach(selectedWidget => {
-                                                group.fields.forEach(field => {
-                                                    if (project[props.selectedView].widgets[selectedWidget][type][field.name] === undefined) {
-                                                        project[props.selectedView].widgets[selectedWidget][type][field.name] = field.default || null;
-                                                    }
-                                                });
-                                                project[props.selectedView].widgets[selectedWidget].data[`g_${group.name}`] = true;
-                                            });
-                                            const newAccordionOpen = JSON.parse(JSON.stringify(accordionOpen));
-                                            newAccordionOpen[group.name] = true;
-                                            window.localStorage.setItem('attributesWidget', JSON.stringify(newAccordionOpen));
-                                            setAccordionOpen(newAccordionOpen);
-                                            props.changeProject(project);
-                                        }
-                                        e.stopPropagation();
-                                    }}
-                                    size="small"
-                                    classes={{ root: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding, props.classes.checkBox) }}
-                                />
-                            </div>
-                        </div>
-                    </AccordionSummary>
-                    <AccordionDetails style={{ flexDirection: 'column', padding: 0, margin: 0 }}>
-                        <table style={{ width: '100%' }}>
-                            <tbody>
-                                {
-                                    group.fields.map((field, fieldIndex) => {
-                                        if (!field) {
-                                            return null;
-                                        }
-                                        let error;
-                                        let disabled;
-                                        if (field.hidden) {
-                                            if (checkFunction(field.hidden, props.project, props.selectedView, props.selectedWidgets, field.index)) {
-                                                return null;
-                                            }
-                                        }
-                                        if (field.type === 'help') {
-                                            return <tr key={fieldIndex} className={props.classes.fieldRow}>
-                                                <td colSpan={2} className={props.classes.fieldHelp} style={field.style}>
-                                                    {field.noTranslation ? field.text : I18n.t(field.text)}
-                                                </td>
-                                            </tr>;
-                                        }
-
-                                        if (field.error) {
-                                            error = checkFunction(field.error, props.project, props.selectedView, props.selectedWidgets, field.index);
-                                        }
-                                        if (field.disabled) {
-                                            if (field.disabled === true) {
-                                                disabled = true;
-                                            } else {
-                                                disabled = !!checkFunction(field.disabled, props.project, props.selectedView, props.selectedWidgets, field.index);
-                                            }
-                                        }
-                                        let label;
-                                        if (field.label === '') {
-                                            label = '';
-                                        } else if (field.title) {
-                                            label = field.title;
-                                        } else if (field.label) {
-                                            label = I18n.t(field.label);
-                                        } else {
-                                            label = window.vis._(field.singleName || field.name) + (field.index !== undefined ? ` [${field.index}]` : '');
-                                        }
-
-                                        const labelStyle = {};
-
-                                        if (label.trim().startsWith('<b')) {
-                                            label = label.match(/<b>(.*?)<\/b>/)[1];
-                                            labelStyle.fontWeight = 'bold';
-                                            labelStyle.color = '#4dabf5';
-                                        }
-                                        if (label.trim().startsWith('<i')) {
-                                            label = label.match(/<i>(.*?)<\/i>/)[1];
-                                            labelStyle.fontStyle = 'italic';
-                                        }
-
-                                        return <tr key={fieldIndex} className={props.classes.fieldRow}>
-                                            {field.type === 'delimiter' ?
-                                                <td colSpan="2"><Divider style={{ borderBottomWidth: 'thick' }} /></td>
-                                                : <>
-                                                    <td
-                                                        className={Utils.clsx(props.classes.fieldTitle, disabled && props.classes.fieldTitleDisabled, error && props.classes.fieldTitleError)}
-                                                        title={field.tooltip ? I18n.t(field.tooltip) : null}
-                                                        style={labelStyle}
-                                                    >
-                                                        {ICONS[field.singleName || field.name] ? ICONS[field.singleName || field.name] : null}
-                                                        {label}
-                                                        {field.type === 'image' && !isDifferent[field.name] && widget && widget.data[field.name] ?
-                                                            <div className={props.classes.smallImageDiv}>
-                                                                <img
-                                                                    src={widget.data[field.name].startsWith('_PRJ_NAME/') ?
-                                                                        widget.data[field.name].replace('_PRJ_NAME/', `../${props.adapterName}.${props.instance}/${props.projectName}/`)
-                                                                        :
-                                                                        widget.data[field.name]}
-                                                                    className={props.classes.smallImage}
-                                                                    onError={e => {
-                                                                        e.target.onerror = null;
-                                                                        e.target.style.display = 'none';
-                                                                    }}
-                                                                    alt={field.name}
-                                                                />
-                                                            </div> : null}
-                                                        {group.isStyle ?
-                                                            <ColorizeIcon
-                                                                fontSize="small"
-                                                                className={props.classes.colorize}
-                                                                onClick={() => props.cssClone(field.name, newValue => {
-                                                                    if (newValue !== null && newValue !== undefined) {
-                                                                        const project = JSON.parse(JSON.stringify(props.project));
-                                                                        props.selectedWidgets.forEach(selectedWidget => {
-                                                                            if (project[props.selectedView].widgets[selectedWidget]) {
-                                                                                project[props.selectedView].widgets[selectedWidget].style = project[props.selectedView].widgets[selectedWidget].style || {};
-                                                                                project[props.selectedView].widgets[selectedWidget].style[field.name] = newValue;
-                                                                            }
-                                                                        });
-                                                                        props.changeProject(project);
-                                                                    }
-                                                                })}
-                                                            /> : null}
-                                                        {field.tooltip ? <InfoIcon className={props.classes.infoIcon} /> : null}
-                                                    </td>
-                                                    <td className={props.classes.fieldContent}>
-                                                        <div className={props.classes.fieldInput}>
-                                                            {accordionOpen[group.name] && group.hasValues ?
-                                                                <WidgetField
-                                                                    widgetType={widgetType}
-                                                                    themeType={props.themeType}
-                                                                    error={error}
-                                                                    disabled={disabled}
-                                                                    field={field}
-                                                                    widget={props.selectedWidgets.length > 1 ? commonValues : widget}
-                                                                    widgetId={props.selectedWidgets.length > 1 ? null : props.selectedWidgets[0]}
-                                                                    isStyle={group.isStyle}
-                                                                    index={group.index}
-                                                                    isDifferent={isDifferent[field.name]}
-                                                                    {...props}
-                                                                /> : null}
-                                                        </div>
-                                                    </td>
-                                                </>}
-                                        </tr>;
-                                    })
-                                }
-                            </tbody>
-                        </table>
-                    </AccordionDetails>
-                </Accordion>;
-            })}
-            {clearGroup ? <IODialog
-                title="Are you sure"
-                onClose={() => setClearGroup(null)}
-                open={!0}
-                action={() => onGroupDelete(clearGroup)}
-                actionTitle="Clear"
-            >
-                {I18n.t('Fields of group will be cleaned')}
-            </IODialog> : null}
-            <Button
-                style={{ opacity: showWidgetCode ? 1 : 0 }}
-                onClick={() => {
-                    setShowWidgetCode(!showWidgetCode);
-                    window.localStorage.setItem('showWidgetCode', showWidgetCode ? 'false' : 'true');
+    renderGroupHeader(group) {
+        return <AccordionSummary
+            classes={{
+                root: Utils.clsx(this.props.classes.clearPadding, this.state.accordionOpen[group.name]
+                    ? this.props.classes.groupSummaryExpanded : this.props.classes.groupSummary, this.props.classes.lightedPanel),
+                content: this.props.classes.clearPadding,
+                expanded: this.props.classes.clearPadding,
+                expandIcon: this.props.classes.clearPadding,
+            }}
+            expandIcon={group.hasValues ? <ExpandMoreIcon /> : <div className={this.props.classes.emptyMoreIcon} />}
+        >
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    width: '100%',
+                    alignItems: 'center',
                 }}
-                startIcon={<CodeIcon />}
             >
-                { showWidgetCode ? I18n.t('hide code') : I18n.t('show code') }
-            </Button>
-            {showWidgetCode ? <pre>
-                {JSON.stringify(widget, null, 2)}
-                {jsonCustomFields}
-            </pre> : null}
-        </div>
-    </>;
-};
+                <div>
+                    {ICONS[`group.${group.singleName || group.name}`] ? ICONS[`group.${group.singleName || group.name}`] : null}
+                    {group.label ?
+                        I18n.t(group.label) + (group.index !== undefined ? ` [${group.index}]` : '')
+                        :
+                        (window.vis._(`group_${group.singleName || group.name}`) + (group.index !== undefined ? ` [${group.index}]` : ''))}
+                </div>
+                {group.iterable ? <>
+                    <div className={this.props.classes.grow} />
+                    {group.iterable.indexTo ? <Tooltip title={I18n.t('Delete')}>
+                        <IconButton
+                            className={this.props.classes.groupButton}
+                            size="small"
+                            onClick={e => this.onGroupMove(e, group.index, group.iterable, 0)}
+                        >
+                            <Delete />
+                        </IconButton>
+                    </Tooltip> : null}
+                    {group.iterable.isFirst ?
+                        <div className={this.props.classes.groupButton} /> :
+                        <Tooltip title={I18n.t('Move up')}>
+                            <IconButton
+                                className={this.props.classes.groupButton}
+                                size="small"
+                                onClick={e => this.onGroupMove(e, group.index, group.iterable, -1)}
+                            >
+                                <ArrowUpward />
+                            </IconButton>
+                        </Tooltip>}
+                    {group.iterable.isLast ?
+                        (group.iterable.indexTo ? <Tooltip title={I18n.t('Add')}>
+                            <IconButton
+                                className={this.props.classes.groupButton}
+                                size="small"
+                                onClick={e => this.onGroupMove(e, group.index, group.iterable, true)}
+                            >
+                                <Add />
+                            </IconButton>
+                        </Tooltip> : <div className={this.props.classes.groupButton} />)
+                        :
+                        <Tooltip title={I18n.t('Move down')}>
+                            <IconButton
+                                className={this.props.classes.groupButton}
+                                size="small"
+                                onClick={e => this.onGroupMove(e, group.index, group.iterable, 1)}
+                            >
+                                <ArrowDownward />
+                            </IconButton>
+                        </Tooltip>}
+                </> : null}
+                <div>
+                    <Checkbox
+                        checked={group.hasValues}
+                        onClick={e => {
+                            if (group.hasValues) {
+                                const type = group.isStyle ? 'style' : 'data';
+                                // check is any attribute from this group is used
+                                let found = false;
+                                for (let w = 0; w < this.props.selectedWidgets.length; w++) {
+                                    for (let f = 0; f < group.fields.length; f++) {
+                                        const value = this.props.project[this.props.selectedView].widgets[this.props.selectedWidgets[w]][type][group.fields[f].name];
+                                        if (value !== null && value !== undefined) {
+                                            found = true;
+                                            break;
+                                        }
+                                    }
+                                }
 
-const WidgetContainer = props => {
-    const widgetTypes = useMemo(() => getWidgetTypes(), [props.widgetsLoaded]);
-    const widgets = props.project[props.selectedView]?.widgets;
-
-    let widgetsExist = 0;
-    widgets && props.selectedWidgets.forEach(selectedWidget => {
-        if (widgets[selectedWidget] && widgetTypes.find(type => type.name === widgets[selectedWidget].tpl)) {
-            widgetsExist++;
-        }
-    });
-    if (!widgets || props.selectedWidgets.length !== widgetsExist) {
-        return null;
+                                if (found) {
+                                    this.setState({ clearGroup: group });
+                                } else {
+                                    this.onGroupDelete(group);
+                                }
+                            } else {
+                                const project = JSON.parse(JSON.stringify(this.props.project));
+                                const type = group.isStyle ? 'style' : 'data';
+                                this.props.selectedWidgets.forEach(wid => {
+                                    group.fields.forEach(field => {
+                                        if (project[this.props.selectedView].widgets[wid][type][field.name] === undefined) {
+                                            project[this.props.selectedView].widgets[wid][type][field.name] = field.default || null;
+                                        }
+                                    });
+                                    project[this.props.selectedView].widgets[wid].data[`g_${group.name}`] = true;
+                                });
+                                const accordionOpen = { ...this.state.accordionOpen };
+                                accordionOpen[group.name] = true;
+                                this.setAccordionState(accordionOpen, () => this.props.changeProject(project));
+                            }
+                            e.stopPropagation();
+                        }}
+                        size="small"
+                        classes={{ root: Utils.clsx(this.props.classes.fieldContent, this.props.classes.clearPadding, this.props.classes.checkBox) }}
+                    />
+                </div>
+            </div>
+        </AccordionSummary>;
     }
 
-    return <Widget widgetTypes={widgetTypes} {...props} />;
-};
+    renderGroupRow(group, field, fieldIndex) {
+        if (!field) {
+            return null;
+        }
+        let error;
+        let disabled;
+        if (field.hidden) {
+            if (Widget.checkFunction(field.hidden, this.props.project, this.props.selectedView, this.props.selectedWidgets, field.index)) {
+                return null;
+            }
+        }
+        if (field.type === 'help') {
+            return <tr key={fieldIndex} className={this.props.classes.fieldRow}>
+                <td colSpan={2} className={this.props.classes.fieldHelp} style={field.style}>
+                    {field.noTranslation ? field.text : I18n.t(field.text)}
+                </td>
+            </tr>;
+        }
 
-WidgetContainer.propTypes = {
+        if (field.error) {
+            error = Widget.checkFunction(field.error, this.props.project, this.props.selectedView, this.props.selectedWidgets, field.index);
+        }
+        if (field.disabled) {
+            if (field.disabled === true) {
+                disabled = true;
+            } else {
+                disabled = !!Widget.checkFunction(field.disabled, this.props.project, this.props.selectedView, this.props.selectedWidgets, field.index);
+            }
+        }
+        let label;
+        if (field.label === '') {
+            label = '';
+        } else if (field.title) {
+            label = field.title;
+        } else if (field.label) {
+            label = I18n.t(field.label);
+        } else {
+            label = window.vis._(field.singleName || field.name) + (field.index !== undefined ? ` [${field.index}]` : '');
+        }
+
+        const labelStyle = {};
+
+        if (label.trim().startsWith('<b')) {
+            label = label.match(/<b>(.*?)<\/b>/)[1];
+            labelStyle.fontWeight = 'bold';
+            labelStyle.color = '#4dabf5';
+        }
+        if (label.trim().startsWith('<i')) {
+            label = label.match(/<i>(.*?)<\/i>/)[1];
+            labelStyle.fontStyle = 'italic';
+        }
+
+        return <tr key={fieldIndex} className={this.props.classes.fieldRow}>
+            {field.type === 'delimiter' ?
+                <td colSpan="2"><Divider style={{ borderBottomWidth: 'thick' }} /></td>
+                : <>
+                    <td
+                        className={Utils.clsx(this.props.classes.fieldTitle, disabled && this.props.classes.fieldTitleDisabled, error && this.props.classes.fieldTitleError)}
+                        title={field.tooltip ? I18n.t(field.tooltip) : null}
+                        style={labelStyle}
+                    >
+                        {ICONS[field.singleName || field.name] ? ICONS[field.singleName || field.name] : null}
+                        {label}
+                        {field.type === 'image' && !this.state.isDifferent[field.name] && this.state.widget && this.state.widget.data[field.name] ?
+                            <div className={this.props.classes.smallImageDiv}>
+                                <img
+                                    src={this.state.widget.data[field.name].startsWith('_PRJ_NAME/') ?
+                                        this.state.widget.data[field.name].replace('_PRJ_NAME/', `../${this.props.adapterName}.${this.props.instance}/${this.props.projectName}/`)
+                                        :
+                                        this.state.widget.data[field.name]}
+                                    className={this.props.classes.smallImage}
+                                    onError={e => {
+                                        e.target.onerror = null;
+                                        e.target.style.display = 'none';
+                                    }}
+                                    alt={field.name}
+                                />
+                            </div> : null}
+                        {group.isStyle ?
+                            <ColorizeIcon
+                                fontSize="small"
+                                className={this.props.classes.colorize}
+                                onClick={() => this.props.cssClone(field.name, newValue => {
+                                    if (newValue !== null && newValue !== undefined) {
+                                        const project = JSON.parse(JSON.stringify(this.props.project));
+                                        this.props.selectedWidgets.forEach(wid => {
+                                            if (project[this.props.selectedView].widgets[wid]) {
+                                                project[this.props.selectedView].widgets[wid].style = project[this.props.selectedView].widgets[wid].style || {};
+                                                project[this.props.selectedView].widgets[wid].style[field.name] = newValue;
+                                            }
+                                        });
+                                        this.props.changeProject(project);
+                                    }
+                                })}
+                            /> : null}
+                        {field.tooltip ? <InfoIcon className={this.props.classes.infoIcon} /> : null}
+                    </td>
+                    <td className={this.props.classes.fieldContent}>
+                        <div className={this.props.classes.fieldInput}>
+                            {this.state.accordionOpen[group.name] && group.hasValues ?
+                                <WidgetField
+                                    widgetType={this.state.widgetType}
+                                    themeType={this.props.themeType}
+                                    error={error}
+                                    disabled={disabled}
+                                    field={field}
+                                    widget={this.props.selectedWidgets.length > 1 ? this.state.commonValues : this.state.widget}
+                                    widgetId={this.props.selectedWidgets.length > 1 ? null : this.props.selectedWidgets[0]}
+                                    isStyle={group.isStyle}
+                                    index={group.index}
+                                    isDifferent={this.state.isDifferent[field.name]}
+                                    {...this.props}
+                                /> : null}
+                        </div>
+                    </td>
+                </>}
+        </tr>;
+    }
+
+    renderGroupBody(group) {
+        return <AccordionDetails style={{ flexDirection: 'column', padding: 0, margin: 0 }}>
+            <table style={{ width: '100%' }}>
+                <tbody>
+                    {group.fields.map((field, fieldIndex) => this.renderGroupRow(group, field, fieldIndex))}
+                </tbody>
+            </table>
+        </AccordionDetails>;
+    }
+
+    renderGroup(group) {
+        return <Accordion
+            classes={{
+                root: this.props.classes.clearPadding,
+                expanded: this.props.classes.clearPadding,
+            }}
+            square
+            key={group.name}
+            elevation={0}
+            expanded={!!(this.state.accordionOpen[group.name] && group.hasValues)}
+            onChange={(e, expanded) => {
+                const accordionOpen = { ...this.state.accordionOpen };
+                accordionOpen[group.name] = expanded;
+                this.setAccordionState(accordionOpen);
+            }}
+        >
+            {this.renderGroupHeader(group)}
+            {this.renderGroupBody(group)}
+        </Accordion>;
+    }
+
+    onGroupDelete(group) {
+        const project = JSON.parse(JSON.stringify(this.props.project));
+        const type = group.isStyle ? 'style' : 'data';
+        this.props.selectedWidgets.forEach(wid => {
+            group.fields.forEach(field => {
+                delete project[this.props.selectedView].widgets[wid][type][field.name];
+            });
+            delete project[this.props.selectedView].widgets[wid].data[`g_${group.name}`];
+        });
+
+        this.props.changeProject(project);
+    }
+
+    render() {
+        if (this.state.recalculate && !this.recalculateTimer) {
+            this.recalculateTimer = setTimeout(() => {
+                this.recalculateTimer = null;
+                this.recalculateFields();
+            }, 50);
+        }
+
+        if (!this.state.widgetTypes) {
+            return null;
+        }
+
+        // check that for all selected widgets the widget type loaded and exists
+        const widgets = this.props.project[this.props.selectedView]?.widgets;
+        let widgetsExist = 0;
+        widgets && this.props.selectedWidgets.forEach(selectedWidget => {
+            if (widgets[selectedWidget] && this.state.widgetTypes.find(type => type.name === widgets[selectedWidget].tpl)) {
+                widgetsExist++;
+            }
+        });
+        if (!widgets || this.props.selectedWidgets.length !== widgetsExist) {
+            return null;
+        }
+
+        // detect triggers from parent to open all groups
+        if (this.props.triggerAllOpened !== this.state.triggerAllOpened) {
+            this.triggerTimer = this.triggerTimer || this.setTimeout(() => {
+                this.triggerTimer = null;
+                const accordionOpen = {};
+                this.state.fields?.forEach(group => accordionOpen[group.name] = true);
+                this.setState({ triggerAllOpened: this.props.triggerAllOpened }, () => this.setAccordionState(accordionOpen));
+            }, 50);
+        }
+        // detect triggers from parent to close all groups
+        if (this.props.triggerAllClosed !== this.state.triggerAllClosed) {
+            this.triggerTimer = this.triggerTimer || this.setTimeout(() => {
+                this.triggerTimer = null;
+                const accordionOpen = {};
+                this.state.fields?.forEach(group => accordionOpen[group.name] = false);
+                this.setState({ triggerAllClosed: this.props.triggerAllClosed }, () => this.setAccordionState(accordionOpen));
+            }, 50);
+        }
+
+        let jsonCustomFields = null;
+        if (this.state.showWidgetCode) {
+            try {
+                jsonCustomFields = JSON.stringify(this.state.customFields, null, 2);
+            } catch (e) {
+                // ignore
+            }
+        }
+
+        return [
+            this.renderHeader(widgets),
+            this.state.fields ? <div key="groups" style={{ height: 'calc(100% - 34px)', overflowY: 'auto' }}>
+                {this.state.fields.map(group => {
+                    if (group.hidden) {
+                        if (Widget.checkFunction(group.hidden, this.props.project, this.props.selectedView, this.props.selectedWidgets)) {
+                            return null;
+                        }
+                    }
+
+                    return this.renderGroup(group);
+                })}
+
+                {this.state.clearGroup ? <IODialog
+                    title="Are you sure"
+                    onClose={() => this.setState({ clearGroup: null })}
+                    open={!0}
+                    action={() => this.onGroupDelete(this.state.clearGroup)}
+                    actionTitle="Clear"
+                >
+                    {I18n.t('Fields of group will be cleaned')}
+                </IODialog> : null}
+
+                <Button
+                    style={{ opacity: this.state.showWidgetCode ? 1 : 0 }}
+                    onClick={() => {
+                        window.localStorage.setItem('showWidgetCode', this.state.showWidgetCode ? 'false' : 'true');
+                        this.setState({ showWidgetCode: !this.state.showWidgetCode });
+                    }}
+                    startIcon={<CodeIcon />}
+                >
+                    { this.state.showWidgetCode ? I18n.t('hide code') : I18n.t('show code') }
+                </Button>
+
+                {this.state.showWidgetCode ? <pre>
+                    {JSON.stringify(this.state.widget, null, 2)}
+                    {jsonCustomFields}
+                </pre> : null}
+            </div> : null,
+        ];
+    }
+}
+
+Widget.propTypes = {
     adapterName: PropTypes.string.isRequired,
     themeType: PropTypes.string.isRequired,
     changeProject: PropTypes.func,
@@ -1281,4 +1365,4 @@ WidgetContainer.propTypes = {
     triggerAllClosed: PropTypes.number,
 };
 
-export default withStyles(styles)(WidgetContainer);
+export default withStyles(styles)(Widget);
