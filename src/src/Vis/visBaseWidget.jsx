@@ -291,13 +291,13 @@ class VisBaseWidget extends React.Component {
             let style;
             // restore original data
             if (copied) {
-                data = widget.data || {};
+                data = widget.data || { bindings: [] };
                 // detect for CanWidgets if size was changed
-                style = widget.style || {};
+                style = widget.style || { bindings: [] };
             } else {
-                data = JSON.parse(JSON.stringify(widget.data || {}));
+                data = JSON.parse(JSON.stringify(widget.data || { bindings: [] }));
                 // detect for CanWidgets if size was changed
-                style = JSON.parse(JSON.stringify(widget.style || {}));
+                style = JSON.parse(JSON.stringify(widget.style || { bindings: [] }));
             }
 
             // replace all _PRJ_NAME with vis.0/name

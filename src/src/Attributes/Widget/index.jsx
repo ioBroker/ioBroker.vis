@@ -518,7 +518,7 @@ class Widget extends Component {
 
     componentDidMount() {
         if (this.state.widgetsLoaded) {
-            this.setState({ widgetTypes: getWidgetTypes() });
+            this.setState({ widgetTypes: getWidgetTypes() }, () => this.recalculateFields());
         }
         this.setAccordionState();
     }
@@ -542,7 +542,7 @@ class Widget extends Component {
         // detect changes of view
         if (dataImage !== state.dataImage) {
             newState = newState || {};
-            newState.dataImage = true;
+            newState.dataImage = dataImage;
             newState.recalculate = true;
         }
 
@@ -553,6 +553,7 @@ class Widget extends Component {
         if (!this.state.widgetTypes) {
             return;
         }
+        console.log('Recalculate fields');
         const newState = { recalculate: false };
         const widgets = this.props.project[this.props.selectedView]?.widgets;
 
@@ -594,6 +595,7 @@ class Widget extends Component {
         });
 
         let fields;
+        const bindFields = [];
         const commonValues = {};
         const isDifferent = {};
 
@@ -621,11 +623,13 @@ class Widget extends Component {
                             commonValues.data[field] = null;
                             isDifferent[field] = true;
                         }
+                        currentWidget.data.bindings.forEach(attr => !bindFields.includes(`data_${attr}`) && bindFields.push(`data_${attr}`));
                     });
                     Object.keys(commonValues.style).forEach(field => {
                         if (commonValues.style[field] !== currentWidget.style[field]) {
                             commonValues.style[field] = null;
                             isDifferent[field] = true;
+                            currentWidget.style.bindings.forEach(attr => !bindFields.includes(`style_${attr}`) && bindFields.push(`style_${attr}`));
                         }
                     });
                 }
@@ -634,6 +638,7 @@ class Widget extends Component {
             fields = selectedWidgetsFields[0];
         }
 
+        newState.bindFields = bindFields.sort();
         newState.customFields = fields;
         newState.isDifferent = isDifferent;
         newState.commonValues = commonValues;

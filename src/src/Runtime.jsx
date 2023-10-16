@@ -264,6 +264,24 @@ class Runtime extends GenericApp {
                             }
                         });
                     }
+                    if (!widget.style.bindings && !Array.isArray(widget.style.bindings)) {
+                        widget.style.bindings = [];
+                        Object.keys(widget.style).forEach(attr => {
+                            if (attr === 'bindings' ||
+                                !widget.style[attr] ||
+                                attr.startsWith('g_') ||
+                                typeof widget.data[attr] !== 'string'
+                            ) {
+                                return;
+                            }
+
+                            // Process bindings in data attributes
+                            const OIDs = extractBinding(widget.style[attr]);
+                            if (OIDs) {
+                                widget.style.bindings.push(attr);
+                            }
+                        });
+                    }
 
                     if (widget.data.members) {
                         widget.data.members.forEach((_wid, i) =>
