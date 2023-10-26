@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
 
@@ -18,7 +18,7 @@ import {
     Code as CodeIcon,
     Info as InfoIcon,
     Delete,
-    Add,
+    Add, LinkOff, Link as LinkIcon,
 } from '@mui/icons-material';
 
 import { I18n, Utils } from '@iobroker/adapter-react-v5';
@@ -28,6 +28,7 @@ import IODialog from '../../Components/IODialog';
 import { getWidgetTypes, parseAttributes } from '../../Vis/visWidgetsCatalog';
 import WidgetCSS from './WidgetCSS';
 import WidgetJS from './WidgetJS';
+import WidgetBindingField from './WidgetBindingField';
 
 const ICONS = {
     'group.fixed': <FilterAltIcon fontSize="small" />,
@@ -148,9 +149,18 @@ const styles = theme => ({
     },
     lightedPanel: theme.classes.lightedPanel,
     infoIcon: {
-        width: 16,
         verticalAlign: 'middle',
         marginLeft: 3,
+    },
+    bindIconSpan: {
+        verticalAlign: 'middle',
+        marginLeft: 3,
+        float: 'right',
+        cursor: 'pointer',
+    },
+    bindIcon: {
+        width: 16,
+        height: 16,
     },
     smallImageDiv: {
         width: 30,
@@ -237,6 +247,7 @@ class Widget extends Component {
             widgetTypes: null,
             fields: null,
             dataImage: Widget.buildDataImage(props.project, props.selectedView, props.selectedWidgets),
+            transitionTime: 0,
         };
 
         this.fieldsBefore = Widget.getFieldsBefore();
@@ -276,7 +287,7 @@ class Widget extends Component {
         ];
     }
 
-    static getSignals(count, adapterName){
+    static getSignals(count, adapterName) {
         const result = {
             name: 'signals',
             fields: [
@@ -623,19 +634,22 @@ class Widget extends Component {
                             commonValues.data[field] = null;
                             isDifferent[field] = true;
                         }
-                        currentWidget.data.bindings.forEach(attr => !bindFields.includes(`data_${attr}`) && bindFields.push(`data_${attr}`));
                     });
                     Object.keys(commonValues.style).forEach(field => {
                         if (commonValues.style[field] !== currentWidget.style[field]) {
                             commonValues.style[field] = null;
                             isDifferent[field] = true;
-                            currentWidget.style.bindings.forEach(attr => !bindFields.includes(`style_${attr}`) && bindFields.push(`style_${attr}`));
                         }
                     });
+
+                    currentWidget.data.bindings.forEach(attr => !bindFields.includes(`data_${attr}`) && bindFields.push(`data_${attr}`));
+                    currentWidget.style.bindings.forEach(attr => !bindFields.includes(`style_${attr}`) && bindFields.push(`style_${attr}`));
                 }
             });
         } else {
             fields = selectedWidgetsFields[0];
+            widgets[this.props.selectedWidgets[0]].data.bindings.forEach(attr => !bindFields.includes(`data_${attr}`) && bindFields.push(`data_${attr}`));
+            widgets[this.props.selectedWidgets[0]].style.bindings.forEach(attr => !bindFields.includes(`style_${attr}`) && bindFields.push(`style_${attr}`));
         }
 
         newState.bindFields = bindFields.sort();
@@ -696,6 +710,8 @@ class Widget extends Component {
             });
             group.hasValues = found !== undefined;
         });
+
+        newState.transitionTime = 0;
 
         this.setState(newState, () => this.setAccordionState());
     }
@@ -851,6 +867,7 @@ class Widget extends Component {
         } else {
             cb && cb();
         }
+        setTimeout(() => this.setState({ transitionTime: 200 }), 500);
     }
 
     componentDidUpdate(/* prevProps, prevState, snapshot */) {
@@ -1090,7 +1107,23 @@ class Widget extends Component {
         </AccordionSummary>;
     }
 
-    renderGroupRow(group, field, fieldIndex) {
+    changeBinding(isStyle, attr) {
+        const project = JSON.parse(JSON.stringify(this.props.project));
+        const type = isStyle ? 'style' : 'data';
+        for (let i = 0; i < this.props.selectedWidgets.length; i++) {
+            const wid = this.props.selectedWidgets[i];
+            const widget = project[this.props.selectedView].widgets[wid];
+            if (widget[type].bindings.includes(attr)) {
+                widget[type].bindings.splice(widget[type].bindings.indexOf(attr), 1);
+            } else {
+                widget[type].bindings.push(attr);
+            }
+        }
+
+        this.props.changeProject(project);
+    }
+
+    renderFieldRow(group, field, fieldIndex) {
         if (!field) {
             return null;
         }
@@ -1142,6 +1175,8 @@ class Widget extends Component {
             labelStyle.fontStyle = 'italic';
         }
 
+        const isBoundField = this.state.bindFields.includes(group.isStyle ? `style_${field.name}` : `data_${field.name}`);
+
         return <tr key={fieldIndex} className={this.props.classes.fieldRow}>
             {field.type === 'delimiter' ?
                 <td colSpan="2"><Divider style={{ borderBottomWidth: 'thick' }} /></td>
@@ -1185,12 +1220,48 @@ class Widget extends Component {
                                     }
                                 })}
                             /> : null}
+                        {isBoundField ?
+                            <span
+                                className={this.props.classes.bindIconSpan}
+                                title={I18n.t('Deactivate binding and use field as standard input')}
+                            >
+                                <LinkOff
+                                    onClick={() => this.props.editMode && this.changeBinding(group.isStye, field.name)}
+                                    className={this.props.classes.bindIcon}
+                                    style={disabled ? { cursor: 'default' } : null}
+                                />
+                            </span> :
+                            <span
+                                className={this.props.classes.bindIconSpan}
+                                title={I18n.t('Use field as binding')}
+                            >
+                                <LinkIcon
+                                    className={this.props.classes.bindIcon}
+                                    style={disabled ? { cursor: 'default' } : null}
+                                    onClick={() => this.props.editMode && this.changeBinding(group.isStye, field.name)}
+                                />
+                            </span>}
                         {field.tooltip ? <InfoIcon className={this.props.classes.infoIcon} /> : null}
                     </td>
                     <td className={this.props.classes.fieldContent}>
                         <div className={this.props.classes.fieldInput}>
-                            {this.state.accordionOpen[group.name] && group.hasValues ?
-                                <WidgetField
+                            {isBoundField ?
+                                <WidgetBindingField
+                                    error={error}
+                                    disabled={disabled}
+                                    field={field}
+                                    label={label}
+                                    widget={this.props.selectedWidgets.length > 1 ? this.state.commonValues : this.state.widget}
+                                    widgetId={this.props.selectedWidgets.length > 1 ? null : this.props.selectedWidgets[0]}
+                                    isStyle={group.isStyle}
+                                    selectedView={this.props.selectedView}
+                                    selectedWidgets={this.props.selectedWidgets}
+                                    isDifferent={this.state.isDifferent[field.name]}
+                                    project={this.props.project}
+                                    socket={this.props.socket}
+                                    changeProject={this.props.changeProject}
+                                />
+                                : <WidgetField
                                     widgetType={this.state.widgetType}
                                     themeType={this.props.themeType}
                                     error={error}
@@ -1202,7 +1273,7 @@ class Widget extends Component {
                                     index={group.index}
                                     isDifferent={this.state.isDifferent[field.name]}
                                     {...this.props}
-                                /> : null}
+                                />}
                         </div>
                     </td>
                 </>}
@@ -1210,10 +1281,13 @@ class Widget extends Component {
     }
 
     renderGroupBody(group) {
+        if (!this.state.accordionOpen[group.name] || !group.hasValues) {
+            return null;
+        }
         return <AccordionDetails style={{ flexDirection: 'column', padding: 0, margin: 0 }}>
             <table style={{ width: '100%' }}>
                 <tbody>
-                    {group.fields.map((field, fieldIndex) => this.renderGroupRow(group, field, fieldIndex))}
+                    {group.fields.map((field, fieldIndex) => this.renderFieldRow(group, field, fieldIndex))}
                 </tbody>
             </table>
         </AccordionDetails>;
@@ -1234,6 +1308,7 @@ class Widget extends Component {
                 accordionOpen[group.name] = expanded;
                 this.setAccordionState(accordionOpen);
             }}
+            TransitionProps={{ timeout: this.state.transitionTime }}
         >
             {this.renderGroupHeader(group)}
             {this.renderGroupBody(group)}
@@ -1279,7 +1354,7 @@ class Widget extends Component {
 
         // detect triggers from parent to open all groups
         if (this.props.triggerAllOpened !== this.state.triggerAllOpened) {
-            this.triggerTimer = this.triggerTimer || this.setTimeout(() => {
+            this.triggerTimer = this.triggerTimer || setTimeout(() => {
                 this.triggerTimer = null;
                 const accordionOpen = {};
                 this.state.fields?.forEach(group => accordionOpen[group.name] = true);
@@ -1288,7 +1363,7 @@ class Widget extends Component {
         }
         // detect triggers from parent to close all groups
         if (this.props.triggerAllClosed !== this.state.triggerAllClosed) {
-            this.triggerTimer = this.triggerTimer || this.setTimeout(() => {
+            this.triggerTimer = this.triggerTimer || setTimeout(() => {
                 this.triggerTimer = null;
                 const accordionOpen = {};
                 this.state.fields?.forEach(group => accordionOpen[group.name] = false);

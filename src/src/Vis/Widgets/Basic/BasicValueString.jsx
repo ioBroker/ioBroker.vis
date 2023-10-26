@@ -93,16 +93,16 @@ class BasicValueString extends VisRxWidget {
         } : {};
         return <div className="vis-widget-body">
             <div data-oid={oid} style={style}>
-                { this.state.rxData.icon ? <Icon
+                {this.state.rxData.icon ? <Icon
                     src={this.state.rxData.icon}
                     style={{
                         width: this.state.rxData.iconSize || 24,
                         height: this.state.rxData.iconSize || 24,
                     }}
-                /> : null }
-                { this.state.rxData.html_prepend || '' }
-                <span>{ body }</span>
-                { this.state.rxData.html_append || '' }
+                /> : null}
+                {this.state.rxData.html_prepend || ''}
+                <span>{body}</span>
+                {this.state.rxData.html_append || ''}
             </div>
         </div>;
     }

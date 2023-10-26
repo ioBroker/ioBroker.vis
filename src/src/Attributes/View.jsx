@@ -780,7 +780,7 @@ const View = props => {
             >
                 {I18n.t(group.name)}
             </AccordionSummary>
-            <AccordionDetails style={{ flexDirection: 'column', padding: 0, margin: 0 }}>
+            {accordionOpen[key] ? <AccordionDetails style={{ flexDirection: 'column', padding: 0, margin: 0 }}>
                 <table style={{ width: '100%' }}>
                     <tbody>
                         {
@@ -1219,7 +1219,7 @@ const View = props => {
                         }
                     </tbody>
                 </table>
-            </AccordionDetails>
+            </AccordionDetails> : null}
         </Accordion>)}
         {allViewDialog}
     </div>;

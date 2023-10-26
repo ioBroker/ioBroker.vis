@@ -407,8 +407,11 @@ class App extends Runtime {
         const newKey = this.getNewWidgetId();
         widgets[newKey] = {
             tpl: widgetType,
-            data: {},
+            data: {
+                bindings: [],
+            },
             style: {
+                bindings: [],
                 left: `${x}px`,
                 top: `${y}px`,
             },

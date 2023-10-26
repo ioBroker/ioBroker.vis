@@ -256,6 +256,12 @@ class JQuiSlider extends VisRxWidget {
         }
     }
 
+    componentWillUnmount() {
+        super.componentWillUnmount();
+        this.controlTimeout && clearTimeout(this.controlTimeout);
+        this.controlTimeout = null;
+    }
+
     static findField(widgetInfo, name) {
         return VisRxWidget.findField(widgetInfo, name);
     }
@@ -377,9 +383,9 @@ class JQuiSlider extends VisRxWidget {
             console.log(`Set ${this.newState.value} - (${this.newState.valueMax || this.state.valueMax})`);
         }
 
-        this.setTimeout && clearTimeout(this.setTimeout);
-        this.setTimeout = setTimeout(async () => {
-            this.setTimeout = null;
+        this.controlTimeout && clearTimeout(this.controlTimeout);
+        this.controlTimeout = setTimeout(async () => {
+            this.controlTimeout = null;
             const newState = this.newState;
             this.newState = null;
             if (!newState) {

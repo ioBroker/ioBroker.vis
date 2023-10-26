@@ -234,6 +234,12 @@ class JQuiState extends VisRxWidget {
         }
     }
 
+    async componentWillUnmount() {
+        super.componentWillUnmount();
+        this.controlTimeout && clearTimeout(this.controlTimeout);
+        this.controlTimeout = null;
+    }
+
     static findField(widgetInfo, name) {
         return VisRxWidget.findField(widgetInfo, name);
     }
@@ -269,9 +275,9 @@ class JQuiState extends VisRxWidget {
         }
 
         if (this.state.rxData.type === 'slider') {
-            this.setTimeout && clearTimeout(this.setTimeout);
-            this.setTimeout = setTimeout(() => {
-                this.setTimeout = null;
+            this.controlTimeout && clearTimeout(this.controlTimeout);
+            this.controlTimeout = setTimeout(() => {
+                this.controlTimeout = null;
                 const oid = this.getControlOid();
                 if (oid) {
                     this.props.context.socket.setState(oid, parseFloat(indexOrValue));

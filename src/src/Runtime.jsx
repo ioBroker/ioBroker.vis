@@ -379,7 +379,7 @@ class Runtime extends GenericApp {
         let difference = 10000;
 
         // First, find all with the best fitting width
-        Object.keys(project).forEach(view => {
+        project && Object.keys(project).forEach(view => {
             if (view === '___settings') {
                 return;
             }
@@ -403,7 +403,7 @@ class Runtime extends GenericApp {
             const ratio = w / h;
             difference = 10000;
 
-            Object.keys(project).forEach(view => {
+            project && Object.keys(project).forEach(view => {
                 if (view === '___settings') {
                     return;
                 }
@@ -418,10 +418,10 @@ class Runtime extends GenericApp {
             });
         }
         if (!result && resultRequired) {
-            result = Object.keys(project).find(view => !view.startsWith('__') && project[view].settings?.useAsDefault);
+            result = project && Object.keys(project).find(view => !view.startsWith('__') && project[view].settings?.useAsDefault);
         }
         if (!result && resultRequired) {
-            return Object.keys(project).find(view => !view.startsWith('__')) || '';
+            return (project && Object.keys(project).find(view => !view.startsWith('__'))) || '';
         }
 
         return result;
