@@ -29,7 +29,10 @@ class BasicHtml extends VisRxWidget {
             visAttrs: [{
                 name: 'common',
                 fields: [
-                    { name: 'html', type: 'html' },
+                    {
+                        name: 'html',
+                        type: 'html',
+                    },
                     {
                         name: 'refreshInterval',
                         type: 'slider',

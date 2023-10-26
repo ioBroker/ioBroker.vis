@@ -1,4 +1,5 @@
 // eslint-disable-next-line import/no-cycle
+import BasicHtml from './Basic/BasicHtml';
 import BasicValueString from './Basic/BasicValueString';
 import BasicViewInWidget from './Basic/BasicViewInWidget';
 import BasicViewInWidget8 from './Basic/BasicViewInWidget8';
@@ -28,6 +29,7 @@ import JQuiSliderVertical from './JQui/JQuiSliderVertical';
 import TabsSliderTabs from './Tabs/TabsSliderTabs';
 
 const WIDGETS = [
+    BasicHtml,
     BasicValueString,
     BasicViewInWidget,
     BasicViewInWidget8,

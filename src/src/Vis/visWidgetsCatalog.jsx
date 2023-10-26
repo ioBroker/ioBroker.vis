@@ -236,9 +236,14 @@ export const getWidgetTypes = usedWidgetSets => {
                 developerMode: widget.url?.startsWith('http://'),
                 i18nPrefix,
             };
-            VisWidgetsCatalog.allWidgetsList.push(widgetObj.name);
+            !VisWidgetsCatalog.allWidgetsList.includes(widgetObj.name) && VisWidgetsCatalog.allWidgetsList.push(widgetObj.name);
 
-            window.visWidgetTypes.push(widgetObj);
+            const index = window.visWidgetTypes.findIndex(item => item.name === widgetObj.name);
+            if (index > -1) {
+                window.visWidgetTypes[index] = widgetObj; // replace old widget with RX widget
+            } else {
+                window.visWidgetTypes.push(widgetObj);
+            }
 
             if (i18nPrefix && typeof widgetInfo.visAttrs === 'object') {
                 widgetInfo.visAttrs.forEach(group => {
