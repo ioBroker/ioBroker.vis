@@ -120,10 +120,12 @@ class WidgetBindingField extends Component {
 
         const values = {};
         for (let i = 0; i < stateOids.length; i++) {
-            const state = await this.props.socket.getState(stateOids[i]);
-            Object.keys(state).forEach(attr => {
-                values[`${stateOids[i]}.${attr}`] = state[attr];
-            });
+            if (stateOids[i].includes('.')) {
+                const state = await this.props.socket.getState(stateOids[i]);
+                state && Object.keys(state).forEach(attr => {
+                    values[`${stateOids[i]}.${attr}`] = state[attr];
+                });
+            }
         }
 
         return this.visFormatUtils.formatBinding(
@@ -275,114 +277,119 @@ class WidgetBindingField extends Component {
             <p>The following operations are supported:</p>
             <ul>
                 <li>
-                    <b>\*</b>
+                    <b className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>*</b>
                     - multiplying. Argument must be in brackets, like
                     <i className={classes.space}>&quot;*(4)&quot;</i>.
                     <span className={classes.space}>this sample, we multiply the value with 4.</span>
                 </li>
                 <li>
-                    <b>\+</b>
+                    <b className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>+</b>
                     - add. Argument must be in brackets, like
                     <i className={classes.space}>&quot;+(4.5)&quot;</i>.
                     <span className={classes.space}>In this sample we add to value 4.5.</span>
                 </li>
                 <li>
-                    <b>\-</b>
+                    <b className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>-</b>
                     - subtract. Argument must be in brackets, like
                     <i className={classes.space}>&quot;-(-674.5)&quot;</i>.
                     <span className={classes.space}>In this sample we subtract from value -674.5.</span>
                 </li>
                 <li>
-                    <b>/</b>
+                    <b className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>/</b>
                     - dividing. Argument must be in brackets, like
                     <i className={classes.space}>&quot;/(0.5)&quot;</i>.
                     <span className={classes.space}>In this sample, we divide the value by 0.5.</span>
                 </li>
                 <li>
-                    <b>%</b>
+                    <b className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>%</b>
                     - modulo. Argument must be in brackets, like
                     <i className={classes.space}>&quot;%(5)&quot;</i>.
                     <span className={classes.space}>In this sample, we take modulo of 5.</span>
                 </li>
-                <li>
+                <li className={classes.clickable} onClick={() => this.insertInText('*', true)}>
                     <b>round</b>
                     - round the value.
                 </li>
-                <li>
+                <li className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>
                     <b>round(N)</b>
                     - round the value with N places after point, e.g.,
                     <i>&quot;34.678;round(1) =&gt; 34.7&quot;</i>
                 </li>
-                <li>
+                <li className={classes.clickable} onClick={() => this.insertInText('*', true)}>
                     <b>hex</b>
                     - convert value to hexadecimal value. All letters are lower cased.
                 </li>
-                <li>
+                <li className={classes.clickable} onClick={() => this.insertInText('*', true)}>
                     <b>hex2</b>
                     - convert value to hexadecimal value. All letters are lower cased. If value less 16, so the leading zero will be added.
                 </li>
-                <li>
+                <li className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>
                     <b>HEX</b>
                     - same as hex, but upper-cased.
                 </li>
-                <li>
+                <li className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>
                     <b>HEX2</b>
                     - same as hex2, but upper-cased.
                 </li>
-                <li>
+                <li className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>
                     <b>date</b>
-                    - format date according to given format. Format is the same as in [iobroker.javascript](https://github.com/iobroker/iobroker.javascript/blob/master/README.md#formatdate)</li>
+                    - format date according to given format. Format is the same as in
+                    <a className={classes.space} href="https://github.com/iobroker/iobroker.javascript/blob/master/README.md#formatdate" target="_blank" rel="noreferrer">
+                        iobroker.javascript
+                    </a>
+                </li>
                 <li>
-                    <b>min(N)</b>
+                    <b className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>min(N)</b>
                     - if value is less than N, take the N, else value
                 </li>
                 <li>
-                    <b>max(M)</b>
+                    <b className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>max(M)</b>
                     - if value is greater than M, take the M, else value
                 </li>
                 <li>
-                    <b>sqrt</b>
+                    <b className={classes.clickable} onClick={() => this.insertInText('*', true)}>sqrt</b>
                     - square root
                 </li>
                 <li>
-                    <b>pow(n)</b>
+                    <b className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>pow(n)</b>
                     - power of N.
                 </li>
                 <li>
-                    <b>pow</b>
+                    <b className={classes.clickable} onClick={() => this.insertInText('*', true)}>pow</b>
                     - power of 2.
                 </li>
                 <li>
-                    <b>floor</b>
+                    <b className={classes.clickable} onClick={() => this.insertInText('*', true)}>floor</b>
                     - Math.floor
                 </li>
                 <li>
-                    <b>ceil</b>
+                    <b className={classes.clickable} onClick={() => this.insertInText('*', true)}>ceil</b>
                     - Math.ceil
                 </li>
                 <li>
-                    <b>random(R)</b>
+                    <b className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>random(R)</b>
                     - Math.random() * R, or just Math.random() if no argument
                 </li>
                 <li>
-                    <b>formatValue(decimals)</b>
+                    <b className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>formatValue(decimals)</b>
                     - format value according to system settings and use decimals
                 </li>
                 <li>
-                    <b>date(format)</b>
+                    <b className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>date(format)</b>
                     - format value as date. The format is like:
                     <i className={classes.space}>&quot;YYYY-MM-DD hh:mm:ss.sss&quot;</i>
                 </li>
                 <li>
-                    <b>momentDate(format, useTodayOrYesterday)</b>
+                    <b className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>momentDate(format, useTodayOrYesterday)</b>
                     - format value as date using Moment.js.
                     <a className={classes.space} href="https://momentjs.com/docs/#/displaying/format/" target="_blank" rel="noreferrer">
                         formats must be entered according to the moment.js library
-                    </a>.
+                    </a>
+                    .
                     <span className={classes.space}>With &apos;useTodayOrYesterday=true&apos; the &apos;moment.js&apos; format &apos;ddd&apos;/&apos;dddd&apos; are overwritten with today / yesterday</span>
                 </li>
                 <li>
-                    <b>array(element1,element2[,element3,element4])</b>
+                    <b className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>array(element1,element2[,element3,element4])</b>
                     - returns the element of index. e.g.:
                     <span className={`${classes.code} ${classes.space}`}>&#123;id.ack;array(ack is false,ack is true)&#125;</span>
                 </li>
@@ -394,7 +401,7 @@ class WidgetBindingField extends Component {
             </p>
             <p>or color calculations:</p>
             <p className={classes.code}>
-#&#123;objectRed;/(100);*(255);HEX2&#125;&#123;objectGreen;HEX2&#125;&#123;objectBlue;HEX2&#125;
+                #&#123;objectRed;/(100);*(255);HEX2&#125;&#123;objectGreen;HEX2&#125;&#123;objectBlue;HEX2&#125;
             </p>
             <p>
                 To show timestamp of object write
@@ -508,7 +515,7 @@ Last change: &#123;objectRed.lc;date(hh:mm)&#125;
         </Dialog>;
     }
 
-    async insertInText(text) {
+    async insertInText(text, oldStyle) {
         const selectionStart = this.inputRef.current.selectionStart;
         const selectionEnd = this.inputRef.current.selectionEnd;
 

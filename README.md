@@ -65,9 +65,9 @@ Patten has the following format:
 
 The following operations are supported:
 
-- `\*` - multiplying. Argument must be in brackets, like "*(4)". In this sample, we multiply the value with 4.
-- `\+` - add. Argument must be in brackets, like "+(4.5)". In this sample we add to value 4.5.
-- `\-` - subtract. Argument must be in brackets, like "-(-674.5)". In this sample we subtract from value -674.5.
+- `*` - multiplying. Argument must be in brackets, like "*(4)". In this sample, we multiply the value with 4.
+- `+` - add. Argument must be in brackets, like "+(4.5)". In this sample we add to value 4.5.
+- `-` - subtract. Argument must be in brackets, like "-(-674.5)". In this sample we subtract from value -674.5.
 - `/` - dividing. Argument must be in brackets, like "/(0.5)". In this sample, we divide the value by 0.5.
 - `%` - modulo. Argument must be in brackets, like "%(5)". In this sample, we take modulo of 5.
 - `round` - round the value.
