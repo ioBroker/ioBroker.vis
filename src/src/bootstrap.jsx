@@ -32,6 +32,14 @@ function modifyClasses(className, addClass, removeClass) {
     return classes.join(' ');
 }
 
+function inIframe() {
+    try {
+        return window.self !== window.top;
+    } catch (e) {
+        return true;
+    }
+}
+
 const ThemeContainer = () => {
     const [currentTheme, setCurrentTheme] = useState(themeName);
 
@@ -75,10 +83,13 @@ const ThemeContainer = () => {
 
     const getTheme = () => createTheme(appTheme(), newTheme);
 
-    if (newTheme.palette.mode === 'dark') {
-        window.document.body.className = modifyClasses(window.document.body.className, 'body-dark', 'body-light');
-    } else {
-        window.document.body.className = modifyClasses(window.document.body.className, 'body-light', 'body-dark');
+    // apply background color only if not in iframe
+    if (!inIframe()) {
+        if (newTheme.palette.mode === 'dark') {
+            window.document.body.className = modifyClasses(window.document.body.className, 'body-dark', 'body-light');
+        } else {
+            window.document.body.className = modifyClasses(window.document.body.className, 'body-light', 'body-dark');
+        }
     }
 
     return <StylesProvider generateClassName={generateClassName}>
@@ -87,10 +98,13 @@ const ThemeContainer = () => {
                 <App
                     version={packageJson.version}
                     onThemeChange={_theme => {
-                        if (newTheme.palette.mode === 'dark') {
-                            window.document.body.className = modifyClasses(window.document.body.className, 'body-dark', 'body-light');
-                        } else {
-                            window.document.body.className = modifyClasses(window.document.body.className, 'body-light', 'body-dark');
+                        // apply background color only if not in iframe
+                        if (!inIframe()) {
+                            if (newTheme.palette.mode === 'dark') {
+                                window.document.body.className = modifyClasses(window.document.body.className, 'body-dark', 'body-light');
+                            } else {
+                                window.document.body.className = modifyClasses(window.document.body.className, 'body-light', 'body-dark');
+                            }
                         }
 
                         setCurrentTheme(_theme);
