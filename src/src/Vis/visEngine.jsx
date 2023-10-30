@@ -1427,9 +1427,8 @@ class VisEngine extends React.Component {
     */
 
     static async loadScriptsOfOneWidgetSet(widgetSet) {
-        for (let i = 0; i < widgetSet.length; i++) {
+        for (const { oldScript, newScript } of widgetSet) {
             try {
-                const { oldScript, newScript } = widgetSet[i];
                 newScript.appendChild(document.createTextNode(oldScript.innerHTML));
                 oldScript.parentNode.replaceChild(newScript, oldScript);
 
@@ -1438,7 +1437,7 @@ class VisEngine extends React.Component {
                     newScript.onload = resolve;
                 });
             } catch (e) {
-                console.error(`Cannot load script: ${JSON.stringify(e)}`);
+                console.error(`Cannot load script "${newScript.src}": ${JSON.stringify(e)}`);
             }
         }
     }
