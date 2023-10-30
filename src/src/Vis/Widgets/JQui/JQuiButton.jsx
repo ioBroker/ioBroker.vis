@@ -475,6 +475,28 @@ class JQuiButton extends VisRxWidget {
         </Dialog>;
     }
 
+    async setObjectWithState(oid, value) {
+        if (this.setObjectType === undefined) {
+            try {
+                const obj = await this.props.context.socket.getObject(oid);
+                this.setObjectType = obj?.common?.type || 'string';
+                await this.setObjectWithState(oid, value);
+            } catch (error) {
+                console.warn(`Object ${oid} not found: ${error}`);
+            }
+            return;
+        }
+        if (this.setObjectType === 'boolean') {
+            value = value === 'true' || value === true || value === '1' || value === 1 || value === 'on' || value === 'ON';
+        } else if (this.setObjectType === 'number') {
+            value = parseFloat(value);
+        } else if (value !== null && value !== undefined) {
+            value = value.toString();
+        }
+
+        await this.props.context.socket.setState(oid, value);
+    }
+
     onClick(passwordChecked) {
         if (this.state.dialogVisible) {
             return;
@@ -505,6 +527,10 @@ class JQuiButton extends VisRxWidget {
         }
 
         if (this.state.rxData.html_dialog || this.state.rxData.contains_view) {
+            if (this.state.rxData.setId) {
+                this.setObjectWithState(this.state.rxData.setId, this.state.rxData.setValue)
+                    .catch(error => console.warn(`Cannot set state: ${error}`));
+            }
             // show dialog
             this.showDialog(true);
         }
