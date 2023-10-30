@@ -229,8 +229,12 @@ class JQuiState extends VisRxWidget {
     async componentDidMount() {
         super.componentDidMount();
         if (this.state.rxData.oid && this.state.rxData.oid !== 'nothing_selected') {
-            const state = await this.props.context.socket.getState(this.state.rxData.oid);
-            this.onStateUpdated(this.state.rxData.oid, state);
+            try {
+                const state = await this.props.context.socket.getState(this.state.rxData.oid);
+                this.onStateUpdated(this.state.rxData.oid, state);
+            } catch (error) {
+                console.error(`Cannot get state ${this.state.rxData.oid}: ${error}`);
+            }
         }
     }
 
