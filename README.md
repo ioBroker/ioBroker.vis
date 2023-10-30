@@ -228,7 +228,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.3.3 (2023-10-30)
 * (foxriver76) fixed problem, that vis is not loading if a single widget has a script error
 * (bluefox) added the editor for bindings
 * (bluefox) background does not used if in iframe
