@@ -1433,11 +1433,12 @@ class VisEngine extends React.Component {
                 newScript.appendChild(document.createTextNode(oldScript.innerHTML));
                 oldScript.parentNode.replaceChild(newScript, oldScript);
 
-                await new Promise(resolve => {
+                await new Promise((resolve, reject) => {
+                    newScript.onerror = reject;
                     newScript.onload = resolve;
                 });
             } catch (e) {
-                console.error(`Cannot load script: ${e}`);
+                console.error(`Cannot load script: ${JSON.stringify(e)}`);
             }
         }
     }
