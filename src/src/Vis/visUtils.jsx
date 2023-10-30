@@ -72,7 +72,7 @@ function extractBinding(format) {
             if (_oid[0] === '{') {
                 continue;
             }
-            // If first symbol '"' => it is JSON
+            // If the first symbol is '"' => it is JSON
             if (_oid && _oid[0] === '"') {
                 continue;
             }
@@ -120,9 +120,11 @@ function extractBinding(format) {
             for (let u = 1; u < parts.length; u++) {
                 // eval construction
                 if (isEval) {
-                    if (parts[u].trim().match(/^[\d\w_]+:\s?[-.\d\w_]+$/)) { // parts[u].indexOf(':') !== -1 && parts[u].indexOf('::') === -1) {
-                        let _systemOid = parts[u].trim();
-                        let _visOid = _systemOid;
+                    const trimmed = parts[u].trim();
+                    if (trimmed.match(/^[\d\w_]+:\s?[-.\d\w_]+$/)) { // parts[u].indexOf(':') !== -1 && parts[u].indexOf('::') === -1) {
+                        const argParts = trimmed.split(':', 2);
+                        let _visOid = argParts[1].trim();
+                        let _systemOid = _visOid;
 
                         test1 = _visOid.substring(_visOid.length - 4);
                         test2 = _visOid.substring(_visOid.length - 3);
@@ -131,21 +133,21 @@ function extractBinding(format) {
                             _visOid += '.val';
                         }
 
-                        test1 = systemOid.substring(_systemOid.length - 4);
-                        test2 = systemOid.substring(_systemOid.length - 3);
+                        test1 = _systemOid.substring(_systemOid.length - 4);
 
                         if (test1 === '.val' || test1 === '.ack') {
                             _systemOid = _systemOid.substring(0, _systemOid.length - 4);
-                        } else if (test2 === '.lc' || test2 === '.ts') {
-                            _systemOid = _systemOid.substring(0, _systemOid.length - 3);
+                        } else {
+                            test2 = _systemOid.substring(_systemOid.length - 3);
+                            if (test2 === '.lc' || test2 === '.ts') {
+                                _systemOid = _systemOid.substring(0, _systemOid.length - 3);
+                            }
                         }
-                        const x1 = _visOid.split(':', 2);
-                        const y1 = _systemOid.split(':', 2);
 
                         operations[0].arg.push({
-                            name: x1[0].trim(),
-                            visOid: x1[1].trim(),
-                            systemOid: y1[1].trim(),
+                            name: argParts[0].trim(),
+                            visOid: _visOid,
+                            systemOid: _systemOid,
                         });
                     } else {
                         parts[u] = parts[u].replace(/::/g, ':');
