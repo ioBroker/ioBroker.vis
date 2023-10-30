@@ -693,7 +693,7 @@ class Widget extends Component {
         }
         newState.fields = fields;
 
-        widgets && fields.forEach(group => {
+        widgets && fields?.forEach(group => {
             const type = group.isStyle ? 'style' : 'data';
             const found = this.props.selectedWidgets.find(selectedWidget => {
                 const fieldFound = group.fields.find(field => {
@@ -1221,7 +1221,7 @@ class Widget extends Component {
                                     }
                                 })}
                             /> : null}
-                        {isBoundField ?
+                        {field.type !== 'custom' || field.label ? (isBoundField ?
                             <span
                                 className={this.props.classes.bindIconSpan}
                                 title={I18n.t('Deactivate binding and use field as standard input')}
@@ -1241,7 +1241,7 @@ class Widget extends Component {
                                     style={disabled ? { cursor: 'default' } : null}
                                     onClick={() => this.props.editMode && this.changeBinding(group.isStye, field.name)}
                                 />
-                            </span>}
+                            </span>) : null}
                         {field.tooltip ? <InfoIcon className={this.props.classes.infoIcon} /> : null}
                     </td>
                     <td className={this.props.classes.fieldContent}>

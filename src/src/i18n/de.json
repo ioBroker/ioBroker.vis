@@ -589,5 +589,7 @@
   "jqui_tooltip": "Tooltip",
   "Hide selected widgets": "Ausgewählte Widgets ausblenden",
   "Show only selected widgets": "Nur ausgewählte Widgets anzeigen",
-  "Group widgets": "Gruppieren"
+  "Group widgets": "Gruppieren",
+  "Just use without modification": "Einfach ohne Modifikation verwenden",
+  "Modify": "Ändern"
 }

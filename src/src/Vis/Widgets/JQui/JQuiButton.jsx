@@ -720,8 +720,25 @@ class JQuiButton extends VisRxWidget {
             }
         });
 
+        // the following widgets are resizable by default
+        let visResizable = this.state.data.visResizable;
+        if (visResizable === undefined || visResizable === null) {
+            if (this.props.tpl === 'tplJquiButtonNav' ||
+                this.props.tpl === 'tplJquiNavPw' ||
+                this.props.tpl === 'tplContainerDialog' ||
+                this.props.tpl === 'tplContainerIconDialog' ||
+                this.props.tpl === 'tplJquiDialog' ||
+                this.props.tpl === 'tplJquiIconDialog' ||
+                this.props.tpl === 'tplIconHttpGet' ||
+                this.props.tpl === 'tplIconLink' ||
+                this.props.tpl === 'tplJquiIconNav'
+            ) {
+                visResizable = true;
+            }
+        }
+
         // extra no rxData here, as it is not possible to set it with bindings
-        if (this.state.data.visResizable) {
+        if (visResizable) {
             buttonStyle.width = '100%';
             buttonStyle.height = '100%';
         } else {
@@ -733,6 +750,8 @@ class JQuiButton extends VisRxWidget {
             // ignore
         } else if (this.state.rxData.nav_view && this.state.rxData.buttontext_view) {
             buttonText = this.props.context.views[this.state.rxData.nav_view]?.settings?.navigationTitle || this.state.rxData.nav_view;
+        } else if (this.state.rxData.buttontext === undefined) {
+            buttonText = this.state.rxData.text || ''; // back compatibility
         } else {
             buttonText = this.state.rxData.buttontext;
         }

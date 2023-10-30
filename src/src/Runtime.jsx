@@ -684,6 +684,15 @@ class Runtime extends GenericApp {
 
     changeView = async selectedView => {
         if (selectedView === this.state.selectedView) {
+            // inform about inView navigation
+            if (this.state.runtime || !this.state.editMode) {
+                const currentPath = VisEngine.getCurrentPath();
+                const newHash = VisEngine.buildPath(currentPath.view, currentPath.path);
+                window.vis.lastChangedView = this.state.projectName ?
+                    `${this.state.projectName}/${newHash.replace(/^#/, '')}` :
+                    newHash.replace(/^#/, '');
+                window.vis.conn.sendCommand(window.vis.instance, 'changedView', window.vis.lastChangedView);
+            }
             return;
         }
         const newState = {
@@ -719,8 +728,13 @@ class Runtime extends GenericApp {
             await this.changeProject(project, true);
         }
 
-        if (!this.state.editMode) {
-            window.vis.conn.sendCommand(window.vis.instance, 'changedView', this.state.projectName ? (this.state.projectName + selectedView) : selectedView);
+        if (this.state.runtime || !this.state.editMode) {
+            const currentPath = VisEngine.getCurrentPath();
+            const newHash = VisEngine.buildPath(currentPath.view, currentPath.path);
+            window.vis.lastChangedView = this.state.projectName ?
+                `${this.state.projectName}/${newHash.replace(/^#/, '')}` :
+                newHash.replace(/^#/, '');
+            window.vis.conn.sendCommand(window.vis.instance, 'changedView', window.vis.lastChangedView);
 
             // inform the legacy widgets
             window.jQuery && window.jQuery(window).trigger('viewChanged', selectedView);

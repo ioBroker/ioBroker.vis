@@ -589,5 +589,7 @@
   "jqui_tooltip": "Dica",
   "Hide selected widgets": "Ocultar widgets selecionados",
   "Show only selected widgets": "Mostrar apenas widgets selecionados",
-  "Group widgets": "Agrupar widgets"
+  "Group widgets": "Agrupar widgets",
+  "Just use without modification": "Basta usar sem modificação",
+  "Modify": "Modificar"
 }

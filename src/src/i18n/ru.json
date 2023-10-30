@@ -589,5 +589,7 @@
   "jqui_tooltip": "Подсказка",
   "Hide selected widgets": "Скрыть выбранные виджеты",
   "Show only selected widgets": "Показать только выбранные виджеты",
-  "Group widgets": "Сгруппировать виджеты"
+  "Group widgets": "Сгруппировать виджеты",
+  "Just use without modification": "Просто используйте без изменений",
+  "Modify": "Буду изменить"
 }

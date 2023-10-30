@@ -8,11 +8,15 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle, FormControlLabel,
+    IconButton, InputAdornment,
     Switch,
     TextField,
 } from '@mui/material';
 
-import { Cancel, Check, Link as LinkIcon } from '@mui/icons-material';
+import {
+    Cancel, Check,
+    Clear, Link as LinkIcon,
+} from '@mui/icons-material';
 import { I18n, Utils, SelectID } from '@iobroker/adapter-react-v5';
 import VisFormatUtils from '../../Vis/visFormatUtils';
 
@@ -670,6 +674,8 @@ class WidgetBindingField extends Component {
         if (!this.state.showEditBindingDialog) {
             return null;
         }
+        const varValuesKeys = this.state.values ? Object.keys(this.state.values) : [];
+
         return <Dialog
             classes={{ paper: this.props.classes.dialog }}
             open={!0}
@@ -690,6 +696,16 @@ class WidgetBindingField extends Component {
                             if (e.keyCode === 13) {
                                 this.setState({ showEditBindingDialog: false }, () => this.onChange(this.state.editValue));
                             }
+                        }}
+                        InputProps={{
+                            endAdornment: this.state.editValue ? <InputAdornment position="end">
+                                <IconButton
+                                    onClick={() => this.setState({ editValue: '' })}
+                                    edge="end"
+                                >
+                                    <Clear />
+                                </IconButton>
+                            </InputAdornment> : null,
                         }}
                         style={{ width: 'calc(100% - 72px)' }}
                         onChange={async e => this.setState({ editValue: e.target.value }, () => {
@@ -725,20 +741,18 @@ class WidgetBindingField extends Component {
                         ...
                     </Button>
                 </div>
-                <div className={this.props.classes.values}>
-                    {Object.keys(this.state.values).map(id => <div key={id}>
+                {varValuesKeys.length ? <div className={this.props.classes.values}>
+                    {varValuesKeys.map(id => <div key={id}>
                         <span className={this.props.classes.valueTitle}>{id}</span>
                         <span>:</span>
                         <span className={`${this.props.classes.space} ${this.props.classes.valueContent}`}>
                             {`${this.state.values[id] === null || this.state.values[id] === undefined ? 'null' : this.state.values[id].toString()} [${typeof this.state.values[id]}]`}
                         </span>
                     </div>)}
-                </div>
+                </div> : null}
                 <div
                     className={this.props.classes.help}
-                    style={{
-                        height: `calc(100% - ${71 + 22 * Object.keys(this.state.values).length}px)`,
-                    }}
+                    style={{ height: `calc(100% - ${71 + 22 * varValuesKeys.length}px)` }}
                 >
                     <div>
                         {I18n.t('Old style')}
@@ -813,9 +827,8 @@ class WidgetBindingField extends Component {
                         this.setState({ askToModify: null }, () =>
                             this.insertInText(options.text, options));
                     }}
-                    startIcon={<Check />}
                 >
-                    {I18n.t('Apply')}
+                    {I18n.t('Modify')}
                 </Button>
                 <Button
                     variant="contained"
@@ -826,9 +839,8 @@ class WidgetBindingField extends Component {
                         this.setState({ askToModify: null }, () =>
                             this.insertInText(options.text, options));
                     }}
-                    startIcon={<Cancel />}
                 >
-                    {I18n.t('Cancel')}
+                    {I18n.t('Just use without modification')}
                 </Button>
             </DialogActions>
         </Dialog>;
@@ -862,6 +874,21 @@ class WidgetBindingField extends Component {
                                 this.setState({ askForArguments: null }, () =>
                                     this.insertInText(options.text, options));
                             }
+                        }}
+                        InputProps={{
+                            endAdornment: this.state.askForArguments.arg1 ? <InputAdornment position="end">
+                                <IconButton
+                                    onClick={() => this.setState({
+                                        askForArguments: {
+                                            ...this.state.askForArguments,
+                                            arg1: '',
+                                        },
+                                    })}
+                                    edge="end"
+                                >
+                                    <Clear />
+                                </IconButton>
+                            </InputAdornment> : null,
                         }}
                         autoFocus
                         onChange={e => this.setState({ askForArguments: { ...this.state.askForArguments, arg1: e.target.value } })}

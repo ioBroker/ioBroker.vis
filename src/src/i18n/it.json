@@ -589,5 +589,7 @@
   "jqui_tooltip": "Descrizione comando",
   "Hide selected widgets": "Nascondi i widget selezionati",
   "Show only selected widgets": "Mostra solo i widget selezionati",
-  "Group widgets": "Raggruppa i widget insieme"
+  "Group widgets": "Raggruppa i widget insieme",
+  "Just use without modification": "Basta usare senza modifiche",
+  "Modify": "Modificare"
 }
