@@ -228,6 +228,7 @@ const styles = theme => ({
 });
 
 const WIDGET_ICON_HEIGHT = 34;
+const IMAGE_TYPES = ['.png', '.jpg', '.svg', '.gif', '.apng', '.avif', '.webp'];
 
 class Widget extends Component {
     constructor(props) {
@@ -765,7 +766,7 @@ class Widget extends Component {
                 if (m) {
                     img = <img src={m[1]} className={this.props.classes.icon} alt={this.props.selectedWidgets[0]} />;
                 }
-            } else if (_widgetType?.preview && (_widgetType?.preview.endsWith('.svg') || _widgetType?.preview.endsWith('.png') || _widgetType?.preview.endsWith('.jpg'))) {
+            } else if (_widgetType?.preview && IMAGE_TYPES.find(ext => _widgetType.preview.toLowerCase().endsWith(ext))) {
                 img = <img src={_widgetType?.preview} className={this.props.classes.icon} alt={this.props.selectedWidgets[0]} />;
             }
 

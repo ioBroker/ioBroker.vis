@@ -129,7 +129,7 @@ class WidgetBindingField extends Component {
         }
         // read all states
         const stateOids = [];
-        oids.map(oid => {
+        oids.forEach(oid => {
             const parts = oid.visOid.split('.');
             if (parts[parts.length - 1] === 'val' || parts[parts.length - 1] === 'ts' || parts[parts.length - 1] === 'lc' || parts[parts.length - 1] === 'ack') {
                 parts.pop();
@@ -923,8 +923,7 @@ class WidgetBindingField extends Component {
         if (editValue) {
             if (!isInBrackets && !options.oldStyle) {
                 if (options.modify) {
-                    editValue = `
-                    }}${editValue.substring(0, selectionStart)}{v:${text};v * 1}${editValue.substring(selectionEnd)}`;
+                    editValue = `${editValue.substring(0, selectionStart)}{v:${text};v * 1}${editValue.substring(selectionEnd)}`;
                 } else {
                     editValue = `${editValue.substring(0, selectionStart)}{${text}}${editValue.substring(selectionEnd)}`;
                 }
@@ -952,7 +951,7 @@ class WidgetBindingField extends Component {
         } else {
             editValue = `{${text}}`;
         }
-        const { calculatedEditValue, values } = await this.calculateValue(e.target.value);
+        const { calculatedEditValue, values } = await this.calculateValue(editValue);
 
         this.setState({ editValue, calculatedEditValue, values }, () => {
             // set cursor on the same position

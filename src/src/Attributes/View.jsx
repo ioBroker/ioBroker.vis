@@ -25,10 +25,12 @@ import {
     Tooltip,
 } from '@mui/material';
 
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import CloseIcon from '@mui/icons-material/Close';
-import ClearIcon from '@mui/icons-material/Clear';
-import InfoIcon from '@mui/icons-material/Info';
+import {
+    ExpandMore as ExpandMoreIcon,
+    Close as CloseIcon,
+    Clear as ClearIcon,
+    Info as InfoIcon,
+} from '@mui/icons-material';
 
 import {
     ColorPicker,
