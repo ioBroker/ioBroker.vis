@@ -349,7 +349,7 @@ const WidgetField = props => {
         }
     };
 
-    let propValue = props.isStyle ? widget.style[field.name] : widget.data[field.name];
+    let propValue = props.isStyle ? widget.style?.[field.name] : widget.data?.[field.name];
     if (propValue === undefined) {
         propValue = null;
     }
