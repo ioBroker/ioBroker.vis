@@ -228,6 +228,9 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (foxriver76) removed duplicate `none` entry in `border-style` dropdown
+
 ### 2.3.3 (2023-10-30)
 * (foxriver76) fixed problem, that vis is not loading if a single widget has a script error
 * (bluefox) added the editor for bindings
