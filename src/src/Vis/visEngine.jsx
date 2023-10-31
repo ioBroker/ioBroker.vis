@@ -223,7 +223,7 @@ class VisEngine extends React.Component {
     }
 
     static getCurrentPath() {
-        const path = window.location.hash.replace('#', '').split('/').map(p => decodeURIComponent(p));
+        const path = window.location.hash.replace(/^#/, '').split('/').map(p => decodeURIComponent(p));
         return {
             view: path.shift(),
             path,
@@ -415,6 +415,7 @@ class VisEngine extends React.Component {
                 IDs: [],
             },
             conn: this.conn,
+            lastChangedView: null, // used in vis-2 to save last sent view name over vis-2.0.command
             updateContainers: () => {
                 const refViews = this.refViews;
                 Object.keys(refViews).forEach(view => refViews[view].onCommand('updateContainers'));

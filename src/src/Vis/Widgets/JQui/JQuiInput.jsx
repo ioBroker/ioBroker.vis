@@ -131,10 +131,14 @@ class JQuiInput extends VisRxWidget {
     async componentDidMount() {
         super.componentDidMount();
 
-        const input = await this.props.context.socket.getState(this.state.rxData.oid);
-        if (input && input.val !== undefined && input.val !== null) {
-            input.val = input.val.toString();
-            this.setState({ input: input.val });
+        try {
+            const input = await this.props.context.socket.getState(this.state.rxData.oid);
+            if (input && input.val !== undefined && input.val !== null) {
+                input.val = input.val.toString();
+                this.setState({ input: input.val });
+            }
+        } catch (error) {
+            console.error(`Cannot get state ${this.state.rxData.oid}: ${error}`);
         }
 
         if (this.inputRef.current &&

@@ -247,12 +247,20 @@ class JQuiSlider extends VisRxWidget {
     async componentDidMount() {
         super.componentDidMount();
         if (this.state.rxData.oid && this.state.rxData.oid !== 'nothing_selected') {
-            const state = await this.props.context.socket.getState(this.state.rxData.oid);
-            this.onStateUpdated(this.state.rxData.oid, state);
+            try {
+                const state = await this.props.context.socket.getState(this.state.rxData.oid);
+                this.onStateUpdated(this.state.rxData.oid, state);
+            } catch (error) {
+                console.error(`Cannot get state ${this.state.rxData.oid}: ${error}`);
+            }
         }
         if (this.state.rxData.type === 'range' && this.state.rxData['oid-2'] && this.state.rxData['oid-2'] !== 'nothing_selected') {
-            const state = await this.props.context.socket.getState(this.state.rxData['oid-2']);
-            this.onStateUpdated(this.state.rxData['oid-2'], state);
+            try {
+                const state = await this.props.context.socket.getState(this.state.rxData['oid-2']);
+                this.onStateUpdated(this.state.rxData['oid-2'], state);
+            } catch (error) {
+                console.error(`Cannot get state ${this.state.rxData.oid}: ${error}`);
+            }
         }
     }
 

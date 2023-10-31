@@ -8,6 +8,8 @@ import { FolderZip } from '@mui/icons-material';
 
 import { I18n, Utils } from '@iobroker/adapter-react-v5';
 
+const IMAGE_TYPES = ['.png', '.jpg', '.svg', '.gif', '.apng', '.avif', '.webp'];
+
 const UploadFile = props => {
     const [fileName, setFileName] = useState('');
     const [fileData, setFileData] = useState(null);
@@ -62,7 +64,7 @@ const UploadFile = props => {
                 {fileName ? <>
                     <div>{fileName}</div>
                     {fileName.endsWith('.zip') ? <FolderZip /> : null}
-                    {fileName.endsWith('.png') || fileName.endsWith('.jpg') || fileName.endsWith('.svg') ?
+                    {IMAGE_TYPES.find(ext => fileName.toLowerCase().endsWith(ext)) ?
                         <img
                             src={fileData}
                             alt="uploaded"

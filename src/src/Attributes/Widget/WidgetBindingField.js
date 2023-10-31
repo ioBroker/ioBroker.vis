@@ -3,16 +3,20 @@ import PropTypes from 'prop-types';
 import withStyles from '@mui/styles/withStyles';
 
 import {
-    Button,
+    Button, Checkbox,
     Dialog,
     DialogActions,
     DialogContent,
-    DialogTitle,
+    DialogTitle, FormControlLabel,
+    IconButton, InputAdornment,
     Switch,
     TextField,
 } from '@mui/material';
 
-import { Cancel, Check, Link as LinkIcon } from '@mui/icons-material';
+import {
+    Cancel, Check,
+    Clear, Link as LinkIcon,
+} from '@mui/icons-material';
 import { I18n, Utils, SelectID } from '@iobroker/adapter-react-v5';
 import VisFormatUtils from '../../Vis/visFormatUtils';
 
@@ -35,7 +39,6 @@ const styles = () => ({
         marginLeft: 10,
         display: 'inline-block',
         width: '100%',
-        height: 'calc(100% - 71px)',
         overflow: 'hidden',
         verticalAlign: 'top',
     },
@@ -58,6 +61,13 @@ const styles = () => ({
         cursor: 'pointer',
         textDecoration: 'underline',
     },
+    valueTitle: {
+        fontFamily: 'monospace',
+        fontWeight: 'bold',
+    },
+    valueContent: {
+        fontFamily: 'monospace',
+    },
 });
 
 class WidgetBindingField extends Component {
@@ -73,11 +83,11 @@ class WidgetBindingField extends Component {
         this.state = {
             value,
             editValue: value,
-            // calculatedValue: this.calculateValue(value),
             showSelectIdDialog: false,
             showEditBindingDialog: false,
             newStyle: true,
             error: '',
+            values: {},
         };
 
         this.inputRef = React.createRef();
@@ -98,6 +108,18 @@ class WidgetBindingField extends Component {
         return null;
     }
 
+    detectOldBindingStyle(value) {
+        this.visFormatUtils = this.visFormatUtils || new VisFormatUtils({ vis: window.vis });
+        const oids = this.visFormatUtils.extractBinding(value);
+        if (!oids) {
+            return false;
+        }
+        if (oids.find(it => it.token?.includes(':'))) {
+            return false;
+        }
+        return true;
+    }
+
     async calculateValue(value) {
         this.visFormatUtils = this.visFormatUtils || new VisFormatUtils({ vis: window.vis });
         if (value === undefined || value === null) {
@@ -110,12 +132,28 @@ class WidgetBindingField extends Component {
             return value;
         }
         // read all states
-        const stateOids = oids.map(oid => {
+        const stateOids = [];
+        oids.forEach(oid => {
             const parts = oid.visOid.split('.');
             if (parts[parts.length - 1] === 'val' || parts[parts.length - 1] === 'ts' || parts[parts.length - 1] === 'lc' || parts[parts.length - 1] === 'ack') {
                 parts.pop();
             }
-            return parts.join('.');
+            const id = parts.join('.');
+            if (!stateOids.includes(id)) {
+                stateOids.push(id);
+            }
+            if (oid.operations) {
+                for (let op = 0; op < oid.operations.length; op++) {
+                    const args = oid.operations[op].arg;
+                    if (args && args.length) {
+                        for (let a = 0; a < args.length; a++) {
+                            if (!stateOids.includes(args[a].systemOid)) {
+                                stateOids.push(args[a].systemOid);
+                            }
+                        }
+                    }
+                }
+            }
         });
 
         const values = {};
@@ -123,19 +161,25 @@ class WidgetBindingField extends Component {
             if (stateOids[i].includes('.')) {
                 const state = await this.props.socket.getState(stateOids[i]);
                 state && Object.keys(state).forEach(attr => {
-                    values[`${stateOids[i]}.${attr}`] = state[attr];
+                    const name = `${stateOids[i]}.${attr}`;
+                    if (oids.find(it => it.visOid === name || it.operations?.find(op => op?.arg?.find(arg => arg.visOid === name)))) {
+                        values[name] = state[attr];
+                    }
                 });
             }
         }
 
-        return this.visFormatUtils.formatBinding(
-            value,
-            this.props.selectedView,
-            this.props.selectedWidgets[0],
-            this.props.project[this.props.selectedView].widgets[this.props.selectedWidgets[0]],
-            this.props.project[this.props.selectedView].widgets[this.props.selectedWidgets[0]].data,
+        return {
+            calculatedEditValue: this.visFormatUtils.formatBinding(
+                value,
+                this.props.selectedView,
+                this.props.selectedWidgets[0],
+                this.props.project[this.props.selectedView].widgets[this.props.selectedWidgets[0]],
+                this.props.project[this.props.selectedView].widgets[this.props.selectedWidgets[0]].data,
+                values,
+            ),
             values,
-        );
+        };
     }
 
     onChange(value) {
@@ -153,7 +197,7 @@ class WidgetBindingField extends Component {
         this.props.changeProject(project);
 
         // try to calculate binding
-        this.setState({ value /* , calculatedValue: this.calculateValue(value) */ });
+        this.setState({ value });
     }
 
     renderSpecialNames() {
@@ -277,110 +321,307 @@ class WidgetBindingField extends Component {
             <p>The following operations are supported:</p>
             <ul>
                 <li>
-                    <b className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>*</b>
+                    <b
+                        className={classes.clickable}
+                        onClick={() => this.insertInText('*', {
+                            oldStyle: true,
+                            desc: 'Multiply with N',
+                            args: [{ type: 'number', label: 'N' }],
+                        })}
+                    >
+                        *(N)
+                    </b>
                     - multiplying. Argument must be in brackets, like
                     <i className={classes.space}>&quot;*(4)&quot;</i>.
                     <span className={classes.space}>this sample, we multiply the value with 4.</span>
                 </li>
                 <li>
-                    <b className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>+</b>
+                    <b
+                        className={classes.clickable}
+                        onClick={() => this.insertInText('+', {
+                            oldStyle: true,
+                            desc: 'Add to N',
+                            args: [{ type: 'number', label: 'N' }],
+                        })}
+                    >
+                        +(N)
+                    </b>
                     - add. Argument must be in brackets, like
                     <i className={classes.space}>&quot;+(4.5)&quot;</i>.
                     <span className={classes.space}>In this sample we add to value 4.5.</span>
                 </li>
                 <li>
-                    <b className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>-</b>
+                    <b
+                        className={classes.clickable}
+                        onClick={() => this.insertInText('-', {
+                            oldStyle: true,
+                            desc: 'Subtract N from value',
+                            args: [{ type: 'number', label: 'N' }],
+                        })}
+                    >
+                        -(N)
+                    </b>
                     - subtract. Argument must be in brackets, like
                     <i className={classes.space}>&quot;-(-674.5)&quot;</i>.
                     <span className={classes.space}>In this sample we subtract from value -674.5.</span>
                 </li>
                 <li>
-                    <b className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>/</b>
+                    <b
+                        className={classes.clickable}
+                        onClick={() => this.insertInText('/', {
+                            oldStyle: true,
+                            desc: 'Divide by D',
+                            args: [{ type: 'number', label: 'D' }],
+                        })}
+                    >
+                        /(D)
+                    </b>
                     - dividing. Argument must be in brackets, like
                     <i className={classes.space}>&quot;/(0.5)&quot;</i>.
                     <span className={classes.space}>In this sample, we divide the value by 0.5.</span>
                 </li>
                 <li>
-                    <b className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>%</b>
+                    <b
+                        className={classes.clickable}
+                        onClick={() => this.insertInText('%', {
+                            oldStyle: true,
+                            desc: 'Modulo with M',
+                            args: [{ type: 'number', label: 'M' }],
+                        })}
+                    >
+                        %(M)
+                    </b>
                     - modulo. Argument must be in brackets, like
                     <i className={classes.space}>&quot;%(5)&quot;</i>.
                     <span className={classes.space}>In this sample, we take modulo of 5.</span>
                 </li>
-                <li className={classes.clickable} onClick={() => this.insertInText('*', true)}>
-                    <b>round</b>
+                <li>
+                    <b
+                        className={classes.clickable}
+                        onClick={() => this.insertInText('round', {
+                            oldStyle: true,
+                            desc: 'Round to integer',
+                        })}
+                    >
+                        round
+                    </b>
                     - round the value.
                 </li>
-                <li className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>
-                    <b>round(N)</b>
+                <li>
+                    <b
+                        className={classes.clickable}
+                        onClick={() => this.insertInText('round', {
+                            oldStyle: true,
+                            desc: 'Round with R places after comma',
+                            args: [{ type: 'number', label: 'R' }],
+                        })}
+                    >
+                        round(R)
+                    </b>
                     - round the value with N places after point, e.g.,
                     <i>&quot;34.678;round(1) =&gt; 34.7&quot;</i>
                 </li>
-                <li className={classes.clickable} onClick={() => this.insertInText('*', true)}>
+                <li>
+                    <b
+                        className={classes.clickable}
+                        onClick={() => this.insertInText('hex', {
+                            oldStyle: true,
+                            desc: 'convert value to hexadecimal value',
+                        })}
+                    >
+                        hex
+                    </b>
                     <b>hex</b>
                     - convert value to hexadecimal value. All letters are lower cased.
                 </li>
-                <li className={classes.clickable} onClick={() => this.insertInText('*', true)}>
+                <li>
+                    <b
+                        className={classes.clickable}
+                        onClick={() => this.insertInText('hex2', {
+                            oldStyle: true,
+                            desc: 'Convert value to hexadecimal value. If value less 16, so the leading zero will be added',
+                        })}
+                    >
+                        hex2
+                    </b>
                     <b>hex2</b>
                     - convert value to hexadecimal value. All letters are lower cased. If value less 16, so the leading zero will be added.
                 </li>
-                <li className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>
+                <li>
+                    <b
+                        className={classes.clickable}
+                        onClick={() => this.insertInText('HEX', {
+                            oldStyle: true,
+                            desc: 'Convert value to hexadecimal value. All letters are upper cased',
+                        })}
+                    >
+                        HEX
+                    </b>
                     <b>HEX</b>
                     - same as hex, but upper-cased.
                 </li>
-                <li className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>
+                <li>
+                    <b
+                        className={classes.clickable}
+                        onClick={() => this.insertInText('HEX2', {
+                            oldStyle: true,
+                            desc: 'Convert value to hexadecimal value. All letters are upper cased. If value less 16, so the leading zero will be added',
+                        })}
+                    >
+                        HEX
+                    </b>
                     <b>HEX2</b>
                     - same as hex2, but upper-cased.
                 </li>
-                <li className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>
-                    <b>date</b>
-                    - format date according to given format. Format is the same as in
-                    <a className={classes.space} href="https://github.com/iobroker/iobroker.javascript/blob/master/README.md#formatdate" target="_blank" rel="noreferrer">
-                        iobroker.javascript
-                    </a>
-                </li>
                 <li>
-                    <b className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>min(N)</b>
+                    <b
+                        className={classes.clickable}
+                        onClick={() => this.insertInText('min', {
+                            oldStyle: true,
+                            desc: 'if value is less than N, take the N, else take the value',
+                            args: [{ type: 'number', label: 'N' }],
+                        })}
+                    >
+                        min(N)
+                    </b>
                     - if value is less than N, take the N, else value
                 </li>
                 <li>
-                    <b className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>max(M)</b>
+                    <b
+                        className={classes.clickable}
+                        onClick={() => this.insertInText('max', {
+                            oldStyle: true,
+                            desc: 'if value is greater than M, take the M, else take the value',
+                            args: [{ type: 'number', label: 'M' }],
+                        })}
+                    >
+                        max(N)
+                    </b>
                     - if value is greater than M, take the M, else value
                 </li>
                 <li>
-                    <b className={classes.clickable} onClick={() => this.insertInText('*', true)}>sqrt</b>
+                    <b
+                        className={classes.clickable}
+                        onClick={() => this.insertInText('sqrt', {
+                            oldStyle: true,
+                            desc: 'square root',
+                            args: [{ type: 'number', label: 'M' }],
+                        })}
+                    >
+                        sqrt
+                    </b>
                     - square root
                 </li>
                 <li>
-                    <b className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>pow(n)</b>
+                    <b
+                        className={classes.clickable}
+                        onClick={() => this.insertInText('pow', {
+                            oldStyle: true,
+                            desc: 'power of N',
+                            args: [{ type: 'number', label: 'n' }],
+                        })}
+                    >
+                        pow(n)
+                    </b>
                     - power of N.
                 </li>
                 <li>
-                    <b className={classes.clickable} onClick={() => this.insertInText('*', true)}>pow</b>
+                    <b
+                        className={classes.clickable}
+                        onClick={() => this.insertInText('pow', {
+                            oldStyle: true,
+                            desc: 'power of 2',
+                        })}
+                    >
+                        pow
+                    </b>
                     - power of 2.
                 </li>
                 <li>
-                    <b className={classes.clickable} onClick={() => this.insertInText('*', true)}>floor</b>
+                    <b
+                        className={classes.clickable}
+                        onClick={() => this.insertInText('floor', {
+                            oldStyle: true,
+                            desc: 'Math.floor',
+                        })}
+                    >
+                        floor
+                    </b>
                     - Math.floor
                 </li>
                 <li>
-                    <b className={classes.clickable} onClick={() => this.insertInText('*', true)}>ceil</b>
+                    <b
+                        className={classes.clickable}
+                        onClick={() => this.insertInText('ceil', {
+                            oldStyle: true,
+                            desc: 'Math.ceil',
+                        })}
+                    >
+                        ceil
+                    </b>
                     - Math.ceil
                 </li>
                 <li>
+                    <b
+                        className={classes.clickable}
+                        onClick={() => this.insertInText('ceil', {
+                            oldStyle: true,
+                            desc: 'Math.ceil',
+                        })}
+                    >
+                        ceil
+                    </b>
                     <b className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>random(R)</b>
                     - Math.random() * R, or just Math.random() if no argument
                 </li>
                 <li>
-                    <b className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>formatValue(decimals)</b>
+                    <b
+                        className={classes.clickable}
+                        onClick={() => this.insertInText('formatValue', {
+                            oldStyle: true,
+                            desc: 'format value according to system settings and use decimals',
+                            args: [{ type: 'number', label: 'decimals' }],
+                        })}
+                    >
+                        formatValue(decimals)
+                    </b>
                     - format value according to system settings and use decimals
                 </li>
                 <li>
-                    <b className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>date(format)</b>
+                    <b
+                        className={classes.clickable}
+                        onClick={() => this.insertInText('date', {
+                            oldStyle: true,
+                            desc: 'format value as date. The format is like "YYYY-MM-DD hh:mm:ss.sss"',
+                            args: [{ type: 'string', label: 'format' }],
+                        })}
+                    >
+                        date(format)
+                    </b>
                     - format value as date. The format is like:
                     <i className={classes.space}>&quot;YYYY-MM-DD hh:mm:ss.sss&quot;</i>
+                    . Format is the same as in
+                    <a className={classes.space} href="https://github.com/iobroker/iobroker.javascript/blob/master/README.md#formatdate" target="_blank" rel="noreferrer">
+                        iobroker.javascript
+                    </a>
+                    .
+                    <span className={classes.space}>If no format given, so the system date format will be used.</span>
                 </li>
                 <li>
-                    <b className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>momentDate(format, useTodayOrYesterday)</b>
+                    <b
+                        className={classes.clickable}
+                        onClick={() => this.insertInText('momentDate', {
+                            oldStyle: true,
+                            desc: 'format value as date using Moment.js',
+                            link: 'https://momentjs.com/docs/#/displaying/format/',
+                            args: [
+                                { type: 'string', label: 'format' },
+                                { type: 'boolean', label: 'Use today or yesterday' },
+                            ],
+                        })}
+                    >
+                        momentDate(format, useTodayOrYesterday)
+                    </b>
                     - format value as date using Moment.js.
                     <a className={classes.space} href="https://momentjs.com/docs/#/displaying/format/" target="_blank" rel="noreferrer">
                         formats must be entered according to the moment.js library
@@ -389,7 +630,16 @@ class WidgetBindingField extends Component {
                     <span className={classes.space}>With &apos;useTodayOrYesterday=true&apos; the &apos;moment.js&apos; format &apos;ddd&apos;/&apos;dddd&apos; are overwritten with today / yesterday</span>
                 </li>
                 <li>
-                    <b className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>array(element1,element2[,element3,element4])</b>
+                    <b
+                        className={classes.clickable}
+                        onClick={() => this.insertInText('array', {
+                            oldStyle: true,
+                            desc: 'returns the element in given array according to index (converted from value)',
+                            args: [{ type: 'string', label: 'array elements divided by comma' }],
+                        })}
+                    >
+                        array(element1,element2[,element3,element4])
+                    </b>
                     - returns the element of index. e.g.:
                     <span className={`${classes.code} ${classes.space}`}>&#123;id.ack;array(ack is false,ack is true)&#125;</span>
                 </li>
@@ -411,7 +661,7 @@ class WidgetBindingField extends Component {
                 <span className={classes.space}>(for last change) at the end of object id, e.g.:</span>
             </p>
             <p className={classes.code}>
-Last change: &#123;objectRed.lc;date(hh:mm)&#125;
+                Last change: &#123;objectRed.lc;date(hh:mm)&#125;
             </p>
         </div>;
     }
@@ -424,6 +674,8 @@ Last change: &#123;objectRed.lc;date(hh:mm)&#125;
         if (!this.state.showEditBindingDialog) {
             return null;
         }
+        const varValuesKeys = this.state.values ? Object.keys(this.state.values) : [];
+
         return <Dialog
             classes={{ paper: this.props.classes.dialog }}
             open={!0}
@@ -445,12 +697,23 @@ Last change: &#123;objectRed.lc;date(hh:mm)&#125;
                                 this.setState({ showEditBindingDialog: false }, () => this.onChange(this.state.editValue));
                             }
                         }}
+                        InputProps={{
+                            endAdornment: this.state.editValue ? <InputAdornment position="end">
+                                <IconButton
+                                    onClick={() => this.setState({ editValue: '' })}
+                                    edge="end"
+                                >
+                                    <Clear />
+                                </IconButton>
+                            </InputAdornment> : null,
+                        }}
                         style={{ width: 'calc(100% - 72px)' }}
                         onChange={async e => this.setState({ editValue: e.target.value }, () => {
                             this.calculateTimeout && clearTimeout(this.calculateTimeout);
                             this.calculateTimeout = setTimeout(async () => {
                                 this.calculateTimeout = null;
-                                this.setState({ calculatedEditValue: await this.calculateValue(e.target.value) });
+                                const { calculatedEditValue, values } = await this.calculateValue(e.target.value);
+                                this.setState({ calculatedEditValue, values });
                             }, 200);
                         })}
                         helperText={<span>
@@ -478,7 +741,19 @@ Last change: &#123;objectRed.lc;date(hh:mm)&#125;
                         ...
                     </Button>
                 </div>
-                <div className={this.props.classes.help}>
+                {varValuesKeys.length ? <div className={this.props.classes.values}>
+                    {varValuesKeys.map(id => <div key={id}>
+                        <span className={this.props.classes.valueTitle}>{id}</span>
+                        <span>:</span>
+                        <span className={`${this.props.classes.space} ${this.props.classes.valueContent}`}>
+                            {`${this.state.values[id] === null || this.state.values[id] === undefined ? 'null' : this.state.values[id].toString()} [${typeof this.state.values[id]}]`}
+                        </span>
+                    </div>)}
+                </div> : null}
+                <div
+                    className={this.props.classes.help}
+                    style={{ height: `calc(100% - ${71 + 22 * varValuesKeys.length}px)` }}
+                >
                     <div>
                         {I18n.t('Old style')}
                         <Switch
@@ -515,28 +790,197 @@ Last change: &#123;objectRed.lc;date(hh:mm)&#125;
         </Dialog>;
     }
 
-    async insertInText(text, oldStyle) {
-        const selectionStart = this.inputRef.current.selectionStart;
-        const selectionEnd = this.inputRef.current.selectionEnd;
+    static isInBrackets(text, pos) {
+        let counter = 0;
+        for (let i = 0; i < pos; i++) {
+            if (text[i] === '{') {
+                counter++;
+            } else if (text[i] === '}') {
+                counter--;
+            }
+        }
+        return counter > 0;
+    }
+
+    renderDialogAskToModify() {
+        if (!this.state.askToModify) {
+            return null;
+        }
+        return <Dialog
+            open={!0}
+            key="modifyDialog"
+            onClose={() => this.setState({ askToModify: null })}
+        >
+            <DialogTitle>{I18n.t('Edit binding')}</DialogTitle>
+            <DialogContent>
+                <div>
+                    {I18n.t('Do you want to modify the value or just use it as it is?')}
+                </div>
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    variant="contained"
+                    color="grey"
+                    onClick={() => {
+                        const options = this.state.askToModify;
+                        options.modify = true;
+                        this.setState({ askToModify: null }, () =>
+                            this.insertInText(options.text, options));
+                    }}
+                >
+                    {I18n.t('Modify')}
+                </Button>
+                <Button
+                    variant="contained"
+                    color="grey"
+                    onClick={() => {
+                        const options = this.state.askToModify;
+                        options.modify = false;
+                        this.setState({ askToModify: null }, () =>
+                            this.insertInText(options.text, options));
+                    }}
+                >
+                    {I18n.t('Just use without modification')}
+                </Button>
+            </DialogActions>
+        </Dialog>;
+    }
+
+    renderDialogArguments() {
+        if (!this.state.askForArguments) {
+            return null;
+        }
+        return <Dialog
+            open={!0}
+            maxWidth="md"
+            fullWidth
+            onClose={() => this.setState({ askForArguments: null })}
+            key="argsDialog"
+        >
+            <DialogTitle>{I18n.t('Arguments')}</DialogTitle>
+            <DialogContent>
+                <div>
+                    {this.state.askForArguments.desc}
+                </div>
+                {this.state.askForArguments.args[0] ? <div>
+                    <TextField
+                        variant="standard"
+                        label={this.state.askForArguments.args[0].label}
+                        value={this.state.askForArguments.arg1 === undefined ? '' : this.state.askForArguments.arg1}
+                        onKeyDown={e => {
+                            if (e.keyCode === 13) {
+                                const options = this.state.askForArguments;
+                                options.args = null;
+                                this.setState({ askForArguments: null }, () =>
+                                    this.insertInText(options.text, options));
+                            }
+                        }}
+                        InputProps={{
+                            endAdornment: this.state.askForArguments.arg1 ? <InputAdornment position="end">
+                                <IconButton
+                                    onClick={() => this.setState({
+                                        askForArguments: {
+                                            ...this.state.askForArguments,
+                                            arg1: '',
+                                        },
+                                    })}
+                                    edge="end"
+                                >
+                                    <Clear />
+                                </IconButton>
+                            </InputAdornment> : null,
+                        }}
+                        autoFocus
+                        onChange={e => this.setState({ askForArguments: { ...this.state.askForArguments, arg1: e.target.value } })}
+                    />
+                </div> : null}
+                {this.state.askForArguments.args[1] ? <div>
+                    <FormControlLabel
+                        variant="standard"
+                        label={this.state.askForArguments.args[1].label}
+                        control={<Checkbox
+                            checked={!!this.state.askForArguments.arg2}
+                            onChange={e => this.setState({ askForArguments: { ...this.state.askForArguments, arg2: e.target.checked } })}
+                        />}
+                    />
+                </div> : null}
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    variant="contained"
+                    color="grey"
+                    onClick={() => {
+                        const options = this.state.askForArguments;
+                        options.args = null;
+                        this.setState({ askForArguments: null }, () =>
+                            this.insertInText(options.text, options));
+                    }}
+                >
+                    {I18n.t('Apply')}
+                </Button>
+                <Button
+                    variant="contained"
+                    color="grey"
+                    onClick={() => this.setState({ askForArguments: null })}
+                >
+                    {I18n.t('Cancel')}
+                </Button>
+            </DialogActions>
+        </Dialog>;
+    }
+
+    async insertInText(text, options) {
+        options = options || {};
+        const selectionStart = options.selectionStart === undefined ? this.inputRef.current.selectionStart : options.selectionStart;
+        const selectionEnd = options.selectionEnd === undefined ? this.inputRef.current.selectionEnd : options.selectionEnd;
+
+        const isInBrackets = WidgetBindingField.isInBrackets(this.state.editValue, selectionStart);
+        if (!options.oldStyle && options.modify === undefined && !isInBrackets) {
+            // ask about do you want to modify value or not
+            this.setState({ askToModify: { ...options, text } });
+            return;
+        }
+        if (options.oldStyle && options.args) {
+            // show the argument dialog
+            this.setState({ askForArguments: { ...options, text } });
+            return;
+        }
 
         let editValue = this.state.editValue;
-        if (selectionStart !== selectionEnd) {
-            if (!selectionStart || editValue[selectionStart - 1] !== '{') {
-                editValue = `${editValue.substring(0, selectionStart)}{${text}}${editValue.substring(selectionEnd)}`;
+        if (editValue) {
+            if (!isInBrackets && !options.oldStyle) {
+                if (options.modify) {
+                    editValue = `${editValue.substring(0, selectionStart)}{v:${text};v * 1}${editValue.substring(selectionEnd)}`;
+                } else {
+                    editValue = `${editValue.substring(0, selectionStart)}{${text}}${editValue.substring(selectionEnd)}`;
+                }
+            } else if (options.oldStyle) {
+                if (options.arg1 !== undefined && options.arg2 !== undefined) {
+                    editValue = `${editValue.substring(0, selectionStart)};${text}(${options.arg1}, ${options.arg2})${editValue.substring(selectionEnd)}`;
+                } else if (options.arg1 !== undefined) {
+                    editValue = `${editValue.substring(0, selectionStart)};${text}(${options.arg1})${editValue.substring(selectionEnd)}`;
+                } else {
+                    editValue = `${editValue.substring(0, selectionStart)};${text}${editValue.substring(selectionEnd)}`;
+                }
             } else {
                 editValue = editValue.substring(0, selectionStart) + text + editValue.substring(selectionEnd);
             }
-        } else if (editValue) {
-            if (!selectionStart || editValue[selectionStart - 1] !== '{') {
-                editValue = `${editValue.substring(0, selectionStart)}{${text}}${editValue.substring(selectionStart)}`;
+        } else if (options.oldStyle) {
+            if (options.arg1 !== undefined && options.arg2 !== undefined) {
+                editValue = `{YOUR_OBJECT_ID;${text}(${options.arg1}, ${options.arg2})`;
+            } else if (options.arg1 !== undefined) {
+                editValue = `{YOUR_OBJECT_ID;${text}(${options.arg1})`;
             } else {
-                editValue = editValue.substring(0, selectionStart) + text + editValue.substring(selectionStart);
+                editValue = `{YOUR_OBJECT_ID;${text}`;
             }
+        } else if (options.modify) {
+            editValue = `{v:${text};v * 1}`;
         } else {
             editValue = `{${text}}`;
         }
+        const { calculatedEditValue, values } = await this.calculateValue(editValue);
 
-        this.setState({ editValue, calculatedEditValue: await this.calculateValue(editValue) }, () => {
+        this.setState({ editValue, calculatedEditValue, values }, () => {
             // set cursor on the same position
             this.inputRef.current.focus();
             if (this.inputRef.current.setSelectionRange) {
@@ -561,36 +1005,7 @@ Last change: &#123;objectRed.lc;date(hh:mm)&#125;
             selected={this.state.selectionValue}
             onOk={async selected => {
                 // insert on cursor and replace selected text
-                let editValue = this.state.editValue;
-                if (this.state.selectionStart !== this.state.selectionEnd) {
-                    if (!this.state.selectionStart || editValue[this.state.selectionStart - 1] !== '{') {
-                        editValue = `${editValue.substring(0, this.state.selectionStart)}{${selected}}${editValue.substring(this.state.selectionEnd)}`;
-                    } else {
-                        editValue = editValue.substring(0, this.state.selectionStart) + selected + editValue.substring(this.state.selectionEnd);
-                    }
-                } else if (editValue) {
-                    if (!this.state.selectionStart || editValue[this.state.selectionStart - 1] !== '{') {
-                        editValue = `${editValue.substring(0, this.state.selectionStart)}{${selected}}${editValue.substring(this.state.selectionStart)}`;
-                    } else {
-                        editValue = editValue.substring(0, this.state.selectionStart) + selected + editValue.substring(this.state.selectionStart);
-                    }
-                } else {
-                    editValue = `{${selected}}`;
-                }
-
-                this.setState({ editValue, calculatedEditValue: await this.calculateValue(editValue) }, () => {
-                    // set cursor on the same position
-                    this.inputRef.current.focus();
-                    if (this.inputRef.current.setSelectionRange) {
-                        this.inputRef.current.setSelectionRange(this.state.selectionStart, this.state.selectionStart);
-                    } else if (this.inputRef.current.createTextRange) {
-                        const t = this.inputRef.current.createTextRange();
-                        t.collapse(true);
-                        t.moveEnd('character', this.state.selectionStart);
-                        t.moveStart('character', this.state.selectionStart);
-                        t.select();
-                    }
-                });
+                await this.insertInText(selected, { selectionStart: this.state.selectionStart, selectionEnd: this.state.selectionEnd });
             }}
             onClose={() => this.setState({ showSelectIdDialog: false })}
             socket={this.props.socket}
@@ -613,10 +1028,13 @@ Last change: &#123;objectRed.lc;date(hh:mm)&#125;
                         size="small"
                         variant="contained"
                         onClick={async () => {
+                            const { calculatedEditValue, values } = await this.calculateValue(this.state.value);
                             this.setState({
                                 showEditBindingDialog: true,
                                 editValue: this.state.value,
-                                calculatedEditValue: await this.calculateValue(this.state.value),
+                                calculatedEditValue,
+                                values,
+                                newStyle: !this.detectOldBindingStyle(this.state.value),
                             });
                         }}
                     >
@@ -631,6 +1049,8 @@ Last change: &#123;objectRed.lc;date(hh:mm)&#125;
             />,
             this.renderEditBindDialog(),
             this.renderSelectIdDialog(),
+            this.renderDialogAskToModify(),
+            this.renderDialogArguments(),
         ];
     }
 }

@@ -228,6 +228,7 @@ const styles = theme => ({
 });
 
 const WIDGET_ICON_HEIGHT = 34;
+const IMAGE_TYPES = ['.png', '.jpg', '.svg', '.gif', '.apng', '.avif', '.webp'];
 
 class Widget extends Component {
     constructor(props) {
@@ -692,7 +693,7 @@ class Widget extends Component {
         }
         newState.fields = fields;
 
-        widgets && fields.forEach(group => {
+        widgets && fields?.forEach(group => {
             const type = group.isStyle ? 'style' : 'data';
             const found = this.props.selectedWidgets.find(selectedWidget => {
                 const fieldFound = group.fields.find(field => {
@@ -765,7 +766,7 @@ class Widget extends Component {
                 if (m) {
                     img = <img src={m[1]} className={this.props.classes.icon} alt={this.props.selectedWidgets[0]} />;
                 }
-            } else if (_widgetType?.preview && (_widgetType?.preview.endsWith('.svg') || _widgetType?.preview.endsWith('.png') || _widgetType?.preview.endsWith('.jpg'))) {
+            } else if (_widgetType?.preview && IMAGE_TYPES.find(ext => _widgetType.preview.toLowerCase().endsWith(ext))) {
                 img = <img src={_widgetType?.preview} className={this.props.classes.icon} alt={this.props.selectedWidgets[0]} />;
             }
 
@@ -1220,7 +1221,7 @@ class Widget extends Component {
                                     }
                                 })}
                             /> : null}
-                        {isBoundField ?
+                        {field.type !== 'custom' || field.label ? (isBoundField ?
                             <span
                                 className={this.props.classes.bindIconSpan}
                                 title={I18n.t('Deactivate binding and use field as standard input')}
@@ -1240,7 +1241,7 @@ class Widget extends Component {
                                     style={disabled ? { cursor: 'default' } : null}
                                     onClick={() => this.props.editMode && this.changeBinding(group.isStye, field.name)}
                                 />
-                            </span>}
+                            </span>) : null}
                         {field.tooltip ? <InfoIcon className={this.props.classes.infoIcon} /> : null}
                     </td>
                     <td className={this.props.classes.fieldContent}>

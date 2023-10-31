@@ -14,6 +14,8 @@ import {
 import { I18n, Utils } from '@iobroker/adapter-react-v5';
 import helpers from '../Components/WizardHelpers';
 
+const IMAGE_TYPES = ['.png', '.jpg', '.svg', '.gif', '.apng', '.avif', '.webp'];
+
 const styles = () => ({
     widget: {
         borderStyle: 'solid',
@@ -110,7 +112,11 @@ const Widget = props => {
             img = <img src={m[1]} className={props.classes.widgetImageWithSrc} alt={props.widgetType.id} />;
         }
     } else if (props.widgetType.preview &&
-        (props.widgetType.preview.endsWith('.svg') || props.widgetType.preview.endsWith('.png') || props.widgetType.preview.endsWith('.jpg') || props.widgetSet === '__marketplace')) {
+        (
+            IMAGE_TYPES.find(ext => props.widgetType.preview.toLowerCase().endsWith(ext)) ||
+            props.widgetSet === '__marketplace'
+        )
+    ) {
         img = <img src={props.widgetType.preview} className={props.classes.widgetImageWithSrc} alt={props.widgetType.id} />;
     }
 

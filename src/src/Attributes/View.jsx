@@ -25,10 +25,12 @@ import {
     Tooltip,
 } from '@mui/material';
 
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import CloseIcon from '@mui/icons-material/Close';
-import ClearIcon from '@mui/icons-material/Clear';
-import InfoIcon from '@mui/icons-material/Info';
+import {
+    ExpandMore as ExpandMoreIcon,
+    Close as CloseIcon,
+    Clear as ClearIcon,
+    Info as InfoIcon,
+} from '@mui/icons-material';
 
 import {
     ColorPicker,
@@ -178,15 +180,27 @@ const checkFunction = (funcText, settings) => {
 };
 
 function isPropertySameInAllViews(project, field, selectedView, views) {
-    const value = project[selectedView].settings[field];
+    let value = project[selectedView].settings[field];
     views = views || Object.keys(project).filter(v => v !== '___settings' && v !== selectedView);
+    if (field.type === 'checkbox') {
+        value = !!value;
+    } else {
+        value = value || '';
+    }
 
     if (!views.length) {
         return true;
     }
 
     for (let v = 0; v < views.length; v++) {
-        if (project[views[v]].settings[field] !== value) {
+        let val = project[views[v]].settings[field];
+        if (field.type === 'checkbox') {
+            val = !!val;
+        } else {
+            val = val || '';
+        }
+
+        if (val !== value) {
             return false;
         }
     }
@@ -698,9 +712,22 @@ const View = props => {
             for (let f = 0; f < showAllViewDialog.group.fields.length; f++) {
                 const field = showAllViewDialog.group.fields[f];
                 if (field.applyToAll && !field.groupApply) {
+                    let selectedViewValue = props.project[props.selectedView].settings[field.field];
+                    if (field.type === 'boolean') {
+                        selectedViewValue = !!selectedViewValue;
+                    } else {
+                        selectedViewValue = selectedViewValue || '';
+                    }
                     viewList.forEach(_view => {
+                        let viewValue = props.project[_view].settings[field.field];
+                        if (field.type === 'boolean') {
+                            viewValue = !!viewValue;
+                        } else {
+                            viewValue = viewValue || '';
+                        }
+
                         if (props.project[_view].settings.navigation &&
-                            props.project[_view].settings[field.field] !== props.project[props.selectedView].settings[field.field] &&
+                            viewValue !== selectedViewValue &&
                             !viewsToChange.includes(props.project[_view].name || _view)
                         ) {
                             viewsToChange.push(props.project[_view].name || _view);
@@ -709,10 +736,21 @@ const View = props => {
                 }
             }
         } else {
+            let selectedViewValue =  props.project[props.selectedView].settings[showAllViewDialog.field];
+
+            if (showAllViewDialog.field.type === 'boolean') {
+                selectedViewValue = !!selectedViewValue;
+            } else {
+                selectedViewValue = selectedViewValue || '';
+            }
             viewList.forEach(_view => {
-                if (props.project[_view].settings.navigation &&
-                    props.project[_view].settings[showAllViewDialog.field] !== props.project[props.selectedView].settings[showAllViewDialog.field]
-                ) {
+                let viewValue = props.project[_view].settings[showAllViewDialog.field];
+                if (showAllViewDialog.field.type === 'boolean') {
+                    viewValue = !!viewValue;
+                } else {
+                    viewValue = viewValue || '';
+                }
+                if (props.project[_view].settings.navigation && viewValue !== selectedViewValue) {
                     viewsToChange.push(props.project[_view].name || _view);
                 }
             });

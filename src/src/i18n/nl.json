@@ -589,5 +589,7 @@
   "jqui_tooltip": "Tooltip",
   "Hide selected widgets": "Verberg geselecteerde widgets",
   "Show only selected widgets": "Toon alleen geselecteerde widgets",
-  "Group widgets": "Groepeer widgets samen"
+  "Group widgets": "Groepeer widgets samen",
+  "Just use without modification": "Gewoon gebruiken zonder wijziging",
+  "Modify": "Bewerken"
 }

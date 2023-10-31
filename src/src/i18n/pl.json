@@ -589,5 +589,7 @@
   "jqui_tooltip": "Etykietka",
   "Hide selected widgets": "Ukryj wybrane widżety",
   "Show only selected widgets": "Pokaż tylko wybrane widżety",
-  "Group widgets": "Grupuj widżety razem"
+  "Group widgets": "Grupuj widżety razem",
+  "Just use without modification": "Po prostu użyj bez modyfikacji",
+  "Modify": "Modyfikować"
 }

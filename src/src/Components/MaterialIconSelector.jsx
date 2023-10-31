@@ -354,8 +354,12 @@ class MaterialIconSelector extends Component {
                             maxSize={10000}
                             accept={{
                                 'image/png': ['.png'],
-                                'image/jpg': ['.jpg'],
+                                'image/jpeg': ['.jpg'],
                                 'image/svg+xml': ['.svg'],
+                                'image/gif': ['.gif'],
+                                'image/apng': ['.apng'],
+                                'image/avif': ['.avif'],
+                                'image/webp': ['.webp'],
                             }}
                         />
                     </div> : null}

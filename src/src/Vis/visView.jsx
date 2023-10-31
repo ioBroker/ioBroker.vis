@@ -1683,6 +1683,7 @@ class VisView extends React.Component {
             theme = createTheme(theme, this.props.customSettings.viewStyle.overrides);
         }
 
+        // if the current view is not active, so hide it and show only if it is active
         if (this.props.view !== this.props.activeView) {
             style.display = 'none';
         }
@@ -1794,7 +1795,9 @@ class VisView extends React.Component {
             {renderedWidgets}
         </div>;
 
-        if (settings.navigation && !this.props.visInWidget) {
+        // render the menu if enabled and not in widget;
+        // only if the view is now active (not alwaysRender)
+        if (settings.navigation && !this.props.visInWidget && this.props.view === this.props.activeView) {
             renderedView = this.renderNavigation(renderedView);
         }
 
@@ -1805,9 +1808,8 @@ class VisView extends React.Component {
                 window._lastAppliedStyle = bgStyle;
                 window.document.documentElement.removeAttribute('style');
                 // apply background style to html
-                Object.keys(backgroundStyle).forEach(attr => {
-                    window.document.documentElement.style[attr] = backgroundStyle[attr];
-                });
+                Object.keys(backgroundStyle).forEach(attr =>
+                    window.document.documentElement.style[attr] = backgroundStyle[attr]);
             }
             window.document.documentElement.className = backgroundClass;
         }

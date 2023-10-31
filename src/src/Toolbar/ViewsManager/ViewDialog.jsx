@@ -39,7 +39,7 @@ const ViewDialog = props => {
         await props.changeProject(project);
         await props.changeView(props.dialogName);
         props.setDialog(null); // close dialog
-        props.dialogCallback && props.dialogCallback.cb(props.dialogName);
+        props.dialogCallback?.cb(props.dialogName);
     };
 
     const renameView = async () => {
@@ -50,7 +50,7 @@ const ViewDialog = props => {
         await props.changeProject(project);
         await props.changeView(props.dialogName);
         props.setDialog(null);
-        props.dialogCallback && props.dialogCallback.cb(props.dialogName);
+        props.dialogCallback?.cb(props.dialogName);
     };
 
     const copyView = async () => {
@@ -60,7 +60,7 @@ const ViewDialog = props => {
         await props.changeProject(project);
         await props.changeView(props.dialogName);
         props.setDialog(null);
-        props.dialogCallback && props.dialogCallback.cb(props.dialogName);
+        props.dialogCallback?.cb(props.dialogName);
     };
 
     const dialogTitles = {
@@ -143,7 +143,7 @@ ViewDialog.propTypes = {
     dialog: PropTypes.string,
     dialogName: PropTypes.string,
     dialogView: PropTypes.string,
-    dialogCallback: PropTypes.func,
+    dialogCallback: PropTypes.object,
     project: PropTypes.object,
     selectedView: PropTypes.string,
     setDialog: PropTypes.func,

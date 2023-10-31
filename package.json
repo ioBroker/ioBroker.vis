@@ -1,7 +1,7 @@
 {
   "name": "iobroker.vis-2",
   "description": "Next generation graphical user interface for ioBroker.",
-  "version": "2.3.2",
+  "version": "2.3.3",
   "author": {
     "name": "bluefox",
     "email": "dogafox@gmail.com"
@@ -26,7 +26,7 @@
   ],
   "dependencies": {
     "@iobroker/adapter-core": "^3.0.4",
-    "axios": "^1.5.1",
+    "axios": "^1.6.0",
     "jsonwebtoken": "^9.0.2",
     "mime": "^3.0.0"
   },

@@ -589,5 +589,7 @@
   "jqui_tooltip": "Info-bulle",
   "Hide selected widgets": "Masquer les widgets sélectionnés",
   "Show only selected widgets": "Afficher uniquement les widgets sélectionnés",
-  "Group widgets": "Regrouper les widgets"
+  "Group widgets": "Regrouper les widgets",
+  "Just use without modification": "A utiliser sans modification",
+  "Modify": "Modifier"
 }
