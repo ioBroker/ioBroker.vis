@@ -230,6 +230,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 ## Changelog
 ### **WORK IN PROGRESS**
 * (foxriver76) fix problem, that vis is not loading if a single widget has a script error
+* (foxriver76) removed duplicate `none` entry in `border-style` dropdown
 
 ### 2.3.2 (2023-10-14)
 * (bluefox) Allowed showing only selected widgets in edit mode
