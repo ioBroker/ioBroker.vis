@@ -228,7 +228,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.3.4 (2023-11-02)
 * (foxriver76) fix crash when selecting multiple widgets
 * (foxriver76) removed duplicate `none` entry in `border-style` dropdown
 * (foxriver76) fix crash when reordering widgets

@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.3.3",
+    "version": "2.3.4",
     "news": {
+      "2.3.4": {
+        "en": "fix crash when selecting multiple widgets\nremoved duplicate `none` entry in `border-style` dropdown\nfix crash when reordering widgets",
+        "de": "crash bei der auswahl mehrerer widgets beheben\nentfernte duplikat keinen eintrag im grenzstil dropdown\ncrash beheben, wenn widgets neu bestellt werden",
+        "ru": "исправить сбой при выборе нескольких виджетов\nудалить дубликаты ни один вход в приграничном стиле dropdown\nисправить сбой при перезаказе виджетов",
+        "pt": "corrigir acidente ao selecionar vários widgets\nremoveu nenhuma entrada duplicada na queda no estilo de fronteira\ncorrigir acidente quando reordenar widgets",
+        "nl": "vertaling:\nverwijderde duplicaat geen toegang in de grenzen\nvertaling:",
+        "fr": "corriger le crash lors de la sélection de plusieurs widgets\nsupprimé aucune entrée de type frontière\ncorriger le crash lors de la réorganisation des widgets",
+        "it": "correzione crash quando si seleziona più widget\nrimosso duplicato nessuno ingresso in stile di confine\nfissare il crash quando riordinare i widget",
+        "es": "fijar fallo al seleccionar varios widgets\nretirada no hay entrada en el desplegamiento del estilo fronterizo\narreglar fallo cuando reordenar widgets",
+        "pl": "reakcja rozbicia, gdy wybrane są wielokrotne widgety\nusunąć\nuszkodzenie rozruchu w czasie reorderingu",
+        "uk": "виправлення аварійних ситуацій при виборі декількох віджетів\nне дублікувати запис у спадку кордону\nвиправлення аварійних ситуацій при переадресації віджетів",
+        "zh-cn": "f 在选择多重目标时发生意外事故\n消除不重复进入边界的下降\nf 在重购燃烧目标时发生意外事故"
+      },
       "2.3.3": {
         "en": "fixed problem, that vis is not loading if a single widget has a script error\nadded the editor for bindings\nbackground does not used if in iframe",
         "de": "problem behoben, dass vis nicht geladen wird, wenn ein einzelnes widget einen skriptfehler hat\nden editor für bindungen hinzugefügt\nhintergrund nicht verwendet, wenn in iframe",
@@ -80,19 +93,6 @@
         "pl": "Date binding poprawił\nOptymizowane obciążenie widgeteria\nNawigacja lotnicza",
         "uk": "Дата обов'язкове виправлення\nОптимальне завантаження віджетів\nГоризонтальна навігація фіксована",
         "zh-cn": "具有约束力的\nB. 强制实施目标\n横向导航"
-      },
-      "2.2.5": {
-        "en": "Implemented horizontal navigation",
-        "de": "Ergänzte horizontale Navigation",
-        "ru": "Внедренная горизонтальная навигация",
-        "pt": "Navegação horizontal implementada",
-        "nl": "Vertaling:",
-        "fr": "Mise en œuvre de la navigation horizontale",
-        "it": "Navigazione orizzontale",
-        "es": "Navegación horizontal aplicada",
-        "pl": "Poprawa horyzontalna",
-        "uk": "Реалізовано горизонтальну навігацію",
-        "zh-cn": "执行横向导航"
       }
     },
     "title": "Visualisation Next Generation",
