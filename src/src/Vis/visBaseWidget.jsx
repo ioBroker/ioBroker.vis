@@ -38,6 +38,9 @@ import VisOrderMenu from './visOrderMenu';
 class VisBaseWidget extends React.Component {
     static FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~]+/g; // from https://github.com/ioBroker/ioBroker.js-controller/blob/master/packages/common/lib/common/tools.js
 
+    /** We do not store the SVG Element in the state because it is cyclic */
+    relativeMoveMenu;
+
     constructor(props) {
         super(props);
 
@@ -1520,7 +1523,7 @@ class VisBaseWidget extends React.Component {
         }
 
         return <VisOrderMenu
-            anchorEl={this.state.showRelativeMoveMenu}
+            anchorEl={this.state.showRelativeMoveMenu ? this.relativeMoveMenu : undefined}
             order={this.props.relativeWidgetOrder}
             wid={this.props.id}
             view={this.props.view}
@@ -1528,7 +1531,7 @@ class VisBaseWidget extends React.Component {
             themeType={this.props.context.themeType}
             onClose={order => {
                 this.props.onIgnoreMouseEvents(false);
-                this.setState({ showRelativeMoveMenu: null });
+                this.setState({ showRelativeMoveMenu: false });
                 order && this.props.context.onWidgetsChanged(null, this.props.view, { order });
             }}
         />;
@@ -1751,7 +1754,8 @@ class VisBaseWidget extends React.Component {
                                     e.preventDefault();
                                     this.pressTimeout = setTimeout(target => {
                                         this.props.onIgnoreMouseEvents(true);
-                                        this.setState({ showRelativeMoveMenu: target });
+                                        this.relativeMoveMenu = target;
+                                        this.setState({ showRelativeMoveMenu: true });
                                         this.pressTimeout = null;
                                     }, 300, e.currentTarget);
                                 }}
@@ -1770,7 +1774,8 @@ class VisBaseWidget extends React.Component {
                                     e.preventDefault();
                                     this.pressTimeout = setTimeout(target => {
                                         this.props.onIgnoreMouseEvents(true);
-                                        this.setState({ showRelativeMoveMenu: target });
+                                        this.relativeMoveMenu = target;
+                                        this.setState({ showRelativeMoveMenu: true });
                                         this.pressTimeout = null;
                                     }, 300, e.currentTarget);
                                 }}
