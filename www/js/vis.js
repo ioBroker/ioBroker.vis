@@ -324,29 +324,18 @@ var vis = {
     },
     _setValue:          function (id, state, isJustCreated) {
         var that = this;
-        var oldValue = this.states.attr(id + '.val');
-
-            // Inform other widgets, that does not support canJS
-        function sub_UpdateWidgetsNotCanJS(){
-            for (var i = 0, len = that.onChangeCallbacks.length; i < len; i++) {
-                try {
-                    that.onChangeCallbacks[i].callback(that.onChangeCallbacks[i].arg, id, state);
-                } catch (e) {
-                    that.conn.logError('Error: can\'t update states object for ' + id + '(' + e + '): ' + JSON.stringify(e.stack));
-                }
-            }
-        }
+        var oldValue = this.states.attr(`${id}.val`);
 
         // If ID starts from 'local_', do not send changes to the server, we assume that it is a local variable of the client
-        if (id.indexOf('local_') === 0) {
+        if (id.startsWith('local_')) {
             that.states.attr(state);
 
             // Inform other widgets, that does not support canJS
-            sub_UpdateWidgetsNotCanJS();
+            that._informWidgetsAboutChanges(id, state);
 
             //need update string to number
-            state.ts=Date.now();
-            state.lc=state.ts;
+            state.ts = Date.now();
+            state.lc = state.ts;
 
             // update local variable state -> needed for binding, etc.
             vis.updateState(id, state);
@@ -354,13 +343,13 @@ var vis = {
             return;
         }
 
-        this.conn.setState(id, state[id + '.val'], function (err) {
+        this.conn.setState(id, state[`${id}.val`], function (err) {
             if (err) {
                 //state[id + '.val'] = oldValue;
                 that.showMessage(_('Cannot execute %s for %s, because of insufficient permissions', 'setState', id), _('Insufficient permissions'), 'alert', 600);
             }
 
-            var val = that.states.attr(id + '.val');
+            var val = that.states.attr(`${id}.val`);
 
             if (that.states.attr(id) || val !== undefined || val !== null) {
                 that.states.attr(state);
@@ -368,14 +357,14 @@ var vis = {
                 // If error set value back, but we need generate the edge
                 if (err) {
                     if (isJustCreated) {
-                        that.states.removeAttr(id + '.val');
-                        that.states.removeAttr(id + '.q');
-                        that.states.removeAttr(id + '.from');
-                        that.states.removeAttr(id + '.ts');
-                        that.states.removeAttr(id + '.lc');
-                        that.states.removeAttr(id + '.ack');
+                        that.states.removeAttr(`${id}.val`);
+                        that.states.removeAttr(`${id}.q`);
+                        that.states.removeAttr(`${id}.from`);
+                        that.states.removeAttr(`${id}.ts`);
+                        that.states.removeAttr(`${id}.lc`);
+                        that.states.removeAttr(`${id}.ack`);
                     } else {
-                        state[id + '.val'] = oldValue;
+                        state[`${id}.val`] = oldValue;
                         that.states.attr(state);
                     }
                 }
@@ -2960,51 +2949,51 @@ var vis = {
         this.subscribing.byViews[view] = this.subscribing.byViews[view] || [];
 
         // subscribe
-        var oids_get = [];               //array for getting Values
-        var oids_subscribe = [];         //array for subscribe Values (exclude "local_")
-        
-        for (var i = 0; i < this.subscribing.byViews[view].length; i++) {
-            let oid=this.subscribing.byViews[view][i];
+        var oidsGet = [];            // array for getting Values
+        var oidsSubscribe = [];         // array for subscribe Values (exclude "local_")
 
-            //if (oid.indexOf('groupAttr') === 0)  //now not possible here, groupAttr changed to real VarName in getUsedObjectIDs()  (after #492)
+        for (let i = 0; i < this.subscribing.byViews[view].length; i++) {
+            const oid = this.subscribing.byViews[view][i];
+
+            // if (oid.indexOf('groupAttr') === 0)  // now not possible here, groupAttr changed to real VarName in getUsedObjectIDs()  (after #492)
             //   continue;
 
-            if (oid.indexOf('local_') === 0){ 
-                if (((this.states[oid+'.val'] == 'null') || (this.states[oid+'.val'] == null))   //Value can be already set in view user script
-                    && !oids_get.includes(oid))
-                  oids_get.push(oid); //add only to "oids_get" array. will try to find it in URL params  
+            if (oid.startsWith('local_')) {
+                if ((this.states[`${oid}.val`] === 'null' || (this.states[`${oid}.val`] === null))   // Value can be already set in view user script
+                    && !oidsGet.includes(oid)
+                ) {
+                    oidsGet.push(oid); // add only to "oids_get" array. will try to find it in URL params
+                }
 
                 continue;
             }
 
-            let pos = this.subscribing.active.indexOf(oid);  
-            if (pos === -1) {
+            if (!this.subscribing.active.includes(oid)) {
                 this.subscribing.active.push(oid);
-                
-                oids_subscribe.push(oid);
-                oids_get.push(oid);
+
+                oidsSubscribe.push(oid);
+                oidsGet.push(oid);
             }
         }
 
-        if (oids_get.length) {
-            var that = this;
-            console.debug('[' + Date.now() + '] Request ' + oids_get.length + ' Subscribe ' + oids_subscribe.length+' states.');
-            
-            this.conn.getStates(oids_get, function (error, data) {
-                error && that.showError(error);
+        if (oidsGet.length) {
+            console.debug(`[${Date.now()}] Request ${oidsGet.length} Subscribe ${oidsSubscribe.length} states.`);
 
-                that.updateStates(data);
+            this.conn.getStates(oidsGet, (error, data) => {
+                error && this.showError(error);
 
-                if (oids_subscribe.length)
-                    that.conn.subscribe(oids_subscribe);
-                
+                this.updateStates(data);
+
+                if (oidsSubscribe.length) {
+                    this.conn.subscribe(oidsSubscribe);
+                }
+
                 callback && callback();
             });
         } else {
             callback && callback();
         }
     },
-    //******************************************************************************************* */
     unsubscribeStates:  function (view) {
         if (!view || this.editMode) return;
 
