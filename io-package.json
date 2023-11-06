@@ -1,8 +1,34 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.4.15",
+        "version": "1.5.1",
         "news": {
+            "1.5.1": {
+                "en": "Changed License: it is now MIT, and the license check was removed",
+                "de": "Änderung der Lizenz: es ist jetzt MIT, und die Lizenzprüfung wurde entfernt",
+                "ru": "Изменена лицензия: сейчас MIT, и проверка лицензии была удалена",
+                "pt": "Licença alterada: é agora MIT, e a verificação da licença foi removida",
+                "nl": "Veranderde License, het is nu MIT en de rijbewijs is verwijderd",
+                "fr": "Licence modifiée: il est maintenant MIT, et le contrôle de licence a été supprimé",
+                "it": "Licenza modificata: è ora MIT e il controllo della licenza è stato rimosso",
+                "es": "Licencia modificada: ahora es MIT, y el cheque de licencia fue eliminado",
+                "pl": "Changed License: obecnie MIT, a kontrola licencji została usunięta",
+                "uk": "Змінена ліцензія: тепер MIT, а також зняття ліцензії",
+                "zh-cn": "修改的许可证:现在是投资条约,被取消许可证检查。"
+            },
+            "1.4.16": {
+                "en": "Corrected connection with \"only port\" URLs",
+                "de": "Korrigierte Verbindung mit \"nur Port\" URLs",
+                "ru": "Исправлена связь с URL-адресами \"только порт\"",
+                "pt": "Conexão correta com URLs \"apenas portas\"",
+                "nl": "Quality over Quantity (QoQ) Releases Vertaling:",
+                "fr": "Connexion corrigée avec des URLs \"uniquement port\"",
+                "it": "Collegamento corretto con URL \"solo porta\"",
+                "es": "Conexión corregida con URLs \"sólo puerto\"",
+                "pl": "Poprawne połączenie z „only port” URL",
+                "uk": "Виправлено підключення з URL-адресами \"тільки порт\"",
+                "zh-cn": "与“港口”URLs联系"
+            },
             "1.4.15": {
                 "en": "Better check of the offline license",
                 "de": "Bessere Überprüfung der Offline-Lizenz",
@@ -62,30 +88,6 @@
                 "es": "Se eliminaron los comandos de ES6 para que sean compatibles con navegadores más antiguos.\nSolucionado el problema con la actualización de widgets agrupados\nSe agregó un manifiesto web para poder manejar vis como la aplicación web.",
                 "pl": "Usunięto polecenia ES6, które mają być obsługiwane przez starsze przeglądarki\nNaprawiono problem z aktualizacją zgrupowanych widżetów\nDodano manifest internetowy, aby móc obsługiwać vis jako aplikację internetową",
                 "zh-cn": "删除了旧浏览器支持的 ES6 命令\n修复了分组小部件更新的问题\n添加了 Web 清单，以便能够将 vis 作为 Web 应用程序处理"
-            },
-            "1.4.8": {
-                "en": "Added support for js-controller 4.x",
-                "de": "Unterstützung für js-controller 4.x hinzugefügt",
-                "ru": "Добавлена поддержка js-контроллера 4.x",
-                "pt": "Adicionado suporte para js-controller 4.x",
-                "nl": "Ondersteuning toegevoegd voor js-controller 4.x",
-                "fr": "Ajout de la prise en charge de js-controller 4.x",
-                "it": "Aggiunto supporto per js-controller 4.x",
-                "es": "Se agregó soporte para js-controller 4.x",
-                "pl": "Dodano wsparcie dla js-controller 4.x",
-                "zh-cn": "添加了对 js-controller 4.x 的支持"
-            },
-            "1.4.7": {
-                "en": "Fixed subscribeOidAtRuntime if called with invalid IDs\nAdded support of license manager",
-                "de": "AbonnierenOidAtRuntime behoben, wenn mit ungültigen IDs aufgerufen\nUnterstützung des Lizenzmanagers hinzugefügt",
-                "ru": "Исправлена ошибка subscribeOidAtRuntime при вызове с недопустимыми идентификаторами\nДобавлена поддержка менеджера лицензий.",
-                "pt": "SubscribeOidAtRuntime corrigido se chamado com IDs inválidos\nAdicionado suporte de gerenciador de licença",
-                "nl": "Vaste subscribeOidAtRuntime indien aangeroepen met ongeldige ID's\nOndersteuning van licentiemanager toegevoegd",
-                "fr": "Abonnement fixeOidAtRuntime si appelé avec des identifiants invalides\nAjout de la prise en charge du gestionnaire de licence",
-                "it": "Risolto il problema con subscribeOidAtRuntime se chiamato con ID non validi\nAggiunto il supporto del gestore delle licenze",
-                "es": "SubscribeOidAtRuntime fijo si se llama con ID no válidos\nSoporte agregado del administrador de licencias",
-                "pl": "Naprawiono subscribeOidAtRuntime w przypadku wywołania z nieprawidłowymi identyfikatorami\nDodano obsługę menedżera licencji",
-                "zh-cn": "如果使用无效 ID 调用，则修复了 subscribeOidAtRuntime\n添加了许可证管理器的支持"
             }
         },
         "title": "Visualisation",
@@ -132,7 +134,7 @@
         "localLinks": {
             "_default": "%web_protocol%://%ip%:%web_port%/vis/edit.html"
         },
-        "license": "CC-BY-NC-4.0",
+        "license": "MIT",
         "dependencies": [
             {
                 "web": ">=3.0.12"
@@ -150,12 +152,13 @@
         "connectionType": "local",
         "dataSource": "push",
         "tier": 3,
-        "noConfig": false,
+        "noConfig": true,
         "adminUI": {
-            "config": "materialize"
+            "config": "none"
         },
         "compact": true,
         "materialize": true,
+        "eraseOnUpload": false,
         "welcomeScreen": {
             "link": "vis/index.html",
             "name": "vis runtime",
@@ -172,9 +175,7 @@
         }
     },
     "native": {
-        "defaultFileMode": 1604,
-        "license": "",
-        "useLicenseManager": 0
+        "defaultFileMode": 1604
     },
     "instanceObjects": [
         {

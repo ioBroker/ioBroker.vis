@@ -48,6 +48,21 @@ function getWidgetGroup(views, view, widget) {
     return null;
 }
 
+// get value of Obj property PropPath. PropPath is string like "Prop1" or "Prop1.Prop2" ...
+function getObjPropValue(obj, propPath) {
+    if (!obj) {
+        return undefined;
+    }
+    const parts = propPath.split('.');
+    for (const part of parts) {
+        obj = obj[part];
+        if (!obj) {
+            return undefined;
+        }
+    }
+    return obj;
+}
+
 function extractBinding(format) {
     var oid = format.match(/{(.+?)}/g);
     var result = null;
@@ -57,9 +72,13 @@ function extractBinding(format) {
         }
         for (var p = 0; p < oid.length && p < 50; p++) {
             var _oid = oid[p].substring(1, oid[p].length - 1);
-            if (_oid[0] === '{') continue;
+            if (_oid[0] === '{') {
+                continue;
+            }
             // If first symbol '"' => it is JSON
-            if (_oid && _oid[0] === '"') continue;
+            if (_oid && _oid[0] === '"') {
+                continue;
+            }
             var parts = _oid.split(';');
             result = result || [];
             var systemOid = parts[0].trim();
@@ -95,8 +114,8 @@ function extractBinding(format) {
                     op: 'eval',
                     arg: [{
                         name: xx[0],
-                        visOid: visOid,
-                        systemOid: systemOid
+                        visOid,
+                        systemOid,
                     }]
                 });
             }
@@ -213,9 +232,14 @@ function extractBinding(format) {
                                     operations.push({op: parse[1], arg: parse[2]});
                                 }
                             }
-                        } else
-                        // operators without parameter
-                        {
+                        } else if (parse[1] === 'json') {
+                            // json(objPropPath)  ex: json(prop1);  json(prop1.propA)
+                            operations = operations || [];
+                            parse[2] = (parse[2] || '').trim();
+                            parse[2] = parse[2].substring(1, parse[2].length - 1);
+                            operations.push({op: parse[1], arg: parse[2]});
+                        } else {
+                            // operators without parameter
                             operations = operations || [];
                             operations.push({op: parse[1]});
                         }

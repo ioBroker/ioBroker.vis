@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2013-2022 bluefox https://github.com/GermanBluefox,
+ *  Copyright (c) 2013-2023 bluefox https://github.com/GermanBluefox,
  *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
@@ -349,9 +349,6 @@ vis = $.extend(true, vis, {
         layout();
 
         $('#vis-version').html(this.version);
-        if (typeof visConfig !== 'undefined' && visConfig.license === false) {
-            $('#vis-version').addClass('vis-license-error').attr('title', _('License error! Please check logs for details.'));
-        }
 
         $('#button_undo').button({
                 icons: {primary: 'ui-icon ui-icon-arrowreturnthick-1-w'},
@@ -3586,6 +3583,12 @@ vis = $.extend(true, vis, {
                             mapping[importObject[widget].groupName] = widgetId;
                         }
 
+                        if (importObject[widget].tpl === '_tplGroup') {
+                            for (var d = 0; d < importObject[widget].data.members.length; d++) {
+                                vis.views[view].widgets[importObject[widget].data.members[d]].groupid=widgetId;
+                            }
+                        }
+
                         // (tpl, data, style, wid, view, noSave, noAnimate)
                         if (!importObject[widget].grouped) widgets.push(widgetId);
                     }
@@ -3976,7 +3979,10 @@ vis = $.extend(true, vis, {
             widgetSet: options.tpl === '_tplGroup' ? null : ($tpl ? $tpl.attr('data-vis-set') : undefined)
         };
 
-        if (options.grouped || viewDiv !== view) this.views[view].widgets[widgetId].grouped = true;
+        if (options.grouped || viewDiv !== view) {
+            this.views[view].widgets[widgetId].grouped = true;
+            this.views[view].widgets[widgetId].groupid = viewDiv;
+        }
         // if group edit
         if (viewDiv !== view) {
             this.views[view].widgets[viewDiv].data.members.push(widgetId);
