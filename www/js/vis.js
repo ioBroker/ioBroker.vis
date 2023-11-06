@@ -277,7 +277,7 @@ var FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~]+/g; // from https://github.com/
 // var FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~\p{Ll}\p{Lu}\p{Nd}]+/gu; // it must be like this, but old browsers does not support Unicode
 
 var vis = {
-    version: '1.5.0',
+    version: '1.5.1',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',

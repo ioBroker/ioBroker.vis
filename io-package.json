@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.5.0",
+        "version": "1.5.1",
         "news": {
+            "1.5.1": {
+                "en": "Changed License: it is now MIT, and the license check was removed",
+                "de": "Änderung der Lizenz: es ist jetzt MIT, und die Lizenzprüfung wurde entfernt",
+                "ru": "Изменена лицензия: сейчас MIT, и проверка лицензии была удалена",
+                "pt": "Licença alterada: é agora MIT, e a verificação da licença foi removida",
+                "nl": "Veranderde License, het is nu MIT en de rijbewijs is verwijderd",
+                "fr": "Licence modifiée: il est maintenant MIT, et le contrôle de licence a été supprimé",
+                "it": "Licenza modificata: è ora MIT e il controllo della licenza è stato rimosso",
+                "es": "Licencia modificada: ahora es MIT, y el cheque de licencia fue eliminado",
+                "pl": "Changed License: obecnie MIT, a kontrola licencji została usunięta",
+                "uk": "Змінена ліцензія: тепер MIT, а також зняття ліцензії",
+                "zh-cn": "修改的许可证:现在是投资条约,被取消许可证检查。"
+            },
             "1.4.16": {
                 "en": "Corrected connection with \"only port\" URLs",
                 "de": "Korrigierte Verbindung mit \"nur Port\" URLs",
