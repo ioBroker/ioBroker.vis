@@ -75,7 +75,7 @@ const CustomAceEditor = props => {
                         el.title = I18n.t('ace_RegExp Search');
                     }
                     el = parent.querySelector('.ace_button[action="toggleCaseSensitive"]');
-                    if (el.title === 'CaseSensitive Search') {
+                    if (el?.title === 'CaseSensitive Search') {
                         el.title = I18n.t('ace_CaseSensitive Search');
                     }
                     el = parent.querySelector('.ace_button[action="toggleWholeWords"]');

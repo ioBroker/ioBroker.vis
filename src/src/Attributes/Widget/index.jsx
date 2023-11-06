@@ -68,7 +68,7 @@ const styles = theme => ({
         height: 24,
     },
     fieldTitle: {
-        width: 140,
+        width: 190,
         fontSize: '80%',
         position: 'relative',
         lineHeight: '21px',
@@ -81,7 +81,7 @@ const styles = theme => ({
     },
     colorize: {
         display: 'none',
-        position: 'absolute',
+        float: 'right',
         right: 0,
         cursor: 'pointer',
         opacity: 0.3,
@@ -1111,8 +1111,7 @@ class Widget extends Component {
     changeBinding(isStyle, attr) {
         const project = JSON.parse(JSON.stringify(this.props.project));
         const type = isStyle ? 'style' : 'data';
-        for (let i = 0; i < this.props.selectedWidgets.length; i++) {
-            const wid = this.props.selectedWidgets[i];
+        for (const wid of this.props.selectedWidgets) {
             const widget = project[this.props.selectedView].widgets[wid];
             if (widget[type].bindings.includes(attr)) {
                 widget[type].bindings.splice(widget[type].bindings.indexOf(attr), 1);
@@ -1204,6 +1203,27 @@ class Widget extends Component {
                                     alt={field.name}
                                 />
                             </div> : null}
+                        {field.type !== 'custom' || field.label ? (isBoundField ?
+                            <span
+                                className={this.props.classes.bindIconSpan}
+                                title={I18n.t('Deactivate binding and use field as standard input')}
+                            >
+                                <LinkOff
+                                    onClick={() => this.props.editMode && this.changeBinding(group.isStyle, field.name)}
+                                    className={this.props.classes.bindIcon}
+                                    style={disabled ? { cursor: 'default' } : null}
+                                />
+                            </span> :
+                            <span
+                                className={this.props.classes.bindIconSpan}
+                                title={I18n.t('Use field as binding')}
+                            >
+                                <LinkIcon
+                                    className={this.props.classes.bindIcon}
+                                    style={disabled ? { cursor: 'default' } : null}
+                                    onClick={() => this.props.editMode && this.changeBinding(group.isStyle, field.name)}
+                                />
+                            </span>) : null}
                         {group.isStyle ?
                             <ColorizeIcon
                                 fontSize="small"
@@ -1220,28 +1240,8 @@ class Widget extends Component {
                                         this.props.changeProject(project);
                                     }
                                 })}
-                            /> : null}
-                        {field.type !== 'custom' || field.label ? (isBoundField ?
-                            <span
-                                className={this.props.classes.bindIconSpan}
-                                title={I18n.t('Deactivate binding and use field as standard input')}
-                            >
-                                <LinkOff
-                                    onClick={() => this.props.editMode && this.changeBinding(group.isStye, field.name)}
-                                    className={this.props.classes.bindIcon}
-                                    style={disabled ? { cursor: 'default' } : null}
-                                />
-                            </span> :
-                            <span
-                                className={this.props.classes.bindIconSpan}
-                                title={I18n.t('Use field as binding')}
-                            >
-                                <LinkIcon
-                                    className={this.props.classes.bindIcon}
-                                    style={disabled ? { cursor: 'default' } : null}
-                                    onClick={() => this.props.editMode && this.changeBinding(group.isStye, field.name)}
-                                />
-                            </span>) : null}
+                            />
+                            : null}
                         {field.tooltip ? <InfoIcon className={this.props.classes.infoIcon} /> : null}
                     </td>
                     <td className={this.props.classes.fieldContent}>
