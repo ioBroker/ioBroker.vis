@@ -988,42 +988,39 @@ class App extends Runtime {
     }
 
     changeProject = async (project, ignoreHistory) => {
-        // remove all special structures
-        this.unsyncMultipleWidgets(project);
-
         // set timestamp
         project.___settings.ts = `${Date.now()}.${Math.random().toString(36).substring(7)}`;
-        const newState = { project, needSave: true };
 
         if (!ignoreHistory) {
             // do not save history too often
             this.saveHistory(project);
         }
 
-        const projectStr = JSON.stringify(project, null, 2);
+        await this.setStateAsync({ visProject: project, needSave: true });
+
         // save changes after 1 second
-        // eslint-disable-next-line no-unused-expressions
         this.savingTimer && clearTimeout(this.savingTimer);
-        this.savingTimer = setTimeout(async _projectStr => {
+        this.savingTimer = setTimeout(async () => {
             this.savingTimer = null;
+
+            // remove all special structures
+            this.unsyncMultipleWidgets(project);
+
+            const projectStr = JSON.stringify(project, null, 2);
+
             if ('TextEncoder' in window) {
                 const encoder = new TextEncoder();
-                const data = encoder.encode(_projectStr);
+                const data = encoder.encode(projectStr);
                 await this.socket.writeFile64(this.adapterId, `${this.state.projectName}/vis-views.json`, data);
             } else {
-                await this.socket.writeFile64(this.adapterId, `${this.state.projectName}/vis-views.json`, _projectStr);
+                await this.socket.writeFile64(this.adapterId, `${this.state.projectName}/vis-views.json`, projectStr);
             }
 
             this.setState({ needSave: false });
             if (this.needRestart) {
                 window.location.reload();
             }
-        }, 1000, projectStr);
-
-        this.syncMultipleWidgets(project);
-
-        newState.visProject = project;
-        await this.setStateAsync(newState);
+        }, 1_000);
     };
 
     unsyncMultipleWidgets(project) {
