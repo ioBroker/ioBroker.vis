@@ -207,6 +207,9 @@ Notice that these settings are valid only for reconnection and not for the first
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Changed License: it is now MIT, and the license check was removed
+
 ### 1.4.16 (2023-01-27)
 * (bluefox) Corrected connection with "only port" URLs
 
@@ -543,17 +546,26 @@ Notice that these settings are valid only for reconnection and not for the first
 * (bluefox) change security settings
 
 ## License
-Copyright (c) 2013-2023 bluefox, https://github.com/GermanBluefox <dogafox@gmail.com>,
+The MIT License (MIT)
 
-Copyright (c) 2013-2014 hobbyquaker, https://github.com/hobbyquaker <hobbyquaker@gmail.com>,
+Copyright (c) 2013-2023 Denis Haev <dogafox@gmail.com>,
+Copyright (c) 2013      hobbyquaker
 
-Creative Common Attribution-NonCommercial (CC BY-NC)
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-http://creativecommons.org/licenses/by-nc/4.0/
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
 
-![CC BY-NC License](https://github.com/GermanBluefox/DashUI/raw/master/images/cc-nc-by.png)
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
 
-Short content:
-Licensees may copy, distribute, display and perform the work and make derivative works based on it only if they give the author or licensor the credits in the manner specified by these.
-Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
-(Free for non-commercial use).

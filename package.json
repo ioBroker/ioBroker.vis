@@ -27,9 +27,7 @@
     "SCADA"
   ],
   "dependencies": {
-    "jsonwebtoken": "^9.0.2",
-    "@iobroker/adapter-core": "^3.0.4",
-    "axios": "^1.6.0"
+    "@iobroker/adapter-core": "^3.0.4"
   },
   "devDependencies": {
     "@alcalzone/release-script": "^3.6.0",
@@ -67,5 +65,5 @@
     "release-major": "release-script major --yes --no-update-lockfile",
     "update-packages": "ncu --upgrade"
   },
-  "license": "CC-BY-NC-4.0"
+  "license": "MIT"
 }

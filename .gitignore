@@ -33,3 +33,13 @@
 admin/i18n/*/flat.txt
 admin/i18n/flat.txt
 *.vis.code-workspace
+/www/widgets/**/*.*
+/www/widgets/**/*
+!/www/widgets/basic/**/*.*
+!/www/widgets/jqplot/**/*.*
+!/www/widgets/jqui/**/*.*
+!/www/widgets/swipe/**/*.*
+!/www/widgets/tabs/**/*.*
+!/www/widgets/todo/**/*.*
+www/edit.src.html
+www/index.src.html

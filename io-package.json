@@ -133,7 +133,7 @@
         "localLinks": {
             "_default": "%web_protocol%://%ip%:%web_port%/vis/edit.html"
         },
-        "license": "CC-BY-NC-4.0",
+        "license": "MIT",
         "dependencies": [
             {
                 "web": ">=3.0.12"
@@ -151,9 +151,9 @@
         "connectionType": "local",
         "dataSource": "push",
         "tier": 3,
-        "noConfig": false,
+        "noConfig": true,
         "adminUI": {
-            "config": "materialize"
+            "config": "none"
         },
         "compact": true,
         "materialize": true,
@@ -174,9 +174,7 @@
         }
     },
     "native": {
-        "defaultFileMode": 1604,
-        "license": "",
-        "useLicenseManager": 0
+        "defaultFileMode": 1604
     },
     "instanceObjects": [
         {
