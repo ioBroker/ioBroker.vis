@@ -228,6 +228,12 @@ function extractBinding(format) {
                                     operations.push({ op: parse[1], arg: parse[2] });
                                 }
                             }
+                        } else if (parse[1] === 'json') {
+                            // json(objPropPath)  ex: json(prop1);  json(prop1.propA)
+                            operations = operations || [];
+                            parse[2] = (parse[2] || '').trim();
+                            parse[2] = parse[2].substring(1, parse[2].length - 1);
+                            operations.push({ op: parse[1], arg: parse[2] });
                         } else {
                             // operators without parameter
                             operations = operations || [];

@@ -31,6 +31,21 @@ class VisFormatUtils {
         //      states (originally canStates
     }
 
+    // get value of Obj property PropPath. PropPath is string like "Prop1" or "Prop1.Prop2" ...
+    static getObjPropValue(obj, propPath) {
+        if (!obj) {
+            return undefined;
+        }
+        const parts = propPath.split('.');
+        for (const part of parts) {
+            obj = obj[part];
+            if (!obj) {
+                return undefined;
+            }
+        }
+        return obj;
+    }
+
     getSpecialValues(name, view, wid, widgetData) {
         switch (name) {
             case 'username.val':
@@ -81,7 +96,7 @@ class VisFormatUtils {
         if (type !== 'object') {
             const j = parseInt(dateObj, 10);
             if (j === dateObj) {
-                // may this is interval
+                // maybe this is an interval?
                 if (j < 946681200) {
                     dateObj = moment(dateObj);
                 } else {
@@ -444,6 +459,18 @@ class VisFormatUtils {
                             break;
                         case 'ceil':
                             value = Math.ceil(parseFloat(value));
+                            break;
+                        case 'json':
+                            if (value && typeof value === 'string') {
+                                try {
+                                    value = JSON.parse(value);
+                                } catch (e) {
+                                    console.warn(`Cannot parse JSON string: ${value}`);
+                                }
+                            }
+                            if (value && typeof value === 'object') {
+                                value = VisFormatUtils.getObjPropValue(value, oids[t].operations[k].arg);
+                            }
                             break;
                         default:
                             // unknown condition

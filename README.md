@@ -84,6 +84,7 @@ The following operations are supported:
 - `pow` - power of 2.
 - `floor` - Math.floor
 - `ceil` - Math.ceil
+- `json` - operation for getting json or object property. E.g., `{id;json(common.name.en)}`
 - `random(R)` - Math.random() * R, or just Math.random() if no argument
 - `formatValue(decimals)` - format value according to system settings and use decimals
 - `date(format)` - format value as date. The format is like: "YYYY-MM-DD hh:mm:ss.sss"

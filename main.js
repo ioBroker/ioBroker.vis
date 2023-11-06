@@ -101,13 +101,17 @@ async function generateWidgetsHtml(widgetSets, forceBuild) {
         } else {
             name = `${widgetSets[w]}.html`;
         }
-        file = fs.readFileSync(`${__dirname}/www/widgets/${name}`);
-        // extract all css and js
+        try {
+            file = fs.readFileSync(`${__dirname}/www/widgets/${name}`);
+            // extract all css and js
 
-        // mark all scripts with data-widgetset attribute
-        file = file.toString().replace(/<script/g, `<script data-widgetset="${name.replace('.html', '')}"`);
+            // mark all scripts with data-widgetset attribute
+            file = file.toString().replace(/<script/g, `<script data-widgetset="${name.replace('.html', '')}"`);
 
-        text += `<!-- --------------${name}--- START -->\n${file.toString()}\n<!-- --------------${name}--- END -->\n`;
+            text += `<!-- --------------${name}--- START -->\n${file.toString()}\n<!-- --------------${name}--- END -->\n`;
+        } catch (e) {
+            adapter.log.warn(`Cannot read file www/widgets/${name}`);
+        }
     }
 
     let data;
@@ -120,12 +124,20 @@ async function generateWidgetsHtml(widgetSets, forceBuild) {
         data = data.file;
     }
     if (data && (data !== text || forceBuild)) {
-        fs.writeFileSync(`${__dirname}/www/widgets.html`, text);
-        // upload file to DB
-        await adapter.writeFileAsync(adapterName, 'www/widgets.html', text);
+        try {
+            fs.writeFileSync(`${__dirname}/www/widgets.html`, text);
+            // upload file to DB
+            await adapter.writeFileAsync(adapterName, 'www/widgets.html', text);
+        } catch (e) {
+            adapter.log.error(`Cannot write file www/widgets.html: ${e}`);
+        }
         return true;
     } else if (!fs.existsSync(`${__dirname}/www/widgets.html`) || fs.readFileSync(`${__dirname}/www/widgets.html`).toString() !== text) {
-        fs.writeFileSync(`${__dirname}/www/widgets.html`, text);
+        try {
+            fs.writeFileSync(`${__dirname}/www/widgets.html`, text);
+        } catch (e) {
+            adapter.log.error(`Cannot write file www/widgets.html: ${e}`);
+        }
     }
 
     return false;
@@ -193,17 +205,29 @@ if (typeof exports !== 'undefined') {
         changed = true;
         adapter.log.info('config.js changed. Upload.');
         await adapter.writeFileAsync(adapterName, 'config.js', configJs);
-        fs.writeFileSync(`${__dirname}/www/config.js`, configJs);
-        !fs.existsSync(`${__dirname}/www/js`) && fs.mkdirSync(`${__dirname}/www/js`);
-        fs.writeFileSync(`${__dirname}/www/js/config.js`, configJs); // backwards compatibility with cloud
+        try {
+            fs.writeFileSync(`${__dirname}/www/config.js`, configJs);
+            !fs.existsSync(`${__dirname}/www/js`) && fs.mkdirSync(`${__dirname}/www/js`);
+            fs.writeFileSync(`${__dirname}/www/js/config.js`, configJs); // backwards compatibility with cloud
+        } catch (e) {
+            adapter.log.error(`Cannot write file www/config.js: ${e}`);
+        }
     } else if (!fs.existsSync(`${__dirname}/www/config.js`) || fs.readFileSync(`${__dirname}/www/config.js`).toString() !== configJs) {
-        fs.writeFileSync(`${__dirname}/www/config.js`, configJs);
-        !fs.existsSync(`${__dirname}/www/js`) && fs.mkdirSync(`${__dirname}/www/js`);
-        fs.writeFileSync(`${__dirname}/www/js/config.js`, configJs); // backwards compatibility with cloud
+        try {
+            fs.writeFileSync(`${__dirname}/www/config.js`, configJs);
+            !fs.existsSync(`${__dirname}/www/js`) && fs.mkdirSync(`${__dirname}/www/js`);
+            fs.writeFileSync(`${__dirname}/www/js/config.js`, configJs); // backwards compatibility with cloud
+        } catch (e) {
+            adapter.log.error(`Cannot write file www/config.js: ${e}`);
+        }
     }
     if (!fs.existsSync(`${__dirname}/www/js/config.js`) || fs.readFileSync(`${__dirname}/www/js/config.js`).toString() !== configJs) {
-        !fs.existsSync(`${__dirname}/www/js`) && fs.mkdirSync(`${__dirname}/www/js`);
-        fs.writeFileSync(`${__dirname}/www/js/config.js`, configJs); // backwards compatibility with cloud
+        try {
+            !fs.existsSync(`${__dirname}/www/js`) && fs.mkdirSync(`${__dirname}/www/js`);
+            fs.writeFileSync(`${__dirname}/www/js/config.js`, configJs); // backwards compatibility with cloud
+        } catch (e) {
+            adapter.log.error(`Cannot write file www/config.js: ${e}`);
+        }
     }
 
     // Create common user CSS file
@@ -933,7 +957,7 @@ async function main() {
         instanceObj.common.messagebox = true;
 
         await adapter.setForeignObjectAsync(instanceObj._id, instanceObj);
-        // restart will be done by controller
+        // controller will do restart
         return;
     }
 
@@ -951,7 +975,7 @@ async function main() {
 
     if (adapter.config.forceBuild) {
         adapter.log.warn('Force build done! Restarting...');
-        await adapter.extendForeignObjectAsync(`system.adapter.${adapter.namespace}`, {native: {forceBuild: false}});
+        await adapter.extendForeignObjectAsync(`system.adapter.${adapter.namespace}`, { native: { forceBuild: false } });
     } else {
         adapter.subscribeForeignObjects('system.adapter.*');
     }
