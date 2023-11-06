@@ -3441,6 +3441,29 @@ function main($, onReady) {
             }
             //console.log('ERROR: binding in edit mode is not allowed on ' + id);
         };
+
+        // Dynamic webmanifest
+        var webmanifest = {
+            "name": "ioBroker vis",
+            "short_name": "vis",
+            "start_url": ".#" + vis.projectPrefix,
+            "display": "standalone",
+            "background_color" : "#ffffff" ,
+            "description": "WEB visualisation for ioBroker platform",
+            "icons": [{
+                "src": "img/vis.png",
+                "sizes": "192x192",
+                "type": "image/png"
+            }]
+        }
+        const manifestString = JSON.stringify(webmanifest);
+        const manifestBlob = new Blob([manifestString], {type: 'application/json'});
+        const manifestURL = URL.createObjectURL(manifestBlob);
+        document.querySelector('#webmanifest').setAttribute('href', manifestURL);
+
+        var manifestLink = document.createElement('Link');
+        manifestLink.rel = "manifest";
+        manifestLink.setAttribute('href', 'data:application/json;charset=8' + manifestString)
     }
 
     // für iOS Safari - wirklich notwendig?
