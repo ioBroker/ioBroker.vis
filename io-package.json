@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.3.5",
+    "version": "2.3.6",
     "news": {
+      "2.3.6": {
+        "en": "fixed issues with binding editor on style attributes\nimproved performance due to optimizations on auto save",
+        "de": "feste probleme mit verbindlichem editor auf style-attributen\nverbesserte leistung durch optimierungen auf autosparen",
+        "ru": "фиксированные вопросы с обязательным редактором по атрибутам стиля\nулучшенная производительность благодаря оптимизации на автосбережение",
+        "pt": "problemas fixos com editor de ligação em atributos de estilo\ndesempenho melhorado devido às otimizações em auto salvar",
+        "nl": "vertaling:\nverbeterde prestaties door optimaties op autoredding",
+        "fr": "problèmes fixes avec l'éditeur de liaison sur les attributs de style\namélioration de la performance en raison d'optimisations sur l'automobile",
+        "it": "problemi fissi con editor vincolante sugli attributi di stile\nmiglioramento delle prestazioni grazie alle ottimizzazioni sul risparmio automatico",
+        "es": "cuestiones fijas con editor en atributos de estilo\nmejora del rendimiento debido a las optimizaciones en ahorro de automóviles",
+        "pl": "zagadnienia z edytorem wiążącym na temat atrybutów stylowych\npoprawiona wydajność z powodu optymalizacji na auto oszczędza",
+        "uk": "виправлені питання з обов'язковим редактором на атрибутах стилю\nпокращена продуктивність за рахунок оптимізації автозбереження",
+        "zh-cn": "具有约束力的编辑的固定问题\na. 由于汽车储蓄的优化业绩有所改善"
+      },
       "2.3.5": {
         "en": "update adapter-react to have enhanced image support in file selector\nfixed color of file browser in light mode\nfixed color inputs jumping to end of input on modify",
         "de": "update-adapter-react, um verbesserte bildunterstützung in dateiauswahl zu haben\nfeste farbe des dateibrowsers im lichtmodus\nfeste farbeingänge springen bis zum ende der eingabe beim modifizieren",
@@ -80,19 +93,6 @@
         "pl": "jQui widgets (wielu z nich) zostały ulepszone",
         "uk": "jQui віджети (many з них) були покращені",
         "zh-cn": "jQui widget(其中many)得到了改善。"
-      },
-      "2.2.7": {
-        "en": "Improved icon selector: you can upload your own icon directly\nOptimized loading: do not load unused widget sets",
-        "de": "Verbesserte Symbolauswahl: Sie können Ihr eigenes Icon direkt hochladen\nOptimierte Belastung: nicht geladene Widget-Sets",
-        "ru": "Улучшенный выбор иконки: вы можете загрузить свой собственный иконку напрямую\nОптимизированная загрузка: не загружайте неиспользуемые наборы виджетов",
-        "pt": "Seletor de ícone melhorado: você pode carregar seu próprio ícone diretamente\nCarga otimizada: não carregar conjuntos de widget não utilizados",
-        "nl": "Improved icon selector, je kunt je eigen icon uploaden\nOptimaal laden, niet ongebruikte widget sets laden",
-        "fr": "Sélecteur d'icônes amélioré: vous pouvez télécharger votre propre icône directement\nCharge optimisée: ne pas charger des jeux de widget inutilisés",
-        "it": "Selettore icona migliorato: è possibile caricare la propria icona direttamente\nCaricamento ottimizzato: non caricare inutilizzati widget set",
-        "es": "Selector de iconos mejorado: puede subir su propio icono directamente\nCarga optimizada: no cargue conjuntos de widget no utilizados",
-        "pl": "Poprawa ikon selekcjonera: Możesz uwolnić swoje ikony bezpośrednio\nOptymizowane obciążenie: nie ładowanie nieużywanych zestawów widgetowych",
-        "uk": "Удосконалено вибір ікони: ви можете завантажити свою іконку безпосередньо\nОптимізоване завантаження: не завантажуйте невикористані комплекти віджетів",
-        "zh-cn": "改进一轮选择:你可以直接卸下你自己的一线。\n肥沃的装载:没有装卸未用的植物"
       }
     },
     "title": "Visualisation Next Generation",
