@@ -48,20 +48,20 @@ function getWidgetGroup(views, view, widget) {
     return null;
 }
 
-// get valeue of Obj property PropPath. PropPath is string like "Prop1" or "Prop1.Prop2" ...
+// get value of Obj property PropPath. PropPath is string like "Prop1" or "Prop1.Prop2" ...
 function getObjPropValue(obj, propPath) {
     if (!obj) {
         return undefined;
     }
     const parts = propPath.split('.');
     for (const part of parts) {
-       obj = obj[part];
-       if (!obj) {
-          return undefined;
-       }
+        obj = obj[part];
+        if (!obj) {
+            return undefined;
+        }
     }
     return obj;
- }
+}
 
 function extractBinding(format) {
     var oid = format.match(/{(.+?)}/g);
@@ -72,9 +72,13 @@ function extractBinding(format) {
         }
         for (var p = 0; p < oid.length && p < 50; p++) {
             var _oid = oid[p].substring(1, oid[p].length - 1);
-            if (_oid[0] === '{') continue;
+            if (_oid[0] === '{') {
+                continue;
+            }
             // If first symbol '"' => it is JSON
-            if (_oid && _oid[0] === '"') continue;
+            if (_oid && _oid[0] === '"') {
+                continue;
+            }
             var parts = _oid.split(';');
             result = result || [];
             var systemOid = parts[0].trim();
@@ -110,8 +114,8 @@ function extractBinding(format) {
                     op: 'eval',
                     arg: [{
                         name: xx[0],
-                        visOid: visOid,
-                        systemOid: systemOid
+                        visOid,
+                        systemOid,
                     }]
                 });
             }

@@ -312,6 +312,16 @@ var vis = {
     user:               '',   // logged in user
     loginRequired:      false,
     sound:              /^((?!chrome|android).)*safari/i.test(window.navigator.userAgent) ? $('<audio id="external_sound" autoplay muted></audio>').appendTo('body') : null,
+    _informWidgetsAboutChanges: function (id, state) {
+        // Inform other widgets, that does not support canJS
+        for (let i = 0, len = this.onChangeCallbacks.length; i < len; i++) {
+            try {
+                this.onChangeCallbacks[i].callback(this.onChangeCallbacks[i].arg, id, state);
+            } catch (e) {
+                this.conn.logError(`Error: can't update states object for ${id}(${e}): ${JSON.stringify(e.stack)}`);
+            }
+        }
+    },
     _setValue:          function (id, state, isJustCreated) {
         var that = this;
         var oldValue = this.states.attr(id + '.val');
@@ -2691,7 +2701,7 @@ var vis = {
                             break;
                         case 'json':
                             if (value && typeof value === 'string') {
-                                try {                                
+                                try {
                                     value = JSON.parse(value);
                                 } catch (e) {
                                     console.warn('Cannot parse JSON string: ' + value);
@@ -2700,7 +2710,7 @@ var vis = {
                             if (value && typeof value === 'object') {
                                 value = getObjPropValue(value, oids[t].operations[k].arg);
                             }
-                            break;   
+                            break;
                     } //switch
                 }
             } //if for
