@@ -9,12 +9,12 @@
 WEB visualisation for ioBroker platform.
 
 ## License requirements
-To use this adapter in ioBroker you need to accept the source code license of the adapter. The source code of this adapter is available under the CC BY-NC license.
+To use this adapter in ioBroker, you need to accept the source code license of the adapter. The source code of this adapter is available under the CC BY-NC license.
 
 Additionally, you need a license to use the adapter. The following license editions are available on https://iobroker.net/www/pricing 
 * **Community-License: Free for private use!**: Get a free license by registering an account on https://iobroker.net . The license if checked online against the ioBroker license server when the vis adapter is started, so an online connection at this timepoint is required!
-* **Private use Offline-License**: For paying a small support fee you can get rid of the required online license check on adapter startup. **Only for Private use!**
-* **Commercial License**: When using Vis in a commercial environment or selling Vis as part of ioBroker packages to your customers this license is for you. License check is also not requiring an online connection.
+* **Private use Offline-License**: For paying a small support fee, you can get rid of the required online license check on adapter startup. **Only for Private use!**
+* **Commercial License**: When using Vis in a commercial environment or selling Vis as part of ioBroker packages to your customers, this license is for you. License check is also not requiring an online connection.
 
 ## Installation & Documentation
 
@@ -25,10 +25,10 @@ Additionally, you need a license to use the adapter. The following license editi
 
 ## Bindings of objects
 Normally, most of the widgets have ObjectID attribute and this attribute can be bound with some value of object ID.
-But there is another option how to bind *any* attribute of widget to some ObjectID. 
+But there is another option for how to bind *any* attribute of widget to some ObjectID. 
 
 Just write into attribute `{object.id}` and it will be bound (not in edit mode) to this object's value. 
-If you use the special format, you can even make some simple operations with it, e.g. multiplying or formatting.
+If you use the special format, you can even make some simple operations with it, e.g., multiplying or formatting.
 Patten has the following format:
 
 ```
@@ -37,13 +37,13 @@ Patten has the following format:
 
 Following operations are supported:
 
-- `\*` - multiplying. Argument must be in brackets, like "*(4)". In this sample we multiply value with 4.
+- `\*` - multiplying. Argument must be in brackets, like "*(4)". In this sample, we multiply the value with 4.
 - `\+` - add. Argument must be in brackets, like "+(4.5)". In this sample we add to value 4.5.
 - `\-` - subtract. Argument must be in brackets, like "-(-674.5)". In this sample we subtract from value -674.5.
-- `/` - dividing. Argument must be in brackets, like "/(0.5)". In this sample we divide value by 0.5.
-- `%` - modulo. Argument must be in brackets, like "%(5)". In this sample we take modulo of 5.
+- `/` - dividing. Argument must be in brackets, like "/(0.5)". In this sample, we divide the value by 0.5.
+- `%` - modulo. Argument must be in brackets, like "%(5)". In this sample, we take modulo of 5.
 - `round` - round the value.
-- `round(N)` - round the value with N places after point, e.g. 34.678;round(1) => 34.7
+- `round(N)` - round the value with N places after point, e.g., 34.678;round(1) => 34.7
 - `hex` - convert value to hexadecimal value. All letters are lower cased.
 - `hex2` - convert value to hexadecimal value. All letters are lower cased. If value less 16, so the leading zero will be added.
 - `HEX` - same as hex, but upper-cased.
@@ -58,7 +58,7 @@ Following operations are supported:
 - `ceil` - Math.ceil
 - `random(R)` - Math.random() * R, or just Math.random() if no argument
 - `formatValue(decimals)` - format value according to system settings and use decimals
-- `date(format)` - format value as date. Format is like: "YYYY-MM-DD hh:mm:ss.sss"
+- `date(format)` - format value as date. The format is like: `YYYY-MM-DD hh:mm:ss.sss`
 - `momentDate(format, useTodayOrYesterday)` - format value as date using Moment.js. [Approved formats must be entered according to the moment.js library](https://momentjs.com/docs/#/displaying/format/). With `useTodayOrYesterday=true` the momentjs format `ddd`/`dddd` are overwritten with today / yesterday
 - `array(element1,element2[,element3,element4])` - returns the element of index. e.g.: `{id.ack;array(ack is false,ack is true)}`
 
@@ -98,14 +98,14 @@ value = (function () {
 
 You can use *any* javascript functions. Arguments must be defined with ':', if not, it will be interpreted as formula.
 
-Take care about types. All of them defined as strings. To be sure, that value will be treated as number use parseFloat function.
+Take care about types. All of them are defined as strings. To be sure, that value will be treated as number use parseFloat function.
 
 ```
 Hypotenuse of {height} and {width} = {h:height;w:width;Math.max(20, Math.sqrt(Math.pow(parseFloat(h), 2) + Math.pow(parseFloat(w), 2)))}
 ```
 
 ### Special bindings
-There are a number different internal bindings to provide additional information in views:
+There are a number of different internal bindings to provide additional information in views:
 * `username` - shows logged-in user
 * `view` - name of actual view
 * `wname` - widget name
@@ -113,10 +113,10 @@ There are a number different internal bindings to provide additional information
 * `wid` - name of actual widget
 * `language` - can be `de`, `en` or `ru`.
 * `instance` - browser instance
-* `login` - if login required or not (e.g. to show/hide logout button)
+* `login` - if login required or not (e.g., to show/hide logout button)
 * `local_*` - if state name is started from `local_` it will not be reported to ioBroker but will update all widgets, that depends on this state. (Local variable for current browser session)
 
-Note: to use ":" in calculations (e.g. in string formula) use "::" instead.
+Note: to use ":" in calculations (e.g., in string formula) use "::" instead.
 
 **Remember**, that style definitions will be interpreted as bindings, so use `{{style: value}}` or just
 
@@ -129,7 +129,7 @@ Note: to use ":" in calculations (e.g. in string formula) use "::" instead.
 for that.
 
 ## Filters
-To visualise on the one view thw whole number of widgets you can use filters to reduce the amount of widgets simultaneously shown on the view.
+To visualise on the one view the whole number of widgets, you can use filters to reduce the number of widgets simultaneously shown on the view.
  
 Every widget has a field `filter`. If you set it to some value, e.g. `light`, so you can use other widget `(bars - filters, filter - dropdown)` to control which filter is actually active.
 
@@ -138,13 +138,13 @@ Vis creates 3 variables:
 
 - `control.instance` - Here the browser instance should be written or `FFFFFFFF` if every browser must be controlled.
 - `control.data`     - Parameter for command. See specific command description.
-- `control.command`  - Command name. Write this variable triggers the command. That means before command will be written the "instance" and "data" must be prepared with data.
+- `control.command`  - Command name. Write this variable triggers the command. That means before command will be written, the "instance" and "data" must be prepared with data.
 
 Commands:
 
-* `alert` - show alert window in the vis. "control.data" has the following format "message;title;jquery-icon". Title and jquery-icon are optional. Icon names can be found [here](http://jqueryui.com/themeroller/). To show icon "ui-icon-info" write ```Message;;info```.
-* `changeView` - switch to desired view. "control.data" must have the name of view. You can specify project name too as "project/view". Default project is "main".
-* `refresh` - reload the vis, for instance after project is changed to reload on all browsers.
+* `alert` - show an alert window in the vis. "control.data" has the following format "message;title;jquery-icon". Title and jquery-icon are optional. Icon names can be found [here](http://jqueryui.com/themeroller/). To show icon "ui-icon-info" write ```Message;;info```.
+* `changeView` - switch to desired view. "control.data" must have the name of view. You can specify the project name too as "project/view". The default project is "main".
+* `refresh` - reload the vis, for instance after a project is changed to reload on all browsers.
 * `reload` - same as refresh.
 * `dialog` - Show dialog window. Dialog must exist on view. One of:
 
@@ -157,17 +157,17 @@ Commands:
 
     `control.data` must have id of dialog widget, e.g. `w00056`.
 * `dialogClose`
-* `popup` - opens a new browser window. Link must be specified in `control.data`, e.g. http://google.com
-* `playSound` - play sound file. The link to file is specified in `control.data`, e.g. http://www.modular-planet.de/fx/marsians/Marsiansrev.mp3.
+* `popup` - opens a new browser window. Link must be specified in `control.data`, e.g., http://google.com
+* `playSound` - play sound file. The link to file is specified in `control.data`, e.g., http://www.modular-planet.de/fx/marsians/Marsiansrev.mp3.
   You can upload your own file in vis and let it play as for instance `/vis.0/main/img/myFile.mp3`.
 
-If user changes the view or at start the variables will be filled by the vis with
+If the user changes the view or at start, the variables will be filled by the vis with
 
 - `control.instance`: browser instance and `ack=true`
 - `control.data`: project and view name in form `project/view`, e.g. `main/view` (and `ack=true`)
 - `control.command`: `changedView` and `ack=true`
 
-You can write the JSON-string or Object into `control.command` as `{instance: 'AABBCCDD', command: 'cmd', data: 'ddd'}`. In this case the instance and data will be taken from JSON object.
+You can write the JSON-string or Object into `control.command` as `{instance: 'AABBCCDD', command: 'cmd', data: 'ddd'}`. In this case, the instance and data will be taken from JSON object.
 
 Example for javascript adapter:
 
@@ -183,22 +183,22 @@ Additionally, you can define if this view must be used as default for this resol
 So every time the `index.html` (without `#viewName`) is called, the best suitable for this resolution view will be opened.
 If only one view has *"Default"* flag, so this view will be opened independently of screen resolution or orientation.      
 
-E.g. you can create two views "Landscape-Mobile" and "Portrait-Mobile" and these two views will be switched automatically when you change the orientation or screen size.
+E.g., you can create two views "Landscape-Mobile" and "Portrait-Mobile" and these two views will be switched automatically when you change the orientation or screen size.
 
 There is a helper widget "basic - Screen Resolution" that shows actual screen resolution and best suitable default view for this resolution. 
 
 ## Settings
 ### Reload if sleep longer than
-There is a rule, that after some disconnection period the whole VIS page will be reloaded to synchronise the project.
-You can configure it in the menu "Settings...". If you set interval to "never" so the page will never be reloaded.
+There is a rule that after some disconnection period, the whole VIS page will be reloaded to synchronise the project.
+You can configure it in the menu "Settings...". If you set an interval to "never" so the page will never be reloaded.
 
 ### Reconnect interval
 Set the interval between the connection attempts if disconnected. If you set 2 seconds, it will try to establish the connection every 2 seconds.
 
 ### Dark reconnect screen
-Sometimes (in the night) it is required to have dark loading screen. With this option you can set it.
+Sometimes (in the night) it is required to have a dark loading screen. With this option, you can set it.
 
-Notice that these settings are valid only for reconnection and not for the first connect.
+Notice that these settings are valid only for reconnection and not for the first connection.
 
 ![Dark](img/dark_screen.png)
 

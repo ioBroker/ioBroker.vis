@@ -3,7 +3,7 @@
 ### 0.9.4 (2016-04-05)
 * (bluefox) implement more "close" types
 * (bluefox) set height of about window
-* (bluefox) rename the upper case datei extensions into lower case by upload
+* (bluefox) rename the upper case datei extensions into a lower case by upload
 * (bluefox) reload vis if lost connection for longer than 1 minute
 
 ### 0.9.3 (2016-03-23)
