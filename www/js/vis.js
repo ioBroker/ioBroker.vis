@@ -2703,10 +2703,16 @@ var vis = {
                             value = Math.ceil(parseFloat(value));
                             break;
                         case 'json':
-                            if((value) && (typeof value === 'string'))          
-                            value = JSON.parse(value);
-                            if (typeof value === 'object') 
-                                value = getObjPropValue(value, oids[t].operations[k].arg)
+                            if (value && typeof value === 'string') {
+                                try {                                
+                                    value = JSON.parse(value);
+                                } catch (e) {
+                                    console.warn('Cannot parse JSON string: ' + value);
+                                }
+                            }
+                            if (value && typeof value === 'object') {
+                                value = getObjPropValue(value, oids[t].operations[k].arg);
+                            }
                             break;   
                     } //switch
                 }
