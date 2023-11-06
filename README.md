@@ -207,7 +207,7 @@ Notice that these settings are valid only for reconnection and not for the first
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 1.5.0 (2023-11-06)
+### **WORK IN PROGRESS**
 * (bluefox) Changed License: it is now MIT, and the license check was removed
 
 ### 1.4.16 (2023-01-27)
