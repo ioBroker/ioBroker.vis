@@ -212,7 +212,8 @@ Notice that these settings are valid only for reconnection and not for the first
 * (agav99) added the new binding operation for getting property of JSON or object
 * (agav99) Checked the initialization of the `local_` variables
 * (agav99) fixed subscribeOidAtRuntime
-* (stephanritscher ) Added dynamic web manifest
+* (stephanritscher) Added dynamic web manifest
+* (agav99) Optimization for basic-view in widget8
 
 ### 1.5.1 (2023-11-06)
 * (bluefox) Changed License: it is now MIT, and the license check was removed

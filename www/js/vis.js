@@ -2699,7 +2699,7 @@ var vis = {
                                 try {
                                     value = JSON.parse(value);
                                 } catch (e) {
-                                    console.warn('Cannot parse JSON string: ' + value);
+                                    console.warn(`Cannot parse JSON string: ${value}`);
                                 }
                             }
                             if (value && typeof value === 'object') {
@@ -2875,13 +2875,13 @@ var vis = {
                 continue;
             }
             if (this.views[view].settings.alwaysRender || view === this.activeView) {
-                if (containers.indexOf(view) === -1) {
+                if (!containers.includes(view)) {
                     containers.push(view);
                 }
-                var $containers = $('#visview_' + view).find('.vis-view-container');
+                var $containers = $(`#visview_${view}`).find('.vis-view-container');
                 $containers.each(function () {
                     var cview = $(this).attr('data-vis-contains');
-                    if (containers.indexOf(cview) === -1) {
+                    if (!containers.includes(cview)) {
                         containers.push(cview);
                     }
                 });
@@ -2892,7 +2892,7 @@ var vis = {
                         var $containers = $(this).find('.vis-view-container');
                         $containers.each(function () {
                             var cview = $(this).attr('data-vis-contains');
-                            if (containers.indexOf(cview) === -1) {
+                            if (!containers.includes(cview)) {
                                 containers.push(cview);
                             }
                         });
@@ -2905,7 +2905,7 @@ var vis = {
             var $this = $(this);
             var view = $this.data('view');
             var viewDiv = $this.attr('id').substring('visview_'.length);
-            // If this view is used as container
+            // If this view is used as a container
             if (containers.indexOf(viewDiv) !== -1 || $this.hasClass('vis-edit-group') || $this.data('persistent')) {
                 return;
             }
@@ -2936,7 +2936,6 @@ var vis = {
             storage.set(this.storageKeyInstance, this.instance);
         }
     },
-    //**********************************************************************************/
     subscribeStates:    function (view, callback) {
         if (!view || this.editMode) {
             return callback && callback();
@@ -2951,8 +2950,8 @@ var vis = {
         this.subscribing.byViews[view] = this.subscribing.byViews[view] || [];
 
         // subscribe
-        var oidsGet = [];            // array for getting Values
-        var oidsSubscribe = [];         // array for subscribe Values (exclude "local_")
+        const oidsGet = [];            // array for getting Values
+        const oidsSubscribe = [];         // array for subscribe Values (exclude "local_")
 
         for (let i = 0; i < this.subscribing.byViews[view].length; i++) {
             const oid = this.subscribing.byViews[view][i];
@@ -2997,7 +2996,9 @@ var vis = {
         }
     },
     unsubscribeStates:  function (view) {
-        if (!view || this.editMode) return;
+        if (!view || this.editMode) {
+            return;
+        }
 
         // view yet active
         var pos = this.subscribing.activeViews.indexOf(view);
@@ -3031,30 +3032,30 @@ var vis = {
         oids.length && this.conn.unsubscribe(oids);
     },
     updateState:        function (id, state) {
-        if (id.indexOf('local_') !== 0) {
+        if (!id.startsWith('local_')) {
             // not needed for local variables
             if (this.editMode) {
-                this.states[id + '.val'] = state.val;
-                this.states[id + '.ts']  = state.ts;
-                this.states[id + '.ack'] = state.ack;
-                this.states[id + '.lc']  = state.lc;
+                this.states[`${id}.val`] = state.val;
+                this.states[`${id}.ts`]  = state.ts;
+                this.states[`${id}.ack`] = state.ack;
+                this.states[`${id}.lc`]  = state.lc;
                 if (state.q !== undefined && state.q !== null) {
-                    this.states[id + '.q'] = state.q;
+                    this.states[`${id}.q`] = state.q;
                 }
             } else {
-                var o = {};
+                const o = {};
                 // Check new model
-                o[id + '.val'] = state.val;
-                o[id + '.ts']  = state.ts;
-                o[id + '.ack'] = state.ack;
-                o[id + '.lc']  = state.lc;
+                o[`${id}.val`] = state.val;
+                o[`${id}.ts`]  = state.ts;
+                o[`${id}.ack`] = state.ack;
+                o[`${id}.lc`]  = state.lc;
                 if (state.q !== undefined && state.q !== null) {
-                    o[id + '.q'] = state.q;
+                    o[`${id}.q`] = state.q;
                 }
                 try {
                     this.states.attr(o);
                 } catch (e) {
-                    this.conn.logError('Error: can\'t create states object for ' + id + '(' + e + '): ' + JSON.stringify(e.stack));
+                    this.conn.logError(`Error: can't create states object for ${id}(${e}): ${JSON.stringify(e.stack)}`);
                 }
             }
         }
@@ -3068,14 +3069,16 @@ var vis = {
                     $(mmWidget).hide();
                     if (mmWidget &&
                         mmWidget._customHandlers &&
-                        mmWidget._customHandlers.onHide) {
+                        mmWidget._customHandlers.onHide
+                    ) {
                         mmWidget._customHandlers.onHide(mmWidget, id);
                     }
                 } else {
                     $(mmWidget).show();
                     if (mmWidget &&
                         mmWidget._customHandlers &&
-                        mmWidget._customHandlers.onShow) {
+                        mmWidget._customHandlers.onShow
+                    ) {
                         mmWidget._customHandlers.onShow(mmWidget, id);
                     }
                 }
@@ -3093,9 +3096,9 @@ var vis = {
                 }
 
                 if (this.isSignalVisible(signal.view, signal.widget, signal.index, state.val)) {
-                    $(mWidget).find('.vis-signal[data-index="' + signal.index + '"]').show();
+                    $(mWidget).find(`.vis-signal[data-index="${signal.index}"]`).show();
                 } else {
-                    $(mWidget).find('.vis-signal[data-index="' + signal.index + '"]').hide();
+                    $(mWidget).find(`.vis-signal[data-index="${signal.index}"]`).hide();
                 }
             }
         }
@@ -3108,7 +3111,13 @@ var vis = {
                 if (uWidget) {
                     var $lc = $(uWidget).find('.vis-last-change');
                     var isInterval = $lc.data('interval');
-                    $lc.html(this.binds.basic.formatDate($lc.data('type') === 'last-change' ? state.lc : state.ts, $lc.data('format'), isInterval === 'true' || isInterval === true));
+                    $lc.html(
+                        this.binds.basic.formatDate(
+                            $lc.data('type') === 'last-change' ? state.lc : state.ts,
+                            $lc.data('format'),
+                            isInterval === 'true' || isInterval === true
+                        )
+                    );
                 }
             }
         }
@@ -3121,7 +3130,7 @@ var vis = {
 
                 widget[this.bindings[id][i].type][this.bindings[id][i].attr] = value;
                 if (this.widgets[this.bindings[id][i].widget] && this.bindings[id][i].type === 'data') {
-                    this.widgets[this.bindings[id][i].widget][this.bindings[id][i].type + '.' + this.bindings[id][i].attr] = value;
+                    this.widgets[this.bindings[id][i].widget][`${this.bindings[id][i].type}.${this.bindings[id][i].attr}`] = value;
                 }
 
                 this.subscribeOidAtRuntime(value);
@@ -3136,7 +3145,7 @@ var vis = {
             try {
                 this.onChangeCallbacks[j].callback(this.onChangeCallbacks[j].arg, id, state.val, state.ack);
             } catch (e) {
-                this.conn.logError('Error: can\'t update states object for ' + id + '(' + e + '): ' + JSON.stringify(e.stack));
+                this.conn.logError(`Error: can't update states object for ${id}(${e}): ${JSON.stringify(e.stack)}`);
             }
         }
         this.editMode && $.fn.selectId && $.fn.selectId('stateAll', id, state);
@@ -3149,15 +3158,15 @@ var vis = {
                 }
                 var obj = data[id];
 
-                if (id.indexOf('local_') === 0) {
+                if (id.startsWith('local_')) {
                     // if it is a local variable, we have to initiate this
                     obj = {
-                        val: this.getUrlParameter(id),              // using url parameter to set initial value of local variable
+                        val: this.getUrlParameter(id),              // using url parameter to set the initial value of local variable
                         ts: Date.now(),
                         lc: Date.now(),
                         ack: false,
                         from: 'system.adapter.vis.0',
-                        user: vis.user ? 'system.user.' + vis.user : 'system.user.admin',
+                        user: vis.user ? `system.user.${vis.user}` : 'system.user.admin',
                         q: 0
                     }
                 }
@@ -3168,26 +3177,26 @@ var vis = {
 
                 try {
                     if (this.editMode) {
-                        this.states[id + '.val'] = obj.val;
-                        this.states[id + '.ts'] = obj.ts;
-                        this.states[id + '.ack'] = obj.ack;
-                        this.states[id + '.lc'] = obj.lc;
+                        this.states[`${id}.val`] = obj.val;
+                        this.states[`${id}.ts`] = obj.ts;
+                        this.states[`${id}.ack`] = obj.ack;
+                        this.states[`${id}.lc`] = obj.lc;
                         if (obj.q !== undefined && obj.q !== null) {
-                            this.states[id + '.q'] = obj.q;
+                            this.states[`${id}.q`] = obj.q;
                         }
                     } else {
-                        var oo = {};
-                        oo[id + '.val'] = obj.val;
-                        oo[id + '.ts'] = obj.ts;
-                        oo[id + '.ack'] = obj.ack;
-                        oo[id + '.lc'] = obj.lc;
+                        const oo = {};
+                        oo[`${id}.val`] = obj.val;
+                        oo[`${id}.ts`] = obj.ts;
+                        oo[`${id}.ack`] = obj.ack;
+                        oo[`${id}.lc`] = obj.lc;
                         if (obj.q !== undefined && obj.q !== null) {
-                            oo[id + '.q'] = obj.q;
+                            oo[`${id}.q`] = obj.q;
                         }
                         this.states.attr(oo);
                     }
                 } catch (e) {
-                    this.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
+                    this.conn.logError(`Error: can't create states object for ${id}(${e})`);
                 }
 
                 if (!this.editMode && this.bindings[id]) {
@@ -3272,13 +3281,13 @@ var vis = {
                         });
 
                         if (widgetIndex >= 0) {
-                            // widget exists in visibility list
+                            // widget exists in a visibility list
                             if (id !== oid) {
                                 this.visibility[id].splice(widgetIndex, 1);
                                 // console.log('widget ' + obj.widget + ' removed from ' + id);
                             }
                         } else {
-                            // widget not exists in visibility list
+                            // widget doesn't exist in a visibility list
                             if (id === oid) {
                                 this.visibility[id].push(obj);
                                 // console.log('widget ' + obj.widget + ' added to ' + id);
@@ -3328,7 +3337,7 @@ if ('applicationCache' in window) {
                 try {
                     window.applicationCache.swapCache();
                 } catch (_e) {
-                    servConn.logError('Cannot execute window.applicationCache.swapCache - ' + _e);
+                    servConn.logError(`Cannot execute window.applicationCache.swapCache - ${_e}`);
                 }
                 setTimeout(function () {
                     window.location.reload();
