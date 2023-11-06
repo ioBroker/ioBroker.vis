@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2013-2022 bluefox https://github.com/GermanBluefox,
+ *  Copyright (c) 2013-2023 bluefox https://github.com/GermanBluefox,
  *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
@@ -98,18 +98,6 @@ if (typeof systemDictionary !== 'undefined') {
             "es": "No se encontraron páginas!",
             "pl": "Nie znaleziono stron!",
             "zh-cn": "找不到页面！"},
-        "No valid license found!": {
-            "en": "No valid vis license found! Please check vis settings.",
-            "de": "Keine gültige vis Lizenz gefunden! Bitte vis Einstellungen prüfen.",
-            "ru": "Действительная лицензия не найдена! Пожалуйста, проверьте настройки.",
-            "pt": "Nenhuma licença válida encontrada! Por favor, verifique vis instance.",
-            "nl": "Geen geldige licentie gevonden! Controleer de vis-aankondiging.",
-            "fr": "Aucune licence valide trouvée ! Veuillez vérifier vis instance.",
-            "it": "Nessuna licenza valida trovata! Si prega di controllare di persona.",
-            "es": "No se encontró ninguna licencia válida! Por favor, compruebe la instancia de visita.",
-            "pl": "Nie znaleziono ważnej licencji! Proszę sprawdzić vis instance.",
-            "zh-cn": "找不到有效的许可证！请检查vis实例。"
-        },
         'No Views found on Server': {
             'en': 'No Views found on Server',
             'de': 'Keine Views am Server gefunden.',
@@ -742,7 +730,6 @@ var vis = {
                     }
                 });
             }
-            this.checkLicense();
         }
 
         if (!containers.length && this.activeView) {
@@ -2858,21 +2845,6 @@ var vis = {
 
         $view.remove();
         this.unsubscribeStates(view);
-    },
-    checkLicense: function () {
-        if (!this.licTimeout && (typeof visConfig === 'undefined' || visConfig.license === false)) {
-            this.licTimeout = setTimeout(function () {
-                this.licTimeout = setTimeout(function () {
-                    $('#vis_container').hide();
-                    $('#vis_license').css('background', '#000');
-                }.bind(this), 10000);
-
-                var $lic = $('#vis_license');
-                var $text = $lic.find('.vis-license-text');
-                $text.text(_($text.text()));
-                $lic.show();
-            }.bind(this), 10000);
-        }
     },
     findAndDestroyViews: function () {
         if (this.destroyTimeout) {
