@@ -236,7 +236,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 ### 2.3.5 (2023-11-03)
 * (foxriver76) update adapter-react to have enhanced image support in file selector
 * (foxriver76) fixed color of file browser in light mode
-* (foxriver76) fixed color inputs jumping to end of input on modify
+* (foxriver76) fixed the color inputs jumping to the end of input on modifying
 
 ### 2.3.4 (2023-11-02)
 * (foxriver76) fix crash when selecting multiple widgets

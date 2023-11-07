@@ -848,7 +848,9 @@ function getRemoteWidgets(socket, onlyWidgetSets) {
             const countRef = { count: 0 };
             const instances = Object.values(objects);
             const dynamicWidgetInstances = instances.filter(obj =>
-                obj.common.visWidgets && (!onlyWidgetSets || onlyWidgetSets.includes(obj.common.name)));
+                obj.common.visWidgets &&
+                !obj.common.visWidgets.onlyV1 && // ignore old widgets for V1
+                (!onlyWidgetSets || onlyWidgetSets.includes(obj.common.name)));
 
             const promises = [];
             for (let i = 0; i < dynamicWidgetInstances.length; i++) {

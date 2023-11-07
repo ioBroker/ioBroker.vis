@@ -519,8 +519,13 @@ async function readAdapterList() {
     const instances = [];
     res.rows
         .forEach(item => {
-            const name = item.value._id.replace('system.adapter.', '').replace(/\.\d+$/, '');
-            if (!instances.includes(name)) {
+            const obj = item.value;
+            // ignore widgets for V1 only
+            if (obj && obj.common && obj.common.visWidgets && obj.common.visWidgets.onlyV1) {
+                return;
+            }
+            const name = obj && obj._id && obj._id.replace('system.adapter.', '').replace(/\.\d+$/, '');
+            if (name && !instances.includes(name)) {
                 instances.push(name);
             }
         });
@@ -928,7 +933,7 @@ async function main() {
         });
     }
 
-    // create vis-2.0 "meta" object if not exists
+    // create a vis-2.0 "meta" object, if not exists
     const visObjNS = await adapter.getForeignObjectAsync(adapter.namespace);
     if (!visObjNS || visObjNS.type !== 'meta') {
         await adapter.setForeignObjectAsync(adapter.namespace, {
