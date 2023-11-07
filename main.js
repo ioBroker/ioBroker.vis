@@ -521,7 +521,7 @@ async function readAdapterList() {
         .forEach(item => {
             const obj = item.value;
             // ignore widgets for V1 only
-            if (obj && obj.common && obj.common.visWidgets && obj.common.visWidgets.onlyV1) {
+            if (obj?.common?.visWidgets?.ingoreInVersions?.includes(2)) {
                 return;
             }
             const name = obj && obj._id && obj._id.replace('system.adapter.', '').replace(/\.\d+$/, '');
