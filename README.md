@@ -229,6 +229,9 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (foxriver76) fixed issues with icon selector filter when changing category
+
 ### 2.3.6 (2023-11-06)
 * (foxriver76) fixed issues with binding editor on style attributes
 * (foxriver76) improved performance due to optimizations on auto save

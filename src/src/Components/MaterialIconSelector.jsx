@@ -227,8 +227,7 @@ class MaterialIconSelector extends Component {
             <DialogTitle>
                 <span style={{ marginRight: 20 }}>
                     {this.state.iconType === 'knx-uf' ? 'KNX UF' : (this.state.iconType !== 'upload' ? 'Material' : '')}
-                    &nbsp;
-                    Icon Selector
+                    &nbsp;Icon Selector
                 </span>
                 {this.state.iconType !== 'upload' ? <TextField
                     value={this.state.filter}
@@ -277,7 +276,8 @@ class MaterialIconSelector extends Component {
                                         newState.selectedIcon = '';
                                         newState.maxPages = 0;
                                     }
-                                    this.setState(newState);
+
+                                    this.setState(newState, () => this.applyFilter(true));
                                 }}
                                 key={type}
                                 value={type}
@@ -351,7 +351,7 @@ class MaterialIconSelector extends Component {
                         <UploadFile
                             themeType={this.props.themeType}
                             onUpload={(name, data) => this.setState({ selectedIcon: data })}
-                            maxSize={10000}
+                            maxSize={10_000}
                             accept={{
                                 'image/png': ['.png'],
                                 'image/jpeg': ['.jpg'],

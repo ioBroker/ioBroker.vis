@@ -55,6 +55,7 @@
     "main.js"
   ],
   "scripts": {
+    "start": "cd src && npm run start",
     "test": "mocha ./test/*.engine.js --exit",
     "test-gui": "mocha ./test/*.gui.js --exit",
     "prepublishOnly": "gulp",
