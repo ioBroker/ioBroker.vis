@@ -555,7 +555,11 @@ const WidgetField = props => {
                     customFilter = { type: field.filter };
                 }
             } else if (field.filter) {
-                customFilter = field.filter;
+                if (typeof field.filter === 'function') {
+                    customFilter = field.filter(widget.data, index);
+                } else {
+                    customFilter = field.filter;
+                }
             }
         }
 
