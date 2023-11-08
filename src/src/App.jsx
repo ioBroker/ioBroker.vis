@@ -99,6 +99,7 @@ const styles = theme => ({
         whiteSpace: 'nowrap',
         display: 'flex',
         alignItems: 'center',
+        textTransform: 'none',
     },
     viewTabs: {
         display: 'inline-block',
