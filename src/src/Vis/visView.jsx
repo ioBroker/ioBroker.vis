@@ -1541,12 +1541,12 @@ class VisView extends React.Component {
                     }));
 
                 if (listRelativeWidgetsOrder.length) {
-                    let column = 0;
+                    let columnIndex = 0;
                     listRelativeWidgetsOrder.forEach((id, index) => {
                         const widget = this.props.context.views[view].widgets[id];
                         // if newLine, start from the beginning
                         if (widget.style.newLine) {
-                            column = 0;
+                            columnIndex = 0;
                         }
                         const w = VisView.getOneWidget(index, widget, {
                             // custom attributes
@@ -1558,7 +1558,7 @@ class VisView extends React.Component {
                             moveAllowed,
                             ignoreMouseEvents: this.ignoreMouseEvents,
                             onIgnoreMouseEvents: this.onIgnoreMouseEvents,
-                            refParent: this.props.selectedGroup ? this.refRelativeView : this.refRelativeColumnsView[column],
+                            refParent: this.props.selectedGroup ? this.refRelativeView : this.refRelativeColumnsView[columnIndex],
                             askView: this.askView,
                             relativeWidgetOrder: this.props.selectedGroup ? relativeWidgetOrder : listRelativeWidgetsOrder,
                             selectedWidgets: this.movement?.selectedWidgetsWithRectangle || this.props.selectedWidgets,
@@ -1567,10 +1567,10 @@ class VisView extends React.Component {
                             customSettings: this.props.customSettings,
                             viewsActiveFilter: this.props.viewsActiveFilter,
                         });
-                        wColumns[column].push(w);
-                        column++;
-                        if (column >= columns) {
-                            column = 0;
+                        wColumns[columnIndex].push(w);
+                        columnIndex++;
+                        if (columnIndex >= columns) {
+                            columnIndex = 0;
                         }
                     });
 
