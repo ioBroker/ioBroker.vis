@@ -591,5 +591,6 @@
   "Show only selected widgets": "Mostrar apenas widgets selecionados",
   "Group widgets": "Agrupar widgets",
   "Just use without modification": "Basta usar sem modificação",
-  "Modify": "Modificar"
+  "Modify": "Modificar",
+  "Use field as binding": "Usar campo como vinculação"
 }

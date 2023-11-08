@@ -591,5 +591,6 @@
   "Show only selected widgets": "Показати лише вибрані віджети",
   "Group widgets": "Згрупуйте віджети разом",
   "Just use without modification": "Просто використовуйте без змін",
-  "Modify": "Змінити"
+  "Modify": "Змінити",
+  "Use field as binding": "Використовувати поле як прив’язку"
 }

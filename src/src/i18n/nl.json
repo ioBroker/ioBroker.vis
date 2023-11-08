@@ -591,5 +591,6 @@
   "Show only selected widgets": "Toon alleen geselecteerde widgets",
   "Group widgets": "Groepeer widgets samen",
   "Just use without modification": "Gewoon gebruiken zonder wijziging",
-  "Modify": "Bewerken"
+  "Modify": "Bewerken",
+  "Use field as binding": "Gebruik veld als bindend"
 }

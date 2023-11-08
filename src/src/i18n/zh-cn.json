@@ -591,5 +591,6 @@
   "Show only selected widgets": "仅显示选定的小部件",
   "Group widgets": "将小部件分组在一起",
   "Just use without modification": "直接使用，无需修改",
-  "Modify": "调整"
+  "Modify": "调整",
+  "Use field as binding": "使用字段作为绑定"
 }

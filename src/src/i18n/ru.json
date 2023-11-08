@@ -591,5 +591,6 @@
   "Show only selected widgets": "Показать только выбранные виджеты",
   "Group widgets": "Сгруппировать виджеты",
   "Just use without modification": "Просто используйте без изменений",
-  "Modify": "Буду изменить"
+  "Modify": "Буду изменить",
+  "Use field as binding": "Использовать поле как привязку"
 }

@@ -591,5 +591,6 @@
   "Show only selected widgets": "Show only selected widgets",
   "Group widgets": "Group widgets",
   "Just use without modification": "Just use without modification",
-  "Modify": "Modify"
+  "Modify": "Modify",
+  "Use field as binding": "Use field as binding"
 }
