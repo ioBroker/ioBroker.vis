@@ -229,10 +229,12 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.4.0 (2023-11-08)
 * (foxriver76) fixed issues with icon selector filter when changing category
 * (foxriver76) fixed problem, that only first widget is pasted
 * (bluefox) added JSON binding operator
+* (bluefox) Allowed to use function as filter for Object ID
+* (bluefox) Implemented View bar (with no menu)
 
 ### 2.3.6 (2023-11-06)
 * (foxriver76) fixed issues with binding editor on style attributes

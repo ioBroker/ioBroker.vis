@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.3.6",
+    "version": "2.4.0",
     "news": {
+      "2.4.0": {
+        "en": "fixed issues with icon selector filter when changing category\nfixed problem, that only first widget is pasted\nadded JSON binding operator\nAllowed to use function as filter for Object ID\nImplemented View bar (with no menu)",
+        "de": "feste probleme mit icon-selektorfilter beim ändern der kategorie\nproblem behoben, dass nur erste widget gepflastert\njSON Bindungsoperator\nErlaubt, Funktion als Filter für Objekt-ID zu verwenden\nImplementierte Ansichtsleiste (ohne Menü)",
+        "ru": "фиксированные проблемы с фильтром иконки при изменении категории\nисправленная проблема, что только первый виджет вклеен\nдобавил JSON обязательного оператора\nРазрешено использовать функцию в качестве фильтра для ID объекта\nРеализованный вид бар (без меню)",
+        "pt": "problemas fixos com filtro seletor de ícones ao alterar a categoria\nproblema fixo, que só primeiro widget é colado\nadicionado operador de ligação JSON\nPermitido usar a função como filtro para ID de objeto\nBarra de visualização implementada (sem menu)",
+        "nl": "verandering van categorie\ndat is het probleem\nvoegde JSON binding operator toe\nGenoemd als filter voor Object ID\nImplemented View bar (met no menu)",
+        "fr": "problèmes fixes avec filtre de sélecteur d'icônes lorsque la catégorie change\nproblème fixe, que seul premier widget est passé\njSON opérateur de liaison\nPermet d'utiliser la fonction comme filtre pour objet ID\nBarre de vue implémentée (sans menu)",
+        "it": "problemi fissi con il filtro del selettore dell'icona quando cambia categoria\nproblema fisso, che solo il primo widget è incollato\naggiunto JSON\nConsente di utilizzare la funzione come filtro per Object ID\nVisualizza barra (senza menu)",
+        "es": "problemas fijos con filtro selector de iconos al cambiar la categoría\nproblema fijo, que sólo el primer widget es pegado\nagregado JSON\nPermitido utilizar la función como filtro para ID de objetos\nBarra de visualización implementada (sin menú)",
+        "pl": "zagadnienia z ikoną selekcjonera zmieniają kategorię\nzłożenie problemu, że tylko pierwszy widget jest przestarzałe\ndodać operatora JSON\nUżycie funkcji jako filtru dla obiektów ID\nWykaz gatunków Implemented View bar (bez menu)",
+        "uk": "виправлені питання з фільтром ікони при зміні категорії\nвиправлена проблема, що тільки перший віджет\nдодано оператор зв'язування JSON\nДозволяє використовувати функцію фільтра для ідентифікатора об'єкта\nРеалізовано панель Перегляду (без меню)",
+        "zh-cn": "一、在改变类别时采用一门选择过滤的固定问题\n固定问题,只有先令目标过去。\n协会增派了有约束力的经营者\n允许将行为作为过滤器\n实施维克·巴(没有男性)"
+      },
       "2.3.6": {
         "en": "fixed issues with binding editor on style attributes\nimproved performance due to optimizations on auto save",
         "de": "feste probleme mit verbindlichem editor auf style-attributen\nverbesserte leistung durch optimierungen auf autosparen",
@@ -80,19 +93,6 @@
         "pl": "Zaklęcie pionowe różnice pomiędzy względnymi widgetami\nLepsze dane wejściowe do liczb min/max w atrybutach dialogowych",
         "uk": "Виправлено вертикальний проміжок між відносними віджетами\nКращий вхід чисел з min/max в діалоговому вікні атрибутів",
         "zh-cn": "相对目标之间的垂直差距\n具有微量/米特色数字的更佳投入"
-      },
-      "2.3.0": {
-        "en": "jQui widgets (many of them) were improved",
-        "de": "jQui Widgets (viele davon) wurden verbessert",
-        "ru": "jQui виджеты (много из них) были улучшены",
-        "pt": "widgets jQui (muitos deles) foram melhorados",
-        "nl": "jQui Widgets (tal van hen) werden verbeterd",
-        "fr": "jQui widgets (bien d'entre eux) ont été améliorés",
-        "it": "jQui widgets (molti di loro) sono stati migliorati",
-        "es": "jQui widgets (muchos de ellos) fueron mejorados",
-        "pl": "jQui widgets (wielu z nich) zostały ulepszone",
-        "uk": "jQui віджети (many з них) були покращені",
-        "zh-cn": "jQui widget(其中many)得到了改善。"
       }
     },
     "title": "Visualisation Next Generation",
