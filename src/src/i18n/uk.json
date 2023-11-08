@@ -592,5 +592,8 @@
   "Group widgets": "Згрупуйте віджети разом",
   "Just use without modification": "Просто використовуйте без змін",
   "Modify": "Змінити",
-  "Use field as binding": "Використовувати поле як прив’язку"
+  "Use field as binding": "Використовувати поле як прив’язку",
+  "Deactivate binding and use field as standard input": "Дезактивувати прив’язку та використовувати поле як стандартний вхід",
+  "Edit binding": "Редагувати прив'язку",
+  "Hide menu": "Приховати меню"
 }

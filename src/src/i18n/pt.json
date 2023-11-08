@@ -592,5 +592,8 @@
   "Group widgets": "Agrupar widgets",
   "Just use without modification": "Basta usar sem modificação",
   "Modify": "Modificar",
-  "Use field as binding": "Usar campo como vinculação"
+  "Use field as binding": "Usar campo como vinculação",
+  "Deactivate binding and use field as standard input": "Desative a vinculação e use o campo como entrada padrão",
+  "Edit binding": "Editar vinculação",
+  "Hide menu": "Ocultar menu"
 }

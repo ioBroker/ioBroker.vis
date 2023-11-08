@@ -592,5 +592,8 @@
   "Group widgets": "Groepeer widgets samen",
   "Just use without modification": "Gewoon gebruiken zonder wijziging",
   "Modify": "Bewerken",
-  "Use field as binding": "Gebruik veld als bindend"
+  "Use field as binding": "Gebruik veld als bindend",
+  "Deactivate binding and use field as standard input": "Deactiveer binding en gebruik veld als standaardinvoer",
+  "Edit binding": "Binding bewerken",
+  "Hide menu": "Menu verbergen"
 }

@@ -592,5 +592,8 @@
   "Group widgets": "Сгруппировать виджеты",
   "Just use without modification": "Просто используйте без изменений",
   "Modify": "Буду изменить",
-  "Use field as binding": "Использовать поле как привязку"
+  "Use field as binding": "Использовать поле как привязку",
+  "Deactivate binding and use field as standard input": "Деактивировать привязку и использовать поле в качестве стандартного ввода",
+  "Edit binding": "Изменить привязку",
+  "Hide menu": "Скрыть меню"
 }

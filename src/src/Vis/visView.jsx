@@ -1541,9 +1541,14 @@ class VisView extends React.Component {
                     }));
 
                 if (listRelativeWidgetsOrder.length) {
+                    let column = 0;
                     listRelativeWidgetsOrder.forEach((id, index) => {
-                        const column = columns <= 1 ? 0 : index % columns;
-                        const w = VisView.getOneWidget(index, this.props.context.views[view].widgets[id], {
+                        const widget = this.props.context.views[view].widgets[id];
+                        // if newLine, start from the beginning
+                        if (widget.style.newLine) {
+                            column = 0;
+                        }
+                        const w = VisView.getOneWidget(index, widget, {
                             // custom attributes
                             context: this.props.context,
                             editMode: this.props.editMode, // relative widget cannot be multi-view
@@ -1563,6 +1568,10 @@ class VisView extends React.Component {
                             viewsActiveFilter: this.props.viewsActiveFilter,
                         });
                         wColumns[column].push(w);
+                        column++;
+                        if (column >= columns) {
+                            column = 0;
+                        }
                     });
 
                     if (this.props.selectedGroup) {

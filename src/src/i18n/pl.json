@@ -592,5 +592,8 @@
   "Group widgets": "Grupuj widżety razem",
   "Just use without modification": "Po prostu użyj bez modyfikacji",
   "Modify": "Modyfikować",
-  "Use field as binding": "Użyj pola jako wiązania"
+  "Use field as binding": "Użyj pola jako wiązania",
+  "Deactivate binding and use field as standard input": "Dezaktywuj powiązanie i użyj pola jako standardowego wejścia",
+  "Edit binding": "Edytuj wiązanie",
+  "Hide menu": "Ukryj menu"
 }

@@ -1179,7 +1179,10 @@ class Widget extends Component {
 
         return <tr key={fieldIndex} className={this.props.classes.fieldRow}>
             {field.type === 'delimiter' ?
-                <td colSpan="2"><Divider style={{ borderBottomWidth: 'thick' }} /></td>
+                // eslint-disable-next-line jsx-a11y/control-has-associated-label
+                <td colSpan="2">
+                    <Divider style={{ borderBottomWidth: 'thick' }} />
+                </td>
                 : <>
                     <td
                         className={Utils.clsx(this.props.classes.fieldTitle, disabled && this.props.classes.fieldTitleDisabled, error && this.props.classes.fieldTitleError)}

@@ -128,7 +128,7 @@ body, html {
     font-variant: unset !important;
 }
 .vis-editmode-widget-name-long {
-    padding: 1px 33px 1px 3px;
+    padding: 1px 50px 1px 3px;
 }
 .vis-editmode-widget-name.dark {
     background: black;
@@ -211,6 +211,31 @@ body, html {
     color: #0b9512;
 }
 .vis-expand-disabled {
+    opacity: 0.7;
+}
+
+.vis-new-line {
+    position: absolute;
+    top: 0;
+    right: 34px;
+    /* font-size: 10px;*/
+    width: 13px;
+    height: 13px;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+.vis-new-line:hover {
+    transform: scale(2);
+    color: #F00;
+}
+.vis-new-line:active {
+    transform: scale(1.7);
+    color: #7c7c7c;
+}
+.vis-new-line-enabled {
+    color: #ed00ff;
+}
+.vis-new-line-disabled {
     opacity: 0.7;
 }
 

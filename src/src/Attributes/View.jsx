@@ -557,7 +557,10 @@ const View = props => {
                     type: 'color', name: 'Background color', field: 'navigationBackground', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
                 },
                 {
-                    type: 'text', name: 'Menu header text', field: 'navigationHeaderText', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
+                    type: 'checkbox', name: 'Hide menu', field: 'navigationHideMenu', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
+                },
+                {
+                    type: 'text', name: 'Menu header text', field: 'navigationHeaderText', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal" || !data.navigationBar', applyToAll: true,
                 },
                 {
                     type: 'checkbox', name: 'Do not hide menu', field: 'navigationNoHide', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,

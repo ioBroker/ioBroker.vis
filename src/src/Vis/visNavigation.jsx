@@ -52,6 +52,13 @@ const styles = theme => ({
         backgroundColor: theme.palette.primary.main,
         color: theme.palette.primary.contrastText,
         transition: 'padding-left 0.4s ease-in-out',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8,
+    },
+    toolbarIcon: {
+        height: 32,
+        width: 'auto',
     },
     verticalMenu: {
         width: '100%',
@@ -346,6 +353,8 @@ class VisNavigation extends React.Component {
         }
         style.opacity = this.props.editMode ? 0.4 : 1;
 
+        const icon = settings.navigationHideMenu ? settings.navigationIcon || settings.navigationImage : null;
+
         return <div
             className={Utils.clsx(
                 this.props.classes.toolBar,
@@ -353,6 +362,10 @@ class VisNavigation extends React.Component {
             )}
             style={style}
         >
+            {icon ? <Icon
+                src={icon}
+                className={this.props.classes.toolbarIcon}
+            /> : null}
             {this.props.activeView}
         </div>;
     }
@@ -378,7 +391,7 @@ class VisNavigation extends React.Component {
         }
 
         return <div className={this.props.classes.root}>
-            <div
+            {!settings.navigationHideMenu ? <div
                 className={Utils.clsx(
                     this.props.classes.openMenuButton,
                     this.props.menuWidth === 'full' && this.props.classes.openMenuButtonFull,
@@ -415,14 +428,14 @@ class VisNavigation extends React.Component {
                         style={settings.navigationBar && this.props.menuWidth === 'hidden' ? { color: this.props.context.themeType === 'dark' ? '#000' : '#FFF' } : null}
                     />
                 </IconButton>
-            </div>
-            {this.renderMenu(settings)}
+            </div> : null}
+            {!settings.navigationHideMenu ? this.renderMenu(settings) : null}
             <div
                 className={Utils.clsx(
                     this.props.classes.afterMenu,
-                    this.props.menuWidth === 'full' && this.props.classes.afterMenuFull,
-                    this.props.menuWidth === 'narrow' && this.props.classes.afterMenuNarrow,
-                    this.props.menuWidth === 'hidden' && this.props.classes.afterMenuHidden,
+                    !settings.navigationHideMenu && this.props.menuWidth === 'full' && this.props.classes.afterMenuFull,
+                    !settings.navigationHideMenu && this.props.menuWidth === 'narrow' && this.props.classes.afterMenuNarrow,
+                    (settings.navigationHideMenu || this.props.menuWidth === 'hidden') && this.props.classes.afterMenuHidden,
                 )}
             >
                 {this.renderToolbar(settings)}

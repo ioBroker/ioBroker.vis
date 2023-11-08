@@ -332,7 +332,8 @@ class WidgetBindingField extends Component {
                         *(N)
                     </b>
                     - multiplying. Argument must be in brackets, like
-                    <i className={classes.space}>&quot;*(4)&quot;</i>.
+                    <i className={classes.space}>&quot;*(4)&quot;</i>
+                    .
                     <span className={classes.space}>this sample, we multiply the value with 4.</span>
                 </li>
                 <li>
@@ -347,7 +348,8 @@ class WidgetBindingField extends Component {
                         +(N)
                     </b>
                     - add. Argument must be in brackets, like
-                    <i className={classes.space}>&quot;+(4.5)&quot;</i>.
+                    <i className={classes.space}>&quot;+(4.5)&quot;</i>
+                    .
                     <span className={classes.space}>In this sample we add to value 4.5.</span>
                 </li>
                 <li>
@@ -362,7 +364,8 @@ class WidgetBindingField extends Component {
                         -(N)
                     </b>
                     - subtract. Argument must be in brackets, like
-                    <i className={classes.space}>&quot;-(-674.5)&quot;</i>.
+                    <i className={classes.space}>&quot;-(-674.5)&quot;</i>
+                    .
                     <span className={classes.space}>In this sample we subtract from value -674.5.</span>
                 </li>
                 <li>
@@ -377,7 +380,8 @@ class WidgetBindingField extends Component {
                         /(D)
                     </b>
                     - dividing. Argument must be in brackets, like
-                    <i className={classes.space}>&quot;/(0.5)&quot;</i>.
+                    <i className={classes.space}>&quot;/(0.5)&quot;</i>
+                    .
                     <span className={classes.space}>In this sample, we divide the value by 0.5.</span>
                 </li>
                 <li>
@@ -392,7 +396,8 @@ class WidgetBindingField extends Component {
                         %(M)
                     </b>
                     - modulo. Argument must be in brackets, like
-                    <i className={classes.space}>&quot;%(5)&quot;</i>.
+                    <i className={classes.space}>&quot;%(5)&quot;</i>
+                    .
                     <span className={classes.space}>In this sample, we take modulo of 5.</span>
                 </li>
                 <li>

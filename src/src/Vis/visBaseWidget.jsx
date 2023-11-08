@@ -22,6 +22,7 @@ import {
     Expand as ExpandIcon,
     ArrowUpward as UpIcon,
     ArrowDownward as DownIcon,
+    KeyboardReturn,
 } from '@mui/icons-material';
 
 import { I18n, Utils } from '@iobroker/adapter-react-v5';
@@ -1506,6 +1507,19 @@ class VisBaseWidget extends React.Component {
         }]);
     }
 
+    onToggleLineBreak(e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        const widget = this.props.context.views[this.props.view].widgets[this.props.id];
+
+        this.props.context.onWidgetsChanged([{
+            wid: this.props.id,
+            view: this.props.view,
+            style: { newLine: !widget.style.newLine },
+        }]);
+    }
+
     static correctStylePxValue(value) {
         if (typeof value === 'string') {
             // eslint-disable-next-line no-restricted-properties
@@ -1719,7 +1733,9 @@ class VisBaseWidget extends React.Component {
                 {this.state.multiViewWidget || widget.usedInWidget ? null :
                     <AnchorIcon onMouseDown={e => this.onToggleRelative(e)} className={Utils.clsx('vis-anchor', this.props.isRelative ? 'vis-anchor-enabled' : 'vis-anchor-disabled')} />}
                 {this.state.multiViewWidget || !this.props.isRelative || !resizable || widget.usedInWidget ? null :
-                    <ExpandIcon onMouseDown={e => this.onToggleWidth(e)} className={Utils.clsx('vis-expand', widget.style ? 'vis-expand-enabled' : 'vis-expand-disabled')} />}
+                    <ExpandIcon onMouseDown={e => this.onToggleWidth(e)} className={Utils.clsx('vis-expand', widget.style.width === '100%' ? 'vis-expand-enabled' : 'vis-expand-disabled')} />}
+                {this.state.multiViewWidget || !this.props.isRelative || widget.usedInWidget ? null :
+                    <KeyboardReturn onMouseDown={e => this.onToggleLineBreak(e)} className={Utils.clsx('vis-new-line', widget.style.newLine ? 'vis-new-line-enabled' : 'vis-new-line-disabled')} />}
             </div>;
 
             if (this.props.isRelative && !this.state.multiViewWidget && !widget.usedInWidget) {

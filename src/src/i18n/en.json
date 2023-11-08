@@ -592,5 +592,8 @@
   "Group widgets": "Group widgets",
   "Just use without modification": "Just use without modification",
   "Modify": "Modify",
-  "Use field as binding": "Use field as binding"
+  "Use field as binding": "Use field as binding",
+  "Deactivate binding and use field as standard input": "Deactivate binding and use field as standard input",
+  "Edit binding": "Edit binding",
+  "Hide menu": "Hide menu"
 }

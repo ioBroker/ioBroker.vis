@@ -592,5 +592,8 @@
   "Group widgets": "Regrouper les widgets",
   "Just use without modification": "A utiliser sans modification",
   "Modify": "Modifier",
-  "Use field as binding": "Utiliser le champ comme liaison"
+  "Use field as binding": "Utiliser le champ comme liaison",
+  "Deactivate binding and use field as standard input": "Désactiver la liaison et utiliser le champ comme entrée standard",
+  "Edit binding": "Modifier la liaison",
+  "Hide menu": "Masquer le menu"
 }
