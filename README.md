@@ -231,6 +231,8 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 ## Changelog
 ### **WORK IN PROGRESS**
 * (foxriver76) fixed issues with icon selector filter when changing category
+* (foxriver76) fixed problem, that only first widget is pasted
+* (bluefox) added JSON binding operator
 
 ### 2.3.6 (2023-11-06)
 * (foxriver76) fixed issues with binding editor on style attributes

@@ -365,7 +365,15 @@ class App extends Runtime {
         return selectedWidgets;
     }
 
-    getNewWidgetIdNumber = (isGroup, project) => {
+    /**
+     * Get next widgetId as a number
+     *
+     * @param isGroup if it is a group of widgets
+     * @param project current project
+     * @param offset offset if multiple widgets are created and not yet in project
+     * @return {number}
+     */
+    getNewWidgetIdNumber = (isGroup, project, offset = 0) => {
         const widgets = [];
         project = project || this.state.visProject;
         Object.keys(project).forEach(view =>
@@ -382,15 +390,19 @@ class App extends Runtime {
             }
         });
 
-        return newKey;
+        return newKey + offset;
     };
 
-    getNewWidgetId = project => {
-        let newKey = this.getNewWidgetIdNumber(false, project);
+    /**
+     * Get new widget id from the project
+     * @param project project to determine next widget id for
+     * @param offset offset, if multiple widgets are created and not yet in the project
+     * @return {string}
+     */
+    getNewWidgetId = (project, offset = 0) => {
+        const newKey = this.getNewWidgetIdNumber(false, project, offset);
 
-        newKey = `w${newKey.toString().padStart(6, 0)}`;
-
-        return newKey;
+        return `w${(newKey).toString().padStart(6, 0)}`;
     };
 
     getNewGroupId = project => {
@@ -617,19 +629,23 @@ class App extends Runtime {
         const widgets = project[this.state.selectedView].widgets;
 
         const newKeys = [];
-        Object.keys(this.state.widgetsClipboard.widgets).forEach(clipboardWidgetId => {
+        let offset = 0;
+
+        for (const clipboardWidgetId of Object.keys(this.state.widgetsClipboard.widgets)) {
             const newWidget = JSON.parse(JSON.stringify(this.state.widgetsClipboard.widgets[clipboardWidgetId]));
             if (this.state.widgetsClipboard.type === 'copy' && this.state.selectedView === this.state.widgetsClipboard.view) {
                 const boundingRect = App.getWidgetRelativeRect(clipboardWidgetId);
                 newWidget.style = this.pxToPercent(newWidget.style, {
-                    left: `${boundingRect.left + 10}px`,
-                    top: `${boundingRect.top + 10}px`,
+                    left: `${(boundingRect?.left ?? 0) + 10}px`,
+                    top: `${(boundingRect?.top ?? 0) + 10}px`,
                 });
             }
-            const newKey = this.getNewWidgetId();
+            const newKey = this.getNewWidgetId(this.state.visProject, offset);
+            offset++;
             widgets[newKey] = newWidget;
             newKeys.push(newKey);
-        });
+        }
+
         this.setSelectedWidgets([]);
         await this.changeProject(project);
         this.setSelectedWidgets(newKeys);

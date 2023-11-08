@@ -91,10 +91,7 @@ class MultiSelect extends Component {
                 text = value[0];
             }
         } else {
-            text = value.map(itemValue => {
-                const item = props.options.find(foundItem => foundItem.value === itemValue);
-                return item ? item.name : itemValue;
-            }).join(', ');
+            text = value.join(', ');
         }
 
         let backColor;

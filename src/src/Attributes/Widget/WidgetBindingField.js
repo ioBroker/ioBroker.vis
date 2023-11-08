@@ -94,7 +94,7 @@ class WidgetBindingField extends Component {
     }
 
     static getDerivedStateFromProps(props, state) {
-        let value = props.widget[props.isStyle ? 'style' : 'data'][props.field.name] || '';
+        let value = props.widget[props.isStyle ? 'style' : 'data']?.[props.field.name] || '';
         if (value === undefined || value === null) {
             value = '';
         } else {
