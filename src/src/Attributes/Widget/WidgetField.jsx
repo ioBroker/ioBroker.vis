@@ -733,7 +733,7 @@ const WidgetField = props => {
             error={!!error}
             helperText={typeof error === 'string' ? I18n.t(error) : null}
             disabled={disabled}
-            value={value}
+            value={value || ''}
             className={props.classes.fieldContentColor}
             onChange={color => change(color)}
             openAbove
@@ -750,6 +750,7 @@ const WidgetField = props => {
 
     if (field.type === 'slider') {
         return <div style={{ display: 'flex' }}>
+            <div style={{ width: 5 }}></div>
             <Slider
                 disabled={disabled}
                 className={props.classes.fieldContentSlider}

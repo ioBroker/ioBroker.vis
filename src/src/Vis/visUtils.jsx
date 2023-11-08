@@ -866,102 +866,103 @@ function getRemoteWidgets(socket, onlyWidgetSets) {
                         if (!visWidgetsCollection.url?.startsWith('http')) {
                             visWidgetsCollection.url = `./widgets/${visWidgetsCollection.url}`;
                         }
+                        if (visWidgetsCollection.components) {
+                            ((collection, instance) => {
+                                try {
+                                    let i18nPrefix = false;
+                                    let i18nPromiseWait;
 
-                        try {
-                            if (visWidgetsCollection.components) {
-                                let i18nPrefix = false;
-                                let i18nPromiseWait;
+                                    // 1. Load language file ------------------
+                                    // instance.common.visWidgets.i18n is deprecated
+                                    if (collection.url && (collection.i18n === true || instance.common.visWidgets.i18n === true)) {
+                                        // load i18n from files
+                                        const pos = collection.url.lastIndexOf('/');
+                                        let i18nURL;
+                                        if (pos !== -1) {
+                                            i18nURL = collection.url.substring(0, pos);
+                                        } else {
+                                            i18nURL = collection.url;
+                                        }
+                                        const lang = I18n.getLanguage();
 
-                                // 1. Load language file ------------------
-                                // dynamicWidgetInstance.common.visWidgets.i18n is deprecated
-                                if (visWidgetsCollection.url && (visWidgetsCollection.i18n === true || dynamicWidgetInstance.common.visWidgets.i18n === true)) {
-                                    // load i18n from files
-                                    const pos = visWidgetsCollection.url.lastIndexOf('/');
-                                    let i18nURL;
-                                    if (pos !== -1) {
-                                        i18nURL = visWidgetsCollection.url.substring(0, pos);
-                                    } else {
-                                        i18nURL = visWidgetsCollection.url;
+                                        const i18nPromise = fetch(`${i18nURL}/i18n/${lang}.json`)
+                                            .then(data => data.json())
+                                            .then(json => {
+                                                countRef.count++;
+                                                I18n.extendTranslations(json, lang);
+                                                window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(countRef.count, promises.length);
+                                            })
+                                            .catch(error => {
+                                                if (lang !== 'en') {
+                                                    // try to load English
+                                                    return fetch(`${i18nURL}/i18n/en.json`)
+                                                        .then(data => data.json())
+                                                        .then(json => {
+                                                            countRef.count++;
+                                                            I18n.extendTranslations(json, lang);
+                                                            window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(countRef.count, promises.length);
+                                                        })
+                                                        .catch(_error => console.log(`Cannot load i18n "${i18nURL}/i18n/${lang}.json": ${_error}`));
+                                                }
+                                                console.log(`Cannot load i18n "${i18nURL}/i18n/${lang}.json": ${error}`);
+                                                return null;
+                                            });
+                                        promises.push(i18nPromise);
+                                    } else if (collection.url && (collection.i18n === 'component' || instance.common.visWidgets.i18n === 'component')) {
+                                        // instance.common.visWidgets.i18n is deprecated
+
+                                        i18nPromiseWait = loadComponent(collection.name, 'default', './translations', collection.url)()
+                                            .then(translations => {
+                                                countRef.count++;
+
+                                                // add automatic prefix to all translations
+                                                if (translations.default.prefix === true) {
+                                                    translations.default.prefix = `${instance.common.name}_`;
+                                                }
+                                                i18nPrefix = translations.default.prefix;
+
+                                                I18n.extendTranslations(translations.default);
+                                                window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(countRef.count, promises.length);
+                                            })
+                                            .catch(error =>
+                                                console.log(`Cannot load i18n "${collection.name}": ${error}`));
+                                    } else if (collection.i18n && typeof collection.i18n === 'object') {
+                                        try {
+                                            I18n.extendTranslations(collection.i18n);
+                                        } catch (error) {
+                                            console.error(`Cannot import i18n: ${error}`);
+                                        }
                                     }
-                                    const lang = I18n.getLanguage();
 
-                                    const i18nPromise = fetch(`${i18nURL}/i18n/${lang}.json`)
-                                        .then(data => data.json())
-                                        .then(json => {
-                                            countRef.count++;
-                                            I18n.extendTranslations(json, lang);
-                                            window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(countRef.count, promises.length);
-                                        })
-                                        .catch(error => {
-                                            if (lang !== 'en') {
-                                                // try to load English
-                                                return fetch(`${i18nURL}/i18n/en.json`)
-                                                    .then(data => data.json())
-                                                    .then(json => {
-                                                        countRef.count++;
-                                                        I18n.extendTranslations(json, lang);
-                                                        window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(countRef.count, promises.length);
-                                                    })
-                                                    .catch(_error => console.log(`Cannot load i18n "${i18nURL}/i18n/${lang}.json": ${_error}`));
-                                            }
-                                            console.log(`Cannot load i18n "${i18nURL}/i18n/${lang}.json": ${error}`);
-                                            return null;
-                                        });
-                                    promises.push(i18nPromise);
-                                } else if (visWidgetsCollection.url && (visWidgetsCollection.i18n === 'component' || dynamicWidgetInstance.common.visWidgets.i18n === 'component')) {
-                                    // dynamicWidgetInstance.common.visWidgets.i18n is deprecated
-
-                                    i18nPromiseWait = loadComponent(visWidgetsCollection.name, 'default', './translations', visWidgetsCollection.url)()
-                                        .then(translations => {
-                                            countRef.count++;
-
-                                            // add automatic prefix to all translations
-                                            if (translations.default.prefix === true) {
-                                                translations.default.prefix = `${dynamicWidgetInstance.common.name}_`;
-                                            }
-                                            i18nPrefix = translations.default.prefix;
-
-                                            I18n.extendTranslations(translations.default);
-                                            window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(countRef.count, promises.length);
-                                        })
-                                        .catch(error =>
-                                            console.log(`Cannot load i18n "${visWidgetsCollection.name}": ${error}`));
-                                } else if (visWidgetsCollection.i18n && typeof visWidgetsCollection.i18n === 'object') {
-                                    try {
-                                        I18n.extendTranslations(visWidgetsCollection.i18n);
-                                    } catch (error) {
-                                        console.error(`Cannot import i18n: ${error}`);
-                                    }
-                                }
-
-                                // 2. Load all components ------------------
-                                if (visWidgetsCollection.components) {
-                                    if (i18nPromiseWait) {
-                                        // we must wait for it as the flag i18nPrefix will be used in the component
-                                        promises.push(i18nPromiseWait
-                                            .then(() => _loadComponentHelper({
-                                                visWidgetsCollection,
+                                    // 2. Load all components ------------------
+                                    if (collection.components) {
+                                        if (i18nPromiseWait) {
+                                            // we must wait for it as the flag i18nPrefix will be used in the component
+                                            promises.push(i18nPromiseWait
+                                                .then(() => _loadComponentHelper({
+                                                    visWidgetsCollection: collection,
+                                                    countRef,
+                                                    dynamicWidgetInstance: instance,
+                                                    i18nPrefix,
+                                                    result,
+                                                })));
+                                        } else {
+                                            // do not wait for languages
+                                            promises.push(_loadComponentHelper({
+                                                visWidgetsCollection: collection,
                                                 countRef,
-                                                dynamicWidgetInstance,
+                                                dynamicWidgetInstance: instance,
                                                 i18nPrefix,
                                                 result,
-                                            })));
-                                    } else {
-                                        // do not wait for languages
-                                        promises.push(_loadComponentHelper({
-                                            visWidgetsCollection,
-                                            countRef,
-                                            dynamicWidgetInstance,
-                                            i18nPrefix,
-                                            result,
-                                        }));
+                                            }));
+                                        }
+                                    } else if (i18nPromiseWait) {
+                                        promises.push(i18nPromiseWait);
                                     }
-                                } else if (i18nPromiseWait) {
-                                    promises.push(i18nPromiseWait);
+                                } catch (e) {
+                                    console.error(e);
                                 }
-                            }
-                        } catch (e) {
-                            console.error(e);
+                            })(visWidgetsCollection, dynamicWidgetInstance);
                         }
                     }
                 }
