@@ -230,13 +230,13 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 -->
 ## Changelog
 ### **WORK IN PROGRESS**
-* (bluefox) Implemented the signal icons for react widgets
+* (bluefox) Implemented the signal icons for React widgets
 
 ### 2.4.0 (2023-11-08)
 * (foxriver76) fixed issues with icon selector filter when changing category
-* (foxriver76) fixed problem, that only first widget is pasted
+* (foxriver76) fixed problem, that only the first widget is pasted
 * (bluefox) added JSON binding operator
-* (bluefox) Allowed to use function as filter for Object ID
+* (bluefox) Allowed using function as filter for Object ID
 * (bluefox) Implemented View bar (with no menu)
 
 ### 2.3.6 (2023-11-06)
