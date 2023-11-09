@@ -113,11 +113,6 @@ const Palette = props => {
         const widgetTypes = getWidgetTypes();
         widgetTypes.forEach(widgetType => {
             const widgetTypeName = widgetType.set;
-            _widgetsList[widgetTypeName] = _widgetsList[widgetTypeName] || {};
-            const title = widgetType.label ? I18n.t(widgetType.label) : window.vis._(widgetType.title) || '';
-            if (widgetType.hidden || (filter && !title.toLowerCase().includes(filter.toLowerCase()))) {
-                return;
-            }
             if (widgetType.developerMode) {
                 _widgetSetProps[widgetTypeName] = _widgetSetProps[widgetTypeName] || {};
                 _widgetSetProps[widgetTypeName].developerMode = true;
@@ -151,6 +146,12 @@ const Palette = props => {
                 _widgetSetProps[widgetTypeName].version = widgetType.version;
             }
 
+            const title = widgetType.label ? I18n.t(widgetType.label) : window.vis._(widgetType.title) || '';
+            if (widgetType.hidden || (filter && !title.toLowerCase().includes(filter.toLowerCase()))) {
+                return;
+            }
+
+            _widgetsList[widgetTypeName] = _widgetsList[widgetTypeName] || {};
             _widgetsList[widgetTypeName][widgetType.name] = widgetType;
         });
 
@@ -190,6 +191,7 @@ const Palette = props => {
             Object.keys(_widgetsList).forEach(widgetType => {
                 if (!Object.keys(_widgetsList[widgetType]).length) {
                     delete _widgetsList[widgetType];
+                    delete _widgetSetProps[widgetType];
                 }
             });
         }
@@ -299,10 +301,10 @@ const Palette = props => {
                 fullWidth
                 value={filter}
                 onChange={e => setFilter(e.target.value)}
-                label={filter.length ? ' ' : I18n.t('Filter')}
+                label={filter ? ' ' : I18n.t('Filter')}
                 InputProps={{
                     className: props.classes.clearPadding,
-                    endAdornment: filter.length ? <IconButton size="small" onClick={() => setFilter('')}>
+                    endAdornment: filter ? <IconButton size="small" onClick={() => setFilter('')}>
                         <ClearIcon />
                     </IconButton> : null,
                 }}
