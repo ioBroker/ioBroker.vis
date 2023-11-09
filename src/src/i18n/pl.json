@@ -595,5 +595,12 @@
   "Use field as binding": "Użyj pola jako wiązania",
   "Deactivate binding and use field as standard input": "Dezaktywuj powiązanie i użyj pola jako standardowego wejścia",
   "Edit binding": "Edytuj wiązanie",
-  "Hide menu": "Ukryj menu"
+  "Hide menu": "Ukryj menu",
+  "signals-count": "Liczba sygnałów",
+  "signals-smallIcon-1": "Mała ikona [1]",
+  "signals-smallIcon-2": "Mała ikona [3]",
+  "signals-smallIcon-0": "Mała ikona [0]",
+  "signals-text-0": "Tekst [0]",
+  "signals-text-1": "Tekst [1]",
+  "signals-text-2": "Tekst [2]"
 }

@@ -1080,7 +1080,7 @@ class VisBaseWidget extends React.Component {
             }}
         >
             <div style={{ color: '#FF0000', paddingLeft: 10 }}>{I18n.t('Unknown widget type "%s"', this.props.tpl)}</div>
-            <pre>{ JSON.stringify(this.state.data, null, 2) }</pre>
+            <pre>{JSON.stringify(this.state.data, null, 2)}</pre>
         </div>;
     }
 
@@ -1850,12 +1850,15 @@ class VisBaseWidget extends React.Component {
             </div>;
         }
 
+        const signals = this.renderSignals ? this.renderSignals() : null;
+
         return <div
             id={props.id}
             className={props.className}
             ref={this.refService}
             style={style}
         >
+            {signals}
             {widgetName}
             {widgetMoveButtons}
             {overlay}

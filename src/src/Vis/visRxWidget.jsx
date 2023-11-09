@@ -20,7 +20,7 @@ import {
     CardContent,
 } from '@mui/material';
 
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n, Icon } from '@iobroker/adapter-react-v5';
 
 // eslint-disable-next-line import/no-cycle
 import VisBaseWidget from './visBaseWidget';
@@ -548,6 +548,175 @@ class VisRxWidget extends VisBaseWidget {
             viewsActiveFilter: this.props.viewsActiveFilter,
             customSettings: this.props.customSettings,
         });
+    }
+
+    isSignalVisible(index, val) {
+        const oid = this.state.rxData[`signals-oid-${index}`];
+
+        if (oid) {
+            if (val === undefined || val === null) {
+                val = this.state.values[`${oid}.val`];
+            }
+
+            const condition = this.state.rxData[`signals-cond-${index}`];
+            let value = this.state.rxData[`signals-val-${index}`];
+
+            if (val === undefined || val === null) {
+                return condition === 'not exist';
+            }
+
+            if (!condition || value === undefined || value === null) {
+                return condition === 'not exist';
+            }
+
+            if (val === 'null' && condition !== 'exist' && condition !== 'not exist') {
+                return false;
+            }
+
+            const t = typeof val;
+            if (t === 'boolean' || val === 'false' || val === 'true') {
+                value = value === 'true' || value === true || value === 1 || value === '1';
+            } else if (t === 'number') {
+                value = parseFloat(value);
+            } else if (t === 'object') {
+                val = JSON.stringify(val);
+            }
+
+            switch (condition) {
+                case '==':
+                    value = value.toString();
+                    val = val.toString();
+                    if (val === '1') val = 'true';
+                    if (value === '1') value = 'true';
+                    if (val === '0') val = 'false';
+                    if (value === '0') value = 'false';
+                    return value === val;
+                case '!=':
+                    value = value.toString();
+                    val = val.toString();
+                    if (val === '1') val = 'true';
+                    if (value === '1') value = 'true';
+                    if (val === '0') val = 'false';
+                    if (value === '0') value = 'false';
+                    return value !== val;
+                case '>=':
+                    return val >= value;
+                case '<=':
+                    return val <= value;
+                case '>':
+                    return val > value;
+                case '<':
+                    return val < value;
+                case 'consist':
+                    value = value.toString();
+                    val = val.toString();
+                    return val.toString().includes(value);
+                case 'not consist':
+                    value = value.toString();
+                    val = val.toString();
+                    return !val.toString().includes(value);
+                case 'exist':
+                    return value !== 'null';
+                case 'not exist':
+                    return value === 'null';
+                default:
+                    console.log(`Unknown signals condition for ${this.props.id}: ${condition}`);
+                    return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    static text2style(textStyle, style) {
+        if (textStyle) {
+            style = style || {};
+            const parts = textStyle.split(';');
+            parts.forEach(part => {
+                const [attr, value] = part.split(':');
+                if (attr && value) {
+                    // convert attr into camelCase notation
+                    const attrParts = attr.trim().split('-');
+                    for (let p = 1; p < attrParts.length; p++) {
+                        attrParts[p] = attrParts[p][0].toUpperCase() + attrParts[p].substring(1);
+                    }
+
+                    style[attrParts.join('')] = value.trim();
+                }
+            });
+        }
+        return style;
+    }
+
+    renderSignal(index) {
+        const oid = this.state.rxData[`signals-oid-${index}`];
+        if (!oid) {
+            return null;
+        }
+        if (this.props.editMode && this.state.rxData[`signals-hide-edit-${index}`]) {
+            return null;
+        }
+
+        // check value
+        if (this.props.editMode || this.isSignalVisible(index)) {
+            let icon = this.state.rxData[`signals-smallIcon-${index}`];
+            let color;
+            if (icon) {
+                color = this.state.rxData[`signals-color-${index}`];
+            } else {
+                icon = this.state.rxData[`signals-icon-${index}`];
+            }
+            const style = {
+                color,
+                position: 'absolute',
+                top: `${parseInt(this.state.rxData[`signals-vert-${index}`], 10) || 0}%`,
+                left: `${parseInt(this.state.rxData[`signals-horz-${index}`], 10) || 0}%`,
+                zIndex: 10,
+                textAlign: 'center',
+            };
+            if (icon) {
+                const imageStyle = {
+                    width: parseFloat(this.state.rxData[`signals-icon-size-${index}`]) || 32,
+                    height: 'auto',
+                };
+                icon = <Icon src={icon} style={imageStyle} className="vis-signal-icon" />;
+            }
+            VisRxWidget.text2style(this.state.rxData[`signals-icon-style-${index}`], style);
+            let text = this.state.rxData[`signals-text-${index}`];
+            if (text) {
+                const textStyle = {
+                    color: this.state.rxData[`signals-color-${index}`],
+                };
+                VisRxWidget.text2style(this.state.rxData[`signals-text-style-${index}`], textStyle);
+                text = <div
+                    className="vis-signal-text"
+                    style={textStyle}
+                >
+                    {this.state.rxData[`signals-text-${index}`]}
+                </div>;
+            } else {
+                text = null;
+            }
+
+            // class name only to address the icon by user's CSS
+            return <div style={style} className={this.state.rxData[`signals-blink-${index}`] ? 'vis-signals-blink' : null}>
+                {icon}
+                {text}
+            </div>;
+        }
+        return null;
+    }
+
+    renderSignals() {
+        const count = parseInt(this.state.rxData?.['signals-count'], 10) || 0;
+        if (!count) {
+            return null;
+        }
+        const result = [];
+        for (let i = 0; i < count; i++) {
+            result.push(this.renderSignal(i));
+        }
+        return result;
     }
 
     render() {

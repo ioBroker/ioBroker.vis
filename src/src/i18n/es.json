@@ -595,5 +595,12 @@
   "Use field as binding": "Usar campo como enlace",
   "Deactivate binding and use field as standard input": "Desactivar el enlace y utilizar el campo como entrada estándar",
   "Edit binding": "Editar enlace",
-  "Hide menu": "Ocultar el menú"
+  "Hide menu": "Ocultar el menú",
+  "signals-count": "Número de señales",
+  "signals-smallIcon-1": "Icono pequeño [1]",
+  "signals-smallIcon-2": "Icono pequeño [3]",
+  "signals-smallIcon-0": "Icono pequeño [0]",
+  "signals-text-0": "Texto [0]",
+  "signals-text-1": "Texto [1]",
+  "signals-text-2": "Texto [2]"
 }

@@ -595,5 +595,12 @@
   "Use field as binding": "Gebruik veld als bindend",
   "Deactivate binding and use field as standard input": "Deactiveer binding en gebruik veld als standaardinvoer",
   "Edit binding": "Binding bewerken",
-  "Hide menu": "Menu verbergen"
+  "Hide menu": "Menu verbergen",
+  "signals-count": "Aantal signalen",
+  "signals-smallIcon-1": "Klein icoontje [1]",
+  "signals-smallIcon-2": "Klein icoontje [3]",
+  "signals-smallIcon-0": "Klein pictogram [0]",
+  "signals-text-0": "Tekst [0]",
+  "signals-text-1": "Tekst [1]",
+  "signals-text-2": "Tekst [2]"
 }

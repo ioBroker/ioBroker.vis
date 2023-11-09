@@ -595,5 +595,12 @@
   "Use field as binding": "Використовувати поле як прив’язку",
   "Deactivate binding and use field as standard input": "Дезактивувати прив’язку та використовувати поле як стандартний вхід",
   "Edit binding": "Редагувати прив'язку",
-  "Hide menu": "Приховати меню"
+  "Hide menu": "Приховати меню",
+  "signals-count": "Кількість сигналів",
+  "signals-smallIcon-1": "Маленький значок [1]",
+  "signals-smallIcon-2": "Маленький значок [3]",
+  "signals-smallIcon-0": "Маленький значок [0]",
+  "signals-text-0": "Текст [0]",
+  "signals-text-1": "Текст [1]",
+  "signals-text-2": "Текст [2]"
 }

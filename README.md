@@ -229,6 +229,9 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Implemented the signal icons for react widgets
+
 ### 2.4.0 (2023-11-08)
 * (foxriver76) fixed issues with icon selector filter when changing category
 * (foxriver76) fixed problem, that only first widget is pasted

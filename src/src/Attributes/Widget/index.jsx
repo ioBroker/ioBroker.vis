@@ -288,16 +288,17 @@ class Widget extends Component {
         ];
     }
 
-    static getSignals(count, adapterName) {
+    static getSignals(count /* , adapterName */) {
         const result = {
             name: 'signals',
             fields: [
                 {
                     name: 'signals-count',
+                    label: 'signals-count',
                     type: 'select',
-                    noTranslation: true,
-                    options: ['1', '2', '3'],
-                    default: '1',
+                    // noTranslation: true,
+                    options: ['0', '1', '2', '3'],
+                    default: '0',
                     immediateChange: true,
                 },
             ],
@@ -305,15 +306,25 @@ class Widget extends Component {
 
         for (let i = 0; i < count; i++) {
             result.fields = result.fields.concat([
+                { type: 'delimiter' },
                 { name: `signals-oid-${i}`, type: 'id' },
                 {
                     name: `signals-cond-${i}`,
                     type: 'select',
+                    noTranslation: true,
                     options: ['==', '!=', '<=', '>=', '<', '>', 'consist', 'not consist', 'exist', 'not exist'],
                     default: '==',
                 },
                 { name: `signals-val-${i}`, default: true },
-                { name: `signals-icon-${i}`, type: 'image', default: `${adapterName}/signals/lowbattery.png` },
+                {
+                    name: `signals-icon-${i}`, type: 'image', default: '', hidden: `!!data["signals-smallIcon-${i}"]`, // `${adapterName}/signals/lowbattery.png` },
+                },
+                {
+                    name: `signals-smallIcon-${i}`, type: 'icon64', default: '', label: `signals-smallIcon-${i}`, hidden: `!!data["signals-icon-${i}"]`,
+                },
+                {
+                    name: `signals-color-${i}`, type: 'color', default: '', hidden: `!data["signals-smallIcon-${i}"] && !data["signals-text-${i}"]`,
+                }, // `${adapterName}/signals/lowbattery.png` },
                 {
                     name: `signals-icon-size-${i}`, type: 'slider', options: { min: 1, max: 120, step: 1 }, default: 0,
                 },
@@ -329,7 +340,6 @@ class Widget extends Component {
                     name: `signals-vert-${i}`, type: 'slider', options: { min: -20, max: 120, step: 1 }, default: 0,
                 },
                 { name: `signals-hide-edit-${i}`, type: 'checkbox', default: false },
-                { type: 'delimiter' },
             ]);
         }
 

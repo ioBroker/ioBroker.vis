@@ -595,5 +595,12 @@
   "Use field as binding": "Feld als Bindung verwenden",
   "Deactivate binding and use field as standard input": "Bindung deaktivieren und Feld als Standardeingabe verwenden",
   "Edit binding": "Bindung bearbeiten",
-  "Hide menu": "Menü ausblenden"
+  "Hide menu": "Menü ausblenden",
+  "signals-count": "Anzahl der Signale",
+  "signals-smallIcon-1": "Kleines Symbol [1]",
+  "signals-smallIcon-2": "Kleines Symbol [3]",
+  "signals-smallIcon-0": "Kleines Symbol [0]",
+  "signals-text-0": "Text [0]",
+  "signals-text-1": "Text [1]",
+  "signals-text-2": "Text [2]"
 }

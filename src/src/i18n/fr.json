@@ -595,5 +595,12 @@
   "Use field as binding": "Utiliser le champ comme liaison",
   "Deactivate binding and use field as standard input": "Désactiver la liaison et utiliser le champ comme entrée standard",
   "Edit binding": "Modifier la liaison",
-  "Hide menu": "Masquer le menu"
+  "Hide menu": "Masquer le menu",
+  "signals-count": "Nombre de signaux",
+  "signals-smallIcon-1": "Petite icône [1]",
+  "signals-smallIcon-2": "Petite icône [3]",
+  "signals-smallIcon-0": "Petite icône [0]",
+  "signals-text-0": "Texte [0]",
+  "signals-text-1": "Texte [1]",
+  "signals-text-2": "Texte [2]"
 }

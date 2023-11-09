@@ -595,5 +595,12 @@
   "Use field as binding": "使用字段作为绑定",
   "Deactivate binding and use field as standard input": "停用绑定并使用字段作为标准输入",
   "Edit binding": "编辑绑定",
-  "Hide menu": "隐藏菜单"
+  "Hide menu": "隐藏菜单",
+  "signals-count": "信号数量",
+  "signals-smallIcon-1": "小图标 [1]",
+  "signals-smallIcon-2": "小图标 [3]",
+  "signals-smallIcon-0": "小图标 [0]",
+  "signals-text-0": "文字 [0]",
+  "signals-text-1": "文本[1]",
+  "signals-text-2": "文字[2]"
 }

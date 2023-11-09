@@ -595,5 +595,12 @@
   "Use field as binding": "Utilizza il campo come vincolante",
   "Deactivate binding and use field as standard input": "Disattiva l'associazione e utilizza il campo come input standard",
   "Edit binding": "Modifica rilegatura",
-  "Hide menu": "Nascondi menù"
+  "Hide menu": "Nascondi menù",
+  "signals-count": "Numero di segnali",
+  "signals-smallIcon-1": "Icona piccola [1]",
+  "signals-smallIcon-2": "Icona piccola [3]",
+  "signals-smallIcon-0": "Icona piccola [0]",
+  "signals-text-0": "Testo [0]",
+  "signals-text-1": "Testo [1]",
+  "signals-text-2": "Testo [2]"
 }
