@@ -2293,7 +2293,7 @@
 
 <!-- Basic Widgets -->
 
-<script id="tplHtml"
+<!-- script id="tplHtml"
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
@@ -2306,7 +2306,7 @@
             <%== this.data.attr('html') %>
         </div>
     </div>
-</script>
+</script-->
 
 <script id="tplShapes"
         type="text/ejs"
@@ -2490,7 +2490,7 @@
 </script-->
 
 <!-- Stateful Widgets -->
-<script id="tplStatefulContainerView8"
+<!--script id="tplStatefulContainerView8"
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
@@ -2514,7 +2514,7 @@
             <div class="vis-view-container" data-oid="<%= data.attr('oid') %>" data-vis-contains="<%= vis.binds.stateful.value(viewArr, data.attr('oid')) %>" <%= (el) -> vis.binds.stateful.view(el, viewArr, data.attr('persistent'), data.attr('notIfInvisible')) %> />
         </div>
     </div>
-</script>
+</script-->
 
 <!-- TODO
 <script type="text/ejs" id="tplStatefulIFrame8Persistent" class="vis-tpl" data-vis-set="basic" data-vis-name="stateful - iFrame 8 (persistent)" data-vis-attrs="oid;refreshInterval;src_(0-1)">
@@ -2964,7 +2964,7 @@
     </div>
 </script>
 
-<script id="tplValueBoolCtrlSvg"
+<!--script id="tplValueBoolCtrlSvg"
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
@@ -2980,7 +2980,7 @@
             <% vis.binds.basic.showSvg(this.data.attr('class'), this.view, this.data.attr('wid'), this.data.attr('oid'), this.data.attr('svg_opacity'), this.data.attr('svg_false'), this.data.attr('svg_true'), null, this.data.attr('no_control')) %>
         </div>
     </div>
-</script>
+</script-->
 
 <script id="tplBasicState"
         type="text/ejs"
@@ -3154,7 +3154,7 @@
     %>
 </script-->
 
-<script id="tplValueGesture"
+<!--script id="tplValueGesture"
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
@@ -3168,7 +3168,7 @@
             <% vis.binds.basic.createValueGesture(this.data.wid, this.view, this.data, this.style); %>
         </div>
     </div>
-</script>
+</script-->
 
 <script id="tplSpeech2Text"
         type="text/ejs"
@@ -3229,11 +3229,11 @@
 </script>
 
 
-<script id="_tplGroup"
+<!--script id="_tplGroup"
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
         data-vis-attrs="attrCount[1]/slider,0,20,1;group.objects;attrName(1-attrCount)//onAttrChanged;attrType(1-attrCount)/select,,id,checkbox,image,color,views,html,widget,history/onAttrChanged;"
 >
     <div class="vis-widget <%== this.data.attr('class') %>" style="overflow: visible" id="<%= this.data.attr('wid') %>"></div>
-</script>
+</script-->

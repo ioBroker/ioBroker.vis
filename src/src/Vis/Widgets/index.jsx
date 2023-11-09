@@ -4,6 +4,7 @@ import BasicValueString from './Basic/BasicValueString';
 import BasicViewInWidget from './Basic/BasicViewInWidget';
 import BasicViewInWidget8 from './Basic/BasicViewInWidget8';
 import BasicGroup from './Basic/BasicGroup';
+import BasicSvgBool from './Basic/BasicSvgBool';
 
 import JQuiButton from './JQui/JQuiButton';
 import JQuiButtonBlank from './JQui/JQuiButtonBlank';
@@ -35,6 +36,7 @@ const WIDGETS = [
     BasicViewInWidget,
     BasicViewInWidget8,
     BasicGroup,
+    BasicSvgBool,
 
     JQuiButton,
     JQuiButtonBlank,
