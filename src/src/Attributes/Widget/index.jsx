@@ -612,14 +612,14 @@ class Widget extends Component {
         const isDifferent = {};
 
         if (this.props.selectedWidgets.length > 1) {
-            fields = selectedWidgetsFields[0].filter(group => {
+            fields = selectedWidgetsFields[0]?.filter(group => {
                 if (commonGroups[group.name] < this.props.selectedWidgets.length) {
                     return false;
                 }
                 group.fields = group.fields.filter(field =>
                     commonFields[`${group.name}.${field.name}`] === this.props.selectedWidgets.length);
                 return true;
-            });
+            }) || [];
 
             this.props.selectedWidgets.forEach((wid, widgetIndex) => {
                 const currentWidget = widgets[wid];
