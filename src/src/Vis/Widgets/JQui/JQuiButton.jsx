@@ -704,7 +704,7 @@ class JQuiButton extends VisRxWidget {
             style={iconStyle}
         /> : null;
 
-        const buttonStyle = {};
+        const buttonStyle = { textTransform: 'none' };
         // apply style from the element
         Object.keys(this.state.rxStyle).forEach(attr => {
             const value = this.state.rxStyle[attr];
