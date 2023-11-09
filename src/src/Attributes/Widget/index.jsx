@@ -590,7 +590,7 @@ class Widget extends Component {
             if (typeof widgetType.params === 'function') {
                 params = widgetType.params(widget.data, null, {
                     views: this.props.project,
-                    view: this.state.props.selectedView,
+                    view: this.props.selectedView,
                     socket: this.props.socket,
                     themeType: this.props.themeType,
                     projectName: this.props.projectName,
