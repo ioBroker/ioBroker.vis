@@ -326,7 +326,7 @@ class Widget extends Component {
                     name: `signals-color-${i}`, type: 'color', default: '', hidden: `!data["signals-smallIcon-${i}"] && !data["signals-text-${i}"]`,
                 }, // `${adapterName}/signals/lowbattery.png` },
                 {
-                    name: `signals-icon-size-${i}`, type: 'slider', options: { min: 1, max: 120, step: 1 }, default: 0,
+                    name: `signals-icon-size-${i}`, type: 'slider', min: 1, max: 120, step: 1, default: 0,
                 },
                 { name: `signals-icon-style-${i}` },
                 { name: `signals-text-${i}` },
@@ -334,10 +334,10 @@ class Widget extends Component {
                 { name: `signals-text-class-${i}` },
                 { name: `signals-blink-${i}`, type: 'checkbox', default: false },
                 {
-                    name: `signals-horz-${i}`, type: 'slider', options: { min: -20, max: 120, step: 1 }, default: 0,
+                    name: `signals-horz-${i}`, type: 'slider', min: -20, max: 120, step: 1, default: 0,
                 },
                 {
-                    name: `signals-vert-${i}`, type: 'slider', options: { min: -20, max: 120, step: 1 }, default: 0,
+                    name: `signals-vert-${i}`, type: 'slider', min: -20, max: 120, step: 1, default: 0,
                 },
                 { name: `signals-hide-edit-${i}`, type: 'checkbox', default: false },
             ]);
@@ -427,33 +427,33 @@ class Widget extends Component {
                     { name: 'margin-right' },
                     { name: 'margin-bottom' }],
             },
-            {
-                name: 'gestures',
-                fields: [
-                    {
-                        name: 'gestures-indicator',
-                        type: 'auto',
-                        options: Object.keys(widgets).filter(wid => widgets[wid].tpl === 'tplValueGesture'),
-                    },
-                    { name: 'gestures-offsetX', default: 0, type: 'number' },
-                    { name: 'gestures-offsetY', default: 0, type: 'number' },
-                    { type: 'delimiter' },
-                    ...(['swiping', 'rotating', 'pinching'].flatMap(gesture => [
-                        { name: `gestures-${gesture}-oid`,        type: 'id' },
-                        { name: `gestures-${gesture}-value`,      default: '' },
-                        { name: `gestures-${gesture}-minimum`,    type: 'number' },
-                        { name: `gestures-${gesture}-maximum`,    type: 'number' },
-                        { name: `gestures-${gesture}-delta`,      type: 'number' },
-                        { type: 'delimiter' },
-                    ])),
-                    ...(['swipeRight', 'swipeLeft', 'swipeUp', 'swipeDown', 'rotateLeft', 'rotateRight', 'pinchIn', 'pinchOut'].flatMap(gesture => [
-                        { name: `gestures-${gesture}-oid`,    type: 'id' },
-                        { name: `gestures-${gesture}-value`,  default: '' },
-                        { name: `gestures-${gesture}-limit`,  type: 'number' },
-                        { type: 'delimiter' },
-                    ])),
-                ],
-            },
+            // {
+            //     name: 'gestures',
+            //     fields: [
+            //         {
+            //             name: 'gestures-indicator',
+            //             type: 'auto',
+            //             options: Object.keys(widgets).filter(wid => widgets[wid].tpl === 'tplValueGesture'),
+            //         },
+            //         { name: 'gestures-offsetX', default: 0, type: 'number' },
+            //         { name: 'gestures-offsetY', default: 0, type: 'number' },
+            //         { type: 'delimiter' },
+            //         ...(['swiping', 'rotating', 'pinching'].flatMap(gesture => [
+            //             { name: `gestures-${gesture}-oid`,        type: 'id' },
+            //             { name: `gestures-${gesture}-value`,      default: '' },
+            //             { name: `gestures-${gesture}-minimum`,    type: 'number' },
+            //             { name: `gestures-${gesture}-maximum`,    type: 'number' },
+            //             { name: `gestures-${gesture}-delta`,      type: 'number' },
+            //             { type: 'delimiter' },
+            //         ])),
+            //         ...(['swipeRight', 'swipeLeft', 'swipeUp', 'swipeDown', 'rotateLeft', 'rotateRight', 'pinchIn', 'pinchOut'].flatMap(gesture => [
+            //             { name: `gestures-${gesture}-oid`,    type: 'id' },
+            //             { name: `gestures-${gesture}-value`,  default: '' },
+            //             { name: `gestures-${gesture}-limit`,  type: 'number' },
+            //             { type: 'delimiter' },
+            //         ])),
+            //     ],
+            // },
             {
                 name: 'last_change',
                 fields: [
@@ -473,15 +473,17 @@ class Widget extends Component {
                         name: 'lc-position-horz', type: 'select', options: ['left', /* 'middle', */'right'], default: 'right',
                     },
                     {
-                        name: 'lc-offset-vert', type: 'slider', options: { min: -120, max: 120, step: 1 }, default: 0,
+                        name: 'lc-offset-vert', type: 'slider', min: -120, max: 120, step: 1, default: 0,
                     },
                     {
-                        name: 'lc-offset-horz', type: 'slider', options: { min: -120, max: 120, step: 1 }, default: 0,
+                        name: 'lc-offset-horz', type: 'slider', min: -120, max: 120, step: 1, default: 0,
                     },
                     {
                         name: 'lc-font-size', type: 'auto', options: ['', 'medium', 'xx-small', 'x-small', 'small', 'large', 'x-large', 'xx-large', 'smaller', 'larger', 'initial', 'inherit'], default: '12px',
                     },
-                    { name: 'lc-font-family', type: 'fontname', default: '' },
+                    {
+                        name: 'lc-font-family', type: 'auto', default: '', options: fonts,
+                    },
                     {
                         name: 'lc-font-style', type: 'auto', options: ['', 'normal', 'italic', 'oblique', 'initial', 'inherit'], default: '',
                     },
@@ -493,11 +495,11 @@ class Widget extends Component {
                     },
                     { name: 'lc-border-color', type: 'color', default: '' },
                     {
-                        name: 'lc-border-radius', type: 'slider', options: { min: 0, max: 20, step: 1 }, default: 10,
+                        name: 'lc-border-radius', type: 'slider', min: 0, max: 20, step: 1, default: 10,
                     },
-                    { name: 'lc-padding' },
+                    { name: 'lc-padding', type: 'slider', min: 0, max: 20, step: 1, default: 3 },
                     {
-                        name: 'lc-zindex', type: 'slider', options: { min: -10, max: 20, step: 1 }, default: 0,
+                        name: 'lc-zindex', type: 'slider', min: -10, max: 20, step: 1, default: 0,
                     },
                 ],
             },

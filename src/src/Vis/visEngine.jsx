@@ -15,6 +15,18 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import moment from 'moment';
+import 'moment/locale/de';
+import 'moment/locale/ru';
+import 'moment/locale/en-gb';
+import 'moment/locale/fr';
+import 'moment/locale/it';
+import 'moment/locale/es';
+import 'moment/locale/pl';
+import 'moment/locale/nl';
+import 'moment/locale/pt';
+import 'moment/locale/uk';
+import 'moment/locale/zh-cn';
 
 import {
     Button,
@@ -134,6 +146,9 @@ class VisEngine extends React.Component {
             timeInterval: JSON.parse(window.localStorage.getItem('timeInterval')) || 'week',
             timeStart: JSON.parse(window.localStorage.getItem('timeStart')) || null,
         };
+
+        // set moment locale
+        moment.locale(window.systemLang);
 
         // this.jsonViews = JSON.stringify(props.views);
 
@@ -685,9 +700,9 @@ class VisEngine extends React.Component {
                 return result;
             },
             formatBinding: (format, view, wid, widget, widgetData, values) =>
-                this.formatUtils.formatBinding(format, view, wid, widget, widgetData, values),
+                this.formatUtils.formatBinding(format, view, wid, widget, widgetData, values, moment),
             getViewOfWidget: id => {
-                // find view of this widget
+                // find a view of this widget
                 for (const v in this.props.views) {
                     if (v === '___settings') {
                         continue;
@@ -2035,6 +2050,7 @@ ${this.scripts}
             onIgnoreMouseEvents: this.props.runtime ? null : this.props.onIgnoreMouseEvents,
             disableInteraction: this.props.disableInteraction,
             toggleTheme: this.props.toggleTheme,
+            moment,
         };
 
         const views = Object.keys(this.props.views).map(view => {

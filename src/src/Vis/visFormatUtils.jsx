@@ -12,8 +12,6 @@
  * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
  * (Free for non-commercial use).
  */
-
-import * as moment from 'moment';
 import { extractBinding } from './visUtils';
 
 class VisFormatUtils {
@@ -84,7 +82,7 @@ class VisFormatUtils {
         return Number.isNaN(value) ? '' : value.toFixed(decimals || 0).replace(format[0], format[1]).replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
     }
 
-    formatMomentDate(dateObj, _format, useTodayOrYesterday) {
+    formatMomentDate(dateObj, _format, useTodayOrYesterday, moment) {
         useTodayOrYesterday = typeof useTodayOrYesterday !== 'undefined' ? useTodayOrYesterday : false;
 
         if (!dateObj) return '';
@@ -280,7 +278,7 @@ class VisFormatUtils {
         return result;
     }
 
-    formatBinding(format, view, wid, widget, widgetData, values) {
+    formatBinding(format, view, wid, widget, widgetData, values, moment) {
         values = values || this.vis.states;
 
         const oids = this.extractBinding(format);
@@ -431,9 +429,9 @@ class VisFormatUtils {
                                 const params = oids[t].operations[k].arg.split(',');
 
                                 if (params.length === 1) {
-                                    value = this.formatMomentDate(value, params[0]);
+                                    value = this.formatMomentDate(value, params[0], false, moment);
                                 } else if (params.length === 2) {
-                                    value = this.formatMomentDate(value, params[0], params[1]);
+                                    value = this.formatMomentDate(value, params[0], params[1], moment);
                                 } else {
                                     value = 'error';
                                 }

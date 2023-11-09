@@ -274,6 +274,7 @@ class VisRxWidget extends VisBaseWidget {
                 this.props.context.views[item.view].widgets[this.props.id],
                 newState.rxData,
                 newState.values,
+                this.props.context.moment,
             );
 
             if (item.type === 'data') {
@@ -705,6 +706,101 @@ class VisRxWidget extends VisBaseWidget {
             </div>;
         }
         return null;
+    }
+
+    renderLastChange(widgetStyle) {
+        // show last change
+        const border = parseInt(this.state.rxData['lc-border-radius'], 10) || 0;
+        const style = {
+            backgroundColor: 'rgba(182, 182, 182, 0.6)',
+            fontFamily: 'Tahoma',
+            position: 'absolute',
+            zIndex: 0,
+            borderRadius: this.state.rxData['lc-position-horz'] === 'left' ?
+                `${border}px 0 0 ${border}px` :
+                (this.state.rxData['lc-position-horz'] === 'right' ? `0 ${border}px ${border}px 0` : border),
+            whiteSpace: 'nowrap',
+        };
+        const fontSize = this.state.rxData['lc-font-size'];
+        if (fontSize) {
+            if (fontSize.match(/\D/)) {
+                style.fontSize = this.state.rxData['lc-font-size'];
+            } else {
+                style.fontSize = parseFloat(this.state.rxData['lc-font-size']);
+            }
+        }
+        if (this.state.rxData['lc-font-style']) {
+            style.fontStyle = this.state.rxData['lc-font-style'];
+        }
+        if (this.state.rxData['lc-font-family']) {
+            style.fontFamily = this.state.rxData['lc-font-family'];
+        }
+        if (this.state.rxData['lc-bkg-color']) {
+            style.backgroundColor = this.state.rxData['lc-bkg-color'];
+        }
+        if (this.state.rxData['lc-color']) {
+            style.color = this.state.rxData['lc-color'];
+        }
+        if (this.state.rxData['lc-border-width']) {
+            style.borderWidth = parseInt(this.state.rxData['lc-border-width'], 10) || 0;
+        }
+        if (this.state.rxData['lc-border-style']) {
+            style.borderStyle = this.state.rxData['lc-border-style'];
+        }
+        if (this.state.rxData['lc-border-color']) {
+            style.borderColor = this.state.rxData['lc-border-color'];
+        }
+        const padding = parseInt(this.state.rxData['lc-padding'], 10);
+        if (padding) {
+            style.padding = padding;
+        } else {
+            style.paddingTop = 3;
+            style.paddingBottom = 3;
+        }
+        if (this.state.rxData['lc-zindex']) {
+            style.zIndex = this.state.rxData['lc-zindex'];
+        }
+        if (this.state.rxData['lc-position-vert'] === 'top') {
+            style.top = parseInt(this.state.rxData['lc-offset-vert'], 10);
+        } else if (this.state.rxData['lc-position-vert'] === 'bottom') {
+            style.bottom = parseInt(this.state.rxData['lc-offset-vert'], 10);
+        } else if (this.state.rxData['lc-position-vert'] === 'middle') {
+            style.top = `calc(50% + ${parseInt(this.state.rxData['lc-offset-vert'], 10) - 10}px)`;
+        }
+        const offset = parseFloat(this.state.rxData['lc-offset-horz']) || 0;
+        if (this.state.rxData['lc-position-horz'] === 'left') {
+            style.right = `calc(100% - ${offset}px)`;
+            if (!padding) {
+                style.paddingRight = 10;
+                style.paddingLeft = 10;
+            }
+        } else if (this.state.rxData['lc-position-horz'] === 'right') {
+            style.left = `calc(100% + ${offset}px)`;
+            if (!padding) {
+                style.paddingRight = 10;
+                style.paddingLeft = 10;
+            }
+        } else if (this.state.rxData['lc-position-horz'] === 'middle') {
+            style.left = `calc(50% + ${offset}px)`;
+        }
+
+        const divLastChange = window.document.createElement('div');
+        // `<div class="vis-last-change" data-type="${data['lc-type']}" data-format="${data['lc-format']}" data-interval="${data['lc-is-interval']}">${this.binds.basic.formatDate(this.states.attr(`${data['lc-oid']}.${data['lc-type'] === 'last-change' ? 'lc' : 'ts'}`), data['lc-format'], data['lc-is-interval'], data['lc-is-moment'])}</div>`
+        divLastChange.className = '';
+
+        widgetStyle.overflow = 'visible';
+        return <div
+            className="vis-last-change" // just to have a possibility to address it in user's CSS
+            style={style}
+        >
+            {this.formatDate(
+                this.state.values[`${this.state.rxData['lc-oid']}.${this.state.rxData['lc-type'] === 'last-change' ? 'lc' : 'ts'}`],
+                this.state.rxData['lc-format'],
+                this.state.rxData['lc-is-interval'],
+                this.state.rxData['lc-is-moment'],
+                true,
+            )}
+        </div>;
     }
 
     renderSignals() {

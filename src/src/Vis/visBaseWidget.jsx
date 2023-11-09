@@ -15,7 +15,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment';
 
 import {
     Anchor as AnchorIcon,
@@ -1214,7 +1213,8 @@ class VisBaseWidget extends React.Component {
 
     formatInterval(timestamp, isMomentJs) {
         if (isMomentJs) {
-            return moment(new Date(timestamp)).fromNow();
+            // init moment
+            return this.props.context.moment(new Date(timestamp)).fromNow();
         }
         let diff = Date.now() - timestamp;
         diff = Math.round(diff / 1000);
@@ -1322,11 +1322,8 @@ class VisBaseWidget extends React.Component {
     }
 
     startUpdateInterval() {
-        if (this.updateInterval) {
-            return;
-        }
         this.updateInterval = this.updateInterval || setInterval(() => {
-            const timeIntervalEl = this.widDiv.querySelector('.time-interval');
+            const timeIntervalEl = (this.widDiv || this.refService.current)?.querySelector('.time-interval');
             if (timeIntervalEl) {
                 const time = parseInt(timeIntervalEl.dataset.time, 10);
                 timeIntervalEl.innerHTML = this.formatInterval(time, timeIntervalEl.dataset.moment === 'true');
@@ -1335,7 +1332,7 @@ class VisBaseWidget extends React.Component {
     }
 
     // eslint-disable-next-line react/no-unused-class-component-methods
-    formatDate(dateObj, format, interval, isMomentJs) {
+    formatDate(dateObj, format, interval, isMomentJs, forRx) {
         if (typeof format === 'boolean') {
             interval = format;
             format = 'auto';
@@ -1369,7 +1366,13 @@ class VisBaseWidget extends React.Component {
         }
         if (interval) {
             this.startUpdateInterval();
-            return `<span class="time-interval" data-time="${dateObj.getTime()}" data-moment="${isMomentJs || false}">${this.formatInterval(dateObj.getTime(), isMomentJs)}</span>`;
+            if (forRx) {
+                return <span className="time-interval" data-time={dateObj.getTime()} data-moment={isMomentJs || false} title={dateObj.toLocaleString()}>
+                    {this.formatInterval(dateObj.getTime(), isMomentJs)}
+                </span>;
+            } else {
+                return `<span class="time-interval" data-time="${dateObj.getTime()}" data-moment="${isMomentJs || false}">${this.formatInterval(dateObj.getTime(), isMomentJs)}</span>`;
+            }
         }
 
         let v;
@@ -1388,21 +1391,21 @@ class VisBaseWidget extends React.Component {
         }
         // Month
         if (format.includes('MM') || format.includes('ММ')) {
-            v =  dateObj.getMonth() + 1;
+            v = dateObj.getMonth() + 1;
             if (v < 10) {
                 v = `0${v}`;
             }
             format = format.replace('MM', v);
             format = format.replace('ММ', v);
         } else if (format.includes('M') || format.includes('М')) {
-            v =  dateObj.getMonth() + 1;
+            v = dateObj.getMonth() + 1;
             format = format.replace('M', v);
             format = format.replace('М', v);
         }
 
         // Day
         if (format.includes('DD') || format.includes('TT') || format.includes('ДД')) {
-            v =  dateObj.getDate();
+            v = dateObj.getDate();
             if (v < 10) {
                 v = `0${v}`;
             }
@@ -1410,7 +1413,7 @@ class VisBaseWidget extends React.Component {
             format = format.replace('TT', v);
             format = format.replace('ДД', v);
         } else if (format.includes('D') || format.includes('TT') || format.includes('Д')) {
-            v =  dateObj.getDate();
+            v = dateObj.getDate();
             format = format.replace('D', v);
             format = format.replace('T', v);
             format = format.replace('Д', v);
@@ -1418,7 +1421,7 @@ class VisBaseWidget extends React.Component {
 
         // hours
         if (format.includes('hh') || format.includes('SS') || format.includes('чч')) {
-            v =  dateObj.getHours();
+            v = dateObj.getHours();
             if (v < 10) {
                 v = `0${v}`;
             }
@@ -1426,7 +1429,7 @@ class VisBaseWidget extends React.Component {
             format = format.replace('SS', v);
             format = format.replace('чч', v);
         } else if (format.includes('h') || format.includes('S') || format.includes('ч')) {
-            v =  dateObj.getHours();
+            v = dateObj.getHours();
             format = format.replace('h', v);
             format = format.replace('S', v);
             format = format.replace('ч', v);
@@ -1434,21 +1437,21 @@ class VisBaseWidget extends React.Component {
 
         // minutes
         if (format.includes('mm') || format.includes('мм')) {
-            v =  dateObj.getMinutes();
+            v = dateObj.getMinutes();
             if (v < 10) {
                 v = `0${v}`;
             }
             format = format.replace('mm', v);
             format = format.replace('мм', v);
         } else if (format.includes('m') ||  format.includes('м')) {
-            v =  dateObj.getMinutes();
+            v = dateObj.getMinutes();
             format = format.replace('m', v);
             format = format.replace('v', v);
         }
 
         // milliseconds
         if (format.includes('sss') || format.includes('ссс')) {
-            v =  dateObj.getMilliseconds();
+            v = dateObj.getMilliseconds();
             if (v < 10) {
                 v = `00${v}`;
             } else if (v < 100) {
@@ -1461,11 +1464,13 @@ class VisBaseWidget extends React.Component {
         // seconds
         if (format.includes('ss') || format.includes('сс')) {
             v =  dateObj.getSeconds();
-            if (v < 10) v = `0${v}`;
+            if (v < 10) {
+                v = `0${v}`;
+            }
             format = format.replace('ss', v);
             format = format.replace('cc', v);
         } else if (format.includes('s') || format.includes('с')) {
-            v =  dateObj.getHours();
+            v = dateObj.getHours();
             format = format.replace('s', v);
             format = format.replace('с', v);
         }
@@ -1851,6 +1856,7 @@ class VisBaseWidget extends React.Component {
         }
 
         const signals = this.renderSignals ? this.renderSignals() : null;
+        const lastChange = this.renderLastChange ? this.renderLastChange(style) : null;
 
         return <div
             id={props.id}
@@ -1859,6 +1865,7 @@ class VisBaseWidget extends React.Component {
             style={style}
         >
             {signals}
+            {lastChange}
             {widgetName}
             {widgetMoveButtons}
             {overlay}

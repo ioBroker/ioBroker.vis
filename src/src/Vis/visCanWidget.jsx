@@ -931,6 +931,7 @@ class VisCanWidget extends VisBaseWidget {
                 this.props.id,
                 widget,
                 widgetData || widgetContext.data,
+                this.props.context.moment,
             );
 
             if (item.type === 'data') {
