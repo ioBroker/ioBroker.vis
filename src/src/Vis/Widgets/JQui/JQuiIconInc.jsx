@@ -35,7 +35,7 @@ class JQuiIconInc extends JQuiWriteState {
         newWidgetInfo.visAttrs[0].fields.unshift({
             name: '_note',
             type: 'help',
-            text: 'jqui_button_link_blank_note',
+            text: 'jqui_write_state_note',
         });
 
         const target = JQuiWriteState.findField(newWidgetInfo, 'type');
