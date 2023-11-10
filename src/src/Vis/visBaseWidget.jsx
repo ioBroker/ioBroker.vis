@@ -1563,7 +1563,9 @@ class VisBaseWidget extends React.Component {
             return null;
         }
 
-        const style = {};
+        const style = {
+            boxSizing: 'border-box',
+        };
         const selected = !this.state.multiViewWidget && this.state.editMode && this.props.selectedWidgets?.includes(this.props.id);
         let classNames = selected ? 'vis-editmode-selected' : 'vis-editmode-overlay-not-selected';
         if (selected && this.state.widgetHint === 'hide') {

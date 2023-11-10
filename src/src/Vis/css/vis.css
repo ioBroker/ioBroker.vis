@@ -319,19 +319,9 @@ body, html {
 /* IT IS UNKNOWN ARE BELOW CLASSES USED SOMEWHERE */
 /*
 .vis-no-user-select {
-    -webkit-touch-callout: none;
-    -ms-touch-select: none;
-    -ms-touch-action: none;
-
     touch-callout: none;
     touch-select: none;
     touch-action: none;
-
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-
     user-select: none;
 }
 
@@ -374,12 +364,12 @@ body, html {
     height: 100%;
 }
 
-@-webkit-keyframes vis-waitico-rotate {
+@keyframes vis-waitico-rotate {
     from {
-        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
     }
     to {
-        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
     }
 }
 
@@ -395,10 +385,10 @@ body, html {
     overflow: hidden;
     background: url(../img/gear-icon-md.png);
     background-size: 100% auto;
-    -webkit-animation-duration: 2s;
-    -webkit-animation-name: vis-waitico-rotate;
-    -webkit-animation-iteration-count: infinite;
-    -webkit-animation-timing-function: linear;
+    animation-duration: 2s;
+    animation-name: vis-waitico-rotate;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
 }
 
 #dialog-message {
@@ -600,10 +590,6 @@ div#vis_editor {
     background-color: rgb(55, 169, 232);
     opacity: 0.8;
     z-index: 1003;
-    -webkit-border-bottom-right-radius: 7px;
-    -webkit-border-bottom-left-radius: 7px;
-    -moz-border-radius-bottomright: 7px;
-    -moz-border-radius-bottomleft: 7px;
     border-bottom-right-radius: 7px;
     border-bottom-left-radius: 7px;
     font-family: Arial, Helvetica, sans-serif;
@@ -619,10 +605,6 @@ div#vis_editor {
     background-color: orange;
     opacity: 0.8;
     z-index: 1003;
-    -webkit-border-bottom-right-radius: 7px;
-    -webkit-border-bottom-left-radius: 7px;
-    -moz-border-radius-bottomright: 7px;
-    -moz-border-radius-bottomleft: 7px;
     border-bottom-right-radius: 7px;
     border-bottom-left-radius: 7px;
 }
@@ -654,11 +636,7 @@ div#vis_editor {
     left: 50%;
     z-index: 99999;
     box-shadow: 0 0 20px #999;
-    -moz-box-shadow: 0 0 20px #999;
-    -webkit-box-shadow: 0 0 20px #999;
     border-radius: 3px 3px 3px 3px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
 }
 
 .login-input-field label {
@@ -685,8 +663,6 @@ div#vis_editor {
     border-top: 1px solid #000;
     color: #fff;
     border-radius: 3px 3px 3px 3px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
     font: 13px Arial, Helvetica, sans-serif;
     padding: 6px 6px 4px;
 }
@@ -708,26 +684,16 @@ div#vis_editor {
     font-weight: bold;
 }
 
-#login-box input:-moz-placeholder {
-    color: #bbb;
-    text-shadow: 0 0 2px #000;
-}
-
-#login-box input::-webkit-input-placeholder {
+#login-box input:placeholder {
     color: #bbb;
     text-shadow: 0 0 2px #000;
 }
 
 .login-button {
-    background: -moz-linear-gradient(center top, #f3f3f3, #dddddd);
-    background: -webkit-gradient(linear, left top, left bottom, from(#f3f3f3), to(#dddddd));
-    background: -o-linear-gradient(top, #f3f3f3, #dddddd);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#f3f3f3', EndColorStr='#dddddd');
+    background: gradient(linear, left top, left bottom, from(#f3f3f3), to(#dddddd));
     border-color: #000;
     border-width: 1px;
-    border-radius: 4px 4px 4px 4px;
-    -moz-border-radius: 4px;
-    -webkit-border-radius: 4px;
+    border-radius: 4px;
     color: #333;
     cursor: pointer;
     display: inline-block;
@@ -750,8 +716,7 @@ div.jGrowl div.info {
 }
 
 div.jGrowl div.info {
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
+    border-radius: 5px;
     width: 280px;
     height: 55px;
     overflow: hidden;
@@ -764,8 +729,7 @@ div.jGrowl div.warn {
 }
 
 div.jGrowl div.warn {
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
+    border-radius: 5px;
     width: 280px;
     height: 55px;
     overflow: hidden;
@@ -794,14 +758,7 @@ div.jGrowl div.warn {
     top: 50%;
     left: 50%;
     box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -ms-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
     user-select: none;
-    -o-user-select: none;
-    -ms-user-select: none;
-    -moz-user-select: -moz-none;
-    -webkit-user-select: none;
     cursor: default;
 }
 .splash-screen-circle-outer {
@@ -816,8 +773,7 @@ div.jGrowl div.warn {
     border-right: 5px solid rgba(0, 0, 0, 0);
     border-left: 5px solid rgba(0, 0, 0, 0);
     box-shadow: 0 0 35px #577191;
-    -moz-animation: spinPulse 5s infinite ease-in-out;
-    -webkit-animation: spinPulse 5s infinite linear;
+    animation: spinPulse 5s infinite ease-in-out;
 }
 .splash-screen-circle-inner {
     z-index: 20001;
@@ -832,8 +788,7 @@ div.jGrowl div.warn {
     border-left: 5px solid rgba(0, 0, 0, 0);
     border-right: 5px solid rgba(0, 0, 0, 0);
     box-shadow: 0 0 15px #577191;
-    -moz-animation: spinoffPulse 5s infinite linear;
-    -webkit-animation: spinoffPulse 5s infinite linear;
+    animation: spinoffPulse 5s infinite linear;
 }
 .splash-screen-text {
     z-index: 20002;
@@ -849,50 +804,27 @@ div.jGrowl div.warn {
     vertical-align: middle;
     color: #002951;
 }
-@-moz-keyframes spinPulse {
+@keyframes spinPulse {
     0% {
-        -moz-transform: rotate(160deg);
+        transform: rotate(160deg);
         opacity: 0;
         box-shadow: 0 0 1px #577191;
     }
     50% {
-        -moz-transform: rotate(145deg);
+        transform: rotate(145deg);
         opacity: 1;
     }
     100% {
-        -moz-transform: rotate(-320deg);
+        transform: rotate(-320deg);
         opacity: 0;
     }
 }
-@-moz-keyframes spinoffPulse {
+@keyframes spinoffPulse {
     0% {
-        -moz-transform: rotate(0deg);
+        transform: rotate(0deg);
     }
     100% {
-        -moz-transform: rotate(360deg);
-    }
-}
-@-webkit-keyframes spinPulse {
-    0% {
-        -webkit-transform: rotate(160deg);
-        opacity: 0;
-        box-shadow: 0 0 1px #577191;
-    }
-    50% {
-        -webkit-transform: rotate(145deg);
-        opacity: 1;
-    }
-    100% {
-        -webkit-transform: rotate(-320deg);
-        opacity: 0;
-    }
-}
-@-webkit-keyframes spinoffPulse {
-    0% {
-        -webkit-transform: rotate(0deg);
-    }
-    100% {
-        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
     }
 }
 */

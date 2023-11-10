@@ -1234,9 +1234,7 @@ class VisCanWidget extends VisBaseWidget {
                 this.widDiv.style.position = isRelative ? (this.props.context.allWidgets[wid].style.position || 'relative') : 'absolute';
 
                 // by default, it is border-box
-                if (!this.props.context.allWidgets[wid].style['box-sizing']) {
-                    this.widDiv.style.boxSizing = 'border-box';
-                }
+                this.widDiv.style.boxSizing = 'border-box';
 
                 if (widgetData && widgetData.class) {
                     this.widDiv.className = addClass(this.widDiv.className, widgetData.class);
@@ -1387,7 +1385,6 @@ class VisCanWidget extends VisBaseWidget {
 
         // the helper div is always absolute
         props.style.position = 'absolute';
-        props.style.boxSizing = 'border-box';
 
         // this code is used only to represent containers, but sometime all of them should be rewritten in React
         const legacyViewContainers = this.state.legacyViewContainers.length ? this.state.legacyViewContainers.map(view => {

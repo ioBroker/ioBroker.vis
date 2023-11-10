@@ -491,11 +491,6 @@ class VisRxWidget extends VisBaseWidget {
             props.style.position = 'absolute';
         }
 
-        // by default, it is border-box
-        if (!this.state.rxStyle['box-sizing']) {
-            props.style.boxSizing = 'border-box';
-        }
-
         if (this.state.editMode) {
             const zIndex = parseInt((this.state.rxStyle['z-index'] || 0), 10);
             if (this.state.selected) {

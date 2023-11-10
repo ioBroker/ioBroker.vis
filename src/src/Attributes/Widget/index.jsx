@@ -407,7 +407,7 @@ class Widget extends Component {
                 name: 'css_border',
                 isStyle: true,
                 fields: [
-                    { name: 'box-sizing', type: 'nselect', options: ['', 'border-box', 'content-box']  },
+                    // { name: 'box-sizing', type: 'nselect', options: ['', 'border-box', 'content-box']  },
                     { name: 'border-width' },
                     { name: 'border-style', type: 'nselect', options: ['', 'dotted', 'dashed', 'solid', 'double', 'groove', 'ridge', 'inset', 'outset', 'hidden'] },
                     { name: 'border-color', type: 'color' },

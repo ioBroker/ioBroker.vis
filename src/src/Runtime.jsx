@@ -245,6 +245,9 @@ class Runtime extends GenericApp {
                         widget.data.members = [];
                     }
 
+                    // delete box-sizing as it is always 'border-box' now
+                    delete widget.style['box-sizing'];
+
                     // collect all attributes with bindings
                     if (!widget.data.bindings && !Array.isArray(widget.data.bindings)) {
                         widget.data.bindings = [];
