@@ -602,5 +602,15 @@
   "signals-smallIcon-0": "Petite icône [0]",
   "signals-text-0": "Texte [0]",
   "signals-text-1": "Texte [1]",
-  "signals-text-2": "Texte [2]"
+  "signals-text-2": "Texte [2]",
+  "jqui_clearable": "Effacable",
+  "jqui_widgetTitle": "Titre",
+  "jqui_disableFuture": "Désactiver le futur",
+  "jqui_disablePast": "Désactiver le passé",
+  "jqui_displayWeekNumber": "Afficher le numéro de la semaine",
+  "jqui_wideFormat": "Grand format",
+  "jqui_ampm": "Matin après-midi",
+  "jqui_stepMinute": "Minute de pas",
+  "jqui_write_state_note": "Obsolète. Utilisez le widget \"Wirte state\" avec l'option \"incrémenter/décrémenter\". Conservé uniquement pour des raisons de compatibilité avec vis.1",
+  "qui_Bool SVG": "SVG booléen"
 }

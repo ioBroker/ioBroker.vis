@@ -25,6 +25,7 @@ class BasicSvgBool extends VisRxWidget {
             id: 'tplValueBoolCtrlSvg',
             visSet: 'basic',
             visName: 'Bool SVG',
+            visWidgetLabel: 'qui_Bool SVG',
             visPrev: 'widgets/basic/img/Prev_ValueBoolCtrlSvg.png',
             visAttrs: [{
                 name: 'common',
@@ -73,9 +74,9 @@ class BasicSvgBool extends VisRxWidget {
         const oid = this.state.rxData.oid;
         let val = this.state.values[`${this.state.rxData.oid}.val`];
         if (val === null || val === '' || val === undefined || val === false || val === 'false') {
-            this.props.context.socket.setState(oid, true);
+            this.props.context.setValue(oid, true);
         } else if (val === true || val === 'true') {
-            this.props.context.socket.setState(oid, false);
+            this.props.context.setValue(oid, false);
         } else {
             val = parseFloat(val);
             if (val >= 0.5) {
@@ -83,7 +84,7 @@ class BasicSvgBool extends VisRxWidget {
             } else {
                 val = 0;
             }
-            this.props.context.socket.setState(oid, 1 - val);
+            this.props.context.setValue(oid, 1 - val);
         }
     }
 

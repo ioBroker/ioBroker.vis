@@ -308,9 +308,9 @@ class JQuiWriteState extends VisRxWidget {
         const oid = this.getControlOid();
         if (oid) {
             if (this.state.valueType === 'number') {
-                this.props.context.socket.setState(oid, parseFloat(value));
+                this.props.context.setValue(oid, parseFloat(value));
             } else {
-                this.props.context.socket.setState(oid, value);
+                this.props.context.setValue(oid, value);
             }
         }
         this.setState({ value });

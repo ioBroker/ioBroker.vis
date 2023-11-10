@@ -494,7 +494,7 @@ class JQuiButton extends VisRxWidget {
             value = value.toString();
         }
 
-        await this.props.context.socket.setState(oid, value);
+        await this.props.context.setValue(oid, value);
     }
 
     onClick(passwordChecked) {

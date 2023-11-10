@@ -602,5 +602,15 @@
   "signals-smallIcon-0": "Маленький значок [0]",
   "signals-text-0": "Текст [0]",
   "signals-text-1": "Текст [1]",
-  "signals-text-2": "Текст [2]"
+  "signals-text-2": "Текст [2]",
+  "jqui_clearable": "Очищаемый",
+  "jqui_widgetTitle": "Заголовок",
+  "jqui_disableFuture": "Отключить будущее",
+  "jqui_disablePast": "Отключить прошлое",
+  "jqui_displayWeekNumber": "Отображение номера недели",
+  "jqui_wideFormat": "Широкий формат",
+  "jqui_ampm": "До полудня после полудня",
+  "jqui_stepMinute": "Шаг минута",
+  "jqui_write_state_note": "Устарело. Используйте виджет «Состояние записи» с опцией «увеличить/уменьшить». Сохранено только для совместимости с vis.1.",
+  "qui_Bool SVG": "Бинарный SVG"
 }

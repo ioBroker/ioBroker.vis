@@ -312,7 +312,7 @@ class JQuiBinaryState extends VisRxWidget {
 
         const oid = this.getControlOid();
         if (oid) {
-            this.props.context.socket.setState(oid, isOn);
+            this.props.context.setValue(oid, isOn);
         }
 
         this.setState({ isOn });

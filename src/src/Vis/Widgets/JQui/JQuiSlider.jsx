@@ -410,7 +410,7 @@ class JQuiSlider extends VisRxWidget {
                     }
 
                     if (this.state.values[`${this.state.rxData.oid}.val`] !== val) {
-                        this.props.context.socket.setState(oid, val);
+                        this.props.context.setValue(oid, val);
                     }
                 }
             }
@@ -423,7 +423,7 @@ class JQuiSlider extends VisRxWidget {
                     }
 
                     if (this.state.values[`${this.state.rxData['oid-2']}.val`] !== val) {
-                        this.props.context.socket.setState(oidMax, val);
+                        this.props.context.setValue(oidMax, val);
                     }
                 }
             }

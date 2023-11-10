@@ -27,6 +27,8 @@ import JQuiState from './JQui/JQuiState';
 import JQuiWriteState from './JQui/JQuiWriteState';
 import JQuiSlider from './JQui/JQuiSlider';
 import JQuiSliderVertical from './JQui/JQuiSliderVertical';
+import JQuiInputDate from './JQui/JQuiInputDate';
+import JQuiInputDateTime from './JQui/JQuiInputDateTime';
 
 import TabsSliderTabs from './Tabs/TabsSliderTabs';
 
@@ -59,6 +61,8 @@ const WIDGETS = [
     JQuiWriteState,
     JQuiSlider,
     JQuiSliderVertical,
+    JQuiInputDate,
+    JQuiInputDateTime,
 
     TabsSliderTabs,
 ];

@@ -602,5 +602,15 @@
   "signals-smallIcon-0": "Mała ikona [0]",
   "signals-text-0": "Tekst [0]",
   "signals-text-1": "Tekst [1]",
-  "signals-text-2": "Tekst [2]"
+  "signals-text-2": "Tekst [2]",
+  "jqui_clearable": "Usuwalne",
+  "jqui_widgetTitle": "Tytuł",
+  "jqui_disableFuture": "Wyłącz przyszłość",
+  "jqui_disablePast": "Wyłącz przeszłość",
+  "jqui_displayWeekNumber": "Wyświetl numer tygodnia",
+  "jqui_wideFormat": "Szeroki format",
+  "jqui_ampm": "Jestem/Po południu",
+  "jqui_stepMinute": "Krok minuta",
+  "jqui_write_state_note": "Przestarzałe. Użyj widżetu „Zapisz stan” z opcją „zwiększ/zmniejsz”. Zachowane tylko ze względu na kompatybilność z vis.1",
+  "qui_Bool SVG": "Wartość logiczna SVG"
 }

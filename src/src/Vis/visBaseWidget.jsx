@@ -1370,9 +1370,9 @@ class VisBaseWidget extends React.Component {
                 return <span className="time-interval" data-time={dateObj.getTime()} data-moment={isMomentJs || false} title={dateObj.toLocaleString()}>
                     {this.formatInterval(dateObj.getTime(), isMomentJs)}
                 </span>;
-            } else {
-                return `<span class="time-interval" data-time="${dateObj.getTime()}" data-moment="${isMomentJs || false}">${this.formatInterval(dateObj.getTime(), isMomentJs)}</span>`;
             }
+
+            return `<span class="time-interval" data-time="${dateObj.getTime()}" data-moment="${isMomentJs || false}">${this.formatInterval(dateObj.getTime(), isMomentJs)}</span>`;
         }
 
         let v;

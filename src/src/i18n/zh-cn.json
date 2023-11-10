@@ -602,5 +602,15 @@
   "signals-smallIcon-0": "小图标 [0]",
   "signals-text-0": "文字 [0]",
   "signals-text-1": "文本[1]",
-  "signals-text-2": "文字[2]"
+  "signals-text-2": "文字[2]",
+  "jqui_clearable": "可清除",
+  "jqui_widgetTitle": "标题",
+  "jqui_disableFuture": "禁用未来",
+  "jqui_disablePast": "禁用过去",
+  "jqui_displayWeekNumber": "显示周数",
+  "jqui_wideFormat": "宽幅",
+  "jqui_ampm": "上午下午",
+  "jqui_stepMinute": "步数分钟",
+  "jqui_write_state_note": "已弃用。使用带有“增量/减量”选项的“Wirte state”小部件。保留只是为了与 vis.1 兼容",
+  "qui_Bool SVG": "布尔SVG"
 }

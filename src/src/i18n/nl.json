@@ -602,5 +602,15 @@
   "signals-smallIcon-0": "Klein pictogram [0]",
   "signals-text-0": "Tekst [0]",
   "signals-text-1": "Tekst [1]",
-  "signals-text-2": "Tekst [2]"
+  "signals-text-2": "Tekst [2]",
+  "jqui_clearable": "Verwijderbaar",
+  "jqui_widgetTitle": "Titel",
+  "jqui_disableFuture": "Toekomst uitschakelen",
+  "jqui_disablePast": "Schakel verleden uit",
+  "jqui_displayWeekNumber": "Weeknummer weergeven",
+  "jqui_wideFormat": "Breed formaat",
+  "jqui_ampm": "AM PM",
+  "jqui_stepMinute": "Stap minuut",
+  "jqui_write_state_note": "Verouderd. Gebruik de widget \"Wirte state\" met de optie \"verhogen/verlagen\". Alleen bewaard voor compatibiliteit met vis.1",
+  "qui_Bool SVG": "Booleaanse SVG"
 }

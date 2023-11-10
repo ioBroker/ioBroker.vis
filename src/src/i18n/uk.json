@@ -602,5 +602,15 @@
   "signals-smallIcon-0": "Маленький значок [0]",
   "signals-text-0": "Текст [0]",
   "signals-text-1": "Текст [1]",
-  "signals-text-2": "Текст [2]"
+  "signals-text-2": "Текст [2]",
+  "jqui_clearable": "Очищається",
+  "jqui_widgetTitle": "Назва",
+  "jqui_disableFuture": "Вимкнути майбутнє",
+  "jqui_disablePast": "Вимкнути минуле",
+  "jqui_displayWeekNumber": "Показати номер тижня",
+  "jqui_wideFormat": "Широкий формат",
+  "jqui_ampm": "Дообіду, після обіду",
+  "jqui_stepMinute": "Крокова хвилина",
+  "jqui_write_state_note": "Застаріле. Використовуйте віджет \"Wirte state\" з опцією \"increment/decrement\". Збережено тільки для сумісності з vis.1",
+  "qui_Bool SVG": "Логічний SVG"
 }

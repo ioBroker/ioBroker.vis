@@ -602,5 +602,15 @@
   "signals-smallIcon-0": "Icono pequeño [0]",
   "signals-text-0": "Texto [0]",
   "signals-text-1": "Texto [1]",
-  "signals-text-2": "Texto [2]"
+  "signals-text-2": "Texto [2]",
+  "jqui_clearable": "Borrable",
+  "jqui_widgetTitle": "Título",
+  "jqui_disableFuture": "Deshabilitar futuro",
+  "jqui_disablePast": "Desactivar pasado",
+  "jqui_displayWeekNumber": "Mostrar número de semana",
+  "jqui_wideFormat": "Formato amplio",
+  "jqui_ampm": "Am PM",
+  "jqui_stepMinute": "Paso minuto",
+  "jqui_write_state_note": "Obsoleto. Utilice el widget \"Estado de escritura\" con la opción \"incrementar/decrementar\". Mantenido solo por compatibilidad con vis.1",
+  "qui_Bool SVG": "SVG booleano"
 }

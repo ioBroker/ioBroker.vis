@@ -602,5 +602,15 @@
   "signals-smallIcon-0": "Kleines Symbol [0]",
   "signals-text-0": "Text [0]",
   "signals-text-1": "Text [1]",
-  "signals-text-2": "Text [2]"
+  "signals-text-2": "Text [2]",
+  "jqui_clearable": "Abräumbar",
+  "jqui_widgetTitle": "Titel",
+  "jqui_disableFuture": "Zukunft deaktivieren",
+  "jqui_disablePast": "Vergangenheit deaktivieren",
+  "jqui_displayWeekNumber": "Wochennummer anzeigen",
+  "jqui_wideFormat": "Breitformat",
+  "jqui_ampm": "Vormittags/Nachmittags",
+  "jqui_stepMinute": "Schrittminute",
+  "jqui_write_state_note": "Veraltet. Verwenden Sie das Widget „Wert schreiben“ mit der Option „Inkrementieren/Dekrementieren“. Wird nur aus Kompatibilitätsgründen mit vis.1 beibehalten",
+  "qui_Bool SVG": "Boolesches SVG"
 }

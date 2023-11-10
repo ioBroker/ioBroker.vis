@@ -497,7 +497,9 @@ class Widget extends Component {
                     {
                         name: 'lc-border-radius', type: 'slider', min: 0, max: 20, step: 1, default: 10,
                     },
-                    { name: 'lc-padding', type: 'slider', min: 0, max: 20, step: 1, default: 3 },
+                    {
+                        name: 'lc-padding', type: 'slider', min: 0, max: 20, step: 1, default: 3,
+                    },
                     {
                         name: 'lc-zindex', type: 'slider', min: -10, max: 20, step: 1, default: 0,
                     },

@@ -183,7 +183,7 @@ class JQuiInput extends VisRxWidget {
                 value = 0;
             }
         }
-        await this.props.context.socket.setState(this.state.rxData.oid, value);
+        await this.props.context.setValue(this.state.rxData.oid, value);
     }
 
     onChange(value) {

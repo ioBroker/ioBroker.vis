@@ -284,7 +284,7 @@ class JQuiState extends VisRxWidget {
                 this.controlTimeout = null;
                 const oid = this.getControlOid();
                 if (oid) {
-                    this.props.context.socket.setState(oid, parseFloat(indexOrValue));
+                    this.props.context.setValue(oid, parseFloat(indexOrValue));
                 }
             }, immediately ? 0 : parseInt(this.state.rxData.timeout, 10) || 300);
             this.setState({ value: indexOrValue });
@@ -292,9 +292,9 @@ class JQuiState extends VisRxWidget {
             const oid = this.getControlOid();
             if (oid) {
                 if (this.state.valueType === 'number') {
-                    this.props.context.socket.setState(oid, parseFloat(this.state.rxData[`value${indexOrValue}`]));
+                    this.props.context.setValue(oid, parseFloat(this.state.rxData[`value${indexOrValue}`]));
                 } else {
-                    this.props.context.socket.setState(oid, this.state.rxData[`value${indexOrValue}`]);
+                    this.props.context.setValue(oid, this.state.rxData[`value${indexOrValue}`]);
                 }
             }
             this.setState({ value: this.state.rxData[`value${indexOrValue}`] });

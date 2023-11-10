@@ -602,5 +602,15 @@
   "signals-smallIcon-0": "Small icon [0]",
   "signals-text-0": "Text [0]",
   "signals-text-1": "Text [1]",
-  "signals-text-2": "Text [2]"
+  "signals-text-2": "Text [2]",
+  "jqui_clearable": "Clearable",
+  "jqui_widgetTitle": "Title",
+  "jqui_disableFuture": "Disable future",
+  "jqui_disablePast": "Disable past",
+  "jqui_displayWeekNumber": "Display week number",
+  "jqui_wideFormat": "Wide format",
+  "jqui_ampm": "Am/Pm",
+  "jqui_stepMinute": "Step minute",
+  "jqui_write_state_note": "Deprecated. Use \"Wirte state\" widget with \"increment/decrement\" option. Keeped just for compatibility with vis.1",
+  "qui_Bool SVG": "Boolean SVG"
 }
