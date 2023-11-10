@@ -100,11 +100,15 @@ class BasicValueString extends VisRxWidget {
                         height: this.state.rxData.iconSize || 24,
                     }}
                 /> : null}
-                {/* eslint-disable-next-line react/no-danger */}
-                <div style={{ display: 'inline' }} dangerouslySetInnerHTML={{ __html: this.state.rxData.html_prepend ?? '' }}></div>
+                <span
+                    // eslint-disable-next-line react/no-danger
+                    dangerouslySetInnerHTML={{ __html: this.state.rxData.html_prepend ?? '' }}
+                />
                 <span>{body}</span>
-                {/* eslint-disable-next-line react/no-danger */}
-                <div style={{ display: 'inline' }} dangerouslySetInnerHTML={{ __html: this.state.rxData.html_append ?? '' }}></div>
+                <span
+                    // eslint-disable-next-line react/no-danger
+                    dangerouslySetInnerHTML={{ __html: this.state.rxData.html_append ?? '' }}
+                />
             </div>
         </div>;
     }
