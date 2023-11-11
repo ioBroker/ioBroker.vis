@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.4.0",
+    "version": "2.5.0",
     "news": {
+      "2.5.0": {
+        "en": "allow to use real html in HTML prepend and HTML append (basic string widget)\nfixed problem while editing groups\ndo not automatically format button text as uppercase\ndo not automatically show page names as uppercase\nImplemented the signal icons for React widgets\nImplemented the last change indication for React widgets\nImplemented SVG Bool widget as React Component",
+        "de": "reale HTML in HTML-Präpendenz und HTML-Append (basic string widget) verwenden\nproblem beim bearbeiten von gruppen behoben\nnicht automatisch formatieren taste text als großbuchstabe\nnicht automatisch seitennamen als großbuchstabe anzeigen\nImplementiert die Signalsymbole für React Widgets\nImplementierung der letzten Änderungsanzeige für React Widgets\nImplementierung von SVG Bool Widget als React Component",
+        "ru": "позволяют использовать реальный html в HTML prepend и HTML append (базовый виджет строки)\nисправленная проблема при редактировании групп\nне автоматически форматируйте текст кнопки в качестве верхнего регистра\nне автоматически показывать названия страниц в качестве верхнего регистра\nРеализованы иконки сигналов для React виджетов\nРеализована последняя индикация изменения для React виджетов\nРеализовано SVG Bool виджет как React Component",
+        "pt": "permitir usar html real em HTML prepend e HTML apêndice (disco de cadeia básica)\nproblema fixo enquanto grupos de edição\nnão formatar automaticamente o texto do botão como maiúscula\nnão mostrar automaticamente nomes de página como maiúscula\nImplementado os ícones de sinal para React widgets\nImplementado a última indicação de mudança para widgets React\nSVG implementado Widget Bool como componente de reação",
+        "nl": "html in HTML prepend en HTML append (basic string widget)\nprobleem opgelost tijdens het bewerken van groepen\nniet automatisch gevormde knop sms'en als uppercase\ntoon geen automatisch paginanamen als uppercase\nImplementeer het signaal icoon voor reageerwijdtes\nImplementeer de laatste wijziging indicatie voor React Widgets\nImplementie SVG Bool Widge als React Componen",
+        "fr": "permettre d'utiliser le html réel dans le prépend HTML et l'append HTML (fil de base widget)\nproblème fixe tout en éditant des groupes\nne pas formater automatiquement le texte du bouton comme majuscule\nne pas afficher automatiquement les noms de page comme majuscule\nMise en œuvre des icônes de signal pour les widgets Réact\nMise en œuvre de la dernière indication de changement pour les widgets Réact\nSVG mis en œuvre widget Bool comme élément React",
+        "it": "consentire di utilizzare html reale in HTML prepend e HTML append (basic string widget)\nproblema fisso durante i gruppi di editing\nnon formattare automaticamente il testo del pulsante come maiuscolo\nnon mostrare automaticamente i nomi delle pagine come maiuscole\nImplementato le icone del segnale per i widget di React\nHo implementato l'ultima indicazione di cambiamento per i widget React\nImplementato SVG Bool widget come React Component",
+        "es": "permite utilizar html real en HTML prepend y HTML append (Basic string widget)\nproblema fijo al editar grupos\nno formatear automáticamente el texto del botón como mayúscula\nno mostrar automáticamente nombres de páginas como mayúscula\nImplementó los iconos de señal para React widgets\nSe implementó la última indicación de cambio para los widgets React\nSVG implementado Bool widget como elemento de reacción",
+        "pl": "umożliwia korzystanie z prawdziwego htmla w prependach HTML oraz dołącz HTML (base-string widget)\nproblem ulepszający\nnie ma ona jednak żadnych przycisków jak tekst górny\nnie automatycznie pojawiać się nazw stron jako nazwa górna\nPoprawiono ikony sygnałowe dla Widgetów React\nPoprawiono ostatnią zmianę widgets\nSVG Bool widget jako React Component",
+        "uk": "дозволяє використовувати реальні HTML в HTML препендії та HTML додаток (басічний віджет рядків)\nвиправлена проблема при монтажі груп\nне автоматично форматувати текст кнопки у верхній частині\nне автоматично показувати імен сторінок у верхній частині\nРеалізовано значки сигналу для React віджетів\nРеалізовано останню індикацію змін для React віджетів\nРеалізовано SVG Bool віджет як компонент React",
+        "zh-cn": "允许HTML预先筛选和HTML 附录(基本植物目标)使用真正的html\n固定问题,而编辑组\n并非自动格式,而是按上级案文\n并不自动显示上级页。\n实施重伤目标的信号\n实施最后的重伤目标变化迹象\n执行SVG Bool widget as React构成部分"
+      },
       "2.4.0": {
         "en": "fixed issues with icon selector filter when changing category\nfixed problem, that only first widget is pasted\nadded JSON binding operator\nAllowed to use function as filter for Object ID\nImplemented View bar (with no menu)",
         "de": "feste probleme mit icon-selektorfilter beim ändern der kategorie\nproblem behoben, dass nur erste widget gepflastert\njSON Bindungsoperator\nErlaubt, Funktion als Filter für Objekt-ID zu verwenden\nImplementierte Ansichtsleiste (ohne Menü)",
@@ -80,19 +93,6 @@
         "pl": "Wykazywał tylko wybrane widżety w trybie edytowanym\nPoprawione obliczenia widoczności dla starych (CanJS)",
         "uk": "Дозволяє показувати тільки вибрані віджети в режимі редагування\nВиправлено розрахунок видимості для старих (CanJS) віджетів",
         "zh-cn": "允许在被包围模式中只展示特定的植物。\n修改旧(JS)的可见度计算"
-      },
-      "2.3.1": {
-        "en": "Corrected vertical gap between relative widgets\nBetter input of numbers with min/max in attribute dialog",
-        "de": "Korrigierte vertikale Lücke zwischen relativen Widgets\nBessere Eingabe von Zahlen mit min/max im Attributdialog",
-        "ru": "Исправлен вертикальный разрыв между относительными виджетами\nЛучший ввод номеров с мин/макс в диалоге атрибутов",
-        "pt": "Intervalo vertical corrigido entre widgets relativos\nMelhor entrada de números com min/max no atributo diálogo",
-        "nl": "Verticale gat tussen verwante wijdgetten\nBeter input met min/max in Attribute dialog",
-        "fr": "Échelle verticale corrigée entre les widgets relatifs\nMeilleure entrée des nombres avec min/max dans le dialogue d'attribut",
-        "it": "Corretto divario verticale tra widget relativi\nMigliore input dei numeri con la finestra di dialogo di attributo min/max",
-        "es": "Pasillo vertical corregido entre widgets relativos\nMejor entrada de números con min/max en el diálogo de atributo",
-        "pl": "Zaklęcie pionowe różnice pomiędzy względnymi widgetami\nLepsze dane wejściowe do liczb min/max w atrybutach dialogowych",
-        "uk": "Виправлено вертикальний проміжок між відносними віджетами\nКращий вхід чисел з min/max в діалоговому вікні атрибутів",
-        "zh-cn": "相对目标之间的垂直差距\n具有微量/米特色数字的更佳投入"
       }
     },
     "title": "Visualisation Next Generation",
