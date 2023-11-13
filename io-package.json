@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.5.0",
+    "version": "2.6.0",
     "news": {
+      "2.6.0": {
+        "en": "implemented select/unselect all buttons\nfixed bindings not working",
+        "de": "alle tasten auswählen/unwählen\nnicht arbeitende feste bindungen",
+        "ru": "реализовано выбрать/отменить все кнопки\nфиксированные привязки не работают",
+        "pt": "selecione/desmarque todos os botões\nencadernação fixa não funciona",
+        "nl": "vervolg alle knoppen\nniet werken",
+        "fr": "sélectionner / désélectionner tous les boutons\nfixations fixes qui ne fonctionnent pas",
+        "it": "selezionare/selezionare tutti i pulsanti\nvincolanti fissi non funzionanti",
+        "es": "implementado seleccionar/deseleccionar todos los botones\nfijaciones fijas que no funcionan",
+        "pl": "zaimplementowany selekcjoner wszystkich przycisków\nwiązanie stałe nie pracuje",
+        "uk": "впроваджувати всі кнопки\nне працює",
+        "zh-cn": "实施的选择/选择\n未工作的固定约束力"
+      },
       "2.5.0": {
         "en": "allow to use real html in HTML prepend and HTML append (basic string widget)\nfixed problem while editing groups\ndo not automatically format button text as uppercase\ndo not automatically show page names as uppercase\nImplemented the signal icons for React widgets\nImplemented the last change indication for React widgets\nImplemented SVG Bool widget as React Component",
         "de": "reale HTML in HTML-Präpendenz und HTML-Append (basic string widget) verwenden\nproblem beim bearbeiten von gruppen behoben\nnicht automatisch formatieren taste text als großbuchstabe\nnicht automatisch seitennamen als großbuchstabe anzeigen\nImplementiert die Signalsymbole für React Widgets\nImplementierung der letzten Änderungsanzeige für React Widgets\nImplementierung von SVG Bool Widget als React Component",
@@ -80,19 +93,6 @@
         "pl": "stały problem, że wiza nie jest ładowana, jeśli pojedynczy widget ma błąd skryptowy\ndodał edytor do wiązań\ntło nie jest używane w przypadku iframe",
         "uk": "виправлена проблема, що вісь не завантажується, якщо один віджет має помилку скрипта\nдодано редактор для обов'язків\nфон не використовується, якщо в iframe",
         "zh-cn": "固定问题,如果单一目标有说明错误,就不会装载。\n增加有约束力的编辑\n2. 如果一框架不使用背景"
-      },
-      "2.3.2": {
-        "en": "Allowed showing only selected widgets in edit mode\nCorrected the visibility calculation for old (CanJS) widgets",
-        "de": "Erlaubt, nur ausgewählte Widgets im Bearbeitungsmodus anzuzeigen\nKorrektur der Sichtberechnung für alte (CanJS) Widgets",
-        "ru": "Разрешено показывать только выбранные виджеты в режиме редактирования\nИсправлена оценка видимости для старых (CanJS) виджетов",
-        "pt": "Permitido mostrando apenas widgets selecionados no modo de edição\nCorrigido o cálculo de visibilidade para widgets antigos (CanJS)",
-        "nl": "Laat zien dat alleen geselecteerde wedgetten in edit mode\nBerekende de visibiliteit voor oud (CanJS) Widgets",
-        "fr": "Permet de ne montrer que les widgets sélectionnés en mode édition\nCorrection du calcul de visibilité des widgets anciens (CanJS)",
-        "it": "Consente di visualizzare solo i widget selezionati in modalità di modifica\nCorretto il calcolo della visibilità per i widget vecchi (CanJS)",
-        "es": "Permitido mostrar sólo widgets seleccionados en modo de edición\nCorregido el cálculo de visibilidad para los widgets antiguos (CanJS)",
-        "pl": "Wykazywał tylko wybrane widżety w trybie edytowanym\nPoprawione obliczenia widoczności dla starych (CanJS)",
-        "uk": "Дозволяє показувати тільки вибрані віджети в режимі редагування\nВиправлено розрахунок видимості для старих (CanJS) віджетів",
-        "zh-cn": "允许在被包围模式中只展示特定的植物。\n修改旧(JS)的可见度计算"
       }
     },
     "title": "Visualisation Next Generation",
