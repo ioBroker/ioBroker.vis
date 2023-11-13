@@ -101,6 +101,7 @@ const getItem = (item, key, props, full) => {
             width={item.width}
             value={item.value ? item.value : value}
             onChange={_value => item.onChange(_value)}
+            setSelectedWidgets={props.setSelectedWidgets}
             options={item.items}
             themeType={props.themeType}
         />;

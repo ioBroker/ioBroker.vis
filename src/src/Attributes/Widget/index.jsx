@@ -663,8 +663,9 @@ class Widget extends Component {
             });
         } else {
             fields = selectedWidgetsFields[0];
-            widgets[this.props.selectedWidgets[0]].data.bindings.forEach(attr => !bindFields.includes(`data_${attr}`) && bindFields.push(`data_${attr}`));
-            widgets[this.props.selectedWidgets[0]].style.bindings.forEach(attr => !bindFields.includes(`style_${attr}`) && bindFields.push(`style_${attr}`));
+
+            widgets[this.props.selectedWidgets[0]].data.bindings?.forEach(attr => !bindFields.includes(`data_${attr}`) && bindFields.push(`data_${attr}`));
+            widgets[this.props.selectedWidgets[0]].style.bindings?.forEach(attr => !bindFields.includes(`style_${attr}`) && bindFields.push(`style_${attr}`));
         }
 
         newState.bindFields = bindFields.sort();

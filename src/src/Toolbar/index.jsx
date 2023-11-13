@@ -279,6 +279,7 @@ Toolbar.propTypes = {
     instance: PropTypes.number,
     projectName: PropTypes.string,
     version: PropTypes.string,
+    setSelectedWidgets: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles)(Toolbar);

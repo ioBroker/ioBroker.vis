@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { withStyles } from '@mui/styles';
 import {
-    Checkbox, FormControl, MenuItem, Menu, List, ListItemButton, ListItemText, ListItemIcon, InputLabel,
+    Checkbox, FormControl, MenuItem, Menu, List, ListItemButton, ListItemText, ListItemIcon, InputLabel, Button,
 } from '@mui/material';
 
 import IconArrowDown from '@mui/icons-material/ArrowDropDown';
 import IconArrowUp from '@mui/icons-material/ArrowDropUp';
 
-import { Utils } from '@iobroker/adapter-react-v5';
+import { Utils, I18n } from '@iobroker/adapter-react-v5';
 
 const styles = theme => ({
     navMain: {
@@ -145,6 +145,10 @@ class MultiSelect extends Component {
                 anchorEl={this.state.elAnchor}
                 onClose={() => this.setState({ elAnchor: null })}
             >
+                <div>
+                    <Button onClick={() => this.props.setSelectedWidgets(props.options.map(item => item.value))}>{I18n.t('Select all')}</Button>
+                    <Button onClick={() => this.props.setSelectedWidgets([])}>{I18n.t('Unselect all')}</Button>
+                </div>
                 {props.options.map(item => <MenuItem
                     value={item.value}
                     key={item.value}

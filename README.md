@@ -229,6 +229,9 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (foxriver76) implemented select/unselect all buttons
+
 ### 2.5.0 (2023-11-11)
 * (foxriver76) allow to use real html in HTML prepend and HTML append (basic string widget)
 * (foxriver76) fixed problem while editing groups
