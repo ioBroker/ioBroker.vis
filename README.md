@@ -231,6 +231,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 ## Changelog
 ### **WORK IN PROGRESS**
 * (foxriver76) implemented select/unselect all buttons
+* (foxriver76) fixed bindings not working
 
 ### 2.5.0 (2023-11-11)
 * (foxriver76) allow to use real html in HTML prepend and HTML append (basic string widget)

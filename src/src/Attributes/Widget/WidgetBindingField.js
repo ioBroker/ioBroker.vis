@@ -170,14 +170,14 @@ class WidgetBindingField extends Component {
         }
 
         return {
-            calculatedEditValue: this.visFormatUtils.formatBinding(
-                value,
-                this.props.selectedView,
-                this.props.selectedWidgets[0],
-                this.props.project[this.props.selectedView].widgets[this.props.selectedWidgets[0]],
-                this.props.project[this.props.selectedView].widgets[this.props.selectedWidgets[0]].data,
+            calculatedEditValue: this.visFormatUtils.formatBinding({
+                format: value,
+                view: this.props.selectedView,
+                wid: this.props.selectedWidgets[0],
+                widget: this.props.project[this.props.selectedView].widgets[this.props.selectedWidgets[0]],
+                widgetData: this.props.project[this.props.selectedView].widgets[this.props.selectedWidgets[0]].data,
                 values,
-            ),
+            }),
             values,
         };
     }

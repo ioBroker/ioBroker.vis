@@ -278,36 +278,51 @@ class VisFormatUtils {
         return result;
     }
 
-    formatBinding(format, view, wid, widget, widgetData, values, moment) {
+    /** @typedef {{ format: string, view: any, wid: string, widget: any, widgetData: any, values?: any, moment: any }} FormatBindingOptions */
+
+    /**
+     * Format given binding
+     *
+     * @param {FormatBindingOptions} options
+     * @return {*}
+     */
+    formatBinding(options) {
+        const {
+            view, wid, widget, widgetData, moment,
+        } = options;
+
+        let { format, values } = options;
+
         values = values || this.vis.states;
 
         const oids = this.extractBinding(format);
 
-        for (let t = 0; t < oids.length; t++) {
+        for (const oid of oids) {
             let value;
-            if (oids[t].visOid) {
-                value = this.getSpecialValues(oids[t].visOid, view, wid, widgetData);
+            if (oid.visOid) {
+                value = this.getSpecialValues(oid.visOid, view, wid, widgetData);
                 if (value === undefined || value === null) {
-                    value = values[oids[t].visOid];
+                    value = values[oid.visOid];
                 }
             }
-            if (oids[t].operations) {
-                for (let k = 0; k < oids[t].operations.length; k++) {
-                    switch (oids[t].operations[k].op) {
+
+            if (oid.operations) {
+                for (const operation of oid.operations) {
+                    switch (operation.op) {
                         case 'eval': {
                             let string = ''; // '(function() {';
-                            for (let a = 0; a < oids[t].operations[k].arg.length; a++) {
-                                if (!oids[t].operations[k].arg[a].name) {
+                            for (let a = 0; a < operation.arg.length; a++) {
+                                if (!operation.arg[a].name) {
                                     continue;
                                 }
-                                value = this.getSpecialValues(oids[t].operations[k].arg[a].visOid, view, wid, widgetData);
+                                value = this.getSpecialValues(operation.arg[a].visOid, view, wid, widgetData);
                                 if (value === undefined || value === null) {
-                                    value = values[oids[t].operations[k].arg[a].visOid];
+                                    value = values[operation.arg[a].visOid];
                                 }
                                 if (value === null) {
-                                    string += `const ${oids[t].operations[k].arg[a].name} = null;`;
+                                    string += `const ${operation.arg[a].name} = null;`;
                                 } else if (value === undefined) {
-                                    string += `const ${oids[t].operations[k].arg[a].name} = undefined;`;
+                                    string += `const ${operation.arg[a].name} = undefined;`;
                                 } else {
                                     const type = typeof value;
                                     if (type === 'string') {
@@ -315,29 +330,29 @@ class VisFormatUtils {
                                             value = JSON.parse(value);
                                             // if array or object, we format it correctly, else it should be a string
                                             if (typeof value === 'object') {
-                                                string += `const ${oids[t].operations[k].arg[a].name} = JSON.parse("${JSON.stringify(value).replace(/\x22/g, '\\\x22')}");`;
+                                                string += `const ${operation.arg[a].name} = JSON.parse("${JSON.stringify(value).replace(/\x22/g, '\\\x22')}");`;
                                             } else {
-                                                string += `const ${oids[t].operations[k].arg[a].name} = "${value}";`;
+                                                string += `const ${operation.arg[a].name} = "${value}";`;
                                             }
                                         } catch (e) {
-                                            string += `const ${oids[t].operations[k].arg[a].name} = "${value}";`;
+                                            string += `const ${operation.arg[a].name} = "${value}";`;
                                         }
                                     } else if (type === 'object') {
-                                        string += `const ${oids[t].operations[k].arg[a].name} = ${JSON.stringify(value)};`;
+                                        string += `const ${operation.arg[a].name} = ${JSON.stringify(value)};`;
                                     } else {
                                         // boolean, number, ...
-                                        string += `const ${oids[t].operations[k].arg[a].name} = ${value.toString()};`;
+                                        string += `const ${operation.arg[a].name} = ${value.toString()};`;
                                     }
                                 }
                             }
 
-                            const { formula } = oids[t].operations[k];
+                            const { formula } = operation;
                             if (formula && formula.includes('widget.')) {
                                 const w = JSON.parse(JSON.stringify(widget));
                                 w.data = widgetData;
                                 string += `const widget = ${JSON.stringify(w)};`;
                             }
-                            string += `return ${oids[t].operations[k].formula};`;
+                            string += `return ${operation.formula};`;
 
                             if (string.includes('\\"')) {
                                 string = string.replace(/\\"/g, '"');
@@ -356,42 +371,42 @@ class VisFormatUtils {
                             break;
                         }
                         case '*':
-                            if (oids[t].operations[k].arg !== undefined && oids[t].operations[k].arg !== null) {
-                                value = parseFloat(value) * oids[t].operations[k].arg;
+                            if (operation.arg !== undefined && operation.arg !== null) {
+                                value = parseFloat(value) * operation.arg;
                             }
                             break;
                         case '/':
-                            if (oids[t].operations[k].arg !== undefined && oids[t].operations[k].arg !== null) {
-                                value = parseFloat(value) / oids[t].operations[k].arg;
+                            if (operation.arg !== undefined && operation.arg !== null) {
+                                value = parseFloat(value) / operation.arg;
                             }
                             break;
                         case '+':
-                            if (oids[t].operations[k].arg !== undefined && oids[t].operations[k].arg !== null) {
-                                value = parseFloat(value) + oids[t].operations[k].arg;
+                            if (operation.arg !== undefined && operation.arg !== null) {
+                                value = parseFloat(value) + operation.arg;
                             }
                             break;
                         case '-':
-                            if (oids[t].operations[k].arg !== undefined && oids[t].operations[k].arg !== null) {
-                                value = parseFloat(value) - oids[t].operations[k].arg;
+                            if (operation.arg !== undefined && operation.arg !== null) {
+                                value = parseFloat(value) - operation.arg;
                             }
                             break;
                         case '%':
-                            if (oids[t].operations[k].arg !== undefined && oids[t].operations[k].arg !== null) {
-                                value = parseFloat(value) % oids[t].operations[k].arg;
+                            if (operation.arg !== undefined && operation.arg !== null) {
+                                value = parseFloat(value) % operation.arg;
                             }
                             break;
                         case 'round':
-                            if (oids[t].operations[k].arg === undefined && oids[t].operations[k].arg !== null) {
+                            if (operation.arg === undefined) {
                                 value = Math.round(parseFloat(value));
                             } else {
-                                value = parseFloat(value).toFixed(oids[t].operations[k].arg);
+                                value = parseFloat(value).toFixed(operation.arg);
                             }
                             break;
                         case 'pow':
-                            if (oids[t].operations[k].arg === undefined && oids[t].operations[k].arg !== null) {
+                            if (operation.arg === undefined) {
                                 value = parseFloat(value) * parseFloat(value);
                             } else {
-                                value = parseFloat(value) ** oids[t].operations[k].arg;
+                                value = parseFloat(value) ** operation.arg;
                             }
                             break;
                         case 'sqrt':
@@ -416,17 +431,17 @@ class VisFormatUtils {
                             }
                             break;
                         case 'value':
-                            value = VisFormatUtils.formatValue(value, parseInt(oids[t].operations[k].arg, 10));
+                            value = VisFormatUtils.formatValue(value, parseInt(operation.arg, 10));
                             break;
                         case 'array':
-                            value = oids[t].operations[k].arg[parseInt(value, 10)];
+                            value = operation.arg[parseInt(value, 10)];
                             break;
                         case 'date':
-                            value = this.formatDate(value, oids[t].operations[k].arg);
+                            value = this.formatDate(value, operation.arg);
                             break;
                         case 'momentDate':
-                            if (oids[t].operations[k].arg !== undefined && oids[t].operations[k].arg !== null) {
-                                const params = oids[t].operations[k].arg.split(',');
+                            if (operation.arg !== undefined && operation.arg !== null) {
+                                const params = operation.arg.split(',');
 
                                 if (params.length === 1) {
                                     value = this.formatMomentDate(value, params[0], false, moment);
@@ -439,17 +454,17 @@ class VisFormatUtils {
                             break;
                         case 'min':
                             value = parseFloat(value);
-                            value = (value < oids[t].operations[k].arg) ? oids[t].operations[k].arg : value;
+                            value = (value < operation.arg) ? operation.arg : value;
                             break;
                         case 'max':
                             value = parseFloat(value);
-                            value = (value > oids[t].operations[k].arg) ? oids[t].operations[k].arg : value;
+                            value = (value > operation.arg) ? operation.arg : value;
                             break;
                         case 'random':
-                            if (oids[t].operations[k].arg === undefined && oids[t].operations[k].arg !== null) {
+                            if (operation.arg === undefined) {
                                 value = Math.random();
                             } else {
-                                value = Math.random() * oids[t].operations[k].arg;
+                                value = Math.random() * operation.arg;
                             }
                             break;
                         case 'floor':
@@ -467,7 +482,7 @@ class VisFormatUtils {
                                 }
                             }
                             if (value && typeof value === 'object') {
-                                value = VisFormatUtils.getObjPropValue(value, oids[t].operations[k].arg);
+                                value = VisFormatUtils.getObjPropValue(value, operation.arg);
                             }
                             break;
                         default:
@@ -477,7 +492,7 @@ class VisFormatUtils {
                     } // switch
                 }
             } // if for
-            format = format.replace(oids[t].token, value);
+            format = format.replace(oid.token, value);
         } // for
 
         format = format.replace(/{{/g, '{').replace(/}}/g, '}');

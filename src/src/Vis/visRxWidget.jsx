@@ -267,15 +267,15 @@ class VisRxWidget extends VisBaseWidget {
 
     applyBinding(stateId, newState) {
         this.linkContext.bindings[stateId] && this.linkContext.bindings[stateId].forEach(item => {
-            const value = this.props.context.formatUtils.formatBinding(
-                item.format,
-                item.view,
-                this.props.id,
-                this.props.context.views[item.view].widgets[this.props.id],
-                newState.rxData,
-                newState.values,
-                this.props.context.moment,
-            );
+            const value = this.props.context.formatUtils.formatBinding({
+                format: item.format,
+                view: item.view,
+                wid: this.props.id,
+                widget: this.props.context.views[item.view].widgets[this.props.id],
+                widgetData: newState.rxData,
+                values: newState.values,
+                moment: this.props.context.moment,
+            });
 
             if (item.type === 'data') {
                 newState.rxData[item.attr] = value;

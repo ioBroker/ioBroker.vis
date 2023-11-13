@@ -925,14 +925,14 @@ class VisCanWidget extends VisBaseWidget {
         this.bindings[stateId].forEach(item => {
             widgetStyle = widgetStyle || widgetContext.style;
 
-            const value = this.props.context.formatUtils.formatBinding(
-                item.format,
-                item.view,
-                this.props.id,
+            const value = this.props.context.formatUtils.formatBinding({
+                format: item.format,
+                view: item.view,
+                wid: this.props.id,
                 widget,
-                widgetData || widgetContext.data,
-                this.props.context.moment,
-            );
+                widgetData: widgetData || widgetContext.data,
+                moment: this.props.context.moment,
+            });
 
             if (item.type === 'data') {
                 if (widgetData) {

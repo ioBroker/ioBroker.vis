@@ -700,7 +700,9 @@ class VisEngine extends React.Component {
                 return result;
             },
             formatBinding: (format, view, wid, widget, widgetData, values) =>
-                this.formatUtils.formatBinding(format, view, wid, widget, widgetData, values, moment),
+                this.formatUtils.formatBinding({
+                    format, view, wid, widget, widgetData, values, moment,
+                }),
             getViewOfWidget: id => {
                 // find a view of this widget
                 for (const v in this.props.views) {
