@@ -238,7 +238,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 * (foxriver76) fixed bindings not working
 
 ### 2.5.0 (2023-11-11)
-* (foxriver76) allow to use real html in HTML prepend and HTML append (basic string widget)
+* (foxriver76) allowed using real html in prepend-HTML and append-HTML (basic string widget)
 * (foxriver76) fixed problem while editing groups
 * (foxriver76) do not automatically format button text as uppercase
 * (foxriver76) do not automatically show page names as uppercase
