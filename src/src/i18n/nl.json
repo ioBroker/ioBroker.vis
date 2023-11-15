@@ -231,7 +231,7 @@
   "Scripts": "Scripts",
   "Sent to back": "Verzonden naar terug",
   "Settings": "Instellingen",
-  "Show app bar": "App-balk tonen",
+  "Show app bar": "Show",
   "Show navigation": "Toon navigatie",
   "Show view": "Toon weergave",
   "States Debounce Time (millis)": "Debouncetijd van staten (millis)",
@@ -615,5 +615,9 @@
   "qui_Bool SVG": "Booleaanse SVG",
   "(Maximal file size is %s)": "(Maximale bestandsgrootte is %s)",
   "File too large": "Bestand te groot",
-  "Invalid file type": "Ongeldig bestandstype"
+  "Invalid file type": "Ongeldig bestandstype",
+  "Bar text": "Ondertiteling",
+  "Bar color": "Achtergrond kleur",
+  "Bar icon": "Icoon",
+  "Bar image": "Afbeelding"
 }

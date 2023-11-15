@@ -231,7 +231,7 @@
   "Scripts": "脚本",
   "Sent to back": "送回",
   "Settings": "设置",
-  "Show app bar": "显示应用栏",
+  "Show app bar": "展示",
   "Show navigation": "显示导航",
   "Show view": "显示视图",
   "States Debounce Time (millis)": "状态去抖时间（毫秒）",
@@ -615,5 +615,9 @@
   "qui_Bool SVG": "布尔SVG",
   "(Maximal file size is %s)": "（最大文件大小为 %s）",
   "File too large": "文件过大",
-  "Invalid file type": "文件类型无效"
+  "Invalid file type": "文件类型无效",
+  "Bar text": "标题",
+  "Bar color": "背景颜色",
+  "Bar icon": "图标",
+  "Bar image": "图像"
 }

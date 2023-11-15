@@ -231,7 +231,7 @@
   "Scripts": "Сценарії",
   "Sent to back": "Відправлено назад",
   "Settings": "Налашт.",
-  "Show app bar": "Показати панель програм",
+  "Show app bar": "Показати",
   "Show navigation": "Показати навігацію",
   "Show view": "Показати вид",
   "States Debounce Time (millis)": "Час усунення дребезгу в штатах (мілісекунди)",
@@ -615,5 +615,9 @@
   "qui_Bool SVG": "Логічний SVG",
   "(Maximal file size is %s)": "(Максимальний розмір файлу %s)",
   "File too large": "Файл завеликий",
-  "Invalid file type": "Недійсний тип файлу"
+  "Invalid file type": "Недійсний тип файлу",
+  "Bar text": "Підпис",
+  "Bar color": "Колір фону",
+  "Bar icon": "значок",
+  "Bar image": "Зображення"
 }

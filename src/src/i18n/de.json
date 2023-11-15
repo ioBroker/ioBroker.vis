@@ -231,7 +231,7 @@
   "Scripts": "Skripte",
   "Sent to back": "Nach hinten geschickt",
   "Settings": "Einstell.",
-  "Show app bar": "App-Leiste anzeigen",
+  "Show app bar": "Anzeigen",
   "Show navigation": "Navigation anzeigen",
   "Show view": "Seite zeigen",
   "States Debounce Time (millis)": "Zustands-Entprellzeit (Millisekunden)",
@@ -615,5 +615,9 @@
   "qui_Bool SVG": "Boolesches SVG",
   "(Maximal file size is %s)": "(Maximale Dateigröße ist %s)",
   "File too large": "Datei zu groß",
-  "Invalid file type": "ungültiger Dateityp"
+  "Invalid file type": "ungültiger Dateityp",
+  "Bar text": "Untertitel",
+  "Bar color": "Hintergrundfarbe",
+  "Bar icon": "Symbol",
+  "Bar image": "Bild"
 }

@@ -231,7 +231,7 @@
   "Scripts": "Scénarios",
   "Sent to back": "Renvoyé à l'arrière",
   "Settings": "Réglages",
-  "Show app bar": "Afficher la barre d'applications",
+  "Show app bar": "Montrer",
   "Show navigation": "Afficher la navigation",
   "Show view": "Afficher la vue",
   "States Debounce Time (millis)": "Temps anti-rebond des États (millis)",
@@ -615,5 +615,9 @@
   "qui_Bool SVG": "SVG booléen",
   "(Maximal file size is %s)": "(La taille maximale du fichier est %s)",
   "File too large": "Fichier trop large",
-  "Invalid file type": "type de fichier invalide"
+  "Invalid file type": "type de fichier invalide",
+  "Bar text": "Légende",
+  "Bar color": "Couleur de l'arrière plan",
+  "Bar icon": "Icône",
+  "Bar image": "Image"
 }

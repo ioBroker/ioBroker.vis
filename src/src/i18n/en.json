@@ -279,7 +279,7 @@
   "Resolution": "Resolution",
   "Show navigation": "Show navigation",
   "Title": "Title",
-  "Show app bar": "Show app bar",
+  "Show app bar": "Show",
   "Icon": "Icon",
   "Image": "Image",
   "Menu header text": "Menu header text",
@@ -615,5 +615,9 @@
   "qui_Bool SVG": "Boolean SVG",
   "(Maximal file size is %s)": "(Maximal file size is %s)",
   "File too large": "File too large",
-  "Invalid file type": "Invalid file type"
+  "Invalid file type": "Invalid file type",
+  "Bar text": "Caption",
+  "Bar color": "Background color",
+  "Bar icon": "Icon",
+  "Bar image": "Image"
 }

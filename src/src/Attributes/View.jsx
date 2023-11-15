@@ -548,12 +548,6 @@ const View = props => {
                     type: 'checkbox', name: 'Only icon', field: 'navigationOnlyIcon', notStyle: true, default: true, hidden: '!data.navigation || data.navigationOrientation !== "horizontal"', applyToAll: true,
                 },
                 {
-                    type: 'checkbox', name: 'Show app bar', field: 'navigationBar', notStyle: true, default: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
-                },
-                {
-                    type: 'color', name: 'Bar color', field: 'navigationBarColor', notStyle: true, hidden: '!data.navigation || (!data.navigationBar && data.navigationOrientation !== "horizontal")', applyToAll: true,
-                },
-                {
                     type: 'color', name: 'Background color', field: 'navigationBackground', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
                 },
                 {
@@ -567,6 +561,27 @@ const View = props => {
                 },
                 {
                     type: 'checkbox', name: 'Show background of button', field: 'navigationButtonBackground', notStyle: true, hidden: '!data.navigation || data.navigationNoHide || data.navigationOrientation === "horizontal"', applyToAll: true,
+                },
+            ],
+        },
+        {
+            name: 'App bar',
+            hidden: '!!data.navigation && data.navigationOrientation === "horizontal"',
+            fields: [
+                {
+                    type: 'checkbox', name: 'Show app bar', field: 'navigationBar', notStyle: true, default: true, applyToAll: true, groupApply: true,
+                },
+                {
+                    type: 'color', name: 'Bar color', field: 'navigationBarColor', notStyle: true, hidden: '!data.navigationBar', applyToAll: true,
+                },
+                {
+                    type: 'text', name: 'Bar text', field: 'navigationBarText', notStyle: true, hidden: '!data.navigationBar', applyToAll: true,
+                },
+                {
+                    type: 'icon64', name: 'Bar icon', field: 'navigationBarIcon', notStyle: true, hidden: '!data.navigationBar || !!data.navigationBarImage', applyToAll: true,
+                },
+                {
+                    type: 'image', name: 'Bar image', field: 'navigationBarImage', notStyle: true, hidden: '!data.navigationBar || !!data.navigationBarIcon', applyToAll: true,
                 },
             ],
         },
@@ -793,39 +808,42 @@ const View = props => {
     }
 
     return <div style={{ height: '100%', overflowY: 'auto' }}>
-        {fields.map((group, key) => <Accordion
-            classes={{
-                root: props.classes.clearPadding,
-                expanded: props.classes.clearPadding,
-            }}
-            square
-            key={key}
-            elevation={0}
-            expanded={accordionOpen[key]}
-            onChange={(e, expanded) => {
-                const newAccordionOpen = JSON.parse(JSON.stringify(accordionOpen));
-                newAccordionOpen[key] = expanded;
-                window.localStorage.setItem('attributesView', JSON.stringify(newAccordionOpen));
-                setAccordionOpen(newAccordionOpen);
-            }}
-        >
-            <AccordionSummary
+        {fields.map((group, key) => {
+            if (group.hidden && checkFunction(group.hidden, props.project[props.selectedView].settings)) {
+                return null;
+            }
+            return <Accordion
                 classes={{
-                    root: Utils.clsx(props.classes.clearPadding, accordionOpen[key]
-                        ? props.classes.groupSummaryExpanded : props.classes.groupSummary, props.classes.lightedPanel),
-                    content: props.classes.clearPadding,
+                    root: props.classes.clearPadding,
                     expanded: props.classes.clearPadding,
-                    expandIcon: props.classes.clearPadding,
                 }}
-                expandIcon={<ExpandMoreIcon />}
+                square
+                key={key}
+                elevation={0}
+                expanded={accordionOpen[key]}
+                onChange={(e, expanded) => {
+                    const newAccordionOpen = JSON.parse(JSON.stringify(accordionOpen));
+                    newAccordionOpen[key] = expanded;
+                    window.localStorage.setItem('attributesView', JSON.stringify(newAccordionOpen));
+                    setAccordionOpen(newAccordionOpen);
+                }}
             >
-                {I18n.t(group.name)}
-            </AccordionSummary>
-            {accordionOpen[key] ? <AccordionDetails style={{ flexDirection: 'column', padding: 0, margin: 0 }}>
-                <table style={{ width: '100%' }}>
-                    <tbody>
-                        {
-                            group.fields.map((field, key2) => {
+                <AccordionSummary
+                    classes={{
+                        root: Utils.clsx(props.classes.clearPadding, accordionOpen[key]
+                            ? props.classes.groupSummaryExpanded : props.classes.groupSummary, props.classes.lightedPanel),
+                        content: props.classes.clearPadding,
+                        expanded: props.classes.clearPadding,
+                        expandIcon: props.classes.clearPadding,
+                    }}
+                    expandIcon={<ExpandMoreIcon />}
+                >
+                    {I18n.t(group.name)}
+                </AccordionSummary>
+                {accordionOpen[key] ? <AccordionDetails style={{ flexDirection: 'column', padding: 0, margin: 0 }}>
+                    <table style={{ width: '100%' }}>
+                        <tbody>
+                            {group.fields.map((field, key2) => {
                                 let error;
                                 let disabled = false;
                                 if (field.hidden) {
@@ -1050,8 +1068,16 @@ const View = props => {
                                             InputProps={{
                                                 classes: { input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) },
                                                 endAdornment: [
-                                                    value ? <IconButton key="clear" onClick={() => change('')} size="small"><ClearIcon /></IconButton> : null,
-                                                    <Button key="select" disabled={!props.editMode || disabled} size="small" onClick={() => setShowDialog(true)}>...</Button>,
+                                                    value ?
+                                                        <IconButton key="clear" onClick={() => change('')} size="small"><ClearIcon /></IconButton> : null,
+                                                    <Button
+                                                        key="select"
+                                                        disabled={!props.editMode || disabled}
+                                                        size="small"
+                                                        onClick={() => setShowDialog(true)}
+                                                    >
+                                                        ...
+                                                    </Button>,
                                                 ],
                                             }}
                                             ref={textRef}
@@ -1195,25 +1221,29 @@ const View = props => {
 
                                 let helpText = null;
                                 if (field.title) {
-                                    helpText = <Tooltip title={I18n.t(field.title)}><InfoIcon className={props.classes.fieldHelpText} /></Tooltip>;
+                                    helpText = <Tooltip title={I18n.t(field.title)}>
+                                        <InfoIcon className={props.classes.fieldHelpText} />
+                                    </Tooltip>;
                                 }
 
                                 if (field.applyToAll) {
                                     if (field.groupApply) {
-                                        let isShow = false;
                                         // find all fields with applyToAll flag, and if any is not equal show button
-                                        for (let f = 0; f < group.fields.length; f++) {
-                                            if (group.fields[f].applyToAll &&
-                                                !group.fields[f].groupApply &&
-                                                !isPropertySameInAllViews(props.project, group.fields[f].field, props.selectedView, viewList)
-                                            ) {
-                                                isShow = true;
-                                                break;
-                                            }
-                                        }
+                                        const isShow = group.fields.find(_field =>
+                                            _field.applyToAll &&
+                                            !isPropertySameInAllViews(props.project, _field.field, props.selectedView, viewList));
+
                                         if (isShow) {
                                             result = <div style={{ display: 'flex', width: '100%' }}>
-                                                <div style={{ flex: 1, lineHeight: '36px', marginRight: 4 }}>
+                                                <div
+                                                    style={{
+                                                        flex: 1,
+                                                        lineHeight: '36px',
+                                                        marginRight: 4,
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                    }}
+                                                >
                                                     {result}
                                                 </div>
                                                 <Tooltip title={I18n.t('Apply ALL navigation properties to all views')}>
@@ -1231,7 +1261,15 @@ const View = props => {
                                         }
                                     } else if (!isPropertySameInAllViews(props.project, field.field, props.selectedView, viewList)) {
                                         result = <div style={{ display: 'flex', width: '100%' }}>
-                                            <div style={{ flex: 1, lineHeight: '36px', marginRight: 4 }}>
+                                            <div
+                                                style={{
+                                                    flex: 1,
+                                                    lineHeight: '36px',
+                                                    marginRight: 4,
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                }}
+                                            >
                                                 {result}
                                             </div>
                                             <Tooltip title={I18n.t('Apply to all views')}>
@@ -1250,18 +1288,21 @@ const View = props => {
                                 }
 
                                 return <tr key={key2}>
-                                    <td className={props.classes.fieldTitle} title={!field.title ? null : I18n.t(field.title)}>
+                                    <td
+                                        className={props.classes.fieldTitle}
+                                        title={!field.title ? null : I18n.t(field.title)}
+                                    >
                                         {I18n.t(field.name)}
                                         {helpText}
                                     </td>
                                     <td className={props.classes.fieldContent}>{result}</td>
                                 </tr>;
-                            })
-                        }
-                    </tbody>
-                </table>
-            </AccordionDetails> : null}
-        </Accordion>)}
+                            })}
+                        </tbody>
+                    </table>
+                </AccordionDetails> : null}
+            </Accordion>;
+        })}
         {allViewDialog}
     </div>;
 };

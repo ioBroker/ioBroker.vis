@@ -344,16 +344,18 @@ class VisNavigation extends React.Component {
         if (!settings.navigationBar) {
             return null;
         }
-        let style = {};
+        let style;
         if (settings.navigationBarColor) {
             style = {
                 backgroundColor: settings.navigationBarColor,
                 color: Utils.getInvertedColor(settings.navigationBarColor, this.props.context.themeType, true),
             };
+        } else {
+            style = {};
         }
         style.opacity = this.props.editMode ? 0.4 : 1;
 
-        const icon = settings.navigationHideMenu ? settings.navigationIcon || settings.navigationImage : null;
+        const icon = settings.navigationBarIcon || settings.navigationBarImage;
 
         return <div
             className={Utils.clsx(
@@ -366,7 +368,7 @@ class VisNavigation extends React.Component {
                 src={icon}
                 className={this.props.classes.toolbarIcon}
             /> : null}
-            {this.props.activeView}
+            {settings.navigationBarText || this.props.activeView}
         </div>;
     }
 

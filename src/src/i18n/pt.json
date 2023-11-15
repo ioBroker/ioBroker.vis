@@ -231,7 +231,7 @@
   "Scripts": "Scripts",
   "Sent to back": "Enviado para trás",
   "Settings": "Definições",
-  "Show app bar": "Mostrar barra de aplicativos",
+  "Show app bar": "Mostrar",
   "Show navigation": "Mostrar navegação",
   "Show view": "Mostrar visualização",
   "States Debounce Time (millis)": "Estados Debounce Time (milis)",
@@ -615,5 +615,9 @@
   "qui_Bool SVG": "SVG booleano",
   "(Maximal file size is %s)": "(O tamanho máximo do arquivo é %s)",
   "File too large": "Arquivo muito grande",
-  "Invalid file type": "Tipo de arquivo inválido"
+  "Invalid file type": "Tipo de arquivo inválido",
+  "Bar text": "Rubrica",
+  "Bar color": "Cor de fundo",
+  "Bar icon": "Ícone",
+  "Bar image": "Imagem"
 }

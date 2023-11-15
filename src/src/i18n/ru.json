@@ -231,7 +231,7 @@
   "Scripts": "Скрипты",
   "Sent to back": "Отправлено на задний план",
   "Settings": "Настр.",
-  "Show app bar": "Показать панель приложений",
+  "Show app bar": "Показать",
   "Show navigation": "Показать навигацию",
   "Show view": "Показать страницу",
   "States Debounce Time (millis)": "Время игнорирования дребезга (млн)",
@@ -615,5 +615,9 @@
   "qui_Bool SVG": "Бинарный SVG",
   "(Maximal file size is %s)": "(Максимальный размер файла – %s)",
   "File too large": "Файл слишком большой",
-  "Invalid file type": "Неверный тип файла"
+  "Invalid file type": "Неверный тип файла",
+  "Bar text": "Подпись",
+  "Bar color": "Фоновый цвет",
+  "Bar icon": "Икона",
+  "Bar image": "Изображение"
 }
