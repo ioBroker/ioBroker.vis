@@ -229,6 +229,9 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Showed "file too large" message by icon upload
+
 ### 2.6.0 (2023-11-13)
 * (foxriver76) implemented select/unselect all buttons
 * (foxriver76) fixed bindings not working

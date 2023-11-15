@@ -14,10 +14,12 @@ const UploadFile = props => {
     const [fileName, setFileName] = useState('');
     const [fileData, setFileData] = useState(null);
     const [working, setWorking] = useState(false);
+    const [error, setError] = useState('');
 
-    const onDrop = useCallback(acceptedFiles => {
+    const onDrop = useCallback((acceptedFiles, fileRejections) => {
         if (acceptedFiles?.length) {
             setWorking(true);
+            error && setError('');
             const reader = new FileReader();
             setFileName(acceptedFiles[0].name);
 
@@ -28,6 +30,18 @@ const UploadFile = props => {
             };
 
             reader.readAsDataURL(acceptedFiles[0]);
+        }
+        if (fileRejections?.length) {
+            fileRejections[0].errors.forEach(err => {
+                if (err.code === 'file-too-large') {
+                    setError(I18n.t('File too large'));
+                } else if (err.code === 'file-invalid-type') {
+                    setError(I18n.t('Invalid file type'));
+                } else {
+                    setError(`Error: ${err.message}`);
+                }
+                setTimeout(() => error && setError(''), 3000);
+            });
         }
     }, []);
 
@@ -53,6 +67,7 @@ const UploadFile = props => {
             borderColor: isDragActive ? (props.themeType === 'dark' ? 'lightgreen' : 'green') : 'inherit',
         }}
     >
+        {error ? <div style={{ color: '#a90000' }}>{error}</div> : null}
         {props.disabled || working ? null : <input {...getInputProps()} />}
         {working ? <CircularProgress /> :
             <p
@@ -78,7 +93,7 @@ const UploadFile = props => {
                         {Utils.formatBytes(fileData.length)}
                         )
                     </div> : null}
-                </> : (props.instruction || I18n.t('Drop the files here ...'))}
+                </> : (props.instruction || `${I18n.t('Drop the files here ...')} ${props.maxSize ? I18n.t('(Maximal file size is %s)', Utils.formatBytes(props.maxSize)) : ''}`)}
             </p>}
     </div>;
 };

@@ -612,5 +612,8 @@
   "jqui_ampm": "Дообіду, після обіду",
   "jqui_stepMinute": "Крокова хвилина",
   "jqui_write_state_note": "Застаріле. Використовуйте віджет \"Wirte state\" з опцією \"increment/decrement\". Збережено тільки для сумісності з vis.1",
-  "qui_Bool SVG": "Логічний SVG"
+  "qui_Bool SVG": "Логічний SVG",
+  "(Maximal file size is %s)": "(Максимальний розмір файлу %s)",
+  "File too large": "Файл завеликий",
+  "Invalid file type": "Недійсний тип файлу"
 }

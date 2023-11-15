@@ -612,5 +612,8 @@
   "jqui_ampm": "Am/Pm",
   "jqui_stepMinute": "Step minute",
   "jqui_write_state_note": "Deprecated. Use \"Wirte state\" widget with \"increment/decrement\" option. Keeped just for compatibility with vis.1",
-  "qui_Bool SVG": "Boolean SVG"
+  "qui_Bool SVG": "Boolean SVG",
+  "(Maximal file size is %s)": "(Maximal file size is %s)",
+  "File too large": "File too large",
+  "Invalid file type": "Invalid file type"
 }

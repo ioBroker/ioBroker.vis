@@ -338,7 +338,7 @@ class MaterialIconSelector extends Component {
                         </Grid>
                     </div> : (this.state.iconType !== 'upload' ? <LinearProgress /> : null)}
                     {this.state.iconType === 'upload' ? <div>
-                        <div style={{ width: '100%', textAlign: 'center' }}>
+                        <div style={{ width: '100%', textAlign: 'center', marginBottom: 10, marginTop: 10 }}>
                             {I18n.t('icon_upload_hint')}
                             <br />
                             <Button
@@ -351,7 +351,7 @@ class MaterialIconSelector extends Component {
                         <UploadFile
                             themeType={this.props.themeType}
                             onUpload={(name, data) => this.setState({ selectedIcon: data })}
-                            maxSize={10_000}
+                            maxSize={15_000}
                             accept={{
                                 'image/png': ['.png'],
                                 'image/jpeg': ['.jpg'],

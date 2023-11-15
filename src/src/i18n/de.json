@@ -612,5 +612,8 @@
   "jqui_ampm": "Vormittags/Nachmittags",
   "jqui_stepMinute": "Schrittminute",
   "jqui_write_state_note": "Veraltet. Verwenden Sie das Widget „Wert schreiben“ mit der Option „Inkrementieren/Dekrementieren“. Wird nur aus Kompatibilitätsgründen mit vis.1 beibehalten",
-  "qui_Bool SVG": "Boolesches SVG"
+  "qui_Bool SVG": "Boolesches SVG",
+  "(Maximal file size is %s)": "(Maximale Dateigröße ist %s)",
+  "File too large": "Datei zu groß",
+  "Invalid file type": "ungültiger Dateityp"
 }

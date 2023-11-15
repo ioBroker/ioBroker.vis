@@ -612,5 +612,8 @@
   "jqui_ampm": "Am PM",
   "jqui_stepMinute": "Paso minuto",
   "jqui_write_state_note": "Obsoleto. Utilice el widget \"Estado de escritura\" con la opción \"incrementar/decrementar\". Mantenido solo por compatibilidad con vis.1",
-  "qui_Bool SVG": "SVG booleano"
+  "qui_Bool SVG": "SVG booleano",
+  "(Maximal file size is %s)": "(El tamaño máximo de archivo es %s)",
+  "File too large": "Archivo demasiado grande",
+  "Invalid file type": "tipo de archivo invalido"
 }

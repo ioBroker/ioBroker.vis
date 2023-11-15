@@ -612,5 +612,8 @@
   "jqui_ampm": "Manhã tarde",
   "jqui_stepMinute": "Passo minuto",
   "jqui_write_state_note": "Descontinuada. Use o widget \"Wirte state\" com a opção \"incremento/decremento\". Mantido apenas para compatibilidade com vis.1",
-  "qui_Bool SVG": "SVG booleano"
+  "qui_Bool SVG": "SVG booleano",
+  "(Maximal file size is %s)": "(O tamanho máximo do arquivo é %s)",
+  "File too large": "Arquivo muito grande",
+  "Invalid file type": "Tipo de arquivo inválido"
 }

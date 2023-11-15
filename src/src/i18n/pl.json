@@ -612,5 +612,8 @@
   "jqui_ampm": "Jestem/Po południu",
   "jqui_stepMinute": "Krok minuta",
   "jqui_write_state_note": "Przestarzałe. Użyj widżetu „Zapisz stan” z opcją „zwiększ/zmniejsz”. Zachowane tylko ze względu na kompatybilność z vis.1",
-  "qui_Bool SVG": "Wartość logiczna SVG"
+  "qui_Bool SVG": "Wartość logiczna SVG",
+  "(Maximal file size is %s)": "(Maksymalny rozmiar pliku to %s)",
+  "File too large": "Plik zbyt duży",
+  "Invalid file type": "Nieprawidłowy typ pliku"
 }

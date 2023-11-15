@@ -612,5 +612,8 @@
   "jqui_ampm": "上午下午",
   "jqui_stepMinute": "步数分钟",
   "jqui_write_state_note": "已弃用。使用带有“增量/减量”选项的“Wirte state”小部件。保留只是为了与 vis.1 兼容",
-  "qui_Bool SVG": "布尔SVG"
+  "qui_Bool SVG": "布尔SVG",
+  "(Maximal file size is %s)": "（最大文件大小为 %s）",
+  "File too large": "文件过大",
+  "Invalid file type": "文件类型无效"
 }

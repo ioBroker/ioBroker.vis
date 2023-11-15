@@ -297,7 +297,7 @@ async function getSuitableLicenses(all, name) {
                                         return;
                                     }
                                 } else if (decoded.version && decoded.version !== version) {
-                                    // Licenses for adapter versions >=2 need to match to the adapter major version
+                                    // Licenses for adapter versions >=2 need to match to the adapter major version,
                                     // which means that a new major version requires new licenses if it would be "included"
                                     // in the last purchase
 

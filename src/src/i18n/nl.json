@@ -612,5 +612,8 @@
   "jqui_ampm": "AM PM",
   "jqui_stepMinute": "Stap minuut",
   "jqui_write_state_note": "Verouderd. Gebruik de widget \"Wirte state\" met de optie \"verhogen/verlagen\". Alleen bewaard voor compatibiliteit met vis.1",
-  "qui_Bool SVG": "Booleaanse SVG"
+  "qui_Bool SVG": "Booleaanse SVG",
+  "(Maximal file size is %s)": "(Maximale bestandsgrootte is %s)",
+  "File too large": "Bestand te groot",
+  "Invalid file type": "Ongeldig bestandstype"
 }
