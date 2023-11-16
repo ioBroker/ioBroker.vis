@@ -100,6 +100,7 @@ const ViewsManager = props => {
     const renderViews = parentId => Object.keys(props.project)
         .filter(name => !name.startsWith('___'))
         .filter(name => (parentId ? props.project[name].parentId === parentId : !props.project[name].parentId))
+        .sort((name1, name2) => (name1.toLowerCase() < name2.toLowerCase() ? 0 : 1))
         .map((name, key) => <div key={key} className={props.classes.viewContainer}>
             <View
                 name={name}
