@@ -25,6 +25,7 @@ const styles = theme => ({
     },
     projectButton: {
         justifyContent: 'left',
+        textTransform: 'none',
     },
     viewManageButtonActions: {
         textAlign: 'right',
