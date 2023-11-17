@@ -227,6 +227,10 @@ class JQuiButtonDialogClose extends VisRxWidget {
         }
         if (dlgName) {
             const el = window.document.getElementById(dlgName) || window.document.querySelector(`[data-dialog-name="${dlgName}"]`);
+
+            const viewName = Object.keys(this.props.context.views).find(view => this.props.context.views[view].widgets[dlgName]);
+            this.props.context.onCommand('closeDialog', viewName, dlgName);
+
             if (el?._showDialog) {
                 el._showDialog(false);
             } else {

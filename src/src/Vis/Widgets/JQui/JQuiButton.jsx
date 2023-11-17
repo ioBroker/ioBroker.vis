@@ -497,6 +497,19 @@ class JQuiButton extends VisRxWidget {
         await this.props.context.setValue(oid, value);
     }
 
+    onCommand(command) {
+        super.onCommand(command);
+        if (command === 'openDialog') {
+            this.showDialog(true);
+            return true;
+        }
+        if (command === 'closeDialog') {
+            this.showDialog(false);
+            return true;
+        }
+        return false;
+    }
+
     onClick(passwordChecked) {
         if (this.state.dialogVisible) {
             return;

@@ -455,9 +455,9 @@ class VisEngine extends React.Component {
             updateFilter: view => {
                 view = view || this.props.activeView;
                 if (this.refViews[view]) {
-                    // collect all possible filter of widgets
+                    // collect all possible filters of widgets
                     if (this.refViews[view]?.onCommand) {
-                        return this.refViews[view]?.onCommand('collectFilters');
+                        return this.refViews[view].onCommand('collectFilters');
                     }
                 }
                 return [];
@@ -910,11 +910,18 @@ class VisEngine extends React.Component {
     changeFilter(view, filter, showEffect, showDuration, hideEffect, hideDuration) {
         view = view || this.props.activeView;
         if (this.refViews[view]?.onCommand) {
-            this.refViews[view]?.onCommand('changeFilter', {
+            this.refViews[view].onCommand('changeFilter', {
                 filter, showEffect, showDuration, hideEffect, hideDuration,
             });
         }
     }
+
+    // allows sending command to view
+    onCommand = (view, command, data) => {
+        if (this.refViews[view]?.onCommand) {
+            this.refViews[view].onCommand(command, data);
+        }
+    };
 
     showMessage(message, title, icon, width, callback) {
         if (typeof icon === 'number') {
@@ -1624,6 +1631,12 @@ class VisEngine extends React.Component {
             case 'dialog':
             case 'dialogOpen': {
                 const el = window.document.getElementById(data) || window.document.querySelector(`[data-dialog-name="${data}"]`);
+                // get reference to view
+                const viewName = Object.keys(this.props.views).find(view => this.props.views[view].widgets[data]);
+                if (viewName && this.refViews[viewName]?.onCommand) {
+                    this.refViews[viewName].onCommand('openDialog', data);
+                }
+
                 if (el?._showDialog) {
                     el._showDialog(true);
                 } else {
@@ -1634,6 +1647,12 @@ class VisEngine extends React.Component {
             }
             case 'dialogClose': {
                 const el = window.document.getElementById(data) || window.document.querySelector(`[data-dialog-name="${data}"]`);
+                // get reference to view
+                const viewName = Object.keys(this.props.views).find(view => this.props.views[view].widgets[data]);
+                if (viewName && this.refViews[viewName]?.onCommand) {
+                    this.refViews[viewName].onCommand('closeDialog', data);
+                }
+
                 if (el?._showDialog) {
                     el._showDialog(false);
                 } else {
@@ -2052,6 +2071,7 @@ ${this.scripts}
             onIgnoreMouseEvents: this.props.runtime ? null : this.props.onIgnoreMouseEvents,
             disableInteraction: this.props.disableInteraction,
             toggleTheme: this.props.toggleTheme,
+            onCommand: this.onCommand,
             moment,
         };
 

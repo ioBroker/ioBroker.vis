@@ -108,8 +108,16 @@ class VisView extends React.Component {
 
             return null;
         }
+
         if (command === 'changeFilter') {
             this.changeFilter(options);
+            return null;
+        }
+
+        if (command === 'closeDialog' || command === 'openDialog') {
+            if (this.widgetsRefs[options]?.onCommand) {
+                this.widgetsRefs[options].onCommand(command);
+            }
             return null;
         }
 
