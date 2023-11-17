@@ -1338,10 +1338,13 @@ class VisView extends React.Component {
         let rxRelativeWidgets = [];
         let rxGroupWidget;
 
-        if (!this.props.context.views || !this.props.view || !this.props.context.views[this.props.view]) {
+        const contextView = this.props.context.views[this.props.view];
+
+        if (!this.props.context.views || !this.props.view || !contextView) {
             return null;
         }
-        const settings = this.props.context.views[this.props.view].settings;
+
+        const settings = contextView.settings;
 
         if (this.props.view === this.props.activeView && this.props.editMode && !this.keysHandlerInstalled) {
             this.installKeyHandlers();
@@ -1354,25 +1357,25 @@ class VisView extends React.Component {
         if (this.state.mounted && this.state.themeCode && this.refView.current) {
             // save initial filter
             if (!this.props.viewsActiveFilter?.[this.props.view]) {
-                this.props.viewsActiveFilter[this.props.view] = (this.props.context.views[this.props.view].settings.filterkey || '')
+                this.props.viewsActiveFilter[this.props.view] = (contextView.settings.filterkey || '')
                     .split(',')
                     .map(f => f.trim())
                     .filter(f => f);
             }
 
-            const widgets = this.props.context.views[this.props.view].widgets;
+            const widgets = contextView.widgets;
             let moveAllowed = true;
             if (widgets) {
                 const relativeWidgetOrder = this.props.selectedGroup ?
-                    this.props.context.views[this.props.view].widgets[this.props.selectedGroup].data.members
+                    contextView.widgets[this.props.selectedGroup].data?.members
                     :
-                    (this.props.context.views[this.props.view].settings?.order || []);
+                    (contextView.settings?.order || []);
 
                 // by group editing first relative, then absolute
                 if (this.props.selectedGroup) {
                     relativeWidgetOrder.sort((a, b) => {
-                        const widgetA = this.props.context.views[this.props.view].widgets[a];
-                        const widgetB = this.props.context.views[this.props.view].widgets[b];
+                        const widgetA = contextView.widgets[a];
+                        const widgetB = contextView.widgets[b];
                         const isRelativeA = widgetA.style && (
                             widgetA.style.position === 'relative' ||
                             widgetA.style.position === 'static'   ||
@@ -1399,7 +1402,7 @@ class VisView extends React.Component {
 
                 if (this.props.editMode && this.props.selectedWidgets?.length) {
                     this.props.selectedWidgets.forEach(id => {
-                        const widget = this.props.context.views[this.props.view].widgets[id];
+                        const widget = contextView.widgets[id];
                         if (!widget || (widget.groupid && !this.props.selectedGroup)) {
                             return;
                         }
@@ -1427,8 +1430,8 @@ class VisView extends React.Component {
 
                 const listRelativeWidgetsOrder = [];
                 const listAbsoluteWidgetsOrder = [];
-                const filterWidgets = this.props.context.views[this.props.view].filterWidgets;
-                const filterInvert = this.props.context.views[this.props.view].filterInvert;
+                const filterWidgets = contextView.filterWidgets;
+                const filterInvert = contextView.filterInvert;
 
                 // calculate the order of relative widgets
                 Object.keys(widgets).forEach(id => {
@@ -1437,7 +1440,7 @@ class VisView extends React.Component {
                         return;
                     }
 
-                    const widget = this.props.context.views[this.props.view].widgets[id];
+                    const widget = contextView.widgets[id];
                     // Ignore grouped widgets in non-group-edit mode. They will be rendered in BasicGroup
                     if (!widget || (widget.grouped && !this.props.selectedGroup)) {
                         return;
@@ -1498,7 +1501,7 @@ class VisView extends React.Component {
 
                 if (!this.props.selectedGroup) {
                     for (let t = relativeWidgetOrder.length - 1; t >= 0; t--) {
-                        if (!this.props.context.views[this.props.view].widgets[relativeWidgetOrder[t]]) {
+                        if (!contextView.widgets[relativeWidgetOrder[t]]) {
                             relativeWidgetOrder.splice(t, 1);
                         }
                     }
@@ -1529,7 +1532,7 @@ class VisView extends React.Component {
                 const view = this.props.view;
 
                 rxAbsoluteWidgets = listAbsoluteWidgetsOrder.map((id, index) =>
-                    VisView.getOneWidget(index, this.props.context.views[view].widgets[id], {
+                    VisView.getOneWidget(index, contextView.widgets[id], {
                         context: this.props.context,
                         editMode: this.props.editMode,
                         id,
@@ -1604,7 +1607,7 @@ class VisView extends React.Component {
 
                 // render group widget apart
                 if (this.props.selectedGroup) {
-                    rxGroupWidget = VisView.getOneWidget(0, this.props.context.views[view].widgets[this.props.selectedGroup], {
+                    rxGroupWidget = VisView.getOneWidget(0, contextView.widgets[this.props.selectedGroup], {
                         context: this.props.context,
                         editMode: this.props.editMode,
                         id: this.props.selectedGroup,
@@ -1711,7 +1714,7 @@ class VisView extends React.Component {
 
         let gridDiv = null;
         if (this.props.context.views[this.props.view].settings.snapType === 2 && this.props.editMode) {
-            gridDiv = VisView.renderGitter(this.props.context.views[this.props.view].settings.gridSize, this.props.context.views[this.props.view].settings.snapColor);
+            gridDiv = VisView.renderGitter(contextView.settings.gridSize, contextView.settings.snapColor);
         }
 
         if (this.props.style) {
