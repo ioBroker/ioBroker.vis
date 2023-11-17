@@ -406,8 +406,14 @@ class App extends Runtime {
         return `w${(newKey).toString().padStart(6, 0)}`;
     };
 
-    getNewGroupId = project => {
-        let newKey = this.getNewWidgetIdNumber(true, project);
+    /**
+     * Get new group id from the project
+     * @param project project to determine next group id for
+     * @param offset offset, if multiple groups are created and not yet in the project
+     * @return {string}
+     */
+    getNewGroupId = (project, offset = 0) => {
+        let newKey = this.getNewWidgetIdNumber(true, project, offset);
 
         newKey = `g${newKey.toString().padStart(6, 0)}`;
 
@@ -630,7 +636,8 @@ class App extends Runtime {
         const widgets = project[this.state.selectedView].widgets;
 
         const newKeys = [];
-        let offset = 0;
+        let widgetOffset = 0;
+        let groupOffset = 0;
 
         for (const clipboardWidgetId of Object.keys(this.state.widgetsClipboard.widgets)) {
             const newWidget = JSON.parse(JSON.stringify(this.state.widgetsClipboard.widgets[clipboardWidgetId]));
@@ -641,8 +648,16 @@ class App extends Runtime {
                     top: `${(boundingRect?.top ?? 0) + 10}px`,
                 });
             }
-            const newKey = this.getNewWidgetId(this.state.visProject, offset);
-            offset++;
+            let newKey;
+
+            if (newWidget.tpl === '_tplGroup') {
+                newKey = this.getNewGroupId(this.state.visProject, groupOffset);
+                groupOffset++;
+            } else {
+                newKey = this.getNewWidgetId(this.state.visProject, widgetOffset);
+                widgetOffset++;
+            }
+
             widgets[newKey] = newWidget;
             newKeys.push(newKey);
         }
