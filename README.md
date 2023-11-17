@@ -229,7 +229,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.6.1 (2023-11-17)
 * (bluefox) Showed "file too large" message by icon upload
 * (bluefox) Made navigation bar for view as an own group
 * (foxriver76) sorted views alphabetically

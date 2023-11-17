@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.6.0",
+    "version": "2.6.1",
     "news": {
+      "2.6.1": {
+        "en": "Showed \"file too large\" message by icon upload\nMade navigation bar for view as an own group\nsorted views alphabetically\nrespect uppercase/lowercase in projects toolbar\nRedirect `dialog` and `dialogClose` commands to widgets",
+        "de": "Gezeigte \"Datei zu groß\" Nachricht durch Icon-Upload\nNavigationsleiste für eine eigene Gruppe\nalphabetisch sortiert\nrespektieren oberkörper/untergehäuse in projekten werkzeugleiste\nDialog und Dialog umleiten Befehle zu Widgets schließen",
+        "ru": "Показано \"файл слишком большой\" сообщение по загрузке иконки\nСоздана навигационная панель для просмотра как собственная группа\nсортированные виды по алфавиту\nуважать верхний шкаф/низкий чемодан в панели инструментов проектов\nРедиректный диалог и диалог Закрыть команды для виджетов",
+        "pt": "Mostrado \"arquivo demasiado grande\" mensagem por ícone upload\nBarra de navegação feita para ver como um próprio grupo\nvistas ordenadas alfabeticamente\nrespeitar maiúscula / minúscula na barra de ferramentas de projetos\nRedirecionar diálogo e diálogo Fechar comandos para widgets",
+        "nl": "Toonde \"file te groot\" bericht door icon upload\nMaakte navigatie bar als een eigen groep\nvertaling:\nrespect uppercase/lowercase in projecten gereedschap\nControle dialoog Dichte commando's naar Widgets",
+        "fr": "Affichage du message \"file too large\" par téléchargement d'icône\nFabriqué barre de navigation pour la vue comme propre groupe\nvues triées par ordre alphabétique\nrespecter majuscule/faible dans la barre d'outils de projets\nRedirect dialogue et dialogue Fermer les commandes aux widgets",
+        "it": "Mostrato \"file too large\" messaggio da icon upload\nBarra di navigazione fatta per la vista come un proprio gruppo\nvista in ordine alfabetico\nrispetto maiuscolo / minuscolo nella barra degli strumenti di progetti\nRedirect finestra di dialogo e dialogo Chiudere i comandi ai widget",
+        "es": "Visualizado \"file demasiado grande\" mensaje por icono subido\nHecho barra de navegación para la vista como un grupo propio\nvistas ordenadas alfabéticamente\nrespeto mayúscula / maletín inferior en proyectos barra de herramientas\nRedirigir diálogo y diálogo Cerrar comandos a widgets",
+        "pl": "Wyświetlanie zbyt dużej wiadomości przez ikonę załadować\nMade navigation bar for view as a group\npojęcie alfabetycznie\nszacunek górny/niższy\nDialogi i dialogi dialogi Close command to widgets",
+        "uk": "Показати \"файл занадто великий\" повідомлення номінальний значок завантаження\nВиготовлений навігаційний комплекс для перегляду як власної групи\nсортування переглядів алфавітно\nповага верхнього вітру / вітрина в проектах панелі інструментів\nДіалогове вікно та діалогове вікно Закриті команди для віджетів",
+        "zh-cn": "黑色“太大”讯息\n马德·导航巴以作为自己集团\n评 注\n在项目工具上尊重上级/次要情况\nB. 直接的口号和口号 A. 严密的指挥"
+      },
       "2.6.0": {
         "en": "implemented select/unselect all buttons\nfixed bindings not working",
         "de": "alle tasten auswählen/unwählen\nnicht arbeitende feste bindungen",
@@ -80,19 +93,6 @@
         "pl": "reakcja rozbicia, gdy wybrane są wielokrotne widgety\nusunąć\nuszkodzenie rozruchu w czasie reorderingu",
         "uk": "виправлення аварійних ситуацій при виборі декількох віджетів\nне дублікувати запис у спадку кордону\nвиправлення аварійних ситуацій при переадресації віджетів",
         "zh-cn": "f 在选择多重目标时发生意外事故\n消除不重复进入边界的下降\nf 在重购燃烧目标时发生意外事故"
-      },
-      "2.3.3": {
-        "en": "fixed problem, that vis is not loading if a single widget has a script error\nadded the editor for bindings\nbackground does not used if in iframe",
-        "de": "problem behoben, dass vis nicht geladen wird, wenn ein einzelnes widget einen skriptfehler hat\nden editor für bindungen hinzugefügt\nhintergrund nicht verwendet, wenn in iframe",
-        "ru": "исправленная проблема, что vis не загружается, если один виджет имеет ошибку скрипта\nдобавлен редактор для связываний\nфон не используется, если в iframe",
-        "pt": "problema fixo, que vis não está carregando se um único widget tem um erro de script\nadicionou o editor para vinculações\nfundo não usado se no iframe",
-        "nl": "dat visum laadt niet als een enkele widget een fout heeft\nvoegde de redacteur toe voor bindingen\nde achtergrond wordt niet gebruikt als",
-        "fr": "problème fixe, cette vis ne se charge pas si un seul widget a une erreur de script\na ajouté l'éditeur pour les reliures\nfond ne s'utilise pas si dans iframe",
-        "it": "problema fisso, che vis non si carica se un singolo widget ha un errore di script\naggiunto l'editor per i binding\nsfondo non utilizzato se in iframe",
-        "es": "problema fijo, que vis no está cargando si un solo widget tiene un error de script\nagregó el editor para el enlace\nfondo no se utiliza si en iframe",
-        "pl": "stały problem, że wiza nie jest ładowana, jeśli pojedynczy widget ma błąd skryptowy\ndodał edytor do wiązań\ntło nie jest używane w przypadku iframe",
-        "uk": "виправлена проблема, що вісь не завантажується, якщо один віджет має помилку скрипта\nдодано редактор для обов'язків\nфон не використовується, якщо в iframe",
-        "zh-cn": "固定问题,如果单一目标有说明错误,就不会装载。\n增加有约束力的编辑\n2. 如果一框架不使用背景"
       }
     },
     "title": "Visualisation Next Generation",
