@@ -13,6 +13,7 @@ import { I18n } from '@iobroker/adapter-react-v5';
 
 import IODialog from '../../Components/IODialog';
 import { useFocus } from '../../Utils';
+import { store } from '../../Store';
 
 const FolderDialog = props => {
     const inputField = useFocus(props.dialog && props.dialog !== 'delete', props.dialog === 'add');
@@ -21,7 +22,7 @@ const FolderDialog = props => {
         return null;
     }
 
-    const folderObject = props.project.___settings.folders.find(folder => folder.id === props.dialogFolder);
+    const folderObject = store.getState().visProject.___settings.folders.find(folder => folder.id === props.dialogFolder);
 
     const dialogTitles = {
         delete: `${I18n.t('Do you want to delete folder "%s"', folderObject?.name)}?`,
@@ -36,7 +37,7 @@ const FolderDialog = props => {
     };
 
     const addFolder = () => {
-        const project = JSON.parse(JSON.stringify(props.project));
+        const project = JSON.parse(JSON.stringify(store.getState().visProject));
         project.___settings.folders.push({
             id: uuidv4(),
             name: props.dialogName,
@@ -46,13 +47,13 @@ const FolderDialog = props => {
     };
 
     const deleteFolder = () => {
-        const project = JSON.parse(JSON.stringify(props.project));
+        const project = JSON.parse(JSON.stringify(store.getState().visProject));
         project.___settings.folders.splice(project.___settings.folders.findIndex(folder => folder.id === props.dialogFolder), 1);
         props.changeProject(project);
     };
 
     const renameFolder = () => {
-        const project = JSON.parse(JSON.stringify(props.project));
+        const project = JSON.parse(JSON.stringify(store.getState().visProject));
         project.___settings.folders.find(folder => folder.id === props.dialogFolder).name = props.dialogName;
         props.changeProject(project);
     };

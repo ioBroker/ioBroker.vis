@@ -175,8 +175,8 @@ class WidgetBindingField extends Component {
                 format: value,
                 view: this.props.selectedView,
                 wid: this.props.selectedWidgets[0],
-                widget: this.props.project[this.props.selectedView].widgets[this.props.selectedWidgets[0]],
-                widgetData: this.props.project[this.props.selectedView].widgets[this.props.selectedWidgets[0]].data,
+                widget: store.getState().visProject[this.props.selectedView].widgets[this.props.selectedWidgets[0]],
+                widgetData: store.getState().visProject[this.props.selectedView].widgets[this.props.selectedWidgets[0]].data,
                 values,
             }),
             values,
@@ -184,7 +184,7 @@ class WidgetBindingField extends Component {
     }
 
     onChange(value) {
-        const project = JSON.parse(JSON.stringify(this.props.project));
+        const project = JSON.parse(JSON.stringify(store.getState().visProject));
         const field = this.props.field;
 
         this.props.selectedWidgets.forEach(wid => {
@@ -1068,7 +1068,6 @@ WidgetBindingField.propTypes = {
     label: PropTypes.string,
     field: PropTypes.object,
     selectedView: PropTypes.string,
-    project: PropTypes.object,
     isStyle: PropTypes.bool,
     selectedWidgets: PropTypes.array,
     changeProject: PropTypes.func,

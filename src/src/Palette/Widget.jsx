@@ -13,6 +13,7 @@ import {
 
 import { I18n, Utils } from '@iobroker/adapter-react-v5';
 import helpers from '../Components/WizardHelpers';
+import { store } from '../Store';
 
 const IMAGE_TYPES = ['.png', '.jpg', '.svg', '.gif', '.apng', '.avif', '.webp'];
 
@@ -207,7 +208,7 @@ const Widget = props => {
         }
         return props.widgetType.customPalette({
             socket: props.socket,
-            project: props.project,
+            project: store.getState().visProject,
             changeProject: props.changeProject,
             selectedView: props.selectedView,
             themeType: props.themeType,
@@ -235,7 +236,6 @@ Widget.propTypes = {
     uninstallWidget: PropTypes.func,
     socket: PropTypes.object,
     themeType: PropTypes.string,
-    project: PropTypes.object,
     changeProject: PropTypes.func,
     editMode: PropTypes.bool,
 };

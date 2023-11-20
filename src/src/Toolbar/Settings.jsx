@@ -20,6 +20,7 @@ import { Save as SaveIcon } from '@mui/icons-material';
 import { I18n } from '@iobroker/adapter-react-v5';
 
 import IODialog from '../Components/IODialog';
+import { store } from '../Store';
 
 const styles = () => ({
     dialog: {
@@ -39,7 +40,7 @@ const Settings = props => {
     const [instance, setInstance] = useState(window.localStorage.getItem('visInstance'));
     /* eslint no-underscore-dangle: 0 */
     useEffect(() => {
-        const _settings = { ...props.project.___settings };
+        const _settings = { ...store.getState().visProject.___settings };
         if (_settings.reloadOnEdit === undefined) {
             _settings.reloadOnEdit = true;
         }
@@ -161,7 +162,7 @@ const Settings = props => {
     ];
 
     const save = () => {
-        const project = JSON.parse(JSON.stringify(props.project));
+        const project = JSON.parse(JSON.stringify(store.getState().visProject));
         project.___settings = settings;
         props.changeProject(project);
         props.onClose();
@@ -174,7 +175,7 @@ const Settings = props => {
         ActionIcon={SaveIcon}
         action={save}
         actionTitle="Save"
-        actionDisabled={JSON.stringify(props.project.___settings) === JSON.stringify(settings)}
+        actionDisabled={JSON.stringify(store.getState().visProject.___settings) === JSON.stringify(settings)}
     >
         <div className={props.classes.dialog}>
             {fields.map((field, key) => {

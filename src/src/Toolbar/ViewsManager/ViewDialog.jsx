@@ -12,13 +12,14 @@ import I18n from '@iobroker/adapter-react-v5/i18n';
 
 import IODialog from '../../Components/IODialog';
 import { useFocus } from '../../Utils';
+import { store } from '../../Store';
 
 const ViewDialog = props => {
     const inputField = useFocus(!!props.dialog && props.dialog !== 'delete', props.dialog === 'add');
 
     const deleteView = async () => {
         const view = props.dialogView || props.selectedView;
-        const project = JSON.parse(JSON.stringify(props.project));
+        const project = JSON.parse(JSON.stringify(store.getState().visProject));
         delete project[view];
         await props.changeView(Object.keys(project).filter(foundView => !foundView.startsWith('__'))[0]);
         await props.changeProject(project);
@@ -26,7 +27,7 @@ const ViewDialog = props => {
     };
 
     const addView = async () => {
-        const project = JSON.parse(JSON.stringify(props.project));
+        const project = JSON.parse(JSON.stringify(store.getState().visProject));
         project[props.dialogName] = {
             name: props.dialogName,
             parentId: props.dialogParentId,
@@ -44,7 +45,7 @@ const ViewDialog = props => {
 
     const renameView = async () => {
         const view = props.dialogView || props.selectedView;
-        const project = JSON.parse(JSON.stringify(props.project));
+        const project = JSON.parse(JSON.stringify(store.getState().visProject));
         project[props.dialogName] = project[view];
         delete project[view];
         await props.changeProject(project);
@@ -55,7 +56,7 @@ const ViewDialog = props => {
 
     const copyView = async () => {
         const view = props.dialogView || props.selectedView;
-        const project = JSON.parse(JSON.stringify(props.project));
+        const project = JSON.parse(JSON.stringify(store.getState().visProject));
         project[props.dialogName] = project[view];
         await props.changeProject(project);
         await props.changeView(props.dialogName);
@@ -101,7 +102,7 @@ const ViewDialog = props => {
 
     let dialogDisabled = false;
     if (props.dialog !== 'delete') {
-        if (props.project[props.dialogName]) {
+        if (store.getState().visProject[props.dialogName]) {
             dialogDisabled = true;
         }
     }
@@ -144,7 +145,6 @@ ViewDialog.propTypes = {
     dialogName: PropTypes.string,
     dialogView: PropTypes.string,
     dialogCallback: PropTypes.object,
-    project: PropTypes.object,
     selectedView: PropTypes.string,
     setDialog: PropTypes.func,
     setDialogName: PropTypes.func,

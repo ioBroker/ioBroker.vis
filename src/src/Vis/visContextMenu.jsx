@@ -16,8 +16,8 @@ import {
 } from 'react-icons/ai';
 
 import { toPng } from 'html-to-image';
-
 import I18n from '@iobroker/adapter-react-v5/i18n';
+import { store } from '../Store';
 
 import IOContextMenu from '../Components/IOContextMenu';
 import WidgetExportDialog from '../Toolbar/WidgetExportDialog';
@@ -28,12 +28,12 @@ const VisContextMenu = props => {
     const [exportDialog, setExportDialog] = useState(false);
     const [importDialog, setImportDialog] = useState(false);
 
-    if (!props.project[props.selectedView]) {
+    if (!store.getState().visProject[props.selectedView]) {
         return null;
     }
 
     const menuItemsData = menuPosition => {
-        const view = props.project[props.selectedView];
+        const view = store.getState().visProject[props.selectedView];
         const coordinatesWidgets = menuPosition ? Object.keys(view.widgets)
             .filter(widget => {
                 const rect = window.document.getElementById(widget)?.getBoundingClientRect();
@@ -70,7 +70,7 @@ const VisContextMenu = props => {
 
             if (view.widgets[coordinatesWidgets[0]].marketplace) {
                 widgetType = `${view.widgets[coordinatesWidgets[0]].marketplace.name} (${I18n.t('version')} ${view.widgets[coordinatesWidgets[0]].marketplace.version})`;
-                // marketplaceUpdate = props.project.___settings.marketplace.find(u =>
+                // marketplaceUpdate = store.getState().visProject.___settings.marketplace.find(u =>
                 //     u.widget_id === view.widgets[coordinatesWidgets[0]].marketplace.widget_id &&
                 //     u.version > view.widgets[coordinatesWidgets[0]].marketplace.version);
             }
@@ -109,12 +109,12 @@ const VisContextMenu = props => {
             {
                 leftIcon: <AiOutlineUngroup />,
                 label: 'Ungroup',
-                subLabel: props.project[props.selectedView].widgets[props.selectedWidgets[0]]?.marketplace ?
+                subLabel: store.getState().visProject[props.selectedView].widgets[props.selectedWidgets[0]]?.marketplace ?
                     I18n.t('convert from widgeteria widget') :
                     null,
                 onClick: () => props.ungroupWidgets(),
                 hide: props.selectedWidgets.length !== 1 ||
-                    props.project[props.selectedView].widgets[props.selectedWidgets[0]].tpl !== '_tplGroup',
+                    store.getState().visProject[props.selectedView].widgets[props.selectedWidgets[0]].tpl !== '_tplGroup',
             },
             window.VisMarketplace ? {
                 leftIcon: <img
@@ -126,7 +126,7 @@ const VisContextMenu = props => {
                 onClick: async () => {
                     // copy all selected widgets
                     const widgets = props.selectedWidgets.map(wid => {
-                        const w = JSON.parse(JSON.stringify(props.project[props.selectedView].widgets[wid]));
+                        const w = JSON.parse(JSON.stringify(store.getState().visProject[props.selectedView].widgets[wid]));
                         w._id = wid;
                         w.isRoot = true;
                         delete w.marketplace;
@@ -152,7 +152,7 @@ const VisContextMenu = props => {
                                     if (groupWidgets.includes(member)) {
                                         return;
                                     }
-                                    const memberWidget = JSON.parse(JSON.stringify(props.project[props.selectedView].widgets[member]));
+                                    const memberWidget = JSON.parse(JSON.stringify(store.getState().visProject[props.selectedView].widgets[member]));
                                     memberWidget._id = `i${wIdx.toString().padStart(6, '0')}`;
                                     memberWidget.widgetSet = window.visWidgetTypes.find(type => type.name === memberWidget.tpl).set;
                                     wIdx++;
@@ -196,16 +196,16 @@ const VisContextMenu = props => {
                     });
                 },
                 hide: props.selectedWidgets.length !== 1 ||
-                    props.project[props.selectedView].widgets[props.selectedWidgets[0]].tpl !== '_tplGroup' ||
-                    props.project[props.selectedView].widgets[props.selectedWidgets[0]].marketplace,
+                    store.getState().visProject[props.selectedView].widgets[props.selectedWidgets[0]].tpl !== '_tplGroup' ||
+                    store.getState().visProject[props.selectedView].widgets[props.selectedWidgets[0]].marketplace,
             } : null,
             {
             // leftIcon: <AiOutlineUngroup />,
                 label: 'Edit group',
                 onClick: () => props.setSelectedGroup(props.selectedWidgets[0]),
                 hide: props.selectedWidgets.length !== 1 ||
-                    props.project[props.selectedView].widgets[props.selectedWidgets[0]].tpl !== '_tplGroup' ||
-                    props.project[props.selectedView].widgets[props.selectedWidgets[0]].marketplace,
+                    store.getState().visProject[props.selectedView].widgets[props.selectedWidgets[0]].tpl !== '_tplGroup' ||
+                    store.getState().visProject[props.selectedView].widgets[props.selectedWidgets[0]].marketplace,
             },
             {
                 leftIcon: <BiCopy />,
@@ -286,13 +286,13 @@ const VisContextMenu = props => {
             onClose={() => setImportDialog(false)}
             changeProject={props.changeProject}
             selectedView={props.selectedView}
-            project={props.project}
+            project={store.getState().visProject}
             getNewWidgetIdNumber={props.getNewWidgetIdNumber}
         /> : null}
         {exportDialog ? <WidgetExportDialog
             open={exportDialog}
             onClose={() => setExportDialog(false)}
-            widgets={props.project[props.selectedView].widgets}
+            widgets={store.getState().visProject[props.selectedView].widgets}
             selectedWidgets={props.selectedWidgets}
         /> : null}
     </>;
@@ -310,7 +310,6 @@ VisContextMenu.propTypes = {
     lockWidgets: PropTypes.func,
     orderWidgets: PropTypes.func,
     pasteWidgets: PropTypes.func,
-    project: PropTypes.object,
     selectedView: PropTypes.string,
     selectedWidgets: PropTypes.array,
     setSelectedGroup: PropTypes.func,

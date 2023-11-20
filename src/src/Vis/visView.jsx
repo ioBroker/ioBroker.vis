@@ -1366,16 +1366,20 @@ class VisView extends React.Component {
             const widgets = contextView.widgets;
             let moveAllowed = true;
             if (widgets) {
-                const relativeWidgetOrder = this.props.selectedGroup ?
-                    contextView.widgets[this.props.selectedGroup].data?.members
-                    :
-                    (contextView.settings?.order || []);
+                /** @type {string[]} */
+                let relativeWidgetOrder = [];
+
+                if (this.props.selectedGroup) {
+                    relativeWidgetOrder = [...(widgets[this.props.selectedGroup]?.data?.members ?? [])];
+                } else if (contextView.settings?.order) {
+                    relativeWidgetOrder = [...contextView.settings.order];
+                }
 
                 // by group editing first relative, then absolute
                 if (this.props.selectedGroup) {
                     relativeWidgetOrder.sort((a, b) => {
-                        const widgetA = contextView.widgets[a];
-                        const widgetB = contextView.widgets[b];
+                        const widgetA = widgets[a];
+                        const widgetB = widgets[b];
                         const isRelativeA = widgetA.style && (
                             widgetA.style.position === 'relative' ||
                             widgetA.style.position === 'static'   ||

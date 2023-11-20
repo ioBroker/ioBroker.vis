@@ -16,6 +16,7 @@ import CreateNewFolderClosedIcon from '@mui/icons-material/CreateNewFolder';
 
 import I18n from '@iobroker/adapter-react-v5/i18n';
 import Utils from '@iobroker/adapter-react-v5/Components/Utils';
+import { store } from '../../Store';
 
 const styles = theme => ({
     viewManageBlock: theme.classes.viewManageBlock,
@@ -62,7 +63,7 @@ const Folder = props => {
         drop: () => ({ folder: props.folder }),
         canDrop: (item, monitor) => {
             if (monitor.getItemType() === 'view') {
-                return props.project[item.name].parentId !== props.folder.id;
+                return store.getState().visProject[item.name].parentId !== props.folder.id;
             }
             if (monitor.getItemType() === 'folder') {
                 let currentFolder = props.folder;
@@ -76,7 +77,7 @@ const Folder = props => {
                     if (!currentFolder.parentId) {
                         return true;
                     }
-                    currentFolder = props.project.___settings.folders.find(foundFolder => foundFolder.id === currentFolder.parentId);
+                    currentFolder = store.getState().visProject.___settings.folders.find(foundFolder => foundFolder.id === currentFolder.parentId);
                 }
             }
             return false;
@@ -85,7 +86,7 @@ const Folder = props => {
             isOver: monitor.isOver(),
             canDrop: monitor.canDrop(),
         }),
-    }), [props.project]);
+    }), [store.getState().visProject]);
 
     const [{ isDraggingThisItem }, dragRef, preview] = useDrag({
         type: 'folder',
@@ -103,11 +104,11 @@ const Folder = props => {
             isDraggingThisItem: monitor.isDragging(),
             handlerId: monitor.getHandlerId(),
         }),
-    }, [props.project]);
+    }, [store.getState().visProject]);
 
     useEffect(() => {
         preview(getEmptyImage(), { captureDraggingState: true });
-    }, [props.project]);
+    }, [store.getState().visProject]);
 
     useEffect(() => {
         props.setIsDragging(isDraggingThisItem ? props.folder.id : '');
@@ -184,8 +185,8 @@ const Folder = props => {
                             props.setFolderDialog('delete');
                             props.setFolderDialogId(props.folder.id);
                         }}
-                        disabled={!!(props.project.___settings.folders.find(foundFolder => foundFolder.parentId === props.folder.id)
-                            || Object.values(props.project).find(foundView => foundView.parentId === props.folder.id))}
+                        disabled={!!(store.getState().visProject.___settings.folders.find(foundFolder => foundFolder.parentId === props.folder.id)
+                            || Object.values(store.getState().visProject).find(foundView => foundView.parentId === props.folder.id))}
                     >
                         <DeleteIcon />
                     </IconButton>
@@ -199,7 +200,6 @@ Folder.propTypes = {
     classes: PropTypes.object,
     folder: PropTypes.object,
     moveFolder: PropTypes.func,
-    project: PropTypes.object,
     setFolderDialog: PropTypes.func,
     setFolderDialogId: PropTypes.func,
     setFolderDialogName: PropTypes.func,

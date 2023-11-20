@@ -103,6 +103,7 @@ const Views = props => {
             setDialogParentId={setDialogParentId}
             classes={{}}
             project={store.getState().visProject}
+            {...props}
         />
     </>;
 };

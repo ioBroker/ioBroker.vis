@@ -11,6 +11,7 @@ import { I18n } from '@iobroker/adapter-react-v5';
 
 import { useFocus } from '../Utils';
 import CustomAceEditor from '../Components/CustomAceEditor';
+import { store } from '../Store';
 
 const WidgetImportDialog = props => {
     const [data, setData] = useState('');
@@ -21,7 +22,7 @@ const WidgetImportDialog = props => {
     const editor = useRef(null);
 
     const importWidgets = () => {
-        const project = JSON.parse(JSON.stringify(props.project));
+        const project = JSON.parse(JSON.stringify(store.getState().visProject));
         const widgets = JSON.parse(data);
         let newKeyNumber = props.getNewWidgetIdNumber();
         let newGroupKeyNumber = props.getNewWidgetIdNumber(true);
@@ -132,7 +133,6 @@ const WidgetImportDialog = props => {
 WidgetImportDialog.propTypes = {
     changeProject: PropTypes.func,
     onClose: PropTypes.func,
-    project: PropTypes.object,
     themeType: PropTypes.string,
     selectedView: PropTypes.string,
 };

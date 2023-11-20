@@ -44,6 +44,7 @@ import {
 
 import { theme, background } from './ViewData';
 import MaterialIconSelector from '../Components/MaterialIconSelector';
+import { store } from '../Store';
 
 const styles = _theme => ({
     backgroundClass: {
@@ -209,7 +210,7 @@ function isPropertySameInAllViews(project, field, selectedView, views) {
 }
 
 const View = props => {
-    if (!props.project || !props.project[props.selectedView]) {
+    if (!store.getState().visProject || !store.getState().visProject[props.selectedView]) {
         return null;
     }
 
@@ -217,7 +218,7 @@ const View = props => {
     const [triggerAllClosed, setTriggerAllClosed] = useState(0);
     const [showAllViewDialog, setShowAllViewDialog] = useState(null);
 
-    const view = props.project[props.selectedView];
+    const view = store.getState().visProject[props.selectedView];
 
     let resolutionSelect = `${view.settings.sizex}x${view.settings.sizey}`;
     if (view.settings.sizex === undefined && view.settings.sizey === undefined) {
@@ -452,7 +453,7 @@ const View = props => {
                     width: 236,
                     value: resolutionSelect,
                     onChange: e => {
-                        const project = JSON.parse(JSON.stringify(props.project));
+                        const project = JSON.parse(JSON.stringify(store.getState().visProject));
                         if (e.target.value === 'none') {
                             delete project[props.selectedView].settings.sizex;
                             delete project[props.selectedView].settings.sizey;
@@ -486,7 +487,7 @@ const View = props => {
                                 },
                             }}
                             onChange={e => {
-                                const project = JSON.parse(JSON.stringify(props.project));
+                                const project = JSON.parse(JSON.stringify(store.getState().visProject));
                                 project[props.selectedView].settings.sizex = e.target.value;
                                 props.changeProject(project);
                             }}
@@ -507,7 +508,7 @@ const View = props => {
                                 },
                             }}
                             onChange={e => {
-                                const project = JSON.parse(JSON.stringify(props.project));
+                                const project = JSON.parse(JSON.stringify(store.getState().visProject));
                                 project[props.selectedView].settings.sizey = e.target.value;
                                 props.changeProject(project);
                             }}
@@ -720,7 +721,7 @@ const View = props => {
         setTimeout(() => props.setIsAllOpened(allOpened), 50);
     }
 
-    const viewList = Object.keys(props.project).filter(v => v !== '___settings' && v !== props.selectedView);
+    const viewList = Object.keys(store.getState().visProject).filter(v => v !== '___settings' && v !== props.selectedView);
 
     let allViewDialog = null;
     if (showAllViewDialog) {
@@ -730,31 +731,31 @@ const View = props => {
             for (let f = 0; f < showAllViewDialog.group.fields.length; f++) {
                 const field = showAllViewDialog.group.fields[f];
                 if (field.applyToAll && !field.groupApply) {
-                    let selectedViewValue = props.project[props.selectedView].settings[field.field];
+                    let selectedViewValue = store.getState().visProject[props.selectedView].settings[field.field];
                     if (field.type === 'boolean') {
                         selectedViewValue = !!selectedViewValue;
                     } else {
                         selectedViewValue = selectedViewValue || '';
                     }
                     viewList.forEach(_view => {
-                        let viewValue = props.project[_view].settings[field.field];
+                        let viewValue = store.getState().visProject[_view].settings[field.field];
                         if (field.type === 'boolean') {
                             viewValue = !!viewValue;
                         } else {
                             viewValue = viewValue || '';
                         }
 
-                        if (props.project[_view].settings.navigation &&
+                        if (store.getState().visProject[_view].settings.navigation &&
                             viewValue !== selectedViewValue &&
-                            !viewsToChange.includes(props.project[_view].name || _view)
+                            !viewsToChange.includes(store.getState().visProject[_view].name || _view)
                         ) {
-                            viewsToChange.push(props.project[_view].name || _view);
+                            viewsToChange.push(store.getState().visProject[_view].name || _view);
                         }
                     });
                 }
             }
         } else {
-            let selectedViewValue =  props.project[props.selectedView].settings[showAllViewDialog.field];
+            let selectedViewValue =  store.getState().visProject[props.selectedView].settings[showAllViewDialog.field];
 
             if (showAllViewDialog.field.type === 'boolean') {
                 selectedViewValue = !!selectedViewValue;
@@ -762,14 +763,14 @@ const View = props => {
                 selectedViewValue = selectedViewValue || '';
             }
             viewList.forEach(_view => {
-                let viewValue = props.project[_view].settings[showAllViewDialog.field];
+                let viewValue = store.getState().visProject[_view].settings[showAllViewDialog.field];
                 if (showAllViewDialog.field.type === 'boolean') {
                     viewValue = !!viewValue;
                 } else {
                     viewValue = viewValue || '';
                 }
-                if (props.project[_view].settings.navigation && viewValue !== selectedViewValue) {
-                    viewsToChange.push(props.project[_view].name || _view);
+                if (store.getState().visProject[_view].settings.navigation && viewValue !== selectedViewValue) {
+                    viewsToChange.push(store.getState().visProject[_view].name || _view);
                 }
             });
         }
@@ -779,7 +780,7 @@ const View = props => {
             text={I18n.t('Following views will be changed: %s', viewsToChange.join(', '))}
             onClose={result => {
                 if (result) {
-                    const project = JSON.parse(JSON.stringify(props.project));
+                    const project = JSON.parse(JSON.stringify(store.getState().visProject));
                     if (showAllViewDialog.groupApply) {
                         // find all fields with applyToAll flag, and if any is not equal show button
                         for (let f = 0; f < showAllViewDialog.group.fields.length; f++) {
@@ -809,7 +810,7 @@ const View = props => {
 
     return <div style={{ height: '100%', overflowY: 'auto' }}>
         {fields.map((group, key) => {
-            if (group.hidden && checkFunction(group.hidden, props.project[props.selectedView].settings)) {
+            if (group.hidden && checkFunction(group.hidden, store.getState().visProject[props.selectedView].settings)) {
                 return null;
             }
             return <Accordion
@@ -850,12 +851,12 @@ const View = props => {
                                     if (field.hidden === true) {
                                         return null;
                                     }
-                                    if (field.hidden !== false && checkFunction(field.hidden, props.project[props.selectedView].settings)) {
+                                    if (field.hidden !== false && checkFunction(field.hidden, store.getState().visProject[props.selectedView].settings)) {
                                         return null;
                                     }
                                 }
                                 if (field.error) {
-                                    error = checkFunction(field.error, props.project[props.selectedView].settings);
+                                    error = checkFunction(field.error, store.getState().visProject[props.selectedView].settings);
                                 }
                                 if (field.disabled) {
                                     if (field.disabled === true) {
@@ -863,7 +864,7 @@ const View = props => {
                                     } else if (field.disabled === false) {
                                         disabled = false;
                                     } else {
-                                        disabled = !!checkFunction(field.disabled, props.project[props.selectedView].settings);
+                                        disabled = !!checkFunction(field.disabled, store.getState().visProject[props.selectedView].settings);
                                     }
                                 }
                                 let value = field.notStyle ? view.settings[field.field] : view.settings.style[field.field];
@@ -872,7 +873,7 @@ const View = props => {
                                 }
 
                                 const change = changeValue => {
-                                    const project = JSON.parse(JSON.stringify(props.project));
+                                    const project = JSON.parse(JSON.stringify(store.getState().visProject));
                                     if (field.notStyle) {
                                         project[props.selectedView].settings[field.field] = changeValue;
                                     } else {
@@ -1055,7 +1056,7 @@ const View = props => {
                                         if (_value.startsWith('../')) {
                                             _value = _value.substring(3);
                                         } else if (_value.startsWith('_PRJ_NAME')) {
-                                            _value = _value.replace('_PRJ_NAME', `../${props.adapterName}.${props.instance}/${props.projectName}/`);
+                                            _value = _value.replace('_PRJ_NAME', `../${props.adapterName}.${props.instance}/${store.getState().visProjectName}/`);
                                         }
                                     }
                                     result = <>
@@ -1090,7 +1091,7 @@ const View = props => {
                                         {showDialog ? <SelectFileDialog
                                             title={I18n.t('Select file')}
                                             onClose={() => setShowDialog(false)}
-                                            restrictToFolder={`${props.adapterName}.${props.instance}/${props.projectName}`}
+                                            restrictToFolder={`${props.adapterName}.${props.instance}/${store.getState().visProjectName}`}
                                             allowNonRestricted
                                             allowUpload
                                             allowDownload
@@ -1102,7 +1103,7 @@ const View = props => {
                                             selected={_value}
                                             filterByType="images"
                                             onSelect={(selected, isDoubleClick) => {
-                                                const projectPrefix = `${props.adapterName}.${props.instance}/${props.projectName}/`;
+                                                const projectPrefix = `${props.adapterName}.${props.instance}/${store.getState().visProjectName}/`;
                                                 if (selected.startsWith(projectPrefix)) {
                                                     selected = `_PRJ_NAME/${selected.substring(projectPrefix.length)}`;
                                                 } else if (selected.startsWith('/')) {
@@ -1114,7 +1115,7 @@ const View = props => {
                                                 isDoubleClick && setShowDialog(false);
                                             }}
                                             onOk={selected => {
-                                                const projectPrefix = `${props.adapterName}.${props.instance}/${props.projectName}/`;
+                                                const projectPrefix = `${props.adapterName}.${props.instance}/${store.getState().visProjectName}/`;
                                                 if (selected.startsWith(projectPrefix)) {
                                                     selected = `_PRJ_NAME/${selected.substring(projectPrefix.length)}`;
                                                 } else if (selected.startsWith('/')) {
@@ -1231,7 +1232,7 @@ const View = props => {
                                         // find all fields with applyToAll flag, and if any is not equal show button
                                         const isShow = group.fields.find(_field =>
                                             _field.applyToAll &&
-                                            !isPropertySameInAllViews(props.project, _field.field, props.selectedView, viewList));
+                                            !isPropertySameInAllViews(store.getState().visProject, _field.field, props.selectedView, viewList));
 
                                         if (isShow) {
                                             result = <div style={{ display: 'flex', width: '100%' }}>
@@ -1259,7 +1260,7 @@ const View = props => {
                                                 </Tooltip>
                                             </div>;
                                         }
-                                    } else if (!isPropertySameInAllViews(props.project, field.field, props.selectedView, viewList)) {
+                                    } else if (!isPropertySameInAllViews(store.getState().visProject, field.field, props.selectedView, viewList)) {
                                         result = <div style={{ display: 'flex', width: '100%' }}>
                                             <div
                                                 style={{
@@ -1311,7 +1312,6 @@ View.propTypes = {
     changeProject: PropTypes.func,
     classes: PropTypes.object,
     userGroups: PropTypes.object,
-    project: PropTypes.object,
     selectedView: PropTypes.string,
     themeType: PropTypes.string,
 

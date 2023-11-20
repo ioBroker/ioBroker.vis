@@ -17,6 +17,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { BiImport, BiExport } from 'react-icons/bi';
 import { withStyles } from '@mui/styles';
+import { store } from '../../Store';
 
 const styles = theme => ({
     viewManageBlock: theme.classes.viewManageBlock,
@@ -76,11 +77,11 @@ const View = props => {
             isDraggingThisItem: monitor.isDragging(),
             handlerId: monitor.getHandlerId(),
         }),
-    }, [props.project]);
+    }, [store.getState().visProject]);
 
     useEffect(() => {
         preview(getEmptyImage(), { captureDraggingState: true });
-    }, [props.project]);
+    }, [store.getState().visProject]);
 
     useEffect(() => {
         props.setIsDragging(isDraggingThisItem ? props.name : '');
@@ -139,7 +140,6 @@ View.propTypes = {
     moveView: PropTypes.func,
     name: PropTypes.string,
     openedViews: PropTypes.array,
-    project: PropTypes.object,
     setExportDialog: PropTypes.func,
     setImportDialog: PropTypes.func,
     showDialog: PropTypes.func,

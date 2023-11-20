@@ -3,6 +3,7 @@ import { useDrop  } from 'react-dnd';
 import { useEffect } from 'react';
 
 import I18n from '@iobroker/adapter-react-v5/i18n';
+import { store } from '../../Store';
 
 const Root = props => {
     const [{ canDrop, isOver }, drop] = useDrop(() => ({
@@ -10,7 +11,7 @@ const Root = props => {
         drop: () => ({ folder: { id: null } }),
         canDrop: (item, monitor) => {
             if (monitor.getItemType() === 'view') {
-                return !!props.project[item.name].parentId;
+                return !!store.getState().visProject[item.name].parentId;
             }
             if (monitor.getItemType() === 'folder') {
                 return !!item.folder.parentId;
@@ -21,7 +22,7 @@ const Root = props => {
             isOver: monitor.isOver(),
             canDrop: monitor.canDrop(),
         }),
-    }), [props.project]);
+    }), [store.getState().visProject]);
 
     useEffect(() => {
         props.setIsOverRoot(isOver && canDrop);

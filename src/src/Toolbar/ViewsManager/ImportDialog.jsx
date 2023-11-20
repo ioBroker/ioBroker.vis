@@ -9,6 +9,7 @@ import I18n from '@iobroker/adapter-react-v5/i18n';
 import IODialog from '../../Components/IODialog';
 import CustomAceEditor from '../../Components/CustomAceEditor';
 import { useFocus } from '../../Utils';
+import { store } from '../../Store';
 
 const ImportDialog = props => {
     const [data, setData] = useState('');
@@ -21,8 +22,8 @@ const ImportDialog = props => {
         setErrors([]);
         setView(props.view);
         setData(
-            props.project[props.view]
-                ? JSON.stringify(props.project[props.view], null, 2)
+            store.getState().visProject[props.view]
+                ? JSON.stringify(store.getState().visProject[props.view], null, 2)
                 : `{
   "settings": {
     "style": {}

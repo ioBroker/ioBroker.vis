@@ -25,6 +25,7 @@ import Widget from './Widget';
 import { getWidgetTypes } from '../Vis/visWidgetsCatalog';
 import MarketplacePalette from '../Marketplace/MarketplacePalette';
 import { loadComponent } from '../Vis/visUtils';
+import { store } from '../Store';
 
 const styles = theme => ({
     widgets: { textAlign: 'center', overflowY: 'auto', height: 'calc(100% - 84px)' },
@@ -220,9 +221,9 @@ const Palette = props => {
                 .then(async () => {
                     const updates = [];
                     const deleted = [];
-                    if (props.project?.___settings?.marketplace && window.VisMarketplace?.api) {
-                        for (const i in props.project.___settings.marketplace) {
-                            const widget = props.project.___settings.marketplace[i];
+                    if (store.getState().visProject?.___settings?.marketplace && window.VisMarketplace?.api) {
+                        for (const i in store.getState().visProject.___settings.marketplace) {
+                            const widget = store.getState().visProject.___settings.marketplace[i];
                             try {
                                 const data = await window.VisMarketplace.api.apiGetWidget(widget.widget_id);
                                 if (data.version !== widget.version) {
@@ -425,7 +426,7 @@ const Palette = props => {
                             <LinearProgress />}
                         {accordionOpen.__marketplace && category === '__marketplace' && marketplaceUpdates && <div>
                             <MarketplacePalette setMarketplaceDialog={props.setMarketplaceDialog} />
-                            {props.project.___settings.marketplace?.map(item => <div key={item.id}>
+                            {store.getState().visProject.___settings.marketplace?.map(item => <div key={item.id}>
                                 <Widget
                                     editMode={props.editMode}
                                     key={item.id}
@@ -453,7 +454,7 @@ const Palette = props => {
                                     changeProject={props.changeProject}
                                     editMode={props.editMode}
                                     key={widgetItem.name}
-                                    project={props.project}
+                                    project={store.getState().visProject}
                                     selectedView={props.selectedView}
                                     socket={props.socket}
                                     themeType={props.themeType}
@@ -476,7 +477,6 @@ Palette.propTypes = {
     uninstallWidget: PropTypes.func,
     setMarketplaceDialog: PropTypes.func,
     updateWidgets: PropTypes.func,
-    project: PropTypes.object,
     widgetsLoaded: PropTypes.bool,
     socket: PropTypes.object,
     themeType: PropTypes.string,
