@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.6.1",
+    "version": "2.6.2",
     "news": {
+      "2.6.2": {
+        "en": "fixed crash case when editing group\nfixed pasting groups\nfixed problem jumping cursor and removed characters while typing",
+        "de": "fester crashfall bei der bearbeitung der gruppe\nfeste pastengruppen\nfix problem springen cursor und entfernte zeichen beim tippen",
+        "ru": "фиксированный случай аварии при редактировании группы\nфиксированные прошлые группы\nфиксированная проблема прыгая курсор и удаленные символы во время ввода",
+        "pt": "caso de acidente fixo ao grupo de edição\ngrupos fixos de colagem\nproblema fixo saltando cursor e caracteres removidos ao digitar",
+        "nl": "vertaling:\nvertaling:\nvervloekingsprobleem springen en verwijderde personages terwijl ze typen",
+        "fr": "cas de crash fixe lorsque le groupe de montage\ngroupes de passe fixe\nle curseur de saut de problème fixe et les caractères enlevés pendant la frappe",
+        "it": "caso di crash fisso durante la modifica del gruppo\ngruppi di incollaggio fissi\nproblema fisso saltare cursore e caratteri rimossi durante la digitazione",
+        "es": "caso de accidente fijo al grupo de edición\ngrupos de pasta fijo\nproblema fijo saltar cursor y eliminar caracteres mientras se escribe",
+        "pl": "sprawa rozbłyskowa w przypadku edycji grupowej\ngrupa stałych pasterek\nstabilny problem skaczący kurs i usunął postaci podczas typowania typów",
+        "uk": "виправлений випадок аварійної ситуації при монтажі групи\nфіксовані пастки групи\nвиправлена проблема стрибки курсора і видалених символів при наборі",
+        "zh-cn": "编辑组\n固定的牧场\n固定问题加快了治疗,并消除了性质,而典型的则"
+      },
       "2.6.1": {
         "en": "Showed \"file too large\" message by icon upload\nMade navigation bar for view as an own group\nsorted views alphabetically\nrespect uppercase/lowercase in projects toolbar\nRedirect `dialog` and `dialogClose` commands to widgets",
         "de": "Gezeigte \"Datei zu groß\" Nachricht durch Icon-Upload\nNavigationsleiste für eine eigene Gruppe\nalphabetisch sortiert\nrespektieren oberkörper/untergehäuse in projekten werkzeugleiste\nDialog und Dialog umleiten Befehle zu Widgets schließen",
@@ -80,19 +93,6 @@
         "pl": "reaktywacja adapter-reaktywna zwiększyła obsługę obrazu w wybranym pliku\nkolor przeglądarki plików w trybie świetlnym\nuruchomione wejściówki skaczące do końca wejściówki do modyfikacji",
         "uk": "оновлення адаптера-реакту, щоб мати розширену підтримку зображень в файловому selector\nфіксований колір файлового браузера в режимі світла\nфіксовані кольорові входи стрибки до кінця введення на зміну",
         "zh-cn": "更新的适应者在档案中加强了图像支助\n固定的以照明方式支票\n固定的颜色投入加快了改变投入的结束。"
-      },
-      "2.3.4": {
-        "en": "fix crash when selecting multiple widgets\nremoved duplicate `none` entry in `border-style` dropdown\nfix crash when reordering widgets",
-        "de": "crash bei der auswahl mehrerer widgets beheben\nentfernte duplikat keinen eintrag im grenzstil dropdown\ncrash beheben, wenn widgets neu bestellt werden",
-        "ru": "исправить сбой при выборе нескольких виджетов\nудалить дубликаты ни один вход в приграничном стиле dropdown\nисправить сбой при перезаказе виджетов",
-        "pt": "corrigir acidente ao selecionar vários widgets\nremoveu nenhuma entrada duplicada na queda no estilo de fronteira\ncorrigir acidente quando reordenar widgets",
-        "nl": "vertaling:\nverwijderde duplicaat geen toegang in de grenzen\nvertaling:",
-        "fr": "corriger le crash lors de la sélection de plusieurs widgets\nsupprimé aucune entrée de type frontière\ncorriger le crash lors de la réorganisation des widgets",
-        "it": "correzione crash quando si seleziona più widget\nrimosso duplicato nessuno ingresso in stile di confine\nfissare il crash quando riordinare i widget",
-        "es": "fijar fallo al seleccionar varios widgets\nretirada no hay entrada en el desplegamiento del estilo fronterizo\narreglar fallo cuando reordenar widgets",
-        "pl": "reakcja rozbicia, gdy wybrane są wielokrotne widgety\nusunąć\nuszkodzenie rozruchu w czasie reorderingu",
-        "uk": "виправлення аварійних ситуацій при виборі декількох віджетів\nне дублікувати запис у спадку кордону\nвиправлення аварійних ситуацій при переадресації віджетів",
-        "zh-cn": "f 在选择多重目标时发生意外事故\n消除不重复进入边界的下降\nf 在重购燃烧目标时发生意外事故"
       }
     },
     "title": "Visualisation Next Generation",

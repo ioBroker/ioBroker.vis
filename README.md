@@ -229,7 +229,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.6.2 (2023-11-20)
 * (foxriver76) fixed crash case when editing group
 * (foxriver76) fixed pasting groups
 * (foxriver76) fixed problem jumping cursor and removed characters while typing
