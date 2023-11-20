@@ -7,6 +7,7 @@ import {
 import { Close } from '@mui/icons-material';
 
 import { I18n } from '@iobroker/adapter-react-v5';
+import { store } from '../Store';
 
 const MarketplaceDialog = props => {
     const VisMarketplace = window.VisMarketplace?.default;
@@ -16,15 +17,17 @@ const MarketplaceDialog = props => {
     if (props.installWidget) {
         installWidget = async marketplace => {
             const widgets = [];
-            Object.keys(props.project).forEach(view => {
+            const project = store.getState().visProject;
+
+            Object.keys(project).forEach(view => {
                 if (view !== '___settings') {
                     const viewWidgets = {
                         name: view,
                         widgets: [],
                     };
-                    Object.keys(props.project[view].widgets).forEach(widget => {
-                        if (props.project[view].widgets[widget].marketplace?.widget_id === marketplace.widget_id &&
-                        props.project[view].widgets[widget].marketplace?.version !== marketplace.version) {
+                    Object.keys(project[view].widgets).forEach(widget => {
+                        if (project[view].widgets[widget].marketplace?.widget_id === marketplace.widget_id &&
+                        project[view].widgets[widget].marketplace?.version !== marketplace.version) {
                             viewWidgets.widgets.push(widget);
                         }
                     });
@@ -81,7 +84,6 @@ MarketplaceDialog.propTypes = {
     installedWidgets: PropTypes.array,
     updateWidgets: PropTypes.func,
     installWidget: PropTypes.func,
-    project: PropTypes.object,
     themeName: PropTypes.string,
 };
 

@@ -33,6 +33,7 @@ import {
 import TextDialog from './TextDialog';
 import MaterialIconSelector from '../../Components/MaterialIconSelector';
 import { findWidgetUsages } from '../../Vis/visUtils';
+import { store, recalculateFields } from '../../Store';
 
 const POSSIBLE_UNITS = ['px', '%', 'em', 'rem', 'vh', 'vw', 'vmin', 'vmax', 'ex', 'ch', 'cm', 'mm', 'in', 'pt', 'pc'];
 
@@ -294,7 +295,7 @@ const WidgetField = props => {
     let onChangeTimeout;
 
     const applyValue = newValues => {
-        const project = JSON.parse(JSON.stringify(props.project));
+        const project = JSON.parse(JSON.stringify(store.getState().visProject));
         props.selectedWidgets.forEach((selectedWidget, i) => {
             const value = Array.isArray(newValues) ? newValues[i] : newValues;
 
@@ -321,7 +322,7 @@ const WidgetField = props => {
             }
             if (field.onChange) {
                 field.onChange(field, JSON.parse(JSON.stringify(data)), newData => {
-                    const _project = JSON.parse(JSON.stringify(props.project));
+                    const _project = JSON.parse(JSON.stringify(store.getState().visProject));
                     _project[props.selectedView].widgets[selectedWidget].data = newData;
                     onChangeTimeout && clearTimeout(onChangeTimeout);
                     onChangeTimeout = setTimeout(() => {
@@ -435,7 +436,7 @@ const WidgetField = props => {
     }, []);
 
     if (askForUsage) {
-        const usages = findWidgetUsages(props.project, props.selectedView, askForUsage.wid);
+        const usages = findWidgetUsages(store.getState().visProject, props.selectedView, askForUsage.wid);
         // show dialog with usage
         return <Dialog
             open={!0}
@@ -606,7 +607,10 @@ const WidgetField = props => {
                 checked={!!value}
                 classes={{ root: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding) }}
                 size="small"
-                onChange={e => change(e.target.checked)}
+                onChange={e => {
+                    store.dispatch(recalculateFields(true));
+                    change(e.target.checked);
+                }}
             />
             {typeof error === 'string' ? <FormHelperText>{I18n.t(error)}</FormHelperText> : null}
         </FormControl>;
@@ -812,29 +816,29 @@ const WidgetField = props => {
             // take widgets from all views
             if (field.all) {
                 options = [];
-                Object.keys(props.project).forEach(view =>
-                    props.project[view].widgets && Object.keys(props.project[view].widgets)
+                Object.keys(store.getState().visProject).forEach(view =>
+                    store.getState().visProject[view].widgets && Object.keys(store.getState().visProject[view].widgets)
                         .filter(wid =>
-                            (field.withGroups || !props.project[view].widgets[wid].grouped) &&
+                            (field.withGroups || !store.getState().visProject[view].widgets[wid].grouped) &&
                             (field.withSelf || wid !== widgetId) &&
-                            (!field.hideUsed || !props.project[view].widgets[wid].usedInView))
+                            (!field.hideUsed || !store.getState().visProject[view].widgets[wid].usedInView))
                         .forEach(wid => options.push({
                             wid,
                             view,
-                            tpl: props.project[view].widgets[wid].tpl,
-                            name: props.project[view].widgets[wid].name,
+                            tpl: store.getState().visProject[view].widgets[wid].tpl,
+                            name: store.getState().visProject[view].widgets[wid].name,
                         })));
             } else {
-                options = Object.keys(props.project[props.selectedView].widgets)
+                options = Object.keys(store.getState().visProject[props.selectedView].widgets)
                     .filter(wid =>
-                        (field.withGroups || !props.project[props.selectedView].widgets[wid].grouped) &&
+                        (field.withGroups || !store.getState().visProject[props.selectedView].widgets[wid].grouped) &&
                         (field.withSelf || wid !== widgetId) &&
-                        (!field.hideUsed || !props.project[props.selectedView].widgets[wid].usedInView))
+                        (!field.hideUsed || !store.getState().visProject[props.selectedView].widgets[wid].usedInView))
                     .map(wid => ({
                         wid,
                         view: props.selectedView,
-                        tpl: props.project[props.selectedView].widgets[wid].tpl,
-                        name: props.project[props.selectedView].widgets[wid].name,
+                        tpl: store.getState().visProject[props.selectedView].widgets[wid].tpl,
+                        name: store.getState().visProject[props.selectedView].widgets[wid].name,
                     }));
             }
             if (field.tpl) {
@@ -863,18 +867,20 @@ const WidgetField = props => {
                 if (field.type === 'widget' &&
                     field.checkUsage &&
                     e.target.value &&
-                    props.project[props.selectedView].widgets[e.target.value]?.usedInWidget
+                    store.getState().visProject[props.selectedView].widgets[e.target.value]?.usedInWidget
                 ) {
                     // Show dialog
                     setAskForUsage({
                         wid: e.target.value,
                         cb: () => {
-                            const project = modifyWidgetUsages(props.project, props.selectedView, e.target.value, props.selectedWidgets[0], field.name);
+                            const project = modifyWidgetUsages(store.getState().visProject, props.selectedView, e.target.value, props.selectedWidgets[0], field.name);
                             props.changeProject(project);
+                            store.dispatch(recalculateFields(true));
                         },
                     });
                 } else {
                     change(e.target.value);
+                    store.dispatch(recalculateFields(true));
                 }
             }}
             renderValue={_value => {
@@ -919,7 +925,7 @@ const WidgetField = props => {
     }
 
     if (field.type === 'select-views') {
-        const options = getViewOptions(props.project, [], null, 0, true)
+        const options = getViewOptions(store.getState().visProject, [], null, 0, true)
             .filter(option => option.type === 'folder' || option.view !== props.selectedView);
 
         return <Select
@@ -1048,7 +1054,7 @@ const WidgetField = props => {
     }
 
     if (field.type === 'views')  {
-        const options = getViewOptions(props.project);
+        const options = getViewOptions(store.getState().visProject);
 
         return <Autocomplete
             freeSolo
@@ -1157,7 +1163,7 @@ const WidgetField = props => {
                     field,
                     widget.data,
                     newData => {
-                        const _project = JSON.parse(JSON.stringify(props.project));
+                        const _project = JSON.parse(JSON.stringify(store.getState().visProject));
                         props.selectedWidgets.forEach(selectedWidget => {
                             Object.keys(newData)
                                 .forEach(attr => {
@@ -1176,7 +1182,7 @@ const WidgetField = props => {
                             projectName,
                             instance,
                             adapterName,
-                            views: props.project,
+                            views: store.getState().visProject,
                         },
                         selectedView: props.selectedView,
                         selectedWidgets: props.selectedWidgets,

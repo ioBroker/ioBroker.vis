@@ -13,6 +13,7 @@
  * (Free for non-commercial use).
  */
 import { I18n } from '@iobroker/adapter-react-v5';
+import { store, updateWidget } from '../Store';
 
 function replaceGroupAttr(inputStr, groupAttrList) {
     let newString = inputStr;
@@ -356,10 +357,14 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
 
     // if widget is in the group => replace groupAttrX values
     if (widget.grouped) {
-        widget.groupid = widget.groupid || getWidgetGroup(views, view, wid);
+        console.log(store.getState().visProject);
+        if (!widget.groupid) {
+            store.dispatch(updateWidget({ viewId: view, widgetId: widget, data: { ...widget, groupid: getWidgetGroup(views, view, wid) } }));
+        }
+        // widget.groupid = widget.groupid || getWidgetGroup(views, view, wid);
 
-        if (!views[view].widgets[widget.groupid]) {
-            widget.groupid = getWidgetGroup(views, view, wid);
+        if (!store.getState().visProject[view].widgets[widget.groupid]) {
+            store.dispatch(updateWidget({ viewId: view, widgetId: widget, data: { ...widget, groupid: getWidgetGroup(views, view, wid) } }));
             if (!widget.groupid) {
                 // create a fictive group
                 let groupNum = 1;

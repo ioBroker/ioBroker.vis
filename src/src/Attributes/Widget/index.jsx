@@ -22,6 +22,7 @@ import {
 } from '@mui/icons-material';
 
 import { I18n, Utils } from '@iobroker/adapter-react-v5';
+import { store, recalculateFields } from '../../Store';
 
 import WidgetField from './WidgetField';
 import IODialog from '../../Components/IODialog';
@@ -247,7 +248,7 @@ class Widget extends Component {
             widgetsLoaded: props.widgetsLoaded,
             widgetTypes: null,
             fields: null,
-            dataImage: Widget.buildDataImage(props.project, props.selectedView, props.selectedWidgets),
+            dataImage: Widget.buildDataImage(store.getState().visProject, props.selectedView, props.selectedWidgets),
             transitionTime: 0,
         };
 
@@ -551,7 +552,7 @@ class Widget extends Component {
 
     static buildDataImage(project, selectedView, selectedWidgets) {
         const result = {};
-        (selectedWidgets || []).sort().forEach(wid => result[wid] = project[selectedView].widgets[wid]);
+        ([...selectedWidgets] || []).sort().forEach(wid => result[wid] = project[selectedView].widgets[wid]);
         return JSON.stringify(result);
     }
 
@@ -561,15 +562,7 @@ class Widget extends Component {
             newState = {};
             newState.widgetsLoaded = true;
             newState.widgetTypes = getWidgetTypes();
-            newState.recalculate = true;
-        }
-
-        const dataImage = Widget.buildDataImage(props.project, props.selectedView, props.selectedWidgets);
-        // detect changes of view
-        if (dataImage !== state.dataImage) {
-            newState = newState || {};
-            newState.dataImage = dataImage;
-            newState.recalculate = true;
+            store.dispatch(recalculateFields(true));
         }
 
         return newState;
@@ -580,8 +573,7 @@ class Widget extends Component {
             return;
         }
         console.log('Recalculate fields');
-        const newState = { recalculate: false };
-        const widgets = this.props.project[this.props.selectedView]?.widgets;
+        const widgets = store.getState().visProject[this.props.selectedView]?.widgets;
 
         let widget;
         let widgetType;
@@ -603,11 +595,11 @@ class Widget extends Component {
             let params = widgetType.params;
             if (typeof widgetType.params === 'function') {
                 params = widgetType.params(widget.data, null, {
-                    views: this.props.project,
+                    views: store.getState().visProject,
                     view: this.props.selectedView,
                     socket: this.props.socket,
                     themeType: this.props.themeType,
-                    projectName: this.props.projectName,
+                    projectName: store.getState().visProjectName,
                     adapterName: this.props.adapterName,
                     instance: this.props.instance,
                     id: wid,
@@ -624,6 +616,7 @@ class Widget extends Component {
         const bindFields = [];
         const commonValues = {};
         const isDifferent = {};
+        const newState = {};
 
         if (this.props.selectedWidgets.length > 1) {
             fields = selectedWidgetsFields[0]?.filter(group => {
@@ -699,7 +692,7 @@ class Widget extends Component {
 
         const fieldsAfter = Widget.getFieldsAfter(
             this.props.selectedWidgets.length === 1 ? widget : commonValues,
-            this.props.project[this.props.selectedView].widgets,
+            store.getState().visProject[this.props.selectedView].widgets,
             this.props.fonts,
         );
         const fieldsSignals = this.fieldsSignals[signalsCount] || this.fieldsSignals[3];
@@ -730,6 +723,7 @@ class Widget extends Component {
         newState.transitionTime = 0;
 
         this.setState(newState, () => this.setAccordionState());
+        store.dispatch(recalculateFields(false));
     }
 
     componentWillUnmount() {
@@ -835,7 +829,7 @@ class Widget extends Component {
                         onClose={() => this.setState({ cssDialogOpened: false })}
                         widget={widgets[this.props.selectedWidgets[0]]}
                         onChange={value => {
-                            const project = JSON.parse(JSON.stringify(this.props.project));
+                            const project = JSON.parse(JSON.stringify(store.getState().visProject));
                             project[this.props.selectedView].widgets[this.props.selectedWidgets[0]].css = value;
                             this.props.changeProject(project);
                         }}
@@ -845,7 +839,7 @@ class Widget extends Component {
                         onClose={() => this.setState({ jsDialogOpened: false })}
                         widget={widgets[this.props.selectedWidgets[0]]}
                         onChange={value => {
-                            const project = JSON.parse(JSON.stringify(this.props.project));
+                            const project = JSON.parse(JSON.stringify(store.getState().visProject));
                             project[this.props.selectedView].widgets[this.props.selectedWidgets[0]].js = value;
                             this.props.changeProject(project);
                         }}
@@ -898,7 +892,7 @@ class Widget extends Component {
 
     onGroupMove(e, index, iterable, direction) {
         e.stopPropagation();
-        const project = JSON.parse(JSON.stringify(this.props.project));
+        const project = JSON.parse(JSON.stringify(store.getState().visProject));
         const oldGroup = this.state.fields.find(f => f.name === `${iterable.group}-${index}`);
         const _widgets = project[this.props.selectedView].widgets;
         const accordionOpen = { ...this.state.accordionOpen };
@@ -1085,7 +1079,7 @@ class Widget extends Component {
                                 let found = false;
                                 for (let w = 0; w < this.props.selectedWidgets.length; w++) {
                                     for (let f = 0; f < group.fields.length; f++) {
-                                        const value = this.props.project[this.props.selectedView].widgets[this.props.selectedWidgets[w]][type][group.fields[f].name];
+                                        const value = store.getState().visProject[this.props.selectedView].widgets[this.props.selectedWidgets[w]][type][group.fields[f].name];
                                         if (value !== null && value !== undefined) {
                                             found = true;
                                             break;
@@ -1099,7 +1093,7 @@ class Widget extends Component {
                                     this.onGroupDelete(group);
                                 }
                             } else {
-                                const project = JSON.parse(JSON.stringify(this.props.project));
+                                const project = JSON.parse(JSON.stringify(store.getState().visProject));
                                 const type = group.isStyle ? 'style' : 'data';
                                 this.props.selectedWidgets.forEach(wid => {
                                     group.fields.forEach(field => {
@@ -1114,6 +1108,7 @@ class Widget extends Component {
                                 this.setAccordionState(accordionOpen, () => this.props.changeProject(project));
                             }
                             e.stopPropagation();
+                            store.dispatch(recalculateFields(true));
                         }}
                         size="small"
                         classes={{ root: Utils.clsx(this.props.classes.fieldContent, this.props.classes.clearPadding, this.props.classes.checkBox) }}
@@ -1124,7 +1119,7 @@ class Widget extends Component {
     }
 
     changeBinding(isStyle, attr) {
-        const project = JSON.parse(JSON.stringify(this.props.project));
+        const project = JSON.parse(JSON.stringify(store.getState().visProject));
         const type = isStyle ? 'style' : 'data';
         for (const wid of this.props.selectedWidgets) {
             const widget = project[this.props.selectedView].widgets[wid];
@@ -1136,6 +1131,7 @@ class Widget extends Component {
         }
 
         this.props.changeProject(project);
+        store.dispatch(recalculateFields(true));
     }
 
     renderFieldRow(group, field, fieldIndex) {
@@ -1145,7 +1141,7 @@ class Widget extends Component {
         let error;
         let disabled;
         if (field.hidden) {
-            if (Widget.checkFunction(field.hidden, this.props.project, this.props.selectedView, this.props.selectedWidgets, field.index)) {
+            if (Widget.checkFunction(field.hidden, store.getState().visProject, this.props.selectedView, this.props.selectedWidgets, field.index)) {
                 return null;
             }
         }
@@ -1158,13 +1154,13 @@ class Widget extends Component {
         }
 
         if (field.error) {
-            error = Widget.checkFunction(field.error, this.props.project, this.props.selectedView, this.props.selectedWidgets, field.index);
+            error = Widget.checkFunction(field.error, store.getState().visProject, this.props.selectedView, this.props.selectedWidgets, field.index);
         }
         if (field.disabled) {
             if (field.disabled === true) {
                 disabled = true;
             } else {
-                disabled = !!Widget.checkFunction(field.disabled, this.props.project, this.props.selectedView, this.props.selectedWidgets, field.index);
+                disabled = !!Widget.checkFunction(field.disabled, store.getState().visProject, this.props.selectedView, this.props.selectedWidgets, field.index);
             }
         }
         let label;
@@ -1210,7 +1206,7 @@ class Widget extends Component {
                             <div className={this.props.classes.smallImageDiv}>
                                 <img
                                     src={this.state.widget.data[field.name].startsWith('_PRJ_NAME/') ?
-                                        this.state.widget.data[field.name].replace('_PRJ_NAME/', `../${this.props.adapterName}.${this.props.instance}/${this.props.projectName}/`)
+                                        this.state.widget.data[field.name].replace('_PRJ_NAME/', `../${this.props.adapterName}.${this.props.instance}/${store.getState().visProjectName}/`)
                                         :
                                         this.state.widget.data[field.name]}
                                     className={this.props.classes.smallImage}
@@ -1248,7 +1244,7 @@ class Widget extends Component {
                                 className={this.props.classes.colorize}
                                 onClick={() => this.props.cssClone(field.name, newValue => {
                                     if (newValue !== null && newValue !== undefined) {
-                                        const project = JSON.parse(JSON.stringify(this.props.project));
+                                        const project = JSON.parse(JSON.stringify(store.getState().visProject));
                                         this.props.selectedWidgets.forEach(wid => {
                                             if (project[this.props.selectedView].widgets[wid]) {
                                                 project[this.props.selectedView].widgets[wid].style = project[this.props.selectedView].widgets[wid].style || {};
@@ -1276,7 +1272,7 @@ class Widget extends Component {
                                     selectedView={this.props.selectedView}
                                     selectedWidgets={this.props.selectedWidgets}
                                     isDifferent={this.state.isDifferent[field.name]}
-                                    project={this.props.project}
+                                    project={store.getState().visProject}
                                     socket={this.props.socket}
                                     changeProject={this.props.changeProject}
                                 />
@@ -1335,7 +1331,7 @@ class Widget extends Component {
     }
 
     onGroupDelete(group) {
-        const project = JSON.parse(JSON.stringify(this.props.project));
+        const project = JSON.parse(JSON.stringify(store.getState().visProject));
         const type = group.isStyle ? 'style' : 'data';
         this.props.selectedWidgets.forEach(wid => {
             group.fields.forEach(field => {
@@ -1345,10 +1341,11 @@ class Widget extends Component {
         });
 
         this.props.changeProject(project);
+        store.dispatch(recalculateFields(true));
     }
 
     render() {
-        if (this.state.recalculate && !this.recalculateTimer) {
+        if (store.getState().recalculateFields && !this.recalculateTimer) {
             this.recalculateTimer = setTimeout(() => {
                 this.recalculateTimer = null;
                 this.recalculateFields();
@@ -1360,7 +1357,7 @@ class Widget extends Component {
         }
 
         // check that for all selected widgets the widget type loaded and exists
-        const widgets = this.props.project[this.props.selectedView]?.widgets;
+        const widgets = store.getState().visProject[this.props.selectedView]?.widgets;
         let widgetsExist = 0;
         widgets && this.props.selectedWidgets.forEach(selectedWidget => {
             if (widgets[selectedWidget] && this.state.widgetTypes.find(type => type.name === widgets[selectedWidget].tpl)) {
@@ -1404,7 +1401,7 @@ class Widget extends Component {
             this.state.fields ? <div key="groups" style={{ height: 'calc(100% - 34px)', overflowY: 'auto' }}>
                 {this.state.fields.map(group => {
                     if (group.hidden) {
-                        if (Widget.checkFunction(group.hidden, this.props.project, this.props.selectedView, this.props.selectedWidgets)) {
+                        if (Widget.checkFunction(group.hidden, store.getState().visProject, this.props.selectedView, this.props.selectedWidgets)) {
                             return null;
                         }
                     }

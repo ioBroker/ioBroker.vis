@@ -9,6 +9,7 @@ module.exports = {
         'airbnb',
         // 'react-app',
         'plugin:eqeqeq-fix/recommended',
+        'plugin:@typescript-eslint/recommended',
     ],
     parserOptions: {
         ecmaFeatures: {

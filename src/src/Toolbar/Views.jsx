@@ -15,6 +15,7 @@ import ViewsManager from './ViewsManager';
 import ToolbarItems from './ToolbarItems';
 
 import ViewDialog from './ViewsManager/ViewDialog';
+import { store } from '../Store';
 
 const styles = () => ({
     label: {
@@ -101,7 +102,7 @@ const Views = props => {
             setDialogName={setDialogName}
             setDialogParentId={setDialogParentId}
             classes={{}}
-            {...props}
+            project={store.getState().visProject}
         />
     </>;
 };

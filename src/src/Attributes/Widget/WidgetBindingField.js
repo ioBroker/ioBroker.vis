@@ -19,6 +19,7 @@ import {
 } from '@mui/icons-material';
 import { I18n, Utils, SelectID } from '@iobroker/adapter-react-v5';
 import VisFormatUtils from '../../Vis/visFormatUtils';
+import { store, recalculateFields } from '../../Store';
 
 const styles = () => ({
     dialog: {
@@ -779,7 +780,10 @@ class WidgetBindingField extends Component {
                     disabled={this.state.editValue === this.state.value}
                     color="primary"
                     startIcon={<Check />}
-                    onClick={() => this.setState({ showEditBindingDialog: false }, () => this.onChange(this.state.editValue))}
+                    onClick={() => {
+                        this.setState({ showEditBindingDialog: false }, () => this.onChange(this.state.editValue));
+                        store.dispatch(recalculateFields(true));
+                    }}
                 >
                     {I18n.t('Apply')}
                 </Button>

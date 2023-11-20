@@ -20,6 +20,8 @@ import { I18n } from '@iobroker/adapter-react-v5';
 
 import MultiSelect from './MultiSelect';
 
+import { store } from '../Store';
+
 const styles = theme => ({
     toolbarBlock: {
         display: 'flex',
@@ -52,7 +54,8 @@ const styles = theme => ({
 });
 
 const getItem = (item, key, props, full) => {
-    const view = props.project[props.selectedView];
+    const { visProject } = store.getState();
+    const view = visProject[props.selectedView];
 
     if (!item || item.hide) {
         !item && console.warn(`Strange item: ${key}`);
@@ -68,7 +71,7 @@ const getItem = (item, key, props, full) => {
         if (!item.field) {
             return;
         }
-        const project = JSON.parse(JSON.stringify(props.project));
+        const project = JSON.parse(JSON.stringify(visProject));
         project[props.selectedView].settings[item.field] = changeValue;
 
         props.changeProject(project);

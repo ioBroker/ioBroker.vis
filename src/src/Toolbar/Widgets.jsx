@@ -25,6 +25,7 @@ import {
 } from '@mui/icons-material';
 
 import { I18n } from '@iobroker/adapter-react-v5';
+import { store } from '../Store';
 
 import ToolbarItems from './ToolbarItems';
 import { getWidgetTypes } from '../Vis/visWidgetsCatalog';
@@ -38,17 +39,19 @@ const Widgets = props => {
     const [filterDialog, setFilterDialog] = useState(false);
 
     const toolbar = useMemo(() => {
+        const project = store.getState().visProject;
+
         if (!props.widgetsLoaded) {
             return null;
         }
         if (!props.openedViews.length) {
             return null;
         }
-        if (!props.project[props.selectedView]) {
+        if (!project[props.selectedView]) {
             return null;
         }
         const widgetTypes = getWidgetTypes();
-        const widgets = props.project[props.selectedView].widgets;
+        const widgets = project[props.selectedView].widgets;
 
         const shownWidgets = Object.keys(widgets)
             .filter(widget => (props.selectedGroup ?
@@ -62,7 +65,7 @@ const Widgets = props => {
                     type: 'icon-button',
                     Icon: FilterIcon,
                     name: 'Filter widgets',
-                    color: props.project[props.selectedView].filterWidgets?.length ? '#c00000' : undefined,
+                    color: project[props.selectedView].filterWidgets?.length ? '#c00000' : undefined,
                     disabled: !props.editMode,
                     onClick: () => setFilterDialog(true),
                 },
@@ -358,7 +361,7 @@ const Widgets = props => {
         props.history.length,
         props.widgetsLoaded,
         props.openedViews.length,
-        props.project[props.selectedView],
+        store.getState().visProject[props.selectedView],
     ]);
 
     if (!props.widgetsLoaded) {
@@ -367,7 +370,7 @@ const Widgets = props => {
     if (!props.openedViews.length) {
         return null;
     }
-    if (!props.project[props.selectedView]) {
+    if (!store.getState().visProject[props.selectedView]) {
         return null;
     }
 
@@ -377,13 +380,13 @@ const Widgets = props => {
             onClose={() => setImportDialog(false)}
             changeProject={props.changeProject}
             selectedView={props.selectedView}
-            project={props.project}
+            project={store.getState().visProject}
             themeType={props.themeType}
             getNewWidgetIdNumber={props.getNewWidgetIdNumber}
         /> : null}
         {exportDialog ? <WidgetExportDialog
             onClose={() => setExportDialog(false)}
-            widgets={props.project[props.selectedView].widgets}
+            widgets={store.getState().visProject[props.selectedView].widgets}
             selectedWidgets={props.selectedWidgets}
             themeType={props.themeType}
         /> : null}
@@ -391,7 +394,7 @@ const Widgets = props => {
             onClose={() => setFilterDialog(false)}
             changeProject={props.changeProject}
             selectedView={props.selectedView}
-            project={props.project}
+            project={store.getState().visProject}
         /> : null}
     </>;
 };
@@ -399,7 +402,6 @@ const Widgets = props => {
 Widgets.propTypes = {
     openedViews: PropTypes.array,
     themeType: PropTypes.string,
-    project: PropTypes.object,
     selectedView: PropTypes.string,
     selectedWidgets: PropTypes.array,
     setSelectedWidgets: PropTypes.func,

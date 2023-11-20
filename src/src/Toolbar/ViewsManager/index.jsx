@@ -21,6 +21,7 @@ import ExportDialog from './ExportDialog';
 import ImportDialog from './ImportDialog';
 import FolderDialog from './FolderDialog';
 import { DndPreview, isTouchDevice } from '../../Utils';
+import { store } from '../../Store';
 
 const styles = theme => ({
     viewManageButtonActions: theme.classes.viewManageButtonActions,
@@ -74,20 +75,22 @@ const ViewsManager = props => {
         }
     }, []);
 
+    const { visProject } = store.getState();
+
     const moveFolder = (id, parentId) => {
-        const project = JSON.parse(JSON.stringify(props.project));
+        const project = JSON.parse(JSON.stringify(visProject));
         project.___settings.folders.find(folder => folder.id === id).parentId = parentId;
         props.changeProject(project);
     };
 
     const moveView = (name, parentId) => {
-        const project = JSON.parse(JSON.stringify(props.project));
+        const project = JSON.parse(JSON.stringify(visProject));
         project[name].parentId = parentId;
         props.changeProject(project);
     };
 
     const importViewAction = (view, data) => {
-        const project = JSON.parse(JSON.stringify(props.project));
+        const project = JSON.parse(JSON.stringify(visProject));
         const viewObject = JSON.parse(data);
         if (!viewObject || !viewObject.settings || !viewObject.widgets || !viewObject.activeWidgets) {
             return;
@@ -97,9 +100,9 @@ const ViewsManager = props => {
         props.changeProject(project);
     };
 
-    const renderViews = parentId => Object.keys(props.project)
+    const renderViews = parentId => Object.keys(visProject)
         .filter(name => !name.startsWith('___'))
-        .filter(name => (parentId ? props.project[name].parentId === parentId : !props.project[name].parentId))
+        .filter(name => (parentId ? visProject[name].parentId === parentId : !visProject[name].parentId))
         .sort((name1, name2) => (name1.toLowerCase() < name2.toLowerCase() ? 0 : 1))
         .map((name, key) => <div key={key} className={props.classes.viewContainer}>
             <View
@@ -115,7 +118,7 @@ const ViewsManager = props => {
         </div>);
 
     const renderFolders = parentId => {
-        const folders = props.project.___settings.folders
+        const folders = visProject.___settings.folders
             .filter(folder => (parentId ? folder.parentId === parentId : !folder.parentId));
 
         return folders.map((folder, key) => <div key={key}>
@@ -212,14 +215,14 @@ const ViewsManager = props => {
             onClose={() => setImportDialog(false)}
             view={importDialog || ''}
             importViewAction={importViewAction}
-            project={props.project}
+            project={visProject}
             themeName={props.themeName}
         /> : null}
         {exportDialog !== false ? <ExportDialog
             open
             onClose={() => setExportDialog(false)}
             view={exportDialog || ''}
-            project={props.project}
+            project={visProject}
             themeName={props.themeName}
         /> : null}
     </IODialog>;
@@ -231,7 +234,6 @@ ViewsManager.propTypes = {
     name: PropTypes.string,
     onClose: PropTypes.func,
     open: PropTypes.bool,
-    project: PropTypes.object,
     showDialog: PropTypes.func,
     themeName: PropTypes.string,
     toggleView: PropTypes.func,

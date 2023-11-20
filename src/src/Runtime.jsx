@@ -35,6 +35,8 @@ import {
 } from './Vis/visUtils';
 import VisWidgetsCatalog from './Vis/visWidgetsCatalog';
 
+import { store, updateProject } from './Store';
+
 const generateClassName = createGenerateClassName({
     productionPrefix: 'vis-r',
 });
@@ -185,11 +187,11 @@ class Runtime extends GenericApp {
                         .then(file => {
                             try {
                                 const ts = JSON.parse(file.file || file).___settings.ts;
-                                if (ts === this.state.visProject.___settings.ts) {
+                                if (ts === store.getState().visProject.___settings.ts) {
                                     return;
                                 }
                                 const tsInt = parseInt(ts.split('.'), 10);
-                                if (tsInt < parseInt(this.state.visProject.___settings.ts.split('.'), 10)) {
+                                if (tsInt < parseInt(store.getState().visProject.___settings.ts.split('.'), 10)) {
                                     // ignore older files
                                     return;
                                 }
@@ -327,7 +329,7 @@ class Runtime extends GenericApp {
     }
 
     syncMultipleWidgets(project) {
-        project = project || this.state.visProject;
+        project = project || store.getState().visProject;
         Object.keys(project).forEach(view => {
             if (view === '___settings') {
                 return;
@@ -548,9 +550,10 @@ class Runtime extends GenericApp {
             visUserCss: null,
             history: [project],
             historyCursor: 0,
-            visProject: project,
             projectName,
         });
+
+        store.dispatch(updateProject(project));
 
         await this.changeView(selectedView);
 
@@ -565,7 +568,7 @@ class Runtime extends GenericApp {
         this.resolutionTimer && clearTimeout(this.resolutionTimer);
         this.resolutionTimer = setTimeout(async () => {
             this.resolutionTimer = null;
-            const view = Runtime.findViewWithNearestResolution(this.state.visProject);
+            const view = Runtime.findViewWithNearestResolution(store.getState().visProject);
             if (view && view !== this.state.selectedView) {
                 await this.changeView(view);
             }
@@ -625,7 +628,7 @@ class Runtime extends GenericApp {
     async onConnectionReady() {
         // preload all widgets first
         if (this.state.widgetsLoaded === Runtime.WIDGETS_LOADING_STEP_HTML_LOADED) {
-            await VisWidgetsCatalog.collectRxInformation(this.socket, this.state.visProject, this.changeProject);
+            await VisWidgetsCatalog.collectRxInformation(this.socket, store.getState().visProject, this.changeProject);
             await this.setStateAsync({ widgetsLoaded: Runtime.WIDGETS_LOADING_STEP_ALL_LOADED });
         }
 
@@ -708,7 +711,7 @@ class Runtime extends GenericApp {
 
         // Check that all selectedWidgets exist
         for (let i = selectedWidgets.length - 1; i >= 0; i--) {
-            if (!this.state.visProject[selectedView] || !this.state.visProject[selectedView].widgets || !this.state.visProject[selectedView].widgets[selectedWidgets[i]]) {
+            if (!store.getState().visProject[selectedView] || !store.getState().visProject[selectedView].widgets || !store.getState().visProject[selectedView].widgets[selectedWidgets[i]]) {
                 selectedWidgets = selectedWidgets.splice(i, 1);
             }
         }
@@ -725,8 +728,8 @@ class Runtime extends GenericApp {
             newState.alignValues = [];
         }
 
-        if (!this.state.runtime && !this.state.visProject.___settings.openedViews.includes(selectedView)) {
-            const project = JSON.parse(JSON.stringify(this.state.visProject));
+        if (!this.state.runtime && !store.getState().visProject.___settings.openedViews.includes(selectedView)) {
+            const project = JSON.parse(JSON.stringify(store.getState().visProject));
             project.___settings.openedViews.push(selectedView);
             await this.changeProject(project, true);
         }
@@ -795,7 +798,7 @@ class Runtime extends GenericApp {
     async onWidgetsLoaded() {
         let widgetsLoaded = Runtime.WIDGETS_LOADING_STEP_HTML_LOADED;
         if (this.socket.isConnected()) {
-            await VisWidgetsCatalog.collectRxInformation(this.socket, this.state.visProject, this.changeProject);
+            await VisWidgetsCatalog.collectRxInformation(this.socket, store.getState().visProject, this.changeProject);
             widgetsLoaded = Runtime.WIDGETS_LOADING_STEP_ALL_LOADED;
         }
         this.setState({ widgetsLoaded });
@@ -975,7 +978,7 @@ class Runtime extends GenericApp {
             visCommonCss={this.state.visCommonCss}
             visUserCss={this.state.visUserCss}
             lang={this.socket.systemLang}
-            views={this.state.visProject}
+            views={store.getState().visProject}
             adapterName={this.adapterName}
             instance={this.instance}
             selectedWidgets={this.state.selectedWidgets}
@@ -1019,7 +1022,7 @@ class Runtime extends GenericApp {
             <StyledEngineProvider injectFirst>
                 <ThemeProvider theme={this.state.theme}>
                     {
-                        !this.state.loaded || !this.state.visProject ?
+                        !this.state.loaded || !store.getState().visProject.___settings ?
                             <Loader theme={this.state.themeType} /> :
                             this.getVisEngine()
                     }

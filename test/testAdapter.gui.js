@@ -2,7 +2,7 @@ const helper = require('@iobroker/vis-2-widgets-testing');
 
 describe('vis', () => {
     before(async function (){
-        this.timeout(180000);
+        this.timeout(180_000);
 
         // install js-controller, web and vis-2
         await helper.startIoBroker({
@@ -20,7 +20,7 @@ describe('vis', () => {
     });
 
     it('Check all widgets', async function (){
-        this.timeout(120000);
+        this.timeout(120_000);
         const widgetSets = await helper.palette.getListOfWidgetSets();
         console.log(`Widget sets found: ${widgetSets.join(', ')}`);
         for (let s = 0; s < widgetSets.length; s++) {
@@ -34,7 +34,7 @@ describe('vis', () => {
     });
 
     after(async function () {
-        this.timeout(5000);
+        this.timeout(5_000);
         await helper.stopBrowser();
         console.log('BROWSER stopped');
         await helper.stopIoBroker();

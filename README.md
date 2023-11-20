@@ -232,6 +232,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 ### **WORK IN PROGRESS**
 * (foxriver76) fixed crash case when editing group
 * (foxriver76) fixed pasting groups
+* (foxriver76) fixed problem jumping cursor and removed characters while typing
 
 ### 2.6.1 (2023-11-17)
 * (bluefox) Showed "file too large" message by icon upload
