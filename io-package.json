@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.6.2",
+    "version": "2.6.3",
     "news": {
+      "2.6.3": {
+        "en": "fixed several crash cases",
+        "de": "mehrere unfallfälle behoben",
+        "ru": "исправлено несколько случаев аварии",
+        "pt": "corrigiu vários casos de acidente",
+        "nl": "verschillende gevallen",
+        "fr": "plusieurs cas de crash",
+        "it": "fissi diversi casi di crash",
+        "es": "varios casos de accidentes fijos",
+        "pl": "naprawiony przypadek",
+        "uk": "виправлено кілька випадків аварії",
+        "zh-cn": "固定事故"
+      },
       "2.6.2": {
         "en": "fixed crash case when editing group\nfixed pasting groups\nfixed problem jumping cursor and removed characters while typing",
         "de": "fester crashfall bei der bearbeitung der gruppe\nfeste pastengruppen\nfix problem springen cursor und entfernte zeichen beim tippen",
@@ -80,19 +93,6 @@
         "pl": "zagadnienia z edytorem wiążącym na temat atrybutów stylowych\npoprawiona wydajność z powodu optymalizacji na auto oszczędza",
         "uk": "виправлені питання з обов'язковим редактором на атрибутах стилю\nпокращена продуктивність за рахунок оптимізації автозбереження",
         "zh-cn": "具有约束力的编辑的固定问题\na. 由于汽车储蓄的优化业绩有所改善"
-      },
-      "2.3.5": {
-        "en": "update adapter-react to have enhanced image support in file selector\nfixed color of file browser in light mode\nfixed color inputs jumping to end of input on modify",
-        "de": "update-adapter-react, um verbesserte bildunterstützung in dateiauswahl zu haben\nfeste farbe des dateibrowsers im lichtmodus\nfeste farbeingänge springen bis zum ende der eingabe beim modifizieren",
-        "ru": "обновление адаптер-реакта для улучшения поддержки изображений в файловом селекторе\nфиксированный цвет файлового браузера в светлом режиме\nфиксированные входы цвета прыгая до конца входа на изменение",
-        "pt": "atualizar o adaptador-react para ter suporte de imagem aprimorado no seletor de arquivos\ncor fixa do navegador de arquivo no modo de luz\nentradas de cor fixa saltando para o fim da entrada em modificar",
-        "nl": "update adapter-reactie om beelden te vergroten in bestand selector\nvertaling:\ngerepareerde kleuren inputs springen tot het einde van de input op de aangepaste wijze",
-        "fr": "mettre à jour l'adaptateur-react pour avoir amélioré le support d'image dans le sélecteur de fichier\ncouleur fixe du navigateur de fichier en mode lumière\nentrées de couleur fixes saut à la fin de l'entrée sur la modification",
-        "it": "aggiornare l'adattatore-react per avere migliorato il supporto dell'immagine nel selettore di file\ncolore fisso del browser di file in modalità luce\ningressi di colore fissi che saltano alla fine dell'ingresso su modifica",
-        "es": "actualización del adaptador-react para haber mejorado el soporte de imagen en el selector de archivos\ncolor fijo del navegador de archivos en modo de luz\nentradas de color fijo saltando al final de la entrada en modificación",
-        "pl": "reaktywacja adapter-reaktywna zwiększyła obsługę obrazu w wybranym pliku\nkolor przeglądarki plików w trybie świetlnym\nuruchomione wejściówki skaczące do końca wejściówki do modyfikacji",
-        "uk": "оновлення адаптера-реакту, щоб мати розширену підтримку зображень в файловому selector\nфіксований колір файлового браузера в режимі світла\nфіксовані кольорові входи стрибки до кінця введення на зміну",
-        "zh-cn": "更新的适应者在档案中加强了图像支助\n固定的以照明方式支票\n固定的颜色投入加快了改变投入的结束。"
       }
     },
     "title": "Visualisation Next Generation",
