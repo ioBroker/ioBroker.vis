@@ -229,6 +229,9 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### 2.6.4 (2023-11-21)
+* (foxriver76) fixed typescript build
+
 ### 2.6.3 (2023-11-20)
 * (foxriver76) fixed several crash cases
 

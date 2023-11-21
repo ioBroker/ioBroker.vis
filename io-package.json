@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.6.3",
+    "version": "2.6.4",
     "news": {
+      "2.6.4": {
+        "en": "fixed typescript build",
+        "de": "fester schriftbau",
+        "ru": "фиксированная типскриптовая сборка",
+        "pt": "constrói de tipo fixo",
+        "nl": "typische opbouw",
+        "fr": "construction de caractères fixes",
+        "it": "tipografia fissa",
+        "es": "construcción de tiposcript fijo",
+        "pl": "konstrukcja standardowa",
+        "uk": "фіксована структура",
+        "zh-cn": "固定表格"
+      },
       "2.6.3": {
         "en": "fixed several crash cases",
         "de": "mehrere unfallfälle behoben",
@@ -80,19 +93,6 @@
         "pl": "zagadnienia z ikoną selekcjonera zmieniają kategorię\nzłożenie problemu, że tylko pierwszy widget jest przestarzałe\ndodać operatora JSON\nUżycie funkcji jako filtru dla obiektów ID\nWykaz gatunków Implemented View bar (bez menu)",
         "uk": "виправлені питання з фільтром ікони при зміні категорії\nвиправлена проблема, що тільки перший віджет\nдодано оператор зв'язування JSON\nДозволяє використовувати функцію фільтра для ідентифікатора об'єкта\nРеалізовано панель Перегляду (без меню)",
         "zh-cn": "一、在改变类别时采用一门选择过滤的固定问题\n固定问题,只有先令目标过去。\n协会增派了有约束力的经营者\n允许将行为作为过滤器\n实施维克·巴(没有男性)"
-      },
-      "2.3.6": {
-        "en": "fixed issues with binding editor on style attributes\nimproved performance due to optimizations on auto save",
-        "de": "feste probleme mit verbindlichem editor auf style-attributen\nverbesserte leistung durch optimierungen auf autosparen",
-        "ru": "фиксированные вопросы с обязательным редактором по атрибутам стиля\nулучшенная производительность благодаря оптимизации на автосбережение",
-        "pt": "problemas fixos com editor de ligação em atributos de estilo\ndesempenho melhorado devido às otimizações em auto salvar",
-        "nl": "vertaling:\nverbeterde prestaties door optimaties op autoredding",
-        "fr": "problèmes fixes avec l'éditeur de liaison sur les attributs de style\namélioration de la performance en raison d'optimisations sur l'automobile",
-        "it": "problemi fissi con editor vincolante sugli attributi di stile\nmiglioramento delle prestazioni grazie alle ottimizzazioni sul risparmio automatico",
-        "es": "cuestiones fijas con editor en atributos de estilo\nmejora del rendimiento debido a las optimizaciones en ahorro de automóviles",
-        "pl": "zagadnienia z edytorem wiążącym na temat atrybutów stylowych\npoprawiona wydajność z powodu optymalizacji na auto oszczędza",
-        "uk": "виправлені питання з обов'язковим редактором на атрибутах стилю\nпокращена продуктивність за рахунок оптимізації автозбереження",
-        "zh-cn": "具有约束力的编辑的固定问题\na. 由于汽车储蓄的优化业绩有所改善"
       }
     },
     "title": "Visualisation Next Generation",
