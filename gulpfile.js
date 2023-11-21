@@ -70,7 +70,7 @@ function buildRuntime() {
                 } else {
                     console.log(`"${cmd} in ${__dirname}/runtime finished.`);
                     // command succeeded
-                    resolve();
+                    resolve(null);
                 }
             });
         }
@@ -212,7 +212,7 @@ function npmInstall(dir) {
             } else {
                 console.log(`"${cmd} in ${cwd} finished.`);
                 // command succeeded
-                resolve();
+                resolve(null);
             }
         });
     });
@@ -391,7 +391,7 @@ function build() {
                 } else {
                     console.log(`"${cmd} in ${__dirname}/src finished.`);
                     // command succeeded
-                    resolve();
+                    resolve(null);
                 }
             });
         }
