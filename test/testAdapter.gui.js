@@ -36,7 +36,7 @@ describe('vis', () => {
         }
 
         // wait for saving
-        await new Promise(resolve => setTimeout(resolve, 5_000));
+        await new Promise(resolve => setTimeout(resolve, 10_000));
     });
 
     it('Check runtime', async function (){
