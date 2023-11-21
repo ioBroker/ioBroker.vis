@@ -774,8 +774,8 @@ async function uploadAdapter() {
     }
 
     // restore normal files
-    await adapter.writeFileAsync(adapterName, 'edit.html', fs.readFileSync(`${__dirname}/www/edit.html`).toString('utf8'));
     await adapter.writeFileAsync(adapterName, 'index.html', fs.readFileSync(`${__dirname}/www/index.html`).toString('utf8'));
+    await adapter.writeFileAsync(adapterName, 'edit.html', fs.readFileSync(`${__dirname}/www/edit.html`).toString('utf8'));
 }
 
 async function copyFolder(sourceId, sourcePath, targetId, targetPath) {

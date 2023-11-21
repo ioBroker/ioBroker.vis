@@ -145,6 +145,7 @@ export default BulkEditor;
     fs.writeFileSync(`${__dirname}/runtime/craco.config.js`, fs.readFileSync(`${__dirname}/src/craco.config.js`));
     fs.writeFileSync(`${__dirname}/runtime/modulefederation.config.js`, fs.readFileSync(`${__dirname}/src/modulefederation.config.js`));
     fs.writeFileSync(`${__dirname}/runtime/src/App.jsx`, fs.readFileSync(`${__dirname}/src/src/Runtime.jsx`));
+    fs.writeFileSync(`${__dirname}/runtime/tsconfig.json`, fs.readFileSync(`${__dirname}/src/tsconfig.json`));
     fs.writeFileSync(`${__dirname}/runtime/src/Store.tsx`, fs.readFileSync(`${__dirname}/src/src/Store.tsx`));
     fs.writeFileSync(`${__dirname}/runtime/src/serviceWorker.jsx`, fs.readFileSync(`${__dirname}/src/src/serviceWorker.jsx`));
     fs.writeFileSync(`${__dirname}/runtime/src/index.jsx`, fs.readFileSync(`${__dirname}/src/src/index.jsx`));
