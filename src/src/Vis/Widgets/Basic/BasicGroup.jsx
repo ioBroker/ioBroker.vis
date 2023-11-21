@@ -31,8 +31,8 @@ class BasicGroup extends VisRxWidget {
                 const attributes = [];
 
                 listOfWidgets.forEach(wid => {
-                    const widgetData = context.views[context.view].widgets[wid].data;
-                    Object.keys(widgetData).forEach(attr => {
+                    const widgetData = context.views[context.view].widgets[wid]?.data;
+                    widgetData && Object.keys(widgetData).forEach(attr => {
                         if (typeof widgetData[attr] === 'string') {
                             let ms = widgetData[attr].match(/(groupAttr\d+)+?/g);
                             if (ms) {
@@ -162,8 +162,8 @@ class BasicGroup extends VisRxWidget {
         if (groupWidgets?.length && this.state.mounted) {
             // first relative, then absolute
             groupWidgets.sort((a, b) => {
-                const widgetA = context.views[this.props.view].widgets[a];
-                const widgetB = context.views[this.props.view].widgets[b];
+                const widgetA = context.views[this.props.view].widgets[a] || {};
+                const widgetB = context.views[this.props.view].widgets[b] || {};
                 const isRelativeA = widgetA.style && (
                     widgetA.style.position === 'relative' ||
                     widgetA.style.position === 'static'   ||
