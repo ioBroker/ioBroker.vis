@@ -734,9 +734,10 @@ class Runtime extends GenericApp {
             await this.changeProject(project, true);
         }
 
-        if (this.state.runtime || !this.state.editMode) {
+        if ((this.state.runtime || !this.state.editMode) && window.vis) {
             const currentPath = VisEngine.getCurrentPath();
             const newHash = VisEngine.buildPath(currentPath.view, currentPath.path);
+
             window.vis.lastChangedView = this.state.projectName ?
                 `${this.state.projectName}/${newHash.replace(/^#/, '')}` :
                 newHash.replace(/^#/, '');

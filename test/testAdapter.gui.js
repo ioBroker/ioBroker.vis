@@ -1,6 +1,5 @@
 const helper = require('@iobroker/vis-2-widgets-testing');
 
-let gBrowser;
 let gPage;
 
 describe('vis', () => {
@@ -14,8 +13,7 @@ describe('vis', () => {
             visUploadedId: 'vis-2.0.info.uploaded',
             mainGuiProject: 'vis-2',
         });
-        const { browser, page } = await helper.startBrowser(process.env.CI === 'true');
-        gBrowser = browser;
+        const { page } = await helper.startBrowser(process.env.CI === 'true');
         gPage = page;
         await helper.createProject();
 
@@ -36,12 +34,21 @@ describe('vis', () => {
                 await helper.view.deleteWidget(null, wid);
             }
         }
+
+        // wait for saving
+        await new Promise(resolve => setTimeout(resolve, 2_000));
     });
 
     it('Check runtime', async function (){
         this.timeout(120_000);
+        // add widget in editor
+        const basicWidgets = await helper.palette.getListOfWidgets(null, 'basic');
+        const wid = await helper.palette.addWidget(null, basicWidgets[0], true);
+
+        // open runtime
         await gPage.goto(`http://127.0.0.1:18082/vis-2/index.html`, { waitUntil: 'domcontentloaded' });
-        await gPage.waitForSelector('#root', { timeout: 10000 });
+        await gPage.waitForSelector('#root', { timeout: 5_000 });
+        await gPage.waitForSelector(`#${wid}`, { timeout: 1_000 });
         await helper.screenshot(null, '90_runtime');
     });
 
