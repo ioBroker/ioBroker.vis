@@ -36,7 +36,7 @@
     "@alcalzone/release-script-plugin-license": "^3.5.9",
     "@iobroker/vis-2-widgets-testing": "^0.3.0",
     "@tsconfig/node16": "^16.1.1",
-    "@types/mocha": "^10.0.4",
+    "@types/mocha": "^10.0.5",
     "chai": "^4.3.10",
     "gulp": "^4.0.2",
     "iobroker.web": "*",
