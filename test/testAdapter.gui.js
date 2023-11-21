@@ -44,12 +44,13 @@ describe('vis', () => {
         // add widget in editor
         const basicWidgets = await helper.palette.getListOfWidgets(null, 'basic');
         const wid = await helper.palette.addWidget(null, basicWidgets[0], true);
+        await helper.screenshot(null, '90_runtime');
 
         // open runtime
         await gPage.goto(`http://127.0.0.1:18082/vis-2/index.html`, { waitUntil: 'domcontentloaded' });
         await gPage.waitForSelector('#root', { timeout: 5_000 });
         await gPage.waitForSelector(`#${wid}`, { timeout: 1_000 });
-        await helper.screenshot(null, '90_runtime');
+        await helper.screenshot(null, '91_runtime');
     });
 
     after(async function () {
