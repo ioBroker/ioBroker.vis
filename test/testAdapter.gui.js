@@ -36,11 +36,11 @@ describe('vis', () => {
         }
 
         // wait for saving
-        await new Promise(resolve => setTimeout(resolve, 2_000));
+        await new Promise(resolve => setTimeout(resolve, 5_000));
     });
 
     it('Check runtime', async function (){
-        this.timeout(120_000);
+        this.timeout(20_000);
         // add widget in editor
         const basicWidgets = await helper.palette.getListOfWidgets(null, 'basic');
         const wid = await helper.palette.addWidget(null, basicWidgets[0], true);
