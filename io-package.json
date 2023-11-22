@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.6.4",
+    "version": "2.7.0",
     "news": {
+      "2.7.0": {
+        "en": "implemented Basic Bar widget natively",
+        "de": "durchgeführt Basic Bar Widget native",
+        "ru": "реализовано Базовый бар виджет родным",
+        "pt": "implementação Basic Bar widget nativamente",
+        "nl": "_ Basic Bar Widget",
+        "fr": "mise en œuvre Bar de base widget nativement",
+        "it": "implementato Basic Bar widget nativo",
+        "es": "aplicadas Basic Bar widget nativamente",
+        "pl": "wdrożone Basic Bar widget (ang.)",
+        "uk": "реалізований Базовий віджет бару рідно",
+        "zh-cn": "执行 B. 基本Bar wid目标"
+      },
       "2.6.4": {
         "en": "fixed typescript build",
         "de": "fester schriftbau",
@@ -80,19 +93,6 @@
         "pl": "umożliwia korzystanie z prawdziwego htmla w prependach HTML oraz dołącz HTML (base-string widget)\nproblem ulepszający\nnie ma ona jednak żadnych przycisków jak tekst górny\nnie automatycznie pojawiać się nazw stron jako nazwa górna\nPoprawiono ikony sygnałowe dla Widgetów React\nPoprawiono ostatnią zmianę widgets\nSVG Bool widget jako React Component",
         "uk": "дозволяє використовувати реальні HTML в HTML препендії та HTML додаток (басічний віджет рядків)\nвиправлена проблема при монтажі груп\nне автоматично форматувати текст кнопки у верхній частині\nне автоматично показувати імен сторінок у верхній частині\nРеалізовано значки сигналу для React віджетів\nРеалізовано останню індикацію змін для React віджетів\nРеалізовано SVG Bool віджет як компонент React",
         "zh-cn": "允许HTML预先筛选和HTML 附录(基本植物目标)使用真正的html\n固定问题,而编辑组\n并非自动格式,而是按上级案文\n并不自动显示上级页。\n实施重伤目标的信号\n实施最后的重伤目标变化迹象\n执行SVG Bool widget as React构成部分"
-      },
-      "2.4.0": {
-        "en": "fixed issues with icon selector filter when changing category\nfixed problem, that only first widget is pasted\nadded JSON binding operator\nAllowed to use function as filter for Object ID\nImplemented View bar (with no menu)",
-        "de": "feste probleme mit icon-selektorfilter beim ändern der kategorie\nproblem behoben, dass nur erste widget gepflastert\njSON Bindungsoperator\nErlaubt, Funktion als Filter für Objekt-ID zu verwenden\nImplementierte Ansichtsleiste (ohne Menü)",
-        "ru": "фиксированные проблемы с фильтром иконки при изменении категории\nисправленная проблема, что только первый виджет вклеен\nдобавил JSON обязательного оператора\nРазрешено использовать функцию в качестве фильтра для ID объекта\nРеализованный вид бар (без меню)",
-        "pt": "problemas fixos com filtro seletor de ícones ao alterar a categoria\nproblema fixo, que só primeiro widget é colado\nadicionado operador de ligação JSON\nPermitido usar a função como filtro para ID de objeto\nBarra de visualização implementada (sem menu)",
-        "nl": "verandering van categorie\ndat is het probleem\nvoegde JSON binding operator toe\nGenoemd als filter voor Object ID\nImplemented View bar (met no menu)",
-        "fr": "problèmes fixes avec filtre de sélecteur d'icônes lorsque la catégorie change\nproblème fixe, que seul premier widget est passé\njSON opérateur de liaison\nPermet d'utiliser la fonction comme filtre pour objet ID\nBarre de vue implémentée (sans menu)",
-        "it": "problemi fissi con il filtro del selettore dell'icona quando cambia categoria\nproblema fisso, che solo il primo widget è incollato\naggiunto JSON\nConsente di utilizzare la funzione come filtro per Object ID\nVisualizza barra (senza menu)",
-        "es": "problemas fijos con filtro selector de iconos al cambiar la categoría\nproblema fijo, que sólo el primer widget es pegado\nagregado JSON\nPermitido utilizar la función como filtro para ID de objetos\nBarra de visualización implementada (sin menú)",
-        "pl": "zagadnienia z ikoną selekcjonera zmieniają kategorię\nzłożenie problemu, że tylko pierwszy widget jest przestarzałe\ndodać operatora JSON\nUżycie funkcji jako filtru dla obiektów ID\nWykaz gatunków Implemented View bar (bez menu)",
-        "uk": "виправлені питання з фільтром ікони при зміні категорії\nвиправлена проблема, що тільки перший віджет\nдодано оператор зв'язування JSON\nДозволяє використовувати функцію фільтра для ідентифікатора об'єкта\nРеалізовано панель Перегляду (без меню)",
-        "zh-cn": "一、在改变类别时采用一门选择过滤的固定问题\n固定问题,只有先令目标过去。\n协会增派了有约束力的经营者\n允许将行为作为过滤器\n实施维克·巴(没有男性)"
       }
     },
     "title": "Visualisation Next Generation",
