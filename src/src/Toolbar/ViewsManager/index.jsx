@@ -123,7 +123,8 @@ const ViewsManager = props => {
 
     const renderFolders = parentId => {
         const folders = visProject.___settings.folders
-            .filter(folder => (parentId ? folder.parentId === parentId : !folder.parentId));
+            .filter(folder => (parentId ? folder.parentId === parentId : !folder.parentId))
+            .sort((folder1, folder2) => (folder1.name.toLowerCase() < folder2.name.toLowerCase() ? 0 : 1));
 
         return folders.map((folder, key) => <div key={key}>
             <div className={props.classes.folderContainer}>

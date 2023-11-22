@@ -229,6 +229,9 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (foxriver76) sort folders alphabetically in pages view
+
 ### 2.7.0 (2023-11-22)
 * (foxriver76) implemented Basic Bar widget natively
 
