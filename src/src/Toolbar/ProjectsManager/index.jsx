@@ -1,18 +1,19 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import I18n from '@iobroker/adapter-react-v5/i18n';
 import {
     AppBar, Button, IconButton, Tooltip, Menu, MenuItem, CircularProgress,
 } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
+import { withStyles } from '@mui/styles';
 
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import {
+    Add as AddIcon,
+    Edit as EditIcon,
+    Delete as DeleteIcon,
+    FileCopy as IconDocument,
+} from '@mui/icons-material';
 import { BiImport, BiExport } from 'react-icons/bi';
-import IconDocument from '@mui/icons-material/FileCopy';
 
-import { Utils } from '@iobroker/adapter-react-v5';
+import { I18n, Utils } from '@iobroker/adapter-react-v5';
 
 import IODialog from '../../Components/IODialog';
 import ImportProjectDialog, { getLiveHost } from './ImportProjectDialog';

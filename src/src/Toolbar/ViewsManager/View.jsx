@@ -1,22 +1,25 @@
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
+import { withStyles } from '@mui/styles';
+import { useDrag } from 'react-dnd';
+import { getEmptyImage } from 'react-dnd-html5-backend';
 
-import I18n from '@iobroker/adapter-react-v5/i18n';
 import {
     IconButton, Tooltip,
 } from '@mui/material';
 
-import { useDrag } from 'react-dnd';
-import { getEmptyImage } from 'react-dnd-html5-backend';
-
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
-import FileIcon from '@mui/icons-material/InsertDriveFile';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import {
+    Edit as EditIcon,
+    Delete as DeleteIcon,
+    FileCopy as FileCopyIcon,
+    InsertDriveFile as FileIcon,
+    Visibility as VisibilityIcon,
+    VisibilityOff as VisibilityOffIcon,
+} from '@mui/icons-material';
 import { BiImport, BiExport } from 'react-icons/bi';
-import { withStyles } from '@mui/styles';
+
+import { I18n } from '@iobroker/adapter-react-v5';
+
 import { store } from '../../Store';
 
 const styles = theme => ({

@@ -7,9 +7,11 @@ import {
     Tab, Tabs, Tooltip, Typography,
 } from '@mui/material';
 
-import ClearIcon from '@mui/icons-material/Clear';
-import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
-import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
+import {
+    Clear as ClearIcon,
+    UnfoldMore as UnfoldMoreIcon,
+    UnfoldLess as UnfoldLessIcon,
+} from '@mui/icons-material';
 
 import { I18n, Utils } from '@iobroker/adapter-react-v5';
 

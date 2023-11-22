@@ -1,17 +1,21 @@
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import I18n from '@iobroker/adapter-react-v5/i18n';
-import { AppBar, IconButton, Tooltip } from '@mui/material';
 
-import withStyles from '@mui/styles/withStyles';
+import { withStyles } from '@mui/styles';
 
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
 
-import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
-import AddIcon from '@mui/icons-material/Add';
-import { useEffect, useState } from 'react';
+import { AppBar, IconButton, Tooltip } from '@mui/material';
+
+import {
+    Add as AddIcon,
+    CreateNewFolder as CreateNewFolderIcon,
+} from '@mui/icons-material';
 import { BiImport } from 'react-icons/bi';
+
+import { I18n } from '@iobroker/adapter-react-v5';
 
 import IODialog from '../../Components/IODialog';
 import Folder from './Folder';

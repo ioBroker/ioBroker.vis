@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import withStyles from '@mui/styles/withStyles';
+import { withStyles } from '@mui/styles';
 
 import {
     Button, Checkbox,
@@ -17,7 +17,9 @@ import {
     Cancel, Check,
     Clear, Link as LinkIcon,
 } from '@mui/icons-material';
+
 import { I18n, Utils, SelectID } from '@iobroker/adapter-react-v5';
+
 import VisFormatUtils from '../../Vis/visFormatUtils';
 import { store, recalculateFields } from '../../Store';
 

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { useDrop  } from 'react-dnd';
 import { useEffect } from 'react';
 
-import I18n from '@iobroker/adapter-react-v5/i18n';
+import { I18n } from '@iobroker/adapter-react-v5';
 import { store } from '../../Store';
 
 const Root = props => {
@@ -36,7 +36,6 @@ const Root = props => {
 };
 
 Root.propTypes = {
-    project: PropTypes.object,
     setIsOverRoot: PropTypes.func,
 };
 

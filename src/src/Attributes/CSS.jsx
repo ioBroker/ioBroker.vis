@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import {
-    MenuItem, Select, Dialog, DialogTitle, Button, DialogContent, DialogActions, IconButton, CircularProgress,
+    MenuItem, Select, Dialog, DialogTitle, Button,
+    DialogContent, DialogActions, IconButton, CircularProgress,
 } from '@mui/material';
 
 import { HelpOutline, Check as CheckIcon } from '@mui/icons-material';

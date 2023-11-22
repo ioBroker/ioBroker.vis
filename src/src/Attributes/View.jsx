@@ -5,7 +5,7 @@ import {
     useState,
     useMemo,
 } from 'react';
-import withStyles from '@mui/styles/withStyles';
+import { withStyles } from '@mui/styles';
 
 import {
     Accordion,

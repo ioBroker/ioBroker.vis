@@ -248,7 +248,7 @@ class Widget extends Component {
             widgetsLoaded: props.widgetsLoaded,
             widgetTypes: null,
             fields: null,
-            dataImage: Widget.buildDataImage(store.getState().visProject, props.selectedView, props.selectedWidgets),
+            // dataImage: Widget.buildDataImage(store.getState().visProject, props.selectedView, props.selectedWidgets),
             transitionTime: 0,
         };
 
@@ -550,11 +550,11 @@ class Widget extends Component {
         this.setAccordionState();
     }
 
-    static buildDataImage(project, selectedView, selectedWidgets) {
-        const result = {};
-        ([...selectedWidgets] || []).sort().forEach(wid => result[wid] = project[selectedView].widgets[wid]);
-        return JSON.stringify(result);
-    }
+    // static buildDataImage(project, selectedView, selectedWidgets) {
+    //     const result = {};
+    //     [...(selectedWidgets || [])].sort().forEach(wid => result[wid] = project[selectedView].widgets[wid]);
+    //     return JSON.stringify(result);
+    // }
 
     static getDerivedStateFromProps(props, state) {
         let newState = null;

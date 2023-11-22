@@ -1,4 +1,6 @@
+import { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
+
 import {
     IconButton,
     Tooltip,
@@ -6,20 +8,21 @@ import {
     MenuItem as DropMenuItem,
 } from '@mui/material';
 
-import withStyles from '@mui/styles/withStyles';
+import { withStyles } from '@mui/styles';
 
-import { useRef, useState } from 'react';
 
-import CloseIcon from '@mui/icons-material/Close';
-import SyncIcon from '@mui/icons-material/Sync';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import PersonIcon from '@mui/icons-material/Person';
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-import HeightFullIcon from '@mui/icons-material/KeyboardArrowUp';
-import HeightNarrowIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
-import HeightVeryNarrowIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
-import SaveIcon from '@mui/icons-material/Save';
+import {
+    Close as CloseIcon,
+    Sync as SyncIcon,
+    PlayArrow as PlayArrowIcon,
+    ArrowDropDown as ArrowDropDownIcon,
+    Person as PersonIcon,
+    ExitToApp as ExitToAppIcon,
+    KeyboardArrowUp as HeightFullIcon,
+    KeyboardDoubleArrowUp as HeightNarrowIcon,
+    KeyboardDoubleArrowDown as HeightVeryNarrowIcon,
+    Save as SaveIcon,
+} from '@mui/icons-material';
 
 import {
     Icon,

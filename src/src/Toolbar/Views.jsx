@@ -1,16 +1,20 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
+import { withStyles } from '@mui/styles';
 
-import Tooltip from '@mui/material/Tooltip';
+import {
+    Tooltip,
+} from '@mui/material';
 
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import MenuIcon from '@mui/icons-material/Menu';
+import {
+    Add as AddIcon,
+    Edit as EditIcon,
+    Delete as DeleteIcon,
+    Menu as MenuIcon,
+} from '@mui/icons-material';
 
 import { I18n } from '@iobroker/adapter-react-v5';
 
-import withStyles from '@mui/styles/withStyles';
 import ViewsManager from './ViewsManager';
 import ToolbarItems from './ToolbarItems';
 

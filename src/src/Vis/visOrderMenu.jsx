@@ -1,9 +1,11 @@
 import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
-import { Menu, MenuItem } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import { useDrag, useDrop, DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+
+import { Menu, MenuItem } from '@mui/material';
+
 import { I18n, Utils } from '@iobroker/adapter-react-v5';
 
 // eslint-disable-next-line import/no-cycle

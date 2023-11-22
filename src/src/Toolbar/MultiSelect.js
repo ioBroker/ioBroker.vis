@@ -1,11 +1,16 @@
 import React, { Component } from 'react';
 import { withStyles } from '@mui/styles';
 import {
-    Checkbox, FormControl, MenuItem, Menu, List, ListItemButton, ListItemText, ListItemIcon, InputLabel, Button,
+    Checkbox, FormControl, MenuItem,
+    Menu, List,
+    ListItemButton, ListItemText,
+    ListItemIcon, InputLabel, Button,
 } from '@mui/material';
 
-import IconArrowDown from '@mui/icons-material/ArrowDropDown';
-import IconArrowUp from '@mui/icons-material/ArrowDropUp';
+import {
+    ArrowDropDown as IconArrowDown,
+    ArrowDropUp as IconArrowUp,
+} from '@mui/icons-material';
 
 import { Utils, I18n } from '@iobroker/adapter-react-v5';
 
@@ -86,7 +91,11 @@ class MultiSelect extends Component {
                 text = item.name;
                 subText = item.subName;
                 color = item.color;
-                icon = item.icon ? <img src={item.icon} className={props.classes.icon} alt={item.name} /> : null;
+                icon = item.icon ? <img
+                    src={item.icon}
+                    className={props.classes.icon}
+                    alt={item.name}
+                /> : null;
             } else {
                 text = value[0];
             }

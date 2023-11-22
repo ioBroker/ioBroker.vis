@@ -8,14 +8,15 @@ import {
     IconButton, Tooltip,
 } from '@mui/material';
 
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import {
+    Add as AddIcon,
+    Edit as EditIcon,
+    Delete as DeleteIcon,
+    CreateNewFolder as CreateNewFolderClosedIcon,
+} from '@mui/icons-material';
 import { FaFolder as FolderClosedIcon, FaFolderOpen as FolderOpenedIcon } from 'react-icons/fa';
-import CreateNewFolderClosedIcon from '@mui/icons-material/CreateNewFolder';
 
-import I18n from '@iobroker/adapter-react-v5/i18n';
-import Utils from '@iobroker/adapter-react-v5/Components/Utils';
+import { Utils, I18n } from '@iobroker/adapter-react-v5';
 import { store } from '../../Store';
 
 const styles = theme => ({

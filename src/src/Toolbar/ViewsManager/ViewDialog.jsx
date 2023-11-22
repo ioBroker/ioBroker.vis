@@ -1,14 +1,17 @@
 import PropTypes from 'prop-types';
 
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
+import {
+    Add as AddIcon,
+    Edit as EditIcon,
+    Delete as DeleteIcon,
+    FileCopy as FileCopyIcon,
+} from '@mui/icons-material';
 
 import {
     TextField,
 } from '@mui/material';
-import I18n from '@iobroker/adapter-react-v5/i18n';
+
+import { I18n } from '@iobroker/adapter-react-v5';
 
 import IODialog from '../../Components/IODialog';
 import { useFocus } from '../../Utils';

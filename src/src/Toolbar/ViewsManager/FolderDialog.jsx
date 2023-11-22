@@ -114,7 +114,6 @@ FolderDialog.propTypes = {
     dialogFolder: PropTypes.string,
     dialogName: PropTypes.string,
     dialogParentId: PropTypes.string,
-    project: PropTypes.object,
     setDialog: PropTypes.func,
     setDialogFolder: PropTypes.func,
     setDialogName: PropTypes.func,

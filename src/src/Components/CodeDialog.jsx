@@ -5,8 +5,10 @@ import {
     Dialog, Button, DialogActions, DialogContent, DialogTitle,
 } from '@mui/material';
 
-import IconCopy from '@mui/icons-material/ContentCopy';
-import CloseIcon from '@mui/icons-material/Close';
+import {
+    ContentCopy as IconCopy,
+    Close as CloseIcon,
+} from '@mui/icons-material';
 
 import { I18n, Utils } from '@iobroker/adapter-react-v5';
 

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 
-import FileCopyIcon from '@mui/icons-material/FileCopy';
+import { FileCopy as FileCopyIcon } from '@mui/icons-material';
 
 import { Utils, I18n } from '@iobroker/adapter-react-v5';
 

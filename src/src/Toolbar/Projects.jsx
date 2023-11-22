@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import withStyles from '@mui/styles/withStyles';
+import { withStyles } from '@mui/styles';
 
 import {
     Menu as MenuIcon,
@@ -17,7 +17,6 @@ import {
 } from '@iobroker/adapter-react-v5';
 
 import ToolbarItems from './ToolbarItems';
-
 import Settings from './Settings';
 import ProjectsManager from './ProjectsManager';
 

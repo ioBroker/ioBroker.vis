@@ -1,10 +1,13 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
+import { toPng } from 'html-to-image';
 
-import WidgetIcon from '@mui/icons-material/Widgets';
-import DeleteIcon from '@mui/icons-material/Delete';
-import LockIcon from '@mui/icons-material/Lock';
-import LockOpenIcon from '@mui/icons-material/LockOpen';
+import {
+    Widgets as WidgetIcon,
+    Delete as DeleteIcon,
+    Lock as LockIcon,
+    LockOpen as LockOpenIcon,
+} from '@mui/icons-material';
 import {
     BiImport, BiExport, BiCut, BiCopy, BiPaste,
 } from 'react-icons/bi';
@@ -15,8 +18,8 @@ import {
     AiOutlineGroup, AiOutlineUngroup,
 } from 'react-icons/ai';
 
-import { toPng } from 'html-to-image';
-import I18n from '@iobroker/adapter-react-v5/i18n';
+import { I18n } from '@iobroker/adapter-react-v5';
+
 import { store } from '../Store';
 
 import IOContextMenu from '../Components/IOContextMenu';

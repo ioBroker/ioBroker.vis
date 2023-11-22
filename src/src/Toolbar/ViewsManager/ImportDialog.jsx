@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { TextField } from '@mui/material';
 
-import I18n from '@iobroker/adapter-react-v5/i18n';
+import { I18n } from '@iobroker/adapter-react-v5';
 
 import IODialog from '../../Components/IODialog';
 import CustomAceEditor from '../../Components/CustomAceEditor';
@@ -76,7 +76,6 @@ ImportDialog.propTypes = {
     importViewAction: PropTypes.func,
     onClose: PropTypes.func,
     open: PropTypes.bool,
-    project: PropTypes.object,
     view: PropTypes.string,
 };
 export default ImportDialog;

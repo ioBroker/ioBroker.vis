@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import withStyles from '@mui/styles/withStyles';
+import { withStyles } from '@mui/styles';
 
 import {
     Button,
@@ -261,7 +261,6 @@ Settings.propTypes = {
     changeProject: PropTypes.func,
     classes: PropTypes.object,
     onClose: PropTypes.func,
-    project: PropTypes.object,
     socket: PropTypes.object,
     adapterName: PropTypes.string,
     instance: PropTypes.number,

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useState, useMemo, useEffect } from 'react';
-import withStyles from '@mui/styles/withStyles';
+import { withStyles } from '@mui/styles';
 
 import {
     Accordion,
