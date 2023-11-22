@@ -107,6 +107,7 @@ class VisRxWidget extends VisBaseWidget {
             resizeHandles: options.resizeHandles === undefined ? (options.visResizeHandles === undefined ? ['n', 'e', 's', 'w', 'nw', 'ne', 'sw', 'se'] : options.visResizeHandles) : options.resizeHandles,
             rxData: newState.rxData,
             rxStyle: newState.rxStyle,
+            /** @type {Record<string, any>} */
             values: {},
             visible: newState.visible,
             disabled: false,

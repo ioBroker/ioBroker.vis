@@ -1031,7 +1031,6 @@ class App extends Runtime {
         }
 
         store.dispatch(updateProject(project));
-        console.log('dispatched');
         await this.setStateAsync({ needSave: true });
 
         // save changes after 1 second

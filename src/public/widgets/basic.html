@@ -1409,25 +1409,6 @@
 
             return val;
         },
-        extractWidth: function (css, multiplier) {
-            // extract from "2px solid #aabbcc" => 2px
-            var m = css.match(/([0-9])+(px|em)?/);
-            if (m) {
-                if (m[1] && m[2]) {
-                    return parseInt(m[1], 10) * (multiplier || 1) + m[2];
-                } else {
-                    return parseInt(m[1], 10) * (multiplier || 1);
-                }
-            }
-        },
-        getCalc: function (data, val) {
-            var min = (data.min || data.min === 0) ? parseFloat(data.min) : 0;
-            var max = (data.max || data.max === 0) ? parseFloat(data.max) : 100;
-            val = parseFloat(vis.states.attr(data.oid + '.val')) || 0;
-            val = (val - min) / (max - min);
-            return (data.border) ? ('calc(' + Math.round(val * 100) + '% - ' + vis.binds.basic.extractWidth(data.border, 2) + ')') : (Math.round(val * 100) + '%');
-        },
-
         formatValue: function formatValue(value, decimals, _format) {
             if (typeof decimals !== 'number') {
                 decimals = 2;
@@ -3064,20 +3045,6 @@
                 <img src="<%== this.data.attr('icon_on') ? this.data.attr('icon_on') : 'img/icon_on.png' %>" width="100%"/>
             <% } %>
         </div>
-    </div>
-</script>
-
-<script id="tplValueFloatBar"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-type="val,bar"
-        data-vis-name="Bar"
-        data-vis-prev='<img src="widgets/basic/img/Prev_ValueFloatBar.png"></img>'
-        data-vis-attrs="oid;min[0];max[100];orientation[horizontal]/select,horizontal,vertical/onOrientation;color[blue]/color;border;shadow;reverse/checkbox">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 240px; height: 20px; border: 1px solid #888" id="<%= this.data.attr('wid') %>">
-        <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget-body"
-        style="<%= (this.data.attr('orientation') === 'vertical') ? ('height: ' + vis.binds.basic.getCalc(this.data) + ';' + ((this.data.border) ? ' width:  calc(100% - ' + vis.binds.basic.extractWidth(this.data.border, 2) + ');' : '') + (this.data.reverse === 'true' || this.data.reverse === true ? 'left: 0; position: absolute; bottom: 0%;' : '')) : (((this.data.border) ? " height: calc(100% - " + vis.binds.basic.extractWidth(this.data.border, 2) + ');' : '') + 'width: ' + vis.binds.basic.getCalc(this.data) + ';' + (this.data.reverse === 'true' || this.data.reverse === true ? 'float: right; ' : '')) %>background-color:<%= this.data.color %>; border: <%= this.data.border %>; box-shadow: <%= this.data.shadow %>"></div>
     </div>
 </script>
 

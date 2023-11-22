@@ -1,4 +1,5 @@
 // eslint-disable-next-line import/no-cycle
+import BasicBar from './Basic/BasicBar';
 import BasicHtml from './Basic/BasicHtml';
 import BasicValueString from './Basic/BasicValueString';
 import BasicViewInWidget from './Basic/BasicViewInWidget';
@@ -33,6 +34,7 @@ import JQuiInputDateTime from './JQui/JQuiInputDateTime';
 import TabsSliderTabs from './Tabs/TabsSliderTabs';
 
 const WIDGETS = [
+    BasicBar,
     BasicHtml,
     BasicValueString,
     BasicViewInWidget,
