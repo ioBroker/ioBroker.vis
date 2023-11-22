@@ -38,7 +38,7 @@ describe('vis', () => {
         }
 
         // wait for saving
-        await new Promise(resolve => setTimeout(resolve, 10_000));
+        await new Promise(resolve => setTimeout(resolve, 2_000));
     });
 
     it('Check runtime', async function (){
@@ -46,9 +46,12 @@ describe('vis', () => {
         // add widget in editor
         const basicWidgets = await helper.palette.getListOfWidgets(gPage, 'basic');
         const wid = await helper.palette.addWidget(gPage, basicWidgets[0], true);
+        // wait for saving
+        await new Promise(resolve => setTimeout(resolve, 5_000));
+
         await helper.screenshot(gPage, '90_runtime');
 
-        const runtimePage = await gBrowser.newPage()
+        const runtimePage = await gBrowser.newPage();
 
         // open runtime
         await runtimePage.goto(`http://127.0.0.1:18082/vis-2/index.html`, { waitUntil: 'domcontentloaded' });
@@ -56,7 +59,7 @@ describe('vis', () => {
         await runtimePage.waitForSelector(`#${wid}`, { timeout: 20_000 });
         await helper.screenshot(runtimePage, '91_runtime');
 
-        await runtimePage.close()
+        await runtimePage.close();
     });
 
     after(async function () {
