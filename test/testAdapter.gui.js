@@ -1,6 +1,7 @@
 const helper = require('@iobroker/vis-2-widgets-testing');
 
 let gPage;
+let gBrowser;
 
 describe('vis', () => {
     before(async function (){
@@ -13,13 +14,14 @@ describe('vis', () => {
             visUploadedId: 'vis-2.0.info.uploaded',
             mainGuiProject: 'vis-2',
         });
-        const { page } = await helper.startBrowser(process.env.CI === 'true');
-        gPage = page;
+        const { browser, page } = await helper.startBrowser(process.env.CI === 'true');
+        gBrowser = browser
+        gPage = page
         await helper.createProject();
 
         // open widgets
-        await helper.palette.openWidgetSet(null, 'basic');
-        await helper.screenshot(null, '02_widgets_opened');
+        await helper.palette.openWidgetSet(gPage, 'basic');
+        await helper.screenshot(gPage, '02_widgets_opened');
     });
 
     it('Check all widgets', async function (){
@@ -27,11 +29,11 @@ describe('vis', () => {
         const widgetSets = await helper.palette.getListOfWidgetSets();
         console.log(`Widget sets found: ${widgetSets.join(', ')}`);
         for (let s = 0; s < widgetSets.length; s++) {
-            const widgets = await helper.palette.getListOfWidgets(null, widgetSets[s]);
+            const widgets = await helper.palette.getListOfWidgets(gPage, widgetSets[s]);
             for (let w = 0; w < widgets.length; w++) {
-                const wid = await helper.palette.addWidget(null, widgets[w], true);
-                await helper.screenshot(null, `10_${widgetSets[s]}_${widgets[w]}`);
-                await helper.view.deleteWidget(null, wid);
+                const wid = await helper.palette.addWidget(gPage, widgets[w], true);
+                await helper.screenshot(gPage, `10_${widgetSets[s]}_${widgets[w]}`);
+                await helper.view.deleteWidget(gPage, wid);
             }
         }
 
@@ -42,15 +44,19 @@ describe('vis', () => {
     it('Check runtime', async function (){
         this.timeout(20_000);
         // add widget in editor
-        const basicWidgets = await helper.palette.getListOfWidgets(null, 'basic');
-        const wid = await helper.palette.addWidget(null, basicWidgets[0], true);
-        await helper.screenshot(null, '90_runtime');
+        const basicWidgets = await helper.palette.getListOfWidgets(gPage, 'basic');
+        const wid = await helper.palette.addWidget(gPage, basicWidgets[0], true);
+        await helper.screenshot(gPage, '90_runtime');
+
+        const runtimePage = await gBrowser.newPage()
 
         // open runtime
-        await gPage.goto(`http://127.0.0.1:18082/vis-2/index.html`, { waitUntil: 'domcontentloaded' });
-        await gPage.waitForSelector('#root', { timeout: 5_000 });
-        await gPage.waitForSelector(`#${wid}`, { timeout: 1_000 });
-        await helper.screenshot(null, '91_runtime');
+        await runtimePage.goto(`http://127.0.0.1:18082/vis-2/index.html`, { waitUntil: 'domcontentloaded' });
+        await runtimePage.waitForSelector('#root', { timeout: 5_000 });
+        await runtimePage.waitForSelector(`#${wid}`, { timeout: 20_000 });
+        await helper.screenshot(runtimePage, '91_runtime');
+
+        await runtimePage.close()
     });
 
     after(async function () {
