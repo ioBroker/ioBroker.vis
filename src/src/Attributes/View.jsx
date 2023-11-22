@@ -1056,7 +1056,7 @@ const View = props => {
                                         if (_value.startsWith('../')) {
                                             _value = _value.substring(3);
                                         } else if (_value.startsWith('_PRJ_NAME')) {
-                                            _value = _value.replace('_PRJ_NAME', `../${props.adapterName}.${props.instance}/${store.getState().visProjectName}/`);
+                                            _value = _value.replace('_PRJ_NAME', `../${props.adapterName}.${props.instance}/${props.projectName}/`);
                                         }
                                     }
                                     result = <>
@@ -1091,7 +1091,7 @@ const View = props => {
                                         {showDialog ? <SelectFileDialog
                                             title={I18n.t('Select file')}
                                             onClose={() => setShowDialog(false)}
-                                            restrictToFolder={`${props.adapterName}.${props.instance}/${store.getState().visProjectName}`}
+                                            restrictToFolder={`${props.adapterName}.${props.instance}/${props.projectName}`}
                                             allowNonRestricted
                                             allowUpload
                                             allowDownload
@@ -1103,7 +1103,7 @@ const View = props => {
                                             selected={_value}
                                             filterByType="images"
                                             onSelect={(selected, isDoubleClick) => {
-                                                const projectPrefix = `${props.adapterName}.${props.instance}/${store.getState().visProjectName}/`;
+                                                const projectPrefix = `${props.adapterName}.${props.instance}/${props.projectName}/`;
                                                 if (selected.startsWith(projectPrefix)) {
                                                     selected = `_PRJ_NAME/${selected.substring(projectPrefix.length)}`;
                                                 } else if (selected.startsWith('/')) {
@@ -1115,7 +1115,7 @@ const View = props => {
                                                 isDoubleClick && setShowDialog(false);
                                             }}
                                             onOk={selected => {
-                                                const projectPrefix = `${props.adapterName}.${props.instance}/${store.getState().visProjectName}/`;
+                                                const projectPrefix = `${props.adapterName}.${props.instance}/${props.projectName}/`;
                                                 if (selected.startsWith(projectPrefix)) {
                                                     selected = `_PRJ_NAME/${selected.substring(projectPrefix.length)}`;
                                                 } else if (selected.startsWith('/')) {

@@ -355,7 +355,10 @@ class VisNavigation extends React.Component {
         }
         style.opacity = this.props.editMode ? 0.4 : 1;
 
-        const icon = settings.navigationBarIcon || settings.navigationBarImage;
+        let icon = settings.navigationBarIcon || settings.navigationBarImage;
+        if (icon && icon.startsWith('_PRJ_NAME/')) {
+            icon = `../${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}${icon.substring(9)}`;  // "_PRJ_NAME".length = 9
+        }
 
         return <div
             className={Utils.clsx(
@@ -378,7 +381,11 @@ class VisNavigation extends React.Component {
         }
         const settings = this.props.context.views[this.props.view].settings;
 
-        if (settings.navigationOrientation === 'horizontal') {
+        if (settings.navigation &&
+            !this.props.visInWidget &&
+            settings.navigationOrientation === 'horizontal' &&
+            this.props.view === this.props.activeView
+        ) {
             return <div className={this.props.classes.rootHorizontal}>
                 {this.renderMenu(settings)}
                 <div
@@ -387,6 +394,15 @@ class VisNavigation extends React.Component {
                         marginTop: this.props.editMode ? undefined : TOOLBAR_SIZE,
                     }}
                 >
+                    {this.props.children}
+                </div>
+            </div>;
+        }
+
+        if (!settings.navigation && settings.navigationBar) {
+            return <div className={this.props.classes.afterMenuHidden}>
+                {this.renderToolbar(settings)}
+                <div className={this.props.classes.viewContentWithToolbar}>
                     {this.props.children}
                 </div>
             </div>;
