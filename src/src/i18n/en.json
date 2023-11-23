@@ -619,5 +619,9 @@
   "Bar text": "Caption",
   "Bar color": "Background color",
   "Bar icon": "Icon",
-  "Bar image": "Image"
+  "Bar image": "Image",
+  "basic_borderColor": "Border color",
+  "basic_borderRadius": "Border radius",
+  "basic_circle": "Circle",
+  "basic_pin": "Pin"
 }

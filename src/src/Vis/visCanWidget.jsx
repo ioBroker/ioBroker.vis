@@ -529,6 +529,7 @@ class VisCanWidget extends VisBaseWidget {
                                         this.$('body').append('<div id="gestureIndicator" style="position: absolute; pointer-events: none; z-index: 100; box-shadow: 2px 2px 5px 1px gray;height: 21px; border: 1px solid #c7c7c7; border-radius: 5px; text-align: center; padding-top: 6px; padding-left: 2px; padding-right: 2px; background: lightgray;"></div>');
                                         $indicator = this.$('#gestureIndicator');
 
+                                        // eslint-disable-next-line @typescript-eslint/no-this-alias
                                         const that = this;
                                         // eslint-disable-next-line func-names
                                         $indicator.on('gestureUpdate', function (event, evData) {

@@ -619,5 +619,9 @@
   "Bar text": "Didascalia",
   "Bar color": "Colore di sfondo",
   "Bar icon": "Icona",
-  "Bar image": "Immagine"
+  "Bar image": "Immagine",
+  "basic_borderColor": "Colore del bordo",
+  "basic_borderRadius": "Raggio del confine",
+  "basic_circle": "Cerchio",
+  "basic_pin": "Spillo"
 }

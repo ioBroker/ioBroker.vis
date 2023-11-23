@@ -619,5 +619,9 @@
   "Bar text": "Subtítulo",
   "Bar color": "Color de fondo",
   "Bar icon": "Icono",
-  "Bar image": "Imagen"
+  "Bar image": "Imagen",
+  "basic_borderColor": "Color del borde",
+  "basic_borderRadius": "Radio del borde",
+  "basic_circle": "Círculo",
+  "basic_pin": "Alfiler"
 }

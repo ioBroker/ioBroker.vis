@@ -648,42 +648,11 @@
                 });
             }
         },
-        hideOnFalse: function (el) {
-            var $this = $(el);
-            var oid   = $this.attr('data-oid');
-
-            function onChange (e, newVal) {
-                if (newVal === null || newVal === false || newVal === 0 || newVal === 'false' || !parseInt(newVal, 10)) {
-                    if (!vis.editMode) {
-                        $this.hide();
-                    }
-                } else {
-                    $this.show();
-                }
-            }
-
-            if (oid) {
-                vis.states.bind(oid + '.val', onChange);
-
-                // remember all ids, that bound
-                $this.data('bound', [oid + '.val'])
-                // remember bind handler
-                    .data('bindHandler', onChange);
-
-                if (!vis.editMode) {
-                    var newVal = vis.states.attr(oid + '.val');
-                    if (newVal === null || newVal === false || newVal === 0 || newVal === 'false' || parseInt(newVal, 10) === 0) {
-                        $this.hide();
-                    }
-                }
-            }
-
-        },
         /*hideOnTrue: function (el) {
             var $this = $(el);
             var oid = $this.attr('data-oid');
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
-                if (newVal === true || parseFloat(newVal) > 0) {
+                if (newVal === true || parseFloat(newVal) > 0) {
                     if (!vis.editMode) {
                         $this.hide();
                     }
@@ -1085,11 +1054,11 @@
                         }
                     } else {
                         var val = vis.states[oid + '.val'];
-                        if ((min === undefined && (val === null || val === '' || val === undefined || val === false || val === 'false')) ||
+                        if ((min === undefined && (val === null || val === '' || val === undefined || val === false || val === 'false')) ||
                             (min !== undefined && min == val)) {
                             vis.setValue(oid, max !== undefined ? max : true);
                         } else
-                        if ((max === undefined && (val === true || val === 'true')) ||
+                        if ((max === undefined && (val === true || val === 'true')) ||
                             (max !== undefined && val == max))
                         {
                             vis.setValue(oid, min !== undefined ? min : false);
@@ -1281,9 +1250,9 @@
                 if (moved) return;
 
                 var val = vis.states[oid + '.val'];
-                if (val === null || val === '' || val === undefined || val === false || val === "false") {
+                if (val === null || val === '' || val === undefined || val === false || val === "false") {
                     vis.setValue(oid, true);
-                } else if (val === true || val === "true") {
+                } else if (val === true || val === "true") {
                     vis.setValue(oid, false);
                 } else {
                     val = parseFloat(val);
@@ -2984,32 +2953,6 @@
 			<%== this.data.attr("html") %>
         </div>
     </div>
-</script>
-
-<script id="tplRedNumber"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-type="val"
-        data-vis-name="Red Number"
-        data-vis-prev='<img src="widgets/basic/img/Prev_RedNumber.png"></img>'
-        data-vis-attrs="oid;type[circle]/select,circle,pin;html_prepend;html_append_singular;html_append_plural">
-    <% if (this.data.attr('type') === 'pin') { %>
-        <div class="vis-widget <%== this.data.attr('class') %>" style="width: 33px; height: 61px; padding-left: 4px" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.hideOnFalse(el) %>>
-            <div class="vis-widget-body" >
-                <img src="widgets/basic/img/pin_red5.svg" style="width: 100%; height: 100%">
-                <div style="position:absolute; top: 22%; width: 95%; text-align: center">
-                    <%== this.data.attr('html_prepend') %><%= parseInt(vis.states.attr(this.data.oid + '.val'), 10) %><%== (parseInt(vis.states.attr(this.data.oid + '.val'), 10) === 1 ? this.data.attr("html_append_singular") : this.data.attr("html_append_plural")) %>
-                </div>
-            </div>
-        </div>
-    <% } else { %>
-        <div class="vis-widget <%== this.data.attr('class') %>" style="padding: 3px; width: auto; min-width: 21px; height: 21px; border-radius:16px; border: 3px solid white; background-color: rgb(214, 69, 69); color:white; font:normal normal normal 20px/normal Helvetica; text-align: center;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.hideOnFalse(el) %>>
-            <div class="vis-widget-body" >
-                <%== this.data.attr('html_prepend') %><%= parseInt(vis.states.attr(this.data.oid + '.val'), 10) %><%== (parseInt(vis.states.attr(this.data.oid + '.val'), 10) === 1 ? this.data.attr("html_append_singular") : this.data.attr("html_append_plural")) %>
-            </div>
-        </div>
-    <% } %>
 </script>
 
 <script id="tplBulbOnOffCtrl"

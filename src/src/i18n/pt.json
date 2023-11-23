@@ -619,5 +619,9 @@
   "Bar text": "Rubrica",
   "Bar color": "Cor de fundo",
   "Bar icon": "Ícone",
-  "Bar image": "Imagem"
+  "Bar image": "Imagem",
+  "basic_borderColor": "Cor da borda",
+  "basic_borderRadius": "Raio da borda",
+  "basic_circle": "Círculo",
+  "basic_pin": "Alfinete"
 }

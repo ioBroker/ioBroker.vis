@@ -619,5 +619,9 @@
   "Bar text": "Подпись",
   "Bar color": "Фоновый цвет",
   "Bar icon": "Икона",
-  "Bar image": "Изображение"
+  "Bar image": "Изображение",
+  "basic_borderColor": "Цвет границы",
+  "basic_borderRadius": "Радиус границы",
+  "basic_circle": "Круг",
+  "basic_pin": "Приколоть"
 }

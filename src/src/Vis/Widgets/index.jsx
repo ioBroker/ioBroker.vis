@@ -1,5 +1,6 @@
 // eslint-disable-next-line import/no-cycle
 import BasicBar from './Basic/BasicBar';
+import BasicRedNumber from './Basic/BasicRedNumber';
 import BasicHtml from './Basic/BasicHtml';
 import BasicValueString from './Basic/BasicValueString';
 import BasicViewInWidget from './Basic/BasicViewInWidget';
@@ -41,6 +42,7 @@ const WIDGETS = [
     BasicViewInWidget8,
     BasicGroup,
     BasicSvgBool,
+    BasicRedNumber,
 
     JQuiButton,
     JQuiButtonBlank,

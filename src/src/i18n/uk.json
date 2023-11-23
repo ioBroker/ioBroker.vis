@@ -619,5 +619,9 @@
   "Bar text": "Підпис",
   "Bar color": "Колір фону",
   "Bar icon": "значок",
-  "Bar image": "Зображення"
+  "Bar image": "Зображення",
+  "basic_borderColor": "Колір рамки",
+  "basic_borderRadius": "Радіус кордону",
+  "basic_circle": "Коло",
+  "basic_pin": "Pin"
 }

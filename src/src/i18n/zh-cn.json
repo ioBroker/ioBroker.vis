@@ -619,5 +619,9 @@
   "Bar text": "标题",
   "Bar color": "背景颜色",
   "Bar icon": "图标",
-  "Bar image": "图像"
+  "Bar image": "图像",
+  "basic_borderColor": "边框颜色",
+  "basic_borderRadius": "边界半径",
+  "basic_circle": "圆圈",
+  "basic_pin": "别针"
 }

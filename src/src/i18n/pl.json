@@ -619,5 +619,9 @@
   "Bar text": "Podpis",
   "Bar color": "Kolor tła",
   "Bar icon": "Ikona",
-  "Bar image": "Obraz"
+  "Bar image": "Obraz",
+  "basic_borderColor": "Kolor ramki",
+  "basic_borderRadius": "Promień granicy",
+  "basic_circle": "Koło",
+  "basic_pin": "Szpilka"
 }

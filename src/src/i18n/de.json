@@ -619,5 +619,9 @@
   "Bar text": "Untertitel",
   "Bar color": "Hintergrundfarbe",
   "Bar icon": "Symbol",
-  "Bar image": "Bild"
+  "Bar image": "Bild",
+  "basic_borderColor": "Randfarbe",
+  "basic_borderRadius": "Grenzradius",
+  "basic_circle": "Kreis",
+  "basic_pin": "Stift"
 }

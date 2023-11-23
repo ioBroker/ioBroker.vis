@@ -3,11 +3,12 @@ import React from 'react';
 // eslint-disable-next-line import/no-cycle
 import VisRxWidget from '../../visRxWidget';
 
-interface BasicBarProps {
+interface RxRenderWidgetProps {
+    className: string;
+    style: React.CSSProperties;
     id: string;
-    context: Record<string, unknown>;
-    view: string;
-    editMode: boolean;
+    refService: React.RefObject<HTMLDivElement>;
+    widget: object;
 }
 
 export default class BasicBar extends VisRxWidget {
@@ -117,7 +118,7 @@ export default class BasicBar extends VisRxWidget {
      *
      * @param props props passed to the parent classes render method
      */
-    renderWidgetBody(props: BasicBarProps): React.JSX.Element {
+    renderWidgetBody(props: RxRenderWidgetProps): React.JSX.Element {
         super.renderWidgetBody(props);
 
         let style: React.CSSProperties;

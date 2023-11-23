@@ -619,5 +619,9 @@
   "Bar text": "Ondertiteling",
   "Bar color": "Achtergrond kleur",
   "Bar icon": "Icoon",
-  "Bar image": "Afbeelding"
+  "Bar image": "Afbeelding",
+  "basic_borderColor": "Rand kleur",
+  "basic_borderRadius": "Randradius",
+  "basic_circle": "Cirkel",
+  "basic_pin": "Pin"
 }

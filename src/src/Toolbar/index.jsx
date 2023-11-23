@@ -10,7 +10,6 @@ import {
 
 import { withStyles } from '@mui/styles';
 
-
 import {
     Close as CloseIcon,
     Sync as SyncIcon,

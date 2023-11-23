@@ -619,5 +619,9 @@
   "Bar text": "Légende",
   "Bar color": "Couleur de l'arrière plan",
   "Bar icon": "Icône",
-  "Bar image": "Image"
+  "Bar image": "Image",
+  "basic_borderColor": "Couleur de la bordure",
+  "basic_borderRadius": "Rayon de la frontière",
+  "basic_circle": "Cercle",
+  "basic_pin": "Épingle"
 }
