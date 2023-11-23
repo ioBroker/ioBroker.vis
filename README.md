@@ -231,6 +231,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 ## Changelog
 ### **WORK IN PROGRESS**
 * (foxriver76) sort folders alphabetically in pages view
+* (foxriver76) fixed deselecting widgets with ctrl + click
 
 ### 2.7.0 (2023-11-22)
 * (foxriver76) implemented Basic Bar widget natively

@@ -417,22 +417,23 @@ class VisBaseWidget extends React.Component {
             }
         }
 
-        if (!this.props.selectedWidgets.includes(this.props.id)) {
-            if (e.shiftKey || e.ctrlKey) {
-                // add or remove
-                const pos = this.props.selectedWidgets.indexOf(this.props.id);
-                if (pos === -1) {
-                    const selectedWidgets = [...this.props.selectedWidgets, this.props.id];
-                    this.props.context.setSelectedWidgets(selectedWidgets);
-                } else {
-                    const selectedWidgets = [...this.props.selectedWidgets];
-                    selectedWidgets.splice(pos, 1);
-                    this.props.context.setSelectedWidgets(selectedWidgets);
-                }
+        if (e.shiftKey || e.ctrlKey) {
+            // add or remove
+            const pos = this.props.selectedWidgets.indexOf(this.props.id);
+            if (pos === -1) {
+                const selectedWidgets = [...this.props.selectedWidgets, this.props.id];
+                this.props.context.setSelectedWidgets(selectedWidgets);
             } else {
-                // set select
-                this.props.context.setSelectedWidgets([this.props.id]);
+                const selectedWidgets = [...this.props.selectedWidgets];
+                selectedWidgets.splice(pos, 1);
+                this.props.context.setSelectedWidgets(selectedWidgets);
             }
+            return;
+        }
+
+        if (!this.props.selectedWidgets.includes(this.props.id)) {
+            // set select
+            this.props.context.setSelectedWidgets([this.props.id]);
         } else if (this.props.moveAllowed && this.state.draggable !== false) {
             if (!this.props.isRelative) {
                 // User can drag only objects of the same type
