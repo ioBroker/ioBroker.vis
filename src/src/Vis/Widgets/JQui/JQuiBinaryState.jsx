@@ -514,11 +514,12 @@ class JQuiBinaryState extends VisRxWidget {
             />;
         }
 
-        return <Switch
-            style={style}
-            checked={isOn}
-            onChange={() => this.onClick()}
-        />;
+        return <div style={style}>
+            <Switch
+                checked={false}
+                onChange={() => this.onClick()}
+            />
+        </div>;
     }
 
     renderCheckbox(isOn, style) {

@@ -232,6 +232,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 ### **WORK IN PROGRESS**
 * (foxriver76) sort folders alphabetically in pages view
 * (foxriver76) fixed deselecting widgets with ctrl + click
+* (foxriver76) fixed display issue with switch component
 * (bleufox) implemented Basic Red Number widget natively
 
 ### 2.7.0 (2023-11-22)
