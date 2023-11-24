@@ -101,7 +101,7 @@ export interface VisLegacy {
     changeView: (viewDiv: string, view: string, hideOptions: any, showOptions: any, sync: boolean, cb: () => void) => void;
     getCurrentPath: () => string;
     navigateInView: (path: string) => void;
-    onWakeUp: (callback: () => void, wid?: string) => void;
+    onWakeUp: (callback: () => void | string, wid?: string) => void;
     // inspectWidgets: (viewDiv: string, view: string, addWidget, delWidget, onlyUpdate: boolean) => void,
     // showMessage: (message: string, title: string, icon, width, callback) => void,
     showWidgetHelper: (viewDiv: string, view: string, wid: string, isShow: boolean) => void,

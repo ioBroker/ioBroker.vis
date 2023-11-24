@@ -9,6 +9,7 @@ import BasicGroup from './Basic/BasicGroup';
 import BasicSvgBool from './Basic/BasicSvgBool';
 import BasicSvgShape from './Basic/BasicSvgShape';
 import BasicScreenResolution from './Basic/BasicScreenResolution';
+import BasicIFrame from './Basic/BasicIFrame';
 
 import JQuiButton from './JQui/JQuiButton';
 import JQuiButtonBlank from './JQui/JQuiButtonBlank';
@@ -47,6 +48,7 @@ const WIDGETS = [
     BasicRedNumber,
     BasicSvgShape,
     BasicScreenResolution,
+    BasicIFrame,
 
     JQuiButton,
     JQuiButtonBlank,

@@ -1089,57 +1089,57 @@
                 });
             }
         },
-        iframeRefresh: function (el, src, refreshInterval, refreshOnWakeUp, refreshOnViewChange, refreshWithNoQuery) {
-            var widgetView;
-            if (src && typeof src === 'object') {
-                widgetView = refreshInterval;
-                refreshInterval     = src.refreshInterval;
-                refreshOnWakeUp     = src.refreshOnWakeUp;
-                refreshOnViewChange = src.refreshOnViewChange;
-                refreshWithNoQuery  = src.refreshWithNoQuery;
-                src                 = src.src;
-            } else if (refreshInterval && typeof refreshInterval === 'object') {
-                widgetView = refreshOnWakeUp;
-                refreshInterval     = refreshInterval.refreshInterval;
-                refreshOnWakeUp     = refreshInterval.refreshOnWakeUp;
-                refreshOnViewChange = refreshInterval.refreshOnViewChange;
-                refreshWithNoQuery  = refreshInterval.refreshWithNoQuery;
-            }
-            refreshOnViewChange = refreshOnViewChange === true || refreshOnViewChange === 'true';
-            refreshOnWakeUp     = refreshOnWakeUp     === true || refreshOnWakeUp     === 'true';
-            refreshWithNoQuery  = refreshWithNoQuery  === true || refreshWithNoQuery  === 'true';
-
-            if (!vis.editMode && src) {
-                var $this = $(el).parent().find('iframe');
-                var wid = $this.attr('id');
-                refreshInterval = parseInt(refreshInterval, 10) || 0;
-
-                if (refreshOnViewChange) {
-                    widgetView = widgetView || vis.activeView;
-                    vis.navChangeCallbacks.push({cb: function (view) {
-                        if (view === widgetView) {
-                            $this.attr('src', src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + Date.now()));
-                        }
-                    }, id: wid});
-                }
-                if (refreshInterval > 0) {
-                    setInterval(function () {
-                        if ($this.is(':visible')) {
-                            var p = $this.parents(':hidden');
-                            if (!p.length || p[0].tagName === 'BODY' || p[0].id === 'materialdesign-vuetify-container') {
-                                $this.attr('src', src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + Date.now()));
-                            }
-                        }
-                    }, refreshInterval);
-                }
-                if (refreshOnWakeUp) {
-                    vis.onWakeUp(function () {
-                        // TODO this does not work. :(
-                        $this.attr('src', src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + Date.now()));
-                    }, wid);
-                }
-            }
-        },
+        // iframeRefresh: function (el, src, refreshInterval, refreshOnWakeUp, refreshOnViewChange, refreshWithNoQuery) {
+        //     var widgetView;
+        //     if (src && typeof src === 'object') {
+        //         widgetView = refreshInterval;
+        //         refreshInterval     = src.refreshInterval;
+        //         refreshOnWakeUp     = src.refreshOnWakeUp;
+        //         refreshOnViewChange = src.refreshOnViewChange;
+        //         refreshWithNoQuery  = src.refreshWithNoQuery;
+        //         src                 = src.src;
+        //     } else if (refreshInterval && typeof refreshInterval === 'object') {
+        //         widgetView = refreshOnWakeUp;
+        //         refreshInterval     = refreshInterval.refreshInterval;
+        //         refreshOnWakeUp     = refreshInterval.refreshOnWakeUp;
+        //         refreshOnViewChange = refreshInterval.refreshOnViewChange;
+        //         refreshWithNoQuery  = refreshInterval.refreshWithNoQuery;
+        //     }
+        //     refreshOnViewChange = refreshOnViewChange === true || refreshOnViewChange === 'true';
+        //     refreshOnWakeUp     = refreshOnWakeUp     === true || refreshOnWakeUp     === 'true';
+        //     refreshWithNoQuery  = refreshWithNoQuery  === true || refreshWithNoQuery  === 'true';
+        //
+        //     if (!vis.editMode && src) {
+        //         var $this = $(el).parent().find('iframe');
+        //         var wid = $this.attr('id');
+        //         refreshInterval = parseInt(refreshInterval, 10) || 0;
+        //
+        //         if (refreshOnViewChange) {
+        //             widgetView = widgetView || vis.activeView;
+        //             vis.navChangeCallbacks.push({cb: function (view) {
+        //                 if (view === widgetView) {
+        //                     $this.attr('src', src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + Date.now()));
+        //                 }
+        //             }, id: wid});
+        //         }
+        //         if (refreshInterval > 0) {
+        //             setInterval(function () {
+        //                 if ($this.is(':visible')) {
+        //                     var p = $this.parents(':hidden');
+        //                     if (!p.length || p[0].tagName === 'BODY' || p[0].id === 'materialdesign-vuetify-container') {
+        //                         $this.attr('src', src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + Date.now()));
+        //                     }
+        //                 }
+        //             }, refreshInterval);
+        //         }
+        //         if (refreshOnWakeUp) {
+        //             vis.onWakeUp(function () {
+        //                 // TODO this does not work. :(
+        //                 $this.attr('src', src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + Date.now()));
+        //             }, wid);
+        //         }
+        //     }
+        // },
         htmlRefresh: function (el, html, refreshInterval) {
             refreshInterval = parseInt(refreshInterval, 10) || 0;
             if (html && !vis.editMode && refreshInterval > 0) {
@@ -2301,7 +2301,7 @@
     </div>
 </script-->
 
-<script id="tplIFrame"
+<!--script id="tplIFrame"
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
@@ -2318,7 +2318,7 @@
             <div <%= (el) -> vis.binds.basic.iframeRefresh(el, data, this.view) %>></div>
         </div>
     </div>
-</script>
+</script-->
 
 <script id="tplImage"
         type="text/ejs"

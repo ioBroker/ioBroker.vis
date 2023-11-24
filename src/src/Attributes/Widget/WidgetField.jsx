@@ -753,6 +753,7 @@ const WidgetField = props => {
     }
 
     if (field.type === 'slider') {
+        // make space before slider element, as if it is at minimum it overlaps with the label
         return <div style={{ display: 'flex' }}>
             <div style={{ width: 5 }}></div>
             <Slider
@@ -769,6 +770,7 @@ const WidgetField = props => {
             />
             <Input
                 className={props.classes.fieldContentSliderInput}
+                style={{ width: field.max > 100000 ? 70 : (field.max > 10000 ? 60 : 50) }}
                 value={value}
                 disabled={disabled}
                 size="small"

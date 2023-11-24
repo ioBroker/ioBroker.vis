@@ -33,7 +33,7 @@ import {
     SelectFile as SelectFileDialog, Icon,
 } from '@iobroker/adapter-react-v5';
 import {
-    isGroup, deepClone, getNewWidgetId, getNewGroupId, copyGroup,
+    isGroup, getNewWidgetId, getNewGroupId, copyGroup,
 } from './Utils/utils';
 import { recalculateFields, store, updateProject } from './Store';
 
