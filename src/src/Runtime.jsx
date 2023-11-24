@@ -979,7 +979,6 @@ class Runtime extends GenericApp {
             visCommonCss={this.state.visCommonCss}
             visUserCss={this.state.visUserCss}
             lang={this.socket.systemLang}
-            views={store.getState().visProject}
             adapterName={this.adapterName}
             instance={this.instance}
             selectedWidgets={this.state.selectedWidgets}

@@ -52,6 +52,7 @@ import VisView from './visView';
 import VisFormatUtils from './visFormatUtils';
 import { getUrlParameter, extractBinding } from './visUtils';
 import VisWidgetsCatalog from './visWidgetsCatalog';
+import { store } from '../Store';
 
 function _translateWord(text, lang, dictionary) {
     if (!text) {
@@ -149,10 +150,6 @@ class VisEngine extends React.Component {
 
         // set moment locale
         moment.locale(window.systemLang);
-
-        // this.jsonViews = JSON.stringify(props.views);
-
-        // this.divRef = React.createRef();
 
         this.can = window.can;
         this.scripts = null;
@@ -298,7 +295,8 @@ class VisEngine extends React.Component {
         // eslint-disable-next-line func-names
         window.$.ui.dialog.prototype._appendTo = function () {
             const wid = this.options.wid;
-            const view = Object.keys(that.props.views).find(v => that.props.views[v].widgets && that.props.views[v].widgets[wid]);
+            const views = store.getState().visProject;
+            const view = Object.keys(views).find(v => views[v].widgets && views[v].widgets[wid]);
             !view && console.warn(`Cannot find view for widget "${wid}"!`);
             return this.document.find(view ? `#visview_${view.replace(/\s/g, '_')}` : 'body').eq(0);
         };
@@ -373,7 +371,7 @@ class VisEngine extends React.Component {
             IDs: [],
         };
 
-        Object.keys(this.props.views).forEach(viewId => {
+        Object.keys(store.getState().visProject).forEach(viewId => {
             if (viewId !== '___settings') {
                 this.vis.subscribing.byViews[viewId] = [];
                 this.vis.subscribing.activeViews.push(viewId);
@@ -412,7 +410,7 @@ class VisEngine extends React.Component {
             navChangeCallbacks: [],
             editMode: !!this.props.editMode,
             binds: {},
-            views: this.props.views,
+            views: store.getState().visProject,
             activeView: this.props.selectedView,
             language: this.props.lang,
             user: '',
@@ -704,12 +702,13 @@ class VisEngine extends React.Component {
                     format, view, wid, widget, widgetData, values, moment,
                 }),
             getViewOfWidget: id => {
+                const views = store.getState().visProject;
                 // find a view of this widget
-                for (const v in this.props.views) {
+                for (const v in views) {
                     if (v === '___settings') {
                         continue;
                     }
-                    if (this.props.views[v]?.widgets && this.props.views[v].widgets[id]) {
+                    if (views[v]?.widgets && views[v].widgets[id]) {
                         return v;
                     }
                 }
@@ -827,7 +826,7 @@ class VisEngine extends React.Component {
                 return line;
             },
             isWidgetHidden: (view, widget, val, widgetData) => {
-                widgetData = widgetData || this.props.views[view].widgets[widget].data;
+                widgetData = widgetData || store.getState().visProject[view].widgets[widget].data;
                 const oid = widgetData['visibility-oid'];
                 const condition = widgetData['visibility-cond'];
                 if (oid) {
@@ -1253,14 +1252,15 @@ class VisEngine extends React.Component {
 
         let result = null;
         const views = [];
-        let difference = 10000;
+        let difference = 10_000;
 
+        const { visProject } = store.getState();
         // First, find all with the best fitting width
-        Object.keys(this.props.views).forEach(view => {
+        Object.keys(visProject).forEach(view => {
             if (view !== '___settings' &&
-                this.props.views[view].settings &&
-                this.props.views[view].settings.useAsDefault) {
-                const ww = parseInt(this.props.views[view].settings.sizex, 10);
+                visProject[view].settings &&
+                visProject[view].settings.useAsDefault) {
+                const ww = parseInt(visProject[view].settings.sizex, 10);
                 // If difference less than 20%
                 if (Math.abs(ww - w) / ww < 0.2) {
                     views.push(view);
@@ -1269,8 +1269,8 @@ class VisEngine extends React.Component {
         });
 
         views.forEach(view => {
-            if (view !== '___settings' && this.props.views[view].settings) {
-                const hh = parseInt(this.props.views[view].settings.sizey, 10);
+            if (view !== '___settings' && visProject[view].settings) {
+                const hh = parseInt(visProject[view].settings.sizey, 10);
                 if (Math.abs(hh - h) < difference) {
                     result = view;
                     difference = Math.abs(hh - h);
@@ -1281,13 +1281,13 @@ class VisEngine extends React.Component {
         // try to find by ratio
         if (!result) {
             const ratio = w / h;
-            difference = 10000;
+            difference = 10_000;
 
-            Object.keys(this.props.views).forEach(view => {
+            Object.keys(visProject).forEach(view => {
                 if (view !== '___settings' &&
-                    this.props.views[view].settings?.useAsDefault) {
-                    const ww = parseInt(this.props.views[view].settings.sizex, 10);
-                    const hh = parseInt(this.props.views[view].settings.sizey, 10);
+                    visProject[view].settings?.useAsDefault) {
+                    const ww = parseInt(visProject[view].settings.sizex, 10);
+                    const hh = parseInt(visProject[view].settings.sizey, 10);
 
                     // If difference less than 20%
                     if (hh && Math.abs(ratio - (ww / hh)) < difference) {
@@ -1299,7 +1299,7 @@ class VisEngine extends React.Component {
         }
 
         if (!result && resultRequiredOrX) {
-            result = Object.keys(this.props.views).find(view => view !== '___settings');
+            result = Object.keys(visProject).find(view => view !== '___settings');
         }
 
         return result;
@@ -1434,23 +1434,6 @@ class VisEngine extends React.Component {
         }
     };
 
-    // Following code is only required if legacy vis is used
-    // eslint-disable-next-line camelcase
-    /*
-    UNSAFE_componentWillReceiveProps(nextProps) {
-        const views = JSON.stringify(nextProps.views);
-        if (views !== this.jsonViews) {
-            this.jsonViews = views;
-            this.vis.updateViews(JSON.parse(JSON.stringify(nextProps.views)));
-        }
-
-        if (nextProps.editMode !== this.state.editMode) {
-            this.vis.setEditMode(nextProps.editMode);
-            this.setState({ editMode: nextProps.editMode });
-        }
-    }
-    */
-
     static async loadScriptsOfOneWidgetSet(widgetSet) {
         for (const { oldScript, newScript } of widgetSet) {
             try {
@@ -1546,7 +1529,7 @@ class VisEngine extends React.Component {
             const div = document.createElement('div');
             document.body.appendChild(div);
 
-            await VisEngine.setInnerHTML(div, text, this.props.runtime && VisWidgetsCatalog.getUsedWidgetSets(this.props.views));
+            await VisEngine.setInnerHTML(div, text, this.props.runtime && VisWidgetsCatalog.getUsedWidgetSets(store.getState().visProject));
 
             this.props.onLoaded && this.props.onLoaded();
         } catch (error) {
@@ -1586,6 +1569,7 @@ class VisEngine extends React.Component {
             }
             return true;
         }
+
         // external Commands
         switch (command) {
             case 'alert': {
@@ -1602,7 +1586,7 @@ class VisEngine extends React.Component {
                 const parts = data.split('/');
 
                 // it is "ProjectName/ViewName"
-                if (!this.props.views[parts[0]] && parts[1]) {
+                if (!store.getState().visProject[parts[0]] && parts[1]) {
                     const projectName = parts.shift();
                     // detect actual project
                     if (projectName !== this.props.projectName) {
@@ -1630,9 +1614,10 @@ class VisEngine extends React.Component {
                 break;
             case 'dialog':
             case 'dialogOpen': {
+                const { visProject } = store.getState();
                 const el = window.document.getElementById(data) || window.document.querySelector(`[data-dialog-name="${data}"]`);
                 // get reference to view
-                const viewName = Object.keys(this.props.views).find(view => this.props.views[view].widgets[data]);
+                const viewName = Object.keys(visProject).find(view => visProject[view].widgets?.[data]);
                 if (viewName && this.refViews[viewName]?.onCommand) {
                     this.refViews[viewName].onCommand('openDialog', data);
                 }
@@ -1646,9 +1631,10 @@ class VisEngine extends React.Component {
                 break;
             }
             case 'dialogClose': {
+                const { visProject } = store.getState();
                 const el = window.document.getElementById(data) || window.document.querySelector(`[data-dialog-name="${data}"]`);
                 // get reference to view
-                const viewName = Object.keys(this.props.views).find(view => this.props.views[view].widgets[data]);
+                const viewName = Object.keys(visProject).find(view => visProject[view].widgets?.[data]);
                 if (viewName && this.refViews[viewName]?.onCommand) {
                     this.refViews[viewName].onCommand('closeDialog', data);
                 }
@@ -1896,11 +1882,13 @@ class VisEngine extends React.Component {
     };
 
     updateCustomScripts() {
-        if (this.props.views) {
+        const { visProject } = store.getState();
+
+        if (visProject) {
             if (!this.props.editMode) {
-                if (this.props.views.___settings) {
-                    if (this.scripts !== (this.props.views.___settings.scripts || '')) {
-                        this.scripts = this.props.views.___settings.scripts || '';
+                if (visProject.___settings) {
+                    if (this.scripts !== (visProject.___settings.scripts || '')) {
+                        this.scripts = visProject.___settings.scripts || '';
                         let userScript = window.document.getElementById('#vis_user_scripts');
                         if (!userScript) {
                             userScript = window.document.createElement('script');
@@ -2008,9 +1996,11 @@ ${this.scripts}
             return <LinearProgress />;
         }
 
+        const { visProject } = store.getState();
+
         this.vis.editMode = this.props.editMode;
         this.vis.activeView = this.props.activeView;
-        this.vis.views = this.props.views;
+        this.vis.views = visProject;
 
         this.updateCustomScripts();
         this.updateCommonCss();
@@ -2063,7 +2053,7 @@ ${this.scripts}
             timeStart: this.state.timeStart,
             user: this.userName,
             userGroups: this.props.userGroups,
-            views: this.props.views, // project
+            views: visProject,
             widgetHint: this.props.widgetHint,
             registerEditorCallback: this.props.runtime ? null : this.props.registerEditorCallback,
             setSelectedGroup: this.props.runtime ? null : this.props.setSelectedGroup,
@@ -2075,10 +2065,10 @@ ${this.scripts}
             moment,
         };
 
-        const views = Object.keys(this.props.views).map(view => {
+        const views = Object.keys(visProject).map(view => {
             if (view !== '___settings' && (
                 view === this.props.activeView ||
-                    this.props.views[view].settings?.alwaysRender ||
+                    visProject[view].settings?.alwaysRender ||
                     (!this.props.editMode && this.state.legacyRequestedViews.includes(view))
             )) {
                 // return <div key={view} id="vis_container" ref={this.divRef} style={{ width: '100%', height: '100%' }} />;
@@ -2113,7 +2103,6 @@ ${this.scripts}
 
 VisEngine.propTypes = {
     socket: PropTypes.object.isRequired,
-    views: PropTypes.object.isRequired, // project
     activeView: PropTypes.string,
     lang: PropTypes.string.isRequired,
     editMode: PropTypes.bool,

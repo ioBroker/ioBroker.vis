@@ -7,6 +7,7 @@ export interface ProjectSettings {
     reloadOnEdit: boolean;
     reloadOnSleep: number;
     statesDebounceTime: number;
+    scripts: unknown;
 }
 
 interface SingleWidget  {
@@ -34,6 +35,7 @@ export interface View {
     filterList: string[];
     rerender: boolean;
     settings: Record<string, unknown>;
+    /** Widgets on this view */
     widgets: Record<string, Widget>;
 }
 

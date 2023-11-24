@@ -235,6 +235,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 * (foxriver76) fixed display issue with switch component
 * (bluefox) implemented Basic Red Number widget natively
 * (foxriver76) fixed copy/clone of grouped widgets
+* (foxriver76) fixed problem with open/close dialog via state
 
 ### 2.7.0 (2023-11-22)
 * (foxriver76) implemented Basic Bar widget natively
