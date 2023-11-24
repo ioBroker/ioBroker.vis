@@ -623,5 +623,15 @@
   "basic_borderColor": "Border color",
   "basic_borderRadius": "Border radius",
   "basic_circle": "Circle",
-  "basic_pin": "Pin"
+  "basic_pin": "Pin",
+  "basic_line": "Line",
+  "basic_triangle": "Triangle",
+  "basic_square": "Square",
+  "basic_pentagone": "Pentagone",
+  "basic_hexagone": "Hexagone",
+  "basic_octagone": "Octagone",
+  "basic_star": "Star",
+  "basic_arrow": "Arrow",
+  "basic_custom": "Custom polygon",
+  "App bar": "Application bar"
 }

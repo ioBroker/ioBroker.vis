@@ -623,5 +623,15 @@
   "basic_borderColor": "边框颜色",
   "basic_borderRadius": "边界半径",
   "basic_circle": "圆圈",
-  "basic_pin": "别针"
+  "basic_pin": "别针",
+  "basic_line": "线",
+  "basic_triangle": "三角形",
+  "basic_square": "正方形",
+  "basic_pentagone": "五角大楼",
+  "basic_hexagone": "六边形",
+  "basic_octagone": "八角形",
+  "basic_star": "星星",
+  "basic_arrow": "箭",
+  "basic_custom": "自定义多边形",
+  "App bar": "应用栏"
 }

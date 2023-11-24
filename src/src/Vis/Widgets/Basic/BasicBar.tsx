@@ -83,7 +83,7 @@ export default class BasicBar extends VisRxWidget {
     }
 
     /**
-     * Calculate width or height of the bar w.r.t. to the border
+     * Calculate the width or height of the bar w.r.t. to the border
      *
      * @param css the border css attribute
      * @param multiplier number of borders, normally 2
@@ -103,7 +103,7 @@ export default class BasicBar extends VisRxWidget {
     }
 
     /**
-     * Calculate length of the bar
+     * Calculate the length of the bar
      */
     getCalc(): string {
         const min = (this.state.rxData.min || this.state.rxData.min === 0) ? parseFloat(this.state.rxData.min) : 0;

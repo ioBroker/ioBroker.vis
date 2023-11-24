@@ -7,6 +7,8 @@ import BasicViewInWidget from './Basic/BasicViewInWidget';
 import BasicViewInWidget8 from './Basic/BasicViewInWidget8';
 import BasicGroup from './Basic/BasicGroup';
 import BasicSvgBool from './Basic/BasicSvgBool';
+import BasicSvgShape from './Basic/BasicSvgShape';
+import BasicScreenResolution from './Basic/BasicScreenResolution';
 
 import JQuiButton from './JQui/JQuiButton';
 import JQuiButtonBlank from './JQui/JQuiButtonBlank';
@@ -43,6 +45,8 @@ const WIDGETS = [
     BasicGroup,
     BasicSvgBool,
     BasicRedNumber,
+    BasicSvgShape,
+    BasicScreenResolution,
 
     JQuiButton,
     JQuiButtonBlank,

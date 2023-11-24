@@ -623,5 +623,15 @@
   "basic_borderColor": "Randfarbe",
   "basic_borderRadius": "Grenzradius",
   "basic_circle": "Kreis",
-  "basic_pin": "Stift"
+  "basic_pin": "Stift",
+  "basic_line": "Linie",
+  "basic_triangle": "Dreieck",
+  "basic_square": "Quadrat",
+  "basic_pentagone": "Pentagon",
+  "basic_hexagone": "Sechseck",
+  "basic_octagone": "Achteck",
+  "basic_star": "Stern",
+  "basic_arrow": "Pfeil",
+  "basic_custom": "Benutzerdefiniertes Polygon",
+  "App bar": "Anwendungsleiste"
 }

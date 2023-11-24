@@ -623,5 +623,15 @@
   "basic_borderColor": "Rand kleur",
   "basic_borderRadius": "Randradius",
   "basic_circle": "Cirkel",
-  "basic_pin": "Pin"
+  "basic_pin": "Pin",
+  "basic_line": "Lijn",
+  "basic_triangle": "Driehoek",
+  "basic_square": "Vierkant",
+  "basic_pentagone": "Pentagon",
+  "basic_hexagone": "Zeshoek",
+  "basic_octagone": "Achthoek",
+  "basic_star": "Ster",
+  "basic_arrow": "Pijl",
+  "basic_custom": "Aangepaste veelhoek",
+  "App bar": "Toepassingsbalk"
 }

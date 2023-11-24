@@ -1259,7 +1259,8 @@ class VisEngine extends React.Component {
         Object.keys(visProject).forEach(view => {
             if (view !== '___settings' &&
                 visProject[view].settings &&
-                visProject[view].settings.useAsDefault) {
+                visProject[view].settings.useAsDefault
+            ) {
                 const ww = parseInt(visProject[view].settings.sizex, 10);
                 // If difference less than 20%
                 if (Math.abs(ww - w) / ww < 0.2) {
@@ -1284,8 +1285,7 @@ class VisEngine extends React.Component {
             difference = 10_000;
 
             Object.keys(visProject).forEach(view => {
-                if (view !== '___settings' &&
-                    visProject[view].settings?.useAsDefault) {
+                if (view !== '___settings' && visProject[view].settings?.useAsDefault) {
                     const ww = parseInt(visProject[view].settings.sizex, 10);
                     const hh = parseInt(visProject[view].settings.sizey, 10);
 
@@ -1299,7 +1299,8 @@ class VisEngine extends React.Component {
         }
 
         if (!result && resultRequiredOrX) {
-            result = Object.keys(visProject).find(view => view !== '___settings');
+            result = Object.keys(visProject).find(view => view !== '___settings' && visProject[view].settings?.useAsDefault);
+            result = result || Object.keys(visProject).find(view => view !== '___settings');
         }
 
         return result;

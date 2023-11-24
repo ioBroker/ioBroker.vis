@@ -623,5 +623,15 @@
   "basic_borderColor": "Couleur de la bordure",
   "basic_borderRadius": "Rayon de la frontière",
   "basic_circle": "Cercle",
-  "basic_pin": "Épingle"
+  "basic_pin": "Épingle",
+  "basic_line": "Doubler",
+  "basic_triangle": "Triangle",
+  "basic_square": "Carré",
+  "basic_pentagone": "Pentagone",
+  "basic_hexagone": "Hexagone",
+  "basic_octagone": "Octogone",
+  "basic_star": "Étoile",
+  "basic_arrow": "Flèche",
+  "basic_custom": "Polygone personnalisé",
+  "App bar": "Barre d'application"
 }

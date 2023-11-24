@@ -623,5 +623,15 @@
   "basic_borderColor": "Color del borde",
   "basic_borderRadius": "Radio del borde",
   "basic_circle": "Círculo",
-  "basic_pin": "Alfiler"
+  "basic_pin": "Alfiler",
+  "basic_line": "Línea",
+  "basic_triangle": "Triángulo",
+  "basic_square": "Cuadrado",
+  "basic_pentagone": "Pentágono",
+  "basic_hexagone": "hexágono",
+  "basic_octagone": "octágono",
+  "basic_star": "Estrella",
+  "basic_arrow": "Flecha",
+  "basic_custom": "polígono personalizado",
+  "App bar": "barra de aplicaciones"
 }

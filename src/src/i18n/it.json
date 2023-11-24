@@ -623,5 +623,15 @@
   "basic_borderColor": "Colore del bordo",
   "basic_borderRadius": "Raggio del confine",
   "basic_circle": "Cerchio",
-  "basic_pin": "Spillo"
+  "basic_pin": "Spillo",
+  "basic_line": "Linea",
+  "basic_triangle": "Triangolo",
+  "basic_square": "Piazza",
+  "basic_pentagone": "Pentagono",
+  "basic_hexagone": "Esagono",
+  "basic_octagone": "Ottagono",
+  "basic_star": "Stella",
+  "basic_arrow": "Freccia",
+  "basic_custom": "Poligono personalizzato",
+  "App bar": "Barra delle applicazioni"
 }

@@ -623,5 +623,15 @@
   "basic_borderColor": "Колір рамки",
   "basic_borderRadius": "Радіус кордону",
   "basic_circle": "Коло",
-  "basic_pin": "Pin"
+  "basic_pin": "Pin",
+  "basic_line": "лінія",
+  "basic_triangle": "Трикутник",
+  "basic_square": "Майдан",
+  "basic_pentagone": "П'ятикутник",
+  "basic_hexagone": "Шестикутник",
+  "basic_octagone": "Восьмикутник",
+  "basic_star": "зірка",
+  "basic_arrow": "Стрілка",
+  "basic_custom": "Довільний полігон",
+  "App bar": "Панель додатків"
 }

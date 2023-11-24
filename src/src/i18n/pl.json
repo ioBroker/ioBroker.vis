@@ -623,5 +623,15 @@
   "basic_borderColor": "Kolor ramki",
   "basic_borderRadius": "Promień granicy",
   "basic_circle": "Koło",
-  "basic_pin": "Szpilka"
+  "basic_pin": "Szpilka",
+  "basic_line": "Linia",
+  "basic_triangle": "Trójkąt",
+  "basic_square": "Kwadrat",
+  "basic_pentagone": "Pentagon",
+  "basic_hexagone": "Sześciokąt",
+  "basic_octagone": "Oktagon",
+  "basic_star": "Gwiazda",
+  "basic_arrow": "Strzałka",
+  "basic_custom": "Niestandardowy wielokąt",
+  "App bar": "Pasek aplikacji"
 }

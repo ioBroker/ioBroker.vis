@@ -1717,60 +1717,60 @@
 
             return format;
         },
-        detectScreen: function (wid) {
-            if (!vis.navChangeCallbacks.find(item => typeof item === 'object' && item.cb === vis.binds.basic.detectScreen)) {
-                vis.navChangeCallbacks.push({ cb: vis.binds.basic.detectScreen, id: wid });
-            }
-
-            function onResize () {
-                if (vis.editMode) {
-                    $('.vis-resolution-width').html(vis.views[vis.activeView].settings.sizex  || $(window).width());
-                    $('.vis-resolution-height').html(vis.views[vis.activeView].settings.sizey || $(window).height());
-                    $('.vis-resolution-default-view').html(vis.findNearestResolution(vis.views[vis.activeView].settings.sizex || $(window).width(), vis.views[vis.activeView].settings.sizey || $(window).height()));
-                } else {
-                    $('.vis-resolution-width').html($(window).width());
-                    $('.vis-resolution-height').html($(window).height());
-                    $('.vis-resolution-default-view').html(vis.findNearestResolution());
-                }
-            }
-
-            setTimeout(function () {
-                $(window).bind('resize', onResize);
-                if (vis.editMode) {
-                    $('.vis-resolution-width').html(vis.views[vis.activeView].settings.sizex  || $(window).width());
-                    $('.vis-resolution-height').html(vis.views[vis.activeView].settings.sizey || $(window).height());
-                    $('.vis-resolution-default-view').html(vis.findNearestResolution(vis.views[vis.activeView].settings.sizex || $(window).width(), vis.views[vis.activeView].settings.sizey || $(window).height()));
-                } else {
-                    $('.vis-resolution-width').html($(window).width());
-                    $('.vis-resolution-height').html($(window).height());
-                    $('.vis-resolution-default-view').html(vis.findNearestResolution());
-                }
-            }, 100);
-
-            if (vis.editMode) {
-                $('#' + wid).data('destroy', function () {
-                    $(window).unbind('resize', onResize);
-                });
-            }
-        },
-        createScreenText: function () {
-            setTimeout(function () {
-                $('.basic-click-create-instance').unbind('click').click(function () {
-                    if (!vis.instance) {
-                        vis.generateInstance();
-                        if (vis.instance) {
-                            $(this).html(vis.instance).removeClass('basic-click-create-instance').css({
-                                'font-weight': 'inherit',
-                                cursor: 'inherit'
-                            });
-                        } else {
-                            window.alert('Cannot generate!');
-                        }
-                    }
-                });
-            }, 500);
-            return '<span class="basic-click-create-instance" style="font-weight: bold; cursor: pointer">' + _('click to create') + '</span>';
-        },
+        // detectScreen: function (wid) {
+        //     if (!vis.navChangeCallbacks.find(item => typeof item === 'object' && item.cb === vis.binds.basic.detectScreen)) {
+        //         vis.navChangeCallbacks.push({ cb: vis.binds.basic.detectScreen, id: wid });
+        //     }
+        //
+        //     function onResize () {
+        //         if (vis.editMode) {
+        //             $('.vis-resolution-width').html(vis.views[vis.activeView].settings.sizex  || $(window).width());
+        //             $('.vis-resolution-height').html(vis.views[vis.activeView].settings.sizey || $(window).height());
+        //             $('.vis-resolution-default-view').html(vis.findNearestResolution(vis.views[vis.activeView].settings.sizex || $(window).width(), vis.views[vis.activeView].settings.sizey || $(window).height()));
+        //         } else {
+        //             $('.vis-resolution-width').html($(window).width());
+        //             $('.vis-resolution-height').html($(window).height());
+        //             $('.vis-resolution-default-view').html(vis.findNearestResolution());
+        //         }
+        //     }
+        //
+        //     setTimeout(function () {
+        //         $(window).bind('resize', onResize);
+        //         if (vis.editMode) {
+        //             $('.vis-resolution-width').html(vis.views[vis.activeView].settings.sizex  || $(window).width());
+        //             $('.vis-resolution-height').html(vis.views[vis.activeView].settings.sizey || $(window).height());
+        //             $('.vis-resolution-default-view').html(vis.findNearestResolution(vis.views[vis.activeView].settings.sizex || $(window).width(), vis.views[vis.activeView].settings.sizey || $(window).height()));
+        //         } else {
+        //             $('.vis-resolution-width').html($(window).width());
+        //             $('.vis-resolution-height').html($(window).height());
+        //             $('.vis-resolution-default-view').html(vis.findNearestResolution());
+        //         }
+        //     }, 100);
+        //
+        //     if (vis.editMode) {
+        //         $('#' + wid).data('destroy', function () {
+        //             $(window).unbind('resize', onResize);
+        //         });
+        //     }
+        // },
+        // createScreenText: function () {
+        //     setTimeout(function () {
+        //         $('.basic-click-create-instance').unbind('click').click(function () {
+        //             if (!vis.instance) {
+        //                 vis.generateInstance();
+        //                 if (vis.instance) {
+        //                     $(this).html(vis.instance).removeClass('basic-click-create-instance').css({
+        //                         'font-weight': 'inherit',
+        //                         cursor: 'inherit'
+        //                     });
+        //                 } else {
+        //                     window.alert('Cannot generate!');
+        //                 }
+        //             }
+        //         });
+        //     }, 500);
+        //     return '<span class="basic-click-create-instance" style="font-weight: bold; cursor: pointer">' + _('click to create') + '</span>';
+        // },
         isFalse: function (val, min, max) {
             if (min !== undefined && min !== null && min !== '') {
                 if (val === 'true') {
@@ -1802,23 +1802,6 @@
             var f = parseFloat(val);
             if (f.toString() !== 'NaN') return !f;
             return false;
-        },
-        circlePoints: function (radius, num, step) {
-            var isArray = false;
-            if (step === true) {
-                isArray = true;
-                step = 0;
-            }
-            step = step || 360 / num;
-            var points = [];
-            var text = '';
-            for (var i = 0; i < num; i++) {
-                var point = {x:Math.sin(Math.PI / 180 * (i * step - 180)) * radius, y:Math.cos(Math.PI / 180 * (i * step - 180)) * radius};
-                points.push(point);
-                text += point.x + ', ' + point.y + ' ';
-            }
-            if (isArray) return points;
-            return text;
         },
         createValueGesture: function (widgetID, view, data, style) {
             var $div = $('#' + widgetID);
@@ -2258,7 +2241,7 @@
     </div>
 </script-->
 
-<script id="tplShapes"
+<!--script id="tplShapes"
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
@@ -2316,7 +2299,7 @@
             </svg>
         </div>
     </div>
-</script>
+</script-->
 
 <script id="tplIFrame"
         type="text/ejs"
@@ -3119,7 +3102,7 @@
     </div>
 </script>
 
-<script id="tplScreenResolution"
+<!--script-- id="tplScreenResolution"
         type="text/ejs"
         class="vis-tpl"
         data-vis-prev='<img src="widgets/basic/img/Prev_ScreenResolution.png"></img>'
@@ -3136,7 +3119,7 @@
 		</div>
 		<%= vis.binds.basic.detectScreen(this.data.attr('wid')) %>
     </div>
-</script>
+</script-->
 
 
 <!--script id="_tplGroup"

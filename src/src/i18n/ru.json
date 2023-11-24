@@ -623,5 +623,15 @@
   "basic_borderColor": "Цвет границы",
   "basic_borderRadius": "Радиус границы",
   "basic_circle": "Круг",
-  "basic_pin": "Приколоть"
+  "basic_pin": "Приколоть",
+  "basic_line": "Линия",
+  "basic_triangle": "Треугольник",
+  "basic_square": "Квадрат",
+  "basic_pentagone": "Пентагон",
+  "basic_hexagone": "шестиугольник",
+  "basic_octagone": "Октагон",
+  "basic_star": "Звезда",
+  "basic_arrow": "Стрелка",
+  "basic_custom": "Произвольный полигон",
+  "App bar": "Панель приложений"
 }
