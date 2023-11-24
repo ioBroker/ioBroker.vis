@@ -232,9 +232,10 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 ### **WORK IN PROGRESS**
 * (bleufox) implemented SVG shape and Screen Resolution widgets natively
 
+### 2.8.0 (2023-11-24)
 * (foxriver76) sort folders alphabetically in pages view
 * (foxriver76) fixed deselecting widgets with ctrl + click
-* (foxriver76) fixed display issue with switch component
+* (foxriver76) fixed display issue with a switch component
 * (bluefox) implemented Basic Red Number widget natively
 * (foxriver76) fixed copy/clone of grouped widgets
 * (foxriver76) fixed problem with open/close dialog via state
