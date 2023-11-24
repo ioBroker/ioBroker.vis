@@ -3,7 +3,7 @@ import React from 'react';
 // eslint-disable-next-line import/no-cycle
 import VisRxWidget from '../../visRxWidget';
 
-import { RxRenderWidgetProps } from '../../../Types';
+import { RxRenderWidgetProps } from '@/types';
 
 export default class BasicSvgShape extends VisRxWidget {
     /**

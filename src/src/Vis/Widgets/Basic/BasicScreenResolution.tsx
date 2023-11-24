@@ -8,7 +8,7 @@ import VisRxWidget from '../../visRxWidget';
 import {
     RxRenderWidgetProps, VisLegacy,
     RxWidgetState, RxWidgetProps,
-} from '../../../Types';
+} from '@/types';
 
 declare global {
     interface Window {

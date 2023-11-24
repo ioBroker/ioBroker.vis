@@ -2022,6 +2022,7 @@ ${this.scripts}
         this.context = {
             $$: window.$$,
             VisView,
+            activeView: this.props.activeView,
             adapterName: this.props.adapterName,
             allWidgets: this.allWidgets,
             askAboutInclude: this.props.askAboutInclude,
