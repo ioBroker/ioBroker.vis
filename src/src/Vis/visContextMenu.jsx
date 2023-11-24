@@ -290,7 +290,6 @@ const VisContextMenu = props => {
             changeProject={props.changeProject}
             selectedView={props.selectedView}
             project={store.getState().visProject}
-            getNewWidgetIdNumber={props.getNewWidgetIdNumber}
         /> : null}
         {exportDialog ? <WidgetExportDialog
             open={exportDialog}
@@ -308,7 +307,6 @@ VisContextMenu.propTypes = {
     cutWidgets: PropTypes.func,
     deleteWidgets: PropTypes.func,
     disabled: PropTypes.bool,
-    getNewWidgetIdNumber: PropTypes.func,
     groupWidgets: PropTypes.func,
     lockWidgets: PropTypes.func,
     orderWidgets: PropTypes.func,

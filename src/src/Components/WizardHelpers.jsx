@@ -276,30 +276,8 @@ const detectDevices = async socket => {
     return result;
 };
 
-const getNewWidgetIdNumber = project => {
-    const widgetIDs = [];
-    Object.keys(project).forEach(view =>
-        project[view].widgets && Object.keys(project[view].widgets).forEach(widget =>
-            widgetIDs.push(widget)));
-    let newKey = 1;
-
-    // find max key
-    widgetIDs.forEach(wid => {
-        const matches = wid.match(/^w([0-9]+)$/);
-        if (matches) {
-            const num = parseInt(matches[1], 10);
-            if (num >= newKey) {
-                newKey = num + 1;
-            }
-        }
-    });
-
-    return newKey;
-};
-
 export default {
     deviceIcons,
-    getNewWidgetIdNumber,
     detectDevices,
     getObjectIcon,
     allObjects,

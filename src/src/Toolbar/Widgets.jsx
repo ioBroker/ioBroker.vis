@@ -382,7 +382,6 @@ const Widgets = props => {
             selectedView={props.selectedView}
             project={store.getState().visProject}
             themeType={props.themeType}
-            getNewWidgetIdNumber={props.getNewWidgetIdNumber}
         /> : null}
         {exportDialog ? <WidgetExportDialog
             onClose={() => setExportDialog(false)}

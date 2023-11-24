@@ -74,5 +74,6 @@ module.exports = {
         radix: 'off',
         indent: ['error', 4, { SwitchCase: 1 }],
         'no-alert': 'off',
+        '@typescript-eslint/no-explicit-any': 'off',
     },
 };

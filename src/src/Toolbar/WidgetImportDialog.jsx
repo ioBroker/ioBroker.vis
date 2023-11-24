@@ -8,6 +8,7 @@ import {
 import { Close as CloseIcon, ImportExport } from '@mui/icons-material';
 
 import { I18n } from '@iobroker/adapter-react-v5';
+import { isGroup, getNewGroupId, getNewWidgetId } from '../Utils/utils';
 
 import { useFocus } from '../Utils';
 import CustomAceEditor from '../Components/CustomAceEditor';
@@ -22,15 +23,14 @@ const WidgetImportDialog = props => {
     const editor = useRef(null);
 
     const importWidgets = () => {
-        const project = JSON.parse(JSON.stringify(store.getState().visProject));
+        const { visProject } = store.getState();
+        const project = JSON.parse(JSON.stringify(visProject));
         const widgets = JSON.parse(data);
-        let newKeyNumber = props.getNewWidgetIdNumber();
-        let newGroupKeyNumber = props.getNewWidgetIdNumber(true);
         const newWidgets = {};
 
         widgets.forEach(widget => {
-            if (widget.tpl === '_tplGroup') {
-                const newKey = `g${newGroupKeyNumber.toString().padStart(6, '0')}`;
+            if (isGroup(widget)) {
+                const newKey = getNewGroupId(visProject);
                 newWidgets[newKey] = widget;
                 // find all widgets that belong to this group and change groupid
                 let w;
@@ -40,10 +40,8 @@ const WidgetImportDialog = props => {
                         w.groupid = newKey;
                     }
                 } while (w);
-
-                newGroupKeyNumber++;
             } else {
-                const newKey = `w${newKeyNumber.toString().padStart(6, '0')}`;
+                const newKey = getNewWidgetId(visProject);
                 newWidgets[newKey] = widget;
                 if (widget.grouped && newWidgets[widget.groupid] && newWidgets[widget.groupid].data && newWidgets[widget.groupid].data.members) {
                     // find group
@@ -52,7 +50,6 @@ const WidgetImportDialog = props => {
                         newWidgets[widget.groupid].data.members[pos] = newKey;
                     }
                 }
-                newKeyNumber++;
             }
         });
 

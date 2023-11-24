@@ -32,6 +32,9 @@ import {
     Message as MessageDialog,
     SelectFile as SelectFileDialog, Icon,
 } from '@iobroker/adapter-react-v5';
+import {
+    isGroup, deepClone, getNewWidgetId, getNewGroupId, copyGroup,
+} from './Utils/utils';
 import { recalculateFields, store, updateProject } from './Store';
 
 import Attributes from './Attributes';
@@ -368,64 +371,10 @@ class App extends Runtime {
         return selectedWidgets;
     }
 
-    /**
-     * Get next widgetId as a number
-     *
-     * @param isGroup if it is a group of widgets
-     * @param project current project
-     * @param offset offset if multiple widgets are created and not yet in project
-     * @return {number}
-     */
-    getNewWidgetIdNumber = (isGroup, project, offset = 0) => {
-        const widgets = [];
-        project = project || store.getState().visProject;
-        Object.keys(project).forEach(view =>
-            project[view].widgets && Object.keys(project[view].widgets).forEach(widget =>
-                widgets.push(widget)));
-        let newKey = 1;
-        widgets.forEach(name => {
-            const matches = isGroup ? name.match(/^g([0-9]+)$/) : name.match(/^w([0-9]+)$/);
-            if (matches) {
-                const num = parseInt(matches[1], 10);
-                if (num >= newKey) {
-                    newKey = num + 1;
-                }
-            }
-        });
-
-        return newKey + offset;
-    };
-
-    /**
-     * Get new widget id from the project
-     * @param project project to determine next widget id for
-     * @param offset offset, if multiple widgets are created and not yet in the project
-     * @return {string}
-     */
-    getNewWidgetId = (project, offset = 0) => {
-        const newKey = this.getNewWidgetIdNumber(false, project, offset);
-
-        return `w${(newKey).toString().padStart(6, 0)}`;
-    };
-
-    /**
-     * Get new group id from the project
-     * @param project project to determine next group id for
-     * @param offset offset, if multiple groups are created and not yet in the project
-     * @return {string}
-     */
-    getNewGroupId = (project, offset = 0) => {
-        let newKey = this.getNewWidgetIdNumber(true, project, offset);
-
-        newKey = `g${newKey.toString().padStart(6, 0)}`;
-
-        return newKey;
-    };
-
     addWidget = async (widgetType, x, y, data, style) => {
         const project = JSON.parse(JSON.stringify(store.getState().visProject));
         const widgets = project[this.state.selectedView].widgets;
-        const newKey = this.getNewWidgetId();
+        const newKey = getNewWidgetId(store.getState().visProject);
         widgets[newKey] = {
             tpl: widgetType,
             data: {
@@ -652,11 +601,12 @@ class App extends Runtime {
             }
             let newKey;
 
-            if (newWidget.tpl === '_tplGroup') {
-                newKey = this.getNewGroupId(store.getState().visProject, groupOffset);
+            if (isGroup(newWidget)) {
+                copyGroup({ group: newWidget, widgets, offset: groupOffset });
+                newKey = getNewGroupId(store.getState().visProject, groupOffset);
                 groupOffset++;
             } else {
-                newKey = this.getNewWidgetId(store.getState().visProject, widgetOffset);
+                newKey = getNewWidgetId(store.getState().visProject, widgetOffset);
                 widgetOffset++;
             }
 
@@ -681,9 +631,14 @@ class App extends Runtime {
                 left: boundingRect.left + 10,
                 top: boundingRect.top + 10,
             });
-            const newKey = this.getNewWidgetId();
-            widgets[newKey] = newWidget;
-            newKeys.push(newKey);
+
+            if (isGroup(newWidget)) {
+                copyGroup({ group: newWidget, widgets });
+            } else {
+                const newKey = getNewWidgetId(store.getState().visProject);
+                widgets[newKey] = newWidget;
+                newKeys.push(newKey);
+            }
         });
         this.setSelectedWidgets([]);
         await this.changeProject(project);
@@ -916,7 +871,7 @@ class App extends Runtime {
 
             },
         };
-        const groupId = this.getNewGroupId();
+        const groupId = getNewGroupId();
         let left = 0;
         let top = 0;
         let right = 0;
@@ -1317,16 +1272,14 @@ class App extends Runtime {
     };
 
     importMarketplaceWidget = (project, view, widgets, id, x, y, widgetId, oldData, oldStyle) => {
-        let newKeyNumber = this.getNewWidgetIdNumber();
-        let newGroupKeyNumber = this.getNewWidgetIdNumber(true);
         const newWidgets = {};
 
         widgets.forEach(_widget => {
             if (_widget.isRoot) {
                 _widget.marketplace = JSON.parse(JSON.stringify(store.getState().visProject.___settings.marketplace.find(item => item.id === id)));
             }
-            if (_widget.tpl === '_tplGroup') {
-                let newKey = `g${newGroupKeyNumber.toString().padStart(6, '0')}`;
+            if (isGroup(_widget)) {
+                let newKey = getNewGroupId(store.getState().visProject);
                 if (_widget.isRoot) {
                     if (widgetId) {
                         newKey = widgetId;
@@ -1347,10 +1300,8 @@ class App extends Runtime {
                         w.groupid = newKey;
                     }
                 } while (w);
-
-                newGroupKeyNumber++;
             } else {
-                const newKey = `w${newKeyNumber.toString().padStart(6, '0')}`;
+                const newKey = getNewWidgetId(store.getState().visProject);
                 newWidgets[newKey] = _widget;
                 if (_widget.grouped && newWidgets[_widget.groupid] && newWidgets[_widget.groupid].data && newWidgets[_widget.groupid].data.members) {
                     // find group
@@ -1359,7 +1310,6 @@ class App extends Runtime {
                         newWidgets[_widget.groupid].data.members[pos] = newKey;
                     }
                 }
-                newKeyNumber++;
             }
         });
 
@@ -1626,7 +1576,6 @@ class App extends Runtime {
                             project={store.getState().visProject}
                             selectedView={this.state.selectedView}
                             changeProject={this.changeProject}
-                            getNewWidgetIdNumber={this.getNewWidgetIdNumber}
                             lockWidgets={this.lockWidgets}
                             groupWidgets={this.groupWidgets}
                             ungroupWidgets={this.ungroupWidgets}
@@ -1999,7 +1948,6 @@ class App extends Runtime {
                             alignWidgets={this.alignWidgets}
                             cloneWidgets={this.cloneWidgets}
                             orderWidgets={this.orderWidgets}
-                            getNewWidgetIdNumber={this.getNewWidgetIdNumber}
                             lockDragging={this.state.lockDragging}
                             disableInteraction={this.state.disableInteraction}
                             toggleLockDragging={this.toggleLockDragging}

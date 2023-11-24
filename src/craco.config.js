@@ -1,5 +1,6 @@
 // const CracoEsbuildPlugin = require('craco-esbuild');
 const { ProvidePlugin } = require('webpack');
+const path = require('path');
 const cracoModuleFederation = require('@iobroker/adapter-react-v5/craco-module-federation');
 
 module.exports = {
@@ -21,6 +22,9 @@ module.exports = {
         },
     },
     webpack: {
+        alias: {
+            '@': path.resolve(__dirname, 'src'),
+        },
         output: {
             publicPath: './',
         },
