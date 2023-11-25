@@ -357,7 +357,6 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
 
     // if widget is in the group => replace groupAttrX values
     if (widget.grouped) {
-        console.log(store.getState().visProject);
         if (!widget.groupid) {
             store.dispatch(updateWidget({ viewId: view, widgetId: widget, data: { ...widget, groupid: getWidgetGroup(views, view, wid) } }));
         }
@@ -833,7 +832,6 @@ function _loadComponentHelper(context) {
                     console.error(`Cannot load widget ${context.dynamicWidgetInstance._id}: ${e.toString()}`);
                     console.error(`Cannot load widget ${context.dynamicWidgetInstance._id}: ${JSON.stringify(e)}`);
                 });
-            // .then(() => console.log(`${_visWidgetsCollection.name}_${_componentKey}: ${Date.now() - start}ms`));
 
             promises.push(promise);
         })(componentKey, context.visWidgetsCollection);

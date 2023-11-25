@@ -64,6 +64,7 @@ const ImportProjectDialog = props => {
                     setWorking(false);
                     timeout && clearTimeout(timeout);
                     timeout = null;
+
                     if (result.error) {
                         window.alert(I18n.t('Cannot upload project: %s', result.error));
                     } else if (props.projectName !== projectName || props.openNewProjectOnCreate) {
@@ -122,15 +123,14 @@ const ImportProjectDialog = props => {
             themeType={props.themeType}
             onUpload={(name, data) => {
                 if (name.match(/^\d\d\d\d-\d\d-\d\d-/)) {
-                    setProjectName(name.substring(11).replace(/\.zip$|\.json$/i, ''));
+                    setProjectName(name.substring(11).replace(/\.zip$/i, ''));
                 } else {
-                    setProjectName(name.replace(/\.zip$|\.json$/i, ''));
+                    setProjectName(name.replace(/\.zip$/i, ''));
                 }
                 setProjectData(data);
             }}
             accept={{
                 'application/zip': ['.zip'],
-                'application/json': ['.json'],
             }}
         />
         <div style={{ marginTop: 10 }}>
