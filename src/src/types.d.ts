@@ -1,6 +1,8 @@
 import React from 'react';
 import { Connection } from '@iobroker/adapter-react-v5';
 
+export type Timer = ReturnType<typeof setTimeout>;
+
 export interface ProjectSettings {
     darkReloadScreen: boolean;
     destroyViewsAfter: number;
@@ -74,7 +76,7 @@ export interface VisLegacy {
     findNearestResolution: (width?: number, height?: number) => string;
     version: number,
     states: any,
-    objects: {},
+    objects: Record<string, any>,
     isTouch: boolean,
     activeWidgets: string[],
     editMode: boolean,
@@ -121,7 +123,7 @@ export interface VisLegacy {
     showCode: (code: string, title: string, mode?: 'html' | 'json' | 'css') => void,
     // findCommonAttributes: (/* view, widgets */) => void;
     bindWidgetClick: () => void;
-    preloadImages: (srcs: string[]) => void,
+    preloadImages: (sources: string[]) => void,
     // updateStates: data => void,
     getHistory: (id: string, options: any, callback: () => void) => void,
     getHttp: (url: string, callback: () => string) => void,
@@ -228,4 +230,3 @@ export interface RxWidgetProps extends RxRenderWidgetProps {
     selectedWidgets: string[],
     viewsActiveFilter: Record<string, string[]>
 }
-

@@ -34,6 +34,7 @@ import {
 
 // eslint-disable-next-line import/no-cycle
 import VisOrderMenu from './visOrderMenu';
+import { calculateOverflow } from './utils';
 
 class VisBaseWidget extends React.Component {
     static FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~]+/g; // from https://github.com/ioBroker/ioBroker.js-controller/blob/master/packages/common/lib/common/tools.js
@@ -1810,7 +1811,7 @@ class VisBaseWidget extends React.Component {
                 }
             }
 
-            style.overflow = 'visible';
+            calculateOverflow(style);
         }
 
         // if multi-view widget and it is not "canJS", dim it in edit mode

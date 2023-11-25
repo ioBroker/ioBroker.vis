@@ -21,6 +21,7 @@ import {
     getUsedObjectIDsInWidget,
 } from './visUtils';
 import VisBaseWidget from './visBaseWidget';
+import { calculateOverflow } from './utils';
 
 const analyzeDraggableResizable = (el, result, widgetStyle) => {
     result = result || {};
@@ -853,7 +854,7 @@ class VisCanWidget extends VisBaseWidget {
         Object.keys(css).forEach(attr => divLastChange.style[attr] = css[attr]);
 
         this.widDiv.prepend(divLastChange);
-        this.widDiv.style.overflow = 'visible';
+        calculateOverflow(this.widDiv.style);
     }
 
     addChart(widgetData) {

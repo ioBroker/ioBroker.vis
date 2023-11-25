@@ -231,7 +231,9 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 ## Changelog
 ### **WORK IN PROGRESS**
 * (bluefox) implemented SVG shape and Screen Resolution widgets natively
-* (bluefox) * (bleufox) implemented Basic iFrame as react widget
+* (bluefox) implemented Basic iFrame as react widget
+* (foxriver76) only allow zip files at project import
+* (foxriver76) fix overflow being overwritten
 
 ### 2.8.0 (2023-11-24)
 * (foxriver76) sort folders alphabetically in pages view
