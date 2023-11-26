@@ -2073,7 +2073,6 @@ ${this.scripts}
                     visProject[view].settings?.alwaysRender ||
                     (!this.props.editMode && this.state.legacyRequestedViews.includes(view))
             )) {
-                // return <div key={view} id="vis_container" ref={this.divRef} style={{ width: '100%', height: '100%' }} />;
                 return <VisView
                     context={this.context}
                     activeView={this.props.activeView}

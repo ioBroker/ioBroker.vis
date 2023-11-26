@@ -174,7 +174,7 @@ const ProjectsManage = props => {
                     </IconButton>
                 </Tooltip>
             </AppBar>
-            {props.projects.map((projectName, key) => <div key={key} className={props.classes.projectBlock}>
+            {props.projects.sort((projName1, projName2) => projName1.toLowerCase().localeCompare(projName2)).map((projectName, key) => <div key={key} className={props.classes.projectBlock}>
                 <Button
                     fullWidth
                     className={props.classes.projectButton}

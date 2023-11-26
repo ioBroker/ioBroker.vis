@@ -107,7 +107,7 @@ const ViewsManager = props => {
     const renderViews = parentId => Object.keys(visProject)
         .filter(name => !name.startsWith('___'))
         .filter(name => (parentId ? visProject[name].parentId === parentId : !visProject[name].parentId))
-        .sort((name1, name2) => (name1.toLowerCase() < name2.toLowerCase() ? 0 : 1))
+        .sort((name1, name2) => (name1.toLowerCase().localeCompare(name2.toLowerCase())))
         .map((name, key) => <div key={key} className={props.classes.viewContainer}>
             <View
                 name={name}
@@ -124,7 +124,7 @@ const ViewsManager = props => {
     const renderFolders = parentId => {
         const folders = visProject.___settings.folders
             .filter(folder => (parentId ? folder.parentId === parentId : !folder.parentId))
-            .sort((folder1, folder2) => (folder1.name.toLowerCase() < folder2.name.toLowerCase() ? 0 : 1));
+            .sort((folder1, folder2) => folder1.name.toLowerCase().localeCompare(folder2.name.toLowerCase()));
 
         return folders.map((folder, key) => <div key={key}>
             <div className={props.classes.folderContainer}>
