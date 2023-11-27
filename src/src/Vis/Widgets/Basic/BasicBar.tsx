@@ -1,15 +1,9 @@
 import React from 'react';
 
+import { RxRenderWidgetProps } from '@/types';
+
 // eslint-disable-next-line import/no-cycle
 import VisRxWidget from '../../visRxWidget';
-
-interface RxRenderWidgetProps {
-    className: string;
-    style: React.CSSProperties;
-    id: string;
-    refService: React.RefObject<HTMLDivElement>;
-    widget: object;
-}
 
 export default class BasicBar extends VisRxWidget {
     /**

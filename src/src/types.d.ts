@@ -52,6 +52,7 @@ export interface Project {
 
 export interface RxRenderWidgetProps {
     className: string;
+    overlayClassNames: string[];
     style: React.CSSProperties;
     id: string;
     refService: React.Ref<HTMLDivElement>;

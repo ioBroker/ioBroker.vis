@@ -10,6 +10,7 @@ import BasicSvgBool from './Basic/BasicSvgBool';
 import BasicSvgShape from './Basic/BasicSvgShape';
 import BasicScreenResolution from './Basic/BasicScreenResolution';
 import BasicIFrame from './Basic/BasicIFrame';
+import BasicImage from './Basic/BasicImage';
 
 import JQuiButton from './JQui/JQuiButton';
 import JQuiButtonBlank from './JQui/JQuiButtonBlank';
@@ -49,6 +50,7 @@ const WIDGETS = [
     BasicSvgShape,
     BasicScreenResolution,
     BasicIFrame,
+    BasicImage,
 
     JQuiButton,
     JQuiButtonBlank,

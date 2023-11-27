@@ -5,10 +5,10 @@ import { RxRenderWidgetProps } from '@/types';
 // eslint-disable-next-line import/no-cycle
 import VisRxWidget from '../../visRxWidget';
 
-export default class BasicIFrame extends VisRxWidget {
+export default class BasicImage extends VisRxWidget {
     private refreshInterval: ReturnType<typeof setInterval> | null = null;
 
-    private readonly frameRef: React.RefObject<HTMLIFrameElement>;
+    private readonly imageRef: React.RefObject<HTMLImageElement>;
 
     private hashInstalled = false;
 
@@ -18,7 +18,7 @@ export default class BasicIFrame extends VisRxWidget {
 
     constructor(props: RxRenderWidgetProps) {
         super(props);
-        this.frameRef = React.createRef();
+        this.imageRef = React.createRef();
     }
 
     /**
@@ -26,16 +26,20 @@ export default class BasicIFrame extends VisRxWidget {
      */
     static getWidgetInfo() {
         return {
-            id: 'tplIFrame',
+            id: 'tplImage',
             visSet: 'basic',
-            visName: 'iFrame',
-            visPrev: 'widgets/basic/img/Prev_iFrame.png',
+            visName: 'Image',
+            visPrev: 'widgets/basic/img/Prev_Image.png',
             visAttrs: [{
                 name: 'common',
                 fields: [
                     {
                         name: 'src',
-                        type: 'url',
+                        type: 'image',
+                    },
+                    {
+                        name: 'stretch',
+                        type: 'checkbox',
                     },
                     {
                         name: 'refreshInterval',
@@ -45,10 +49,6 @@ export default class BasicIFrame extends VisRxWidget {
                         max: 180000,
                         step: 100,
                         default: 0,
-                    },
-                    {
-                        name: 'noSandbox',
-                        type: 'checkbox',
                     },
                     {
                         name: 'refreshOnWakeUp',
@@ -63,24 +63,15 @@ export default class BasicIFrame extends VisRxWidget {
                         type: 'checkbox',
                     },
                     {
-                        name: 'scrollX',
+                        name: 'allowUserInteractions',
                         type: 'checkbox',
-                    },
-                    {
-                        name: 'scrollY',
-                        type: 'checkbox',
-                    },
-                    {
-                        name: 'seamless',
-                        type: 'checkbox',
-                        default: true,
                     },
                 ],
             }],
             // visWidgetLabel: 'value_string',  // Label of widget
             visDefaultStyle: {
-                width: 600,
-                height: 320,
+                width: 200,
+                height: 130,
             },
         };
     }
@@ -104,20 +95,22 @@ export default class BasicIFrame extends VisRxWidget {
      */
     // eslint-disable-next-line class-methods-use-this
     getWidgetInfo() {
-        return BasicIFrame.getWidgetInfo();
+        return BasicImage.getWidgetInfo();
     }
 
     onHashChange = () => {
         if (this.props.context.activeView === this.props.view) {
-            this.refreshIFrame();
+            this.refreshImage();
         }
     };
 
-    refreshIFrame() {
-        if (this.state.rxData.refreshWithNoQuery === true || this.state.rxData.refreshWithNoQuery === 'true') {
-            this.frameRef.current?.contentWindow?.location.reload();
-        } else if (this.frameRef.current) {
-            this.frameRef.current.src = `${this.state.rxData.src}${this.state.rxData.src.includes('?') ? '&' : '?'}_refts=${Date.now()}`;
+    refreshImage() {
+        if (this.imageRef.current) {
+            if (this.state.rxData.refreshWithNoQuery === true || this.state.rxData.refreshWithNoQuery === 'true') {
+                this.imageRef.current.src = this.state.rxData.src;
+            } else {
+                this.imageRef.current.src = `${this.state.rxData.src}${this.state.rxData.src.includes('?') ? '&' : '?'}_refts=${Date.now()}`;
+            }
         }
     }
 
@@ -125,7 +118,7 @@ export default class BasicIFrame extends VisRxWidget {
         return el.offsetParent === null;
     }
 
-    static getParents(el: HTMLIFrameElement): HTMLElement[] {
+    static getParents(el: HTMLImageElement): HTMLElement[] {
         const els = [];
         let pel = el as HTMLElement;
         do {
@@ -162,10 +155,10 @@ export default class BasicIFrame extends VisRxWidget {
                 }
                 // install refresh handler
                 this.refreshInterval = this.refreshInterval || setInterval(() => {
-                    if (this.frameRef.current && !BasicIFrame.isHidden(this.frameRef.current as HTMLElement)) {
-                        const parents = BasicIFrame.getParents(this.frameRef.current).filter(el => BasicIFrame.isHidden(el));
+                    if (this.imageRef.current && !BasicImage.isHidden(this.imageRef.current as HTMLElement)) {
+                        const parents = BasicImage.getParents(this.imageRef.current).filter(el => BasicImage.isHidden(el));
                         if (!parents.length || parents[0].tagName === 'BODY' || parents[0].id === 'materialdesign-vuetify-container') {
-                            this.refreshIFrame();
+                            this.refreshImage();
                         }
                     }
                 }, refreshInterval);
@@ -205,26 +198,28 @@ export default class BasicIFrame extends VisRxWidget {
         }
 
         const style: React.CSSProperties = {
-            position: 'absolute',
-            boxSizing: 'border-box',
             padding: 0,
             margin: 0,
             border: 0,
             width: '100%',
-            height: '100%',
-            overflowX: this.state.rxData.scrollX ? 'scroll' : 'hidden',
-            overflowY: this.state.rxData.scrollY ? 'scroll' : 'hidden',
+            height: 'auto',
         };
+        if (this.state.rxData.stretch) {
+            style.height = '100%';
+        }
+        if (!this.state.rxData.allowUserInteractions) {
+            style.touchAction = 'none';
+            style.userSelect = 'none';
+        }
+
         const src = this.state.rxData.src || '';
 
-        return src ? <div className="vis-widget-body">
-            <iframe
+        return src ? <div className="vis-widget-body" style={{ overflow: 'hidden' }}>
+            <img
                 style={style}
-                ref={this.frameRef}
-                title={this.props.id}
+                ref={this.imageRef}
                 src={this.state.rxData.src}
-                sandbox={this.state.rxData.noSandbox ? 'allow-modals allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts' : undefined}
-                seamless={this.state.rxData.seamless}
+                alt={this.props.id}
             />
         </div> : null;
     }
