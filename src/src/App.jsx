@@ -33,7 +33,7 @@ import {
     SelectFile as SelectFileDialog, Icon,
 } from '@iobroker/adapter-react-v5';
 import {
-    isGroup, getNewWidgetId, getNewGroupId, copyGroup,
+    isGroup, getNewWidgetId, getNewGroupId, copyGroup, unsyncMultipleWidgets,
 } from './Utils/utils';
 import { recalculateFields, store, updateProject } from './Store';
 
@@ -994,7 +994,7 @@ class App extends Runtime {
             this.savingTimer = null;
 
             // remove all special structures
-            this.unsyncMultipleWidgets(project);
+            project = unsyncMultipleWidgets(project);
 
             const projectStr = JSON.stringify(project, null, 2);
 
@@ -1012,22 +1012,6 @@ class App extends Runtime {
             }
         }, 1_000);
     };
-
-    unsyncMultipleWidgets(project) {
-        project = project || store.getState().visProject;
-        Object.keys(project).forEach(view => {
-            if (view === '___settings') {
-                return;
-            }
-            const oView = project[view];
-            // remove all copied widgets
-            Object.keys(oView.widgets).forEach(widgetId => {
-                if (widgetId.includes('_')) {
-                    delete oView.widgets[widgetId];
-                }
-            });
-        });
-    }
 
     renameProject = async (fromProjectName, toProjectName) => {
         try {

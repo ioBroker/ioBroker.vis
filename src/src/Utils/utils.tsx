@@ -101,3 +101,25 @@ export function copyGroup(options: CopyGroupOptions) {
 
     widgets[newKey] = group;
 }
+
+/**
+ * Removes all special structures from the project
+ *
+ * @param project the project to remove special structures from
+ */
+export function unsyncMultipleWidgets(project: Project): Project {
+    project = deepClone(project || store.getState().visProject);
+    for (const  [viewName, view] of Object.entries(project)) {
+        if (viewName === '___settings') {
+            continue;
+        }
+
+        for (const widgetId of Object.keys(view.widgets)) {
+            if (widgetId.includes('_')) {
+                delete view.widgets[widgetId];
+            }
+        }
+    }
+
+    return project;
+}
