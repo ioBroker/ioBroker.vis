@@ -263,7 +263,6 @@ class App extends Runtime {
 
     async componentDidMount() {
         super.componentDidMount();
-        store.subscribe(() => this.render);
         window.addEventListener('keydown', this.onKeyDown, false);
         window.addEventListener('beforeunload', this.onBeforeUnload, false);
     }
