@@ -60,6 +60,11 @@ class TabsSliderTabs extends VisRxWidget {
                                 { value: 'fullWidth', label: 'vis_2_widgets_widgets_tabs_variant_full_width' },
                             ],
                         },
+                        {
+                            name: 'color',
+                            type: 'color',
+                            label: 'vis_2_widgets_widgets_tabs_color',
+                        },
                     ],
                 },
                 {
@@ -202,6 +207,7 @@ class TabsSliderTabs extends VisRxWidget {
                 iconPosition="start"
                 value={t}
                 key={t.toString()}
+                style={{ color: this.state.rxData.color, textTransform: 'none' }}
                 wrapped
             />);
         }
@@ -215,6 +221,11 @@ class TabsSliderTabs extends VisRxWidget {
         >
             <div>
                 <Tabs
+                    TabIndicatorProps={{
+                        style: {
+                            backgroundColor: this.state.rxData.color,
+                        },
+                    }}
                     value={this.state.tabIndex || 0}
                     onChange={(e, tabIndex) => {
                         window.localStorage.setItem(`${this.props.id}-tabIndex`, tabIndex.toString());
