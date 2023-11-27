@@ -1569,9 +1569,9 @@ class VisBaseWidget extends React.Component {
             boxSizing: 'border-box',
         };
         const selected = !this.state.multiViewWidget && this.state.editMode && this.props.selectedWidgets?.includes(this.props.id);
-        let classNames = selected ? 'vis-editmode-selected' : 'vis-editmode-overlay-not-selected';
+        const classNames = selected ? ['vis-editmode-selected'] : ['vis-editmode-overlay-not-selected'];
         if (selected && this.state.widgetHint === 'hide') {
-            classNames = addClass(classNames, 'vis-editmode-selected-background');
+            classNames.push('vis-editmode-selected-background');
         }
 
         if (this.state.editMode && !(widget.groupid && !this.props.selectedGroup)) {
@@ -1614,13 +1614,14 @@ class VisBaseWidget extends React.Component {
             }
 
             if (this.props.tpl?.toLowerCase().includes('image')) {
-                classNames = addClass(classNames, 'vis-editmode-helper');
+                classNames.push('vis-editmode-helper');
                 style.opacity = style.opacity || 0.3;
             }
         }
 
         const props = {
             className: '',
+            overlayClassNames: classNames,
             style,
             id: `rx_${this.props.id}`,
             refService: this.refService,
@@ -1703,7 +1704,7 @@ class VisBaseWidget extends React.Component {
             }
         });
 
-        classNames = addClass(classNames, 'vis-editmode-overlay');
+        classNames.push('vis-editmode-overlay');
 
         let widgetName = null;
         let widgetMoveButtons = null;
@@ -1829,7 +1830,7 @@ class VisBaseWidget extends React.Component {
             (!widget.groupid || this.props.selectedGroup) && // if not in group or in the edit group mode
             (this.props.selectedGroup !== this.props.id) ?   // and it does not the edited group itself
                 <div
-                    className={classNames}
+                    className={classNames.join(' ')}
                     onMouseDown={e => this.props.context.setSelectedWidgets && this.onMouseDown(e)}
                 /> : null;
 

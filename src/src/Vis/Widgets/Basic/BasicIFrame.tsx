@@ -5,6 +5,7 @@ import VisRxWidget from '../../visRxWidget';
 
 interface RxRenderWidgetProps {
     className: string;
+    overlayClassNames: string[];
     style: React.CSSProperties;
     id: string;
     refService: React.Ref<HTMLDivElement>;
@@ -205,6 +206,8 @@ export default class BasicIFrame extends VisRxWidget {
      */
     renderWidgetBody(props: RxRenderWidgetProps): React.JSX.Element | null {
         super.renderWidgetBody(props);
+
+        props.overlayClassNames.push('vis-editmode-helper');
 
         const style: React.CSSProperties = {
             position: 'absolute',
