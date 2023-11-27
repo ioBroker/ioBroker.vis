@@ -547,6 +547,8 @@ class Runtime extends GenericApp {
             this.socket.subscribeFiles(this.adapterId, `${projectName}/*`, this.onProjectChange);
         }
 
+        store.dispatch(updateProject(project));
+
         await this.setStateAsync({
             visCommonCss: null,
             visUserCss: null,
@@ -554,8 +556,6 @@ class Runtime extends GenericApp {
             historyCursor: 0,
             projectName,
         });
-
-        store.dispatch(updateProject(project));
 
         await this.changeView(selectedView);
 
