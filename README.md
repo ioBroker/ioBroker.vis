@@ -229,7 +229,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.9.0 (2023-11-27)
 * (bluefox) implemented SVG shape and Screen Resolution widgets natively
 * (bluefox) implemented Basic iFrame as react widget
 * (foxriver76) only allow zip files at project import
