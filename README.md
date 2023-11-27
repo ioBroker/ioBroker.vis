@@ -235,6 +235,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 * (foxriver76) only allow zip files at project import
 * (foxriver76) fix overflow being overwritten
 * (foxriver76) sort pages and projects alphabetically
+* (foxriver76) fixed problem with groups when `always render` is activated
 
 ### 2.8.0 (2023-11-24)
 * (foxriver76) sort folders alphabetically in pages view

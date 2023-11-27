@@ -2070,7 +2070,7 @@ ${this.scripts}
         const views = Object.keys(visProject).map(view => {
             if (view !== '___settings' && (
                 view === this.props.activeView ||
-                    visProject[view].settings?.alwaysRender ||
+                (visProject[view].settings?.alwaysRender && !this.props.selectedGroup) ||
                     (!this.props.editMode && this.state.legacyRequestedViews.includes(view))
             )) {
                 return <VisView
