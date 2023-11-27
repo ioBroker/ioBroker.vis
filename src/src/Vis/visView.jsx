@@ -1822,7 +1822,7 @@ class VisView extends React.Component {
 
         // render the menu if enabled and not in widget;
         // only if the view is now active (not alwaysRender)
-        if (settings.navigation || settings.navigationBar) {
+        if ((settings.navigation || settings.navigationBar) && this.props.view === this.props.activeView) {
             renderedView = this.renderNavigation(renderedView);
         }
 

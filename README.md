@@ -238,6 +238,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 * (foxriver76) fixed problem on saving
 * (foxriver76) fixed problem with groups when `always render` is activated
 * (foxriver76) allow to change color and write lowercase in tabs component
+* (foxriver76) fixed problem that navigation from a alwaysRender page is shown on different page
 
 ### 2.8.0 (2023-11-24)
 * (foxriver76) sort folders alphabetically in pages view
