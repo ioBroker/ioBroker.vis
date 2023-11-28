@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.0",
+    "version": "2.9.1",
     "news": {
+      "2.9.1": {
+        "en": "recalculate fields after moving widgets\nfixed pasting group on other view\nfixed theme also applied in iframe\nimplemented Basic Image as react widget",
+        "de": "felder nach bewegten widgets neu berechnen\nfeste pastengruppe auf andere sicht\nfestes thema auch in iframe angewendet\ndurchgeführt Grund Bild als reagierendes Widget",
+        "ru": "пересчитать поля после перемещения виджетов\nфиксированная пастельная группа на другом взгляде\nфиксированная тема также применяется в iframe\nреализовано Базовый Изображение как реагирует виджет",
+        "pt": "recalcular campos após mover widgets\ngrupo de colar fixo em outra vista\ntema fixo também aplicado em iframe\nimplementação Básico Imagem como widget de reação",
+        "nl": "realculeren velden na het verplaatsen van wedgets\nvertaling:\n_\n_ Basis Vertaling:",
+        "fr": "recalculer les champs après le déplacement des widgets\ngroupe de passe fixe sur une autre vue\nthème fixe également appliqué dans iframe\nmise en œuvre Base Image comme widget de réaction",
+        "it": "ricalcolare i campi dopo aver spostato i widget\ngruppo di incollaggio fisso su altra vista\ntema fisso applicato anche in iframe\nimplementato Di base Immagine come widget di reazione",
+        "es": "recalcular campos después de mover widgets\ngrupo de pasto fijo en otro punto de vista\ntema fijo también aplicado en iframe\naplicadas Básico Imagen como widget de reacción",
+        "pl": "pola obliczeniowe po poruszaniu się\ngrupa pastwiska na innej stronie\ntakże temat stały stosowane są w iframe\nwdrożone Basic Obraz jako reagujący widget",
+        "uk": "recalculate поля після переміщення віджетів\nфіксована пастуюча група з іншого вигляду\nвиправлена тема також застосовується в iframe\nреалізований Головна Зображення як реагувати віджет",
+        "zh-cn": "移植被后重新调整田\n其他观点的固定过去小组\n一. 固定主题也适用于一框架\n执行 A. 基本条件 一. 反应目标"
+      },
       "2.9.0": {
         "en": "implemented SVG shape and Screen Resolution widgets natively\nimplemented Basic iFrame as react widget\nonly allow zip files at project import\nfix overflow being overwritten\nsort pages and projects alphabetically\nfixed problem on saving\nfixed problem with groups when `always render` is activated\nallow to change color and write lowercase in tabs component\nfixed problem that navigation from a alwaysRender page is shown on different page",
         "de": "implementiert SVG-Form und Bildschirmauflösung Widgets native\ndurchgeführt Basic iFrame als Reakt Widget\nnur erlauben zip-dateien bei projektimport\nfixer überlauf überschrieben\nsortieren von seiten und projekten alphabetisch\nproblem beim speichern\nproblem mit gruppen behoben, wenn `always render` aktiviert ist\nerlauben, die farbe zu ändern und kleinbuchstaben in tabs-komponente zu schreiben\nproblem, dass Navigation von einem immer Render-Seite wird auf verschiedenen Seiten angezeigt",
@@ -80,19 +93,6 @@
         "pl": "sprawa rozbłyskowa w przypadku edycji grupowej\ngrupa stałych pasterek\nstabilny problem skaczący kurs i usunął postaci podczas typowania typów",
         "uk": "виправлений випадок аварійної ситуації при монтажі групи\nфіксовані пастки групи\nвиправлена проблема стрибки курсора і видалених символів при наборі",
         "zh-cn": "编辑组\n固定的牧场\n固定问题加快了治疗,并消除了性质,而典型的则"
-      },
-      "2.6.1": {
-        "en": "Showed \"file too large\" message by icon upload\nMade navigation bar for view as an own group\nsorted views alphabetically\nrespect uppercase/lowercase in projects toolbar\nRedirect `dialog` and `dialogClose` commands to widgets",
-        "de": "Gezeigte \"Datei zu groß\" Nachricht durch Icon-Upload\nNavigationsleiste für eine eigene Gruppe\nalphabetisch sortiert\nrespektieren oberkörper/untergehäuse in projekten werkzeugleiste\nDialog und Dialog umleiten Befehle zu Widgets schließen",
-        "ru": "Показано \"файл слишком большой\" сообщение по загрузке иконки\nСоздана навигационная панель для просмотра как собственная группа\nсортированные виды по алфавиту\nуважать верхний шкаф/низкий чемодан в панели инструментов проектов\nРедиректный диалог и диалог Закрыть команды для виджетов",
-        "pt": "Mostrado \"arquivo demasiado grande\" mensagem por ícone upload\nBarra de navegação feita para ver como um próprio grupo\nvistas ordenadas alfabeticamente\nrespeitar maiúscula / minúscula na barra de ferramentas de projetos\nRedirecionar diálogo e diálogo Fechar comandos para widgets",
-        "nl": "Toonde \"file te groot\" bericht door icon upload\nMaakte navigatie bar als een eigen groep\nvertaling:\nrespect uppercase/lowercase in projecten gereedschap\nControle dialoog Dichte commando's naar Widgets",
-        "fr": "Affichage du message \"file too large\" par téléchargement d'icône\nFabriqué barre de navigation pour la vue comme propre groupe\nvues triées par ordre alphabétique\nrespecter majuscule/faible dans la barre d'outils de projets\nRedirect dialogue et dialogue Fermer les commandes aux widgets",
-        "it": "Mostrato \"file too large\" messaggio da icon upload\nBarra di navigazione fatta per la vista come un proprio gruppo\nvista in ordine alfabetico\nrispetto maiuscolo / minuscolo nella barra degli strumenti di progetti\nRedirect finestra di dialogo e dialogo Chiudere i comandi ai widget",
-        "es": "Visualizado \"file demasiado grande\" mensaje por icono subido\nHecho barra de navegación para la vista como un grupo propio\nvistas ordenadas alfabéticamente\nrespeto mayúscula / maletín inferior en proyectos barra de herramientas\nRedirigir diálogo y diálogo Cerrar comandos a widgets",
-        "pl": "Wyświetlanie zbyt dużej wiadomości przez ikonę załadować\nMade navigation bar for view as a group\npojęcie alfabetycznie\nszacunek górny/niższy\nDialogi i dialogi dialogi Close command to widgets",
-        "uk": "Показати \"файл занадто великий\" повідомлення номінальний значок завантаження\nВиготовлений навігаційний комплекс для перегляду як власної групи\nсортування переглядів алфавітно\nповага верхнього вітру / вітрина в проектах панелі інструментів\nДіалогове вікно та діалогове вікно Закриті команди для віджетів",
-        "zh-cn": "黑色“太大”讯息\n马德·导航巴以作为自己集团\n评 注\n在项目工具上尊重上级/次要情况\nB. 直接的口号和口号 A. 严密的指挥"
       }
     },
     "title": "Visualisation Next Generation",
