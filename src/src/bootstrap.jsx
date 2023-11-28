@@ -33,10 +33,15 @@ function modifyClasses(className, addClass, removeClass) {
     return classes.join(' ');
 }
 
+/**
+ * Checks if vis is rendered inside an iFrame
+ *
+ * @return {boolean}
+ */
 function inIframe() {
     try {
         return window.self !== window.top;
-    } catch (e) {
+    } catch {
         return true;
     }
 }
@@ -91,6 +96,8 @@ const ThemeContainer = () => {
         } else {
             window.document.body.className = modifyClasses(window.document.body.className, 'body-light', 'body-dark');
         }
+    } else {
+        window.document.body.className = '';
     }
 
     return <StylesProvider generateClassName={generateClassName}>
