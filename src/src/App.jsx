@@ -1109,8 +1109,6 @@ class App extends Runtime {
                     }
                 });
             }
-
-            console.log('changed');
         });
 
         // settings of view are changed
