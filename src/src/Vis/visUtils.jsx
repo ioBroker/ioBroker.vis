@@ -100,7 +100,7 @@ function extractBinding(format) {
                 systemOid = systemOid.substring(0, systemOid.length - 3);
             }
             let operations = null;
-            const isEval = visOid.match(/^[\d\w_]+:\s?[-\d\w_.]+/) || (!visOid.length && parts.length > 0); // (visOid.indexOf(':') !== -1) && (visOid.indexOf('::') === -1);
+            const isEval = visOid.match(/^[\d\w_]+:\s?[-._/ :!#$%&()+=@^{}|~\p{Ll}\p{Lu}\p{Nd}]+$/u) || (!visOid.length && parts.length > 0); // (visOid.indexOf(':') !== -1) && (visOid.indexOf('::') === -1);
 
             if (isEval) {
                 const xx = visOid.split(':', 2);
