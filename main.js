@@ -34,7 +34,8 @@ function startAdapter(options) {
             if (id.startsWith('system.adapter.') &&
                 id.match(/\d+$/) &&
                 id !== 'system.adapter.vis-2-beta.0' &&
-                id !== 'system.adapter.vis.0'
+                id !== 'system.adapter.vis.0' &&
+                id !== 'system.adapter.vis-2.0'
             ) {
                 if (obj && obj.type !== 'instance') {
                     return;
@@ -250,7 +251,8 @@ if (typeof exports !== 'undefined') {
 
 // delete this function as js.controller 4.0 will be mainstream
 async function getSuitableLicenses(all, name) {
-    if (adapter.getSuitableLicenses) {
+    // activate it again as js-controller 5.0.18 will be mainstream
+    if (false && adapter.getSuitableLicenses) {
         return adapter.getSuitableLicenses(all, name);
     } else {
         const licenses = [];
@@ -268,7 +270,13 @@ async function getSuitableLicenses(all, name) {
 
             if (obj && obj.native && obj.native.licenses && obj.native.licenses.length) {
                 const now = Date.now();
-                const version = adapter.pack.version.split('.')[0];
+                const _obj = name ? await adapter.getForeignObjectAsync(`system.adapter.${name === 'vis' ? 'vis-2' : name}`) : null;
+                let version;
+                if (_obj && _obj.common && _obj.common.version) {
+                    version = _obj.common.version.split('.')[0];
+                } else {
+                    version = adapter.pack.version.split('.')[0];
+                }
 
                 obj.native.licenses.forEach(license => {
                     try {
@@ -346,8 +354,17 @@ async function getSuitableLicenses(all, name) {
     }
 }
 
-function checkLicense(license, uuid, originalError, name) {
-    const version = adapter.pack.version.split('.')[0];
+async function checkLicense(license, uuid, originalError, name) {
+    const _obj = name ? await adapter.getForeignObjectAsync(`system.adapter.${name === 'vis' ? 'vis-2' : name}`) : null;
+    let version;
+    if (_obj && _obj.common && _obj.common.version) {
+        version = _obj.common.version.split('.')[0];
+    } else {
+        version = adapter.pack.version.split('.')[0];
+    }
+
+    license.name = license.name.replace(/\.action$/, '');
+    license.name = license.name.replace(/\.offline$/, '');
 
     if (license && license.expires * 1000 < new Date().getTime()) {
         adapter.log.error(`License error: Expired on ${new Date(license.expires * 1000).toString()}`);
@@ -362,6 +379,7 @@ function checkLicense(license, uuid, originalError, name) {
         adapter.log.error(`License is for other adapter "${license.name}". Expected "iobroker.${name}"`);
         return true;
     } else if (
+        license.type !== 'commercial' &&
         (version !== '1' && version !== license.version) ||
         (version === '1' && license.version !== '&lt;2' && license.version !== '<2' && license.version !== '<1' && license.version !== '<=1')
     ) {
@@ -394,18 +412,27 @@ function checkLicense(license, uuid, originalError, name) {
     }
 }
 
-function check(license, uuid, originalError, name) {
+async function check(license, uuid, originalError, name) {
     try {
         const decoded = jwt.verify(license, fs.readFileSync(`${__dirname}/lib/cloudCert.crt`));
-        return checkLicense(decoded, uuid, originalError, name);
+        return await checkLicense(decoded, uuid, originalError, name);
     } catch (err) {
         adapter.log.error(`Cannot check license: ${originalError}`);
         return true
     }
 }
 
-function doLicense(license, uuid, name) {
-    const version = adapter.pack.version.split('.')[0];
+async function doLicense(license, uuid, name) {
+    let version = adapter.pack.version.split('.')[0];
+    // take the version of checked adapter
+    if (name !== 'vis' && name !== 'vis-2') {
+        const obj = await adapter.getForeignObject(`system.adapter.${name}.0`);
+        if (obj && obj.common && obj.common.version) {
+            version = obj.common.version.split('.')[0];
+        } else {
+            version = '1';
+        }
+    }
 
     return new Promise((resolve, reject) => {
         const data = JSON.stringify({
@@ -435,11 +462,10 @@ function doLicense(license, uuid, name) {
                 try {
                     const data = JSON.parse(result);
                     if (data.result === 'OK') {
-                        if (data.name !== `iobroker.${name}` &&
-                            data.name !== name &&
-                            data.name !== `iobroker.${name}.offline` &&
-                            data.name !== `iobroker.${name}.offline.action`
-                        ) {
+                        data.name = data.name.replace(/\.action$/, '');
+                        data.name = data.name.replace(/\.offline$/, '');
+
+                        if (data.name !== `iobroker.${name}` && data.name !== name) {
                             adapter.log.error(`License is for other adapter "${data.name}". Expected "iobroker.${name}"`);
                             resolve(true);
                         } else
@@ -869,13 +895,13 @@ async function checkL(license, useLicenseManager, name) {
         }
 
         if (!license) {
-            adapter.log.error('No license found for vis, vis-2. Please get one on https://iobroker.net !');
+            adapter.log.error(`No license found for ${name}. Please get one on https://iobroker.net !`);
             return false;
         } else {
             try {
-                return !await doLicense(license, uuidObj.native.uuid, name);
+                return !(await doLicense(license, uuidObj.native.uuid, name));
             } catch (err) {
-                return check(license, uuidObj.native.uuid, err, name);
+                return !(await check(license, uuidObj.native.uuid, err, name));
             }
         }
     }
