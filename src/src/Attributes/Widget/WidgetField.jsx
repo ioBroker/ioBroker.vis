@@ -1177,6 +1177,7 @@ const WidgetField = props => {
                                 });
                         });
                         props.changeProject(_project);
+                        store.dispatch(recalculateFields(true));
                     },
                     {
                         context: {

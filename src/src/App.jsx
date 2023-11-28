@@ -157,9 +157,6 @@ const ViewDrop = props => {
     const [{ CanDrop, isOver }, drop] = useDrop(() => ({
         accept: ['widget'],
         drop(item, monitor) {
-            console.log(monitor.getClientOffset());
-            console.log(targetRef.current.getBoundingClientRect());
-            console.log(item);
             if (item.widgetSet === '__marketplace') {
                 props.addMarketplaceWidget(
                     item.widgetType.id,
@@ -1112,6 +1109,8 @@ class App extends Runtime {
                     }
                 });
             }
+
+            console.log('changed');
         });
 
         // settings of view are changed
@@ -1201,7 +1200,6 @@ class App extends Runtime {
     };
 
     showConfirmDialog(confirmDialog) {
-        console.log(confirmDialog.message);
         this.setState({ confirmDialog });
     }
 
