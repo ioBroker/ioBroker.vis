@@ -335,7 +335,6 @@ class App extends Runtime {
     };
 
     setWidgetsLoadingProgress = (step, total) => {
-        // console.log('setWidgetsLoadingProgress', step, total);
         this.setState({ loadingProgress: { step, total } });
     };
 
@@ -586,7 +585,7 @@ class App extends Runtime {
 
             if (isGroup(newWidget)) {
                 pasteGroup({
-                    group: newWidget, widgets, offset: groupOffset, clipboardWidgets: this.state.widgetsClipboard.groupMembers,
+                    group: newWidget, widgets, offset: groupOffset, groupMembers: this.state.widgetsClipboard.groupMembers,
                 });
                 newKey = getNewGroupId(store.getState().visProject, groupOffset);
                 groupOffset++;
@@ -618,7 +617,7 @@ class App extends Runtime {
             });
 
             if (isGroup(newWidget)) {
-                pasteGroup({ group: newWidget, widgets, clipboardWidgets: this.state.widgetsClipboard.groupMembers });
+                pasteGroup({ group: newWidget, widgets, groupMembers: widgets });
             } else {
                 const newKey = getNewWidgetId(store.getState().visProject);
                 widgets[newKey] = newWidget;
@@ -1156,8 +1155,6 @@ class App extends Runtime {
     };
 
     registerCallback = (name, view, cb) => {
-        // console.log(`${!cb ? 'Unr' : 'R'}egister handler for ${view}: ${name}`);
-
         if (cb) {
             this.visEngineHandlers[view] = this.visEngineHandlers[view] || {};
             this.visEngineHandlers[view][name] = cb;
@@ -1173,7 +1170,7 @@ class App extends Runtime {
         if (this.visEngineHandlers[this.state.selectedView] && this.visEngineHandlers[this.state.selectedView].onPxToPercent) {
             return this.visEngineHandlers[this.state.selectedView].onPxToPercent(wids, attr, cb);
         }
-        // cb && cb(wids, attr, null); // cancel selection
+
         return null;
     };
 

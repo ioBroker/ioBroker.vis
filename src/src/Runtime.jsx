@@ -110,8 +110,6 @@ class Runtime extends GenericApp {
     componentDidMount() {
         super.componentDidMount();
 
-        store.subscribe(() => this.render());
-
         const newState = {
             alert: false,
             alertType: 'info',
