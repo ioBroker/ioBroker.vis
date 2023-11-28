@@ -74,32 +74,35 @@ interface CopyGroupOptions {
     group: GroupWidget;
     /** The widgets key, value object to copy the group to */
     widgets: Record<string, Widget>;
+    /** The group member widgets stored in the clipboard to paste from */
+    groupMembers: Record<string, Widget>,
     /** The offset to use, if multiple groups are copied without saving */
     offset?: number
 }
 
 /**
- * Copy a group and all the members into the given widgets key, value object
+ * Paste a group and all the members into the given widgets key, value object
  *
  * @param options group, widgets and offset information
  */
-export function copyGroup(options: CopyGroupOptions) {
-    const  { widgets, group, offset } = options;
-    const newKey = getNewGroupId(store.getState().visProject, offset ?? 0);
+export function pasteGroup(options: CopyGroupOptions) {
+    const  {
+        widgets, group, groupMembers, offset,
+    } = options;
+    const newGroupId = getNewGroupId(store.getState().visProject, offset ?? 0);
 
-    // copy all members
     for (let i = 0; i < group.data.members.length; i++) {
         const wid = group.data.members[i];
-        const newMember = deepClone(widgets[wid]);
+        const newMember = deepClone(groupMembers[wid]);
 
-        newMember.groupid = newKey;
         const newMemberId = getNewWidgetId(store.getState().visProject, i);
-        widgets[newMemberId] = newMember;
 
+        newMember.groupid = newGroupId;
         group.data.members[i] = newMemberId;
+        widgets[newMemberId] = newMember;
     }
 
-    widgets[newKey] = group;
+    widgets[newGroupId] = group;
 }
 
 /**

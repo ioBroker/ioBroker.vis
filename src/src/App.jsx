@@ -33,7 +33,7 @@ import {
     SelectFile as SelectFileDialog, Icon,
 } from '@iobroker/adapter-react-v5';
 import {
-    isGroup, getNewWidgetId, getNewGroupId, copyGroup, unsyncMultipleWidgets,
+    isGroup, getNewWidgetId, getNewGroupId, pasteGroup, unsyncMultipleWidgets, deepClone,
 } from './Utils/utils';
 import { recalculateFields, store, updateProject } from './Store';
 
@@ -530,10 +530,20 @@ class App extends Runtime {
 
     cutCopyWidgets = async type => {
         const widgets = {};
-        const project = JSON.parse(JSON.stringify(store.getState().visProject));
+        const groupMembers = {};
+        const project = deepClone(store.getState().visProject);
+        const { visProject } = store.getState();
 
         this.state.selectedWidgets.forEach(selectedWidget => {
-            widgets[selectedWidget] = store.getState().visProject[this.state.selectedView].widgets[selectedWidget];
+            widgets[selectedWidget] = visProject[this.state.selectedView].widgets[selectedWidget];
+            const copiedWidget = widgets[selectedWidget];
+
+            if (isGroup(copiedWidget)) {
+                for (const wid of copiedWidget.data.members) {
+                    groupMembers[wid] = visProject[this.state.selectedView].widgets[wid];
+                }
+            }
+
             if (type === 'cut' && project[this.state.selectedView]) {
                 delete project[this.state.selectedView].widgets[selectedWidget];
             }
@@ -544,8 +554,8 @@ class App extends Runtime {
                 type,
                 view: this.state.selectedView,
                 widgets,
+                groupMembers,
             },
-            // clipboardImages: JSON.parse(JSON.stringify(this.state.selectedWidgets)),
         });
 
         // deselect all widgets
@@ -553,32 +563,6 @@ class App extends Runtime {
             await this.setSelectedWidgets([]);
             await this.changeProject(project);
         }
-
-        /*
-        const clipboardImages = [];
-        for (const k in this.state.selectedWidgets) {
-            clipboardImages.push(this.state.selectedWidgets[k]);
-            // let canvas;
-            // try {
-            //     canvas = (await html2canvas(window.document.getElementById(this.state.selectedWidgets[k])));
-            // } catch (e) {
-            // //
-            // }
-            // if (canvas) {
-            //     const newCanvas = window.document.createElement('canvas');
-            //     newCanvas.height = 80;
-            //     newCanvas.width = Math.ceil((canvas.width / canvas.height) * newCanvas.height);
-            //     if (newCanvas.width > 80) {
-            //         newCanvas.width = 80;
-            //         newCanvas.height = Math.ceil((canvas.height / canvas.width) * newCanvas.width);
-            //     }
-            //     const ctx = newCanvas.getContext('2d');
-            //     ctx.clearRect(0, 0, newCanvas.width, newCanvas.height);
-            //     ctx.drawImage(canvas, 0, 0, newCanvas.width, newCanvas.height);
-            //     clipboardImages.push(newCanvas.toDataURL(0));
-            // }
-        }
-         */
     };
 
     pasteWidgets = async () => {
@@ -601,7 +585,9 @@ class App extends Runtime {
             let newKey;
 
             if (isGroup(newWidget)) {
-                copyGroup({ group: newWidget, widgets, offset: groupOffset });
+                pasteGroup({
+                    group: newWidget, widgets, offset: groupOffset, clipboardWidgets: this.state.widgetsClipboard.groupMembers,
+                });
                 newKey = getNewGroupId(store.getState().visProject, groupOffset);
                 groupOffset++;
             } else {
@@ -632,7 +618,7 @@ class App extends Runtime {
             });
 
             if (isGroup(newWidget)) {
-                copyGroup({ group: newWidget, widgets });
+                pasteGroup({ group: newWidget, widgets, clipboardWidgets: this.state.widgetsClipboard.groupMembers });
             } else {
                 const newKey = getNewWidgetId(store.getState().visProject);
                 widgets[newKey] = newWidget;

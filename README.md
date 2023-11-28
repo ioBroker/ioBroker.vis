@@ -231,6 +231,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 ## Changelog
 ### **WORK IN PROGRESS**
 * (foxriver76) recalculate fields after moving widgets
+* (foxriver76) fixed pasting group on other view
 * (bluefox) implemented Basic Image as react widget
 
 ### 2.9.0 (2023-11-27)
