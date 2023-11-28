@@ -157,7 +157,12 @@ async function generatePages() {
     let changed = !!syncWidgetSets(false);
 
     // upload config.js
-    let data = await adapter.readFileAsync(adapterName, 'js/config.js');
+    let data;
+    try {
+        data = await adapter.readFileAsync(adapterName, 'js/config.js');
+    } catch (_e) {
+        //
+    }
     if (typeof data === 'object') {
         data = data.file;
     }
