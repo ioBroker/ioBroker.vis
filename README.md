@@ -214,6 +214,8 @@ Notice that these settings are valid only for reconnection and not for the first
 * (agav99) fixed subscribeOidAtRuntime
 * (stephanritscher) Added dynamic web manifest
 * (agav99) Optimization for basic-view in widget8
+* (oweitman) Changed binding regex to accept umlauts
+* (mcm1957) Corrected first installation of vis
 
 ### 1.5.1 (2023-11-06)
 * (bluefox) Changed License: it is now MIT, and the license check was removed
