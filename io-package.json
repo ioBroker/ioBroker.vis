@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.5.1",
+        "version": "1.5.2",
         "news": {
+            "1.5.2": {
+                "en": "added the new binding operation for getting property of JSON or object\nChecked the initialization of the `local_` variables\nfixed subscribeOidAtRuntime\nAdded dynamic web manifest\nOptimization for basic-view in widget8\nChanged binding regex to accept umlauts\nCorrected first installation of vis",
+                "de": "die neue Bindungsoperation zum Erhalt von Eigentum von JSON oder Objekt hinzugefügt\nDie Initialisierung der lokalen_ Variablen wurde geprüft\nabonnierenOidAtRuntime\nHinzufügen dynamischer web manifest\nOptimierung der Grundansicht in widget8\nÄnderung des verbindlichen Regex zur Annahme von Umlauts\nKorrigierte erste Installation von vis",
+                "ru": "добавлена новая операция связывания для получения собственности JSON или объекта\nПроверена инициализация локальных_ переменных\nфиксированная подпискаOidAtRuntime\nДобавлен динамический веб-проявление\nОптимизация для базового просмотра в виджете8\nИзмененный обязательный regex, чтобы принять umlauts\nИсправлена первая установка vis",
+                "pt": "adicionou a nova operação de ligação para obter propriedade de JSON ou objeto\nVerificada a inicialização das variáveis local_\nassinada fixaOidAtRuntime\nAdicionado manifesto dinâmico da web\nOtimização para visualização básica no widget8\nMudança de ligação regex para aceitar umlauts\nPrimeira instalação correta de vis",
+                "nl": "voegde de nieuwe binding toe voor het krijgen van eigendom van JSON of object\nControleerde de initialisatie van de plaatselijke variabelen\nvertaling:\nDynamisch web manifest\nOptimisatie voor basis-view in Widget8\nVeranderde bindingsregister om paralauten te accepteren\nVertaling:",
+                "fr": "ajouté la nouvelle opération de reliure pour obtenir la propriété de JSON ou objet\nVérifié l'initialisation des variables locales_\nabonnement fixeOidAtRuntime\nAjout d ' un manifeste dynamique\nOptimisation de la vue de base dans widget8\nChangement de regex contraignant pour accepter umlauts\nCorrection de la première installation de vis",
+                "it": "aggiunto il nuovo funzionamento vincolante per ottenere proprietà di JSON o oggetto\nControllata l'inizializzazione delle variabili locali_\nabbonamento fissoOidAtRuntime\nAggiunto dinamico web manifesto\nOttimizzazione per la visione di base in widget8\nRegex vincolante modificato per accettare umlauts\nCorretto prima installazione di vis",
+                "es": "agregó la nueva operación vinculante para obtener propiedad de JSON o objeto\nComprobó la inicialización de las variables local_\nsuscripción fijaOidAtRuntime\nAñadido dinámico web manifiesto\nOptimización para la visión básica en widget8\nCambio de reno vinculante para aceptar umlauts\nPrimera instalación corregida de vis",
+                "pl": "dodano nową operację wiązania dla uzyskania własności obiektów JSON lub JSON\nZinicjował inicjację lokalnych zmiennych _\nadAtRuntime\nDynamiczny manifest internetowy\nOptymizacja podstawowego przeglądu widget8\nZmienił rejestry wiążące się z umlauts\nPierwsza instalacja wizy",
+                "uk": "додано нову операцію для отримання майна JSON або об'єкта\nПеревірка ініціалізації змінних локальних_\nфіксована підпискаOidAtRuntime\nДодана динамічна веб-проявка\nОптимізація для базового перегляду у віджеті8\nЗмінений обов'язковий regex для прийняття umlauts\nВиправлена перша установка в'язнів",
+                "zh-cn": "增加新的具有约束力的行动,以获得联合执行董事会或目标的财产。\n检查当地的初始化:变量\n固定签名\n增加动态网站\nA. 彻底审查目标8\nB. 修改具有约束力的条例以接受劳教\n更正"
+            },
             "1.5.1": {
                 "en": "Changed License: it is now MIT, and the license check was removed",
                 "de": "Änderung der Lizenz: es ist jetzt MIT, und die Lizenzprüfung wurde entfernt",
@@ -76,18 +89,6 @@
                 "es": "Error solucionado con la exportación de widgets específicos.",
                 "pl": "Naprawiono błąd z eksportem określonych widżetów",
                 "zh-cn": "修复了导出特定小部件的错误"
-            },
-            "1.4.11": {
-                "en": "Removed ES6 commands to be supported by older browsers\nFixed problem with update of grouped widgets\nAdded web manifest to be able to handle vis as the web app",
-                "de": "Entfernte ES6-Befehle, die von älteren Browsern unterstützt werden sollen\nProblem mit der Aktualisierung von gruppierten Widgets behoben\nWeb-Manifest hinzugefügt, um vis als Web-App handhaben zu können",
-                "ru": "Удалены команды ES6 для поддержки старых браузеров.\nИсправлена проблема с обновлением сгруппированных виджетов\nДобавлен веб-манифест, позволяющий обрабатывать vis как веб-приложение.",
-                "pt": "Comandos ES6 removidos para serem suportados por navegadores mais antigos\nCorrigido problema com atualização de widgets agrupados\nManifesto da web adicionado para poder lidar com vis como o aplicativo da web",
-                "nl": "ES6-commando's verwijderd om door oudere browsers te worden ondersteund\nProbleem opgelost met update van gegroepeerde widgets\nWebmanifest toegevoegd om vis als webapp te kunnen gebruiken",
-                "fr": "Suppression des commandes ES6 pour qu'elles soient prises en charge par les anciens navigateurs\nCorrection d'un problème avec la mise à jour des widgets groupés\nAjout d'un manifeste Web pour pouvoir gérer vis en tant qu'application Web",
-                "it": "Rimossi i comandi ES6 per essere supportati dai browser meno recenti\nRisolto il problema con l'aggiornamento dei widget raggruppati\nAggiunto manifesto web per poter gestire vis come app web",
-                "es": "Se eliminaron los comandos de ES6 para que sean compatibles con navegadores más antiguos.\nSolucionado el problema con la actualización de widgets agrupados\nSe agregó un manifiesto web para poder manejar vis como la aplicación web.",
-                "pl": "Usunięto polecenia ES6, które mają być obsługiwane przez starsze przeglądarki\nNaprawiono problem z aktualizacją zgrupowanych widżetów\nDodano manifest internetowy, aby móc obsługiwać vis jako aplikację internetową",
-                "zh-cn": "删除了旧浏览器支持的 ES6 命令\n修复了分组小部件更新的问题\n添加了 Web 清单，以便能够将 vis 作为 Web 应用程序处理"
             }
         },
         "title": "Visualisation",
