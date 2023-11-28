@@ -123,7 +123,7 @@ function extractBinding(format) {
             for (var u = 1; u < parts.length; u++) {
                 // eval construction
                 if (isEval) {
-                    if (parts[u].trim().match(/^[\d\w_]+:\s?[-.\d\w_]+$/)) {//parts[u].indexOf(':') !== -1 && parts[u].indexOf('::') === -1) {
+                    if (parts[u].trim().match(/^[\d\w_]+:\s?[._\-\/ :!#$%&()+=@^{}|~\p{Ll}\p{Lu}\p{Nd}]+$/u)) {
                         var _systemOid = parts[u].trim();
                         var _visOid = _systemOid;
 
