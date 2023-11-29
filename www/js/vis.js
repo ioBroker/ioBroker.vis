@@ -3448,7 +3448,7 @@ function main($, onReady) {
             if (id && id.match(/^dev\d+(.val|.ack|.tc|.lc)+/)) {
                 return vis.states.___bind(id, callback);
             }
-            //console.log('ERROR: binding in edit mode is not allowed on ' + id);
+            // console.log('ERROR: binding in edit mode is not allowed on ' + id);
         };
 
         // Dynamic webmanifest
@@ -3466,16 +3466,20 @@ function main($, onReady) {
             }],
         };
         const manifestString = JSON.stringify(webmanifest);
-        const manifestBlob = new Blob([manifestString], {type: 'application/json'});
-        const manifestURL = URL.createObjectURL(manifestBlob);
-        document.querySelector('#webmanifest').setAttribute('href', manifestURL);
+
+        const webManifest = document.querySelector('#webmanifest');
+        if (webManifest) {
+            const manifestBlob = new Blob([manifestString], {type: 'application/json'});
+            const manifestURL = URL.createObjectURL(manifestBlob);
+            webManifest.setAttribute('href', manifestURL);
+        }
 
         const manifestLink = document.createElement('Link');
         manifestLink.rel = 'manifest';
         manifestLink.setAttribute('href', `data:application/json;charset=8${manifestString}`)
     }
 
-    // für iOS Safari - wirklich notwendig?
+    // für iOS Safari - really required?
     $('body').on('touchmove', function (e) {
         !$(e.target).closest('body').length && e.preventDefault();
     });
