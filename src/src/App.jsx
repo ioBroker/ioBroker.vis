@@ -839,8 +839,8 @@ class App extends Runtime {
         return null;
     }
 
-    groupWidgets = () => {
-        const project = JSON.parse(JSON.stringify(store.getState().visProject));
+    groupWidgets = async () => {
+        const project = deepClone(store.getState().visProject);
         const widgets = project[this.state.selectedView].widgets;
         const group = {
             tpl: '_tplGroup',
@@ -885,7 +885,8 @@ class App extends Runtime {
         group.style.height = `${bottom - top}px`;
         widgets[groupId] = group;
 
-        return this.changeProject(project);
+        await this.changeProject(project);
+        this.setSelectedWidgets([groupId]);
     };
 
     ungroupWidgets = () => {
@@ -957,7 +958,7 @@ class App extends Runtime {
         }, 1000);
     }
 
-    changeProject = async (project, ignoreHistory) => {
+    changeProject = async (project, ignoreHistory = false) => {
         // set timestamp
         project.___settings.ts = `${Date.now()}.${Math.random().toString(36).substring(7)}`;
 
