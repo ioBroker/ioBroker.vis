@@ -983,6 +983,7 @@ class VisView extends React.Component {
         this.moveTimer = setTimeout(() => {
             this.moveTimer = null;
             this.showRulers(true);
+            store.dispatch(recalculateFields(true));
 
             this.props.selectedWidgets.forEach(wid => {
                 if (this.widgetsRefs[wid]?.onMove) {
