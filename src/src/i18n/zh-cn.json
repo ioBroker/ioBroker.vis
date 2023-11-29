@@ -634,5 +634,10 @@
   "vis_2_widgets_widgets_tabs_variant_full_width": "全屏宽度",
   "vis_2_widgets_widgets_tabs_vertical": "垂直的",
   "welcome_message": "目前还没有一个项目存在。",
-  "word-spacing": "字间距"
+  "word-spacing": "字间距",
+  "Limit screen": "限制屏",
+  "Limit border width": "边框宽度",
+  "Limit border color": "边框颜色",
+  "Limit border style": "边框样式",
+  "Limit background color": "背景颜色"
 }

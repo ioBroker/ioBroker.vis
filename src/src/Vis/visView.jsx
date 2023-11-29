@@ -24,6 +24,7 @@ import VisBaseWidget from './visBaseWidget';
 import VisCanWidget from './visCanWidget';
 import { addClass, parseDimension } from './visUtils';
 import VisNavigation from './visNavigation';
+import { isVarFinite } from './utils';
 import VisWidgetsCatalog from './visWidgetsCatalog';
 import { recalculateFields, store } from '../Store';
 
@@ -1135,7 +1136,7 @@ class VisView extends React.Component {
         ];
     }
 
-    getRelativeStyle(settings, groupId) {
+    getRelativeStyle(settings, groupId, limitScreenSize) {
         const relativeStyle = {};
         if (groupId) {
             const groupWidgetStyle = store.getState().visProject[this.props.view].widgets[groupId].style;
@@ -1143,13 +1144,13 @@ class VisView extends React.Component {
             relativeStyle.height = groupWidgetStyle?.height || '100%';
         } else {
             // this was only if this.props.editMode
-            if (settings.sizex) {
+            if (settings.sizex && !limitScreenSize) {
                 let ww = settings.sizex;
                 let hh = settings.sizey;
-                if (Number.isFinite(ww)) {
+                if (isVarFinite(ww)) {
                     ww = parseFloat(ww);
                 }
-                if (Number.isFinite(hh)) {
+                if (isVarFinite(hh)) {
                     hh = parseFloat(hh);
                 }
 
@@ -1173,7 +1174,7 @@ class VisView extends React.Component {
                 relativeStyle.flexWrap = 'wrap';
                 relativeStyle.columnGap = 8;
 
-                if (Number.isFinite(settings.columnGap)) {
+                if (isVarFinite(settings.columnGap)) {
                     relativeStyle.columnGap = parseInt(settings.columnGap, 10);
                 }
                 // relativeStyle.justifyContent = settings.style.justifyContent || 'center';
@@ -1192,7 +1193,7 @@ class VisView extends React.Component {
         // number of columns
         const width = this.state.width;
         if (width) {
-            if (settings.columnWidth && Number.isFinite(settings.columnWidth)) {
+            if (settings.columnWidth && isVarFinite(settings.columnWidth)) {
                 return Math.floor(this.state.width / settings.columnWidth) + 1;
             }
 
@@ -1500,7 +1501,7 @@ class VisView extends React.Component {
                         rxRelativeWidgets = wColumns[0];
                     } else {
                         const style = {};
-                        if (settings.columnWidth && Number.isFinite(settings.columnWidth)) {
+                        if (settings.columnWidth && isVarFinite(settings.columnWidth)) {
                             style.maxWidth = parseFloat(settings.columnWidth);
                         }
                         rxRelativeWidgets = wColumns.map((column, i) => <div
@@ -1642,30 +1643,61 @@ class VisView extends React.Component {
             }
             if (settings['bg-position-x']) {
                 // eslint-disable-next-line no-restricted-properties
-                backgroundStyle.backgroundPositionX = window.isFinite(settings['bg-position-x']) ? `${settings['bg-position-x']}px` : settings['bg-position-x'];
+                backgroundStyle.backgroundPositionX = isVarFinite(settings['bg-position-x']) ? `${settings['bg-position-x']}px` : settings['bg-position-x'];
             }
             if (settings['bg-position-y']) {
                 // eslint-disable-next-line no-restricted-properties
-                backgroundStyle.backgroundPositionY = window.isFinite(settings['bg-position-y']) ? `${settings['bg-position-y']}px` : settings['bg-position-y'];
+                backgroundStyle.backgroundPositionY = isVarFinite(settings['bg-position-y']) ? `${settings['bg-position-y']}px` : settings['bg-position-y'];
             }
             if (settings['bg-width'] && settings['bg-height']) {
                 // eslint-disable-next-line no-restricted-properties
-                const w = window.isFinite(settings['bg-width']) ? `${settings['bg-width']}px` : settings['bg-width'];
+                const w = isVarFinite(settings['bg-width']) ? `${settings['bg-width']}px` : settings['bg-width'];
                 // eslint-disable-next-line no-restricted-properties
-                const h = window.isFinite(settings['bg-height']) ? `${settings['bg-height']}px` : settings['bg-height'];
+                const h = isVarFinite(settings['bg-height']) ? `${settings['bg-height']}px` : settings['bg-height'];
                 backgroundStyle.backgroundSize = `${w} ${h}`;
             } else if (settings['bg-width']) {
                 // eslint-disable-next-line no-restricted-properties
-                backgroundStyle.backgroundSize = `${window.isFinite(settings['bg-width']) ? `${settings['bg-width']}px` : settings['bg-width']} auto`;
+                backgroundStyle.backgroundSize = `${isVarFinite(settings['bg-width']) ? `${settings['bg-width']}px` : settings['bg-width']} auto`;
             } else if (settings['bg-height']) {
                 // eslint-disable-next-line no-restricted-properties
-                const w = window.isFinite(settings['bg-height']) ? `${settings['bg-height']}px` : settings['bg-height'];
+                const w = isVarFinite(settings['bg-height']) ? `${settings['bg-height']}px` : settings['bg-height'];
                 backgroundStyle.backgroundSize = `auto ${w}`;
             }
         }
         Object.assign(style, backgroundStyle);
 
         let renderedWidgets;
+
+        let limitScreenStyle = null;
+        // limit screen size of desired
+        if (settings.limitScreen) {
+            const ww = isVarFinite(settings.sizex) ? parseFloat(settings.sizex) : 0;
+            const hh = isVarFinite(settings.sizey) ? parseFloat(settings.sizey) : 0;
+            if (ww && hh) {
+                const borderWidth = parseFloat(settings.limitScreenBorderWidth) || 0;
+                const borderColor = settings.limitScreenBorderColor || '#333';
+                const borderStyle = settings.limitScreenBorderStyle || 'dotted';
+                const bgColor = settings.limitScreenBackgroundColor || null;
+
+                limitScreenStyle = {
+                    ...backgroundStyle,
+                    width: ww + borderWidth * 2,
+                    height: hh + borderWidth * 2,
+                    minWidth: ww + borderWidth * 2,
+                    minHeight: hh + borderWidth * 2,
+                    overflow: 'auto',
+                    position: 'relative',
+                    boxSizing: 'border-box',
+                    borderWidth,
+                    borderColor,
+                    borderStyle,
+                };
+                style.display = 'flex';
+                style.justifyContent = 'center';
+                style.alignItems = 'center';
+                style.backgroundColor = bgColor;
+            }
+        }
 
         if (this.props.selectedGroup) {
             // draw all widgets in div, that has exact size of the group
@@ -1684,13 +1716,22 @@ class VisView extends React.Component {
             renderedWidgets = <>
                 {rxRelativeWidgets ? <div
                     ref={this.refRelativeView}
-                    style={this.getRelativeStyle(settings, this.props.selectedGroup)}
+                    style={this.getRelativeStyle(settings, this.props.selectedGroup, !!limitScreenStyle)}
                     className="vis-relative-view"
                 >
                     {rxRelativeWidgets}
                 </div> : null}
                 {rxAbsoluteWidgets}
             </>;
+        }
+
+        if (limitScreenStyle) {
+            renderedWidgets = <div
+                style={limitScreenStyle}
+                className="vis-limit-screen"
+            >
+                {renderedWidgets}
+            </div>;
         }
 
         let renderedView = <div
@@ -1703,7 +1744,7 @@ class VisView extends React.Component {
         >
             <style>{this.state.themeCode}</style>
             {gridDiv}
-            {this.renderScreenSize()}
+            {limitScreenStyle ? null : this.renderScreenSize()}
             {this.state.rulers.map((ruler, key) =>
                 <div
                     key={key}

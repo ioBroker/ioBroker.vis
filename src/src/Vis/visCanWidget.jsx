@@ -21,7 +21,7 @@ import {
     getUsedObjectIDsInWidget,
 } from './visUtils';
 import VisBaseWidget from './visBaseWidget';
-import { calculateOverflow } from './utils';
+import { calculateOverflow, isVarFinite } from './utils';
 
 const analyzeDraggableResizable = (el, result, widgetStyle) => {
     result = result || {};
@@ -1003,7 +1003,7 @@ class VisCanWidget extends VisBaseWidget {
             if (isRelative) {
                 delete widgetStyle.top;
                 delete widgetStyle.left;
-                if (Number.isFinite(this.props.context.views[this.props.view].settings.rowGap)) {
+                if (isVarFinite(this.props.context.views[this.props.view].settings.rowGap)) {
                     widgetStyle['margin-bottom'] = `${parseFloat(this.props.context.views[this.props.view].settings.rowGap)}px`;
                 }
             }

@@ -1545,7 +1545,7 @@ class App extends Runtime {
                             setSelectedGroup={this.setSelectedGroup}
                             setMarketplaceDialog={this.setMarketplaceDialog}
                         >
-                            { visEngine }
+                            {visEngine}
                         </VisContextMenu>
                     </div>
                 </ViewDrop>

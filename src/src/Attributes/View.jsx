@@ -126,42 +126,42 @@ const styles = _theme => ({
 });
 
 const resolution = [
-    { value: 'none', name: 'not defined' },
-    { value: 'user', name: 'User defined' },
-    { value: '375x667', name: 'iPhone SE - Portrait' },
-    { value: '667x375', name: 'iPhone SE - Landscape' },
-    { value: '414x896', name: 'iPhone XR - Portrait' },
-    { value: '896x414', name: 'iPhone XR - Landscape' },
-    { value: '390x844', name: 'iPhone 12 Pro - Portrait' },
-    { value: '844x390', name: 'iPhone 12 Pro - Landscape' },
-    { value: '393x851', name: 'Pixel 5 - Portrait' },
-    { value: '851x393', name: 'Pixel 5 - Landscape' },
-    { value: '360x740', name: 'Samsung Galaxy S8+ - Portrait' },
-    { value: '740x360', name: 'Samsung Galaxy S8+ - Landscape' },
-    { value: '412x915', name: 'Samsung Galaxy S20 Ultra - Portrait' },
-    { value: '915x412', name: 'Samsung Galaxy S20 Ultra - Landscape' },
-    { value: '820x1180', name: 'iPad Air - Portrait' },
-    { value: '1180x820', name: 'iPad Air - Landscape' },
-    { value: '768x1024', name: 'iPad Mini - Portrait' },
-    { value: '1024x768', name: 'iPad Mini - Landscape' },
-    { value: '1024x1366', name: 'iPad Pro - Portrait' },
-    { value: '1366x1024', name: 'iPad Pro - Landscape' },
-    { value: '912x1368', name: 'Surface Pro 7 - Portrait' },
-    { value: '1368x912', name: 'Surface Pro 7 - Landscape' },
-    { value: '540x720', name: 'Surface Duo - Portrait' },
-    { value: '720x540', name: 'Surface Duo - Landscape' },
-    { value: '280x653', name: 'Galaxy Fold - Portrait' },
-    { value: '653x280', name: 'Galaxy Fold - Landscape' },
-    { value: '412x914', name: 'Samsung Galaxy A51/71 - Portrait' },
-    { value: '914x412', name: 'Samsung Galaxy A51/71 - Landscape' },
-    { value: '600x1024', name: 'Nest Hub - Portrait' },
-    { value: '1024x600', name: 'Nest Hub - Landscape' },
-    { value: '800x1280', name: 'Nest Hub Max - Portrait' },
-    { value: '1280x800', name: 'Nest Hub Max - Landscape' },
-    { value: '720x1280', name: 'HD - Portrait' },
-    { value: '1280x720', name: 'HD - Landscape' },
-    { value: '1080x1920', name: 'Full HD - Portrait' },
-    { value: '1920x1080', name: 'Full HD - Landscape' },
+    { value: 'none', label: 'not defined' },
+    { value: 'user', label: 'User defined' },
+    { value: '375x667', label: 'iPhone SE - Portrait' },
+    { value: '667x375', label: 'iPhone SE - Landscape' },
+    { value: '414x896', label: 'iPhone XR - Portrait' },
+    { value: '896x414', label: 'iPhone XR - Landscape' },
+    { value: '390x844', label: 'iPhone 12 Pro - Portrait' },
+    { value: '844x390', label: 'iPhone 12 Pro - Landscape' },
+    { value: '393x851', label: 'Pixel 5 - Portrait' },
+    { value: '851x393', label: 'Pixel 5 - Landscape' },
+    { value: '360x740', label: 'Samsung Galaxy S8+ - Portrait' },
+    { value: '740x360', label: 'Samsung Galaxy S8+ - Landscape' },
+    { value: '412x915', label: 'Samsung Galaxy S20 Ultra - Portrait' },
+    { value: '915x412', label: 'Samsung Galaxy S20 Ultra - Landscape' },
+    { value: '820x1180', label: 'iPad Air - Portrait' },
+    { value: '1180x820', label: 'iPad Air - Landscape' },
+    { value: '768x1024', label: 'iPad Mini - Portrait' },
+    { value: '1024x768', label: 'iPad Mini - Landscape' },
+    { value: '1024x1366', label: 'iPad Pro - Portrait' },
+    { value: '1366x1024', label: 'iPad Pro - Landscape' },
+    { value: '912x1368', label: 'Surface Pro 7 - Portrait' },
+    { value: '1368x912', label: 'Surface Pro 7 - Landscape' },
+    { value: '540x720', label: 'Surface Duo - Portrait' },
+    { value: '720x540', label: 'Surface Duo - Landscape' },
+    { value: '280x653', label: 'Galaxy Fold - Portrait' },
+    { value: '653x280', label: 'Galaxy Fold - Landscape' },
+    { value: '412x914', label: 'Samsung Galaxy A51/71 - Portrait' },
+    { value: '914x412', label: 'Samsung Galaxy A51/71 - Landscape' },
+    { value: '600x1024', label: 'Nest Hub - Portrait' },
+    { value: '1024x600', label: 'Nest Hub - Landscape' },
+    { value: '800x1280', label: 'Nest Hub Max - Portrait' },
+    { value: '1280x800', label: 'Nest Hub Max - Landscape' },
+    { value: '720x1280', label: 'HD - Portrait' },
+    { value: '1280x720', label: 'HD - Landscape' },
+    { value: '1080x1920', label: 'Full HD - Portrait' },
+    { value: '1920x1080', label: 'Full HD - Landscape' },
 ];
 
 const checkFunction = (funcText, settings) => {
@@ -235,9 +235,9 @@ const View = props => {
                     name: 'display',
                     field: 'display',
                     type: 'select',
-                    items: [
-                        { name: 'flex', value: 'flex' },
-                        { name: 'block', value: 'block' },
+                    options: [
+                        { label: 'flex', value: 'flex' },
+                        { label: 'block', value: 'block' },
                     ],
                     noTranslation: true,
                     title: 'For widgets with relative position',
@@ -259,7 +259,7 @@ const View = props => {
                     field: 'theme',
                     notStyle: true,
                     type: 'select',
-                    items: theme,
+                    options: theme,
                     noTranslation: true,
                 },
                 {
@@ -267,9 +267,9 @@ const View = props => {
                     field: 'group_action',
                     notStyle: true,
                     type: 'select',
-                    items: [
-                        { name: 'Disabled', value: 'disabled' },
-                        { name: 'Hide', value: 'hide' },
+                    options: [
+                        { label: 'Disabled', value: 'disabled' },
+                        { label: 'Hide', value: 'hide' },
                     ],
                 },
             ],
@@ -326,7 +326,7 @@ const View = props => {
                 {
                     name: 'Background class',
                     type: 'select',
-                    items: background,
+                    options: background,
                     field: 'background_class',
                     // eslint-disable-next-line react/no-unstable-nested-components
                     itemModify: item => <>
@@ -356,7 +356,7 @@ const View = props => {
                     type: 'autocomplete',
                     field: 'background-repeat',
                     hidden: 'data.useBackground || !!data.background_class || !!data["bg-image"]',
-                    items: [
+                    options: [
                         'repeat', 'repeat-x', 'repeat-y', 'no-repeat', 'initial', 'inherit',
                     ],
                 },
@@ -365,35 +365,35 @@ const View = props => {
                     field: 'background-attachment',
                     type: 'autocomplete',
                     hidden: 'data.useBackground || !!data.background_class || !!data["bg-image"]',
-                    items: ['scroll', 'fixed', 'local', 'initial', 'inherit'],
+                    options: ['scroll', 'fixed', 'local', 'initial', 'inherit'],
                 },
                 {
                     name: '-position',
                     field: 'background-position',
                     type: 'autocomplete',
                     hidden: 'data.useBackground || !!data.background_class || !!data["bg-image"]',
-                    items: ['left top', 'left center', 'left bottom', 'right top', 'right center', 'right bottom', 'center top', 'center center', 'center bottom', 'initial', 'inherit'],
+                    options: ['left top', 'left center', 'left bottom', 'right top', 'right center', 'right bottom', 'center top', 'center center', 'center bottom', 'initial', 'inherit'],
                 },
                 {
                     name: '-size',
                     field: 'background-size',
                     type: 'autocomplete',
                     hidden: 'data.useBackground || !!data.background_class || !!data["bg-image"]',
-                    items: ['auto', 'cover', 'contain', 'initial', 'inherit'],
+                    options: ['auto', 'cover', 'contain', 'initial', 'inherit'],
                 },
                 {
                     name: '-clip',
                     field: 'background-clip',
                     type: 'autocomplete',
                     hidden: 'data.useBackground || !!data.background_class || !!data["bg-image"]',
-                    items: ['border-box', 'padding-box', 'content-box', 'initial', 'inherit'],
+                    options: ['border-box', 'padding-box', 'content-box', 'initial', 'inherit'],
                 },
                 {
                     name: '-origin',
                     field: 'background-origin',
                     type: 'autocomplete',
                     hidden: 'data.useBackground || !!data.background_class || !!data["bg-image"]',
-                    items: ['border-box', 'padding-box', 'content-box', 'initial', 'inherit'],
+                    options: ['border-box', 'padding-box', 'content-box', 'initial', 'inherit'],
                 },
             ],
         },
@@ -425,10 +425,10 @@ const View = props => {
                     type: 'select',
                     name: 'Grid',
                     field: 'snapType',
-                    items: [
-                        { name: 'Disabled', value: 0 },
-                        { name: 'Elements', value: 1 },
-                        { name: 'Grid', value: 2 },
+                    options: [
+                        { label: 'Disabled', value: 0 },
+                        { label: 'Elements', value: 1 },
+                        { label: 'Grid', value: 2 },
                     ],
                     notStyle: true,
                 },
@@ -449,7 +449,7 @@ const View = props => {
                 {
                     type: 'select',
                     name: 'Resolution',
-                    items: resolution,
+                    options: resolution,
                     width: 236,
                     value: resolutionSelect,
                     onChange: e => {
@@ -471,6 +471,7 @@ const View = props => {
                         }
                         props.changeProject(project);
                     },
+                    notStyle: true,
                 },
                 {
                     type: 'raw',
@@ -514,6 +515,55 @@ const View = props => {
                             }}
                         />
                     </span>,
+                    notStyle: true,
+                },
+                {
+                    type: 'checkbox',
+                    name: 'Limit screen',
+                    field: 'limitScreen',
+                    hidden: 'data.sizex === undefined && data.sizey === undefined',
+                    notStyle: true,
+                },
+                {
+                    type: 'slider',
+                    name: 'Limit border width',
+                    field: 'limitScreenBorderWidth',
+                    min: 0,
+                    max: 20,
+                    hidden: '(data.sizex === undefined && data.sizey === undefined) || !data.limitScreen',
+                    notStyle: true,
+                },
+                {
+                    type: 'color',
+                    name: 'Limit border color',
+                    field: 'limitScreenBorderColor',
+                    hidden: '(data.sizex === undefined && data.sizey === undefined) || !data.limitScreen || !data.limitScreenBorderWidth',
+                    notStyle: true,
+                },
+                {
+                    type: 'select',
+                    name: 'Limit border style',
+                    field: 'limitScreenBorderStyle',
+                    noTranslation: true,
+                    options: [
+                        { label: 'solid', value: 'solid' },
+                        { label: 'dotted', value: 'dotted' },
+                        { label: 'dashed', value: 'dashed' },
+                        { label: 'double', value: 'double' },
+                        { label: 'groove', value: 'groove' },
+                        { label: 'ridge', value: 'ridge' },
+                        { label: 'inset', value: 'inset' },
+                        { label: 'outset', value: 'outset' },
+                    ],
+                    hidden: '(data.sizex === undefined && data.sizey === undefined) || !data.limitScreen || !data.limitScreenBorderWidth',
+                    notStyle: true,
+                },
+                {
+                    type: 'color',
+                    name: 'Limit background color',
+                    field: 'limitScreenBackgroundColor',
+                    hidden: '(data.sizex === undefined && data.sizey === undefined) || !data.limitScreen',
+                    notStyle: true,
                 },
             ],
         },
@@ -540,9 +590,9 @@ const View = props => {
                     default: 'vertical',
                     hidden: '!data.navigation',
                     applyToAll: true,
-                    items: [
-                        { value: 'vertical', name: 'Vertical' },
-                        { value: 'horizontal', name: 'Horizontal' },
+                    options: [
+                        { value: 'vertical', label: 'Vertical' },
+                        { value: 'horizontal', label: 'Horizontal' },
                     ],
                 },
                 {
@@ -595,9 +645,9 @@ const View = props => {
                     name: 'Direction',
                     field: 'flexDirection',
                     notStyle: true,
-                    items: [
-                        { name: 'Column', value: 'column' },
-                        { name: 'Row', value: 'row' },
+                    options: [
+                        { label: 'Column', value: 'column' },
+                        { label: 'Row', value: 'row' },
                     ],
                 },
                 {
@@ -605,9 +655,9 @@ const View = props => {
                     name: 'Wrap',
                     field: 'flexWrap',
                     notStyle: true,
-                    items: [
-                        { name: 'Wrap', value: 'wrap' },
-                        { name: 'No wrap', value: 'nowrap' },
+                    options: [
+                        { label: 'Wrap', value: 'wrap' },
+                        { label: 'No wrap', value: 'nowrap' },
                     ],
                 },
                 {
@@ -615,13 +665,13 @@ const View = props => {
                     name: 'Justify content',
                     field: 'justifyContent',
                     notStyle: true,
-                    items: [
-                        { name: 'flex-start', value: 'flex-start' },
-                        { name: 'center', value: 'center' },
-                        { name: 'flex-end', value: 'flex-end' },
-                        { name: 'space-between', value: 'space-between' },
-                        { name: 'space-around', value: 'space-around' },
-                        { name: 'space-evenly', value: 'space-evenly' },
+                    options: [
+                        { label: 'flex-start', value: 'flex-start' },
+                        { label: 'center', value: 'center' },
+                        { label: 'flex-end', value: 'flex-end' },
+                        { label: 'space-between', value: 'space-between' },
+                        { label: 'space-around', value: 'space-around' },
+                        { label: 'space-evenly', value: 'space-evenly' },
                     ],
                 },
                 {
@@ -629,12 +679,12 @@ const View = props => {
                     name: 'Align items',
                     field: 'alignItems',
                     notStyle: true,
-                    items: [
-                        { name: 'flex-start', value: 'flex-start' },
-                        { name: 'center', value: 'center' },
-                        { name: 'flex-end', value: 'flex-end' },
-                        { name: 'stretch', value: 'stretch' },
-                        { name: 'baseline', value: 'baseline' },
+                    options: [
+                        { label: 'flex-start', value: 'flex-start' },
+                        { label: 'center', value: 'center' },
+                        { label: 'flex-end', value: 'flex-end' },
+                        { label: 'stretch', value: 'stretch' },
+                        { label: 'baseline', value: 'baseline' },
                     ],
                 },
                 {
@@ -643,13 +693,13 @@ const View = props => {
                     field: 'alignContent',
                     hidden: data => data.flexWrap === 'nowrap',
                     notStyle: true,
-                    items: [
-                        { name: 'flex-start', value: 'flex-start' },
-                        { name: 'center', value: 'center' },
-                        { name: 'flex-end', value: 'flex-end' },
-                        { name: 'stretch', value: 'stretch' },
-                        { name: 'space-between', value: 'space-between' },
-                        { name: 'space-around', value: 'space-around' },
+                    options: [
+                        { label: 'flex-start', value: 'flex-start' },
+                        { label: 'center', value: 'center' },
+                        { label: 'flex-end', value: 'flex-end' },
+                        { label: 'stretch', value: 'stretch' },
+                        { label: 'space-between', value: 'space-between' },
+                        { label: 'space-around', value: 'space-around' },
                     ],
                 },
                 */
@@ -912,7 +962,7 @@ const View = props => {
                                         options = window.vis ? window.vis.updateFilter() : [];
                                         options.unshift('');
                                     } else {
-                                        options = field.items;
+                                        options = field.options;
                                     }
 
                                     result = <Autocomplete
@@ -956,11 +1006,11 @@ const View = props => {
                                         renderValue={field.renderValue}
                                         fullWidth
                                     >
-                                        {field.items.map(selectItem => <MenuItem
+                                        {field.options.map(selectItem => <MenuItem
                                             value={selectItem.value}
                                             key={selectItem.value}
                                         >
-                                            {field.itemModify ? field.itemModify(selectItem) : (field.noTranslation ? selectItem.name : I18n.t(selectItem.name))}
+                                            {field.itemModify ? field.itemModify(selectItem) : (field.noTranslation ? selectItem.label : I18n.t(selectItem.label))}
                                         </MenuItem>)}
                                     </Select>;
                                 } else if (field.type === 'multi-select') {
@@ -977,12 +1027,12 @@ const View = props => {
                                         multiple
                                         fullWidth
                                     >
-                                        {field.items.map(selectItem => <MenuItem
+                                        {field.options.map(selectItem => <MenuItem
                                             value={selectItem.value}
                                             key={selectItem.value}
                                         >
                                             <Checkbox checked={value.includes(selectItem.value)} />
-                                            <ListItemText primary={field.noTranslation ? selectItem.name : I18n.t(selectItem.name)} />
+                                            <ListItemText primary={field.noTranslation ? selectItem.label : I18n.t(selectItem.label)} />
                                         </MenuItem>)}
                                     </Select>;
                                 } else if (field.type === 'groups') {

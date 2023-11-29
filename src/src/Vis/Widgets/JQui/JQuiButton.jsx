@@ -35,6 +35,7 @@ import {
 
 // eslint-disable-next-line import/no-cycle
 import VisRxWidget from '../../visRxWidget';
+import { isVarFinite } from '../../utils';
 
 class JQuiButton extends VisRxWidget {
     constructor(props) {
@@ -653,13 +654,13 @@ class JQuiButton extends VisRxWidget {
         }
 
         // eslint-disable-next-line no-restricted-properties
-        // const top = window.isFinite(this.state.rxData.dialog_top) ? parseFloat(this.state.rxData.dialog_top) : this.state.rxData.dialog_top;
+        // const top = isVarFinite(this.state.rxData.dialog_top) ? parseFloat(this.state.rxData.dialog_top) : this.state.rxData.dialog_top;
         // eslint-disable-next-line no-restricted-properties
-        // const left = window.isFinite(this.state.rxData.dialog_left) ? parseFloat(this.state.rxData.dialog_left) : this.state.rxData.dialog_left;
+        // const left = isVarFinite(this.state.rxData.dialog_left) ? parseFloat(this.state.rxData.dialog_left) : this.state.rxData.dialog_left;
         // eslint-disable-next-line no-restricted-properties
-        const width = window.isFinite(this.state.rxData.dialog_width) ? parseFloat(this.state.rxData.dialog_width) : this.state.rxData.dialog_width;
+        const width = isVarFinite(this.state.rxData.dialog_width) ? parseFloat(this.state.rxData.dialog_width) : this.state.rxData.dialog_width;
         // eslint-disable-next-line no-restricted-properties
-        const height = window.isFinite(this.state.rxData.dialog_height) ? parseFloat(this.state.rxData.dialog_height) : this.state.rxData.dialog_height;
+        const height = isVarFinite(this.state.rxData.dialog_height) ? parseFloat(this.state.rxData.dialog_height) : this.state.rxData.dialog_height;
 
         const dialogStyle = {
             minWidth: width || (window.innerWidth - 50),

@@ -34,7 +34,7 @@ import {
 
 // eslint-disable-next-line import/no-cycle
 import VisOrderMenu from './visOrderMenu';
-import { calculateOverflow } from './utils';
+import { calculateOverflow, isVarFinite } from './utils';
 
 class VisBaseWidget extends React.Component {
     static FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~]+/g; // from https://github.com/ioBroker/ioBroker.js-controller/blob/master/packages/common/lib/common/tools.js
@@ -77,7 +77,7 @@ class VisBaseWidget extends React.Component {
                 props.view,
                 props.editMode,
             ),
-            gap: style.position === 'relative' ? (Number.isFinite(props.context.views[props.view].settings.rowGap) ? parseFloat(props.context.views[props.view].settings.rowGap) : 0) : 0,
+            gap: style.position === 'relative' ? (isVarFinite(props.context.views[props.view].settings.rowGap) ? parseFloat(props.context.views[props.view].settings.rowGap) : 0) : 0,
         };
 
         this.onCommandBound = this.onCommand.bind(this);
@@ -225,7 +225,7 @@ class VisBaseWidget extends React.Component {
         let newState = null; // No change to state by default
         let widget = context.views[props.view].widgets[props.id];
         const gap = widget.style.position === 'relative' ?
-            (Number.isFinite(context.views[props.view].settings.rowGap) ? parseFloat(context.views[props.view].settings.rowGap) : 0) : 0;
+            (isVarFinite(context.views[props.view].settings.rowGap) ? parseFloat(context.views[props.view].settings.rowGap) : 0) : 0;
         let copied = false;
 
         if (widget.groupid) {
@@ -1354,7 +1354,7 @@ class VisBaseWidget extends React.Component {
             dateObj = new Date(dateObj);
         }
         if (text !== 'object') {
-            if (Number.isFinite(dateObj)) {
+            if (isVarFinite(dateObj)) {
                 const i = parseInt(dateObj, 10);
                 // if greater than 2000.01.01 00:00:00
                 if (i > 946681200000) {
@@ -1530,7 +1530,7 @@ class VisBaseWidget extends React.Component {
     static correctStylePxValue(value) {
         if (typeof value === 'string') {
             // eslint-disable-next-line no-restricted-properties
-            if (window.isFinite(value)) {
+            if (isVarFinite(value)) {
                 return parseFloat(value);
             }
         }
@@ -1654,7 +1654,7 @@ class VisBaseWidget extends React.Component {
             }
         }
 
-        if (this.props.isRelative && Number.isFinite(this.props.context.views[this.props.view].settings.rowGap)) {
+        if (this.props.isRelative && isVarFinite(this.props.context.views[this.props.view].settings.rowGap)) {
             style.marginBottom = parseFloat(this.props.context.views[this.props.view].settings.rowGap);
         }
 
@@ -1682,7 +1682,7 @@ class VisBaseWidget extends React.Component {
         ['top', 'left', 'width', 'height', 'right', 'bottom'].forEach(attr => {
             if (style[attr] !== undefined && typeof style[attr] === 'string') {
                 // eslint-disable-next-line no-restricted-properties
-                if (window.isFinite(style[attr])) {
+                if (isVarFinite(style[attr])) {
                     style[attr] = parseFloat(style[attr]);
                 } else if (style[attr].includes('{')) {
                     // try to steal style by rxWidget

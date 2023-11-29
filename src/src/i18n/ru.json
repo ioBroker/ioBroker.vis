@@ -634,5 +634,10 @@
   "vis_2_widgets_widgets_tabs_variant_full_width": "полная ширина",
   "vis_2_widgets_widgets_tabs_vertical": "Вертикальный",
   "welcome_message": "Ни одного проекта пока не существует.",
-  "word-spacing": "межсловный интервал"
+  "word-spacing": "межсловный интервал",
+  "Limit screen": "Ограничить экран",
+  "Limit border width": "Ширина рамки",
+  "Limit border color": "Цвет границы",
+  "Limit border style": "Стиль границы",
+  "Limit background color": "Фоновый цвет"
 }

@@ -634,5 +634,10 @@
   "vis_2_widgets_widgets_tabs_variant_full_width": "volle breedte",
   "vis_2_widgets_widgets_tabs_vertical": "Verticaal",
   "welcome_message": "Er is nog geen enkel project.",
-  "word-spacing": "woordspatiëring"
+  "word-spacing": "woordspatiëring",
+  "Limit screen": "Beperk scherm",
+  "Limit border width": "Grensbreedte",
+  "Limit border color": "Rand kleur",
+  "Limit border style": "Randstijl",
+  "Limit background color": "Achtergrond kleur"
 }
