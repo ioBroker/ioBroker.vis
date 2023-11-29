@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.1",
+    "version": "2.9.2",
     "news": {
+      "2.9.2": {
+        "en": "fixed reactivity in custom components\nfixed import for groups\nafter creating a group it is now pre-selected\nfields are now updated when moved via keyboard",
+        "de": "feste reaktivität in benutzerdefinierten komponenten\npauschaler einfuhr für gruppen\nnach der erstellung einer gruppe wird sie nun vorgewählt\nfelder werden nun aktualisiert, wenn über tastatur bewegt",
+        "ru": "фиксированная реакция в пользовательских компонентах\nфиксированный импорт для групп\nпосле создания группы сейчас предварительно выбран\nполя теперь обновляются при передвижении через клавиатуру",
+        "pt": "reatividade fixa em componentes personalizados\nimportação fixa para grupos\ndepois de criar um grupo é agora pré-selecionado\ncampos agora são atualizados quando movidos via teclado",
+        "nl": "gereageerd op maat gemaakte componenten\nimport voor groepen\nna het creëren van een groep is het nu vooraf gekozen\nde velden zijn nu geüpdateerd als ze verplaatst worden via toetsenbord",
+        "fr": "réactivité fixe dans les composants personnalisés\nimportation fixe pour les groupes\naprès avoir créé un groupe, il est maintenant présélectionné\nles champs sont maintenant mis à jour lorsque déplacés via le clavier",
+        "it": "reattività fissa in componenti personalizzati\nimportazione fissa per gruppi\ndopo aver creato un gruppo è ora prescelto\ni campi sono ora aggiornati quando spostati tramite tastiera",
+        "es": "reactividad fija en componentes personalizados\nimportación fija para grupos\ndespués de crear un grupo ahora es pre-seleccionado\ncampos se actualizan ahora cuando se mueve a través del teclado",
+        "pl": "reaktywacja stała w komponentach dostosowań do niestandardowych komponentów\nstały import dla grup\npo utworzeniu grupy jest obecnie wybierany przed wyborem\nobecnie pola są aktualizowane, gdy przenoszone przez klawiaturę",
+        "uk": "фіксована реактивність в нестандартних компонентах\nфіксований імпорт для груп\nпісля створення групи зараз\nполя тепер оновлюються при переході через клавіатуру",
+        "zh-cn": "习惯组成部分的固定反应\n固定进口集团\n成立集团后,现在先当选\n现已通过关键载板移入外地。"
+      },
       "2.9.1": {
         "en": "recalculate fields after moving widgets\nfixed pasting group on other view\nfixed theme also applied in iframe\nimplemented Basic Image as react widget",
         "de": "felder nach bewegten widgets neu berechnen\nfeste pastengruppe auf andere sicht\nfestes thema auch in iframe angewendet\ndurchgeführt Grund Bild als reagierendes Widget",
@@ -80,19 +93,6 @@
         "pl": "naprawiony przypadek",
         "uk": "виправлено кілька випадків аварії",
         "zh-cn": "固定事故"
-      },
-      "2.6.2": {
-        "en": "fixed crash case when editing group\nfixed pasting groups\nfixed problem jumping cursor and removed characters while typing",
-        "de": "fester crashfall bei der bearbeitung der gruppe\nfeste pastengruppen\nfix problem springen cursor und entfernte zeichen beim tippen",
-        "ru": "фиксированный случай аварии при редактировании группы\nфиксированные прошлые группы\nфиксированная проблема прыгая курсор и удаленные символы во время ввода",
-        "pt": "caso de acidente fixo ao grupo de edição\ngrupos fixos de colagem\nproblema fixo saltando cursor e caracteres removidos ao digitar",
-        "nl": "vertaling:\nvertaling:\nvervloekingsprobleem springen en verwijderde personages terwijl ze typen",
-        "fr": "cas de crash fixe lorsque le groupe de montage\ngroupes de passe fixe\nle curseur de saut de problème fixe et les caractères enlevés pendant la frappe",
-        "it": "caso di crash fisso durante la modifica del gruppo\ngruppi di incollaggio fissi\nproblema fisso saltare cursore e caratteri rimossi durante la digitazione",
-        "es": "caso de accidente fijo al grupo de edición\ngrupos de pasta fijo\nproblema fijo saltar cursor y eliminar caracteres mientras se escribe",
-        "pl": "sprawa rozbłyskowa w przypadku edycji grupowej\ngrupa stałych pasterek\nstabilny problem skaczący kurs i usunął postaci podczas typowania typów",
-        "uk": "виправлений випадок аварійної ситуації при монтажі групи\nфіксовані пастки групи\nвиправлена проблема стрибки курсора і видалених символів при наборі",
-        "zh-cn": "编辑组\n固定的牧场\n固定问题加快了治疗,并消除了性质,而典型的则"
       }
     },
     "title": "Visualisation Next Generation",
