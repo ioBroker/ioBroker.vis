@@ -26,6 +26,7 @@
         "echarts-for-react": "^3.0.2",
         "eslint": "^8.54.0",
         "eslint-config-airbnb": "^19.0.4",
+        "eslint-import-resolver-typescript": "^3.6.1",
         "eslint-plugin-eqeqeq-fix": "^1.0.3",
         "eslint-plugin-import": "^2.29.0",
         "eslint-plugin-jsx-a11y": "^6.8.0",

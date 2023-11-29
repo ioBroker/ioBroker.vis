@@ -1,9 +1,8 @@
 import React from 'react';
 
+import { RxRenderWidgetProps } from '@/types';
 // eslint-disable-next-line import/no-cycle
 import VisRxWidget from '../../visRxWidget';
-
-import { RxRenderWidgetProps } from '@/types';
 
 export default class BasicSvgShape extends VisRxWidget {
     /**

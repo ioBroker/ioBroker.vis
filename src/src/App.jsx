@@ -32,10 +32,10 @@ import {
     Message as MessageDialog,
     SelectFile as SelectFileDialog, Icon,
 } from '@iobroker/adapter-react-v5';
+import { recalculateFields, store, updateProject } from './Store';
 import {
     isGroup, getNewWidgetId, getNewGroupId, pasteGroup, unsyncMultipleWidgets, deepClone,
 } from './Utils/utils';
-import { recalculateFields, store, updateProject } from './Store';
 
 import Attributes from './Attributes';
 import Palette from './Palette';

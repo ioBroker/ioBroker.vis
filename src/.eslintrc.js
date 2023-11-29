@@ -23,6 +23,11 @@ module.exports = {
         'only-warn',
         'react-hooks',
     ],
+    settings: {
+        'import/resolver': {
+            typescript: {}, // this loads <rootdir>/tsconfig.json to eslint
+        },
+    },
     rules: {
         'arrow-parens': [1, 'as-needed'],
         'react/jsx-indent': 'off',

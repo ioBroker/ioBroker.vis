@@ -2,13 +2,13 @@ import React from 'react';
 
 import { I18n } from '@iobroker/adapter-react-v5';
 
-// eslint-disable-next-line import/no-cycle
-import VisRxWidget from '../../visRxWidget';
-
 import {
     RxRenderWidgetProps, VisLegacy,
     RxWidgetState, RxWidgetProps,
 } from '@/types';
+
+// eslint-disable-next-line import/no-cycle
+import VisRxWidget from '../../visRxWidget';
 
 declare global {
     interface Window {
