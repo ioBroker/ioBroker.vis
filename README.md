@@ -208,7 +208,7 @@ Notice that these settings are valid only for reconnection and not for the first
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 1.5.3 (2023-11-29)
+### **WORK IN PROGRESS**
 * (agav99) added the new binding operation for getting property of JSON or object
 * (agav99) Checked the initialization of the `local_` variables
 * (agav99) fixed subscribeOidAtRuntime

@@ -3,19 +3,6 @@
         "name": "vis",
         "version": "1.5.3",
         "news": {
-            "1.5.3": {
-                "en": "added the new binding operation for getting property of JSON or object\nChecked the initialization of the `local_` variables\nfixed subscribeOidAtRuntime\nAdded dynamic web manifest\nOptimization for basic-view in widget8\nChanged binding regex to accept umlauts\nCorrected first installation of vis",
-                "de": "die neue Bindungsoperation zum Erhalt von Eigentum von JSON oder Objekt hinzugefügt\nDie Initialisierung der lokalen_ Variablen wurde geprüft\nabonnierenOidAtRuntime\nHinzufügen dynamischer web manifest\nOptimierung der Grundansicht in widget8\nÄnderung des verbindlichen Regex zur Annahme von Umlauts\nKorrigierte erste Installation von vis",
-                "ru": "добавлена новая операция связывания для получения собственности JSON или объекта\nПроверена инициализация локальных_ переменных\nфиксированная подпискаOidAtRuntime\nДобавлен динамический веб-проявление\nОптимизация для базового просмотра в виджете8\nИзмененный обязательный regex, чтобы принять umlauts\nИсправлена первая установка vis",
-                "pt": "adicionou a nova operação de ligação para obter propriedade de JSON ou objeto\nVerificada a inicialização das variáveis local_\nassinada fixaOidAtRuntime\nAdicionado manifesto dinâmico da web\nOtimização para visualização básica no widget8\nMudança de ligação regex para aceitar umlauts\nPrimeira instalação correta de vis",
-                "nl": "voegde de nieuwe binding toe voor het krijgen van eigendom van JSON of object\nControleerde de initialisatie van de plaatselijke variabelen\nvertaling:\nDynamisch web manifest\nOptimisatie voor basis-view in Widget8\nVeranderde bindingsregister om paralauten te accepteren\nVertaling:",
-                "fr": "ajouté la nouvelle opération de reliure pour obtenir la propriété de JSON ou objet\nVérifié l'initialisation des variables locales_\nabonnement fixeOidAtRuntime\nAjout d ' un manifeste dynamique\nOptimisation de la vue de base dans widget8\nChangement de regex contraignant pour accepter umlauts\nCorrection de la première installation de vis",
-                "it": "aggiunto il nuovo funzionamento vincolante per ottenere proprietà di JSON o oggetto\nControllata l'inizializzazione delle variabili locali_\nabbonamento fissoOidAtRuntime\nAggiunto dinamico web manifesto\nOttimizzazione per la visione di base in widget8\nRegex vincolante modificato per accettare umlauts\nCorretto prima installazione di vis",
-                "es": "agregó la nueva operación vinculante para obtener propiedad de JSON o objeto\nComprobó la inicialización de las variables local_\nsuscripción fijaOidAtRuntime\nAñadido dinámico web manifiesto\nOptimización para la visión básica en widget8\nCambio de reno vinculante para aceptar umlauts\nPrimera instalación corregida de vis",
-                "pl": "dodano nową operację wiązania dla uzyskania własności obiektów JSON lub JSON\nZinicjował inicjację lokalnych zmiennych _\nadAtRuntime\nDynamiczny manifest internetowy\nOptymizacja podstawowego przeglądu widget8\nZmienił rejestry wiążące się z umlauts\nPierwsza instalacja wizy",
-                "uk": "додано нову операцію для отримання майна JSON або об'єкта\nПеревірка ініціалізації змінних локальних_\nфіксована підпискаOidAtRuntime\nДодана динамічна веб-проявка\nОптимізація для базового перегляду у віджеті8\nЗмінений обов'язковий regex для прийняття umlauts\nВиправлена перша установка в'язнів",
-                "zh-cn": "增加新的具有约束力的行动,以获得联合执行董事会或目标的财产。\n检查当地的初始化:变量\n固定签名\n增加动态网站\nA. 彻底审查目标8\nB. 修改具有约束力的条例以接受劳教\n更正"
-            },
             "1.5.1": {
                 "en": "Changed License: it is now MIT, and the license check was removed",
                 "de": "Änderung der Lizenz: es ist jetzt MIT, und die Lizenzprüfung wurde entfernt",

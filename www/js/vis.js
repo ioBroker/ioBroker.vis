@@ -3474,9 +3474,10 @@ function main($, onReady) {
             webManifest.setAttribute('href', manifestURL);
         }
 
-        const manifestLink = document.createElement('Link');
+        const manifestLink = document.createElement('link');
         manifestLink.rel = 'manifest';
-        manifestLink.setAttribute('href', `data:application/json;charset=8${manifestString}`)
+        manifestLink.setAttribute('href', `data:application/json;charset=8${manifestString}`);
+        document.head.appendChild(manifestLink);
     }
 
     // für iOS Safari - really required?
