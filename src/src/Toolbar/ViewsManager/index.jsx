@@ -26,6 +26,7 @@ import ImportDialog from './ImportDialog';
 import FolderDialog from './FolderDialog';
 import { DndPreview, isTouchDevice } from '../../Utils';
 import { store } from '../../Store';
+import { deepClone } from '../../Utils/utils';
 
 const styles = theme => ({
     viewManageButtonActions: theme.classes.viewManageButtonActions,
@@ -94,8 +95,13 @@ const ViewsManager = props => {
     };
 
     const importViewAction = (view, data) => {
-        const project = JSON.parse(JSON.stringify(visProject));
+        const project = deepClone(visProject);
         const viewObject = JSON.parse(data);
+
+        if (viewObject.parentId !== undefined) {
+            delete viewObject.parentId;
+        }
+
         if (!viewObject || !viewObject.settings || !viewObject.widgets || !viewObject.activeWidgets) {
             return;
         }
