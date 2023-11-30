@@ -231,6 +231,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 ## Changelog
 ### **WORK IN PROGRESS**
 * (bluefox) Added the possibility to limit hard the view size
+* (foxriver76) implemented simple sort mechanic for navigation
 
 ### 2.9.2 (2023-11-29)
 * (foxriver76) fixed reactivity in custom components

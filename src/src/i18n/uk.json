@@ -233,6 +233,11 @@
   "Jump to widget by double click": "Перейдіть до віджета, двічі клацнувши на віджеті",
   "Just use without modification": "Просто використовуйте без змін",
   "Keep on old place": "Залишити на старому місці",
+  "Limit background color": "Колір фону",
+  "Limit border color": "Колір рамки",
+  "Limit border style": "Стиль кордону",
+  "Limit border width": "Ширина кордону",
+  "Limit screen": "Обмежити екран",
   "Lined paper": "Лінійований папір",
   "Lock": "Замок",
   "Lock dragging": "Перетягування замка",
@@ -275,6 +280,7 @@
   "Open runtime in new window": "Відкрити середовище виконання в новому вікні",
   "Open widgeteria": "Відкрити widgeteria",
   "Options": "Опції",
+  "Order": "порядок",
   "Orientation": "Орієнтація",
   "Palette": "Палітра",
   "Paste": "Вставити",
@@ -634,10 +640,5 @@
   "vis_2_widgets_widgets_tabs_variant_full_width": "повна ширина",
   "vis_2_widgets_widgets_tabs_vertical": "Вертикальний",
   "welcome_message": "Жодного проекту ще немає.",
-  "word-spacing": "міжсловний інтервал",
-  "Limit screen": "Обмежити екран",
-  "Limit border width": "Ширина кордону",
-  "Limit border color": "Колір рамки",
-  "Limit border style": "Стиль кордону",
-  "Limit background color": "Колір фону"
+  "word-spacing": "міжсловний інтервал"
 }

@@ -233,6 +233,11 @@
   "Jump to widget by double click": "Перейти к виджету двойным щелчком по виджету",
   "Just use without modification": "Просто используйте без изменений",
   "Keep on old place": "Держись на старом месте",
+  "Limit background color": "Фоновый цвет",
+  "Limit border color": "Цвет границы",
+  "Limit border style": "Стиль границы",
+  "Limit border width": "Ширина рамки",
+  "Limit screen": "Ограничить экран",
   "Lined paper": "Линованной бумаги",
   "Lock": "Замок",
   "Lock dragging": "Блокировка перетаскивания",
@@ -275,6 +280,7 @@
   "Open runtime in new window": "Открыть среду выполнения в новом окне",
   "Open widgeteria": "Открыть виджетерию",
   "Options": "Опции",
+  "Order": "Заказ",
   "Orientation": "Ориентация",
   "Palette": "Палитра",
   "Paste": "Вставить",
@@ -634,10 +640,5 @@
   "vis_2_widgets_widgets_tabs_variant_full_width": "полная ширина",
   "vis_2_widgets_widgets_tabs_vertical": "Вертикальный",
   "welcome_message": "Ни одного проекта пока не существует.",
-  "word-spacing": "межсловный интервал",
-  "Limit screen": "Ограничить экран",
-  "Limit border width": "Ширина рамки",
-  "Limit border color": "Цвет границы",
-  "Limit border style": "Стиль границы",
-  "Limit background color": "Фоновый цвет"
+  "word-spacing": "межсловный интервал"
 }

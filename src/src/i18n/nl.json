@@ -233,6 +233,11 @@
   "Jump to widget by double click": "Spring naar widget door te dubbelklikken op widget",
   "Just use without modification": "Gewoon gebruiken zonder wijziging",
   "Keep on old place": "Blijf op de oude plek",
+  "Limit background color": "Achtergrond kleur",
+  "Limit border color": "Rand kleur",
+  "Limit border style": "Randstijl",
+  "Limit border width": "Grensbreedte",
+  "Limit screen": "Beperk scherm",
   "Lined paper": "Lijntjes papier",
   "Lock": "Op slot doen",
   "Lock dragging": "Vergrendelen slepen",
@@ -275,6 +280,7 @@
   "Open runtime in new window": "Open runtime in nieuw venster",
   "Open widgeteria": "Widgeteria openen",
   "Options": "Opties",
+  "Order": "Volgorde",
   "Orientation": "Oriëntatie",
   "Palette": "Palet",
   "Paste": "Plakken",
@@ -634,10 +640,5 @@
   "vis_2_widgets_widgets_tabs_variant_full_width": "volle breedte",
   "vis_2_widgets_widgets_tabs_vertical": "Verticaal",
   "welcome_message": "Er is nog geen enkel project.",
-  "word-spacing": "woordspatiëring",
-  "Limit screen": "Beperk scherm",
-  "Limit border width": "Grensbreedte",
-  "Limit border color": "Rand kleur",
-  "Limit border style": "Randstijl",
-  "Limit background color": "Achtergrond kleur"
+  "word-spacing": "woordspatiëring"
 }

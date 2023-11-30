@@ -577,6 +577,9 @@ const View = props => {
                     type: 'text', name: 'Title', field: 'navigationTitle', notStyle: true, hidden: '!data.navigation',
                 },
                 {
+                    type: 'number', name: 'Order', field: 'navigationOrder', notStyle: true, hidden: '!data.navigation',
+                },
+                {
                     type: 'icon64', name: 'Icon', field: 'navigationIcon', notStyle: true, hidden: '!data.navigation || data.navigationImage',
                 },
                 {

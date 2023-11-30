@@ -233,6 +233,11 @@
   "Jump to widget by double click": "Vá para o widget clicando duas vezes no widget",
   "Just use without modification": "Basta usar sem modificação",
   "Keep on old place": "Manter no lugar antigo",
+  "Limit background color": "Cor de fundo",
+  "Limit border color": "Cor da borda",
+  "Limit border style": "Estilo de borda",
+  "Limit border width": "Largura da borda",
+  "Limit screen": "Tela limite",
   "Lined paper": "Papel pautado",
   "Lock": "Trancar",
   "Lock dragging": "Bloquear arrastando",
@@ -275,6 +280,7 @@
   "Open runtime in new window": "Abra o tempo de execução em uma nova janela",
   "Open widgeteria": "Widgeteria aberta",
   "Options": "Opções",
+  "Order": "Ordem",
   "Orientation": "Orientação",
   "Palette": "Paleta",
   "Paste": "Colar",
@@ -634,10 +640,5 @@
   "vis_2_widgets_widgets_tabs_variant_full_width": "largura completa",
   "vis_2_widgets_widgets_tabs_vertical": "Vertical",
   "welcome_message": "Nenhum projeto ainda existe.",
-  "word-spacing": "espaçamento entre palavras",
-  "Limit screen": "Tela limite",
-  "Limit border width": "Largura da borda",
-  "Limit border color": "Cor da borda",
-  "Limit border style": "Estilo de borda",
-  "Limit background color": "Cor de fundo"
+  "word-spacing": "espaçamento entre palavras"
 }

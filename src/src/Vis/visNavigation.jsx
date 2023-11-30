@@ -219,16 +219,19 @@ class VisNavigation extends React.Component {
                     color: viewSettings.navigationColor,
                     icon: viewSettings.navigationIcon || viewSettings.navigationImage,
                     noText: viewSettings.navigationOnlyIcon,
+                    order: parseInt(viewSettings.navigationOrder ?? '0'),
                     view,
                 };
 
                 items.push(item);
 
-                if (item.icon && item.icon.startsWith('_PRJ_NAME/')) {
+                if (item.icon?.startsWith('_PRJ_NAME/')) {
                     item.icon = `../${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}${item.icon.substring(9)}`;  // "_PRJ_NAME".length = 9
                 }
             }
         });
+
+        items.sort((prevItem, nextItem) => (prevItem.order === nextItem.order ? 0 : prevItem.order < nextItem.order ? -1 : 1));
 
         if (settings.navigationOrientation === 'horizontal') {
             return <div

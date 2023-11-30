@@ -233,6 +233,11 @@
   "Jump to widget by double click": "双击小部件跳转到小部件",
   "Just use without modification": "直接使用，无需修改",
   "Keep on old place": "继续老地方",
+  "Limit background color": "背景颜色",
+  "Limit border color": "边框颜色",
+  "Limit border style": "边框样式",
+  "Limit border width": "边框宽度",
+  "Limit screen": "限制屏",
   "Lined paper": "横格纸",
   "Lock": "锁",
   "Lock dragging": "锁定拖动",
@@ -275,6 +280,7 @@
   "Open runtime in new window": "在新窗口中打开运行时",
   "Open widgeteria": "打开widderia",
   "Options": "选项",
+  "Order": "命令",
   "Orientation": "方向",
   "Palette": "调色板",
   "Paste": "粘贴",
@@ -634,10 +640,5 @@
   "vis_2_widgets_widgets_tabs_variant_full_width": "全屏宽度",
   "vis_2_widgets_widgets_tabs_vertical": "垂直的",
   "welcome_message": "目前还没有一个项目存在。",
-  "word-spacing": "字间距",
-  "Limit screen": "限制屏",
-  "Limit border width": "边框宽度",
-  "Limit border color": "边框颜色",
-  "Limit border style": "边框样式",
-  "Limit background color": "背景颜色"
+  "word-spacing": "字间距"
 }
