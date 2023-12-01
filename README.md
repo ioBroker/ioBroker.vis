@@ -233,6 +233,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 * (bluefox) Added the possibility to limit hard the view size
 * (foxriver76) implemented simple sort mechanic for navigation
 * (foxriver76) fixed import of views, which were inside a folder
+* (foxriver76) fixed theme also applied in iframe
 
 ### 2.9.2 (2023-11-29)
 * (foxriver76) fixed reactivity in custom components
