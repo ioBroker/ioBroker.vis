@@ -133,6 +133,7 @@ export interface VisLegacy {
     editSelect: (widAttr: string, values: any, notTranslate: boolean, init: () => void, onchange: () => void) => string | null,
     isWidgetHidden: (view: string, widget: string, visibilityOidValue: null | number | string | undefined | boolean, widgetData: any) => boolean;
     getUserGroups: () => Record<string, string[]>;
+    detectBounce: (el: any, isUp?: boolean) => boolean
 }
 
 export interface Window {

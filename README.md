@@ -235,7 +235,8 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 * (foxriver76) fixed import of views, which were inside a folder
 * (foxriver76) fixed theme also applied in iframe
 * (foxriver76) do not simply reuse widget ids when importing or copying views
-
+* (foxriver76) implemented basic bulb widget as react widget
+ 
 ### 2.9.2 (2023-11-29)
 * (foxriver76) fixed reactivity in custom components
 * (foxriver76) fixed import for groups

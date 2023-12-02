@@ -1,5 +1,6 @@
 // eslint-disable-next-line import/no-cycle
 import BasicBar from './Basic/BasicBar';
+import BasicBulb from './Basic/BasicBulb';
 import BasicRedNumber from './Basic/BasicRedNumber';
 import BasicHtml from './Basic/BasicHtml';
 import BasicValueString from './Basic/BasicValueString';
@@ -40,6 +41,7 @@ import TabsSliderTabs from './Tabs/TabsSliderTabs';
 
 const WIDGETS = [
     BasicBar,
+    BasicBulb,
     BasicHtml,
     BasicValueString,
     BasicViewInWidget,

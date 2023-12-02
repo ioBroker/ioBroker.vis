@@ -2938,42 +2938,6 @@
     </div>
 </script>
 
-<script id="tplBulbOnOffCtrl"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-prev='<img src="widgets/basic/img/Prev_BulbOnOffCtrl.png"></img>'
-        data-vis-set="basic"
-        data-vis-type="ctrl"
-        data-vis-name="Bulb on/off"
-        data-vis-attrs="oid;min;max;icon_off[img~bulb_off.png]/image;icon_on[img~bulb_on.png]/image;readOnly/checkbox;"
-        data-vis-attrs0="group.ccontrol;urlTrue;urlFalse;oidTrue/id;oidFalse/id;oidTrueValue;oidFalseValue;"
->
-    <div
-        data-oid="<%= this.data.attr('oid') %>"
-        class="vis-widget <%== this.data.attr('class') %>"
-        id="<%= this.data.attr('wid') %>"
-        style="width: 44px; height: 59px"
-        data-read-only="<%=  this.data.attr('readOnly') %>"
-        data-min="<%= this.data.attr('min') %>"
-        data-max="<%= this.data.attr('max') %>"
-        data-url-true="<%=  this.data.attr('urlTrue') %>"
-        data-url-false="<%= this.data.attr('urlFalse') %>"
-        data-oid-true="<%=  this.data.attr('oidTrue') %>"
-        data-oid-false="<%= this.data.attr('oidFalse') %>"
-        data-oid-true-value="<%=  this.data.attr('oidTrueValue') %>"
-        data-oid-false-value="<%= this.data.attr('oidFalseValue') %>"
-        <%= (el) -> vis.binds.basic.toggle(el) %>
-        >
-        <div class="vis-widget-body">
-            <% if (vis.binds.basic.isFalse(vis.states.attr(this.data.oid + '.val'), this.data.attr('min'), this.data.attr('max'))) { %>
-                <img src="<%== this.data.attr('icon_off') ? this.data.attr('icon_off') : 'img/bulb_off.png' %>" width="100%"/>
-            <% } else { %>
-                <img src="<%== this.data.attr('icon_on') ? this.data.attr('icon_on') : 'img/icon_on.png' %>" width="100%"/>
-            <% } %>
-        </div>
-    </div>
-</script>
-
 <script id="tplNote"
         type="text/ejs"
         class="vis-tpl"

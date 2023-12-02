@@ -3,6 +3,9 @@
  */
 import type { CSSProperties } from '@mui/styles';
 
+/** Default OID if no selected */
+export const NOTHING_SELECTED = 'nothing_selected';
+
 /**
  * Adds an overflow visible attribute if no specific overflow is present,
  * else it deletes the general overflow, so the specific one can take effect
