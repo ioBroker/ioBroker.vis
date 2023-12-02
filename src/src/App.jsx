@@ -582,7 +582,7 @@ class App extends Runtime {
 
             if (isGroup(newWidget)) {
                 pasteGroup({
-                    group: newWidget, widgets, offset: groupOffset, groupMembers: this.state.widgetsClipboard.groupMembers,
+                    group: newWidget, widgets, offset: groupOffset, groupMembers: this.state.widgetsClipboard.groupMembers, project: store.getState().visProject,
                 });
                 newKey = getNewGroupId(store.getState().visProject, groupOffset);
                 groupOffset++;
@@ -614,7 +614,9 @@ class App extends Runtime {
             });
 
             if (isGroup(newWidget)) {
-                pasteGroup({ group: newWidget, widgets, groupMembers: widgets });
+                pasteGroup({
+                    group: newWidget, widgets, groupMembers: widgets, project: store.getState().visProject,
+                });
             } else {
                 const newKey = getNewWidgetId(store.getState().visProject);
                 widgets[newKey] = newWidget;

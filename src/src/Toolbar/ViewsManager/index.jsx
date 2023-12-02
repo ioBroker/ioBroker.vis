@@ -26,7 +26,9 @@ import ImportDialog from './ImportDialog';
 import FolderDialog from './FolderDialog';
 import { DndPreview, isTouchDevice } from '../../Utils';
 import { store } from '../../Store';
-import { deepClone } from '../../Utils/utils';
+import {
+    deepClone, getNewWidgetId, isGroup, pasteGroup,
+} from '../../Utils/utils';
 
 const styles = theme => ({
     viewManageButtonActions: theme.classes.viewManageButtonActions,
@@ -105,8 +107,23 @@ const ViewsManager = props => {
         if (!viewObject || !viewObject.settings || !viewObject.widgets || !viewObject.activeWidgets) {
             return;
         }
+
+        const originalWidgets = deepClone(viewObject.widgets);
+
+        project[view] =  { ...viewObject, widgets: {}, activeWidgets: [] };
+
+        for (const [wid, widget] of Object.entries(originalWidgets)) {
+            if (isGroup(widget)) {
+                pasteGroup({
+                    group: widget, widgets: project[view].widgets, groupMembers: originalWidgets, project,
+                });
+            } else if (!widget.groupid) {
+                const newWid = getNewWidgetId(project);
+                project[view].widgets[newWid] = originalWidgets[wid];
+            }
+        }
+
         viewObject.name = view;
-        project[view] = viewObject;
         props.changeProject(project);
     };
 

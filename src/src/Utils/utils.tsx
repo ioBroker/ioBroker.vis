@@ -78,6 +78,8 @@ interface CopyGroupOptions {
     groupMembers: Record<string, Widget>,
     /** The offset to use, if multiple groups are copied without saving */
     offset?: number
+    /** The project to calculate new widget ids from */
+    project: Project
 }
 
 /**
@@ -85,17 +87,17 @@ interface CopyGroupOptions {
  *
  * @param options group, widgets and offset information
  */
-export function pasteGroup(options: CopyGroupOptions) {
+export function pasteGroup(options: CopyGroupOptions): void {
     const  {
-        widgets, group, groupMembers, offset,
+        widgets, group, groupMembers, offset, project,
     } = options;
-    const newGroupId = getNewGroupId(store.getState().visProject, offset ?? 0);
+    const newGroupId = getNewGroupId(project, offset ?? 0);
 
     for (let i = 0; i < group.data.members.length; i++) {
         const wid = group.data.members[i];
         const newMember = deepClone(groupMembers[wid]);
 
-        const newMemberId = getNewWidgetId(store.getState().visProject, i);
+        const newMemberId = getNewWidgetId(project, i);
 
         newMember.groupid = newGroupId;
         group.data.members[i] = newMemberId;

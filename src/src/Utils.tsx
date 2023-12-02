@@ -39,7 +39,7 @@ export function isTouchDevice(): boolean {
         || (navigator.msMaxTouchPoints > 0));
 }
 
-export const useFocus = (open: boolean, select: boolean, isAce: boolean) => {
+export const useFocus = (open: boolean, select: boolean, isAce = false) => {
     // TODO: find correct type
     const inputField = useRef<any>(null);
 

@@ -1,5 +1,4 @@
-import PropTypes from 'prop-types';
-
+import React from 'react';
 import {
     Add as AddIcon,
     Edit as EditIcon,
@@ -13,11 +12,32 @@ import {
 
 import { I18n } from '@iobroker/adapter-react-v5';
 
-import IODialog from '../../Components/IODialog';
-import { useFocus } from '../../Utils';
-import { store } from '../../Store';
+import { store } from '@/Store';
+import {
+    deepClone, getNewWidgetId, isGroup, pasteGroup,
+} from '@/Utils/utils';
+import { useFocus } from '@/Utils';
+import IODialog from '@/Components/IODialog';
+import { Project } from '@/types';
 
-const ViewDialog = props => {
+interface ViewDialogProps {
+    changeProject: (project: Project) => Promise<void>,
+    changeView: (viewName: string) => Promise<void>,
+    dialog: string,
+    /** Name of view */
+    dialogName: string,
+    dialogView: string;
+    dialogCallback?: { cb: (dialogName: string) => void };
+    selectedView: string;
+    setDialog: (closeAction: null) => void;
+    setDialogName: (dialogName: string) => void,
+    setDialogView: (action: null) => void,
+    dialogParentId?: string,
+    noTranslation: boolean;
+    setDialogParentId: (action: null) => void;
+}
+
+const ViewDialog = (props: ViewDialogProps) => {
     const inputField = useFocus(!!props.dialog && props.dialog !== 'delete', props.dialog === 'add');
 
     const deleteView = async () => {
@@ -59,42 +79,55 @@ const ViewDialog = props => {
 
     const copyView = async () => {
         const view = props.dialogView || props.selectedView;
-        const project = JSON.parse(JSON.stringify(store.getState().visProject));
-        project[props.dialogName] = project[view];
+        const project = deepClone(store.getState().visProject);
+        project[props.dialogName] = { ...project[view], widgets: {}, activeWidgets: [] };
+        const originalWidgets = deepClone(project[view].widgets);
+
+        for (const [wid, widget] of Object.entries(originalWidgets)) {
+            if (isGroup(widget)) {
+                pasteGroup({
+                    group: widget, widgets: project[props.dialogName].widgets, groupMembers: originalWidgets, project,
+                });
+            } else if (!widget.groupid) {
+                const newWid = getNewWidgetId(project);
+                project[props.dialogName].widgets[newWid] = originalWidgets[wid];
+            }
+        }
+
         await props.changeProject(project);
         await props.changeView(props.dialogName);
         props.setDialog(null);
         props.dialogCallback?.cb(props.dialogName);
     };
 
-    const dialogTitles = {
+    const dialogTitles: Record<string, string> = {
         delete: I18n.t('Do you want to delete view "%s"?', props.dialogView || props.selectedView),
         copy: I18n.t('Copy view "%s"', props.dialogView || props.selectedView),
         rename: I18n.t('Rename view "%s"', props.dialogView || props.selectedView),
         add: I18n.t('Add view'),
     };
 
-    const dialogButtons = {
+    const dialogButtons: Record<string, string> = {
         delete: I18n.t('Delete'),
         copy: I18n.t('Create copy'),
         rename: I18n.t('Rename'),
         add: I18n.t('Add'),
     };
 
-    const dialogActions = {
+    const dialogActions: Record<string, () => Promise<void>> = {
         delete: deleteView,
         copy: copyView,
         rename: renameView,
         add: addView,
     };
 
-    const dialogInputs = {
+    const dialogInputs: Record<string, string> = {
         copy: I18n.t('Name of copy'),
         rename: I18n.t('New name'),
         add: I18n.t('Name'),
     };
 
-    const dialogIcons = {
+    const dialogIcons: Record<string, unknown> = {
         delete: DeleteIcon,
         copy: FileCopyIcon,
         rename: EditIcon,
@@ -139,19 +172,6 @@ const ViewDialog = props => {
                 onChange={e => props.setDialogName(e.target.value)}
             /> }
     </IODialog>;
-};
-
-ViewDialog.propTypes = {
-    changeProject: PropTypes.func,
-    changeView: PropTypes.func,
-    dialog: PropTypes.string,
-    dialogName: PropTypes.string,
-    dialogView: PropTypes.string,
-    dialogCallback: PropTypes.object,
-    selectedView: PropTypes.string,
-    setDialog: PropTypes.func,
-    setDialogName: PropTypes.func,
-    setDialogView: PropTypes.func,
 };
 
 export default ViewDialog;
