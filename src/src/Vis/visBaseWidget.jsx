@@ -26,6 +26,7 @@ import {
 
 import { I18n, Utils } from '@iobroker/adapter-react-v5';
 
+import { calculateOverflow, isVarFinite } from '@/Utils/utils';
 import {
     addClass,
     removeClass,
@@ -34,7 +35,6 @@ import {
 
 // eslint-disable-next-line import/no-cycle
 import VisOrderMenu from './visOrderMenu';
-import { calculateOverflow, isVarFinite } from './utils';
 
 class VisBaseWidget extends React.Component {
     static FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~]+/g; // from https://github.com/ioBroker/ioBroker.js-controller/blob/master/packages/common/lib/common/tools.js
@@ -1068,6 +1068,12 @@ class VisBaseWidget extends React.Component {
         }
     }
 
+    /**
+     * Render the widget body
+     *
+     * @param props
+     * @return {Element | void}
+     */
     // eslint-disable-next-line class-methods-use-this,no-unused-vars
     renderWidgetBody(props) {
         // Default render method. Normally it should be overwritten

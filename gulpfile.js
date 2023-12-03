@@ -85,7 +85,9 @@ gulp.task('runtime-0-clean', done => {
 gulp.task('runtime-1-copy-src', done => {
     !fs.existsSync(`${__dirname}/runtime`) && fs.mkdirSync(`${__dirname}/runtime`);
     !fs.existsSync(`${__dirname}/runtime/src`) && fs.mkdirSync(`${__dirname}/runtime/src`);
+    // copy only single shared utils file now
     !fs.existsSync(`${__dirname}/runtime/src/Vis`) && fs.mkdirSync(`${__dirname}/runtime/src/Vis`);
+    !fs.existsSync(`${__dirname}/runtime/src/Utils`) && fs.mkdirSync(`${__dirname}/runtime/src/Utils`);
     !fs.existsSync(`${__dirname}/runtime/src/i18n`) && fs.mkdirSync(`${__dirname}/runtime/src/i18n`);
     !fs.existsSync(`${__dirname}/runtime/public`) && fs.mkdirSync(`${__dirname}/runtime/public`);
     copyFolder(`${__dirname}/src/public`, `${__dirname}/runtime/public`, ['ace', 'visEditWords.js']);
@@ -147,6 +149,7 @@ export default BulkEditor;
     fs.writeFileSync(`${__dirname}/runtime/src/App.jsx`, fs.readFileSync(`${__dirname}/src/src/Runtime.jsx`));
     fs.writeFileSync(`${__dirname}/runtime/tsconfig.json`, fs.readFileSync(`${__dirname}/src/tsconfig.json`));
     fs.writeFileSync(`${__dirname}/runtime/src/Store.tsx`, fs.readFileSync(`${__dirname}/src/src/Store.tsx`));
+    fs.writeFileSync(`${__dirname}/runtime/src/Utils/utils.tsx`, fs.readFileSync(`${__dirname}/src/src/Utils/utils.tsx`));
     fs.writeFileSync(`${__dirname}/runtime/src/types.d.ts`, fs.readFileSync(`${__dirname}/src/src/types.d.ts`));
     fs.writeFileSync(`${__dirname}/runtime/src/serviceWorker.jsx`, fs.readFileSync(`${__dirname}/src/src/serviceWorker.jsx`));
     fs.writeFileSync(`${__dirname}/runtime/src/index.jsx`, fs.readFileSync(`${__dirname}/src/src/index.jsx`));

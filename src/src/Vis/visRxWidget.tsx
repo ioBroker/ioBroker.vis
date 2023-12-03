@@ -13,8 +13,7 @@
  * (Free for non-commercial use).
  */
 
-import PropTypes from 'prop-types';
-
+import React from 'react';
 import {
     Card,
     CardContent,
@@ -22,10 +21,11 @@ import {
 
 import { I18n, Icon } from '@iobroker/adapter-react-v5';
 
+import { RxWidgetInfo } from '@/types';
+import { deepClone, calculateOverflow } from '@/Utils/utils';
 // eslint-disable-next-line import/no-cycle
 import VisBaseWidget from './visBaseWidget';
 import { addClass, getUsedObjectIDsInWidget } from './visUtils';
-import { calculateOverflow } from './utils';
 
 const POSSIBLE_MUI_STYLES = [
     'background-color',
@@ -56,15 +56,104 @@ const POSSIBLE_MUI_STYLES = [
     'word-spacing',
 ];
 
-class VisRxWidget extends VisBaseWidget {
+interface VisRxWidgetProps {
+    /** If currently running in edit mode */
+    editMode: boolean;
+    /** The widget's view */
+    view: string;
+    /** TODO */
+    context: Record<string, any>;
+    /** TODO */
+    id: string;
+    /** TODO */
+    isRelative:boolean;
+    /** TODO */
+    refParent: unknown;
+    /** TODO */
+    askView: unknown;
+    /** Current selected widgets */
+    selectedWidgets: string[];
+    /** TODO */
+    viewsActiveFilter: any;
+}
+
+interface RxData {
+    _originalData: any;
+    filterkey: any;
+}
+
+/** TODO move to VisBaseWidget when ported */
+interface VisBaseWidgetState {
+    data: any;
+    style: any;
+    applyBindings: boolean;
+    editMode: boolean;
+    multiViewWidget: any;
+    selected: any;
+    selectedOne: any;
+    resizable: boolean;
+    resizeHandles: string[];
+    widgetHint:any;
+    isHidden: any;
+    gap: number;
+    rxStyle: any;
+    visible: boolean;
+    draggable: boolean;
+    disabled: boolean;
+}
+
+interface VisRxWidgetState extends VisBaseWidgetState {
+    rxData: RxData;
+    values: Record<string, any>;
+}
+
+/** TODO: this overload can be removed as soon as VisBaseWidget is written correctly in TS */
+interface VisRxWidget<TRxData extends Record<string, any>, TState extends Record<string, any> = Record<string, never>> extends VisBaseWidget {
+   state: VisRxWidgetState & TState & { rxData: TRxData };
+}
+
+class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
     static POSSIBLE_MUI_STYLES = POSSIBLE_MUI_STYLES;
 
-    constructor(props) {
-        super(props, true);
+    private linkContext: {
+        IDs: string[];
+        bindings: Record<string, any>;
+        visibility: Record<string, any>;
+        lastChanges: Record<string, any>;
+        signals: Record<string, any>;
+        widgetAttrInfo: any;
+    };
 
-        const options = this.getWidgetInfo();
+    /** Method called when state changed */
+    private readonly onStateChangedBind: (id: any, state: any, doNotApplyState: any) => void;
 
-        const widgetAttrInfo = {};
+    /** If resizing is currently locked */
+    private resizeLocked: boolean;
+
+    private readonly visDynamicResizable: any;
+
+    private newState?: Partial<VisRxWidgetState & { rxData: TRxData }> | null;
+
+    private wrappedContent?: boolean;
+
+    private updateTimer?: ReturnType<typeof setTimeout>;
+
+    private ignoreMouseEvents?: boolean;
+
+    private mouseDownOnView?: any;
+
+    private bindingsTimer?: ReturnType<typeof setTimeout>;
+
+    private informIncludedWidgets?:  ReturnType<typeof setTimeout>;
+
+    private filterDisplay?: any;
+
+    constructor(props: VisRxWidgetProps) {
+        super(props);
+
+        const options = this.getWidgetInfo() as RxWidgetInfo;
+
+        const widgetAttrInfo: Record<string, any> = {};
         // collect all attributes (only types)
         if (Array.isArray(options.visAttrs)) {
             options.visAttrs.forEach(group =>
@@ -90,7 +179,7 @@ class VisRxWidget extends VisBaseWidget {
         // apply bindings and modifications
         const newState = this.onStateChanged(null, null, true);
 
-        this.resizeLocked = options.visResizeLocked;
+        this.resizeLocked = !!options.visResizeLocked;
 
         // find in fields visResizable name
         // if resizable exists, take the resizable from data
@@ -106,16 +195,19 @@ class VisRxWidget extends VisBaseWidget {
             resizable: options.resizable === undefined ? (options.visResizable === undefined ? true : options.visResizable) : options.resizable,
             draggable: options.visDraggable === undefined ? true : options.visDraggable,
             resizeHandles: options.resizeHandles === undefined ? (options.visResizeHandles === undefined ? ['n', 'e', 's', 'w', 'nw', 'ne', 'sw', 'se'] : options.visResizeHandles) : options.resizeHandles,
+            // @ts-expect-error fix later
             rxData: newState.rxData,
+            // @ts-expect-error fix later
             rxStyle: newState.rxStyle,
             /** @type {Record<string, any>} */
             values: {},
+            // @ts-expect-error fix later
             visible: newState.visible,
             disabled: false,
         };
     }
 
-    static findField(widgetInfo, name) {
+    static findField(widgetInfo: Record<string, any>, name: string) {
         if (!widgetInfo.visAttrs) {
             return null;
         }
@@ -137,7 +229,7 @@ class VisRxWidget extends VisBaseWidget {
         return '';
     }
 
-    static getText(text) {
+    static getText(text: string | ioBroker.Translated) {
         if (typeof text === 'object') {
             return text[I18n.getLanguage()] || text.en;
         }
@@ -145,7 +237,7 @@ class VisRxWidget extends VisBaseWidget {
         return text;
     }
 
-    static t(key, ...args) {
+    static t(key: string, ...args: string[]) {
         if (this.getI18nPrefix) {
             return I18n.t(`${this.getI18nPrefix()}${key}`,  ...args);
         }
@@ -157,8 +249,8 @@ class VisRxWidget extends VisBaseWidget {
         return I18n.getLanguage();
     }
 
-    onCommand(command, options) {
-        const result = super.onCommand(command, options);
+    onCommand(command: string) {
+        const result = super.onCommand(command);
         if (result === false) {
             if (command === 'collectFilters') {
                 return this.state.rxData?.filterkey;
@@ -169,76 +261,56 @@ class VisRxWidget extends VisBaseWidget {
                 if (visible !== this.state.visible) {
                     this.setState({ visible });
                 }
-                /*
-                if (!options || !options.filter.length) {
-                    // just show
-
-                } else if (options.filter[0] === '$') {
-                    // hide all
-                    if (this.state.rxData.filterkey) {
-                        this.setState({ visible: false });
-                    }
-                } else {
-                    const wFilters = this.state.rxData.filterkey;
-
-                    if (wFilters) {
-                        const found = wFilters.find(f => options.filter.includes(f));
-
-                        if (!found) {
-                            this.setState({ visible: false });
-                        } else  {
-                            const visible = this.checkVisibility();
-                            if (visible !== this.state.visible) {
-                                this.setState({ visible });
-                            }
-                        }
-                    }
-                }
-                */
             }
         }
 
         return result;
     }
 
-    // eslint-disable-next-line no-unused-vars,class-methods-use-this
-    onStateUpdated(id, state) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars,class-methods-use-this
+    onStateUpdated(id: string, state: typeof this.state) {
 
     }
 
-    onStateChanged(id, state, doNotApplyState) {
+    onStateChanged(id?: string | null, state?: typeof this.state | null, doNotApplyState?: boolean) {
         this.newState = this.newState || {
-            values: JSON.parse(JSON.stringify(this.state.values || {})),
+            values: deepClone(this.state.values || {}),
             rxData: { ...this.state.data },
             rxStyle: { ...this.state.style },
             editMode: this.props.editMode,
             applyBindings: false,
         };
 
+        // @ts-expect-error fix later
         delete this.newState.rxData._originalData;
         delete this.newState.rxStyle._originalData;
 
         if (id && state) {
+            // @ts-expect-error fix later
             Object.keys(state).forEach(attr => this.newState.values[`${id}.${attr}`] = state[attr]);
             // wait till the state is saved in this.newState.values
             setTimeout(() => this.onStateUpdated(id, state), 60);
         }
 
+        // @ts-expect-error fix later
         Object.keys(this.linkContext.bindings).forEach(_id => this.applyBinding(_id, this.newState));
 
         this.newState.visible = this.checkVisibility(id, this.newState);
+        // @ts-expect-error fix later
         const userGroups = this.newState.rxData['visibility-groups'];
         this.newState.disabled = false;
 
+        // @ts-expect-error fix later
         if (this.newState.rxData.filterkey && typeof this.newState.rxData.filterkey === 'string') {
+            // @ts-expect-error fix later
             this.newState.rxData.filterkey = this.newState.rxData.filterkey.split(/[;,]+/).map(f => f.trim()).filter(f => f);
         }
 
         if (userGroups && userGroups.length && !this.isUserMemberOfGroup(this.props.context.user, userGroups)) {
+            // @ts-expect-error fix later
             if (this.newState.rxData['visibility-groups-action'] === 'disabled') {
                 this.newState.disabled = true;
             } else {
-                // newState.rxData['visibility-groups-action'] === 'hide'
                 this.newState.visible = false;
             }
         }
@@ -258,7 +330,7 @@ class VisRxWidget extends VisBaseWidget {
             JSON.stringify(this.state.applyBindings) !== JSON.stringify(this.newState.applyBindings)
         ) {
             this.updateTimer = setTimeout(() => {
-                this.updateTimer = null;
+                this.updateTimer = undefined;
                 const newState = this.newState;
                 this.newState = null;
                 this.setState(newState);
@@ -270,7 +342,8 @@ class VisRxWidget extends VisBaseWidget {
         return null;
     }
 
-    applyBinding(stateId, newState) {
+    applyBinding(stateId: string, newState: typeof this.state) {
+        // @ts-expect-error fix later
         this.linkContext.bindings[stateId] && this.linkContext.bindings[stateId].forEach(item => {
             const value = this.props.context.formatUtils.formatBinding({
                 format: item.format,
@@ -283,6 +356,7 @@ class VisRxWidget extends VisBaseWidget {
             });
 
             if (item.type === 'data') {
+                // @ts-expect-error fix later
                 newState.rxData[item.attr] = value;
             } else {
                 newState.rxStyle[item.attr] = value;
@@ -296,16 +370,16 @@ class VisRxWidget extends VisBaseWidget {
     }
 
     // eslint-disable-next-line no-unused-vars,class-methods-use-this
-    onRxDataChanged(prevRxData) {
+    onRxDataChanged(prevRxData: typeof this.state.rxData) {
 
     }
 
     // eslint-disable-next-line no-unused-vars,class-methods-use-this
-    onRxStyleChanged(prevRxData) {
+    onRxStyleChanged(prevRxStyle: typeof this.state.rxStyle) {
 
     }
 
-    componentDidUpdate(prevProps, prevState) {
+    componentDidUpdate(prevProps: VisRxWidgetProps, prevState: typeof this.state) {
         if (prevState) {
             if (JSON.stringify(this.state.rxData) !== JSON.stringify(prevState.rxData)) {
                 this.onRxDataChanged(prevState.rxData);
@@ -321,7 +395,7 @@ class VisRxWidget extends VisBaseWidget {
         super.componentWillUnmount();
     }
 
-    checkVisibility(stateId, newState) {
+    checkVisibility(stateId?: string | null, newState?: typeof this.newState) {
         newState = newState || this.state;
         if (!this.state.editMode) {
             if (!this.isWidgetFilteredOut(newState.rxData)) {
@@ -372,7 +446,7 @@ class VisRxWidget extends VisBaseWidget {
         this.onStateChanged();
     }
 
-    formatValue(value, round) {
+    formatValue(value: number | string, round: number) {
         if (typeof value === 'number') {
             if (round === 1) {
                 value = Math.round(value * 10) / 10;
@@ -390,7 +464,7 @@ class VisRxWidget extends VisBaseWidget {
     }
 
     // eslint-disable-next-line no-unused-vars
-    wrapContent(content, addToHeader, cardContentStyle, headerStyle, onCardClick, components) {
+    wrapContent(content: any, addToHeader: any, cardContentStyle: any, headerStyle: any, onCardClick: any, components: any) {
         if (this.props.context.views[this.props.view].widgets[this.props.id].usedInWidget) {
             return content;
         }
@@ -466,7 +540,7 @@ class VisRxWidget extends VisBaseWidget {
         </MyCard>;
     }
 
-    renderWidgetBody(props) {
+    renderWidgetBody(props: any) {
         props.id = this.props.id;
 
         props.className = `vis-widget${this.state.rxData.class ? ` ${this.state.rxData.class}` : ''}`;
@@ -483,6 +557,7 @@ class VisRxWidget extends VisBaseWidget {
                         /(-\w)/g,
                         text => text[1].toUpperCase(),
                     );
+
                     props.style[attr] = value;
                 }
             }
@@ -507,7 +582,7 @@ class VisRxWidget extends VisBaseWidget {
         }
     }
 
-    getWidgetView(view, props) {
+    getWidgetView(view: any, props: any) {
         const context = this.props.context;
         const VisView = context.VisView;
         props = props || {};
@@ -526,7 +601,7 @@ class VisRxWidget extends VisBaseWidget {
     }
 
     // eslint-disable-next-line no-unused-vars
-    getWidgetInWidget(view, wid, props) {
+    getWidgetInWidget(view: any, wid: string, props: any) {
         props = props || {};
 
         // old (can) widgets require props.refParent
@@ -544,6 +619,7 @@ class VisRxWidget extends VisBaseWidget {
             askView: this.props.askView,
             relativeWidgetOrder: [wid],
             selectedGroup: this.props.selectedGroup,
+            // @ts-expect-error fix later
             selectedWidgets: this.movement?.selectedWidgetsWithRectangle || this.props.selectedWidgets,
             view,
             viewsActiveFilter: this.props.viewsActiveFilter,
@@ -551,7 +627,7 @@ class VisRxWidget extends VisBaseWidget {
         });
     }
 
-    isSignalVisible(index, val) {
+    isSignalVisible(index: number, val?: any) {
         const oid = this.state.rxData[`signals-oid-${index}`];
 
         if (oid) {
@@ -629,7 +705,7 @@ class VisRxWidget extends VisBaseWidget {
         }
     }
 
-    static text2style(textStyle, style) {
+    static text2style(textStyle: string, style: any) {
         if (textStyle) {
             style = style || {};
             const parts = textStyle.split(';');
@@ -649,7 +725,7 @@ class VisRxWidget extends VisBaseWidget {
         return style;
     }
 
-    renderSignal(index) {
+    renderSignal(index: number) {
         const oid = this.state.rxData[`signals-oid-${index}`];
         if (!oid) {
             return null;
@@ -700,6 +776,7 @@ class VisRxWidget extends VisBaseWidget {
             }
 
             // class name only to address the icon by user's CSS
+            // @ts-expect-error fix later
             return <div style={style} className={this.state.rxData[`signals-blink-${index}`] ? 'vis-signals-blink' : null}>
                 {icon}
                 {text}
@@ -708,10 +785,10 @@ class VisRxWidget extends VisBaseWidget {
         return null;
     }
 
-    renderLastChange(widgetStyle) {
+    renderLastChange(widgetStyle: any) {
         // show last change
         const border = parseInt(this.state.rxData['lc-border-radius'], 10) || 0;
-        const style = {
+        const style: Record<string, any> = {
             backgroundColor: 'rgba(182, 182, 182, 0.6)',
             fontFamily: 'Tahoma',
             position: 'absolute',
@@ -823,10 +900,10 @@ class VisRxWidget extends VisBaseWidget {
 
         if (this.state.applyBindings && !this.bindingsTimer) {
             this.bindingsTimer = setTimeout(async () => {
-                this.bindingsTimer = null;
+                this.bindingsTimer = undefined;
                 await this.onPropertiesUpdated();
 
-                const refs = [];
+                const refs: any[] = [];
                 // if widget has included widgets => inform them about the new size or position
                 const oWidget = this.props.context.views[this.props.view].widgets[this.props.id];
                 const attrs = Object.keys(oWidget.data);
@@ -840,7 +917,7 @@ class VisRxWidget extends VisBaseWidget {
                 this.informIncludedWidgets && clearTimeout(this.informIncludedWidgets);
                 if (refs) {
                     this.informIncludedWidgets = setTimeout(() => {
-                        this.informIncludedWidgets = null;
+                        this.informIncludedWidgets = undefined;
                         refs.forEach(ref => ref.onCommand('updatePosition'));
                     }, 200);
                 }
@@ -855,20 +932,14 @@ class VisRxWidget extends VisBaseWidget {
 
         return super.render();
     }
-}
 
-VisRxWidget.propTypes = {
-    id: PropTypes.string.isRequired,
-    context: PropTypes.object.isRequired,
-    view: PropTypes.string.isRequired,
-    editMode: PropTypes.bool.isRequired,
-    isRelative: PropTypes.bool,
-    // eslint-disable-next-line react/no-unused-prop-types
-    refParent: PropTypes.object.isRequired,
-    askView: PropTypes.func,
-    // eslint-disable-next-line react/no-unused-prop-types
-    selectedWidgets: PropTypes.array,
-    viewsActiveFilter: PropTypes.object.isRequired,
-};
+    /**
+     * Get information about specific widget, needs to be implemented by widget class
+     */
+    // eslint-disable-next-line class-methods-use-this
+    getWidgetInfo(): Record<string, any> {
+        throw new Error('not implemented');
+    }
+}
 
 export default VisRxWidget;

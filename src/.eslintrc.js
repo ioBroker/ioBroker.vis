@@ -80,5 +80,18 @@ module.exports = {
         indent: ['error', 4, { SwitchCase: 1 }],
         'no-alert': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
+        '@typescript-eslint/member-delimiter-style': [
+            'error',
+            {
+                multiline: {
+                    delimiter: 'semi',
+                    requireLast: true,
+                },
+                singleline: {
+                    delimiter: 'semi',
+                    requireLast: false,
+                },
+            },
+        ],
     },
 };

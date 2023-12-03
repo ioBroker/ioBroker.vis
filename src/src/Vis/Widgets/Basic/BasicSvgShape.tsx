@@ -1,10 +1,11 @@
 import React from 'react';
 
-import { RxRenderWidgetProps } from '@/types';
-// eslint-disable-next-line import/no-cycle
-import VisRxWidget from '../../visRxWidget';
+import { GetRxDataFromWidget, RxRenderWidgetProps } from '@/types';
+import VisRxWidget from '@/Vis/visRxWidget';
 
-export default class BasicSvgShape extends VisRxWidget {
+type RxData = GetRxDataFromWidget<typeof BasicSvgShape>
+
+export default class BasicSvgShape extends VisRxWidget<RxData> {
     /**
      * Returns the widget info which is rendered in the edit mode
      */
@@ -84,12 +85,11 @@ export default class BasicSvgShape extends VisRxWidget {
                     },
                 ],
             }],
-            // visWidgetLabel: 'value_string',  // Label of widget
             visDefaultStyle: {
                 width: 100,
                 height: 100,
             },
-        };
+        } as const;
     }
 
     /**

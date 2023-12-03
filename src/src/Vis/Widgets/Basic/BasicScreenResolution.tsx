@@ -4,11 +4,9 @@ import { I18n } from '@iobroker/adapter-react-v5';
 
 import {
     RxRenderWidgetProps, VisLegacy,
-    RxWidgetState, RxWidgetProps,
+    RxWidgetState, RxWidgetProps, GetRxDataFromWidget,
 } from '@/types';
-
-// eslint-disable-next-line import/no-cycle
-import VisRxWidget from '../../visRxWidget';
+import VisRxWidget from '@/Vis/visRxWidget';
 
 declare global {
     interface Window {
@@ -23,12 +21,15 @@ interface BasicScreenResolutionState extends RxWidgetState {
     essentialData: string;
 }
 
-export default class BasicScreenResolution extends VisRxWidget {
+type RxData = GetRxDataFromWidget<typeof BasicScreenResolution>
+
+export default class BasicScreenResolution extends VisRxWidget<RxData, BasicScreenResolutionState> {
     private essentialData: string;
 
     constructor(props: RxWidgetProps) {
+        // @ts-expect-error refactor types to extend from parent types
         super(props);
-        const state = this.state as BasicScreenResolutionState;
+        const state = this.state;
         state.width = document.documentElement.clientWidth;
         state.height = document.documentElement.clientHeight;
         this.essentialData = JSON.stringify(this.buildEssentialProjectData());
@@ -133,7 +134,7 @@ export default class BasicScreenResolution extends VisRxWidget {
      */
     renderWidgetBody(props: RxRenderWidgetProps): React.JSX.Element | null {
         super.renderWidgetBody(props);
-        const state = this.state as BasicScreenResolutionState;
+        const state = this.state;
 
         const essentialData = JSON.stringify(this.buildEssentialProjectData());
         if (essentialData !== this.essentialData) {

@@ -33,9 +33,9 @@ import {
     Utils, IconCopy,
 } from '@iobroker/adapter-react-v5';
 
+import { isVarFinite } from '../../../Utils/utils';
 // eslint-disable-next-line import/no-cycle
 import VisRxWidget from '../../visRxWidget';
-import { isVarFinite } from '../../utils';
 
 class JQuiButton extends VisRxWidget {
     constructor(props) {

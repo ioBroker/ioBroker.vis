@@ -6,7 +6,7 @@ export type Timer = ReturnType<typeof setTimeout>;
 export interface ProjectSettings {
     darkReloadScreen: boolean;
     destroyViewsAfter: number;
-    folders: {id: string, name: string, parentId: string}[];
+    folders: {id: string; name: string; parentId: string}[];
     openedViews: string[];
     reconnectInterval: number;
     reloadOnEdit: boolean;
@@ -29,8 +29,8 @@ interface GroupWidget extends SingleWidget {
     data: {
         /** Widget IDs of the members */
         members: string[];
-        [other: string]: unknown
-    }
+        [other: string]: unknown;
+    };
 }
 
 export type Widget = SingleWidget | GroupWidget;
@@ -75,27 +75,27 @@ export interface VisLegacy {
     instance: string;
     navChangeCallbacks: (() => void)[];
     findNearestResolution: (width?: number, height?: number) => string;
-    version: number,
-    states: any,
-    objects: Record<string, any>,
-    isTouch: boolean,
-    activeWidgets: string[],
-    editMode: boolean,
-    binds: any,
-    views: Project,
-    activeView: string,
-    language: string,
-    user: string,
-    projectPrefix: string,
-    _: (word: string) => string,
-    dateFormat: '',
-    loginRequired: false,
-    viewsActiveFilter: Record<string, string[]>,
-    onChangeCallbacks: ArgumentChanged[],
-    subscribing: Subscribing,
-    conn: any,
-    lastChangedView: string | null, // used in vis-2 to save last sent view name over vis-2.0.command
-    updateContainers: () => void,
+    version: number;
+    states: any;
+    objects: Record<string, any>;
+    isTouch: boolean;
+    activeWidgets: string[];
+    editMode: boolean;
+    binds: any;
+    views: Project;
+    activeView: string;
+    language: string;
+    user: string;
+    projectPrefix: string;
+    _: (word: string) => string;
+    dateFormat: '';
+    loginRequired: false;
+    viewsActiveFilter: Record<string, string[]>;
+    onChangeCallbacks: ArgumentChanged[];
+    subscribing: Subscribing;
+    conn: any;
+    lastChangedView: string | null; // used in vis-2 to save last sent view name over vis-2.0.command
+    updateContainers: () => void;
     renderView: (viewDiv: string, view: string, hidden: boolean, cb: () => void) => void;
     updateFilter: (view: string) => string[];
     destroyUnusedViews: () => void;
@@ -107,33 +107,33 @@ export interface VisLegacy {
     onWakeUp: (callback: () => void | string, wid?: string) => void;
     // inspectWidgets: (viewDiv: string, view: string, addWidget, delWidget, onlyUpdate: boolean) => void,
     // showMessage: (message: string, title: string, icon, width, callback) => void,
-    showWidgetHelper: (viewDiv: string, view: string, wid: string, isShow: boolean) => void,
+    showWidgetHelper: (viewDiv: string, view: string, wid: string, isShow: boolean) => void;
     addFont: (fontName: string) => void;
     // registerOnChange: (callback, arg, wid: string) => void;
     // unregisterOnChange: (callback, arg, wid: string) => void;
-    generateInstance: () => string,
+    generateInstance: () => string;
     // findByRoles: (stateId: string, roles) => any,
     // findByName: (stateId: string, objName) => any,
-    hideShowAttr: (widAttr: string) => void,
+    hideShowAttr: (widAttr: string) => void;
     // bindingsCache: {},
     extractBinding: (format: string, doNotIgnoreEditMode?: boolean) => any;
     // formatBinding: (format: string, view: string, wid: string, widget, widgetData, values) => string,
-    getViewOfWidget: (wid: string) => string | null,
-    confirmMessage: (message: string, title: string, icon: string, width: number, callback: () => boolean) => void,
+    getViewOfWidget: (wid: string) => string | null;
+    confirmMessage: (message: string, title: string, icon: string, width: number, callback: () => boolean) => void;
     // config: {}, // storage of dialog positions and size (Deprecated)
-    showCode: (code: string, title: string, mode?: 'html' | 'json' | 'css') => void,
+    showCode: (code: string, title: string, mode?: 'html' | 'json' | 'css') => void;
     // findCommonAttributes: (/* view, widgets */) => void;
     bindWidgetClick: () => void;
-    preloadImages: (sources: string[]) => void,
+    preloadImages: (sources: string[]) => void;
     // updateStates: data => void,
-    getHistory: (id: string, options: any, callback: () => void) => void,
-    getHttp: (url: string, callback: () => string) => void,
-    formatDate: (dateObj: Date | string | number, isDuration?: boolean, _format?: string) => string,
-    widgets: any,
-    editSelect: (widAttr: string, values: any, notTranslate: boolean, init: () => void, onchange: () => void) => string | null,
+    getHistory: (id: string, options: any, callback: () => void) => void;
+    getHttp: (url: string, callback: () => string) => void;
+    formatDate: (dateObj: Date | string | number, isDuration?: boolean, _format?: string) => string;
+    widgets: any;
+    editSelect: (widAttr: string, values: any, notTranslate: boolean, init: () => void, onchange: () => void) => string | null;
     isWidgetHidden: (view: string, widget: string, visibilityOidValue: null | number | string | undefined | boolean, widgetData: any) => boolean;
     getUserGroups: () => Record<string, string[]>;
-    detectBounce: (el: any, isUp?: boolean) => boolean
+    detectBounce: (el: any, isUp?: boolean) => boolean;
 }
 
 export interface Window {
@@ -145,8 +145,8 @@ export interface BaseWidgetState extends React.ComponentState {
     height: number;
     defaultView: string;
     draggable: boolean;
-    data: Record<string, string | number | boolean>,
-    style: Record<string, string | number>,
+    data: Record<string, string | number | boolean>;
+    style: Record<string, string | number>;
     applyBindings: boolean;
     editMode: boolean;
     multiViewWidget: boolean;
@@ -229,6 +229,51 @@ export interface RxWidgetProps extends RxRenderWidgetProps {
     isRelative: boolean;
     // refParent: React.RefObject<any>,
     // askView: (command: string, props?: any) => any,
-    selectedWidgets: string[],
-    viewsActiveFilter: Record<string, string[]>
+    selectedWidgets: string[];
+    viewsActiveFilter: Record<string, string[]>;
 }
+
+type RxWidgetAttributeType = 'id' | 'number' | 'image' | 'checkbox';
+
+interface RxWidgetInfoAttributes {
+    /** Name of the attributes section */
+    name: string;
+    /** Fields of this attribute section */
+    fields: { name: string; type: RxWidgetAttributeType; default?: any }[];
+}
+
+interface RxWidgetInfo {
+    /** ID of the widget */
+    id: string;
+    /** Vis widget set name */
+    visSet: string;
+    /** Name in vis */
+    visName: string;
+    /** Preview image */
+    visPrev: string;
+    /** Defines the widget attributes */
+    visAttrs: RxWidgetInfoAttributes[];
+    /** TODO */
+    visResizeLocked?: boolean;
+    /** TODO */
+    resizable?: boolean;
+    /** TODO */
+    visResizable?: boolean;
+    /** TODO */
+    visDraggable?: boolean;
+    /** TODO */
+    resizeHandles?: string[];
+    /** TODO */
+    visResizeHandles?: string[];
+}
+
+type AttributeTypeToDataType<TType extends RxWidgetAttributeType> = TType extends 'checkbox' ? boolean : TType extends 'number' ? number :
+    string;
+
+/** Infer the RxData from VisAttrs */
+type GetRxDataFromVisAttrs<T extends Record<string, any>> = {
+    [K in T['visAttrs'][number]['fields'][number] as K['name']]: AttributeTypeToDataType<K['type']>
+}
+
+/** Infers the RxData from a given Widget */
+type GetRxDataFromWidget<T extends { getWidgetInfo: () => Record<string, any> }> =  GetRxDataFromVisAttrs<ReturnType<(T['getWidgetInfo'])>>

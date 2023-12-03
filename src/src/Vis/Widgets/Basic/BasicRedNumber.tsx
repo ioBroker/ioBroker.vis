@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { RxRenderWidgetProps } from '@/types';
+import { GetRxDataFromWidget, RxRenderWidgetProps } from '@/types';
+import VisRxWidget from '@/Vis/visRxWidget';
 
-// eslint-disable-next-line import/no-cycle
-import VisRxWidget from '../../visRxWidget';
+type RxData = GetRxDataFromWidget<typeof BasicRedNumber>
 
 interface SvgProps {
     style?: React.CSSProperties;
@@ -16,7 +16,7 @@ const PinSvg = (props: SvgProps) => <svg xmlns="http://www.w3.org/2000/svg" view
     />
 </svg>;
 
-export default class BasicRedNumber extends VisRxWidget {
+export default class BasicRedNumber extends VisRxWidget<RxData> {
     /**
      * Returns the widget info which is rendered in the edit mode
      */

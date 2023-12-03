@@ -1,11 +1,11 @@
 import React from 'react';
 
-import { RxRenderWidgetProps } from '@/types';
+import { GetRxDataFromWidget, RxRenderWidgetProps } from '@/types';
+import VisRxWidget from '@/Vis/visRxWidget';
 
-// eslint-disable-next-line import/no-cycle
-import VisRxWidget from '../../visRxWidget';
+type RxData = GetRxDataFromWidget<typeof BasicIFrame>
 
-export default class BasicIFrame extends VisRxWidget {
+export default class BasicIFrame extends VisRxWidget<RxData> {
     private refreshInterval: ReturnType<typeof setInterval> | null = null;
 
     private readonly frameRef: React.RefObject<HTMLIFrameElement>;
@@ -17,6 +17,7 @@ export default class BasicIFrame extends VisRxWidget {
     private startedInterval = 0;
 
     constructor(props: RxRenderWidgetProps) {
+        // @ts-expect-error refactor types to extend from parent types
         super(props);
         this.frameRef = React.createRef();
     }
@@ -82,7 +83,7 @@ export default class BasicIFrame extends VisRxWidget {
                 width: 600,
                 height: 320,
             },
-        };
+        } as const;
     }
 
     async componentDidMount(): Promise<void> {
@@ -114,7 +115,7 @@ export default class BasicIFrame extends VisRxWidget {
     };
 
     refreshIFrame() {
-        if (this.state.rxData.refreshWithNoQuery === true || this.state.rxData.refreshWithNoQuery === 'true') {
+        if (this.state.rxData.refreshWithNoQuery === true) {
             this.frameRef.current?.contentWindow?.location.reload();
         } else if (this.frameRef.current) {
             this.frameRef.current.src = `${this.state.rxData.src}${this.state.rxData.src.includes('?') ? '&' : '?'}_refts=${Date.now()}`;
@@ -139,8 +140,8 @@ export default class BasicIFrame extends VisRxWidget {
     onPropertyUpdate() {
         const src     = this.state.rxData.src || '';
         const refreshInterval = parseFloat(this.state.rxData.refreshInterval) || 0;
-        const refreshOnViewChange = this.state.rxData.refreshOnViewChange === true || this.state.rxData.refreshOnViewChange === 'true';
-        const refreshOnWakeUp = this.state.rxData.refreshOnWakeUp === true || this.state.rxData.refreshOnWakeUp === 'true';
+        const refreshOnViewChange = this.state.rxData.refreshOnViewChange === true;
+        const refreshOnWakeUp = this.state.rxData.refreshOnWakeUp === true;
 
         if (src) {
             if (refreshOnViewChange) {

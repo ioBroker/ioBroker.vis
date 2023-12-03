@@ -24,7 +24,7 @@ import VisBaseWidget from './visBaseWidget';
 import VisCanWidget from './visCanWidget';
 import { addClass, parseDimension } from './visUtils';
 import VisNavigation from './visNavigation';
-import { isVarFinite } from './utils';
+import { isVarFinite } from '../Utils/utils';
 import VisWidgetsCatalog from './visWidgetsCatalog';
 import { recalculateFields, store } from '../Store';
 

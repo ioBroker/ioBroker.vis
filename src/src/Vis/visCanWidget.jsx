@@ -15,13 +15,13 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { calculateOverflow, isVarFinite } from '@/Utils/utils';
 import {
     replaceGroupAttr,
     addClass,
     getUsedObjectIDsInWidget,
 } from './visUtils';
 import VisBaseWidget from './visBaseWidget';
-import { calculateOverflow, isVarFinite } from './utils';
 
 const analyzeDraggableResizable = (el, result, widgetStyle) => {
     result = result || {};
