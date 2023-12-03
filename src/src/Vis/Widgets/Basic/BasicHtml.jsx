@@ -18,6 +18,7 @@ import PropTypes from 'prop-types';
 
 // eslint-disable-next-line import/no-cycle
 import VisRxWidget from '../../visRxWidget';
+import DangerousHtmlWithScript from '../Utils/DangerousHtmlWithScript';
 
 class BasicHtml extends VisRxWidget {
     static getWidgetInfo() {
@@ -79,20 +80,15 @@ class BasicHtml extends VisRxWidget {
         }
     }
 
-    // htmlDecode(html){
-    //     const e = document.createElement('div');
-    //     e.innerHTML = html;
-    //     return e.childNodes.length === 0 ? '' : e.childNodes[0].nodeValue;
-    // }
-
+    /**
+     * Renders the widget
+     *
+     * @return {Element}
+     */
     renderWidgetBody(props) {
         super.renderWidgetBody(props);
 
-        return <div
-            className="vis-widget-body"
-            // eslint-disable-next-line react/no-danger
-            dangerouslySetInnerHTML={{ __html: this.state.rxData.html }}
-        />;
+        return <DangerousHtmlWithScript className="vis-widget-body" html={this.state.rxData.html} isDiv />;
     }
 }
 
