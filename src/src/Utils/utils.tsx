@@ -30,10 +30,9 @@ export function calculateOverflow(style: CSSProperties): void {
 export function isVarFinite(numberOrString: number | string): boolean {
     // the difference between Number.isFinite and window.isFinite is that window.isFinite tries to convert the parameter to a number
     // and Number.isFinite does not and just check against non NaN and non Infinity
-    const num = typeof numberOrString === 'string' ? parseFloat(numberOrString) : numberOrString;
 
     // eslint-disable-next-line no-restricted-properties
-    return window.isFinite(num);
+    return window.isFinite(numberOrString as number);
 }
 
 /**
