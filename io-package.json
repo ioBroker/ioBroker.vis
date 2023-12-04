@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.3",
+    "version": "2.9.4",
     "news": {
+      "2.9.4": {
+        "en": "fixed issues with display width",
+        "de": "feste probleme mit displaybreite",
+        "ru": "фиксированные проблемы с шириной дисплея",
+        "pt": "problemas fixos com largura de exibição",
+        "nl": "vertaling:",
+        "fr": "problèmes fixes avec largeur d'affichage",
+        "it": "problemi fissi con larghezza del display",
+        "es": "problemas fijos con ancho de pantalla",
+        "pl": "rzeczywista szerokość",
+        "uk": "виправлені питання з шириною дисплея",
+        "zh-cn": "b. 展示妻子的固定问题"
+      },
       "2.9.3": {
         "en": "Added the possibility to limit hard the view size\nimplemented simple sort mechanic for navigation\nfixed import of views, which were inside a folder\nfixed theme also applied in iframe\ndo not simply reuse widget ids when importing or copying views\nimplemented basic bulb widget as react widget\nmade script tags work in basic html widget",
         "de": "Hinzugefügt die Möglichkeit, hart die Ansicht Größe zu begrenzen\neinfache art mechanik für navigation\nfester import von ansichten, die in einem ordner waren\nfestes thema auch in iframe angewendet\nnicht einfach widget ids beim importieren oder kopieren von ansichten wiederverwenden\nimplementiert grundlegende glühbirne widget als reakt widget\nscript-tags funktionieren im grundlegenden html widget",
@@ -80,19 +93,6 @@
         "pl": "wdrożone Basic Bar widget (ang.)",
         "uk": "реалізований Базовий віджет бару рідно",
         "zh-cn": "执行 B. 基本Bar wid目标"
-      },
-      "2.6.4": {
-        "en": "fixed typescript build",
-        "de": "fester schriftbau",
-        "ru": "фиксированная типскриптовая сборка",
-        "pt": "constrói de tipo fixo",
-        "nl": "typische opbouw",
-        "fr": "construction de caractères fixes",
-        "it": "tipografia fissa",
-        "es": "construcción de tiposcript fijo",
-        "pl": "konstrukcja standardowa",
-        "uk": "фіксована структура",
-        "zh-cn": "固定表格"
       }
     },
     "title": "Visualisation Next Generation",
