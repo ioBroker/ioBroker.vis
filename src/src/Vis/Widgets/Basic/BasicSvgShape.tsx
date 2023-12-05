@@ -3,7 +3,7 @@ import React from 'react';
 import { GetRxDataFromWidget, RxRenderWidgetProps } from '@/types';
 import VisRxWidget from '@/Vis/visRxWidget';
 
-type RxData = GetRxDataFromWidget<typeof BasicSvgShape>
+type RxData = GetRxDataFromWidget<typeof BasicSvgShape>;
 
 export default class BasicSvgShape extends VisRxWidget<RxData> {
     /**

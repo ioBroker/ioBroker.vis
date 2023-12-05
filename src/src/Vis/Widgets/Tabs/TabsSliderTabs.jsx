@@ -196,9 +196,12 @@ class TabsSliderTabs extends VisRxWidget {
         for (let t = 0; t < parseInt(this.state.rxData.show_tabs, 10); t++) {
             const color = this.state.rxData[`icon_color_${t + 1}`];
             const icon = this.state.rxData[`icon_tab_${t + 1}`];
-            const image = this.state.rxData[`image_tab_${t + 1}`];
+            let image = this.state.rxData[`image_tab_${t + 1}`];
             const size = this.state.rxData[`icon_size_${t + 1}`];
             const title = this.state.rxData[`title_tab_${t + 1}`];
+            if (image && image.startsWith('_PRJ_NAME/')) {
+                image = image.replace('_PRJ_NAME/', `../${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}/`);
+            }
 
             tabs.push(<Tab
                 label={title || (icon || image ? '' : `Tab ${t + 1}`)}

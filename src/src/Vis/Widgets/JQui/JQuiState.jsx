@@ -323,7 +323,7 @@ class JQuiState extends VisRxWidget {
 
     renderIcon(i, selectedIndex) {
         let color;
-        const icon = this.state.rxData[`icon${i}`];
+        let icon = this.state.rxData[`icon${i}`];
         if (icon && this.state.rxData[`color${i}`]) {
             color = this.state.rxData[`color${i}`];
             if (i === selectedIndex && this.state.rxData[`activeColor${i}`]) {
@@ -332,6 +332,9 @@ class JQuiState extends VisRxWidget {
         }
 
         if (icon) {
+            if (icon.startsWith('_PRJ_NAME/')) {
+                icon = icon.replace('_PRJ_NAME/', `../${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}/`);
+            }
             return <Icon
                 key="icon"
                 style={{ color }}

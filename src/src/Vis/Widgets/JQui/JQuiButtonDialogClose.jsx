@@ -258,9 +258,14 @@ class JQuiButtonDialogClose extends VisRxWidget {
                 iconStyle.height = 'auto';
             }
         }
+        let iconSrc = !this.state.rxData.jquery_style && (this.state.rxData.src || this.state.rxData.icon);
 
-        const icon = !this.state.rxData.jquery_style && (this.state.rxData.src || this.state.rxData.icon) ? <Icon
-            src={this.state.rxData.src || this.state.rxData.icon}
+        if (iconSrc && iconSrc.startsWith('_PRJ_NAME/')) {
+            iconSrc = iconSrc.replace('_PRJ_NAME/', `../${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}/`);
+        }
+
+        const icon = iconSrc ? <Icon
+            src={iconSrc}
             style={iconStyle}
         /> : null;
 

@@ -21,18 +21,18 @@ import IODialog from '@/Components/IODialog';
 import { Project } from '@/types';
 
 interface ViewDialogProps {
-    changeProject: (project: Project) => Promise<void>,
-    changeView: (viewName: string) => Promise<void>,
-    dialog: string,
+    changeProject: (project: Project) => Promise<void>;
+    changeView: (viewName: string) => Promise<void>;
+    dialog: string;
     /** Name of view */
-    dialogName: string,
+    dialogName: string;
     dialogView: string;
     dialogCallback?: { cb: (dialogName: string) => void };
     selectedView: string;
     setDialog: (closeAction: null) => void;
-    setDialogName: (dialogName: string) => void,
-    setDialogView: (action: null) => void,
-    dialogParentId?: string,
+    setDialogName: (dialogName: string) => void;
+    setDialogView: (action: null) => void;
+    dialogParentId?: string;
     noTranslation: boolean;
     setDialogParentId: (action: null) => void;
 }

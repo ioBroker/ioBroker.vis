@@ -57,7 +57,7 @@ class JQuiBinaryState extends VisRxWidget {
                             type: 'select',
                             noTranslation: true,
                             default: 'button',
-                            options: ['button', 'html', 'radio', 'checkbox', 'image', 'switch'],
+                            options: ['button', 'round-button', 'html', 'radio', 'checkbox', 'image', 'switch'],
                         },
                         {
                             name: 'oid',
@@ -79,15 +79,9 @@ class JQuiBinaryState extends VisRxWidget {
                             type: 'checkbox',
                         },
                         {
-                            name: 'widgetTitle',
-                            label: 'jqui_name',
-                            type: 'text',
-                        },
-                        {
                             name: 'test',
                             type: 'select',
                             label: 'jqui_test',
-                            noTranslation: true,
                             options: [
                                 { value: '', label: 'none' },
                                 { value: true, label: 'jqui_true' },
@@ -370,10 +364,30 @@ class JQuiBinaryState extends VisRxWidget {
             if (this.state.width < this.state.height) {
                 style.width = `calc(100% - ${(this.state.rxData.padding || 0) * 2}px)`;
                 style.height = 'auto';
+                style.maxHeight = '100%';
             } else {
                 style.height = `calc(100% - ${(this.state.rxData.padding || 0) * 2}px)`;
                 style.width = 'auto';
+                style.maxWidth = '100%';
             }
+        } else if (this.state.rxData.type === 'round-button') {
+            if (this.state.width < this.state.height) {
+                style.width = `calc(50% - ${(this.state.rxData.padding || 0) * 2}px)`;
+                style.height = 'auto';
+                style.maxHeight = '100%';
+            } else {
+                style.height = `calc(50% - ${(this.state.rxData.padding || 0) * 2}px)`;
+                style.width = 'auto';
+                style.maxWidth = '100%';
+            }
+        } else if (this.state.width < this.state.height) {
+            style.width = `calc(100% - ${(this.state.rxData.padding || 0) * 2}px)`;
+            style.height = 'auto';
+            style.maxHeight = '100%';
+        } else {
+            style.height = `calc(100% - ${(this.state.rxData.padding || 0) * 2}px)`;
+            style.width = 'auto';
+            style.maxWidth = '100%';
         }
 
         if (this.state.rxData.padding) {
@@ -381,6 +395,10 @@ class JQuiBinaryState extends VisRxWidget {
         }
 
         if (icon) {
+            if (icon.startsWith('_PRJ_NAME/')) {
+                icon = icon.replace('_PRJ_NAME/', `../${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}/`);
+            }
+
             return <Icon
                 key="icon"
                 style={style}
@@ -412,30 +430,33 @@ class JQuiBinaryState extends VisRxWidget {
         const icon = this.renderIcon(isOn);
         const text = this.renderText(isOn);
 
-        if (!text.text) {
-            style.zIndex = this.props.editMode ? 0 : undefined;
-            // Fab
-            return <Fab
-                style={style}
-                color={isOn ? 'primary' : 'grey'}
-                onClick={() => this.onClick()}
-            >
-                {icon}
-            </Fab>;
-        }
-
         style.color = text.color || undefined;
 
         // Button
         return <Button
-            startIcon={icon}
             variant={this.state.rxData.variant === undefined ? 'contained' : this.state.rxData.variant}
             color={isOn ? 'primary' : 'grey'}
             onClick={() => this.onClick()}
             style={style}
         >
+            {icon}
             {text.text}
         </Button>;
+    }
+
+    renderFab(isOn, style) {
+        const icon = this.renderIcon(isOn);
+        const text = this.renderText(isOn);
+
+        style.zIndex = this.props.editMode ? 0 : undefined;
+        // Fab
+        return <Fab
+            style={style}
+            color={isOn ? 'primary' : 'grey'}
+            onClick={() => this.onClick()}
+        >
+            {icon || text.text}
+        </Fab>;
     }
 
     renderHtml(isOn) {
@@ -640,9 +661,7 @@ class JQuiBinaryState extends VisRxWidget {
         buttonStyle.height = '100%';
         let content;
         const bodyStyle = { textAlign: 'center' };
-        if (this.state.rxData.type === 'button' && !this.state.rxData.jquery_style) {
-            content = this.renderButton(isOn, buttonStyle);
-        } else if (this.state.rxData.type === 'radio') {
+        if (this.state.rxData.type === 'radio') {
             content = this.renderRadio(isOn, buttonStyle);
         } else if (this.state.rxData.type === 'html' || (this.state.rxData.type === 'button' && this.state.rxData.jquery_style)) {
             bodyStyle.display = 'flex';
@@ -659,13 +678,10 @@ class JQuiBinaryState extends VisRxWidget {
         } else if (this.state.rxData.type === 'image') {
             bodyStyle.cursor = !this.state.rxData.readOnly ? 'pointer' : undefined;
             content = this.renderIcon(isOn, buttonStyle);
-        }
-
-        if (this.state.rxData.widgetTitle) {
-            content = <FormControl>
-                <FormLabel>{this.state.rxData.widgetTitle}</FormLabel>
-                {content}
-            </FormControl>;
+        } else if (this.state.rxData.type === 'round-button') {
+            content = this.renderFab(isOn, buttonStyle);
+        }else if (!this.state.rxData.jquery_style) {
+            content = this.renderButton(isOn, buttonStyle);
         }
 
         const result = <div

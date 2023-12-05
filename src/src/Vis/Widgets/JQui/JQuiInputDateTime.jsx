@@ -49,7 +49,7 @@ class JQuiInputDateTime extends VisRxWidget {
             id: 'tplJquiInputDatetime',
             visSet: 'jqui',
             visName: 'Input Time',
-            visWidgetLabel: 'jqui_Input Time',
+            visWidgetLabel: 'jqui_input_time',
             visPrev: 'widgets/jqui/img/Prev_InputDateTime.png',
             visOrder: 31,
             visAttrs: [

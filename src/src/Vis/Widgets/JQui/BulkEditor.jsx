@@ -560,8 +560,13 @@ class BulkEditor extends React.Component {
         }
 
         let button;
+        let iconSrc = this.state.images[i] || this.state.icons[i] || '';
+        if (iconSrc.startsWith('_PRJ_NAME/')) {
+            iconSrc = iconSrc.replace('_PRJ_NAME/', `../${this.props.adapterName}.${this.props.instance}/${this.props.projectName}/`);
+        }
+
         if (this.props.data.type === 'radio') {
-            const icon = <Icon src={this.state.images[i] || this.state.icons[i] || ''} style={{ width: 24, height: 24 }} />;
+            const icon = <Icon src={iconSrc} style={{ width: 24, height: 24 }} />;
             const text = <div style={{ display: 'flex', gap: 4 }}>
                 {icon}
                 {this.state.texts[i]}
@@ -575,7 +580,7 @@ class BulkEditor extends React.Component {
                 label={text}
             />;
         } else if (this.props.data.type === 'select') {
-            const icon = <Icon src={this.state.images[i] || this.state.icons[i] || ''} style={{ width: 24, height: 24 }} />;
+            const icon = <Icon src={iconSrc} style={{ width: 24, height: 24 }} />;
             const text = <div style={{ display: 'flex', gap: 4 }}>
                 {icon}
                 {this.state.texts[i]}
@@ -592,7 +597,7 @@ class BulkEditor extends React.Component {
                 color={this.state.activeLine === i ? 'primary' : 'grey'}
                 variant={this.props.data.variant === undefined ? 'contained' : this.props.data.variant}
                 onClick={() => this.setState({ activeLine: i })}
-                startIcon={<Icon src={this.state.images[i] || this.state.icons[i] || ''} style={{ width: 24, height: 24 }} />}
+                startIcon={<Icon src={iconSrc} style={{ width: 24, height: 24 }} />}
             >
                 {this.state.texts[i]}
             </Button>;

@@ -640,5 +640,10 @@
   "vis_2_widgets_widgets_tabs_variant_full_width": "Gesamtbreite",
   "vis_2_widgets_widgets_tabs_vertical": "Vertikal",
   "welcome_message": "Es existiert noch kein Projekt.",
-  "word-spacing": "Wortabstand"
+  "word-spacing": "Wortabstand",
+  "jqui_icon_increment": "Mit Icon erhöhen",
+  "jqui_input_date": "Eingabe des Datums",
+  "jqui_input_time": "Zeiteingabe",
+  "jqui_true": "WAHR",
+  "jqui_false": "FALSCH"
 }

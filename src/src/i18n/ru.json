@@ -640,5 +640,10 @@
   "vis_2_widgets_widgets_tabs_variant_full_width": "полная ширина",
   "vis_2_widgets_widgets_tabs_vertical": "Вертикальный",
   "welcome_message": "Ни одного проекта пока не существует.",
-  "word-spacing": "межсловный интервал"
+  "word-spacing": "межсловный интервал",
+  "jqui_icon_increment": "Увеличение с помощью значка",
+  "jqui_input_date": "Ввод даты",
+  "jqui_input_time": "Ввод времени",
+  "jqui_true": "Истинный",
+  "jqui_false": "ЛОЖЬ"
 }

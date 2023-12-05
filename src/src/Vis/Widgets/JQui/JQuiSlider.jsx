@@ -441,6 +441,9 @@ class JQuiSlider extends VisRxWidget {
         }
 
         if (icon) {
+            if (icon && icon.startsWith('_PRJ_NAME/')) {
+                icon = icon.replace('_PRJ_NAME/', `../${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}/`);
+            }
             return <Icon
                 src={icon}
             />;

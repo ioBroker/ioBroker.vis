@@ -640,5 +640,10 @@
   "vis_2_widgets_widgets_tabs_variant_full_width": "pełna szerokość",
   "vis_2_widgets_widgets_tabs_vertical": "Pionowy",
   "welcome_message": "Żaden projekt jeszcze nie istnieje.",
-  "word-spacing": "odstępy między wyrazami"
+  "word-spacing": "odstępy między wyrazami",
+  "jqui_icon_increment": "Przyrost za pomocą ikony",
+  "jqui_input_date": "Wprowadzanie daty",
+  "jqui_input_time": "Wprowadzanie czasu",
+  "jqui_true": "PRAWDA",
+  "jqui_false": "FAŁSZ"
 }

@@ -18,7 +18,9 @@ import {
     Code as CodeIcon,
     Info as InfoIcon,
     Delete,
-    Add, LinkOff, Link as LinkIcon,
+    Add,
+    LinkOff,
+    Link as LinkIcon,
 } from '@mui/icons-material';
 
 import { I18n, Utils } from '@iobroker/adapter-react-v5';
@@ -1130,9 +1132,13 @@ class Widget extends Component {
             }
         }
 
-        this.props.changeProject(project);
-        store.dispatch(recalculateFields(true));
+        this.changeProject(project);
     }
+
+    changeProject = (project, ignoreHistory) => {
+        this.props.changeProject(project, ignoreHistory);
+        store.dispatch(recalculateFields(true));
+    };
 
     renderFieldRow(group, field, fieldIndex) {
         if (!field) {
@@ -1274,7 +1280,7 @@ class Widget extends Component {
                                     isDifferent={this.state.isDifferent[field.name]}
                                     project={store.getState().visProject}
                                     socket={this.props.socket}
-                                    changeProject={this.props.changeProject}
+                                    changeProject={this.changeProject}
                                 />
                                 : <WidgetField
                                     widgetType={this.state.widgetType}
@@ -1288,6 +1294,7 @@ class Widget extends Component {
                                     index={group.index}
                                     isDifferent={this.state.isDifferent[field.name]}
                                     {...this.props}
+                                    changeProject={this.changeProject}
                                 />}
                         </div>
                     </td>
@@ -1340,8 +1347,7 @@ class Widget extends Component {
             delete project[this.props.selectedView].widgets[wid].data[`g_${group.name}`];
         });
 
-        this.props.changeProject(project);
-        store.dispatch(recalculateFields(true));
+        this.changeProject(project);
     }
 
     render() {

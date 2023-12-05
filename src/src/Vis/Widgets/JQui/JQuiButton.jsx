@@ -380,9 +380,7 @@ class JQuiButton extends VisRxWidget {
     }
 
     showDialog = show => {
-        const that = this;
-
-        that.setState({ dialogVisible: show });
+        this.setState({ dialogVisible: show });
 
         // Auto-close
         let timeout = this.state.rxData.autoclose;
@@ -401,13 +399,13 @@ class JQuiButton extends VisRxWidget {
 
         if (timeout) {
             if (show) {
-                that.hideTimeout = setTimeout(() => {
-                    that.hideTimeout = null;
-                    that.showDialog(false);
+                this.hideTimeout = setTimeout(() => {
+                    this.hideTimeout = null;
+                    this.showDialog(false);
                 }, timeout);
-            } else if (that.hideTimeout) {
-                clearTimeout(that.hideTimeout);
-                that.hideTimeout = null;
+            } else if (this.hideTimeout) {
+                clearTimeout(this.hideTimeout);
+                this.hideTimeout = null;
             }
         }
     };
@@ -712,9 +710,13 @@ class JQuiButton extends VisRxWidget {
                 iconStyle.height = 'auto';
             }
         }
+        let iconSrc = !this.state.rxData.jquery_style && (this.state.rxData.src || this.state.rxData.icon);
 
-        const icon = !this.state.rxData.jquery_style && (this.state.rxData.src || this.state.rxData.icon) ? <Icon
-            src={this.state.rxData.src || this.state.rxData.icon}
+        if (iconSrc && iconSrc.startsWith('_PRJ_NAME/')) {
+            iconSrc = iconSrc.replace('_PRJ_NAME/', `../${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}/`);
+        }
+        const icon = iconSrc ? <Icon
+            src={iconSrc}
             style={iconStyle}
         /> : null;
 

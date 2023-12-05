@@ -640,5 +640,10 @@
   "vis_2_widgets_widgets_tabs_variant_full_width": "全屏宽度",
   "vis_2_widgets_widgets_tabs_vertical": "垂直的",
   "welcome_message": "目前还没有一个项目存在。",
-  "word-spacing": "字间距"
+  "word-spacing": "字间距",
+  "jqui_icon_increment": "用图标递增",
+  "jqui_input_date": "输入日期",
+  "jqui_input_time": "输入时间",
+  "jqui_true": "真的",
+  "jqui_false": "错误的"
 }
