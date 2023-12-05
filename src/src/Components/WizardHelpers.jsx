@@ -19,8 +19,8 @@ import {
 } from '@mui/icons-material';
 
 import { TbVacuumCleaner } from 'react-icons/tb';
-
 import ChannelDetector from '@iobroker/type-detector';
+import { getNewWidgetIdNumber, getNewWidgetId } from '../Utils/utils';
 
 const deviceIcons = {
     blind: <Blinds />,
@@ -281,4 +281,7 @@ export default {
     detectDevices,
     getObjectIcon,
     allObjects,
+    getNewWidgetId,
+    /** @deprecated use "getNewWidgetInfo" instead, it will give you the full wid like "w000001" */
+    getNewWidgetIdNumber,
 };

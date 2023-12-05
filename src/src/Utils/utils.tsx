@@ -60,7 +60,7 @@ export function deepClone<T extends Record<string, any>>(object: T): T {
  * @param project current project
  * @param offset offset if multiple widgets are created and not yet in project
  */
-function getNewWidgetIdNumber(isWidgetGroup: boolean, project: Project, offset = 0): number  {
+export function getNewWidgetIdNumber(isWidgetGroup: boolean, project: Project, offset = 0): number  {
     const widgets: string[] = [];
     project = project || store.getState().visProject;
     Object.keys(project).forEach(view =>
