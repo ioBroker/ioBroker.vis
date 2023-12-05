@@ -653,5 +653,9 @@
   "Height": "Висота",
   "Instance": "Екземпляр",
   "jqui_invert_icon": "Інвертувати значок",
-  "jqui_image_height": "Висота зображення"
+  "jqui_image_height": "Висота зображення",
+  "jqui_input_with_button": "Вхід за допомогою кнопки",
+  "jqui_button_input_note": "Застаріле. Використовуйте віджет «Введення». Збережено тільки для сумісності з vis.1",
+  "jqui_button_text": "Текст кнопки",
+  "jqui_unit": "одиниця"
 }

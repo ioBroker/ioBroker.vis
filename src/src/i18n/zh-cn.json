@@ -653,5 +653,9 @@
   "Height": "高度",
   "Instance": "实例",
   "jqui_invert_icon": "反转图标",
-  "jqui_image_height": "图像高度"
+  "jqui_image_height": "图像高度",
+  "jqui_input_with_button": "用按钮输入",
+  "jqui_button_input_note": "已弃用。使用“输入”小部件。保留只是为了与 vis.1 兼容",
+  "jqui_button_text": "按钮文字",
+  "jqui_unit": "单元"
 }

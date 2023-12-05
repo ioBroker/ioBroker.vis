@@ -653,5 +653,9 @@
   "Height": "Wysokość",
   "Instance": "Instancja",
   "jqui_invert_icon": "Odwróć ikonę",
-  "jqui_image_height": "Wysokość obrazu"
+  "jqui_image_height": "Wysokość obrazu",
+  "jqui_input_with_button": "Wejście za pomocą przycisku",
+  "jqui_button_input_note": "Przestarzałe. Użyj widżetu „Wejście”. Zachowane tylko ze względu na kompatybilność z vis.1",
+  "jqui_button_text": "Przycisk tekstowy",
+  "jqui_unit": "Jednostka"
 }

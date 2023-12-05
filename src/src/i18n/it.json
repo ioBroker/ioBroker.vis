@@ -653,5 +653,9 @@
   "Height": "Altezza",
   "Instance": "Esempio",
   "jqui_invert_icon": "Icona inverti",
-  "jqui_image_height": "Altezza dell'immagine"
+  "jqui_image_height": "Altezza dell'immagine",
+  "jqui_input_with_button": "Ingresso con pulsante",
+  "jqui_button_input_note": "Deprecato. Utilizza il widget \"Inserisci\". Mantenuto solo per compatibilità con vis.1",
+  "jqui_button_text": "Testo del pulsante",
+  "jqui_unit": "Unità"
 }

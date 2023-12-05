@@ -29,6 +29,7 @@ import JQuiButtonDialogClose from './JQui/JQuiButtonDialogClose';
 import JQuiContainerButtonDialog from './JQui/JQuiContainerButtonDialog';
 import JQuiContainerIconDialog from './JQui/JQuiContainerIconDialog';
 import JQuiInput from './JQui/JQuiInput';
+import JQuiInputSet from './JQui/JQuiInputSet';
 import JQuiBinaryState from './JQui/JQuiBinaryState';
 import JQuiState from './JQui/JQuiState';
 import JQuiWriteState from './JQui/JQuiWriteState';
@@ -71,6 +72,7 @@ const WIDGETS = [
     JQuiContainerIconDialog,
     JQuiButtonDialogClose,
     JQuiInput,
+    JQuiInputSet,
     JQuiBinaryState,
     JQuiState,
     JQuiWriteState,

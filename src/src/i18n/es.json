@@ -653,5 +653,9 @@
   "Height": "Altura",
   "Instance": "Instancia",
   "jqui_invert_icon": "Icono de invertir",
-  "jqui_image_height": "Altura de imagen"
+  "jqui_image_height": "Altura de imagen",
+  "jqui_input_with_button": "Entrada con botón",
+  "jqui_button_input_note": "Obsoleto. Utilice el widget \"Entrada\". Mantenido solo por compatibilidad con vis.1",
+  "jqui_button_text": "Botón de texto",
+  "jqui_unit": "Unidad"
 }

@@ -653,5 +653,9 @@
   "Height": "Hoogte",
   "Instance": "Voorbeeld",
   "jqui_invert_icon": "Pictogram omkeren",
-  "jqui_image_height": "Hoogte afbeelding"
+  "jqui_image_height": "Hoogte afbeelding",
+  "jqui_input_with_button": "Ingang met knop",
+  "jqui_button_input_note": "Verouderd. Gebruik de \"Invoer\"-widget. Alleen bewaard voor compatibiliteit met vis.1",
+  "jqui_button_text": "Knop tekst",
+  "jqui_unit": "Eenheid"
 }

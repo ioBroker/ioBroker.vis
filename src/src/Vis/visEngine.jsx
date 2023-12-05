@@ -291,7 +291,6 @@ class VisEngine extends React.Component {
 
     componentDidMount() {
         // modify jquery dialog to add it to view (originally dialog was added to body) (because of styles)
-        const that = this;
         // eslint-disable-next-line func-names
         window.$.ui.dialog.prototype._appendTo = function () {
             const wid = this.options.wid;

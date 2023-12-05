@@ -653,5 +653,9 @@
   "Height": "Höhe",
   "Instance": "Beispiel",
   "jqui_invert_icon": "Symbol umkehren",
-  "jqui_image_height": "Bildhöhe"
+  "jqui_image_height": "Bildhöhe",
+  "jqui_input_with_button": "Eingabe mit Taste",
+  "jqui_button_input_note": "Veraltet. Verwenden Sie das Widget „Eingabe“. Wird nur aus Kompatibilitätsgründen mit vis.1 beibehalten",
+  "jqui_button_text": "Schaltflächentext",
+  "jqui_unit": "Einheit"
 }

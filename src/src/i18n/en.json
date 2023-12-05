@@ -653,5 +653,9 @@
   "Height": "Height",
   "Instance": "Instance",
   "jqui_invert_icon": "Invert icon",
-  "jqui_image_height": "Image height"
+  "jqui_image_height": "Image height",
+  "jqui_input_with_button": "Input with button",
+  "jqui_button_input_note": "Deprecated. Use \"Input\" widget. Keeped just for compatibility with vis.1",
+  "jqui_button_text": "Button text",
+  "jqui_unit": "Unit"
 }

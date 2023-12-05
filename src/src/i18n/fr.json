@@ -653,5 +653,9 @@
   "Height": "Hauteur",
   "Instance": "Exemple",
   "jqui_invert_icon": "Icône Inverser",
-  "jqui_image_height": "Hauteur de l'image"
+  "jqui_image_height": "Hauteur de l'image",
+  "jqui_input_with_button": "Saisie avec bouton",
+  "jqui_button_input_note": "Obsolète. Utilisez le widget \"Entrée\". Conservé uniquement pour des raisons de compatibilité avec vis.1",
+  "jqui_button_text": "Texte du bouton",
+  "jqui_unit": "Unité"
 }

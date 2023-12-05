@@ -19,7 +19,7 @@ import PropTypes from 'prop-types';
 import {
     IconButton,
     TextField,
-    InputAdornment,
+    InputAdornment, Button,
 } from '@mui/material';
 
 import { KeyboardReturn } from '@mui/icons-material';
@@ -57,19 +57,43 @@ class JQuiInput extends VisRxWidget {
                         {
                             name: 'oid',
                             type: 'id',
+                            onChange: async (field, data, changeData, socket) => {
+                                if (data[field.name] && data[field.name] !== 'nothing_selected') {
+                                    const obj = await socket.getObject(data[field.name]);
+                                    let changed = false;
+                                    if (obj?.common?.unit) {
+                                        if (data.unit !== obj.common.unit) {
+                                            data.unit = obj.common.unit;
+                                            changed = true;
+                                        }
+                                    }
+                                    if (obj?.common?.type !== 'number') {
+                                        if (!data.asString) {
+                                            data.asString = true;
+                                            changed = true;
+                                        }
+                                    } else if (obj?.common?.type === 'number') {
+                                        if (data.asString) {
+                                            data.asString = false;
+                                            changed = true;
+                                        }
+                                    }
+                                    changed && changeData(data);
+                                }
+                            },
                         },
                         {
                             name: 'asString',
                             type: 'checkbox',
                             label: 'jqui_as_string',
                         },
-                        /* {
-                            name: 'digits',
-                            type: 'slider',
-                            min: 0,
-                            max: 5,
-                            hidden: data => !!data.asString,
-                        }, */
+                        // {
+                        //     name: 'digits',
+                        //     type: 'slider',
+                        //     min: 0,
+                        //     max: 5,
+                        //     hidden: data => !!data.asString,
+                        // },
                         {
                             name: 'autoFocus',
                             type: 'checkbox',
@@ -82,10 +106,21 @@ class JQuiInput extends VisRxWidget {
                             label: 'jqui_with_enter_button',
                         },
                         {
+                            name: 'buttontext',
+                            type: 'text',
+                            label: 'jqui_button_text',
+                            hidden: '!data.withEnter',
+                        },
+                        {
                             name: 'selectAllOnFocus',
                             type: 'checkbox',
                             label: 'jqui_select_all_on_focus',
                             tooltip: 'jqui_select_all_on_focus_tooltip',
+                        },
+                        {
+                            name: 'unit',
+                            type: 'text',
+                            label: 'jqui_unit',
                         },
                     ],
                 },
@@ -126,6 +161,10 @@ class JQuiInput extends VisRxWidget {
     // eslint-disable-next-line class-methods-use-this
     getWidgetInfo() {
         return JQuiInput.getWidgetInfo();
+    }
+
+    static findField(widgetInfo, name) {
+        return super.findField(widgetInfo, name);
     }
 
     async componentDidMount() {
@@ -199,6 +238,7 @@ class JQuiInput extends VisRxWidget {
         props.style.overflow = 'visible';
 
         let content;
+        const label = this.state.rxData.label === undefined ? this.state.rxData.title : this.state.rxData.label; // title for back compatibility with tplJquiInputSet
         if (!this.state.rxData.jquery_style && !this.state.rxData.no_style) {
             content = <TextField
                 fullWidth
@@ -215,20 +255,30 @@ class JQuiInput extends VisRxWidget {
                 variant={this.state.rxData.variant === undefined ? 'standard' : this.state.rxData.variant}
                 InputProps={{
                     endAdornment: this.state.rxData.withEnter ? <InputAdornment position="end">
-                        <IconButton
+                        {this.state.rxData.buttontext ? <Button
                             onClick={() => this.setValue(this.state.input)}
-                            edge="end"
+                            variant="contained"
+                            style={{ marginBottom: 10, minWidth: 40 }}
                         >
-                            <KeyboardReturn />
-                        </IconButton>
+                            {this.state.rxData.buttontext}
+                        </Button> :
+                            <IconButton
+                                onClick={() => this.setValue(this.state.input)}
+                                edge="end"
+                            >
+                                <KeyboardReturn />
+                            </IconButton>}
+                    </InputAdornment> : undefined,
+                    startAdornment: this.state.rxData.unit ? <InputAdornment position="start">
+                        {this.state.rxData.unit}
                     </InputAdornment> : undefined,
                 }}
-                label={this.state.rxData.label}
+                label={label}
                 onChange={e => this.onChange(e.target.value)}
             />;
         } else {
             content = [
-                <div key="label" style={{ marginRight: 8 }}>{this.state.rxData.label}</div>,
+                <div key="label" style={{ marginRight: 8 }}>{label}</div>,
                 <input
                     style={{ flexGrow: 1 }}
                     key="input"

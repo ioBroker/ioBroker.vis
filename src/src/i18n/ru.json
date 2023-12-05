@@ -653,5 +653,9 @@
   "Height": "Высота",
   "Instance": "Пример",
   "jqui_invert_icon": "Инвертировать значок",
-  "jqui_image_height": "Высота изображения"
+  "jqui_image_height": "Высота изображения",
+  "jqui_input_with_button": "Ввод с помощью кнопки",
+  "jqui_button_input_note": "Устарело. Используйте виджет «Ввод». Сохранено только для совместимости с vis.1.",
+  "jqui_button_text": "Текст кнопки",
+  "jqui_unit": "Единица"
 }
