@@ -231,6 +231,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 ## Changelog
 ### **WORK IN PROGRESS**
 * (foxriver76) fixed crash case if signals are used
+* (foxriver76) update references to view in widget when view is renamed
 * (bluefox) jQui Toggle icon widget was migrated to react
 
 ### 2.9.4 (2023-12-04)

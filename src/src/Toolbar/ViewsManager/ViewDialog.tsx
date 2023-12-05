@@ -66,11 +66,54 @@ const ViewDialog = (props: ViewDialogProps) => {
         props.dialogCallback?.cb(props.dialogName);
     };
 
+    interface RenameReferencesOptions {
+        /** The project to rename references in */
+        project: Project;
+        /** The view name to rename */
+        oldViewName: string;
+    }
+
+    /**
+     * Rename the references to this view
+     * This currently affects View in Widget (8)
+     *
+     * @param options the project to rename the references in and the old view name
+     */
+    const renameReferences = (options: RenameReferencesOptions) => {
+        const { project, oldViewName } = options;
+
+        for (const [viewName, view] of Object.entries(project)) {
+            if (viewName === '___settings')  {
+                continue;
+            }
+
+            for (const widget of Object.values(view.widgets)) {
+                if (widget.tpl === 'tplContainerView') {
+                    if (widget.data.contains_view === oldViewName) {
+                        widget.data.contains_view = props.dialogName;
+                    }
+                }
+
+                if (widget.tpl === 'tplStatefulContainerView8') {
+                    for (const [key, val] of Object.entries(widget.data)) {
+                        if (key.startsWith('contains_view') && val === oldViewName) {
+                            widget.data[key] = props.dialogName;
+                        }
+                    }
+                }
+            }
+        }
+    };
+
     const renameView = async () => {
-        const view = props.dialogView || props.selectedView;
-        const project = JSON.parse(JSON.stringify(store.getState().visProject));
-        project[props.dialogName] = project[view];
-        delete project[view];
+        const oldViewName = props.dialogView || props.selectedView;
+        const project = deepClone(store.getState().visProject);
+        project[props.dialogName] = project[oldViewName];
+        delete project[oldViewName];
+
+        // Rename view where applicable
+        renameReferences({ project, oldViewName });
+
         await props.changeProject(project);
         await props.changeView(props.dialogName);
         props.setDialog(null);
