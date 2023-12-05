@@ -645,5 +645,13 @@
   "jqui_input_date": "Wprowadzanie daty",
   "jqui_input_time": "Wprowadzanie czasu",
   "jqui_true": "PRAWDA",
-  "jqui_false": "FAŁSZ"
+  "jqui_false": "FAŁSZ",
+  "jqui_button_binary_control_note": "Przestarzałe. Użyj widżetu „Kontrola binarna”. Zachowane tylko ze względu na kompatybilność z vis.1",
+  "jqui_icon_toggle": "Przycisk przełączania z ikoną",
+  "Default view": "Widok domyślny",
+  "Width": "Szerokość",
+  "Height": "Wysokość",
+  "Instance": "Instancja",
+  "jqui_invert_icon": "Odwróć ikonę",
+  "jqui_image_height": "Wysokość obrazu"
 }

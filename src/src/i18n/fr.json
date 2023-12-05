@@ -645,5 +645,13 @@
   "jqui_input_date": "Saisie de la date",
   "jqui_input_time": "Saisie du temps",
   "jqui_true": "Vrai",
-  "jqui_false": "FAUX"
+  "jqui_false": "FAUX",
+  "jqui_button_binary_control_note": "Obsolète. Utilisez le widget \"Contrôle binaire\". Conservé uniquement pour des raisons de compatibilité avec vis.1",
+  "jqui_icon_toggle": "Bouton bascule avec icône",
+  "Default view": "Vue par défaut",
+  "Width": "Largeur",
+  "Height": "Hauteur",
+  "Instance": "Exemple",
+  "jqui_invert_icon": "Icône Inverser",
+  "jqui_image_height": "Hauteur de l'image"
 }

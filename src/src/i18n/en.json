@@ -645,5 +645,13 @@
   "jqui_input_date": "Input of date",
   "jqui_input_time": "Input of time",
   "jqui_true": "True",
-  "jqui_false": "False"
+  "jqui_false": "False",
+  "jqui_button_binary_control_note": "Deprecated. Use \"Binary control\" widget. Keeped just for compatibility with vis.1",
+  "jqui_icon_toggle": "Toggle button with icon",
+  "Default view": "Default view",
+  "Width": "Width",
+  "Height": "Height",
+  "Instance": "Instance",
+  "jqui_invert_icon": "Invert icon",
+  "jqui_image_height": "Image height"
 }

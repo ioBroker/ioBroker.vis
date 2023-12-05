@@ -645,5 +645,13 @@
   "jqui_input_date": "Entrada de fecha",
   "jqui_input_time": "entrada de tiempo",
   "jqui_true": "Verdadero",
-  "jqui_false": "FALSO"
+  "jqui_false": "FALSO",
+  "jqui_button_binary_control_note": "Obsoleto. Utilice el widget \"Control binario\". Mantenido solo por compatibilidad con vis.1",
+  "jqui_icon_toggle": "Botón de alternar con icono",
+  "Default view": "Vista predeterminada",
+  "Width": "Ancho",
+  "Height": "Altura",
+  "Instance": "Instancia",
+  "jqui_invert_icon": "Icono de invertir",
+  "jqui_image_height": "Altura de imagen"
 }

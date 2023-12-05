@@ -645,5 +645,13 @@
   "jqui_input_date": "Ввод даты",
   "jqui_input_time": "Ввод времени",
   "jqui_true": "Истинный",
-  "jqui_false": "ЛОЖЬ"
+  "jqui_false": "ЛОЖЬ",
+  "jqui_button_binary_control_note": "Устарело. Используйте виджет «Двоичное управление». Сохранено только для совместимости с vis.1.",
+  "jqui_icon_toggle": "Кнопка переключения со значком",
+  "Default view": "Вид по умолчанию",
+  "Width": "Ширина",
+  "Height": "Высота",
+  "Instance": "Пример",
+  "jqui_invert_icon": "Инвертировать значок",
+  "jqui_image_height": "Высота изображения"
 }

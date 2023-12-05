@@ -423,8 +423,8 @@
   "basic_triangle": "Dreieck",
   "block": "Block",
   "color": "Farbe",
-  "color_false": "Farbe durch falsch",
-  "color_true": "Farbe nach wahr",
+  "color_false": "Farbe bei falsch",
+  "color_true": "Farbe bei wahr",
   "convert from widgeteria widget": "Konvertieren aus dem Widgeteria-Widget",
   "copy": "Kopie",
   "css_project": "Für dieses Projekt",
@@ -645,5 +645,13 @@
   "jqui_input_date": "Eingabe des Datums",
   "jqui_input_time": "Zeiteingabe",
   "jqui_true": "WAHR",
-  "jqui_false": "FALSCH"
+  "jqui_false": "FALSCH",
+  "jqui_button_binary_control_note": "Veraltet. Verwenden Sie das Widget „Binäre Steuerung“. Wird nur aus Kompatibilitätsgründen mit vis.1 beibehalten",
+  "jqui_icon_toggle": "Umschalttaste mit Symbol",
+  "Default view": "Standardansicht",
+  "Width": "Breite",
+  "Height": "Höhe",
+  "Instance": "Beispiel",
+  "jqui_invert_icon": "Symbol umkehren",
+  "jqui_image_height": "Bildhöhe"
 }

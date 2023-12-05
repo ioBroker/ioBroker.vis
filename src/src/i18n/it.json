@@ -645,5 +645,13 @@
   "jqui_input_date": "Immissione della data",
   "jqui_input_time": "Immissione dell'ora",
   "jqui_true": "VERO",
-  "jqui_false": "Falso"
+  "jqui_false": "Falso",
+  "jqui_button_binary_control_note": "Deprecato. Utilizza il widget \"Controllo binario\". Mantenuto solo per compatibilità con vis.1",
+  "jqui_icon_toggle": "Pulsante di attivazione/disattivazione con icona",
+  "Default view": "Visualizzazione predefinita",
+  "Width": "Larghezza",
+  "Height": "Altezza",
+  "Instance": "Esempio",
+  "jqui_invert_icon": "Icona inverti",
+  "jqui_image_height": "Altezza dell'immagine"
 }

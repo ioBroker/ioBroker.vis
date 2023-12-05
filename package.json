@@ -28,7 +28,7 @@
     "@iobroker/adapter-core": "^3.0.4",
     "axios": "^1.6.2",
     "jsonwebtoken": "^9.0.2",
-    "mime": "^4.0.0"
+    "mime": "^3.0.0"
   },
   "devDependencies": {
     "@alcalzone/release-script": "^3.7.0",

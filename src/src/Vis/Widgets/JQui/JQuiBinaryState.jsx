@@ -123,7 +123,7 @@ class JQuiBinaryState extends VisRxWidget {
                             type: 'text',
                             label: 'text_true',
                             default: I18n.t('jqui_on').replace('jqui_', ''),
-                            hidden: data => data.type === 'image' || data.type === 'html',
+                            hidden: data => data.type === 'image' || data.type === 'html' || data.type === 'round-button',
                         },
                         {
                             name: 'color_false',
@@ -199,16 +199,18 @@ class JQuiBinaryState extends VisRxWidget {
                             name: 'icon_color_false',
                             label: 'jqui_color',
                             type: 'color',
-                            hidden: data => !data.icon_true,
+                            hidden: data => !data.icon_false,
                         },
 
                         {
                             name: 'invert_icon_false',
+                            label: 'jqui_invert_icon',
                             type: 'checkbox',
                             hidden: data => !data.src_false && !data.icon_false,
                         },
                         {
                             name: 'imageHeight_false',
+                            label: 'jqui_image_height',
                             type: 'slider',
                             min: 0,
                             max: 200,
@@ -236,15 +238,17 @@ class JQuiBinaryState extends VisRxWidget {
                             name: 'icon_color_true',
                             label: 'jqui_color',
                             type: 'color',
-                            hidden: data => !data.icon_true,
+                            hidden: data => !data.icon_true && !data.icon_false,
                         },
                         {
                             name: 'invert_icon_true',
+                            label: 'jqui_invert_icon',
                             type: 'checkbox',
                             hidden: data => !data.src_true && !data.icon_true,
                         },
                         {
                             name: 'imageHeight_true',
+                            label: 'jqui_image_height',
                             type: 'slider',
                             min: 0,
                             max: 200,
@@ -372,11 +376,11 @@ class JQuiBinaryState extends VisRxWidget {
             }
         } else if (this.state.rxData.type === 'round-button') {
             if (this.state.width < this.state.height) {
-                style.width = `calc(50% - ${(this.state.rxData.padding || 0) * 2}px)`;
+                style.width = `calc(70% - ${(this.state.rxData.padding || 0) * 2}px)`;
                 style.height = 'auto';
                 style.maxHeight = '100%';
             } else {
-                style.height = `calc(50% - ${(this.state.rxData.padding || 0) * 2}px)`;
+                style.height = `calc(70% - ${(this.state.rxData.padding || 0) * 2}px)`;
                 style.width = 'auto';
                 style.maxWidth = '100%';
             }
@@ -414,14 +418,10 @@ class JQuiBinaryState extends VisRxWidget {
 
         if (isOn) {
             text = this.state.rxData.text_true;
-            if (text) {
-                color = this.state.rxData.color_true;
-            }
+            color = this.state.rxData.color_true;
         }
-        if (!text) {
-            text = this.state.rxData.text_false;
-            color = this.state.rxData.color_false;
-        }
+        text = text || this.state.rxData.text_false;
+        color = color || this.state.rxData.color_false;
 
         return { text, color };
     }

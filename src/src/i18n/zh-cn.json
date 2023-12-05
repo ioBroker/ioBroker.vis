@@ -645,5 +645,13 @@
   "jqui_input_date": "输入日期",
   "jqui_input_time": "输入时间",
   "jqui_true": "真的",
-  "jqui_false": "错误的"
+  "jqui_false": "错误的",
+  "jqui_button_binary_control_note": "已弃用。使用“二进制控制”小部件。保留只是为了与 vis.1 兼容",
+  "jqui_icon_toggle": "带图标的切换按钮",
+  "Default view": "默认视图",
+  "Width": "宽度",
+  "Height": "高度",
+  "Instance": "实例",
+  "jqui_invert_icon": "反转图标",
+  "jqui_image_height": "图像高度"
 }

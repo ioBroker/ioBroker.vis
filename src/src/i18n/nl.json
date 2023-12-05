@@ -645,5 +645,13 @@
   "jqui_input_date": "Invoer van datum",
   "jqui_input_time": "Invoer van tijd",
   "jqui_true": "WAAR",
-  "jqui_false": "Vals"
+  "jqui_false": "Vals",
+  "jqui_button_binary_control_note": "Verouderd. Gebruik de widget \"Binaire controle\". Alleen bewaard voor compatibiliteit met vis.1",
+  "jqui_icon_toggle": "Schakelknop met pictogram",
+  "Default view": "Standaard weergave",
+  "Width": "Breedte",
+  "Height": "Hoogte",
+  "Instance": "Voorbeeld",
+  "jqui_invert_icon": "Pictogram omkeren",
+  "jqui_image_height": "Hoogte afbeelding"
 }

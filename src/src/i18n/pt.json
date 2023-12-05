@@ -645,5 +645,13 @@
   "jqui_input_date": "Entrada de data",
   "jqui_input_time": "Entrada de tempo",
   "jqui_true": "Verdadeiro",
-  "jqui_false": "Falso"
+  "jqui_false": "Falso",
+  "jqui_button_binary_control_note": "Descontinuada. Use o widget \"Controle binário\". Mantido apenas para compatibilidade com vis.1",
+  "jqui_icon_toggle": "Botão de alternância com ícone",
+  "Default view": "Visualização padrão",
+  "Width": "Largura",
+  "Height": "Altura",
+  "Instance": "Instância",
+  "jqui_invert_icon": "Ícone de inversão",
+  "jqui_image_height": "Altura da imagem"
 }
