@@ -22,7 +22,7 @@ import {
 } from '@mui/icons-material';
 
 import { I18n, Utils } from '@iobroker/adapter-react-v5';
-import { store, recalculateFields } from '../../Store';
+import { store, recalculateFields, updateWidget } from '../../Store';
 
 import WidgetField from './WidgetField';
 import IODialog from '../../Components/IODialog';
@@ -681,7 +681,7 @@ class Widget extends Component {
                 }
                 signalsCount = i + 1;
                 if (signalsCount > 1) {
-                    widgetData['signals-count'] = signalsCount;
+                    store.dispatch(updateWidget({ widgetId: this.props.selectedWidgets[0], viewId: this.props.selectedView, data: { ...widget, data: { ...widget.data, 'signals-count': signalsCount } } }));
                 }
             } else {
                 signalsCount = parseInt(widgetData['signals-count'], 10);

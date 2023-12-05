@@ -229,6 +229,9 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (foxriver76) fixed crash case if signals are used
+
 ### 2.9.4 (2023-12-04)
 * (foxriver76) fixed issues with display width
 

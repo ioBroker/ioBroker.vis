@@ -2,8 +2,8 @@ import { createReducer, configureStore, createAction } from '@reduxjs/toolkit';
 import type { View, Widget, Project } from '@/types';
 
 export const updateProject = createAction<Project>('project/update');
-export const updateView = createAction<{viewId: string, data: View}>('view/update');
-export const updateWidget = createAction<{viewId: string, widgetId: string, data: Widget}>('widget/update');
+export const updateView = createAction<{viewId: string; data: View}>('view/update');
+export const updateWidget = createAction<{viewId: string; widgetId: string; data: Widget}>('widget/update');
 export const recalculateFields = createAction<boolean>('attributes/recalculate');
 
 const reducer = createReducer(
