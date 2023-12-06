@@ -234,6 +234,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 * (foxriver76) fixed material-design-widgets helper 
 * (foxriver76) update references to view in widget when view is renamed
 * (bluefox) jQui Toggle icon widget was migrated to react
+* (bluefox) jQui Radio widget was migrated to react
 * (bluefox) Corrected last-change by React widgets
 
 ### 2.9.4 (2023-12-04)
