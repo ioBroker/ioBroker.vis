@@ -657,5 +657,8 @@
   "jqui_input_with_button": "Ingang met knop",
   "jqui_button_input_note": "Verouderd. Gebruik de \"Invoer\"-widget. Alleen bewaard voor compatibiliteit met vis.1",
   "jqui_button_text": "Knop tekst",
-  "jqui_unit": "Eenheid"
+  "jqui_unit": "Eenheid",
+  "jqui_radio_buttons_on_off": "Keuzerondjes (aan/uit)",
+  "jqui_orientation": "Oriëntatie",
+  "jqui_not_equal_length": "Niet gelijke breedte"
 }

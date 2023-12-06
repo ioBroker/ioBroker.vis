@@ -657,5 +657,8 @@
   "jqui_input_with_button": "Saisie avec bouton",
   "jqui_button_input_note": "Obsolète. Utilisez le widget \"Entrée\". Conservé uniquement pour des raisons de compatibilité avec vis.1",
   "jqui_button_text": "Texte du bouton",
-  "jqui_unit": "Unité"
+  "jqui_unit": "Unité",
+  "jqui_radio_buttons_on_off": "Boutons radio (marche/arrêt)",
+  "jqui_orientation": "Orientation",
+  "jqui_not_equal_length": "Pas la même largeur"
 }

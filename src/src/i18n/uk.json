@@ -657,5 +657,8 @@
   "jqui_input_with_button": "Вхід за допомогою кнопки",
   "jqui_button_input_note": "Застаріле. Використовуйте віджет «Введення». Збережено тільки для сумісності з vis.1",
   "jqui_button_text": "Текст кнопки",
-  "jqui_unit": "одиниця"
+  "jqui_unit": "одиниця",
+  "jqui_radio_buttons_on_off": "Перемикачі (увімкнення/вимкнення)",
+  "jqui_orientation": "Орієнтація",
+  "jqui_not_equal_length": "Не однакова ширина"
 }

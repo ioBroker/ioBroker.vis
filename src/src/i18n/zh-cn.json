@@ -657,5 +657,8 @@
   "jqui_input_with_button": "用按钮输入",
   "jqui_button_input_note": "已弃用。使用“输入”小部件。保留只是为了与 vis.1 兼容",
   "jqui_button_text": "按钮文字",
-  "jqui_unit": "单元"
+  "jqui_unit": "单元",
+  "jqui_radio_buttons_on_off": "单选按钮（开/关）",
+  "jqui_orientation": "方向",
+  "jqui_not_equal_length": "宽度不等"
 }

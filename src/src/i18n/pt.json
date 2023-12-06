@@ -657,5 +657,8 @@
   "jqui_input_with_button": "Entrada com botão",
   "jqui_button_input_note": "Descontinuada. Use o widget \"Entrada\". Mantido apenas para compatibilidade com vis.1",
   "jqui_button_text": "Botão de texto",
-  "jqui_unit": "Unidade"
+  "jqui_unit": "Unidade",
+  "jqui_radio_buttons_on_off": "Botões de rádio (ligar/desligar)",
+  "jqui_orientation": "Orientação",
+  "jqui_not_equal_length": "Largura diferente"
 }

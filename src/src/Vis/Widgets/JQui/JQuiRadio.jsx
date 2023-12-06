@@ -16,19 +16,18 @@
 import PropTypes from 'prop-types';
 
 // eslint-disable-next-line import/no-cycle
-import JQuiInput from './JQuiInput';
+import JQuiBinaryState from './JQuiBinaryState';
 
-class JQuiInputSet extends JQuiInput {
-
+class JQuiRadio extends JQuiBinaryState {
     static getWidgetInfo() {
-        const widgetInfo = JQuiInput.getWidgetInfo();
+        const widgetInfo = JQuiBinaryState.getWidgetInfo();
         const newWidgetInfo = {
-            id: 'tplJquiInputSet',
+            id: 'tplJquiRadio',
             visSet: 'jqui',
-            visName: 'Input + Button',
-            visWidgetLabel: 'jqui_input_with_button',
-            visPrev: 'widgets/jqui/img/Prev_InputWithButton.png',
-            visOrder: 14,
+            visName: 'Radiobuttons on/off',
+            visWidgetLabel: 'jqui_radio_buttons_on_off',
+            visPrev: 'widgets/jqui/img/Prev_RadioButtonsOnOff.png',
+            visOrder: 15,
             visAttrs: widgetInfo.visAttrs,
             visDefaultStyle: {
                 width: 150,
@@ -40,17 +39,12 @@ class JQuiInputSet extends JQuiInput {
         newWidgetInfo.visAttrs[0].fields.unshift({
             name: '_note',
             type: 'help',
-            text: 'jqui_button_input_note',
+            text: 'jqui_button_binary_control_note',
         });
 
-        const withEnter = JQuiInput.findField(newWidgetInfo, 'withEnter');
-        if (withEnter) {
-            withEnter.default = true;
-        }
-
-        const buttonText = JQuiInput.findField(newWidgetInfo, 'buttontext');
-        if (buttonText) {
-            buttonText.default = 'OK';
+        const type = JQuiBinaryState.findField(newWidgetInfo, 'type');
+        if (type) {
+            type.default = 'radio';
         }
 
         return newWidgetInfo;
@@ -58,11 +52,11 @@ class JQuiInputSet extends JQuiInput {
 
     // eslint-disable-next-line class-methods-use-this
     getWidgetInfo() {
-        return JQuiInputSet.getWidgetInfo();
+        return JQuiRadio.getWidgetInfo();
     }
 }
 
-JQuiInputSet.propTypes = {
+JQuiRadio.propTypes = {
     id: PropTypes.string.isRequired,
     context: PropTypes.object.isRequired,
     view: PropTypes.string.isRequired,
@@ -70,4 +64,4 @@ JQuiInputSet.propTypes = {
     tpl: PropTypes.string.isRequired,
 };
 
-export default JQuiInputSet;
+export default JQuiRadio;

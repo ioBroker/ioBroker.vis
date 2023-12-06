@@ -657,5 +657,8 @@
   "jqui_input_with_button": "Wejście za pomocą przycisku",
   "jqui_button_input_note": "Przestarzałe. Użyj widżetu „Wejście”. Zachowane tylko ze względu na kompatybilność z vis.1",
   "jqui_button_text": "Przycisk tekstowy",
-  "jqui_unit": "Jednostka"
+  "jqui_unit": "Jednostka",
+  "jqui_radio_buttons_on_off": "Przyciski opcji (wł./wył.)",
+  "jqui_orientation": "Orientacja",
+  "jqui_not_equal_length": "Nie równa szerokość"
 }

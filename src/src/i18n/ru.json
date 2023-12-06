@@ -657,5 +657,8 @@
   "jqui_input_with_button": "Ввод с помощью кнопки",
   "jqui_button_input_note": "Устарело. Используйте виджет «Ввод». Сохранено только для совместимости с vis.1.",
   "jqui_button_text": "Текст кнопки",
-  "jqui_unit": "Единица"
+  "jqui_unit": "Единица",
+  "jqui_radio_buttons_on_off": "Радиокнопки (вкл/выкл)",
+  "jqui_orientation": "Ориентация",
+  "jqui_not_equal_length": "Не равная ширина"
 }

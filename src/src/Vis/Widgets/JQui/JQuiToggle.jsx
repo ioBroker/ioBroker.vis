@@ -19,13 +19,6 @@ import PropTypes from 'prop-types';
 import JQuiBinaryState from './JQuiBinaryState';
 
 class JQuiToggle extends JQuiBinaryState {
-    constructor(props) {
-        super(props);
-        this.state.isOn = false;
-        this.state.height = 0;
-        this.state.width = 0;
-    }
-
     static getWidgetInfo() {
         const widgetInfo = JQuiBinaryState.getWidgetInfo();
         const newWidgetInfo = {

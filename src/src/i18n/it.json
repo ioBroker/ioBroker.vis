@@ -657,5 +657,8 @@
   "jqui_input_with_button": "Ingresso con pulsante",
   "jqui_button_input_note": "Deprecato. Utilizza il widget \"Inserisci\". Mantenuto solo per compatibilità con vis.1",
   "jqui_button_text": "Testo del pulsante",
-  "jqui_unit": "Unità"
+  "jqui_unit": "Unità",
+  "jqui_radio_buttons_on_off": "Pulsanti di opzione (on/off)",
+  "jqui_orientation": "Orientamento",
+  "jqui_not_equal_length": "Larghezza non uguale"
 }

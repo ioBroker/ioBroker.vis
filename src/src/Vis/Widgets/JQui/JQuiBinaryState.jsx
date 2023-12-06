@@ -174,6 +174,21 @@ class JQuiBinaryState extends VisRxWidget {
                             default: 'contained',
                             hidden: data => data.type !== 'button' && data.type !== 'radio',
                         },
+                        {
+                            name: 'orientation',
+                            label: 'jqui_orientation',
+                            type: 'select',
+                            noTranslation: true,
+                            options: ['horizontal', 'vertical'],
+                            default: 'horizontal',
+                            hidden: data => data.type !== 'radio',
+                        },
+                        {
+                            name: 'notEqualLength',
+                            label: 'jqui_not_equal_length',
+                            type: 'checkbox',
+                            hidden: data => data.type !== 'radio' || data.orientation !== 'horizontal',
+                        },
                         { name: 'html_prepend', type: 'html' },
                         { name: 'html_append', type: 'html' },
                     ],
@@ -416,10 +431,10 @@ class JQuiBinaryState extends VisRxWidget {
         let color;
 
         if (isOn) {
-            text = this.state.rxData.text_true;
+            text = this.state.rxData.text_true !== undefined ? this.state.rxData.text_true : this.state.rxData.on_text; // back compatibility with radio on/off
             color = this.state.rxData.color_true;
         }
-        text = text || this.state.rxData.text_false;
+        text = text || (this.state.rxData.text_false !== undefined ? this.state.rxData.text_false : this.state.rxData.off_text); // back compatibility with radio on/off
         color = color || this.state.rxData.color_false;
 
         return { text, color };
@@ -490,9 +505,9 @@ class JQuiBinaryState extends VisRxWidget {
     }
 
     renderSwitch(isOn, style) {
-        const on = this.state.rxData.text_true;
+        const on = this.state.rxData.text_true !== undefined ? this.state.rxData.text_true : this.state.rxData.on_text; // back compatibility with radio on/off
         const textColorOn = this.state.rxData.color_true;
-        const off = this.state.rxData.text_false;
+        const off = this.state.rxData.text_false !== undefined ? this.state.rxData.text_false : this.state.rxData.off_text; // back compatibility with radio on/off
         const textColorOff = this.state.rxData.color_false;
 
         const onIcon = this.renderIcon(true, true);
@@ -543,9 +558,11 @@ class JQuiBinaryState extends VisRxWidget {
     }
 
     renderCheckbox(isOn, style) {
-        let text = isOn ? this.state.rxData.text_true : this.state.rxData.text_false;
+        let text = isOn ?
+            (this.state.rxData.text_true !== undefined ? this.state.rxData.text_true : this.state.rxData.on_text) // back compatibility with radio on/off
+            : (this.state.rxData.text_false !== undefined ? this.state.rxData.text_false : this.state.rxData.off_text); // back compatibility with radio on/off
         if (!text) {
-            text = this.state.rxData.text_false;
+            text = this.state.rxData.text_false !== undefined ? this.state.rxData.text_false : this.state.rxData.off_text; // back compatibility with radio on/off
         }
         const icon = isOn ? this.renderIcon(true) : this.renderIcon(false);
         style.marginLeft = 5;
@@ -572,8 +589,8 @@ class JQuiBinaryState extends VisRxWidget {
     }
 
     renderRadio(isOn, style) {
-        const on = this.state.rxData.text_true;
-        const off = this.state.rxData.text_false;
+        const on = this.state.rxData.text_true !== undefined ? this.state.rxData.text_true : this.state.rxData.on_text; // back compatibility with radio on/off
+        const off = this.state.rxData.text_false !== undefined ? this.state.rxData.text_false : this.state.rxData.off_text; // back compatibility with radio on/off
         const onIcon = this.renderIcon(true);
         const offIcon = this.renderIcon(false);
 
@@ -582,11 +599,15 @@ class JQuiBinaryState extends VisRxWidget {
             variant = 'text';
         }
 
+        const buttonStyle = this.state.rxData.orientation === 'vertical' ? { height: '50%' } : (this.state.rxData.notEqualLength ? undefined : { width: '50%' });
+
         return <ButtonGroup
             style={style}
             variant={variant}
+            orientation={this.state.rxData.orientation || 'horizontal'}
         >
             <Button
+                style={buttonStyle}
                 startIcon={offIcon}
                 color={isOn ? 'grey' : 'primary'}
                 onClick={() => this.onClick(false)}
@@ -594,6 +615,7 @@ class JQuiBinaryState extends VisRxWidget {
                 {off || I18n.t('off')}
             </Button>
             <Button
+                style={buttonStyle}
                 color={isOn ? 'primary' : 'grey'}
                 startIcon={onIcon}
                 onClick={() => this.onClick(true)}
@@ -655,14 +677,19 @@ class JQuiBinaryState extends VisRxWidget {
             }
         });
 
+        let type = this.state.rxData.type;
+        if (!type && this.props.tpl === 'tplJquiRadio') {
+            type = 'radio';
+        }
+
         // extra no rxData here, as it is not possible to set it with bindings
         buttonStyle.width = '100%';
         buttonStyle.height = '100%';
         let content;
         const bodyStyle = { textAlign: 'center' };
-        if (this.state.rxData.type === 'radio') {
+        if (type === 'radio') {
             content = this.renderRadio(isOn, buttonStyle);
-        } else if (this.state.rxData.type === 'html' || (this.state.rxData.type === 'button' && this.state.rxData.jquery_style)) {
+        } else if (type === 'html' || (type === 'button' && this.state.rxData.jquery_style)) {
             bodyStyle.display = 'flex';
             bodyStyle.flexDirection = this.state.height > this.state.width ? 'column' : 'row';
             bodyStyle.alignItems = 'center';
@@ -670,23 +697,23 @@ class JQuiBinaryState extends VisRxWidget {
             bodyStyle.cursor = !this.state.rxData.readOnly ? 'pointer' : undefined;
 
             content = this.renderHtml(isOn);
-        } else if (this.state.rxData.type === 'switch') {
+        } else if (type === 'switch') {
             content = this.renderSwitch(isOn, buttonStyle);
-        } else if (this.state.rxData.type === 'checkbox') {
+        } else if (type === 'checkbox') {
             content = this.renderCheckbox(isOn, buttonStyle);
-        } else if (this.state.rxData.type === 'image') {
+        } else if (type === 'image') {
             bodyStyle.cursor = !this.state.rxData.readOnly ? 'pointer' : undefined;
             content = this.renderIcon(isOn, buttonStyle);
-        } else if (this.state.rxData.type === 'round-button') {
+        } else if (type === 'round-button') {
             content = this.renderFab(isOn, buttonStyle);
-        }else if (!this.state.rxData.jquery_style) {
+        } else if (!this.state.rxData.jquery_style) {
             content = this.renderButton(isOn, buttonStyle);
         }
 
         const result = <div
             className="vis-widget-body"
             style={bodyStyle}
-            onClick={this.state.rxData.type === 'image' || this.state.rxData.type === 'html' ? () => this.onClick() : undefined}
+            onClick={type === 'image' || type === 'html' ? () => this.onClick() : undefined}
         >
             {content}
         </div>;
