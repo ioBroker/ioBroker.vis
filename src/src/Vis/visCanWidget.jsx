@@ -1276,7 +1276,7 @@ class VisCanWidget extends VisBaseWidget {
                     s++;
                 }
 
-                if (widgetData['lc-oid']) {
+                if (widgetData['lc-oid'] && widgetData['lc-oid'] !== 'nothing_selected') {
                     this.addLastChange(widgetData);
                 }
 

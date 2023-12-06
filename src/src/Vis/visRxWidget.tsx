@@ -727,7 +727,7 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
 
     renderSignal(index: number) {
         const oid = this.state.rxData[`signals-oid-${index}`];
-        if (!oid) {
+        if (!oid || oid === 'nothing_selected') {
             return null;
         }
         if (this.props.editMode && this.state.rxData[`signals-hide-edit-${index}`]) {
@@ -786,6 +786,10 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
     }
 
     renderLastChange(widgetStyle: any) {
+        const oid = this.state.rxData['lc-oid'];
+        if (!oid || oid === 'nothing_selected') {
+            return null;
+        }
         // show last change
         const border = parseInt(this.state.rxData['lc-border-radius'], 10) || 0;
         const style: Record<string, any> = {
