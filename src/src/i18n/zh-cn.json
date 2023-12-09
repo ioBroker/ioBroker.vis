@@ -660,5 +660,9 @@
   "jqui_unit": "单元",
   "jqui_radio_buttons_on_off": "单选按钮（开/关）",
   "jqui_orientation": "方向",
-  "jqui_not_equal_length": "宽度不等"
+  "jqui_not_equal_length": "宽度不等",
+  "jqui_state_note": "已弃用。使用带有“增量/减量”选项的“状态控制”小部件。保留只是为了与 vis.1 兼容",
+  "jqui_radio_list": "包含值的单选列表",
+  "jqui_group_value": "价值",
+  "jqui_value": "价值"
 }

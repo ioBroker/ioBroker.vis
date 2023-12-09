@@ -660,5 +660,9 @@
   "jqui_unit": "Eenheid",
   "jqui_radio_buttons_on_off": "Keuzerondjes (aan/uit)",
   "jqui_orientation": "Oriëntatie",
-  "jqui_not_equal_length": "Niet gelijke breedte"
+  "jqui_not_equal_length": "Niet gelijke breedte",
+  "jqui_state_note": "Verouderd. Gebruik de widget \"Statescontrole\" met de optie \"verhogen/verlagen\". Alleen bewaard voor compatibiliteit met vis.1",
+  "jqui_radio_list": "Radiolijst met waarden",
+  "jqui_group_value": "Waarde",
+  "jqui_value": "Waarde"
 }

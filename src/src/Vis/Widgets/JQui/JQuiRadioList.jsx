@@ -16,21 +16,21 @@
 import PropTypes from 'prop-types';
 
 // eslint-disable-next-line import/no-cycle
-import JQuiInput from './JQuiInput';
+import JQuiState from './JQuiState';
 
-class JQuiInputSet extends JQuiInput {
+class JQuiRadioList extends JQuiState {
     static getWidgetInfo() {
-        const widgetInfo = JQuiInput.getWidgetInfo();
+        const widgetInfo = JQuiState.getWidgetInfo();
         const newWidgetInfo = {
-            id: 'tplJquiInputSet',
+            id: 'tplJquiRadioList',
             visSet: 'jqui',
-            visName: 'Input + Button',
-            visWidgetLabel: 'jqui_input_with_button',
-            visPrev: 'widgets/jqui/img/Prev_InputWithButton.png',
-            visOrder: 14,
+            visName: 'Radiobuttons ValueList',
+            visWidgetLabel: 'jqui_radio_list',
+            visPrev: 'widgets/jqui/img/Prev_RadioList.png',
+            visOrder: 15,
             visAttrs: widgetInfo.visAttrs,
             visDefaultStyle: {
-                width: 150,
+                width: 250,
                 height: 45,
             },
         };
@@ -39,29 +39,19 @@ class JQuiInputSet extends JQuiInput {
         newWidgetInfo.visAttrs[0].fields.unshift({
             name: '_note',
             type: 'help',
-            text: 'jqui_button_input_note',
+            text: 'jqui_state_note',
         });
-
-        const withEnter = JQuiInput.findField(newWidgetInfo, 'withEnter');
-        if (withEnter) {
-            withEnter.default = true;
-        }
-
-        const buttonText = JQuiInput.findField(newWidgetInfo, 'buttontext');
-        if (buttonText) {
-            buttonText.default = 'OK';
-        }
 
         return newWidgetInfo;
     }
 
     // eslint-disable-next-line class-methods-use-this
     getWidgetInfo() {
-        return JQuiInputSet.getWidgetInfo();
+        return JQuiRadioList.getWidgetInfo();
     }
 }
 
-JQuiInputSet.propTypes = {
+JQuiRadioList.propTypes = {
     id: PropTypes.string.isRequired,
     context: PropTypes.object.isRequired,
     view: PropTypes.string.isRequired,
@@ -69,4 +59,4 @@ JQuiInputSet.propTypes = {
     tpl: PropTypes.string.isRequired,
 };
 
-export default JQuiInputSet;
+export default JQuiRadioList;

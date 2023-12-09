@@ -121,7 +121,7 @@ There are a number of different internal bindings to provide additional informat
 * `login` - if login required or not (e.g., to show/hide logout button)
 * `local_*` - if state name is started from `local_` it will not be reported to ioBroker but will update all widgets, that depends on this state. (Local variable for current browser session)
 
-Note: to use ":" in calculations (e.g. in string formula) use "::" instead.
+Note: to use ":" in calculations (e.g., in string formula) use "::" instead.
 
 **Remember**, that style definitions will be interpreted as bindings, so use `{{style: value}}` or just
 
@@ -172,7 +172,7 @@ If the user changes the view or at the start, the variables will be filled by th
 - `control.data`: project and view name in form `project/view`, e.g. `main/view` (and `ack=true`)
 - `control.command`: `changedView` and `ack=true`
 
-You can write the JSON-string or Object into `control.command` as `{instance: 'AABBCCDD', command: 'cmd', data: 'ddd'}`. In this case, the instance and data will be taken from JSON object.
+You can write the JSON string or Object into `control.command` as `{instance: 'AABBCCDD', command: 'cmd', data: 'ddd'}`. In this case, the instance and data will be taken from JSON object.
 
 Example for javascript adapter:
 
@@ -235,6 +235,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 * (foxriver76) update references to view in widget when view is renamed
 * (bluefox) jQui Toggle icon widget was migrated to react
 * (bluefox) jQui Radio widget was migrated to react
+* (bluefox) jQui Radio List widget was migrated to react
 * (bluefox) Corrected last-change by React widgets
 
 ### 2.9.4 (2023-12-04)

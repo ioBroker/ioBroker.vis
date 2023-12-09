@@ -38,12 +38,6 @@ import VisRxWidget from '../../visRxWidget';
 import BulkEditor from './BulkEditor';
 
 class JQuiState extends VisRxWidget {
-    constructor(props) {
-        super(props);
-        this.state.value = '';
-        this.state.valueType = null;
-    }
-
     static getWidgetInfo() {
         return {
             id: 'tplJquiButtonState',
@@ -142,7 +136,7 @@ class JQuiState extends VisRxWidget {
                 },
                 {
                     name: 'states',
-                    label: 'group_value',
+                    label: 'jqui_group_value',
                     indexFrom: 1,
                     indexTo: 'count',
                     hidden: data => !!data.percents,
@@ -150,13 +144,13 @@ class JQuiState extends VisRxWidget {
                         {
                             name: 'value',
                             type: 'text',
-                            label: 'value',
+                            label: 'jqui_value',
                             default: '0',
                         },
                         {
                             name: 'test',
                             type: 'checkbox',
-                            label: 'test',
+                            label: 'jqui_test',
                             onChange: async (field, data, changeData, socket, index) => {
                                 if (data[field.name]) {
                                     let changed = false;
@@ -183,7 +177,7 @@ class JQuiState extends VisRxWidget {
                             name: 'text',
                             default: I18n.t('Value'),
                             type: 'text',
-                            label: 'text',
+                            label: 'jqui_text',
                             hidden: (data, index) => !!data[`onlyIcon${index}`] || data[`value${index}`] === '' || data[`value${index}`] === null || data[`value${index}`] === undefined,
                         },
                         {
@@ -227,7 +221,29 @@ class JQuiState extends VisRxWidget {
     }
 
     async componentDidMount() {
-        super.componentDidMount();
+        await super.componentDidMount();
+
+        // convert old tplJquiRadioList data to JquiState data
+        if (this.props.tpl === 'tplJquiRadioList' && this.state.data && this.state.data.values && this.state.data.texts && this.props.context.onWidgetsChanged) {
+            // convert
+            const values = this.state.data.values.split(';');
+            const texts = this.state.data.texts.split(';');
+            const data = JSON.parse(JSON.stringify(this.state.data));
+            data.values = null;
+            data.texts = null;
+            data.count = values.length;
+            for (let i = 1; i <= values.length; i++) {
+                data[`value${i}`] = values[i - 1];
+                data[`text${i}`] = texts[i - 1];
+                data[`g_states-${i}`] = true;
+            }
+            setTimeout(() => this.props.context.onWidgetsChanged([{
+                wid: this.props.id,
+                view: this.props.view,
+                data,
+            }]), 100);
+        }
+
         if (this.state.rxData.oid && this.state.rxData.oid !== 'nothing_selected') {
             try {
                 const state = await this.props.context.socket.getState(this.state.rxData.oid);
