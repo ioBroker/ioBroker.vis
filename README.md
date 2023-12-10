@@ -229,7 +229,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.9.5 (2023-12-10)
 * (foxriver76) open new views at the beginning
 * (foxriver76) fixed crash case if signals are used
 * (foxriver76) fixed material-design-widgets helper 
