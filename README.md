@@ -230,6 +230,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 -->
 ## Changelog
 ### **WORK IN PROGRESS**
+* (foxriver76) open new views at the beginning
 * (foxriver76) fixed crash case if signals are used
 * (foxriver76) fixed material-design-widgets helper 
 * (foxriver76) update references to view in widget when view is renamed

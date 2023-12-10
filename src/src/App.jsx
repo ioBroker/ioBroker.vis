@@ -1025,12 +1025,12 @@ class App extends Runtime {
         }
     };
 
-    toggleView = async (view, isShow, isActivate) => {
+    toggleView = async (view, isShow, isActivate = false) => {
         let changed = false;
-        const project = JSON.parse(JSON.stringify(store.getState().visProject));
+        const project = deepClone(store.getState().visProject);
         const pos = project.___settings.openedViews.indexOf(view);
         if (isShow && pos === -1) {
-            project.___settings.openedViews.push(view);
+            project.___settings.openedViews.unshift(view);
             changed = true;
         } else if (!isShow && pos !== -1) {
             project.___settings.openedViews.splice(pos, 1);
@@ -1345,8 +1345,8 @@ class App extends Runtime {
     askAboutInclude = (wid, toWid, cb) => this.setState({ askAboutInclude: { wid, toWid, cb } });
 
     renderTabs() {
-        const views = Object.keys(store.getState().visProject)
-            .filter(view => !view.startsWith('__') && store.getState().visProject.___settings.openedViews.includes(view));
+        const { visProject } = store.getState();
+        const views = visProject.___settings.openedViews.filter(view => Object.keys(visProject).includes(view));
 
         return <div className={this.props.classes.tabsContainer}>
             {this.state.hidePalette ? <Tooltip title={I18n.t('Show palette')}>
