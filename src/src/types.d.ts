@@ -1,5 +1,5 @@
-import React from 'react';
-import { Connection } from '@iobroker/adapter-react-v5';
+import type React from 'react';
+import type { Connection } from '@iobroker/adapter-react-v5';
 
 export type Timer = ReturnType<typeof setTimeout>;
 

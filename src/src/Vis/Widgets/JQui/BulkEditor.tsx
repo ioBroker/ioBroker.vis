@@ -1,6 +1,6 @@
 import React from 'react';
 import { withStyles } from '@mui/styles';
-import PropTypes from 'prop-types';
+import type { Connection } from '@iobroker/adapter-react-v5';
 
 import {
     Button,
@@ -39,9 +39,9 @@ import {
     Utils,
 } from '@iobroker/adapter-react-v5';
 
-import MaterialIconSelector from '../../../Components/MaterialIconSelector';
+import MaterialIconSelector from '@/Components/MaterialIconSelector';
 
-const BUTTONS = {
+const BUTTONS: Record<string, string> = {
     AUTO: 'thermostat_auto',
     MANUAL: 'pan_tool',
     VACATION: 'houseboat',
@@ -73,8 +73,68 @@ const styles = () => ({
     },
 });
 
-class BulkEditor extends React.Component {
-    constructor(props) {
+interface BulkEditorData {
+    variant?: 'outlined' | 'contained';
+    type: 'select' | 'radio';
+    oid: string;
+    count: number;
+    [colors: `color${string}`]: string;
+    [values: `value${string}`]: string | number;
+    [values: `text${string}`]: string;
+    [values: `icon${string}`]: string | null;
+    [values: `g_states-${string}`]: boolean;
+    [values: `image${string}`]: string;
+    [values: `activeColor${string}`]: string;
+    [values: `tooltip${string}`]: string;
+}
+
+interface BulkEditorProps {
+    socket: Connection;
+    data: BulkEditorData;
+    themeType: string;
+    adapterName: string;
+    instance: number;
+    projectName: string;
+    /** The css classes */
+    classes: Record<keyof ReturnType<typeof styles>, any>;
+    onDataChange: (data: BulkEditorData) => void;
+}
+
+interface BulkEditorState {
+    minMaxDialog?: boolean;
+    activeLine?: number;
+    editDialog?: {
+        index?: number;
+        value: string | number;
+        add: unknown;
+    } | null;
+    textDialogFocused: unknown[];
+    states: null;
+    unit: string;
+    originalUnit: string;
+    usePercents: boolean;
+    min: number;
+    max: number;
+    step?: number;
+    steps: number;
+    texts: string[];
+    values: (string | number)[];
+    colors: string[];
+    activeColors: string[];
+    icons: (string|null)[];
+    images: string[];
+    tooltips: string[];
+    iconDialog: null | number;
+    imageDialog: null | number;
+    dialog: boolean;
+    dialogDelete: null | false | number;
+    numbers?: boolean;
+}
+
+class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
+    private readonly textRef: React.RefObject<any>[];
+
+    constructor(props: BulkEditorProps) {
         super(props);
         this.state = {
             textDialogFocused: [],
@@ -101,9 +161,9 @@ class BulkEditor extends React.Component {
         this.textRef = [];
     }
 
-    static iconsPromise;
+    static iconPromise: Promise<Record<string, any>>;
 
-    static getIcon(icon) {
+    static getIcon(icon: string): Promise<string | null> {
         if (!BulkEditor.iconPromise) {
             BulkEditor.iconPromise = fetch('./material-icons/baseline.json')
                 .then(res => res.json());
@@ -122,7 +182,7 @@ class BulkEditor extends React.Component {
             });
     }
 
-    static async generateFields(data, socket) {
+    static async generateFields(data: BulkEditorData, socket: Connection) {
         const oid = data.oid;
         if (!oid || oid === 'nothing_selected') {
             return false;
@@ -211,8 +271,9 @@ class BulkEditor extends React.Component {
         return false;
     }
 
-    async calculateFirst(useStates) {
-        const newState = {
+    async calculateFirst(useStates = false): Promise<void> {
+        const newState: Pick<BulkEditorState, keyof BulkEditorState> = {
+            ...this.state,
             dialog: true,
         };
 
@@ -266,7 +327,7 @@ class BulkEditor extends React.Component {
             newState.activeColors = [];
             newState.tooltips = [];
             for (let i = 0; i < this.props.data.count; i++) {
-                newState.texts[i] = this.props.data[`text${i + 1}`] || '';
+                newState.texts[i] = this.props.data[`text${i + 1}`] as string || '';
                 newState.values[i] = this.props.data[`value${i + 1}`] || '';
                 newState.icons[i] = this.props.data[`icon${i + 1}`] || '';
                 newState.images[i] = this.props.data[`image${i + 1}`] || '';
@@ -304,13 +365,16 @@ class BulkEditor extends React.Component {
                         const colors = [...this.state.colors];
                         const activeColors = [...this.state.activeColors];
                         const tooltips = [...this.state.tooltips];
-                        values.splice(this.state.dialogDelete, 1);
-                        texts.splice(this.state.dialogDelete, 1);
-                        icons.splice(this.state.dialogDelete, 1);
-                        images.splice(this.state.dialogDelete, 1);
-                        colors.splice(this.state.dialogDelete, 1);
-                        tooltips.splice(this.state.dialogDelete, 1);
-                        activeColors.splice(this.state.dialogDelete, 1);
+                        if (typeof this.state.dialogDelete === 'number') {
+                            values.splice(this.state.dialogDelete, 1);
+                            texts.splice(this.state.dialogDelete, 1);
+                            icons.splice(this.state.dialogDelete, 1);
+                            images.splice(this.state.dialogDelete, 1);
+                            colors.splice(this.state.dialogDelete, 1);
+                            tooltips.splice(this.state.dialogDelete, 1);
+                            activeColors.splice(this.state.dialogDelete, 1);
+                        }
+
                         this.setState({
                             values,
                             texts,
@@ -327,6 +391,7 @@ class BulkEditor extends React.Component {
                 </Button>
                 <Button
                     variant="contained"
+                    // @ts-expect-error this is fine
                     color="grey"
                     startIcon={<Close />}
                     onClick={() => this.setState({ dialogDelete: false })}
@@ -345,11 +410,13 @@ class BulkEditor extends React.Component {
             key="iconDialog"
             themeType={this.props.themeType}
             value={this.state.icons[this.state.iconDialog]}
-            onClose={icon => {
+            onClose={(icon: string) => {
                 this.setState({ iconDialog: null });
                 if (icon !== null) {
                     const icons = [...this.state.icons];
-                    icons[this.state.iconDialog] = icon;
+                    if (typeof this.state.iconDialog === 'number') {
+                        icons[this.state.iconDialog] = icon;
+                    }
                     this.setState({ icons, iconDialog: null });
                 }
             }}
@@ -367,7 +434,7 @@ class BulkEditor extends React.Component {
             value = value.replace('_PRJ_NAME/', `../${this.props.adapterName}.${this.props.instance}/${this.props.projectName}/`);
         }
 
-        const onChange = (selected, isClose) => {
+        const onChange = (selected: string, isClose: boolean) => {
             const projectPrefix = `${this.props.adapterName}.${this.props.instance}/${this.props.projectName}/`;
             if (selected.startsWith(projectPrefix)) {
                 selected = `_PRJ_NAME/${selected.substring(projectPrefix.length)}`;
@@ -377,7 +444,9 @@ class BulkEditor extends React.Component {
                 selected = `../${selected}`;
             }
             const images = [...this.state.images];
-            images[this.state.imageDialog] = selected;
+            if (typeof this.state.imageDialog === 'number') {
+                images[this.state.imageDialog] = selected;
+            }
             this.setState({ images });
 
             isClose && this.setState({ imageDialog: null });
@@ -398,56 +467,63 @@ class BulkEditor extends React.Component {
             imagePrefix="../"
             selected={value}
             filterByType="images"
-            onSelect={(selected, isDoubleClick) => onChange(selected, isDoubleClick)}
+            // @ts-expect-error adapter react v5 types incomplete
+            onSelect={(selected: string, isDoubleClick: boolean) => onChange(selected, isDoubleClick)}
             onOk={selected => onChange(selected, true)}
             socket={this.props.socket}
         />;
     }
 
-    renderEditDialog() {
+    /**
+     * Called when Bulk Editor data is submitted
+     */
+    onEnter() {
+        const values = [...this.state.values];
+
+        if (this.state.editDialog?.add) {
+            const index = values.length;
+            values[index] = this.state.editDialog.value;
+
+            const texts = [...this.state.texts];
+            const icons = [...this.state.icons];
+            const images = [...this.state.images];
+            const colors = [...this.state.colors];
+            const activeColors = [...this.state.activeColors];
+            const tooltips = [...this.state.tooltips];
+            texts[index] = texts[index] || '';
+            icons[index] = icons[index] || '';
+            images[index] = images[index] || '';
+            colors[index] = colors[index] || '';
+            activeColors[index] = activeColors[index] || '';
+            tooltips[index] = tooltips[index] || '';
+
+            this.setState({
+                values,
+                texts,
+                icons,
+                images,
+                colors,
+                activeColors,
+                tooltips,
+                editDialog: null,
+            });
+        } else {
+            if (this.state.editDialog?.index !== undefined) {
+                values[this.state.editDialog.index] = this.state.editDialog.value;
+            }
+
+            this.setState({
+                values,
+                editDialog: null,
+            });
+        }
+    }
+
+    renderEditDialog(): React.JSX.Element | null {
         if (!this.state.editDialog) {
             return null;
         }
-        const isUnique = !this.state.values.map(v => v.trim()).includes(this.state.editDialog.value);
-
-        const onEnter = () => {
-            const values = [...this.state.values];
-
-            if (this.state.editDialog.add) {
-                const index = values.length;
-                values[index] = this.state.editDialog.value;
-
-                const texts = [...this.state.texts];
-                const icons = [...this.state.icons];
-                const images = [...this.state.images];
-                const colors = [...this.state.colors];
-                const activeColors = [...this.state.activeColors];
-                const tooltips = [...this.state.tooltips];
-                texts[index] = texts[index] || '';
-                icons[index] = icons[index] || '';
-                images[index] = images[index] || '';
-                colors[index] = colors[index] || '';
-                activeColors[index] = activeColors[index] || '';
-                tooltips[index] = tooltips[index] || '';
-
-                this.setState({
-                    values,
-                    texts,
-                    icons,
-                    images,
-                    colors,
-                    activeColors,
-                    tooltips,
-                    editDialog: null,
-                });
-            } else {
-                values[this.state.editDialog.index] = this.state.editDialog.value;
-                this.setState({
-                    values,
-                    editDialog: null,
-                });
-            }
-        };
+        const isUnique = !this.state.values.map(v => (typeof v === 'string' ? v.trim() : v)).includes(this.state.editDialog.value);
 
         return <Dialog
             key="editDialog"
@@ -458,13 +534,23 @@ class BulkEditor extends React.Component {
             <DialogTitle>{this.state.editDialog.add ? I18n.t('jqui_Add new value') : I18n.t('Edit')}</DialogTitle>
             <DialogContent>
                 <TextField
-                    onKeyDown={e => e.keyCode === 13 && isUnique && this.state.editDialog.value && onEnter()}
+                    onKeyDown={e => e.keyCode === 13 && isUnique && this.state.editDialog?.value && this.onEnter()}
                     fullWidth
                     autoFocus
                     variant="standard"
                     label={I18n.t('Value')}
                     value={this.state.editDialog.value}
-                    onChange={e => this.setState({ editDialog: { value: e.target.value, add: this.state.editDialog.add, index: this.state.editDialog.index } })}
+                    onChange={e => {
+                        if (this.state.editDialog) {
+                            this.setState({
+                                editDialog: {
+                                    value: e.target.value,
+                                    add: this.state.editDialog.add,
+                                    index: this.state.editDialog.index,
+                                },
+                            });
+                        }
+                    }}
                 />
             </DialogContent>
             <DialogActions>
@@ -479,6 +565,7 @@ class BulkEditor extends React.Component {
                 </Button>
                 <Button
                     variant="contained"
+                    // @ts-expect-error this is fine
                     color="grey"
                     startIcon={<Close />}
                     onClick={() => this.setState({ editDialog: null })}
@@ -489,7 +576,7 @@ class BulkEditor extends React.Component {
         </Dialog>;
     }
 
-    renderLine(i) {
+    renderLine(i: number): React.JSX.Element {
         let image = null;
         this.textRef[i] = this.textRef[i] || React.createRef();
         if (!this.state.icons[i]) {
@@ -594,6 +681,7 @@ class BulkEditor extends React.Component {
         } else {
             button = <Button
                 style={{ color: this.state.activeLine === i ? (this.state.activeColors[i] || this.state.colors[i]) : this.state.colors[i] || undefined }}
+                // @ts-expect-error this is fine
                 color={this.state.activeLine === i ? 'primary' : 'grey'}
                 variant={this.props.data.variant === undefined ? 'contained' : this.props.data.variant}
                 onClick={() => this.setState({ activeLine: i })}
@@ -656,6 +744,7 @@ class BulkEditor extends React.Component {
                     />
                     <Button
                         variant={this.state.icons[i] ? 'outlined' : undefined}
+                        // @ts-expect-error this is fine
                         color={this.state.icons[i] ? 'grey' : undefined}
                         onClick={() => this.setState({ iconDialog: i })}
                     >
@@ -757,7 +846,7 @@ class BulkEditor extends React.Component {
                                 } else if (unit === '%') {
                                     unit = this.state.originalUnit || '';
                                 }
-                                this.setState({ usePercents: e.target.checked, unit: this.state.unit || (e.target.checked ? '%' : '') });
+                                this.setState({ usePercents: e.target.checked, unit });
                             }}
                         />}
                         label={I18n.t('jqui_Percents')}
@@ -769,7 +858,7 @@ class BulkEditor extends React.Component {
                     variant="standard"
                     label={I18n.t('jqui_Minimum value')}
                     value={this.state.min}
-                    onChange={e => this.setState({ min: e.target.value })}
+                    onChange={e => this.setState({ min: Number(e.target.value) })}
                 />
                 <TextField
                     fullWidth
@@ -777,7 +866,7 @@ class BulkEditor extends React.Component {
                     variant="standard"
                     label={I18n.t('jqui_Maximum value')}
                     value={this.state.max}
-                    onChange={e => this.setState({ max: e.target.value })}
+                    onChange={e => this.setState({ max: Number(e.target.value) })}
                 />
                 <div style={{ width: '100%' }}>
                     <div style={{ width: '100%' }}>
@@ -800,7 +889,7 @@ class BulkEditor extends React.Component {
                                     label: '20',
                                 },
                             ]}
-                            onChange={(e, value) => this.setState({ steps: value })}
+                            onChange={(e, value) => this.setState({ steps: value as number })}
                         />
                     </div>
                 </div>
@@ -824,7 +913,8 @@ class BulkEditor extends React.Component {
                     color="primary"
                     startIcon={<Check />}
                     onClick={() => {
-                        const newState = {
+                        const newState: BulkEditorState = {
+                            ...this.state,
                             minMaxDialog: false,
                             values: [],
                             texts: [...this.state.texts],
@@ -860,6 +950,7 @@ class BulkEditor extends React.Component {
                 </Button>
                 <Button
                     variant="contained"
+                    // @ts-expect-error this is fine
                     color="grey"
                     startIcon={<Close />}
                     onClick={() => this.setState({ minMaxDialog: false })}
@@ -888,7 +979,8 @@ class BulkEditor extends React.Component {
                     variant="contained"
                     onClick={async () => {
                         const oid = this.props.data.oid;
-                        const newState = {
+                        const newState: BulkEditorState = {
+                            ...this.state,
                             minMaxDialog: true,
                             usePercents: true,
                             min: this.state.min,
@@ -992,6 +1084,7 @@ class BulkEditor extends React.Component {
                 </Button>
                 <Button
                     variant="contained"
+                    // @ts-expect-error this works
                     color="grey"
                     startIcon={<Close />}
                     onClick={() => this.setState({ dialog: false })}
@@ -1022,13 +1115,5 @@ class BulkEditor extends React.Component {
         ];
     }
 }
-BulkEditor.propTypes = {
-    themeType: PropTypes.string,
-    socket: PropTypes.object,
-    data: PropTypes.object,
-    adapterName: PropTypes.string,
-    instance: PropTypes.number,
-    projectName: PropTypes.string,
-};
 
 export default withStyles(styles)(BulkEditor);

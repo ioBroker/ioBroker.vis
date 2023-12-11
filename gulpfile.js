@@ -98,7 +98,7 @@ gulp.task('runtime-1-copy-src', done => {
         fs.writeFileSync(`${__dirname}/runtime/public/index.html`, runtimeText);
     }
 
-    copyFolder(`${__dirname}/src/src/Vis`, `${__dirname}/runtime/src/Vis`,  ['visContextMenu.jsx', 'oldVis.jsx', 'visOrderMenu.jsx', 'BulkEditor.jsx']);
+    copyFolder(`${__dirname}/src/src/Vis`, `${__dirname}/runtime/src/Vis`,  ['visContextMenu.jsx', 'oldVis.jsx', 'visOrderMenu.jsx', 'BulkEditor.tsx']);
     copyFolder(`${__dirname}/src/src/img`, `${__dirname}/runtime/src/img`);
 
     fs.writeFileSync(`${__dirname}/runtime/src/Vis/visOrderMenu.jsx`, `
@@ -114,7 +114,7 @@ export default VisOrderMenu;
 
 `);
 
-    fs.writeFileSync(`${__dirname}/runtime/src/Vis/Widgets/JQui/BulkEditor.jsx`, `
+    fs.writeFileSync(`${__dirname}/runtime/src/Vis/Widgets/JQui/BulkEditor.tsx`, `
 import React from 'react';
 
 class BulkEditor extends React.Component {

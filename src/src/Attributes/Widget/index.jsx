@@ -939,7 +939,10 @@ class Widget extends Component {
                     widgetData[iterable.indexTo]--;
                 });
 
-                this.setAccordionState(accordionOpen, () => this.props.changeProject(project));
+                this.setAccordionState(accordionOpen, () => {
+                    this.props.changeProject(project);
+                    store.dispatch(recalculateFields(true));
+                });
             }
             return;
         }
@@ -964,7 +967,10 @@ class Widget extends Component {
                 accordionOpen[`${iterable.group}-${newIndex}`] = true;
                 widgetData[iterable.indexTo] = newIndex;
             });
-            this.setAccordionState(accordionOpen, () => this.props.changeProject(project));
+            this.setAccordionState(accordionOpen, () => {
+                this.props.changeProject(project);
+                store.dispatch(recalculateFields(true));
+            });
         } else {
             const newIndex = index + direction;
             const newGroup = this.state.fields.find(f => f.name === `${iterable.group}-${newIndex}`);
@@ -998,7 +1004,10 @@ class Widget extends Component {
                 }
             });
 
-            this.setAccordionState(accordionOpen, () => this.props.changeProject(project));
+            this.setAccordionState(accordionOpen, () => {
+                this.props.changeProject(project);
+                store.dispatch(recalculateFields(true));
+            });
         }
     }
 

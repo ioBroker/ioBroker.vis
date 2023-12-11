@@ -230,6 +230,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 -->
 ## Changelog
 ### **WORK IN PROGRESS**
+* (foxriver76) fixed issues with the BulkEditor
 * (foxriver76) fixed issues with Bulb widget if min/max was once filled
 
 ### 2.9.5 (2023-12-10)
