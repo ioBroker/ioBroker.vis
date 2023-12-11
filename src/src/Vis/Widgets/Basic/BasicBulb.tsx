@@ -98,16 +98,16 @@ export default class BasicBulb extends VisRxWidget<RxData> {
             urlFalse, oidFalse,
         } = this.state.rxData;
 
-        let finalMin: string | boolean = min;
-        let finalMax: string | boolean = max;
-        let oidTrueValueFinal: string | boolean | number = oidTrueValue;
-        let oidFalseValueFinal: string | boolean | number = oidFalseValue;
+        let finalMin: string | boolean = min ?? '';
+        let finalMax: string | boolean = max ?? '';
+        let oidTrueValueFinal: string | boolean | number = oidTrueValue ?? '';
+        let oidFalseValueFinal: string | boolean | number = oidFalseValue ?? '';
 
         if (oidTrue || urlTrue) {
             if (!oidFalse && oidTrue) oidFalse = oidTrue;
             if (!urlFalse && urlTrue) urlFalse = urlTrue;
 
-            if (finalMax !== undefined) {
+            if (finalMax !== '') {
                 if (finalMax === 'true')  finalMax = true;
                 if (finalMax === 'false') finalMax = false;
                 if (val === 'true')  val = true;
@@ -118,12 +118,12 @@ export default class BasicBulb extends VisRxWidget<RxData> {
             }
             val = !val; // invert
 
-            if (finalMin === undefined || finalMin === 'false' || finalMin === null) finalMin = false;
-            if (finalMax === undefined || finalMax === 'true'  || finalMax === null) finalMax = true;
+            if (finalMin === '' || finalMin === 'false' || finalMin === null) finalMin = false;
+            if (finalMax === '' || finalMax === 'true'  || finalMax === null) finalMax = true;
 
             if (oidTrue) {
                 if (val) {
-                    if (oidTrueValueFinal === undefined || oidTrueValueFinal === null) oidTrueValueFinal = finalMax;
+                    if (oidTrueValueFinal === '') oidTrueValueFinal = finalMax;
                     if (oidTrueValueFinal === 'false') oidTrueValueFinal = false;
                     if (oidTrueValueFinal === 'true')  oidTrueValueFinal = true;
                     if (typeof oidTrueValueFinal === 'string') {
@@ -132,7 +132,7 @@ export default class BasicBulb extends VisRxWidget<RxData> {
                     }
                     this.props.context.setValue(oidTrue, oidTrueValueFinal);
                 } else {
-                    if (oidFalseValueFinal === undefined || oidFalseValueFinal === null) oidFalseValueFinal = finalMin;
+                    if (oidFalseValueFinal === '') oidFalseValueFinal = finalMin;
                     if (oidFalseValueFinal === 'false') oidFalseValueFinal = false;
                     if (oidFalseValueFinal === 'true')  oidFalseValueFinal = true;
                     if (typeof oidFalseValueFinal === 'string') {
@@ -150,16 +150,16 @@ export default class BasicBulb extends VisRxWidget<RxData> {
                     this.props.socket.getRawSocket().emit('httpGet', urlFalse);
                 }
             }
-        } else if ((finalMin === undefined && (val === null || val === '' || val === undefined || val === false || val === 'false')) ||
-                        (finalMin !== undefined && finalMin === val)) {
-            this.props.context.setValue(oid, finalMax !== undefined ? finalMax : true);
+        } else if ((finalMin === '' && (val === null || val === '' || val === undefined || val === false || val === 'false')) ||
+                        (finalMin !== '' && finalMin === val)) {
+            this.props.context.setValue(oid, finalMax !== '' ? finalMax : true);
         } else
-            if ((finalMax === undefined && (val === true || val === 'true')) ||
-                        (finalMax !== undefined && val === finalMax)) {
-                this.props.context.setValue(oid,  finalMin !== undefined ? finalMin : false);
+            if ((finalMax === '' && (val === true || val === 'true')) ||
+                        (finalMax !== '' && val === finalMax)) {
+                this.props.context.setValue(oid,  finalMin !== '' ? finalMin : false);
             } else {
                 val = parseFloat(val);
-                if (finalMin !== undefined && finalMax !== undefined) {
+                if (finalMin !== '' && finalMax !== '') {
                     if (val >= (parseFloat(finalMax) - parseFloat(finalMin)) / 2) {
                         val = finalMin;
                     } else {
