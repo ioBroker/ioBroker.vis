@@ -88,7 +88,7 @@ class BasicHtml extends VisRxWidget {
     renderWidgetBody(props) {
         super.renderWidgetBody(props);
 
-        return <DangerousHtmlWithScript className="vis-widget-body" html={this.state.rxData.html} isDiv />;
+        return <DangerousHtmlWithScript className="vis-widget-body" html={this.state.rxData.html} isDiv wid={this.props.id} />;
     }
 }
 
