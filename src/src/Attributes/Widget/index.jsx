@@ -32,6 +32,7 @@ import { getWidgetTypes, parseAttributes } from '../../Vis/visWidgetsCatalog';
 import WidgetCSS from './WidgetCSS';
 import WidgetJS from './WidgetJS';
 import WidgetBindingField from './WidgetBindingField';
+import { deepClone } from '../../Utils/utils';
 
 const ICONS = {
     'group.fixed': <FilterAltIcon fontSize="small" />,
@@ -250,7 +251,6 @@ class Widget extends Component {
             widgetsLoaded: props.widgetsLoaded,
             widgetTypes: null,
             fields: null,
-            // dataImage: Widget.buildDataImage(store.getState().visProject, props.selectedView, props.selectedWidgets),
             transitionTime: 0,
         };
 
@@ -430,33 +430,6 @@ class Widget extends Component {
                     { name: 'margin-right' },
                     { name: 'margin-bottom' }],
             },
-            // {
-            //     name: 'gestures',
-            //     fields: [
-            //         {
-            //             name: 'gestures-indicator',
-            //             type: 'auto',
-            //             options: Object.keys(widgets).filter(wid => widgets[wid].tpl === 'tplValueGesture'),
-            //         },
-            //         { name: 'gestures-offsetX', default: 0, type: 'number' },
-            //         { name: 'gestures-offsetY', default: 0, type: 'number' },
-            //         { type: 'delimiter' },
-            //         ...(['swiping', 'rotating', 'pinching'].flatMap(gesture => [
-            //             { name: `gestures-${gesture}-oid`,        type: 'id' },
-            //             { name: `gestures-${gesture}-value`,      default: '' },
-            //             { name: `gestures-${gesture}-minimum`,    type: 'number' },
-            //             { name: `gestures-${gesture}-maximum`,    type: 'number' },
-            //             { name: `gestures-${gesture}-delta`,      type: 'number' },
-            //             { type: 'delimiter' },
-            //         ])),
-            //         ...(['swipeRight', 'swipeLeft', 'swipeUp', 'swipeDown', 'rotateLeft', 'rotateRight', 'pinchIn', 'pinchOut'].flatMap(gesture => [
-            //             { name: `gestures-${gesture}-oid`,    type: 'id' },
-            //             { name: `gestures-${gesture}-value`,  default: '' },
-            //             { name: `gestures-${gesture}-limit`,  type: 'number' },
-            //             { type: 'delimiter' },
-            //         ])),
-            //     ],
-            // },
             {
                 name: 'last_change',
                 fields: [
@@ -551,12 +524,6 @@ class Widget extends Component {
         }
         this.setAccordionState();
     }
-
-    // static buildDataImage(project, selectedView, selectedWidgets) {
-    //     const result = {};
-    //     [...(selectedWidgets || [])].sort().forEach(wid => result[wid] = project[selectedView].widgets[wid]);
-    //     return JSON.stringify(result);
-    // }
 
     static getDerivedStateFromProps(props, state) {
         let newState = null;
@@ -1088,9 +1055,9 @@ class Widget extends Component {
                                 const type = group.isStyle ? 'style' : 'data';
                                 // check is any attribute from this group is used
                                 let found = false;
-                                for (let w = 0; w < this.props.selectedWidgets.length; w++) {
-                                    for (let f = 0; f < group.fields.length; f++) {
-                                        const value = store.getState().visProject[this.props.selectedView].widgets[this.props.selectedWidgets[w]][type][group.fields[f].name];
+                                for (const selectedWidget of this.props.selectedWidgets) {
+                                    for (const groupField of group.fields) {
+                                        const value = store.getState().visProject[this.props.selectedView].widgets[selectedWidget][type][groupField.name];
                                         if (value !== null && value !== undefined) {
                                             found = true;
                                             break;
@@ -1141,13 +1108,9 @@ class Widget extends Component {
             }
         }
 
-        this.changeProject(project);
-    }
-
-    changeProject = (project, ignoreHistory) => {
-        this.props.changeProject(project, ignoreHistory);
+        this.props.changeProject(project);
         store.dispatch(recalculateFields(true));
-    };
+    }
 
     renderFieldRow(group, field, fieldIndex) {
         if (!field) {
@@ -1259,7 +1222,7 @@ class Widget extends Component {
                                 className={this.props.classes.colorize}
                                 onClick={() => this.props.cssClone(field.name, newValue => {
                                     if (newValue !== null && newValue !== undefined) {
-                                        const project = JSON.parse(JSON.stringify(store.getState().visProject));
+                                        const project = deepClone(store.getState().visProject);
                                         this.props.selectedWidgets.forEach(wid => {
                                             if (project[this.props.selectedView].widgets[wid]) {
                                                 project[this.props.selectedView].widgets[wid].style = project[this.props.selectedView].widgets[wid].style || {};
@@ -1289,7 +1252,7 @@ class Widget extends Component {
                                     isDifferent={this.state.isDifferent[field.name]}
                                     project={store.getState().visProject}
                                     socket={this.props.socket}
-                                    changeProject={this.changeProject}
+                                    changeProject={this.props.changeProject}
                                 />
                                 : <WidgetField
                                     widgetType={this.state.widgetType}
@@ -1303,7 +1266,6 @@ class Widget extends Component {
                                     index={group.index}
                                     isDifferent={this.state.isDifferent[field.name]}
                                     {...this.props}
-                                    changeProject={this.changeProject}
                                 />}
                         </div>
                     </td>
@@ -1356,7 +1318,8 @@ class Widget extends Component {
             delete project[this.props.selectedView].widgets[wid].data[`g_${group.name}`];
         });
 
-        this.changeProject(project);
+        this.props.changeProject(project);
+        store.dispatch(recalculateFields(true));
     }
 
     render() {
@@ -1446,7 +1409,7 @@ class Widget extends Component {
                 </Button>
 
                 {this.state.showWidgetCode ? <pre>
-                    {JSON.stringify(this.state.widget, null, 2)}
+                    {JSON.stringify(store.getState().visProject[this.props.selectedView].widgets[this.props.selectedWidgets[0]], null, 2)}
                     {jsonCustomFields}
                 </pre> : null}
             </div> : null,

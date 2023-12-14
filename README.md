@@ -233,6 +233,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 * (foxriver76) fixed issues with the BulkEditor
 * (foxriver76) scripts in HTML are now added to the DOM, instead of being executed in eval
 * (foxriver76) fixed issues with Bulb widget if min/max was once filled
+* (foxriver76) migrated "speech2text" widget to react
 
 ### 2.9.5 (2023-12-10)
 * (foxriver76) open new views at the beginning

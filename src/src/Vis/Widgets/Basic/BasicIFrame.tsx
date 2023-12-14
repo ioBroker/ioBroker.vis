@@ -139,7 +139,7 @@ export default class BasicIFrame extends VisRxWidget<RxData> {
 
     onPropertyUpdate() {
         const src     = this.state.rxData.src || '';
-        const refreshInterval = parseFloat(this.state.rxData.refreshInterval) || 0;
+        const refreshInterval = Number(this.state.rxData.refreshInterval) || 0;
         const refreshOnViewChange = this.state.rxData.refreshOnViewChange === true;
         const refreshOnWakeUp = this.state.rxData.refreshOnWakeUp === true;
 

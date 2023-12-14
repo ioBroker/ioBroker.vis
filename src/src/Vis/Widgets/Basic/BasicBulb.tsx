@@ -222,7 +222,7 @@ export default class BasicBulb extends VisRxWidget<RxData> {
      *
      * @param props props passed to the parent classes render method
      */
-    renderWidgetBody(props: RxRenderWidgetProps) {
+    renderWidgetBody(props: RxRenderWidgetProps): React.JSX.Element {
         super.renderWidgetBody(props);
 
         const val = this.state.values[`${this.state.rxData.oid}.val`];

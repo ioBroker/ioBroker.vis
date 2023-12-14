@@ -128,10 +128,10 @@ export default class BasicSvgShape extends VisRxWidget<RxData> {
         super.renderWidgetBody(props);
 
         let svg: React.JSX.Element | null = null;
-        const rotate      = parseFloat(this.state.rxData.rotate) || 0;
-        const scaleWidth  = parseFloat(this.state.rxData.scaleWidth) || 1;
-        const scaleHeight = parseFloat(this.state.rxData.scaleHeight) || 1;
-        const strokeWidth = parseInt(this.state.rxData.strokeWidth, 10) || 0;
+        const rotate      = Number(this.state.rxData.rotate) || 0;
+        const scaleWidth  = Number(this.state.rxData.scaleWidth) || 1;
+        const scaleHeight = Number(this.state.rxData.scaleHeight) || 1;
+        const strokeWidth = Number(this.state.rxData.strokeWidth) || 0;
 
         const transform = `rotate(${rotate}) scale(${scaleWidth}, ${scaleHeight})`;
 
@@ -179,7 +179,7 @@ export default class BasicSvgShape extends VisRxWidget<RxData> {
         }  else if (this.state.rxData.svgType === 'custom') {
             svg = <polygon
                 transform={transform}
-                points={BasicSvgShape.circlePoints(50 - strokeWidth, parseInt(this.state.rxData.points, 10) || 3)}
+                points={BasicSvgShape.circlePoints(50 - strokeWidth, Number(this.state.rxData.points) || 3)}
             />;
         } else if (this.state.rxData.svgType === 'star') {
             svg = <polygon

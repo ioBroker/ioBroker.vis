@@ -233,13 +233,58 @@ export interface RxWidgetProps extends RxRenderWidgetProps {
     viewsActiveFilter: Record<string, string[]>;
 }
 
-type RxWidgetAttributeType = 'id' | 'number' | 'image' | 'checkbox';
+type RxWidgetAttributeType = 'id' | 'number' | 'slider' | 'image' | 'checkbox' | 'color';
+
+type RxWidgetInfoAttributesField = {
+    /** Name of the widget field */
+    name: string;
+    /** Field default value */
+    default?: string;
+    /** Field type */
+    type?: 'id' | 'image' | 'color';
+} | {
+    /** Name of the widget field */
+    name: string;
+    /** Field type */
+    type: 'select';
+    /** Field default value */
+    default?: string;
+    /** Options for select type */
+    options: { value: string; label: string }[];
+} | {
+    /** Name of the widget field */
+    name: string;
+    /** Field type */
+    type: 'checkbox';
+    /** Field default value */
+    default?: boolean;
+} | {
+    /** Name of the widget field */
+    name: string;
+    /** Field type */
+    type: 'number';
+    /** Field default value */
+    default?: number;
+} | {
+    /** Name of the widget field */
+    name: string;
+    /** Field type */
+    type: 'slider';
+    /** Field default value */
+    default?: number;
+    /** Slider min value */
+    min: number;
+    /** Slider max value */
+    max: number;
+    /** Slider max value */
+    step?: number;
+}
 
 interface RxWidgetInfoAttributes {
     /** Name of the attributes section */
     name: string;
     /** Fields of this attribute section */
-    fields: { name: string; type: RxWidgetAttributeType; default?: any }[];
+    fields: RxWidgetInfoAttributesField[];
 }
 
 interface RxWidgetInfo {
@@ -267,7 +312,7 @@ interface RxWidgetInfo {
     visResizeHandles?: string[];
 }
 
-type AttributeTypeToDataType<TType extends RxWidgetAttributeType> = TType extends 'checkbox' ? boolean : TType extends 'number' ? number :
+type AttributeTypeToDataType<TType extends RxWidgetAttributeType> = TType extends 'checkbox' ? boolean : TType extends 'number' | 'slider' ? number :
     string;
 
 /** Infer the RxData from VisAttrs */

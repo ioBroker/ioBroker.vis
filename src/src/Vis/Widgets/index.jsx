@@ -10,6 +10,7 @@ import BasicGroup from './Basic/BasicGroup';
 import BasicSvgBool from './Basic/BasicSvgBool';
 import BasicSvgShape from './Basic/BasicSvgShape';
 import BasicScreenResolution from './Basic/BasicScreenResolution';
+import BasicSpeechToText from './Basic/BasicSpeechToText';
 import BasicIFrame from './Basic/BasicIFrame';
 import BasicImage from './Basic/BasicImage';
 
@@ -55,6 +56,7 @@ const WIDGETS = [
     BasicRedNumber,
     BasicSvgShape,
     BasicScreenResolution,
+    BasicSpeechToText,
     BasicIFrame,
     BasicImage,
 

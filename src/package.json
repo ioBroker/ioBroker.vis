@@ -19,6 +19,7 @@
         "@reduxjs/toolkit": "^2.0.1",
         "@sentry/browser": "^7.85.0",
         "@sentry/integrations": "^7.85.0",
+        "@types/dom-speech-recognition": "^0.0.4",
         "ace-builds": "^1.32.0",
         "craco-module-federation": "^1.1.0",
         "dayjs": "^1.11.10",
