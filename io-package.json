@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.5",
+    "version": "2.9.6",
     "news": {
+      "2.9.6": {
+        "en": "fixed issues with the BulkEditor\nscripts in HTML are now added to the DOM, instead of being executed in eval\nfixed issues with Bulb widget if min/max was once filled\nmigrated \"speech2text\" widget to react",
+        "de": "feste Probleme mit dem BulkEditor\nskripte in HTML werden nun dem DOM hinzugefügt, anstatt in eval ausgeführt zu werden\nfeste Probleme mit Bulb Widget, wenn min/max einmal gefüllt\nmigrated language2text widget zu reagieren",
+        "ru": "фиксированные вопросы с BulkEditor\nскрипты в HTML теперь добавлены в DOM, вместо того, чтобы быть выполнены в эвале\nфиксированные проблемы с виджетом ламп, если мин/макс был когда-то заполнен\nмигрированная речи2текстовый виджет для реакции",
+        "pt": "problemas fixos com o BulkEditor\nscripts em HTML agora são adicionados ao DOM, em vez de serem executados em eval\nproblemas fixos com widget Bulb se min/max foi preenchido uma vez\nwidget de fala2text migrado para reagir",
+        "nl": "vertaling:\nscripts in HTML zijn nu toegevoegd aan de DOM, in plaats van geëvalueerd te worden\n_\ngemigreerde speech 2text widget om te reageren",
+        "fr": "problèmes fixes avec le BulkEditor\nles scripts en HTML sont maintenant ajoutés au DOM, au lieu d'être exécutés en val\nproblèmes fixes avec widget Bulb si min/max a été rempli une fois\nwidget vocal2text migré pour réagir",
+        "it": "problemi fissi con il BulkEditor\nscript in HTML sono ora aggiunti al DOM, invece di essere eseguito in eva\nproblemi fissi con widget Bulb se min/max è stato riempito una volta\nmigrato speech2text widget per reagire",
+        "es": "problemas fijos con el BulkEditor\nscripts en HTML se añaden ahora a la DOM, en lugar de ser ejecutados en eval\nproblemas fijos con el widget Bulb si min/max fue una vez llenado\nmigrated speech2text widget para reaccionar",
+        "pl": "związane z programem BulkEditor\nskrypty w HTML są obecnie dodawane do DOM, zamiast być wykonywane w ewalu\nzawartość Bulb widget jeśli min/max jest wypełnione\nmigrować widżet mowy 2",
+        "uk": "виправлені питання з BulkEditor\nскрипки в HTML тепер додаються до DOM, замість того, щоб бути виконаними в eval\nвиправлені питання з Булб віджету, якщо min/max був колись заповнений\nmigrated word2text віджет для реагації",
+        "zh-cn": "与布lkEditor的固定问题\n红十字与红新月运动的文字现在被添加到警察局,而不是用电子方式执行。\n如果明示/米纳税一旦得到填补,便与Bulb wid目标有固定问题。\n移出的演讲2 背 景"
+      },
       "2.9.5": {
         "en": "open new views at the beginning\nfixed crash case if signals are used\nfixed material-design-widgets helper \nupdate references to view in widget when view is renamed\njQui Toggle icon widget was migrated to react\njQui Radio widget was migrated to react\njQui Radio List widget was migrated to react\nCorrected last-change by React widgets",
         "de": "neue ansichten am anfang öffnen\nfester crashfall, wenn signale verwendet werden\nfeste material-design-widgets-helfer\naktualisierung von referenzen zur ansicht in widget, wenn die ansicht umbenannt wird\nj Qui Toggle Symbol Widget wurde migriert, um zu reagieren\nj Qui Radio Widget wurde migriert, um zu reagieren\nj Radio Liste widget wurde migriert zu reagieren\nLetzte Änderung durch React Widgets korrigiert",
@@ -80,19 +93,6 @@
         "pl": "wdrożony kształt SVG i Rezolucja Screen Rezolucja widgets na terenie kraju\nwdrożone Basic iFrame jako reag widget\ndopuszczać pliki z zamówieniem na import\nnaprawić przepełnianie\nstrona i projekty alfabetycznie\nproblem stały\nstały problem z grupami, gdy 'always renderuje' jest aktywowany\numożliwia zmianę koloru i pisanie walizek komponentów tabeli\nstały problem nawigacji od zawsze. Oficjalna strona Render",
         "uk": "реалізовані SVG форма і роздільна здатність екрана віджети нативно\nреалізований Basic iFrame як реагувати віджет\nzip-файли в імпорті проекту\nзафіксувати переповнення перезаписано\nсортування сторінок і проектів алфавітно\nвиправлена проблема з економії\nвиправлена проблема з групами при активації `always render`\nдозволяє змінити колір і писати нижній регістр в компоненті вкладок\nвиправлена проблема, яка навігація завжди Рендерна сторінка відображається на різних сторінках",
         "zh-cn": "实施SVG形形状和Screen决议目标\n执行 A. 恢复原状的基本法\n仅允许项目进口的档案\nfix 外流\n页数和项目名称\n储蓄的固定问题\n在“行道”启动时,与团体的固定问题\n可在表格构成部分中改变颜色和写法。\na. 导航始终存在的固定问题 午页在不同页上显示"
-      },
-      "2.8.0": {
-        "en": "sort folders alphabetically in pages view\nfixed deselecting widgets with ctrl + click\nfixed display issue with switch component\nimplemented Basic Red Number widget natively\nfixed copy/clone of grouped widgets\nfixed problem with open/close dialog via state",
-        "de": "sortieren von ordnern alphabetisch in den seiten\nfeste deselecting widgets mit ctrl + klick\nfeste anzeigeausgabe mit schalterkomponente\ndurchgeführt Basic Red Number Widget native\nfestes exemplar/klemm von gruppierten widgets\nfestes problem mit offenem/schließen dialog über zustand",
-        "ru": "сортировать папки по алфавиту в просмотре страниц\nфиксированные отборные виджеты с ctrl + нажмите\nисправлена проблема дисплея с компонентом переключателя\nреализовано Базовый виджет Red Number родным\nфиксированная копия/clone группированных виджетов\nисправленная проблема с открытым/закрыть диалог через состояние",
-        "pt": "classificar pastas alfabeticamente na visualização de páginas\nwidgets de desmarcação fixos com ctrl + clique\nproblema de exibição fixa com componente de interruptor\nimplementação Basic Red Number widget nativamente\ncópia/clone fixo de widgets agrupados\nproblema fixo com aberto / fechar diálogo via estado",
-        "nl": "vouwen alfabetisch in pagina's\ngerepareerde widgets met ctrl + click\nvertaling:\n_ Basic Red Number Wid Widget\nvertaling:\n_",
-        "fr": "trier les dossiers alphabétiquement dans les pages afficher\nwidgets de désélection fixe avec ctrl + clic\nproblème d'affichage fixe avec composant de commutation\nmise en œuvre Basic Red Number widget nativement\ncopie fixe/clone des widgets groupés\nproblème fixe avec dialogue ouvert/fermeture via l'état",
-        "it": "ordinare cartelle in ordine alfabetico nella visualizzazione delle pagine\nwidget di deselecting fissi con ctrl + click\nproblema di visualizzazione fisso con componente di commutazione\nimplementato Basic Red Number widget nativo\ncopia/clone fisso di widget raggruppati\nproblema fisso con dialogo aperto/chiuso tramite stato",
-        "es": "clasificar carpetas alfabéticamente en la vista de páginas\nwidgets deseleccionamiento fijo con ctrl + clic\nemisión de pantalla fija con componente de conmutación\naplicadas Número rojo básico widget nativamente\ncopia fija/clone de widgets agrupados\nproblema fijo con diálogo abierto/cerrar a través del estado",
-        "pl": "alfabetycznie\nuruchomione widgety z ctrl + click\ndystrybucja z przełącznikowym komponentem\nwdrożone Podstawowy numer czerwony (ang. Basic Red Number)\noficjalna kopia/klon grupyed widgets\nstały problem z otwartym/zamkniętym dialogiem poprzez stanowy",
-        "uk": "сортувати папки алфавітно в перегляді сторінок\nфіксовані деселекційні віджети з ctrl + натисніть\nвиправлено проблему відображення з компонентом перемикача\nреалізований Basic Red Number віджет рідно\nфіксована копія/клон вбудованих віджетів\nвиправлена проблема з відкритим / закритим діалогом через державу",
-        "zh-cn": "英文\na. 固定的用石流+点\nb. 转成构成部分的固定问题\n执行 A. 基本红树脂\na. 固定的供状\nb. 通过国家开放/排除沉默的固定问题"
       }
     },
     "title": "Visualisation Next Generation",
