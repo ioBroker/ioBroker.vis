@@ -33,7 +33,8 @@
     "@alcalzone/release-script": "^3.7.0",
     "@alcalzone/release-script-plugin-iobroker": "^3.7.0",
     "@alcalzone/release-script-plugin-license": "^3.7.0",
-    "@iobroker/legacy-testing": "^1.0.4",
+    "@iobroker/legacy-testing": "^1.0.5",
+    "@iobroker/vis-2-widgets-testing": "^1.0.0",
     "chai": "^4.3.10",
     "colorette": "^2.0.20",
     "gulp": "^4.0.2",
@@ -57,7 +58,7 @@
     "main.js"
   ],
   "scripts": {
-    "test": "node node_modules/mocha/bin/mocha --exit",
+    "test": "mocha --exit",
     "install": "node main.js --install",
     "install-only": "npm install --ignore-scripts",
     "prepublishOnly": "node node_modules/gulp/bin/gulp.js",

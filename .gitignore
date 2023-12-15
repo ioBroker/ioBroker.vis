@@ -43,3 +43,5 @@ admin/i18n/flat.txt
 !/www/widgets/todo/**/*.*
 www/edit.src.html
 www/index.src.html
+*.tgz
+tmp/
