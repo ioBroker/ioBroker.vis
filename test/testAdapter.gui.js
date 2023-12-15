@@ -14,6 +14,10 @@ describe('vis', () => {
             additionalAdapters: ['web'],
             mainGuiProject: 'vis',
         });
+
+        // wait till web is started
+        await new Promise(resolve => setTimeout(resolve, 15_000));
+
         const { browser, page } = await helper.startBrowser(process.env.CI === 'true');
         gBrowser = browser
         gPage = page
