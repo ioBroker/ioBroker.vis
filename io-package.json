@@ -102,6 +102,7 @@
             "it": "Visualizzazione",
             "es": "Visualización",
             "pl": "Wizualizacja",
+            "uk": "Візуалізація",
             "zh-cn": "可视化"
         },
         "desc": {
@@ -114,6 +115,7 @@
             "it": "Interfaccia utente grafica per iobroker",
             "es": "Interfaz gráfica de usuario para iobroker",
             "pl": "Graficzny interfejs użytkownika dla iobroker",
+            "uk": "Графічний інтерфейс користувача для iobroker",
             "zh-cn": "iobroker的图形化用户界面"
         },
         "platform": "Javascript/Node.js",
