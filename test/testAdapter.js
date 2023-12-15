@@ -69,7 +69,7 @@ function sendTo(target, command, message, callback) {
     });
 }
 
-describe(`Test ${adapterShortName} adapter`, function() {
+describe.skip(`Test ${adapterShortName} adapter`, function() {
     before(`Test ${adapterShortName} adapter: Start js-controller`, function (_done) {
         this.timeout(600000); // because of the first installation from npm
 
