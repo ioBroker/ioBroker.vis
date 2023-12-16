@@ -34,6 +34,7 @@ import TextDialog from './TextDialog';
 import MaterialIconSelector from '../../Components/MaterialIconSelector';
 import { findWidgetUsages } from '../../Vis/visUtils';
 import { store, recalculateFields } from '../../Store';
+import { deepClone } from '../../Utils/utils';
 
 const POSSIBLE_UNITS = ['px', '%', 'em', 'rem', 'vh', 'vw', 'vmin', 'vmax', 'ex', 'ch', 'cm', 'mm', 'in', 'pt', 'pc'];
 
@@ -203,7 +204,7 @@ const t = (word, ...args) => {
 
 function modifyWidgetUsages(project, usedInView, usedWidgetId, inNewWidgetId, inAttr) {
     // find where it is used
-    const newProject = JSON.parse(JSON.stringify(project));
+    const newProject = deepClone(project);
     const usedIn = findWidgetUsages(newProject, usedInView, usedWidgetId);
     usedIn.forEach(usage => {
         newProject[usage.view].widgets[usage.wid].data[usage.attr] = '';
@@ -1165,7 +1166,7 @@ const WidgetField = props => {
                     field,
                     widget.data,
                     newData => {
-                        const _project = JSON.parse(JSON.stringify(store.getState().visProject));
+                        const _project = deepClone(store.getState().visProject);
                         props.selectedWidgets.forEach(selectedWidget => {
                             Object.keys(newData)
                                 .forEach(attr => {

@@ -24,7 +24,9 @@ import {
 } from '@mui/icons-material';
 
 import { I18n, Utils } from '@iobroker/adapter-react-v5';
-import { store, recalculateFields, updateWidget } from '../../Store';
+import {
+    store, recalculateFields, updateWidget, selectWidget,
+} from '../../Store';
 
 import WidgetField from './WidgetField';
 import IODialog from '../../Components/IODialog';
@@ -678,10 +680,7 @@ class Widget extends Component {
                     if (fieldValue === undefined) {
                         return false;
                     }
-                    // if ((field.default || field.default === 0 || field.default === false || field.default === '') && fieldValue === field.default) {
-                    //     return false;
-                    // }
-                    // console.log(`Group "${group.name}" is not empty because of ${field.name}: [${JSON.stringify(field.default)}/${typeof field.default}] !== [${JSON.stringify(fieldValue)}/${typeof fieldValue}]`);
+
                     return true;
                 });
                 return fieldFound !== undefined;
@@ -798,7 +797,7 @@ class Widget extends Component {
                         onClose={() => this.setState({ cssDialogOpened: false })}
                         widget={widgets[this.props.selectedWidgets[0]]}
                         onChange={value => {
-                            const project = JSON.parse(JSON.stringify(store.getState().visProject));
+                            const project = deepClone(store.getState().visProject);
                             project[this.props.selectedView].widgets[this.props.selectedWidgets[0]].css = value;
                             this.props.changeProject(project);
                         }}
@@ -808,7 +807,7 @@ class Widget extends Component {
                         onClose={() => this.setState({ jsDialogOpened: false })}
                         widget={widgets[this.props.selectedWidgets[0]]}
                         onChange={value => {
-                            const project = JSON.parse(JSON.stringify(store.getState().visProject));
+                            const project = deepClone(store.getState().visProject);
                             project[this.props.selectedView].widgets[this.props.selectedWidgets[0]].js = value;
                             this.props.changeProject(project);
                         }}
@@ -849,7 +848,7 @@ class Widget extends Component {
         setTimeout(() => this.setState({ transitionTime: 200 }), 500);
     }
 
-    componentDidUpdate(/* prevProps, prevState, snapshot */) {
+    componentDidUpdate() {
         // scale the old style HTML widget icon
         if (this.imageRef.current?.children[0]) {
             const height = this.imageRef.current.children[0].clientHeight;
@@ -861,7 +860,7 @@ class Widget extends Component {
 
     onGroupMove(e, index, iterable, direction) {
         e.stopPropagation();
-        const project = JSON.parse(JSON.stringify(store.getState().visProject));
+        const project = deepClone(store.getState().visProject);
         const oldGroup = this.state.fields.find(f => f.name === `${iterable.group}-${index}`);
         const _widgets = project[this.props.selectedView].widgets;
         const accordionOpen = { ...this.state.accordionOpen };
@@ -1071,7 +1070,7 @@ class Widget extends Component {
                                     this.onGroupDelete(group);
                                 }
                             } else {
-                                const project = JSON.parse(JSON.stringify(store.getState().visProject));
+                                const project = deepClone(store.getState().visProject);
                                 const type = group.isStyle ? 'style' : 'data';
                                 this.props.selectedWidgets.forEach(wid => {
                                     group.fields.forEach(field => {
@@ -1097,7 +1096,7 @@ class Widget extends Component {
     }
 
     changeBinding(isStyle, attr) {
-        const project = JSON.parse(JSON.stringify(store.getState().visProject));
+        const project = deepClone(store.getState().visProject);
         const type = isStyle ? 'style' : 'data';
         for (const wid of this.props.selectedWidgets) {
             const widget = project[this.props.selectedView].widgets[wid];
@@ -1309,7 +1308,7 @@ class Widget extends Component {
     }
 
     onGroupDelete(group) {
-        const project = JSON.parse(JSON.stringify(store.getState().visProject));
+        const project = deepClone(store.getState().visProject);
         const type = group.isStyle ? 'style' : 'data';
         this.props.selectedWidgets.forEach(wid => {
             group.fields.forEach(field => {
@@ -1409,7 +1408,7 @@ class Widget extends Component {
                 </Button>
 
                 {this.state.showWidgetCode ? <pre>
-                    {JSON.stringify(store.getState().visProject[this.props.selectedView].widgets[this.props.selectedWidgets[0]], null, 2)}
+                    {JSON.stringify(selectWidget(store.getState(), this.props.selectedView, this.props.selectedWidgets[0]), null, 2)}
                     {jsonCustomFields}
                 </pre> : null}
             </div> : null,

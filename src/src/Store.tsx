@@ -1,4 +1,6 @@
-import { createReducer, configureStore, createAction } from '@reduxjs/toolkit';
+import {
+    createReducer, configureStore, createAction, createSelector,
+} from '@reduxjs/toolkit';
 import type { View, Widget, Project } from '@/types';
 
 export const updateProject = createAction<Project>('project/update');
@@ -6,11 +8,13 @@ export const updateView = createAction<{viewId: string; data: View}>('view/updat
 export const updateWidget = createAction<{viewId: string; widgetId: string; data: Widget}>('widget/update');
 export const recalculateFields = createAction<boolean>('attributes/recalculate');
 
+const initialState = {
+    visProject: {} as Project,
+    recalculateFields: false,
+};
+
 const reducer = createReducer(
-    {
-        visProject: {} as Project,
-        recalculateFields: false,
-    },
+    initialState,
     builder => {
         builder
             .addCase(updateProject, (state, action) => {
@@ -29,6 +33,20 @@ const reducer = createReducer(
             });
     },
 );
+
+type StoreState = typeof initialState
+
+const selectProject = (state: StoreState) => state.visProject;
+
+export const selectView = createSelector([
+    selectProject,
+    (_state: StoreState, viewName: string) => viewName,
+], (project, view) => project[view]);
+
+export const selectWidget = createSelector([
+    selectView,
+    (_state: StoreState, _viewName: string, wid: string) => wid,
+], (view, wid) => view.widgets[wid]);
 
 export const store = configureStore({
     reducer,
