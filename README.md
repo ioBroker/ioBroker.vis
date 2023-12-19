@@ -229,7 +229,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.9.7 (2023-12-19)
 * (bluefox) Allowed the read only flag for Styled/Input
 
 ### 2.9.6 (2023-12-14)

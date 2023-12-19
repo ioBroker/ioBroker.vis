@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.6",
+    "version": "2.9.7",
     "news": {
+      "2.9.7": {
+        "en": "Allowed the read only flag for Styled/Input",
+        "de": "Erlaubt die nur gelesene Flagge für Styled/Input",
+        "ru": "Разрешил читать только флаг для Styled/Input",
+        "pt": "Permite a única bandeira de leitura para Styled/Input",
+        "nl": "Staan de laad vlag alleen toe voor Styled/Input",
+        "fr": "Permet le seul drapeau de lecture pour Styled/Input",
+        "it": "Consentito la sola bandiera di lettura per Styled/Input",
+        "es": "Permitió la leída bandera única para Styled/Input",
+        "pl": "Wszystko przyzwyczajało tylko flagę Styled/Input",
+        "uk": "Дозвольте читати тільки прапор для стильного / Вхід",
+        "zh-cn": "允许仅为Styled/Input的旗帜"
+      },
       "2.9.6": {
         "en": "fixed issues with the BulkEditor\nscripts in HTML are now added to the DOM, instead of being executed in eval\nfixed issues with Bulb widget if min/max was once filled\nmigrated \"speech2text\" widget to react",
         "de": "feste Probleme mit dem BulkEditor\nskripte in HTML werden nun dem DOM hinzugefügt, anstatt in eval ausgeführt zu werden\nfeste Probleme mit Bulb Widget, wenn min/max einmal gefüllt\nmigrated language2text widget zu reagieren",
@@ -80,19 +93,6 @@
         "pl": "pola obliczeniowe po poruszaniu się\ngrupa pastwiska na innej stronie\ntakże temat stały stosowane są w iframe\nwdrożone Basic Obraz jako reagujący widget",
         "uk": "recalculate поля після переміщення віджетів\nфіксована пастуюча група з іншого вигляду\nвиправлена тема також застосовується в iframe\nреалізований Головна Зображення як реагувати віджет",
         "zh-cn": "移植被后重新调整田\n其他观点的固定过去小组\n一. 固定主题也适用于一框架\n执行 A. 基本条件 一. 反应目标"
-      },
-      "2.9.0": {
-        "en": "implemented SVG shape and Screen Resolution widgets natively\nimplemented Basic iFrame as react widget\nonly allow zip files at project import\nfix overflow being overwritten\nsort pages and projects alphabetically\nfixed problem on saving\nfixed problem with groups when `always render` is activated\nallow to change color and write lowercase in tabs component\nfixed problem that navigation from a alwaysRender page is shown on different page",
-        "de": "implementiert SVG-Form und Bildschirmauflösung Widgets native\ndurchgeführt Basic iFrame als Reakt Widget\nnur erlauben zip-dateien bei projektimport\nfixer überlauf überschrieben\nsortieren von seiten und projekten alphabetisch\nproblem beim speichern\nproblem mit gruppen behoben, wenn `always render` aktiviert ist\nerlauben, die farbe zu ändern und kleinbuchstaben in tabs-komponente zu schreiben\nproblem, dass Navigation von einem immer Render-Seite wird auf verschiedenen Seiten angezeigt",
-        "ru": "реализованные виджеты SVG формы и разрешения экрана родным\nреализовано Базовый iFrame как реагирует виджет\nтолько позволяют zip-файлы в импорте проекта\nисправить переполнение быть перезаписано\nсортировать страницы и проекты по алфавиту\nфиксированная проблема на экономии\nфиксированная проблема с группами, когда `always рендер` активируется\nпозвольте изменить цвет и написать нижнюю часть в компоненте вкладок\nфиксированная проблема, навигация из всегда Страница загрузки показана на другой странице",
-        "pt": "implementada forma SVG e widgets de resolução de tela nativamente\nimplementação iFrame básico como widget de reação\napenas permitir arquivos zip na importação de projeto\ncorrigir o excesso de fluxo sendo substituído\nclassificar páginas e projetos em ordem alfabética\nproblema fixo na economia\nproblema fixo com grupos quando `sempre render` é ativado\npermitir alterar a cor e escrever minúsculas no componente tabs\nproblema fixo que a navegação de um sempre Render página é mostrada em página diferente",
-        "nl": "vertaling:\n_ Basis IFrame as react widget\nlaat alleen zip bestanden van project import\nhet wordt overdreven\npagina's en projecten alfabetisch\neen probleem met het redden van\n_\n_\neen probleem dat navigatie van een altijd Render pagina is getoond op verschillende pagina's",
-        "fr": "mis en œuvre la forme SVG et les widgets de résolution d'écran nativement\nmise en œuvre Basic iFrame as react widget\nuniquement permettre des fichiers zip à l'importation du projet\nle dépassement de débit étant écrasé\ntrier les pages et les projets par ordre alphabétique\nproblème fixe pour sauver\nproblème fixe avec les groupes quand ``toujours le rendu` est activé\npermettre de changer la couleur et d'écrire la minuscule dans le composant des onglets\nproblème fixe que la navigation d'un toujours La page Render est affichée sur différentes pages",
-        "it": "implementato SVG forma e widget di risoluzione dello schermo nativamente\nimplementato IFrame di base come widget di reazione\nconsentire solo i file zip all'importazione di progetto\ncorrezione overflow essendo sovrascritto\nordinare pagine e progetti in ordine alfabetico\nproblema fisso sul risparmio\nproblema fisso con i gruppi quando `always render` viene attivato\nconsentire di cambiare colore e scrivere minuscolo nel componente schede\nproblema fisso che la navigazione da sempre La pagina di rimborso viene visualizzata in una pagina diversa",
-        "es": "implementado SVG forma y pantalla Resolución widgets nativo\naplicadas IFrame básico como widget de reacción\nsólo permitir archivos zip en la importación de proyecto\ndesbordamiento de la solución que se ha descrito\nclasificar páginas y proyectos alfabéticamente\nproblema fijo en el ahorro\nproblema fijo con grupos cuando se activa\npermite cambiar el color y escribir minúsculas en el componente de pestañas\nproblema fijo que la navegación de un siempre Página de remitente se muestra en otra página",
-        "pl": "wdrożony kształt SVG i Rezolucja Screen Rezolucja widgets na terenie kraju\nwdrożone Basic iFrame jako reag widget\ndopuszczać pliki z zamówieniem na import\nnaprawić przepełnianie\nstrona i projekty alfabetycznie\nproblem stały\nstały problem z grupami, gdy 'always renderuje' jest aktywowany\numożliwia zmianę koloru i pisanie walizek komponentów tabeli\nstały problem nawigacji od zawsze. Oficjalna strona Render",
-        "uk": "реалізовані SVG форма і роздільна здатність екрана віджети нативно\nреалізований Basic iFrame як реагувати віджет\nzip-файли в імпорті проекту\nзафіксувати переповнення перезаписано\nсортування сторінок і проектів алфавітно\nвиправлена проблема з економії\nвиправлена проблема з групами при активації `always render`\nдозволяє змінити колір і писати нижній регістр в компоненті вкладок\nвиправлена проблема, яка навігація завжди Рендерна сторінка відображається на різних сторінках",
-        "zh-cn": "实施SVG形形状和Screen决议目标\n执行 A. 恢复原状的基本法\n仅允许项目进口的档案\nfix 外流\n页数和项目名称\n储蓄的固定问题\n在“行道”启动时,与团体的固定问题\n可在表格构成部分中改变颜色和写法。\na. 导航始终存在的固定问题 午页在不同页上显示"
       }
     },
     "title": "Visualisation Next Generation",
