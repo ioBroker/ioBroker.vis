@@ -45,6 +45,7 @@ import {
 import { theme, background } from './ViewData';
 import MaterialIconSelector from '../Components/MaterialIconSelector';
 import { store } from '../Store';
+import { deepClone } from '../Utils/utils';
 
 const styles = _theme => ({
     backgroundClass: {
@@ -330,12 +331,12 @@ const View = props => {
                     field: 'background_class',
                     // eslint-disable-next-line react/no-unstable-nested-components
                     itemModify: item => <>
-                        <span className={`${props.classes.backgroundClassSquare} ${item.value}`} />
-                        {I18n.t(item.name)}
+                        <span className={`${props.classes.backgroundClass} ${item.value}`} />
+                        {I18n.t(item.label)}
                     </>,
                     renderValue: value => <div className={props.classes.backgroundClass}>
                         <span className={`${props.classes.backgroundClassSquare} ${value}`} />
-                        {I18n.t(background.find(item => item.value === value).name)}
+                        {I18n.t(background.find(item => item.value === value).label)}
                     </div>,
                     hidden: '!!data["bg-image"]',
                 },
@@ -735,7 +736,7 @@ const View = props => {
                 },
             ],
         },
-    ]), [resolutionSelect, `${view.settings.sizex}x${view.settings.sizey}`]);
+    ]), [resolutionSelect, `${view.settings.sizex}x${view.settings.sizey}`, props.classes.backgroundClass, props.classes.backgroundClassSquare]);
 
     const [accordionOpen, setAccordionOpen] = useState(
         window.localStorage.getItem('attributesView')
@@ -926,7 +927,7 @@ const View = props => {
                                 }
 
                                 const change = changeValue => {
-                                    const project = JSON.parse(JSON.stringify(store.getState().visProject));
+                                    const project = deepClone(store.getState().visProject);
                                     if (field.notStyle) {
                                         project[props.selectedView].settings[field.field] = changeValue;
                                     } else {

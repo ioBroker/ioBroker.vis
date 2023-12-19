@@ -20,7 +20,7 @@ export const theme = [
     { value: 'ui-darkness', label: 'ui-darkness' },
     { value: 'ui-lightness', label: 'ui-lightness' },
     { value: 'vader', label: 'vader' },
-];
+] as const;
 
 export const background = [
     { value: '', label: 'not-specified' },
@@ -77,4 +77,4 @@ export const background = [
     { value: 'hq-background-blueprint-grid', label: 'Blueprint grid' },
     { value: 'hq-background-blue-flowers', label: 'Blue flowers' },
     { value: 'group-view-css-background', label: 'Group view css background' },
-];
+] as const;
