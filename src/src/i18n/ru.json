@@ -693,5 +693,6 @@
   "vis_2_widgets_widgets_tabs_variant_full_width": "полная ширина",
   "vis_2_widgets_widgets_tabs_vertical": "Вертикальный",
   "welcome_message": "Ни одного проекта пока не существует.",
-  "word-spacing": "межсловный интервал"
+  "word-spacing": "межсловный интервал",
+  "jqui_read_only": "Только чтение"
 }

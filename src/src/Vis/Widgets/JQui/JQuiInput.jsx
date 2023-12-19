@@ -101,15 +101,21 @@ class JQuiInput extends VisRxWidget {
                             max: 5,
                         },
                         {
+                            name: 'readOnly',
+                            type: 'checkbox',
+                            label: 'jqui_read_only',
+                        },
+                        {
                             name: 'withEnter',
                             type: 'checkbox',
                             label: 'jqui_with_enter_button',
+                            hidden: '!!data.readOnly',
                         },
                         {
                             name: 'buttontext',
                             type: 'text',
                             label: 'jqui_button_text',
-                            hidden: '!data.withEnter',
+                            hidden: '!data.withEnter || !!data.readOnly',
                         },
                         {
                             name: 'selectAllOnFocus',
@@ -253,9 +259,11 @@ class JQuiInput extends VisRxWidget {
                 onBlur={() => this.focused = false}
                 autoFocus={!this.props.editMode && this.state.rxData.autoFocus}
                 variant={this.state.rxData.variant === undefined ? 'standard' : this.state.rxData.variant}
+                inputProps={{ readOnly: this.state.rxData.readOnly }}
+                // eslint-disable-next-line react/jsx-no-duplicate-props
                 InputProps={{
-                    endAdornment: this.state.rxData.withEnter ? <InputAdornment position="end">
-                        {this.state.rxData.buttontext ? <Button
+                    endAdornment: this.state.rxData.withEnter && !this.state.rxData.readOnly ? <InputAdornment position="end">
+                        {this.state.rxData.buttontext? <Button
                             onClick={() => this.setValue(this.state.input)}
                             variant="contained"
                             style={{ marginBottom: 10, minWidth: 40 }}
@@ -282,6 +290,7 @@ class JQuiInput extends VisRxWidget {
                 <input
                     style={{ flexGrow: 1 }}
                     key="input"
+                    readOnly={this.state.rxData.readOnly}
                     value={this.state.input || ''}
                     ref={this.inputRef}
                     size={this.state.rxData.size || 10}
@@ -294,7 +303,7 @@ class JQuiInput extends VisRxWidget {
                     onBlur={() => this.focused = false}
                     onChange={e => this.onChange(e.target.value)}
                 />,
-                this.state.rxData.withEnter ? <IconButton
+                this.state.rxData.withEnter && !this.state.rxData.readOnly ? <IconButton
                     style={{ marginRight: 5 }}
                     key="button"
                     onClick={() => this.setValue(this.state.input)}

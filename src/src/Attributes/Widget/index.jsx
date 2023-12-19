@@ -103,6 +103,11 @@ const styles = theme => ({
             display: 'initial',
         },
     },
+    fieldDivider: {
+        width: '100%',
+        height: 2,
+        backgroundColor: '#999999',
+    },
     groupButton: {
         width: 24,
         height: 24,
@@ -1129,6 +1134,11 @@ class Widget extends Component {
                 </td>
             </tr>;
         }
+        if (field.type === 'divider') {
+            return <tr key={fieldIndex} className={this.props.classes.fieldRow}>
+                <td colSpan={2} className={this.props.classes.fieldDivider} style={field.style} />
+            </tr>;
+        }
 
         if (field.error) {
             error = Widget.checkFunction(field.error, store.getState().visProject, this.props.selectedView, this.props.selectedWidgets, field.index);
@@ -1194,7 +1204,7 @@ class Widget extends Component {
                                     alt={field.name}
                                 />
                             </div> : null}
-                        {field.type !== 'custom' || field.label ? (isBoundField ?
+                        {(field.type !== 'custom' || field.label) && !field.noBinding ? (isBoundField ?
                             <span
                                 className={this.props.classes.bindIconSpan}
                                 title={I18n.t('Deactivate binding and use field as standard input')}
@@ -1404,7 +1414,7 @@ class Widget extends Component {
                     }}
                     startIcon={<CodeIcon />}
                 >
-                    { this.state.showWidgetCode ? I18n.t('hide code') : I18n.t('show code') }
+                    {this.state.showWidgetCode ? I18n.t('hide code') : I18n.t('show code')}
                 </Button>
 
                 {this.state.showWidgetCode ? <pre>

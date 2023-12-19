@@ -123,6 +123,7 @@ Group can have the following attributes:
 - `disabled`: [optional] JS code to calculate the error state of the attribute. Syntax is the same as `hidden`. You can set it permanently to `true`.
 - `error`: [optional] JS code to calculate the error state of the attribute. Syntax is the same as `hidden`, but you may return string instead of boolean.
 - `component`: in development
+- `noBinding`: [optional] if true, no binding button will be shown for this attribute
 - `onChange`: [optional] Script, that will be called, when value of attribute will be changed. Example: 
 ```
 onChange: async (field, data, changeData, socket) => {
@@ -203,9 +204,10 @@ onChange: async (field, data, changeData, socket) => {
     - `multiline` - show multi-line editor
   - `icon64` - Select from predefined material icons as base64 (svg)
   - `help` - show help text
-    - `text` - [required] This text will be shown without label
+    - `text` - [required] This text will be shown without a label
     - `noTranslation` - [optional] if true, the text will not be translated
     - `style` - [optional] this style will be applied to the text
+  - `delimiter` - just line between fields
 
 ### Custom field editor
 Example of custom field

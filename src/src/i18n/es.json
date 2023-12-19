@@ -693,5 +693,6 @@
   "vis_2_widgets_widgets_tabs_variant_full_width": "ancho completo",
   "vis_2_widgets_widgets_tabs_vertical": "Vertical",
   "welcome_message": "Aún no existe ningún proyecto.",
-  "word-spacing": "espacio entre palabras"
+  "word-spacing": "espacio entre palabras",
+  "jqui_read_only": "Solo lectura"
 }

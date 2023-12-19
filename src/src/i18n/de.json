@@ -693,5 +693,6 @@
   "vis_2_widgets_widgets_tabs_variant_full_width": "Gesamtbreite",
   "vis_2_widgets_widgets_tabs_vertical": "Vertikal",
   "welcome_message": "Es existiert noch kein Projekt.",
-  "word-spacing": "Wortabstand"
+  "word-spacing": "Wortabstand",
+  "jqui_read_only": "Schreibgeschützt"
 }

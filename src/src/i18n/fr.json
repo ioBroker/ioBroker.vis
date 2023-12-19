@@ -693,5 +693,6 @@
   "vis_2_widgets_widgets_tabs_variant_full_width": "pleine largeur",
   "vis_2_widgets_widgets_tabs_vertical": "Vertical",
   "welcome_message": "Aucun projet n'existe encore.",
-  "word-spacing": "espacement des mots"
+  "word-spacing": "espacement des mots",
+  "jqui_read_only": "Lecture seulement"
 }
