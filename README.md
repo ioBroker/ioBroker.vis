@@ -229,6 +229,9 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Allowed the read only flag for Styled/Input
+
 ### 2.9.6 (2023-12-14)
 * (foxriver76) fixed issues with the BulkEditor
 * (foxriver76) scripts in HTML are now added to the DOM, instead of being executed in eval
