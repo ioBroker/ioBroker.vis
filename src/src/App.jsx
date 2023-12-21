@@ -999,7 +999,6 @@ class App extends Runtime {
 
     renameProject = async (fromProjectName, toProjectName) => {
         try {
-            // const files = await this.socket.readDir(this.adapterId, fromProjectName);
             await this.socket.rename(this.adapterId, fromProjectName, toProjectName);
             if (this.state.projectName === fromProjectName) {
                 window.location.href = `?${toProjectName}${window.location.hash || ''}`;

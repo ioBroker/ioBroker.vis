@@ -72,17 +72,15 @@ class VisView extends React.Component {
         this.oldFilter = JSON.stringify((props.viewsActiveFilter && props.viewsActiveFilter[this.props.view]) || []);
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         this.updateViewWidth();
 
-        this.promiseToCollect
-            .then(() => {
-                this.props.context.linkContext.registerViewRef(this.props.view, this.refView, this.onCommand);
+        await this.promiseToCollect;
+        this.props.context.linkContext.registerViewRef(this.props.view, this.refView, this.onCommand);
 
-                this.loadJqueryTheme(this.getJQueryThemeName())
-                    .then(() => this.setState({ mounted: true }, () =>
-                        this.registerEditorHandlers()));
-            });
+        await this.loadJqueryTheme(this.getJQueryThemeName());
+        this.setState({ mounted: true }, () =>
+            this.registerEditorHandlers());
     }
 
     componentWillUnmount() {
@@ -489,7 +487,6 @@ class VisView extends React.Component {
         this.movement.moved = true;
         this.movement.x = e.pageX - this.movement.startX;
         this.movement.y = e.pageY - this.movement.startY;
-        // console.log(this.movement.x, this.movement.y, this.movement.startX, this.movement.startY, e.pageX, e.pageY);
 
         const viewRect = this.refView.current.getBoundingClientRect();
 
@@ -897,7 +894,7 @@ class VisView extends React.Component {
         />;
     }
 
-    loadJqueryTheme(jQueryTheme) {
+    async loadJqueryTheme(jQueryTheme) {
         if (VisView.themeCache[jQueryTheme] && this.props.view) {
             let data = VisView.themeCache[jQueryTheme];
             const _view = `visview_${this.props.view.replace(/\s/g, '_')}`;
@@ -907,13 +904,10 @@ class VisView extends React.Component {
             data = data.replace(/images/g, `../../lib/css/themes/jquery-ui/${jQueryTheme}/images`);
 
             this.setState({ loadedjQueryTheme: jQueryTheme, themeCode: data });
-            return Promise.resolve();
-        }
-
-        return fetch(`../../lib/css/themes/jquery-ui/${jQueryTheme}/jquery-ui.min.css`)
-            .then(resp => resp.text())
-            .then(data => {
-                this.loadingTheme = false;
+        } else {
+            try {
+                const resp = await fetch(`../../lib/css/themes/jquery-ui/${jQueryTheme}/jquery-ui.min.css`);
+                let data = await resp.text();
                 VisView.themeCache[jQueryTheme] = data;
 
                 const _view = `visview_${this.props.view.replace(/\s/g, '_')}`;
@@ -923,8 +917,12 @@ class VisView extends React.Component {
                 data = data.replace(/images/g, `../../lib/css/themes/jquery-ui/${jQueryTheme}/images`);
 
                 this.setState({ loadedjQueryTheme: jQueryTheme, themeCode: data });
-            })
-            .catch(error => console.warn(`Cannot load jQueryUI theme "${jQueryTheme}": ${error}`));
+            } catch (e) {
+                console.warn(`Cannot load jQueryUI theme "${jQueryTheme}": ${e.stack}`);
+            }
+        }
+
+        this.loadingTheme = false;
     }
 
     getJQueryThemeName() {
@@ -1170,16 +1168,12 @@ class VisView extends React.Component {
             relativeStyle.display = settings.style.display || 'flex';
 
             if (relativeStyle.display === 'flex') {
-                // relativeStyle.flexDirection = 'row';
                 relativeStyle.flexWrap = 'wrap';
                 relativeStyle.columnGap = 8;
 
                 if (isVarFinite(settings.columnGap)) {
                     relativeStyle.columnGap = parseInt(settings.columnGap, 10);
                 }
-                // relativeStyle.justifyContent = settings.style.justifyContent || 'center';
-                // relativeStyle.alignItems = settings.style.alignItems || 'flex-start';
-                // relativeStyle.alignItems = settings.style.alignItems || 'flex-start';
             }
         }
         relativeStyle.position = 'absolute';

@@ -232,6 +232,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 ### **WORK IN PROGRESS**
 * (foxriver76) fixed bug that no labels are shown for background
 * (foxriver76) prevent short flashing of widgets with visibility condition at page load
+* (foxriver76) fixed issue on theme switch
 
 ### 2.9.7 (2023-12-19)
 * (bluefox) Allowed the read only flag for Styled/Input
