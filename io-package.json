@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.7",
+    "version": "2.9.8",
     "news": {
+      "2.9.8": {
+        "en": "fixed bug that no labels are shown for background\nprevent short flashing of widgets with visibility condition at page load\nfixed issue on theme switch",
+        "de": "fehler behoben, dass keine etiketten für hintergrund angezeigt werden\nverhindern kurzes aufblitzen von widgets mit sichtbedingung bei seitenlast\nfestes problem beim themaschalter",
+        "ru": "исправлена ошибка, которую никакие ярлыки не показаны для фона\nпредотвратить короткую прошивку виджетов с условием видимости на загрузке страницы\nфиксированная проблема на переключателе темы",
+        "pt": "bug fixo que nenhum rótulos são mostrados para fundo\nevitar flashing curto de widgets com condição de visibilidade na carga da página\nproblema fixo no interruptor de tema",
+        "nl": "vertaling:\nverhinderen korte flitsen met zichtbaarheidsconditie op pagina lading\n_",
+        "fr": "bug fixe qu'aucune étiquette n'est montrée pour l'arrière-plan\nempêcher l'éclairage court des widgets avec l'état de visibilité à la charge de page\nnuméro fixe sur l'interrupteur de thème",
+        "it": "bug fisso che non vengono mostrate etichette per sfondo\nevitare breve lampeggiamento di widget con condizione di visibilità al carico di pagina\nproblema fisso sull'interruttore a tema",
+        "es": "bug fijo que no se muestran etiquetas para el fondo\npreviene el flasheo corto de widgets con condición de visibilidad en la carga de la página\ncuestión fija en el interruptor de tema",
+        "pl": "ostateczne błędy, które nie są widoczne na tle, nie są widoczne\nzapobieganie krótkiego błyskawicznego widżetu z warunkowaniem widoczności na stronie obciążeniowej\nbieżący problem w przełączniku tematycznym",
+        "uk": "виправлені помилки, які не відображаються етикеток для фону\nзапобігання короткого спалаху віджетів з умовою видимості на завантаження сторінки\nвиправлений номер на тему перемикач",
+        "zh-cn": "b 固定的标签没有按背景标明\n防止在页装载上有可见度的突发目标\n主题转换的固定问题"
+      },
       "2.9.7": {
         "en": "Allowed the read only flag for Styled/Input",
         "de": "Erlaubt die nur gelesene Flagge für Styled/Input",
@@ -80,19 +93,6 @@
         "pl": "reaktywacja stała w komponentach dostosowań do niestandardowych komponentów\nstały import dla grup\npo utworzeniu grupy jest obecnie wybierany przed wyborem\nobecnie pola są aktualizowane, gdy przenoszone przez klawiaturę",
         "uk": "фіксована реактивність в нестандартних компонентах\nфіксований імпорт для груп\nпісля створення групи зараз\nполя тепер оновлюються при переході через клавіатуру",
         "zh-cn": "习惯组成部分的固定反应\n固定进口集团\n成立集团后,现在先当选\n现已通过关键载板移入外地。"
-      },
-      "2.9.1": {
-        "en": "recalculate fields after moving widgets\nfixed pasting group on other view\nfixed theme also applied in iframe\nimplemented Basic Image as react widget",
-        "de": "felder nach bewegten widgets neu berechnen\nfeste pastengruppe auf andere sicht\nfestes thema auch in iframe angewendet\ndurchgeführt Grund Bild als reagierendes Widget",
-        "ru": "пересчитать поля после перемещения виджетов\nфиксированная пастельная группа на другом взгляде\nфиксированная тема также применяется в iframe\nреализовано Базовый Изображение как реагирует виджет",
-        "pt": "recalcular campos após mover widgets\ngrupo de colar fixo em outra vista\ntema fixo também aplicado em iframe\nimplementação Básico Imagem como widget de reação",
-        "nl": "realculeren velden na het verplaatsen van wedgets\nvertaling:\n_\n_ Basis Vertaling:",
-        "fr": "recalculer les champs après le déplacement des widgets\ngroupe de passe fixe sur une autre vue\nthème fixe également appliqué dans iframe\nmise en œuvre Base Image comme widget de réaction",
-        "it": "ricalcolare i campi dopo aver spostato i widget\ngruppo di incollaggio fisso su altra vista\ntema fisso applicato anche in iframe\nimplementato Di base Immagine come widget di reazione",
-        "es": "recalcular campos después de mover widgets\ngrupo de pasto fijo en otro punto de vista\ntema fijo también aplicado en iframe\naplicadas Básico Imagen como widget de reacción",
-        "pl": "pola obliczeniowe po poruszaniu się\ngrupa pastwiska na innej stronie\ntakże temat stały stosowane są w iframe\nwdrożone Basic Obraz jako reagujący widget",
-        "uk": "recalculate поля після переміщення віджетів\nфіксована пастуюча група з іншого вигляду\nвиправлена тема також застосовується в iframe\nреалізований Головна Зображення як реагувати віджет",
-        "zh-cn": "移植被后重新调整田\n其他观点的固定过去小组\n一. 固定主题也适用于一框架\n执行 A. 基本条件 一. 反应目标"
       }
     },
     "title": "Visualisation Next Generation",
