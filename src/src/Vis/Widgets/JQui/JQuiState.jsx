@@ -26,6 +26,7 @@ import {
     FormControl,
     InputLabel,
     FormLabel, Slider,
+    List,
 } from '@mui/material';
 
 import {
@@ -132,6 +133,12 @@ class JQuiState extends VisRxWidget {
                             type: 'number',
                             hidden: data => data.type !== 'slider',
                         },
+                        {
+                            name: 'open',
+                            label: 'jqui_open',
+                            type: 'checkbox',
+                            hidden: data => data.type !== 'select',
+                        },
                     ],
                 },
                 {
@@ -224,7 +231,7 @@ class JQuiState extends VisRxWidget {
         await super.componentDidMount();
 
         // convert old tplJquiRadioList data to JquiState data
-        if (this.props.tpl === 'tplJquiRadioList' && this.state.data && this.state.data.values && this.state.data.texts && this.props.context.onWidgetsChanged) {
+        if ((this.props.tpl === 'tplJquiRadioList' || this.props.tpl === 'tplJquiSelectList') && this.state.data && this.state.data.values && this.state.data.texts && this.props.context.onWidgetsChanged) {
             // convert
             const values = this.state.data.values.split(';');
             const texts = this.state.data.texts.split(';');
@@ -237,6 +244,7 @@ class JQuiState extends VisRxWidget {
                 data[`text${i}`] = texts[i - 1];
                 data[`g_states-${i}`] = true;
             }
+            data.type = this.props.tpl === 'tplJquiRadioList' ? 'radio' : 'select';
             setTimeout(() => this.props.context.onWidgetsChanged([{
                 wid: this.props.id,
                 view: this.props.view,
@@ -339,7 +347,7 @@ class JQuiState extends VisRxWidget {
 
     renderIcon(i, selectedIndex) {
         let color;
-        let icon = this.state.rxData[`icon${i}`];
+        let icon = this.state.rxData[`icon${i}`] || this.state.rxData[`image${i}`];
         if (icon && this.state.rxData[`color${i}`]) {
             color = this.state.rxData[`color${i}`];
             if (i === selectedIndex && this.state.rxData[`activeColor${i}`]) {
@@ -351,9 +359,13 @@ class JQuiState extends VisRxWidget {
             if (icon.startsWith('_PRJ_NAME/')) {
                 icon = icon.replace('_PRJ_NAME/', `../${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}/`);
             }
+            const style = { color };
+            style.width = 'auto';
+            style.height = 24;
+
             return <Icon
                 key="icon"
-                style={{ color }}
+                style={style}
                 src={icon}
             />;
         }
@@ -448,6 +460,7 @@ class JQuiState extends VisRxWidget {
             selected={selectedIndex === i}
             style={buttonStyle}
             value={this.state.rxData[`value${i}`]}
+            onClick={this.state.rxData.open ? () => this.onClick(i) : undefined}
         >
             {text || icon}
         </MenuItem>;
@@ -531,14 +544,26 @@ class JQuiState extends VisRxWidget {
                 variant = 'outlined';
             }
 
-            content = <Select
-                style={{ width: '100%', height: '100%' }}
-                value={this.state.value}
-                onChange={e => this.onClick(this.getSelectedIndex(e.target.value))}
-                variant={variant}
-            >
-                {buttons}
-            </Select>;
+            if (this.state.rxData.open) {
+                content = <List
+                    style={{ width: '100%', height: '100%' }}
+                    value={this.state.value}
+                    onChange={e => this.onClick(this.getSelectedIndex(e.target.value))}
+                    variant={variant}
+                >
+                    {buttons}
+                </List>;
+            } else {
+                content = <Select
+                    style={{ width: '100%', height: '100%' }}
+                    value={this.state.value}
+                    onChange={e => this.onClick(this.getSelectedIndex(e.target.value))}
+                    variant={variant}
+                >
+                    {buttons}
+                </Select>;
+
+            }
         } else if (this.state.rxData.type === 'slider') {
             props.style.overflow = 'visible';
             const marks = [];

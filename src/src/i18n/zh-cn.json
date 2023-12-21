@@ -694,5 +694,6 @@
   "vis_2_widgets_widgets_tabs_vertical": "垂直的",
   "welcome_message": "目前还没有一个项目存在。",
   "word-spacing": "字间距",
-  "jqui_read_only": "只读"
+  "jqui_read_only": "只读",
+  "jqui_open": "作为列表"
 }

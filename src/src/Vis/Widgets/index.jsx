@@ -35,6 +35,7 @@ import JQuiBinaryState from './JQui/JQuiBinaryState';
 import JQuiRadio from './JQui/JQuiRadio';
 import JQuiState from './JQui/JQuiState';
 import JQuiRadioList from './JQui/JQuiRadioList';
+import JQuiSelectList from './JQui/JQuiSelectList';
 import JQuiWriteState from './JQui/JQuiWriteState';
 import JQuiSlider from './JQui/JQuiSlider';
 import JQuiSliderVertical from './JQui/JQuiSliderVertical';
@@ -81,6 +82,7 @@ const WIDGETS = [
     JQuiRadio,
     JQuiState,
     JQuiRadioList,
+    JQuiSelectList,
     JQuiWriteState,
     JQuiSlider,
     JQuiSliderVertical,

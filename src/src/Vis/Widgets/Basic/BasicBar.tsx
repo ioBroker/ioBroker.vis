@@ -3,7 +3,7 @@ import React from 'react';
 import { GetRxDataFromWidget, RxRenderWidgetProps } from '@/types';
 import VisRxWidget from '@/Vis/visRxWidget';
 
-type RxData = GetRxDataFromWidget<typeof BasicBar>
+type RxData = GetRxDataFromWidget<typeof BasicBar>;
 
 export default class BasicBar extends VisRxWidget<RxData> {
     /**

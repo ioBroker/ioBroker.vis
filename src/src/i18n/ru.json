@@ -694,5 +694,6 @@
   "vis_2_widgets_widgets_tabs_vertical": "Вертикальный",
   "welcome_message": "Ни одного проекта пока не существует.",
   "word-spacing": "межсловный интервал",
-  "jqui_read_only": "Только чтение"
+  "jqui_read_only": "Только чтение",
+  "jqui_open": "Как список"
 }

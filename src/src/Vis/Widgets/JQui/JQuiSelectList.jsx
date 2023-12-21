@@ -19,16 +19,16 @@ import PropTypes from 'prop-types';
 import JQuiState from './JQuiState';
 import JQuiButton from "./JQuiButton";
 
-class JQuiRadioList extends JQuiState {
+class JQuiSelectList extends JQuiState {
     static getWidgetInfo() {
         const widgetInfo = JQuiState.getWidgetInfo();
         const newWidgetInfo = {
-            id: 'tplJquiRadioList',
+            id: 'tplJquiSelectList',
             visSet: 'jqui',
-            visName: 'Radiobuttons ValueList',
-            visWidgetLabel: 'jqui_radio_list',
-            visPrev: 'widgets/jqui/img/Prev_RadioList.png',
-            visOrder: 15,
+            visName: 'Select ValueList',
+            visWidgetLabel: 'jqui_select_list',
+            visPrev: 'widgets/jqui/img/Prev_SelectList.png',
+            visOrder: 16,
             visAttrs: widgetInfo.visAttrs,
             visDefaultStyle: {
                 width: 250,
@@ -37,7 +37,7 @@ class JQuiRadioList extends JQuiState {
         };
 
         const type = JQuiButton.findField(newWidgetInfo, 'type');
-        type.default = 'radio';
+        type.default = 'select';
 
         // Add note
         newWidgetInfo.visAttrs[0].fields.unshift({
@@ -51,11 +51,11 @@ class JQuiRadioList extends JQuiState {
 
     // eslint-disable-next-line class-methods-use-this
     getWidgetInfo() {
-        return JQuiRadioList.getWidgetInfo();
+        return JQuiSelectList.getWidgetInfo();
     }
 }
 
-JQuiRadioList.propTypes = {
+JQuiSelectList.propTypes = {
     id: PropTypes.string.isRequired,
     context: PropTypes.object.isRequired,
     view: PropTypes.string.isRequired,
@@ -63,4 +63,4 @@ JQuiRadioList.propTypes = {
     tpl: PropTypes.string.isRequired,
 };
 
-export default JQuiRadioList;
+export default JQuiSelectList;

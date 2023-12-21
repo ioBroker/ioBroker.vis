@@ -229,6 +229,9 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) migrated jQui select widget to react
+ 
 ### 2.9.8 (2023-12-21)
 * (foxriver76) fixed bug that no labels are shown for background
 * (foxriver76) prevent short flashing of widgets with visibility condition at page load

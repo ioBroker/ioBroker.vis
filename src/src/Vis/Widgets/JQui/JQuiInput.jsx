@@ -263,7 +263,7 @@ class JQuiInput extends VisRxWidget {
                 // eslint-disable-next-line react/jsx-no-duplicate-props
                 InputProps={{
                     endAdornment: this.state.rxData.withEnter && !this.state.rxData.readOnly ? <InputAdornment position="end">
-                        {this.state.rxData.buttontext? <Button
+                        {this.state.rxData.buttontext ? <Button
                             onClick={() => this.setValue(this.state.input)}
                             variant="contained"
                             style={{ marginBottom: 10, minWidth: 40 }}
