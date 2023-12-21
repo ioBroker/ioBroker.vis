@@ -271,7 +271,7 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
         return false;
     }
 
-    async calculateFirst(useStates = false): Promise<void> {
+    async calculateFirst(useStates?: boolean | undefined): Promise<void> {
         const newState: Pick<BulkEditorState, keyof BulkEditorState> = {
             ...this.state,
             dialog: true,

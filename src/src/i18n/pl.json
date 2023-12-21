@@ -695,5 +695,7 @@
   "welcome_message": "Żaden projekt jeszcze nie istnieje.",
   "word-spacing": "odstępy między wyrazami",
   "jqui_read_only": "Tylko czytać",
-  "jqui_open": "Jako lista"
+  "jqui_open": "Jako lista",
+  "jqui_push_mode_tooltip": "Po naciśnięciu przycisku zostanie zapisane „prawda”, a po zwolnieniu przycisku zostanie zapisane „fałsz”.",
+  "jqui_push_mode": "Tryb pchania"
 }

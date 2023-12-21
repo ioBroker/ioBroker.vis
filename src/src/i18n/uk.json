@@ -695,5 +695,7 @@
   "welcome_message": "Жодного проекту ще немає.",
   "word-spacing": "міжсловний інтервал",
   "jqui_read_only": "Лише для читання",
-  "jqui_open": "Як список"
+  "jqui_open": "Як список",
+  "jqui_push_mode_tooltip": "При натисканні кнопки буде написано «true», а коли ви відпустите кнопку, буде написано «false».",
+  "jqui_push_mode": "Режим Push"
 }

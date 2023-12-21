@@ -695,5 +695,7 @@
   "welcome_message": "Er is nog geen enkel project.",
   "word-spacing": "woordspatiëring",
   "jqui_read_only": "Alleen lezen",
-  "jqui_open": "Als lijst"
+  "jqui_open": "Als lijst",
+  "jqui_push_mode_tooltip": "Als u op de knop drukt, wordt 'true' geschreven en als u de knop loslaat, wordt 'false' geschreven.",
+  "jqui_push_mode": "Push-modus"
 }

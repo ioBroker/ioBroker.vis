@@ -695,5 +695,7 @@
   "welcome_message": "Es existiert noch kein Projekt.",
   "word-spacing": "Wortabstand",
   "jqui_read_only": "Schreibgeschützt",
-  "jqui_open": "Als Liste"
+  "jqui_open": "Als Liste",
+  "jqui_push_mode_tooltip": "Durch Drücken der Taste wird „true“ geschrieben und wenn Sie die Taste loslassen, wird „false“ geschrieben.",
+  "jqui_push_mode": "Drück-Modus"
 }

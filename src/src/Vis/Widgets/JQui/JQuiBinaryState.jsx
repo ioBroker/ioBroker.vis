@@ -67,6 +67,13 @@ class JQuiBinaryState extends VisRxWidget {
                             type: 'checkbox',
                         },
                         {
+                            name: 'pushMode',
+                            type: 'checkbox',
+                            label: 'jqui_push_mode',
+                            tooltip: 'jqui_push_mode_tooltip',
+                            hidden: data => data.type !== 'button' && data.type !== 'round-button' && data.type !== 'image',
+                        },
+                        {
                             name: 'click_id',
                             type: 'id',
                             noSubscribe: true,
@@ -330,6 +337,26 @@ class JQuiBinaryState extends VisRxWidget {
         this.setState({ isOn });
     }
 
+    // "My" is used to avoid conflicts with parent class
+    onMyMouseDown() {
+        const oid = this.getControlOid();
+        if (oid) {
+            this.props.context.setValue(oid, this.state.rxData.invert ? false : true);
+        }
+
+        this.setState({ isOn: true });
+    }
+
+    // "My" is used to avoid conflicts with parent class
+    onMyMouseUp() {
+        const oid = this.getControlOid();
+        if (oid) {
+            this.props.context.setValue(oid, this.state.rxData.invert ? true : false);
+        }
+
+        this.setState({ isOn: false });
+    }
+
     isOn() {
         let value;
         if (this.props.editMode && (this.state.rxData.test === true || this.state.rxData.test === false)) {
@@ -450,7 +477,9 @@ class JQuiBinaryState extends VisRxWidget {
         return <Button
             variant={this.state.rxData.variant === undefined ? 'contained' : this.state.rxData.variant}
             color={isOn ? 'primary' : 'grey'}
-            onClick={() => this.onClick()}
+            onMouseDown={this.state.rxData.pushMode && !this.state.rxData.readOnly && !this.props.editMode ? () => this.onMyMouseDown() : undefined}
+            onMouseUp={this.state.rxData.pushMode && !this.state.rxData.readOnly && !this.props.editMode ? () => this.onMyMouseUp() : undefined}
+            onClick={!this.state.rxData.pushMode && !this.state.rxData.readOnly && !this.props.editMode ? () => this.onClick() : undefined}
             style={style}
         >
             {icon}
@@ -467,7 +496,9 @@ class JQuiBinaryState extends VisRxWidget {
         return <Fab
             style={style}
             color={isOn ? 'primary' : 'grey'}
-            onClick={() => this.onClick()}
+            onMouseDown={this.state.rxData.pushMode && !this.state.rxData.readOnly && !this.props.editMode ? () => this.onMyMouseDown() : undefined}
+            onMouseUp={this.state.rxData.pushMode && !this.state.rxData.readOnly && !this.props.editMode ? () => this.onMyMouseUp() : undefined}
+            onClick={!this.state.rxData.pushMode && !this.state.rxData.readOnly && !this.props.editMode ? () => this.onClick() : undefined}
         >
             {icon || text.text}
         </Fab>;

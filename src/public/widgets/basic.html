@@ -1,3 +1,4 @@
+<script src="../../src/Vis/Widgets/JQui/JQuiBinaryState.jsx"></script>
 <link rel="stylesheet" type="text/css" href="widgets/basic/css/table.css" />
 <script type="text/javascript" src="widgets/basic/js/table.js"></script>
 
@@ -434,34 +435,41 @@
 
             if (!vis.editMode) {
                 var moved = false;
-                $this.on('click touchend', function (e) {
-                    // Protect against two events
-                    if (vis.detectBounce(this)) return;
-
-                    if (moved) return;
-
-                    var oid = $(this).attr('data-ctrl-oid');
-
-                    if ($(this).attr('url-value')) {
-                        vis.conn.httpGet($(this).attr('url-value'));
-                    }
-
-                    if (oid) {
-                        var val = $(this).attr('data-val');
-                        if (val === undefined || val === null) val = false;
-                        if (val === 'true')  val = true;
-                        if (val === 'false') val = false;
-                        if (parseFloat(val).toString() == val) {
-                            val = parseFloat(val);
+                $this
+                    .on('click touchend', function (e) {
+                        // Protect against two events
+                        if (vis.detectBounce(this)) {
+                            return;
                         }
 
-                        oid && vis.setValue(oid, val);
-                    }
-                }).on('touchmove', function () {
-                    moved = true;
-                }).on('touchstart', function () {
-                    moved = false;
-                });
+                        if (moved) {
+                            return;
+                        }
+
+                        var oid = $(this).attr('data-ctrl-oid');
+
+                        if ($(this).attr('url-value')) {
+                            vis.conn.httpGet($(this).attr('url-value'));
+                        }
+
+                        if (oid) {
+                            var val = $(this).attr('data-val');
+                            if (val === undefined || val === null) val = false;
+                            if (val === 'true')  val = true;
+                            if (val === 'false') val = false;
+                            if (parseFloat(val).toString() == val) {
+                                val = parseFloat(val);
+                            }
+
+                            oid && vis.setValue(oid, val);
+                        }
+                    })
+                    .on('touchmove', function () {
+                        moved = true;
+                    })
+                    .on('touchstart', function () {
+                        moved = false;
+                    });
             }
         },
         pressed: null,

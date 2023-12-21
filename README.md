@@ -230,7 +230,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 -->
 ## Changelog
 ### **WORK IN PROGRESS**
-* (bluefox) migrated jQui select widget to react
+* (bluefox) migrated jQui select, jQui Radio steps widgets to react
  
 ### 2.9.8 (2023-12-21)
 * (foxriver76) fixed bug that no labels are shown for background

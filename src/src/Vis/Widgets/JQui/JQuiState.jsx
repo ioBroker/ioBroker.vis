@@ -230,6 +230,44 @@ class JQuiState extends VisRxWidget {
     async componentDidMount() {
         await super.componentDidMount();
 
+        // convert old tplJquiRadioSteps data to JquiState data
+        if (this.props.tpl === 'tplJquiRadioSteps' && this.state.data && this.props.context.onWidgetsChanged && this.state.data.count === undefined) {
+            const data = JSON.parse(JSON.stringify(this.state.data));
+
+            data.count = 5;
+            const min = parseFloat(data.min || 0, 10);
+            const max = parseFloat(data.max || 100, 10);
+
+            data.value1 = min;
+            data.text1 = I18n.t('jqui_off');
+            data['g_states-1'] = true;
+
+            data.value5 = max;
+            data.text5 = '100%';
+            data['g_states-5'] = true;
+
+            data.value2 = (max - min) * 0.25 + min;
+            data.text2 = '25%';
+            data['g_states-2'] = true;
+
+            data.value3 = (max - min) * 0.5 + min;
+            data.text3 = '50%';
+            data['g_states-3'] = true;
+
+            data.value4 = (max - min) * 0.75 + min;
+            data.text4 = '75%';
+            data['g_states-4'] = true;
+
+            data.min = null;
+            data.max = null;
+
+            setTimeout(() => this.props.context.onWidgetsChanged([{
+                wid: this.props.id,
+                view: this.props.view,
+                data,
+            }]), 100);
+        }
+
         // convert old tplJquiRadioList data to JquiState data
         if ((this.props.tpl === 'tplJquiRadioList' || this.props.tpl === 'tplJquiSelectList') && this.state.data && this.state.data.values && this.state.data.texts && this.props.context.onWidgetsChanged) {
             // convert
@@ -556,13 +594,12 @@ class JQuiState extends VisRxWidget {
             } else {
                 content = <Select
                     style={{ width: '100%', height: '100%' }}
-                    value={this.state.value}
+                    value={this.state.value === undefined ? '' : this.state.value}
                     onChange={e => this.onClick(this.getSelectedIndex(e.target.value))}
                     variant={variant}
                 >
                     {buttons}
                 </Select>;
-
             }
         } else if (this.state.rxData.type === 'slider') {
             props.style.overflow = 'visible';

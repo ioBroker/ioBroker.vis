@@ -695,5 +695,7 @@
   "welcome_message": "目前还没有一个项目存在。",
   "word-spacing": "字间距",
   "jqui_read_only": "只读",
-  "jqui_open": "作为列表"
+  "jqui_open": "作为列表",
+  "jqui_push_mode_tooltip": "按下按钮时，将写入“true”，松开按钮时，将写入“false”。",
+  "jqui_push_mode": "推送模式"
 }

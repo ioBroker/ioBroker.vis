@@ -695,5 +695,7 @@
   "welcome_message": "Aucun projet n'existe encore.",
   "word-spacing": "espacement des mots",
   "jqui_read_only": "Lecture seulement",
-  "jqui_open": "Comme liste"
+  "jqui_open": "Comme liste",
+  "jqui_push_mode_tooltip": "En appuyant sur le bouton, « vrai » sera écrit et lorsque vous relâcherez le bouton, « faux » sera écrit.",
+  "jqui_push_mode": "Mode poussée"
 }
