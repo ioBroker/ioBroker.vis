@@ -102,9 +102,20 @@ interface VisBaseWidgetState {
     disabled: boolean;
 }
 
+interface VisRxWidgetStateValues {
+    /** State value */
+    [values: `${string}.val`]: any;
+    /** State from */
+    [from: `${string}.from`]: string;
+    /** State timestamp */
+    [timestamp: `${string}.ts`]: number;
+    /** State last change */
+    [timestamp: `${string}.lc`]: number;
+}
+
 interface VisRxWidgetState extends VisBaseWidgetState {
     rxData: RxData;
-    values: Record<string, any>;
+    values: VisRxWidgetStateValues;
 }
 
 /** TODO: this overload can be removed as soon as VisBaseWidget is written correctly in TS */
@@ -296,6 +307,7 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
         Object.keys(this.linkContext.bindings).forEach(_id => this.applyBinding(_id, this.newState));
 
         this.newState.visible = this.checkVisibility(id, this.newState);
+
         // @ts-expect-error fix later
         const userGroups = this.newState.rxData['visibility-groups'];
         this.newState.disabled = false;

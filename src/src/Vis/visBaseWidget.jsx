@@ -996,6 +996,11 @@ class VisBaseWidget extends React.Component {
         const condition = widgetData['visibility-cond'];
 
         if (oid) {
+            if (!Object.keys(states).includes(`${oid}.val`)) {
+                // if we don't have state information yet - hide to prevent shortly showing widget during render
+                return true;
+            }
+
             let val = states[`${oid}.val`];
 
             if (val === undefined || val === null) {
