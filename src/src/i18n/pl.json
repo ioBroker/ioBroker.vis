@@ -393,7 +393,6 @@
   "Widgets": "Widżety",
   "Width": "Szerokość",
   "Width x height (px)": "Szerokość x wysokość (px)",
-  "Write value": "Zapisz wartość",
   "Writer": "Pisarz",
   "Wrong password": "Złe hasło",
   "Yes": "TAk",
@@ -704,5 +703,6 @@
   "jqui_radio_steps": "Przycisk opcji (kroki)",
   "Select object ID": "Wybierz identyfikator obiektu",
   "jqui_equal_text_length_tooltip": "Jeśli jest aktywowane, długości tekstów dla prawdy i fałszu będą równe, więc ikona pozostanie w tym samym miejscu w stanach „wyłączony” i „włączony”.",
-  "jqui_equal_text_length": "Równa długość tekstu"
+  "jqui_equal_text_length": "Równa długość tekstu",
+  "jqui_write_value": "Zapisz wartość"
 }

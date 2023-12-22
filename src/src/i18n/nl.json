@@ -393,7 +393,6 @@
   "Widgets": "Widgets",
   "Width": "Breedte",
   "Width x height (px)": "Breedte x hoogte (px)",
-  "Write value": "Schrijf waarde",
   "Writer": "auteur",
   "Wrong password": "Verkeerd wachtwoord",
   "Yes": "Ja",
@@ -704,5 +703,6 @@
   "jqui_radio_steps": "Keuzerondje (stappen)",
   "Select object ID": "Selecteer object-ID",
   "jqui_equal_text_length_tooltip": "Indien geactiveerd, zullen de lengtes van de teksten voor waar en onwaar gelijk zijn, zodat het pictogram op dezelfde plaats blijft in de status \"uit\" en \"aan\".",
-  "jqui_equal_text_length": "Gelijke tekstlengtes"
+  "jqui_equal_text_length": "Gelijke tekstlengtes",
+  "jqui_write_value": "Schrijf waarde"
 }

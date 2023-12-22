@@ -393,7 +393,6 @@
   "Widgets": "小部件",
   "Width": "宽度",
   "Width x height (px)": "宽度 x 高度（像素）",
-  "Write value": "写入值",
   "Writer": "作家",
   "Wrong password": "密码错误",
   "Yes": "是的",
@@ -704,5 +703,6 @@
   "jqui_radio_steps": "单选按钮（步骤）",
   "Select object ID": "选择对象 ID",
   "jqui_equal_text_length_tooltip": "如果激活，则 true 和 false 的文本长度将相等，因此图标在“关闭”和“打开”状态下将保持在同一位置。",
-  "jqui_equal_text_length": "相等的文本长度"
+  "jqui_equal_text_length": "相等的文本长度",
+  "jqui_write_value": "写入值"
 }

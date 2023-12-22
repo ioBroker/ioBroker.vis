@@ -21,6 +21,7 @@ import {
 } from '@mui/material';
 
 import {
+    I18n,
     Icon,
 } from '@iobroker/adapter-react-v5';
 
@@ -39,7 +40,7 @@ class JQuiWriteState extends VisRxWidget {
             id: 'tplIconState',
             visSet: 'jqui',
             visName: 'Icon State',
-            visWidgetLabel: 'Write value',
+            visWidgetLabel: 'jqui_write_value',
             visPrev: 'widgets/jqui/img/Prev_WriteState.png',
             visOrder: 26,
             visAttrs: [
@@ -176,7 +177,7 @@ class JQuiWriteState extends VisRxWidget {
                         {
                             name: 'text',
                             type: 'text',
-                            default: 'Write state',
+                            default: I18n.t('Write state'),
                         },
                         {
                             name: 'src',
@@ -228,7 +229,7 @@ class JQuiWriteState extends VisRxWidget {
     }
 
     async componentDidMount() {
-        super.componentDidMount();
+        await super.componentDidMount();
         if (this.state.rxData.oid && this.state.rxData.oid !== 'nothing_selected') {
             try {
                 const state = await this.props.context.socket.getState(this.state.rxData.oid);
@@ -401,7 +402,7 @@ class JQuiWriteState extends VisRxWidget {
     }
 
     async componentWillUnmount() {
-        super.componentWillUnmount();
+        await super.componentWillUnmount();
         this.iterateInterval && clearInterval(this.iterateInterval);
         this.iterateInterval = null;
         this.iterateTimeout && clearTimeout(this.iterateTimeout);

@@ -393,7 +393,6 @@
   "Widgets": "Віджети",
   "Width": "Ширина",
   "Width x height (px)": "Ширина х висота (px)",
-  "Write value": "Напишіть значення",
   "Writer": "Письменник",
   "Wrong password": "Неправильний пароль",
   "Yes": "Так",
@@ -704,5 +703,6 @@
   "jqui_radio_steps": "Перемикач (кроки)",
   "Select object ID": "Виберіть ID об'єкта",
   "jqui_equal_text_length_tooltip": "Якщо активовано, довжина текстів для true та false буде однаковою, тому значок залишатиметься на тому самому місці у «вимкненому» та «увімкненому» станах.",
-  "jqui_equal_text_length": "Рівна довжина тексту"
+  "jqui_equal_text_length": "Рівна довжина тексту",
+  "jqui_write_value": "Напишіть значення"
 }

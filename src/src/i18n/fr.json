@@ -393,7 +393,6 @@
   "Widgets": "Widget",
   "Width": "Largeur",
   "Width x height (px)": "Largeur x hauteur (px)",
-  "Write value": "Écrire la valeur",
   "Writer": "Écrivain",
   "Wrong password": "Mauvais mot de passe",
   "Yes": "Oui",
@@ -704,5 +703,6 @@
   "jqui_radio_steps": "Bouton radio (étapes)",
   "Select object ID": "Sélectionnez l'ID de l'objet",
   "jqui_equal_text_length_tooltip": "Si activé, les longueurs des textes pour vrai et faux seront égales, donc l'icône restera au même endroit dans les états \"off\" et \"on\".",
-  "jqui_equal_text_length": "Longueurs de texte égales"
+  "jqui_equal_text_length": "Longueurs de texte égales",
+  "jqui_write_value": "Écrire la valeur"
 }

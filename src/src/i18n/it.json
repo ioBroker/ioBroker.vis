@@ -393,7 +393,6 @@
   "Widgets": "Widget",
   "Width": "Larghezza",
   "Width x height (px)": "Larghezza x altezza (px)",
-  "Write value": "Scrivi valore",
   "Writer": "scrittore",
   "Wrong password": "Password errata",
   "Yes": "sì",
@@ -704,5 +703,6 @@
   "jqui_radio_steps": "Pulsante di opzione (passi)",
   "Select object ID": "Seleziona l'ID dell'oggetto",
   "jqui_equal_text_length_tooltip": "Se attivata, la lunghezza dei testi per vero e falso sarà uguale, quindi l'icona rimarrà nello stesso posto negli stati \"off\" e \"on\".",
-  "jqui_equal_text_length": "Uguali lunghezze del testo"
+  "jqui_equal_text_length": "Uguali lunghezze del testo",
+  "jqui_write_value": "Scrivi valore"
 }

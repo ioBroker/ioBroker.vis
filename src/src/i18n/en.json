@@ -393,7 +393,6 @@
   "Widgets": "Widgets",
   "Width": "Width",
   "Width x height (px)": "Width x height (px)",
-  "Write value": "Write value",
   "Writer": "Writer",
   "Wrong password": "Wrong password",
   "Yes": "Yes",
@@ -583,7 +582,7 @@
   "jqui_min": "Minimal value",
   "jqui_name": "Title",
   "jqui_nav_view": "Go to view",
-  "jqui_navigation_button": "Navigaion Button",
+  "jqui_navigation_button": "Navigation Button",
   "jqui_navigation_icon": "Navigation icon",
   "jqui_navigation_password": "Navigation with password",
   "jqui_not_equal_length": "Not equal width",
@@ -704,5 +703,6 @@
   "jqui_radio_steps": "Radio button (steps)",
   "Select object ID": "Select object ID",
   "jqui_equal_text_length_tooltip": "If activated, the lengths of texts for true and false will be equal, so the icon will stay on the same place in \"off\" and \"on\" states.",
-  "jqui_equal_text_length": "Equal text lengths"
+  "jqui_equal_text_length": "Equal text lengths",
+  "jqui_write_value": "Write value"
 }
