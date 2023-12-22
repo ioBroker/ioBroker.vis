@@ -1076,7 +1076,6 @@ class App extends Runtime {
         }
 
         store.dispatch(recalculateFields(true));
-        console.log(`widget ${selectedWidgets} selected`);
     };
 
     toggleCode = () => {
