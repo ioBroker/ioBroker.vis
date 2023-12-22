@@ -36,6 +36,8 @@ import JQuiRadio from './JQui/JQuiRadio';
 import JQuiState from './JQui/JQuiState';
 import JQuiRadioList from './JQui/JQuiRadioList';
 import JQuiSelectList from './JQui/JQuiSelectList';
+import JQuiIconStatePushButton from './JQui/JQuiIconStatePushButton';
+import JQuiIconStateBool from './JQui/JQuiIconStateBool';
 import JQuiRadioSteps from './JQui/JQuiRadioSteps';
 import JQuiWriteState from './JQui/JQuiWriteState';
 import JQuiSlider from './JQui/JQuiSlider';
@@ -88,6 +90,8 @@ const WIDGETS = [
     JQuiWriteState,
     JQuiSlider,
     JQuiSliderVertical,
+    JQuiIconStatePushButton,
+    JQuiIconStateBool,
     JQuiInputDate,
     JQuiInputDateTime,
     JQuiToggle,

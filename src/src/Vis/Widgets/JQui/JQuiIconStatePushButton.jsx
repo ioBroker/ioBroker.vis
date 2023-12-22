@@ -16,33 +16,35 @@
 import PropTypes from 'prop-types';
 
 // eslint-disable-next-line import/no-cycle
-import JQuiState from './JQuiState';
+import JQuiBinaryState from './JQuiBinaryState';
 
-class JQuiRadioList extends JQuiState {
+class JQuiIconStatePushButton extends JQuiBinaryState {
     static getWidgetInfo() {
-        const widgetInfo = JQuiState.getWidgetInfo();
+        const widgetInfo = JQuiBinaryState.getWidgetInfo();
         const newWidgetInfo = {
-            id: 'tplJquiRadioList',
+            id: 'tplIconStatePushButton',
             visSet: 'jqui',
-            visName: 'Radiobuttons ValueList',
-            visWidgetLabel: 'jqui_radio_list',
-            visPrev: 'widgets/jqui/img/Prev_RadioList.png',
+            visName: 'Binary Icon Push Button',
+            visWidgetLabel: 'jqui_icon_state_push_button',
+            visPrev: 'widgets/jqui/img/Prev_IconPushButton.png',
             visOrder: 15,
             visAttrs: widgetInfo.visAttrs,
             visDefaultStyle: {
-                width: 250,
-                height: 45,
+                width: 70,
+                height: 30,
             },
         };
 
-        const type = JQuiState.findField(newWidgetInfo, 'type');
-        type.default = 'radio';
+        const pushMode = JQuiBinaryState.findField(newWidgetInfo, 'pushMode');
+        if (pushMode) {
+            pushMode.default = true;
+        }
 
         // Add note
         newWidgetInfo.visAttrs[0].fields.unshift({
             name: '_note',
             type: 'help',
-            text: 'jqui_state_note',
+            text: 'jqui_button_binary_control_note',
         });
 
         return newWidgetInfo;
@@ -50,11 +52,11 @@ class JQuiRadioList extends JQuiState {
 
     // eslint-disable-next-line class-methods-use-this
     getWidgetInfo() {
-        return JQuiRadioList.getWidgetInfo();
+        return JQuiIconStatePushButton.getWidgetInfo();
     }
 }
 
-JQuiRadioList.propTypes = {
+JQuiIconStatePushButton.propTypes = {
     id: PropTypes.string.isRequired,
     context: PropTypes.object.isRequired,
     view: PropTypes.string.isRequired,
@@ -62,4 +64,4 @@ JQuiRadioList.propTypes = {
     tpl: PropTypes.string.isRequired,
 };
 
-export default JQuiRadioList;
+export default JQuiIconStatePushButton;

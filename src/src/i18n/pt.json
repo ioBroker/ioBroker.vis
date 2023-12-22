@@ -697,5 +697,12 @@
   "jqui_read_only": "Somente leitura",
   "jqui_open": "Como lista",
   "jqui_push_mode_tooltip": "Ao pressionar o botão será escrito “true” e ao soltar o botão será escrito “false”.",
-  "jqui_push_mode": "Modo push"
+  "jqui_push_mode": "Modo push",
+  "jqui_icon_state_bool": "Botão de ícone booleano",
+  "jqui_icon_state_push_button": "Botão de apertar",
+  "jqui_select_list": "Selecione na lista",
+  "jqui_radio_steps": "Botão de opção (etapas)",
+  "Select object ID": "Selecione o ID do objeto",
+  "jqui_equal_text_length_tooltip": "Se ativado, os comprimentos dos textos para verdadeiro e falso serão iguais, então o ícone permanecerá no mesmo lugar nos estados \"desligado\" e \"ligado\".",
+  "jqui_equal_text_length": "Comprimentos de texto iguais"
 }

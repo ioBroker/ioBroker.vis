@@ -697,5 +697,12 @@
   "jqui_read_only": "Sola lettura",
   "jqui_open": "Come elenco",
   "jqui_push_mode_tooltip": "Premendo il pulsante verrà scritto “true” mentre al rilascio del pulsante verrà scritto “false”.",
-  "jqui_push_mode": "Modalità push"
+  "jqui_push_mode": "Modalità push",
+  "jqui_icon_state_bool": "Pulsante icona booleana",
+  "jqui_icon_state_push_button": "Premi il bottone",
+  "jqui_select_list": "Seleziona dall'elenco",
+  "jqui_radio_steps": "Pulsante di opzione (passi)",
+  "Select object ID": "Seleziona l'ID dell'oggetto",
+  "jqui_equal_text_length_tooltip": "Se attivata, la lunghezza dei testi per vero e falso sarà uguale, quindi l'icona rimarrà nello stesso posto negli stati \"off\" e \"on\".",
+  "jqui_equal_text_length": "Uguali lunghezze del testo"
 }

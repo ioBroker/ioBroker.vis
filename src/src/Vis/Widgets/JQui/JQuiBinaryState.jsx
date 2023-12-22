@@ -153,6 +153,13 @@ class JQuiBinaryState extends VisRxWidget {
                             type: 'text',
                             label: 'alt_true',
                         },
+                        {
+                            name: 'equal_text_length',
+                            type: 'checkbox',
+                            label: 'jqui_equal_text_length',
+                            tooltip: 'jqui_equal_text_length_tooltip',
+                            hidden: data => !data.text_true || !data.text_false,
+                        },
                     ],
                 },
                 {
@@ -282,7 +289,33 @@ class JQuiBinaryState extends VisRxWidget {
     }
 
     async componentDidMount() {
-        super.componentDidMount();
+        await super.componentDidMount();
+
+        // convert old tplIconStateBool data to JquiBinaryState data
+        if ((this.props.tpl === 'tplIconStateBool' || this.props.tpl === 'tplIconStatePushButton') && (this.state.data.false_text || this.state.data.true_text)) {
+            const data = JSON.parse(JSON.stringify(this.state.data));
+            data.text_false = data.false_text;
+            data.text_true = data.true_text;
+            data.src_false = data.false_src;
+            data.src_true = data.true_src;
+            data.alt_false = data.false_alt;
+            data.alt_true = data.true_alt;
+            data.invert_icon_false = data.invert_icon;
+            data.invert_icon_true = data.invert_icon;
+            if (this.props.tpl === 'tplIconStatePushButton') {
+                data.pushMode = true;
+            }
+
+            data.false_text = null;
+            data.true_text = null;
+
+            setTimeout(() => this.props.context.onWidgetsChanged([{
+                wid: this.props.id,
+                view: this.props.view,
+                data,
+            }]), 100);
+        }
+
         if (this.state.rxData.oid && this.state.rxData.oid !== 'nothing_selected') {
             try {
                 const state = await this.props.context.socket.getState(this.state.rxData.oid);
@@ -341,7 +374,7 @@ class JQuiBinaryState extends VisRxWidget {
     onMyMouseDown() {
         const oid = this.getControlOid();
         if (oid) {
-            this.props.context.setValue(oid, this.state.rxData.invert ? false : true);
+            this.props.context.setValue(oid, !this.state.rxData.invert);
         }
 
         this.setState({ isOn: true });
@@ -351,7 +384,7 @@ class JQuiBinaryState extends VisRxWidget {
     onMyMouseUp() {
         const oid = this.getControlOid();
         if (oid) {
-            this.props.context.setValue(oid, this.state.rxData.invert ? true : false);
+            this.props.context.setValue(oid, !!this.state.rxData.invert);
         }
 
         this.setState({ isOn: false });
@@ -384,15 +417,15 @@ class JQuiBinaryState extends VisRxWidget {
             if (icon) {
                 invert = this.state.rxData.invert_icon_true;
                 height = this.state.rxData.imageHeight_true;
-                color = this.state.rxData.icon_color_true;
             }
+            color = this.state.rxData.icon_color_true;
         }
         if (!icon && (!isOn || !doNotFallback)) {
             icon = this.state.rxData.src_false || this.state.rxData.icon_false;
             if (icon) {
                 invert = this.state.rxData.invert_icon_false;
                 height = this.state.rxData.imageHeight_false;
-                color = this.state.rxData.icon_color_false;
+                color = color || this.state.rxData.icon_color_false;
             }
         }
         const style = {};
@@ -453,6 +486,27 @@ class JQuiBinaryState extends VisRxWidget {
         return null;
     }
 
+    getTextWidth(text) {
+        if (!this.refService.current) {
+            return text * 14;
+        }
+        this.textsLengthCache = this.textsLengthCache || {};
+        if (this.textsLengthCache[text]) {
+            return this.textsLengthCache[text];
+        }
+        const el = document.createElement('div');
+        el.style.position = 'absolute';
+        el.style.visibility = 'hidden';
+        el.style.height = 'auto';
+        el.style.width = 'auto';
+        el.innerHTML = text;
+        this.refService.current.appendChild(el);
+        const width = el.clientWidth;
+        this.refService.current.removeChild(el);
+        this.textsLengthCache[text] = width;
+        return width;
+    }
+
     renderText(isOn) {
         let text;
         let color;
@@ -461,8 +515,20 @@ class JQuiBinaryState extends VisRxWidget {
             text = this.state.rxData.text_true !== undefined ? this.state.rxData.text_true : this.state.rxData.on_text; // back compatibility with radio on/off
             color = this.state.rxData.color_true;
         }
+
         text = text || (this.state.rxData.text_false !== undefined ? this.state.rxData.text_false : this.state.rxData.off_text); // back compatibility with radio on/off
         color = color || this.state.rxData.color_false;
+
+        if (this.state.rxData.equal_text_length && this.state.rxData.text_false && this.state.rxData.text_true) {
+            // get the length of false text
+            const falseLength = this.getTextWidth(this.state.rxData.text_false);
+            const trueLength = this.getTextWidth(this.state.rxData.text_true);
+            const length = Math.max(falseLength, trueLength);
+            return {
+                text: <div style={{ width: length, display: 'inline-block', color }}>{text}</div>,
+                color,
+            };
+        }
 
         return { text, color };
     }

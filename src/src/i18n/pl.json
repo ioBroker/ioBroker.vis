@@ -697,5 +697,12 @@
   "jqui_read_only": "Tylko czytać",
   "jqui_open": "Jako lista",
   "jqui_push_mode_tooltip": "Po naciśnięciu przycisku zostanie zapisane „prawda”, a po zwolnieniu przycisku zostanie zapisane „fałsz”.",
-  "jqui_push_mode": "Tryb pchania"
+  "jqui_push_mode": "Tryb pchania",
+  "jqui_icon_state_bool": "Przycisk z ikoną logiczną",
+  "jqui_icon_state_push_button": "Naciśnij przycisk",
+  "jqui_select_list": "Wybierz z listy",
+  "jqui_radio_steps": "Przycisk opcji (kroki)",
+  "Select object ID": "Wybierz identyfikator obiektu",
+  "jqui_equal_text_length_tooltip": "Jeśli jest aktywowane, długości tekstów dla prawdy i fałszu będą równe, więc ikona pozostanie w tym samym miejscu w stanach „wyłączony” i „włączony”.",
+  "jqui_equal_text_length": "Równa długość tekstu"
 }

@@ -697,5 +697,12 @@
   "jqui_read_only": "只读",
   "jqui_open": "作为列表",
   "jqui_push_mode_tooltip": "按下按钮时，将写入“true”，松开按钮时，将写入“false”。",
-  "jqui_push_mode": "推送模式"
+  "jqui_push_mode": "推送模式",
+  "jqui_icon_state_bool": "布尔图标按钮",
+  "jqui_icon_state_push_button": "按钮",
+  "jqui_select_list": "从列表中选择",
+  "jqui_radio_steps": "单选按钮（步骤）",
+  "Select object ID": "选择对象 ID",
+  "jqui_equal_text_length_tooltip": "如果激活，则 true 和 false 的文本长度将相等，因此图标在“关闭”和“打开”状态下将保持在同一位置。",
+  "jqui_equal_text_length": "相等的文本长度"
 }

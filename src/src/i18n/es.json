@@ -697,5 +697,12 @@
   "jqui_read_only": "Solo lectura",
   "jqui_open": "como lista",
   "jqui_push_mode_tooltip": "Al presionar el botón se escribirá “verdadero” y al soltar el botón se escribirá “falso”.",
-  "jqui_push_mode": "Modo de empuje"
+  "jqui_push_mode": "Modo de empuje",
+  "jqui_icon_state_bool": "Botón de icono booleano",
+  "jqui_icon_state_push_button": "Presionar el botón",
+  "jqui_select_list": "Seleccionar de la lista",
+  "jqui_radio_steps": "Botón de radio (pasos)",
+  "Select object ID": "Seleccionar ID de objeto",
+  "jqui_equal_text_length_tooltip": "Si se activa, las longitudes de los textos para verdadero y falso serán iguales, por lo que el ícono permanecerá en el mismo lugar en los estados \"apagado\" y \"encendido\".",
+  "jqui_equal_text_length": "Longitudes de texto iguales"
 }

@@ -16,33 +16,35 @@
 import PropTypes from 'prop-types';
 
 // eslint-disable-next-line import/no-cycle
-import JQuiState from './JQuiState';
+import JQuiBinaryState from './JQuiBinaryState';
 
-class JQuiRadioList extends JQuiState {
+class JQuiIconStateBool extends JQuiBinaryState {
     static getWidgetInfo() {
-        const widgetInfo = JQuiState.getWidgetInfo();
+        const widgetInfo = JQuiBinaryState.getWidgetInfo();
         const newWidgetInfo = {
-            id: 'tplJquiRadioList',
+            id: 'tplIconStateBool',
             visSet: 'jqui',
-            visName: 'Radiobuttons ValueList',
-            visWidgetLabel: 'jqui_radio_list',
-            visPrev: 'widgets/jqui/img/Prev_RadioList.png',
+            visName: 'Binary Icon State',
+            visWidgetLabel: 'jqui_icon_state_bool',
+            visPrev: 'widgets/jqui/img/Prev_IconStateBool.png',
             visOrder: 15,
             visAttrs: widgetInfo.visAttrs,
             visDefaultStyle: {
-                width: 250,
-                height: 45,
+                width: 70,
+                height: 30,
             },
         };
 
-        const type = JQuiState.findField(newWidgetInfo, 'type');
-        type.default = 'radio';
+        const iconFalse = JQuiBinaryState.findField(newWidgetInfo, 'icon_false');
+        if (iconFalse) {
+            iconFalse.default = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSJjdXJyZW50Q29sb3IiIGQ9Ik05IDIxYzAgLjUuNCAxIDEgMWg0Yy42IDAgMS0uNSAxLTF2LTFIOXYxem0zLTE5QzguMSAyIDUgNS4xIDUgOWMwIDIuNCAxLjIgNC41IDMgNS43VjE3YzAgLjUuNCAxIDEgMWg2Yy42IDAgMS0uNSAxLTF2LTIuM2MxLjgtMS4zIDMtMy40IDMtNS43YzAtMy45LTMuMS03LTctN3oiLz48L3N2Zz4=';
+        }
 
         // Add note
         newWidgetInfo.visAttrs[0].fields.unshift({
             name: '_note',
             type: 'help',
-            text: 'jqui_state_note',
+            text: 'jqui_button_binary_control_note',
         });
 
         return newWidgetInfo;
@@ -50,11 +52,11 @@ class JQuiRadioList extends JQuiState {
 
     // eslint-disable-next-line class-methods-use-this
     getWidgetInfo() {
-        return JQuiRadioList.getWidgetInfo();
+        return JQuiIconStateBool.getWidgetInfo();
     }
 }
 
-JQuiRadioList.propTypes = {
+JQuiIconStateBool.propTypes = {
     id: PropTypes.string.isRequired,
     context: PropTypes.object.isRequired,
     view: PropTypes.string.isRequired,
@@ -62,4 +64,4 @@ JQuiRadioList.propTypes = {
     tpl: PropTypes.string.isRequired,
 };
 
-export default JQuiRadioList;
+export default JQuiIconStateBool;

@@ -697,5 +697,12 @@
   "jqui_read_only": "Alleen lezen",
   "jqui_open": "Als lijst",
   "jqui_push_mode_tooltip": "Als u op de knop drukt, wordt 'true' geschreven en als u de knop loslaat, wordt 'false' geschreven.",
-  "jqui_push_mode": "Push-modus"
+  "jqui_push_mode": "Push-modus",
+  "jqui_icon_state_bool": "Booleaanse pictogramknop",
+  "jqui_icon_state_push_button": "Druk op de knop",
+  "jqui_select_list": "Selecteer uit de lijst",
+  "jqui_radio_steps": "Keuzerondje (stappen)",
+  "Select object ID": "Selecteer object-ID",
+  "jqui_equal_text_length_tooltip": "Indien geactiveerd, zullen de lengtes van de teksten voor waar en onwaar gelijk zijn, zodat het pictogram op dezelfde plaats blijft in de status \"uit\" en \"aan\".",
+  "jqui_equal_text_length": "Gelijke tekstlengtes"
 }

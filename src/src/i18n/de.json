@@ -607,7 +607,7 @@
   "jqui_slider": "Schieberegler",
   "jqui_slider_note": "Veraltet. Verwenden Sie das Schieberegler-Widget mit vertikaler Ausrichtung. Wird nur aus Kompatibilitätsgründen mit vis.1 beibehalten",
   "jqui_slider_vertical": "Vertikaler Schieberegler",
-  "jqui_state_note": "Veraltet. Verwenden Sie das Widget „Statuskontrolle“ mit der Option „Erhöhen/Verringern“. Wird nur aus Kompatibilitätsgründen mit vis.1 beibehalten",
+  "jqui_state_note": "Veraltet. Verwenden Sie das Widget „Zustände steuern“ mit der Option „Erhöhen/Verringern“. Wird nur aus Kompatibilitätsgründen mit vis.1 beibehalten",
   "jqui_states_control": "Zustände steuern",
   "jqui_stepMinute": "Schrittminute",
   "jqui_test": "Testwert",
@@ -697,5 +697,12 @@
   "jqui_read_only": "Schreibgeschützt",
   "jqui_open": "Als Liste",
   "jqui_push_mode_tooltip": "Durch Drücken der Taste wird „true“ geschrieben und wenn Sie die Taste loslassen, wird „false“ geschrieben.",
-  "jqui_push_mode": "Drück-Modus"
+  "jqui_push_mode": "Drück-Modus",
+  "jqui_icon_state_bool": "Boolesche Symbolschaltfläche",
+  "jqui_icon_state_push_button": "Druckknopf",
+  "jqui_select_list": "Aus Liste auswählen",
+  "jqui_radio_steps": "Optionsfeld (Schritte)",
+  "Select object ID": "Die Objekt-ID auswählen ",
+  "jqui_equal_text_length_tooltip": "Wenn diese Option aktiviert ist, sind die Textlängen für „wahr“ und „falsch“ gleich, sodass das Symbol im „Aus“- und „Ein“-Zustand an derselben Stelle bleibt.",
+  "jqui_equal_text_length": "Gleiche Textlängen"
 }

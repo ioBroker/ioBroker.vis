@@ -697,5 +697,12 @@
   "jqui_read_only": "Лише для читання",
   "jqui_open": "Як список",
   "jqui_push_mode_tooltip": "При натисканні кнопки буде написано «true», а коли ви відпустите кнопку, буде написано «false».",
-  "jqui_push_mode": "Режим Push"
+  "jqui_push_mode": "Режим Push",
+  "jqui_icon_state_bool": "Логічна кнопка піктограми",
+  "jqui_icon_state_push_button": "Нажимна Кнопка",
+  "jqui_select_list": "Виберіть зі списку",
+  "jqui_radio_steps": "Перемикач (кроки)",
+  "Select object ID": "Виберіть ID об'єкта",
+  "jqui_equal_text_length_tooltip": "Якщо активовано, довжина текстів для true та false буде однаковою, тому значок залишатиметься на тому самому місці у «вимкненому» та «увімкненому» станах.",
+  "jqui_equal_text_length": "Рівна довжина тексту"
 }
