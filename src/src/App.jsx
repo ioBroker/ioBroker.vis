@@ -1067,7 +1067,7 @@ class App extends Runtime {
         } else {
             window.localStorage.setItem(`${this.state.projectName}.${this.state.selectedView}.widgets`, JSON.stringify(selectedWidgets));
 
-            this.setState({
+            await this.setStateAsync({
                 selectedWidgets,
                 alignType: null,
                 alignIndex: 0,

@@ -575,7 +575,7 @@ class Widget extends Component {
                     view: this.props.selectedView,
                     socket: this.props.socket,
                     themeType: this.props.themeType,
-                    projectName: store.getState().visProjectName,
+                    projectName: this.props.projectName,
                     adapterName: this.props.adapterName,
                     instance: this.props.instance,
                     id: wid,
@@ -1120,6 +1120,9 @@ class Widget extends Component {
         if (!field) {
             return null;
         }
+
+        const selectedWidget = selectWidget(store.getState(), this.props.selectedView, this.props.selectedWidgets[0]);
+
         let error;
         let disabled;
         if (field.hidden) {
@@ -1189,13 +1192,13 @@ class Widget extends Component {
                     >
                         {ICONS[field.singleName || field.name] ? ICONS[field.singleName || field.name] : null}
                         {label}
-                        {field.type === 'image' && !this.state.isDifferent[field.name] && this.state.widget && this.state.widget.data[field.name] ?
+                        {field.type === 'image' && !this.state.isDifferent[field.name] && selectedWidget?.data[field.name] ?
                             <div className={this.props.classes.smallImageDiv}>
                                 <img
-                                    src={this.state.widget.data[field.name].startsWith('_PRJ_NAME/') ?
-                                        this.state.widget.data[field.name].replace('_PRJ_NAME/', `../${this.props.adapterName}.${this.props.instance}/${store.getState().visProjectName}/`)
+                                    src={selectedWidget.data[field.name].startsWith('_PRJ_NAME/') ?
+                                        selectedWidget.data[field.name].replace('_PRJ_NAME/', `../${this.props.adapterName}.${this.props.instance}/${this.props.projectName}/`)
                                         :
-                                        this.state.widget.data[field.name]}
+                                        selectedWidget.data[field.name]}
                                     className={this.props.classes.smallImage}
                                     onError={e => {
                                         e.target.onerror = null;
@@ -1253,7 +1256,7 @@ class Widget extends Component {
                                     disabled={disabled}
                                     field={field}
                                     label={label}
-                                    widget={this.props.selectedWidgets.length > 1 ? this.state.commonValues : this.state.widget}
+                                    widget={this.props.selectedWidgets.length > 1 ? this.state.commonValues : selectedWidget}
                                     widgetId={this.props.selectedWidgets.length > 1 ? null : this.props.selectedWidgets[0]}
                                     isStyle={group.isStyle}
                                     selectedView={this.props.selectedView}
@@ -1269,7 +1272,7 @@ class Widget extends Component {
                                     error={error}
                                     disabled={disabled}
                                     field={field}
-                                    widget={this.props.selectedWidgets.length > 1 ? this.state.commonValues : this.state.widget}
+                                    widget={this.props.selectedWidgets.length > 1 ? this.state.commonValues : selectedWidget}
                                     widgetId={this.props.selectedWidgets.length > 1 ? null : this.props.selectedWidgets[0]}
                                     isStyle={group.isStyle}
                                     index={group.index}
