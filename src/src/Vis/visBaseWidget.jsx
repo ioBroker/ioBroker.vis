@@ -704,7 +704,6 @@ class VisBaseWidget extends React.Component {
                 // calculate widget position
                 calculateRelativeWidgetPosition(this.props.id, left, top, this.shadowDiv, this.movement.order);
             }
-            // console.log(this.movement.order.join(', '));
 
             // End of movement
             if (save) {

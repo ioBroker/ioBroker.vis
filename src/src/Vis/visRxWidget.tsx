@@ -283,6 +283,13 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
 
     }
 
+    /**
+     * Called if ioBroker state changed
+     *
+     * @param id state id
+     * @param state state object
+     * @param doNotApplyState if state should not be set
+     */
     onStateChanged(id?: string | null, state?: typeof this.state | null, doNotApplyState?: boolean) {
         this.newState = this.newState || {
             values: deepClone(this.state.values || {}),
@@ -306,7 +313,9 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
         // @ts-expect-error fix later
         Object.keys(this.linkContext.bindings).forEach(_id => this.applyBinding(_id, this.newState));
 
-        this.newState.visible = this.checkVisibility(id, this.newState);
+        if (id === this.newState.rxData?.['visibility-oid']) {
+            this.newState.visible = this.checkVisibility(id, this.newState);
+        }
 
         // @ts-expect-error fix later
         const userGroups = this.newState.rxData['visibility-groups'];

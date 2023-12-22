@@ -10,6 +10,7 @@
         "@emotion/styled": "^11.11.0",
         "@iobroker/adapter-react-v5": "^4.8.1",
         "@iobroker/type-detector": "^3.0.5",
+        "@iobroker/types": "^5.0.17",
         "@iobroker/vis-2-widgets-react-dev": "^1.0.5",
         "@material-icons/svg": "^1.0.33",
         "@mui/icons-material": "^5.15.1",
