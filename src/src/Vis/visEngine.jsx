@@ -1667,16 +1667,17 @@ class VisEngine extends React.Component {
                         this.refSound.current.play();
                     } else if (typeof Audio !== 'undefined') {
                         const snd = new Audio(href); // buffers automatically when created
-                        snd.play();
+                        snd.play()
+                            .catch(e => console.error(`Cannot play sound: ${e}`));
                     } else {
-                        // noinspection JSJQueryEfficiency
-                        let $sound = this.$('#external_sound');
-                        if (!$sound.length) {
-                            this.$('body').append('<audio id="external_sound"></audio>');
-                            $sound = this.$('#external_sound');
+                        let sound = window.document.getElementById('external_sound');
+                        if (!sound) {
+                            sound = document.createElement('audio');
+                            sound.setAttribute('id', 'external_sound');
+                            window.document.body.appendChild(sound);
                         }
-                        $sound.attr('src', href);
-                        window.document.getElementById('external_sound').play();
+                        sound.setAttribute('src', href);
+                        sound.play();
                     }
                 }, 1);
                 break;

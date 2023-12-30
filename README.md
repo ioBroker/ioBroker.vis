@@ -165,6 +165,7 @@ Commands:
 * `popup` - opens a new browser window. Link must be specified in `control.data`, e.g., http://google.com
 * `playSound` - play sound file. The link to file is specified in `control.data`, e.g., http://www.modular-planet.de/fx/marsians/Marsiansrev.mp3.
   You can upload your own file in vis-2 and let it play as for instance `/vis-2.0/main/img/myFile.mp3`.
+  **Important** browser cannot play audio till the user has not clicked at least once on the page. It is a browser security policy. [Here](https://github.com/Hugo22O/chrome-autoplay) you can read more.
 
 If the user changes the view or at the start, the variables will be filled by the vis-2 with
 
