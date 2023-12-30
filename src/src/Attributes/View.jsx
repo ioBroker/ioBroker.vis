@@ -331,7 +331,7 @@ const View = props => {
                     field: 'background_class',
                     // eslint-disable-next-line react/no-unstable-nested-components
                     itemModify: item => <>
-                        <span className={`${props.classes.backgroundClass} ${item.value}`} />
+                        <span className={`${props.classes.backgroundClassSquare} ${item.value}`} />
                         {I18n.t(item.label)}
                     </>,
                     renderValue: value => <div className={props.classes.backgroundClass}>
@@ -736,7 +736,7 @@ const View = props => {
                 },
             ],
         },
-    ]), [resolutionSelect, `${view.settings.sizex}x${view.settings.sizey}`, props.classes.backgroundClass, props.classes.backgroundClassSquare]);
+    ]), [resolutionSelect, `${view.settings.sizex}x${view.settings.sizey}`, props.classes.backgroundClassSquare]);
 
     const [accordionOpen, setAccordionOpen] = useState(
         window.localStorage.getItem('attributesView')
