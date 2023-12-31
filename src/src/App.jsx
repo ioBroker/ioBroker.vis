@@ -892,18 +892,23 @@ class App extends Runtime {
     };
 
     ungroupWidgets = () => {
-        const project = JSON.parse(JSON.stringify(store.getState().visProject));
+        const project = deepClone(store.getState().visProject);
         const widgets = project[this.state.selectedView].widgets;
         const group = widgets[this.state.selectedWidgets[0]];
-        group.data.members.forEach(member => {
+
+        for (const member of group.data.members) {
             const widgetBoundingRect = App.getWidgetRelativeRect(member);
-            widgets[member].style.left = `${widgetBoundingRect.left}px`;
-            widgets[member].style.top = `${widgetBoundingRect.top}px`;
-            widgets[member].style.width = `${widgetBoundingRect.width}px`;
-            widgets[member].style.height = `${widgetBoundingRect.height}px`;
+
+            if (widgetBoundingRect) {
+                widgets[member].style.left = `${widgetBoundingRect.left}px`;
+                widgets[member].style.top = `${widgetBoundingRect.top}px`;
+                widgets[member].style.width = `${widgetBoundingRect.width}px`;
+                widgets[member].style.height = `${widgetBoundingRect.height}px`;
+            }
+
             delete widgets[member].grouped;
             delete widgets[member].groupid;
-        });
+        }
         this.setSelectedWidgets(group.data.members);
         delete widgets[this.state.selectedWidgets[0]];
 

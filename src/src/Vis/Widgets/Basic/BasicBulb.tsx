@@ -183,30 +183,16 @@ export default class BasicBulb extends VisRxWidget<RxData> {
      * @param max max value
      */
     // eslint-disable-next-line class-methods-use-this
-    isFalse(val: any, min?: any, max?: any): boolean {
+    isFalse(val: any, min?: string, max?: string): boolean {
         if (min !== undefined && min !== null && min !== '') {
-            if (val === 'true') {
-                val = true;
-            }
-            if (val === 'false') {
-                val = false;
+            if (val !== undefined && typeof val !== 'string') {
+                val = val.toString();
             }
 
             if (max !== undefined && max !== null && max !== '') {
-                if (max === 'false') {
-                    max = false;
-                }
-                if (max === 'true') {
-                    max = true;
-                }
                 return val !== max;
             }
-            if (min === 'false') {
-                min = false;
-            }
-            if (min === 'true') {
-                min = true;
-            }
+
             return val === min;
         }
 
