@@ -104,7 +104,8 @@ const ViewsManager = props => {
             delete viewObject.parentId;
         }
 
-        if (!viewObject || !viewObject.settings || !viewObject.widgets || !viewObject.activeWidgets) {
+        if (!viewObject || !viewObject.settings || !viewObject.widgets) {
+            console.warn('Cannot import view: view is non-existing or missing one of the required properties "settings, widgets"');
             return;
         }
 
