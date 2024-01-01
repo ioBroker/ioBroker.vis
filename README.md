@@ -230,14 +230,14 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.9.9 (2024-01-01)
 * (foxriver76) allow to import views without attribute `activeWidgets`
 * (foxriver76) make BasicBulb behave more like its old version
 * (foxriver76) fixed issue that data of different widget is displayed in edit mode
 * (foxriver76) fixed issue that every state update is used for visibility calculation
 * (bluefox) migrated jQui select, jQui Radio steps widgets to react
 * (bluefox) All jQui widgets were migrated to react
- 
+
 ### 2.9.8 (2023-12-21)
 * (foxriver76) fixed bug that no labels are shown for a background
 * (foxriver76) prevent short flashing of widgets with visibility condition at a page load
@@ -426,7 +426,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 * (bluefox) Completely new visualization, but partly compatible with the previous version
 
 ## License
- Copyright (c) 2021-2023 Denis Haev, https://github.com/GermanBluefox <dogafox@gmail.com>,
+ Copyright (c) 2021-2024 Denis Haev, https://github.com/GermanBluefox <dogafox@gmail.com>,
   
  Creative Common Attribution-NonCommercial (CC BY-NC)
 

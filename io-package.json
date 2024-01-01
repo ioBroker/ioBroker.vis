@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.8",
+    "version": "2.9.9",
     "news": {
+      "2.9.9": {
+        "en": "allow to import views without attribute `activeWidgets`\nmake BasicBulb behave more like its old version\nfixed issue that data of different widget is displayed in edit mode\nfixed issue that every state update is used for visibility calculation\nmigrated jQui select, jQui Radio steps widgets to react\nAll jQui widgets were migrated to react",
+        "de": "erlauben, Ansichten ohne Attribut activeWidgets zu importieren\nbasicBulb verhalten sich mehr wie seine alte Version\nfestes problem, dass daten von verschiedenen widget im bearbeitungsmodus angezeigt werden\nfestes problem, dass jedes zustandsupdate zur sichtberechnung verwendet wird\nmigrated jQui select, jQui Radio Schritte Widgets zu reagieren\nAlle jQui Widgets wurden migriert, um zu reagieren",
+        "ru": "позволяют импортировать просмотры без атрибутов activeWidgets\nсделать BasicBulb вести себя больше, как его старая версия\nисправлена проблема, что данные различного виджета отображаются в режиме редактирования\nфиксированная проблема, что каждое государственное обновление используется для расчета видимости\nmigrated jQui выбрать, jQui Radio шагает виджеты, чтобы реагировать\nВсе виджеты jQui были мигрированы, чтобы реагировать",
+        "pt": "permitir importar visualizações sem atribuir activeWidgets\nfazer BasicBulb se comportar mais como sua versão antiga\nproblema fixo que os dados do widget diferente é exibido no modo de edição\nproblema fixo que cada atualização do estado é usado para cálculo da visibilidade\nmigrado jQui select, jQui Radio passos widgets para reagir\nTodos os widgets jQui foram migrados para reagir",
+        "nl": "_\nlaat BasicBulb zich meer gedragen als zijn oude versie\n_\n_\njQui selecteert, JQui Radio stapt wijdgetten om te reageren\nAlle JQui Widgets werden gemigreerd om te reageren",
+        "fr": "permettre d'importer des vues sans attribut activeWidgets\nfaire BasicBulb se comporter plus comme son ancienne version\nproblème fixe que les données de différents widgets sont affichées en mode édition\nproblème fixe que chaque mise à jour de l'état est utilisée pour le calcul de la visibilité\nmigré jQui sélectionnez, jQui Radio étapes widgets pour réagir\nTous les widgets jQui ont été migrés pour réagir",
+        "it": "consentire di importare punti di vista senza attributo activeWidgets\nrendere BasicBulb comportarsi più come la sua vecchia versione\nproblema fisso che i dati di diversi widget vengono visualizzati in modalità di modifica\nproblema fisso che ogni aggiornamento dello stato viene utilizzato per il calcolo della visibilità\nmigrato jQui selezionare, jQui Radio passi widget per reagire\nTutti i widget jQui sono stati migrati per reagire",
+        "es": "permite importar puntos de vista sin atributos activeWidgets\nhacer BasicBulb comportarse más como su versión anterior\nedición fija que los datos de diferentes widgets se muestra en modo de edición\nproblema fijo que cada actualización del estado se utiliza para el cálculo de visibilidad\nmigrated jQui select, jQui Radio pasos widgets para reaccionar\nTodos los widgets jQui fueron migrados para reaccionar",
+        "pl": "umożliwia importowanie poglądów bez atrybutów aktywnych\nbasicBulb zachowuje się podobnie jak jego stara wersja\nrzeczywiście, że dane o różnych widgetach są wyświetlane w trybie edit\nostateczny problem, w którym każda aktualizacja stanu jest używana do obliczeń widoczności\nzmienił jQui, jQui Radio kroki widget by reagować\nWszystkie widgety jQui zostały migrowane do reagowania",
+        "uk": "дозволяє імпортувати переглядів без активації атрибутів\nзробити BasicBulb behave більш схожий на його стару версію\nвиправлено проблему, що дані різних віджетів відображаються в режимі редагування\nвиправлений номер, який використовується для розрахунку видимості\nmigrated jQui виберіть, jQui Radio кроки віджетів, щоб реагувати\nВсі віджети JQui були мігровані для реагації",
+        "zh-cn": "允许进口不属积极目标的观点\n基本Bulb的行为与旧版本更类似。\n固定问题:不同植物种的数据以配有方式显示\n每个国家更新的固定问题用于能见度计算\n移出的JQui选择, jQui电台的步骤迫使人们作出反应。\n所有Quuis的植物群被移到来反应。"
+      },
       "2.9.8": {
         "en": "fixed bug that no labels are shown for background\nprevent short flashing of widgets with visibility condition at page load\nfixed issue on theme switch",
         "de": "fehler behoben, dass keine etiketten für hintergrund angezeigt werden\nverhindern kurzes aufblitzen von widgets mit sichtbedingung bei seitenlast\nfestes problem beim themaschalter",
@@ -80,19 +93,6 @@
         "pl": "Dokładna możliwość ograniczania rozmiarów widoku\nmaszyna do nawigacji\nstały import poglądów, które były wewnątrz folderów\ntakże temat stały stosowane są w iframe\nnie po prostu wykorzystuje się widgetów, gdy importują lub kopiowają poglądy\nwidget reagujący\nscenariusze pracują w podstawowych html widget",
         "uk": "Додана можливість обмежити розмір вигляду\nреалізований простий механік для навігації\nвиправлено імпорт переглядів, які були всередині папки\nвиправлена тема також застосовується в iframe\nне просто повторно використовувати віджети, коли імпорт або копіювання переглядів\nреалізовано базовий віджет лампи як реагувати віджет\nhtml віджет",
         "zh-cn": "增加限制观点规模的可能性\n执行简单的导航机制\na. 固定进口意见,这些意见是在一轮内。\n一. 固定主题也适用于一框架\n在进口或复制意见时,不只是重新使用目标。\n实施基本欺凌目标作为反应目标\n说明基本目标的工作"
-      },
-      "2.9.2": {
-        "en": "fixed reactivity in custom components\nfixed import for groups\nafter creating a group it is now pre-selected\nfields are now updated when moved via keyboard",
-        "de": "feste reaktivität in benutzerdefinierten komponenten\npauschaler einfuhr für gruppen\nnach der erstellung einer gruppe wird sie nun vorgewählt\nfelder werden nun aktualisiert, wenn über tastatur bewegt",
-        "ru": "фиксированная реакция в пользовательских компонентах\nфиксированный импорт для групп\nпосле создания группы сейчас предварительно выбран\nполя теперь обновляются при передвижении через клавиатуру",
-        "pt": "reatividade fixa em componentes personalizados\nimportação fixa para grupos\ndepois de criar um grupo é agora pré-selecionado\ncampos agora são atualizados quando movidos via teclado",
-        "nl": "gereageerd op maat gemaakte componenten\nimport voor groepen\nna het creëren van een groep is het nu vooraf gekozen\nde velden zijn nu geüpdateerd als ze verplaatst worden via toetsenbord",
-        "fr": "réactivité fixe dans les composants personnalisés\nimportation fixe pour les groupes\naprès avoir créé un groupe, il est maintenant présélectionné\nles champs sont maintenant mis à jour lorsque déplacés via le clavier",
-        "it": "reattività fissa in componenti personalizzati\nimportazione fissa per gruppi\ndopo aver creato un gruppo è ora prescelto\ni campi sono ora aggiornati quando spostati tramite tastiera",
-        "es": "reactividad fija en componentes personalizados\nimportación fija para grupos\ndespués de crear un grupo ahora es pre-seleccionado\ncampos se actualizan ahora cuando se mueve a través del teclado",
-        "pl": "reaktywacja stała w komponentach dostosowań do niestandardowych komponentów\nstały import dla grup\npo utworzeniu grupy jest obecnie wybierany przed wyborem\nobecnie pola są aktualizowane, gdy przenoszone przez klawiaturę",
-        "uk": "фіксована реактивність в нестандартних компонентах\nфіксований імпорт для груп\nпісля створення групи зараз\nполя тепер оновлюються при переході через клавіатуру",
-        "zh-cn": "习惯组成部分的固定反应\n固定进口集团\n成立集团后,现在先当选\n现已通过关键载板移入外地。"
       }
     },
     "title": "Visualisation Next Generation",
