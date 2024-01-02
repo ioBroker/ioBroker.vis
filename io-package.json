@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.10",
+    "version": "2.9.11",
     "news": {
+      "2.9.11": {
+        "en": "fixed bug with visibility calculation",
+        "de": "fehler behoben mit sichtberechnung",
+        "ru": "исправлена ошибка с расчетом видимости",
+        "pt": "bug fixo com cálculo de visibilidade",
+        "nl": "vertaling:",
+        "fr": "bug fixe avec calcul de visibilité",
+        "it": "bug fisso con calcolo della visibilità",
+        "es": "bug fijo con cálculo de visibilidad",
+        "pl": "urządzenie do obliczeń stałych",
+        "uk": "виправлена помилка з розрахунку видимості",
+        "zh-cn": "b 固定的能见度计算"
+      },
       "2.9.10": {
         "en": "remove accidentally added script file, which lead to crash",
         "de": "versehentlich hinzugefügte skriptdatei entfernen, die zum absturz führen",
@@ -80,19 +93,6 @@
         "pl": "nowe widoki na początku\nw przypadku gdy sygnały są używane, są używane\nulepszanie materiałów\nodwołuje się do przeglądu widget, kiedy zmieniono nazwę przeglądu\nj Qui Toggle icon widget zostało migrowane\nj Widget został przeniesiony do Qui Radio widget by reagować\nj Radio Lista widget została przeniesiona do reagowania\nOstatnia zmiana przeprowadzona przez React widgets",
         "uk": "відкрити нові види на початку\nвиправлений випадок аварії, якщо сигнали використовуються\nфіксований матеріал-дизайн-widgets помічник\nоновлення посилань на перегляд у віджеті при перегляді\nй Віджет іконки Qui Toggle був мігрований для реагації\nй Віджет Qui Radio був мігрований для реагації\nй Твій радіо Список віджетів був мігрований для реагації\nВиправлено останню зміну React віджетів",
         "zh-cn": "开 幕的新观点\n如果使用信号,固定事故案件\nb. 固定物质-转用目标帮助者\n说明\n页:1 基普什莱·伊科夫被移作反应\n页:1 被移植了基电台,以作出反应。\n页:1 基 无线电 被移出以反应的名单\n重新爆发成见"
-      },
-      "2.9.4": {
-        "en": "fixed issues with display width",
-        "de": "feste probleme mit displaybreite",
-        "ru": "фиксированные проблемы с шириной дисплея",
-        "pt": "problemas fixos com largura de exibição",
-        "nl": "vertaling:",
-        "fr": "problèmes fixes avec largeur d'affichage",
-        "it": "problemi fissi con larghezza del display",
-        "es": "problemas fijos con ancho de pantalla",
-        "pl": "rzeczywista szerokość",
-        "uk": "виправлені питання з шириною дисплея",
-        "zh-cn": "b. 展示妻子的固定问题"
       }
     },
     "title": "Visualisation Next Generation",
