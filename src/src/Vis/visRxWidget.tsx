@@ -190,6 +190,10 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
         // apply bindings and modifications
         const newState = this.onStateChanged(null, null, true);
 
+        if (newState) {
+            newState.visible = this.checkVisibility(newState.rxData?.['visibility-oid'], newState);
+        }
+
         this.resizeLocked = !!options.visResizeLocked;
 
         // find in fields visResizable name
