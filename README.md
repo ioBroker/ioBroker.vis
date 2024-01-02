@@ -230,6 +230,9 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (foxriver76) remove accidentally added script file, which lead to crash
+
 ### 2.9.9 (2024-01-01)
 * (foxriver76) allow to import views without attribute `activeWidgets`
 * (foxriver76) make BasicBulb behave more like its old version
