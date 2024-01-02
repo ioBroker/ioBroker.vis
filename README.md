@@ -230,7 +230,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.9.10 (2024-01-02)
 * (foxriver76) remove accidentally added script file, which lead to crash
 
 ### 2.9.9 (2024-01-01)

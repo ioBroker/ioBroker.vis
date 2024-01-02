@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.9",
+    "version": "2.9.10",
     "news": {
+      "2.9.10": {
+        "en": "remove accidentally added script file, which lead to crash",
+        "de": "versehentlich hinzugefügte skriptdatei entfernen, die zum absturz führen",
+        "ru": "удалить случайно добавленный файл скрипта, который приведет к сбою",
+        "pt": "remover acidentalmente adicionado arquivo de script, que levam ao acidente",
+        "nl": "verwijder per ongeluk script bestand, wat leidt tot crash",
+        "fr": "supprimer accidentellement ajouté fichier de script, qui conduisent à planter",
+        "it": "rimuovere accidentalmente aggiunto file di script, che portano a crash",
+        "es": "eliminar accidentalmente añadido archivo script, que conduce a estrellarse",
+        "pl": "usunąć przypadkowo dodawane pliki skryptowe, które doprowadziły do katastrofy",
+        "uk": "видалити випадково доданий файл скрипта, який призведе до аварії",
+        "zh-cn": "删除错误的文字档案,造成事故"
+      },
       "2.9.9": {
         "en": "allow to import views without attribute `activeWidgets`\nmake BasicBulb behave more like its old version\nfixed issue that data of different widget is displayed in edit mode\nfixed issue that every state update is used for visibility calculation\nmigrated jQui select, jQui Radio steps widgets to react\nAll jQui widgets were migrated to react",
         "de": "erlauben, Ansichten ohne Attribut activeWidgets zu importieren\nbasicBulb verhalten sich mehr wie seine alte Version\nfestes problem, dass daten von verschiedenen widget im bearbeitungsmodus angezeigt werden\nfestes problem, dass jedes zustandsupdate zur sichtberechnung verwendet wird\nmigrated jQui select, jQui Radio Schritte Widgets zu reagieren\nAlle jQui Widgets wurden migriert, um zu reagieren",
@@ -80,19 +93,6 @@
         "pl": "rzeczywista szerokość",
         "uk": "виправлені питання з шириною дисплея",
         "zh-cn": "b. 展示妻子的固定问题"
-      },
-      "2.9.3": {
-        "en": "Added the possibility to limit hard the view size\nimplemented simple sort mechanic for navigation\nfixed import of views, which were inside a folder\nfixed theme also applied in iframe\ndo not simply reuse widget ids when importing or copying views\nimplemented basic bulb widget as react widget\nmade script tags work in basic html widget",
-        "de": "Hinzugefügt die Möglichkeit, hart die Ansicht Größe zu begrenzen\neinfache art mechanik für navigation\nfester import von ansichten, die in einem ordner waren\nfestes thema auch in iframe angewendet\nnicht einfach widget ids beim importieren oder kopieren von ansichten wiederverwenden\nimplementiert grundlegende glühbirne widget als reakt widget\nscript-tags funktionieren im grundlegenden html widget",
-        "ru": "Добавлена возможность жестко ограничить размер взгляда\nреализован простой сорт механик для навигации\nфиксированный импорт просмотров, которые были внутри папки\nфиксированная тема также применяется в iframe\nне просто повторно использовать виджет ids при импорте или копировании просмотров\nреализованный базовый виджет лампы как реагирует виджет\nсделано скриптовые теги работают в базовом html виджете",
-        "pt": "Adicionado a possibilidade de limitar difícil o tamanho vista\nmecânica de tipo simples implementada para navegação\nimportação fixa de visualizações, que estavam dentro de uma pasta\ntema fixo também aplicado em iframe\nnão basta reutilizar os widgets ao importar ou copiar visualizações\nimplementado widget básico da lâmpada como widget de reação\nmade script tags work in basic html widget",
-        "nl": "Voeg de mogelijkheid toe om het uitzicht te beperken\neen simpele monteur voor navigatie\ngerepareerde import van views, die in een map zaten\n_\nverwijder widget niet als je importeert of nabootst\ngevuld met basic bulb widget als react widget\nscript tags werken in de basis html widgett",
-        "fr": "Ajout de la possibilité de limiter dur la taille de la vue\nmis en œuvre mécanicien de tri simple pour la navigation\nimportation fixe de vues, qui étaient dans un dossier\nthème fixe également appliqué dans iframe\nne réutilisez pas simplement les idgets lorsque vous importez ou copiez des vues\nimplémenté le widget ampoule de base comme widget de réaction\nmake script tags work in basic html widget",
-        "it": "Aggiunto la possibilità di limitare duro la dimensione della vista\nimplementato semplice tipo meccanico per la navigazione\nimportazione fissa di visualizzazioni, che erano all'interno di una cartella\ntema fisso applicato anche in iframe\nnon riutilizzare semplicemente ids widget quando importare o copiare le viste\nimplementato widget lampadina di base come widget di reazione\ncreato tag script lavorare in widget html di base",
-        "es": "Se agregó la posibilidad de limitar duramente el tamaño de la vista\nimplementado mecánico de tipo simple para la navegación\nimportación fija de vistas, que estaban dentro de una carpeta\ntema fijo también aplicado en iframe\nno simplemente reutilizar ids widget al importar o copiar vistas\nimplementado widget de bulbo básico como widget de reacción\nhecho etiquetas script funcionan en basic html widget",
-        "pl": "Dokładna możliwość ograniczania rozmiarów widoku\nmaszyna do nawigacji\nstały import poglądów, które były wewnątrz folderów\ntakże temat stały stosowane są w iframe\nnie po prostu wykorzystuje się widgetów, gdy importują lub kopiowają poglądy\nwidget reagujący\nscenariusze pracują w podstawowych html widget",
-        "uk": "Додана можливість обмежити розмір вигляду\nреалізований простий механік для навігації\nвиправлено імпорт переглядів, які були всередині папки\nвиправлена тема також застосовується в iframe\nне просто повторно використовувати віджети, коли імпорт або копіювання переглядів\nреалізовано базовий віджет лампи як реагувати віджет\nhtml віджет",
-        "zh-cn": "增加限制观点规模的可能性\n执行简单的导航机制\na. 固定进口意见,这些意见是在一轮内。\n一. 固定主题也适用于一框架\n在进口或复制意见时,不只是重新使用目标。\n实施基本欺凌目标作为反应目标\n说明基本目标的工作"
       }
     },
     "title": "Visualisation Next Generation",
