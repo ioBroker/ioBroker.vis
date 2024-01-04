@@ -230,7 +230,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.9.12 (2024-01-04)
 * (foxriver76) optimized copy/paste/cut in groups
 
 ### 2.9.11 (2024-01-02)

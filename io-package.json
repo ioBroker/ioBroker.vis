@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.11",
+    "version": "2.9.12",
     "news": {
+      "2.9.12": {
+        "en": "optimized copy/paste/cut in groups",
+        "de": "optimierte kopie/paste/cut in gruppen",
+        "ru": "оптимизированная копия/вставить/вырезать в группах",
+        "pt": "cópia/paste/corte otimizado em grupos",
+        "nl": "optimaal kopie/paste gesneden in groepen",
+        "fr": "copie/coller/coller optimisé en groupes",
+        "it": "copia ottimizzata / incolla/taglio in gruppi",
+        "es": "copy/paste/cut optimizado en grupos",
+        "pl": "zoptymalizowane kopie/drapowanie w grupach",
+        "uk": "оптимізоване копіювання / копіювання в групах",
+        "zh-cn": "优化各组的复制/节目"
+      },
       "2.9.11": {
         "en": "fixed bug with visibility calculation",
         "de": "fehler behoben mit sichtberechnung",
@@ -80,19 +93,6 @@
         "pl": "związane z programem BulkEditor\nskrypty w HTML są obecnie dodawane do DOM, zamiast być wykonywane w ewalu\nzawartość Bulb widget jeśli min/max jest wypełnione\nmigrować widżet mowy 2",
         "uk": "виправлені питання з BulkEditor\nскрипки в HTML тепер додаються до DOM, замість того, щоб бути виконаними в eval\nвиправлені питання з Булб віджету, якщо min/max був колись заповнений\nmigrated word2text віджет для реагації",
         "zh-cn": "与布lkEditor的固定问题\n红十字与红新月运动的文字现在被添加到警察局,而不是用电子方式执行。\n如果明示/米纳税一旦得到填补,便与Bulb wid目标有固定问题。\n移出的演讲2 背 景"
-      },
-      "2.9.5": {
-        "en": "open new views at the beginning\nfixed crash case if signals are used\nfixed material-design-widgets helper \nupdate references to view in widget when view is renamed\njQui Toggle icon widget was migrated to react\njQui Radio widget was migrated to react\njQui Radio List widget was migrated to react\nCorrected last-change by React widgets",
-        "de": "neue ansichten am anfang öffnen\nfester crashfall, wenn signale verwendet werden\nfeste material-design-widgets-helfer\naktualisierung von referenzen zur ansicht in widget, wenn die ansicht umbenannt wird\nj Qui Toggle Symbol Widget wurde migriert, um zu reagieren\nj Qui Radio Widget wurde migriert, um zu reagieren\nj Radio Liste widget wurde migriert zu reagieren\nLetzte Änderung durch React Widgets korrigiert",
-        "ru": "открыть новые виды в начале\nфиксированный случай аварии, если сигналы используются\nфиксированный материал-дизайн-виджеты помощник\nобновление ссылок для просмотра в виджете, когда просмотр переименован\nдж Виджет иконки Qui Toggle был мигрирован, чтобы реагировать\nдж Виджет Qui Radio был мигрирован, чтобы реагировать\nдж Qui Радио Список виджет был мигрирован, чтобы реагировать\nИсправлена последняя смена React виджетов",
-        "pt": "abrir novas vistas no início\ncaso de acidente fixo se os sinais são usados\nmaterial fixo-design-widgets helper\natualizar referências para ver em widget quando vista é renomeada\njJ Qui Toggle ícone widget foi migrado para reagir\njJ Qui Radio widget foi migrado para reagir\njJ Qui Radio Lista widget foi migrado para reagir\nCorrigido última mudança por widgets React",
-        "nl": "open nieuwe uitzichten in het begin\nvertaling:\nmateriaal-design-widgets helper\nverwijzing naar het uitzicht in widget wanneer het zicht wordt hernoemd\nj Qui Toggle icon Widget werd gemigreerd om te reageren\nj Qui Radio Widget werd gemigreerd om te reageren\nj Qui Radio List Widget werd gemigreerd om te reageren\nVertaling:",
-        "fr": "ouvrir de nouvelles vues au début\ncas de crash fixe si les signaux sont utilisés\nmatériel fixe-design-widgets helper\nmettre à jour les références à afficher dans widget lorsque la vue est renommée\nj Le widget d'icône de Qui Toggle a été migré pour réagir\nj Le widget de Qui Radio a été migré pour réagir\nj Qui Radio List widget was migrated to react\nChangement final corrigé par les widgets React",
-        "it": "aprire nuove viste all'inizio\ncaso di arresto fisso se i segnali vengono utilizzati\nhelper fisso materiale-design-widgets\naggiornamento riferimenti da visualizzare in widget quando la vista viene rinominata\n# Qui Toggle widget icon è stato migrato per reagire\n# Qui Radio widget è stato migrato per reagire\n# Qui Radio Lista widget è stato migrato per reagire\nCorretto l'ultimo cambiamento da widget di React",
-        "es": "abrir nuevas vistas al comienzo\ncaso de accidente fijo si se utilizan señales\nayudador de herramientas de diseño de material fijo\nreferencias de actualización para ver en widget cuando la vista se renombra\nj Qui Toggle icono widget fue migrado para reaccionar\nj Qui Radio widget fue migrado para reaccionar\nj Qui Radio El widget de lista fue migrado para reaccionar\nCorregido último cambio por React widgets",
-        "pl": "nowe widoki na początku\nw przypadku gdy sygnały są używane, są używane\nulepszanie materiałów\nodwołuje się do przeglądu widget, kiedy zmieniono nazwę przeglądu\nj Qui Toggle icon widget zostało migrowane\nj Widget został przeniesiony do Qui Radio widget by reagować\nj Radio Lista widget została przeniesiona do reagowania\nOstatnia zmiana przeprowadzona przez React widgets",
-        "uk": "відкрити нові види на початку\nвиправлений випадок аварії, якщо сигнали використовуються\nфіксований матеріал-дизайн-widgets помічник\nоновлення посилань на перегляд у віджеті при перегляді\nй Віджет іконки Qui Toggle був мігрований для реагації\nй Віджет Qui Radio був мігрований для реагації\nй Твій радіо Список віджетів був мігрований для реагації\nВиправлено останню зміну React віджетів",
-        "zh-cn": "开 幕的新观点\n如果使用信号,固定事故案件\nb. 固定物质-转用目标帮助者\n说明\n页:1 基普什莱·伊科夫被移作反应\n页:1 被移植了基电台,以作出反应。\n页:1 基 无线电 被移出以反应的名单\n重新爆发成见"
       }
     },
     "title": "Visualisation Next Generation",
