@@ -34,7 +34,7 @@ import {
 } from '@iobroker/adapter-react-v5';
 import { recalculateFields, store, updateProject } from './Store';
 import {
-    isGroup, getNewWidgetId, getNewGroupId, pasteGroup, unsyncMultipleWidgets, deepClone,
+    isGroup, getNewWidgetId, getNewGroupId, pasteGroup, unsyncMultipleWidgets, deepClone, pasteSingleWidget,
 } from './Utils/utils';
 
 import Attributes from './Attributes';
@@ -528,7 +528,7 @@ class App extends Runtime {
         const widgets = {};
         const groupMembers = {};
         const project = deepClone(store.getState().visProject);
-        const { visProject } = store.getState();
+        const { visProject } = deepClone(store.getState());
 
         this.state.selectedWidgets.forEach(selectedWidget => {
             widgets[selectedWidget] = visProject[this.state.selectedView].widgets[selectedWidget];
@@ -540,8 +540,28 @@ class App extends Runtime {
                 }
             }
 
-            if (type === 'cut' && project[this.state.selectedView]) {
-                delete project[this.state.selectedView].widgets[selectedWidget];
+            if (project[this.state.selectedView]) {
+                const widget = project[this.state.selectedView].widgets[selectedWidget];
+
+                if (widget.groupid) {
+                    delete widgets[selectedWidget].groupid;
+                    delete widgets[selectedWidget].grouped;
+                    delete widget._id;
+                }
+
+                if (type === 'cut') {
+                    if (widget.groupid) {
+                        const group = project[this.state.selectedView].widgets[widget.groupid];
+
+                        const pos = group.data.members.indexOf(selectedWidget);
+
+                        if (pos !== -1) {
+                            group.data.members.splice(pos, 1);
+                        }
+                    }
+
+                    delete project[this.state.selectedView].widgets[selectedWidget];
+                }
             }
         });
 
@@ -562,7 +582,7 @@ class App extends Runtime {
     };
 
     pasteWidgets = async () => {
-        const project = JSON.parse(JSON.stringify(store.getState().visProject));
+        const project = deepClone(store.getState().visProject);
         const widgets = project[this.state.selectedView].widgets;
 
         const newKeys = [];
@@ -570,7 +590,7 @@ class App extends Runtime {
         let groupOffset = 0;
 
         for (const clipboardWidgetId of Object.keys(this.state.widgetsClipboard.widgets)) {
-            const newWidget = JSON.parse(JSON.stringify(this.state.widgetsClipboard.widgets[clipboardWidgetId]));
+            const newWidget = deepClone(this.state.widgetsClipboard.widgets[clipboardWidgetId]);
             if (this.state.widgetsClipboard.type === 'copy' && this.state.selectedView === this.state.widgetsClipboard.view) {
                 const boundingRect = App.getWidgetRelativeRect(clipboardWidgetId);
                 newWidget.style = this.pxToPercent(newWidget.style, {
@@ -581,17 +601,18 @@ class App extends Runtime {
             let newKey;
 
             if (isGroup(newWidget)) {
-                pasteGroup({
+                newKey = pasteGroup({
                     group: newWidget, widgets, offset: groupOffset, groupMembers: this.state.widgetsClipboard.groupMembers, project: store.getState().visProject,
                 });
-                newKey = getNewGroupId(store.getState().visProject, groupOffset);
+
                 groupOffset++;
             } else {
-                newKey = getNewWidgetId(store.getState().visProject, widgetOffset);
+                newKey = pasteSingleWidget({
+                    widget: newWidget, offset: widgetOffset, project: store.getState().visProject, selectedGroup: this.state.selectedGroup, widgets,
+                });
                 widgetOffset++;
             }
 
-            widgets[newKey] = newWidget;
             newKeys.push(newKey);
         }
 
@@ -601,12 +622,12 @@ class App extends Runtime {
     };
 
     cloneWidgets = async () => {
-        const project = JSON.parse(JSON.stringify(store.getState().visProject));
+        const project = deepClone(store.getState().visProject);
         const widgets = project[this.state.selectedView].widgets;
 
         const newKeys = [];
         this.state.selectedWidgets.forEach(selectedWidget => {
-            const newWidget = JSON.parse(JSON.stringify(widgets[selectedWidget]));
+            const newWidget = deepClone(widgets[selectedWidget]);
             const boundingRect = App.getWidgetRelativeRect(selectedWidget);
             newWidget.style = this.pxToPercent(newWidget.style, {
                 left: boundingRect.left + 10,
@@ -618,8 +639,10 @@ class App extends Runtime {
                     group: newWidget, widgets, groupMembers: widgets, project: store.getState().visProject,
                 });
             } else {
-                const newKey = getNewWidgetId(store.getState().visProject);
-                widgets[newKey] = newWidget;
+                const newKey = pasteSingleWidget({
+                    widget: newWidget, project: store.getState().visProject, selectedGroup: this.state.selectedGroup, widgets,
+                });
+
                 newKeys.push(newKey);
             }
         });
@@ -629,7 +652,7 @@ class App extends Runtime {
     };
 
     alignWidgets = type => {
-        const project = JSON.parse(JSON.stringify(store.getState().visProject));
+        const project = deepClone(store.getState().visProject);
         const widgets = project[this.state.selectedView].widgets;
         const newCoordinates = {
             left: 0, top: 0, width: 0, height: 0, right: 0, bottom: 0,
@@ -790,7 +813,7 @@ class App extends Runtime {
     };
 
     orderWidgets = type => {
-        const project = JSON.parse(JSON.stringify(store.getState().visProject));
+        const project = deepClone(store.getState().visProject);
         const widgets = project[this.state.selectedView].widgets;
         let minZ = 0;
         let maxZ = 0;
@@ -951,7 +974,7 @@ class App extends Runtime {
         this.historyTimer = setTimeout(() => {
             this.historyTimer = null;
 
-            let history = JSON.parse(JSON.stringify(this.state.history));
+            let history = deepClone(this.state.history);
             let historyCursor = this.state.historyCursor;
             if (historyCursor !== history.length - 1) {
                 history = history.slice(0, historyCursor + 1);
@@ -1090,7 +1113,7 @@ class App extends Runtime {
     };
 
     onWidgetsChanged = (changedData, view, viewSettings) => {
-        this.tempProject = this.tempProject || JSON.parse(JSON.stringify(store.getState().visProject));
+        this.tempProject = this.tempProject || deepClone(store.getState().visProject);
         changedData && changedData.forEach(item => {
             if (item.style) {
                 const currentStyle = this.tempProject[item.view].widgets[item.wid].style;
@@ -1216,7 +1239,7 @@ class App extends Runtime {
 
     installWidget = async (widgetId, id) => {
         if (window.VisMarketplace?.api) {
-            const project = JSON.parse(JSON.stringify(store.getState().visProject));
+            const project = deepClone(store.getState().visProject);
             const marketplaceWidget = await window.VisMarketplace.api.apiGetWidgetRevision(widgetId, id);
             if (!project.___settings.marketplace) {
                 project.___settings.marketplace = [];
@@ -1232,7 +1255,7 @@ class App extends Runtime {
     };
 
     uninstallWidget = async widget => {
-        const project = JSON.parse(JSON.stringify(store.getState().visProject));
+        const project = deepClone(store.getState().visProject);
         const widgetIndex = project.___settings.marketplace.findIndex(item => item.id === widget);
         if (widgetIndex !== -1) {
             project.___settings.marketplace.splice(widgetIndex, 1);
@@ -1245,7 +1268,7 @@ class App extends Runtime {
 
         widgets.forEach(_widget => {
             if (_widget.isRoot) {
-                _widget.marketplace = JSON.parse(JSON.stringify(store.getState().visProject.___settings.marketplace.find(item => item.id === id)));
+                _widget.marketplace = deepClone(store.getState().visProject.___settings.marketplace.find(item => item.id === id));
             }
             if (isGroup(_widget)) {
                 let newKey = getNewGroupId(store.getState().visProject);
@@ -1289,17 +1312,17 @@ class App extends Runtime {
     };
 
     addMarketplaceWidget = async (id, x, y, widgetId, oldData, oldStyle) => {
-        const project = JSON.parse(JSON.stringify(store.getState().visProject));
-        const widgets = JSON.parse(JSON.stringify(store.getState().visProject.___settings.marketplace.find(item => item.id === id).widget));
+        const project = deepClone(store.getState().visProject);
+        const widgets = deepClone(store.getState().visProject.___settings.marketplace.find(item => item.id === id).widget);
         this.importMarketplaceWidget(project, this.state.selectedView, widgets, id, x, y, widgetId, oldData, oldStyle);
         await this.changeProject(project);
     };
 
     updateWidget = async id => {
-        const project = JSON.parse(JSON.stringify(store.getState().visProject));
+        const project = deepClone(store.getState().visProject);
         const widget = project[this.state.selectedView].widgets[id];
         if (widget && widget.marketplace) {
-            const marketplace = JSON.parse(JSON.stringify(store.getState().visProject.___settings.marketplace.find(item => item.widget_id === widget.marketplace.widget_id)));
+            const marketplace = deepClone(store.getState().visProject.___settings.marketplace.find(item => item.widget_id === widget.marketplace.widget_id));
             await this.deleteWidgetsAction();
             await this.addMarketplaceWidget(marketplace.id, null, null, id, widget.data, widget.style);
         }
@@ -1450,7 +1473,7 @@ class App extends Runtime {
                     <IconButton
                         size="small"
                         onClick={() => {
-                            const project = JSON.parse(JSON.stringify(store.getState().visProject));
+                            const project = deepClone(store.getState().visProject);
                             project.___settings.openedViews = [this.state.selectedView];
                             this.changeProject(project, true);
                         }}

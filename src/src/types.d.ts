@@ -16,12 +16,16 @@ export interface ProjectSettings {
 }
 
 interface SingleWidget  {
+    /** Internal wid */
+    _id?: string;
     data: Record<string, unknown>;
     style: Record<string, unknown>;
     tpl: string;
     widgetSet: string;
     /** The id of the group, if the widget is grouped */
     groupid?: string;
+    /** If the widget is grouped */
+    grouped?: boolean;
 }
 
 interface GroupWidget extends SingleWidget {

@@ -3,7 +3,9 @@
  */
 import type { CSSProperties } from '@mui/styles';
 import { store } from '@/Store';
-import { GroupWidget, Widget, Project } from '@/types';
+import {
+    GroupWidget, Widget, Project, SingleWidget,
+} from '@/types';
 
 /** Default OID if no selected */
 export const NOTHING_SELECTED = 'nothing_selected';
@@ -103,25 +105,60 @@ export function getNewGroupId(project: Project, offset = 0): string {
     return `g${newKey.toString().padStart(6, '0')}`;
 }
 
-interface CopyGroupOptions {
-    /** The group which should be copied */
-    group: GroupWidget;
+interface CopyWidgetOptions {
     /** The widgets key, value object to copy the group to */
     widgets: Record<string, Widget>;
-    /** The group member widgets stored in the clipboard to paste from */
-    groupMembers: Record<string, Widget>;
     /** The offset to use, if multiple groups are copied without saving */
     offset?: number;
     /** The project to calculate new widget ids from */
     project: Project;
 }
 
+interface CopySingleWidgetOptions extends CopyWidgetOptions {
+    /** The widget which should be copied */
+    widget: SingleWidget;
+    /** ID of the selected group if one is active */
+    selectedGroup?: string;
+}
+
+interface CopyGroupOptions extends CopyWidgetOptions {
+    /** The group which should be copied */
+    group: GroupWidget;
+    /** The group member widgets stored in the clipboard to paste from */
+    groupMembers: Record<string, Widget>;
+}
+
+/**
+ * Paste a single widget into the given widgets key, value object
+ * Returns the new widget id
+ *
+ * @param options selected group, widgets and offset information
+ */
+export function pasteSingleWidget(options: CopySingleWidgetOptions): string {
+    const  {
+        widgets, offset, project, widget, selectedGroup,
+    } = options;
+
+    const newKey = getNewWidgetId(project, offset);
+
+    if (selectedGroup && isGroup(widgets[selectedGroup])) {
+        widget.grouped = true;
+        widget.groupid = selectedGroup;
+        (widgets[selectedGroup] as GroupWidget).data.members.push(newKey);
+    }
+
+    widgets[newKey] = widget;
+
+    return newKey;
+}
+
 /**
  * Paste a group and all the members into the given widgets key, value object
+ * Returns the new group id
  *
  * @param options group, widgets and offset information
  */
-export function pasteGroup(options: CopyGroupOptions): void {
+export function pasteGroup(options: CopyGroupOptions): string {
     const  {
         widgets, group, groupMembers, offset, project,
     } = options;
@@ -139,6 +176,8 @@ export function pasteGroup(options: CopyGroupOptions): void {
     }
 
     widgets[newGroupId] = group;
+
+    return newGroupId;
 }
 
 /**

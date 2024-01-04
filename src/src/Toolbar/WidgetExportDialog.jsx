@@ -6,10 +6,11 @@ import { Utils, I18n } from '@iobroker/adapter-react-v5';
 
 import IODialog from '../Components/IODialog';
 import CustomAceEditor from '../Components/CustomAceEditor';
+import { deepClone } from '../Utils/utils';
 
 const WidgetExportDialog = props => {
     const widgets = props.selectedWidgets.map(wid => {
-        const w = JSON.parse(JSON.stringify(props.widgets[wid]));
+        const w = deepClone(props.widgets[wid]);
         w._id = wid;
         return w;
     });
@@ -25,13 +26,13 @@ const WidgetExportDialog = props => {
             const newId = `f${gIdx.toString().padStart(6, '0')}`;
             gIdx++;
 
-            if (widget.data && widget.data.members) {
+            if (widget.data?.members) {
                 const members = [];
                 widget.data.members.forEach(member => {
                     if (groupWidgets.includes(member)) {
                         return;
                     }
-                    const memberWidget = JSON.parse(JSON.stringify(props.widgets[member]));
+                    const memberWidget = deepClone(props.widgets[member]);
                     memberWidget._id = `i${wIdx.toString().padStart(6, '0')}`;
                     wIdx++;
                     members.push(memberWidget._id);

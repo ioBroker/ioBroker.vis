@@ -337,7 +337,7 @@ const Widgets = props => {
                         Icon: BiImport,
                         name: 'Import widgets',
                         size: 'normal',
-                        disabled: !props.editMode || !!props.selectedGroup,
+                        disabled: !props.editMode,
                         onClick: () => setImportDialog(true),
                     }],
                     [{
@@ -381,6 +381,7 @@ const Widgets = props => {
             changeProject={props.changeProject}
             selectedView={props.selectedView}
             project={store.getState().visProject}
+            selectedGroup={props.selectedGroup}
             themeType={props.themeType}
         /> : null}
         {exportDialog ? <WidgetExportDialog
