@@ -13,7 +13,9 @@ import {
 
 import { useFocus } from '@/Utils';
 import { store } from '@/Store';
-import { GroupWidget, Project, Widget } from '@/types';
+import {
+    GroupWidget, GroupWidgetId, Project, Widget,
+} from '@/types';
 import CustomAceEditor from '../Components/CustomAceEditor';
 
 interface WidgetImportDialogProps {
@@ -21,7 +23,7 @@ interface WidgetImportDialogProps {
     onClose:() => void;
     themeType: string;
     selectedView: string;
-    selectedGroup: string;
+    selectedGroup: GroupWidgetId;
 }
 
 const WidgetImportDialog = (props: WidgetImportDialogProps) => {

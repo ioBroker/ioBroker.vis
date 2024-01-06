@@ -18,7 +18,7 @@ import {
 } from '@/Utils/utils';
 import { useFocus } from '@/Utils';
 import IODialog from '@/Components/IODialog';
-import { Project } from '@/types';
+import { Project, SingleWidgetId } from '@/types';
 
 interface ViewDialogProps {
     changeProject: (project: Project) => Promise<void>;
@@ -133,7 +133,7 @@ const ViewDialog = (props: ViewDialogProps) => {
                 });
             } else if (!widget.groupid) {
                 const newWid = getNewWidgetId(project);
-                project[props.dialogName].widgets[newWid] = originalWidgets[wid];
+                project[props.dialogName].widgets[newWid] = originalWidgets[wid as SingleWidgetId];
             }
         }
 

@@ -39,13 +39,20 @@ interface GroupWidget extends SingleWidget {
 
 export type Widget = SingleWidget | GroupWidget;
 
+export type SingleWidgetId = `w${string}`
+export type GroupWidgetId = `g${string}`
+export type AnyWidgetId = SingleWidgetId | GroupWidgetId
+
 export interface View {
     activeWidgets: string[];
     filterList: string[];
     rerender: boolean;
     settings: Record<string, unknown>;
     /** Widgets on this view */
-    widgets: Record<string, Widget>;
+    widgets: {
+        [groupId: GroupWidgetId]: GroupWidget;
+        [widgetId: SingleWidgetId]: SingleWidget;
+    };
 }
 
 export interface Project {

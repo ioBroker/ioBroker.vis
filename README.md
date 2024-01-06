@@ -230,6 +230,10 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (foxriver76) prevent showing widget in group after it is already cut out
+* (foxriver76) prevent usage of widgets which are not in group for calculating rulers on group view
+
 ### 2.9.12 (2024-01-04)
 * (foxriver76) optimized copy/paste/cut in groups
 

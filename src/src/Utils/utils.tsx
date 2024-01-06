@@ -4,7 +4,7 @@
 import type { CSSProperties } from '@mui/styles';
 import { store } from '@/Store';
 import {
-    GroupWidget, Widget, Project, SingleWidget,
+    GroupWidget, Widget, Project, SingleWidget, SingleWidgetId, GroupWidgetId, AnyWidgetId,
 } from '@/types';
 
 /** Default OID if no selected */
@@ -88,7 +88,7 @@ export function getNewWidgetIdNumber(isWidgetGroup: boolean, project: Project, o
  * @param offset offset, if multiple widgets are created and not yet in the project
  * @return {string}
  */
-export function getNewWidgetId(project: Project, offset = 0): string {
+export function getNewWidgetId(project: Project, offset = 0): SingleWidgetId {
     const newKey = getNewWidgetIdNumber(false, project, offset);
 
     return `w${(newKey).toString().padStart(6, '0')}`;
@@ -99,7 +99,7 @@ export function getNewWidgetId(project: Project, offset = 0): string {
  * @param project project to determine next group id for
  * @param offset offset, if multiple groups are created and not yet in the project
  */
-export function getNewGroupId(project: Project, offset = 0): string {
+export function getNewGroupId(project: Project, offset = 0): GroupWidgetId {
     const newKey = getNewWidgetIdNumber(true, project, offset);
 
     return `g${newKey.toString().padStart(6, '0')}`;
@@ -194,7 +194,7 @@ export function unsyncMultipleWidgets(project: Project): Project {
 
         for (const widgetId of Object.keys(view.widgets)) {
             if (widgetId.includes('_')) {
-                delete view.widgets[widgetId];
+                delete view.widgets[widgetId as AnyWidgetId];
             }
         }
     }

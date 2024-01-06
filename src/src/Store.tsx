@@ -1,11 +1,14 @@
 import {
     createReducer, configureStore, createAction, createSelector,
 } from '@reduxjs/toolkit';
-import type { View, Widget, Project } from '@/types';
+import type {
+    View, Project, AnyWidgetId, SingleWidgetId, SingleWidget, GroupWidget, GroupWidgetId,
+} from '@/types';
 
 export const updateProject = createAction<Project>('project/update');
-export const updateView = createAction<{viewId: string; data: View}>('view/update');
-export const updateWidget = createAction<{viewId: string; widgetId: string; data: Widget}>('widget/update');
+export const updateView = createAction<{ viewId: string; data: View }>('view/update');
+export const updateWidget = createAction<{ viewId: string; widgetId: SingleWidgetId; data: SingleWidget }>('widget/update');
+export const updateGroupWidget = createAction<{ viewId: string; widgetId: GroupWidgetId; data: GroupWidget }>('group/update');
 export const recalculateFields = createAction<boolean>('attributes/recalculate');
 
 const initialState = {
@@ -28,6 +31,10 @@ const reducer = createReducer(
                 const { viewId, widgetId, data } = action.payload;
                 state.visProject[viewId].widgets[widgetId] = data;
             })
+            .addCase(updateGroupWidget, (state, action) => {
+                const { viewId, widgetId, data } = action.payload;
+                state.visProject[viewId].widgets[widgetId] = data;
+            })
             .addCase(recalculateFields, (state, action) => {
                 state.recalculateFields = action.payload;
             });
@@ -45,7 +52,7 @@ export const selectView = createSelector([
 
 export const selectWidget = createSelector([
     selectView,
-    (_state: StoreState, _viewName: string, wid: string) => wid,
+    (_state: StoreState, _viewName: string, wid: AnyWidgetId) => wid,
 ], (view, wid) => view.widgets[wid]);
 
 export const store = configureStore({

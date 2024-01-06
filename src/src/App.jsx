@@ -468,9 +468,9 @@ class App extends Runtime {
     };
 
     deleteWidgetsAction = async () => {
-        const project = JSON.parse(JSON.stringify(store.getState().visProject));
+        const project = deepClone(store.getState().visProject);
         const widgets = project[this.state.selectedView].widgets;
-        this.state.selectedWidgets.forEach(selectedWidget => {
+        for (const selectedWidget of this.state.selectedWidgets) {
             if (widgets[selectedWidget].tpl === '_tplGroup') {
                 widgets[selectedWidget].data.members.forEach(member => {
                     delete widgets[member];
@@ -490,7 +490,7 @@ class App extends Runtime {
             }
 
             delete widgets[selectedWidget];
-        });
+        }
         this.setSelectedWidgets([]);
         await this.changeProject(project);
     };
@@ -546,21 +546,6 @@ class App extends Runtime {
                 if (widget.groupid) {
                     delete widgets[selectedWidget].groupid;
                     delete widgets[selectedWidget].grouped;
-                    delete widget._id;
-                }
-
-                if (type === 'cut') {
-                    if (widget.groupid) {
-                        const group = project[this.state.selectedView].widgets[widget.groupid];
-
-                        const pos = group.data.members.indexOf(selectedWidget);
-
-                        if (pos !== -1) {
-                            group.data.members.splice(pos, 1);
-                        }
-                    }
-
-                    delete project[this.state.selectedView].widgets[selectedWidget];
                 }
             }
         });
@@ -576,8 +561,7 @@ class App extends Runtime {
 
         // deselect all widgets
         if (type === 'cut') {
-            await this.setSelectedWidgets([]);
-            await this.changeProject(project);
+            this.deleteWidgetsAction();
         }
     };
 
