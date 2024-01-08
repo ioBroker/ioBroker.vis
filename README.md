@@ -230,7 +230,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.9.13 (2024-01-08)
 * (foxriver76) correctly detect IDs in bindings when they contain hash character
 * (foxriver76) fix crash when multiple JquiState widgets selected
 * (foxriver76) prevent showing widget in group after it is already cut out

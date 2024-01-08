@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.12",
+    "version": "2.9.13",
     "news": {
+      "2.9.13": {
+        "en": "correctly detect IDs in bindings when they contain hash character\nfix crash when multiple JquiState widgets selected\nprevent showing widget in group after it is already cut out\nprevent usage of widgets which are not in group for calculating rulers on group view",
+        "de": "richtig erkennen IDs in Bindungen, wenn sie Hashcharakter enthalten\ncrash beheben, wenn mehrere JquiState Widgets ausgewählt wurden\nverhindern, widget in gruppe zu zeigen, nachdem es bereits herausgeschnitten\ndie verwendung von widgets, die nicht in der gruppe zur berechnung von herrschern auf gruppenansicht",
+        "ru": "правильно обнаружить Идентификаторы в привязки, когда они содержат хэш-символ\nисправление крушения при выборе нескольких виджетов JquiState\nне показывать виджет в группе после того, как он уже вырезан\nпредотвратить использование виджетов, которые не в группе для расчета правителей на групповом взгляде",
+        "pt": "detectar corretamente IDs em ligações quando contêm caracteres hash\ncorrigir acidente quando vários widgets JquiState selecionados\nevitar mostrar widget no grupo depois que já está cortado\nevitar o uso de widgets que não estão em grupo para calcular governantes na vista do grupo",
+        "nl": "correct detecteren ID's in bindingen wanneer ze hash-teken bevatten\nfix crash wanneer meerdere JquiState widgets geselecteerd\nvoorkomen dat widget in groep wordt getoond nadat het al is uitgesneden\nvoorkomen gebruik van widgets die niet in de groep voor het berekenen van liniaals op groepsweergave",
+        "fr": "détecter correctement IDs dans les liaisons lorsqu'ils contiennent un caractère de hachage\ncorrection du crash lorsque plusieurs widgets JquiState sont sélectionnés\nempêcher l'affichage du widget en groupe après qu'il soit déjà coupé\nempêcher l'utilisation de widgets qui ne sont pas en groupe pour le calcul des règles sur la vue de groupe",
+        "it": "rilevare correttamente ID in binding quando contengono carattere hash\ncorrezione crash quando più widget JquiState selezionati\nevitare di mostrare widget in gruppo dopo che è già tagliato fuori\nimpedire l'uso di widget che non sono in gruppo per il calcolo dei righelli sulla vista di gruppo",
+        "es": "detectar correctamente IDs in bindings when they containh character\narreglar fallo cuando varios widgets JquiState seleccionados\nevitar mostrar widget en grupo después de que ya está cortado\npreviene el uso de widgets que no están en grupo para calcular gobernantes en vista de grupo",
+        "pl": "poprawnie wykryć Identyfikatory w wiązaniach, gdy zawierają znak haszu\nnaprawić awarię po wybraniu wielu widżetów JquiState\nzapobieganie pokazywaniu widżetu w grupie po jego wycięciu\nzapobieganie stosowaniu widżetów, które nie są w grupie do obliczania władców na widoku grupy",
+        "uk": "правильно виявити Ідентифікатори у зв'язках, коли вони містять характер хешу\nвиправити аварійний випадок, коли кілька віджетів JquiState вибрано\nзапобігти показувати віджет в групі після того, як він вже вирізати\nзапобігання використання віджетів, які не в групі для обчислення ліній на груповому перегляді",
+        "zh-cn": "正确检测 包含散列字符的装订标识\n选择多个 Jqui State 部件时修复崩溃\n阻止在已剪掉后在组中显示部件\n防止使用组内不用于在组视图中计算标尺的部件"
+      },
       "2.9.12": {
         "en": "optimized copy/paste/cut in groups",
         "de": "optimierte kopie/paste/cut in gruppen",
@@ -80,19 +93,6 @@
         "pl": "Wszystko przyzwyczajało tylko flagę Styled/Input",
         "uk": "Дозвольте читати тільки прапор для стильного / Вхід",
         "zh-cn": "允许仅为Styled/Input的旗帜"
-      },
-      "2.9.6": {
-        "en": "fixed issues with the BulkEditor\nscripts in HTML are now added to the DOM, instead of being executed in eval\nfixed issues with Bulb widget if min/max was once filled\nmigrated \"speech2text\" widget to react",
-        "de": "feste Probleme mit dem BulkEditor\nskripte in HTML werden nun dem DOM hinzugefügt, anstatt in eval ausgeführt zu werden\nfeste Probleme mit Bulb Widget, wenn min/max einmal gefüllt\nmigrated language2text widget zu reagieren",
-        "ru": "фиксированные вопросы с BulkEditor\nскрипты в HTML теперь добавлены в DOM, вместо того, чтобы быть выполнены в эвале\nфиксированные проблемы с виджетом ламп, если мин/макс был когда-то заполнен\nмигрированная речи2текстовый виджет для реакции",
-        "pt": "problemas fixos com o BulkEditor\nscripts em HTML agora são adicionados ao DOM, em vez de serem executados em eval\nproblemas fixos com widget Bulb se min/max foi preenchido uma vez\nwidget de fala2text migrado para reagir",
-        "nl": "vertaling:\nscripts in HTML zijn nu toegevoegd aan de DOM, in plaats van geëvalueerd te worden\n_\ngemigreerde speech 2text widget om te reageren",
-        "fr": "problèmes fixes avec le BulkEditor\nles scripts en HTML sont maintenant ajoutés au DOM, au lieu d'être exécutés en val\nproblèmes fixes avec widget Bulb si min/max a été rempli une fois\nwidget vocal2text migré pour réagir",
-        "it": "problemi fissi con il BulkEditor\nscript in HTML sono ora aggiunti al DOM, invece di essere eseguito in eva\nproblemi fissi con widget Bulb se min/max è stato riempito una volta\nmigrato speech2text widget per reagire",
-        "es": "problemas fijos con el BulkEditor\nscripts en HTML se añaden ahora a la DOM, en lugar de ser ejecutados en eval\nproblemas fijos con el widget Bulb si min/max fue una vez llenado\nmigrated speech2text widget para reaccionar",
-        "pl": "związane z programem BulkEditor\nskrypty w HTML są obecnie dodawane do DOM, zamiast być wykonywane w ewalu\nzawartość Bulb widget jeśli min/max jest wypełnione\nmigrować widżet mowy 2",
-        "uk": "виправлені питання з BulkEditor\nскрипки в HTML тепер додаються до DOM, замість того, щоб бути виконаними в eval\nвиправлені питання з Булб віджету, якщо min/max був колись заповнений\nmigrated word2text віджет для реагації",
-        "zh-cn": "与布lkEditor的固定问题\n红十字与红新月运动的文字现在被添加到警察局,而不是用电子方式执行。\n如果明示/米纳税一旦得到填补,便与Bulb wid目标有固定问题。\n移出的演讲2 背 景"
       }
     },
     "title": "Visualisation Next Generation",
