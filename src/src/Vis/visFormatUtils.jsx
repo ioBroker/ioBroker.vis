@@ -13,6 +13,7 @@
  * (Free for non-commercial use).
  */
 import { extractBinding } from './visUtils';
+import { deepClone } from '../Utils/utils';
 
 class VisFormatUtils {
     constructor(props) {
@@ -265,14 +266,14 @@ class VisFormatUtils {
             return null;
         }
         if (!this.vis.editMode && this.bindingsCache[format]) {
-            return JSON.parse(JSON.stringify(this.bindingsCache[format]));
+            return deepClone(this.bindingsCache[format]);
         }
 
         const result = extractBinding(format);
 
         // cache bindings
         if (result && this.bindingsCache && !this.vis.editMode) {
-            this.bindingsCache[format] = JSON.parse(JSON.stringify(result));
+            this.bindingsCache[format] = deepClone(result);
         }
 
         return result;
@@ -348,7 +349,7 @@ class VisFormatUtils {
 
                             const { formula } = operation;
                             if (formula && formula.includes('widget.')) {
-                                const w = JSON.parse(JSON.stringify(widget));
+                                const w = deepClone(widget);
                                 w.data = widgetData;
                                 string += `const widget = ${JSON.stringify(w)};`;
                             }

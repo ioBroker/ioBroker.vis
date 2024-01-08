@@ -27,7 +27,7 @@ Additionally, you need a license to use the adapter. The following license editi
 Normally, most of the widgets have ObjectID attribute and this attribute can be bound with some value of object ID.
 But there is another option for how to bind *any* attribute of widget to some ObjectID. 
 
-Just write into attribute `{object.id}` and it will be bound to this object's value. 
+Just write into attribute `{object.id}` e.g. `{hm-rpc.0.OEQ1880105.4.ACTUAL_TEMPERATURE}` and it will be bound to this object's value. 
 If you use the special format, you can even make some simple operations with it, e.g., multiplying or formatting.
 
 E.g., to calculate the hypotenuse of a triangle:
