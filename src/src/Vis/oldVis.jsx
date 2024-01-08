@@ -1927,9 +1927,9 @@ class Vis {
             css['z-index'] = data['lc-zindex'];
         }
         if (data['lc-position-vert'] === 'top') {
-            css.top = parseInt(data['lc-offset-vert'], 10);
+            css.top = `${parseInt(data['lc-offset-vert'], 10)}px`;
         } else if (data['lc-position-vert'] === 'bottom') {
-            css.bottom = parseInt(data['lc-offset-vert'], 10);
+            css.bottom = `${parseInt(data['lc-offset-vert'], 10)}px`;
         } else if (data['lc-position-vert'] === 'middle') {
             css.top = `calc(50% + ${parseInt(data['lc-offset-vert'], 10) - 10}px)`;
         }

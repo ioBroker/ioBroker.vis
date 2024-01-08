@@ -1340,7 +1340,7 @@ class VisBaseWidget extends React.Component {
                 const time = parseInt(timeIntervalEl.dataset.time, 10);
                 timeIntervalEl.innerHTML = this.formatInterval(time, timeIntervalEl.dataset.moment === 'true');
             }
-        }, 10000);
+        }, 10_000);
     }
 
     // eslint-disable-next-line react/no-unused-class-component-methods

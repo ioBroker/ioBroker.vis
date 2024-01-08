@@ -231,6 +231,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 -->
 ## Changelog
 ### **WORK IN PROGRESS**
+* (foxriver76) fixed last change y-offset for some widgets
 * (foxriver76) fixed issue where JquiState did not respect data type
 
 ### 2.9.13 (2024-01-08)

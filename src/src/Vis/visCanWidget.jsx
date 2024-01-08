@@ -818,10 +818,11 @@ class VisCanWidget extends VisBaseWidget {
         if (widgetData['lc-zindex']) {
             css.zIndex = widgetData['lc-zindex'];
         }
+
         if (widgetData['lc-position-vert'] === 'top') {
-            css.top = parseInt(widgetData['lc-offset-vert'], 10);
+            css.top = `${parseInt(widgetData['lc-offset-vert'], 10)}px`;
         } else if (widgetData['lc-position-vert'] === 'bottom') {
-            css.bottom = parseInt(widgetData['lc-offset-vert'], 10);
+            css.bottom = `${parseInt(widgetData['lc-offset-vert'], 10)}px`;
         } else if (widgetData['lc-position-vert'] === 'middle') {
             css.top = `calc(50% + ${parseInt(widgetData['lc-offset-vert'], 10) - 10}px)`;
         }
@@ -851,6 +852,7 @@ class VisCanWidget extends VisBaseWidget {
             widgetData['lc-is-interval'],
             widgetData['lc-is-moment'],
         );
+
         Object.keys(css).forEach(attr => divLastChange.style[attr] = css[attr]);
 
         this.widDiv.prepend(divLastChange);
