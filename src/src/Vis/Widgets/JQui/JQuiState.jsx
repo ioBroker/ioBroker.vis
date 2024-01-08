@@ -37,6 +37,7 @@ import {
 // eslint-disable-next-line import/no-cycle
 import VisRxWidget from '../../visRxWidget';
 import BulkEditor from './BulkEditor';
+import { deepClone } from '../../../Utils/utils';
 
 class JQuiState extends VisRxWidget {
     static getWidgetInfo() {
@@ -96,7 +97,8 @@ class JQuiState extends VisRxWidget {
                                 onDataChange,
                                 props, // {context: {views, view, socket, themeType, projectName, adapterName, instance, id, widget}, selectedView, selectedWidget, selectedWidgets}
                             ) => <BulkEditor
-                                data={data}
+                                // TODO: if multiple widgets of this type selected data will get undefined, check why
+                                data={data || {}}
                                 onDataChange={onDataChange}
                                 socket={props.context.socket}
                                 themeType={props.context.themeType}
@@ -273,7 +275,7 @@ class JQuiState extends VisRxWidget {
             // convert
             const values = this.state.data.values.split(';');
             const texts = this.state.data.texts.split(';');
-            const data = JSON.parse(JSON.stringify(this.state.data));
+            const data = deepClone(this.state.data);
             data.values = null;
             data.texts = null;
             data.count = values.length;
