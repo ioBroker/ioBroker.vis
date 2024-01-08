@@ -234,7 +234,7 @@ class JQuiState extends VisRxWidget {
 
         // convert old tplJquiRadioSteps data to JquiState data
         if (this.props.tpl === 'tplJquiRadioSteps' && this.state.data && this.props.context.onWidgetsChanged && this.state.data.count === undefined) {
-            const data = JSON.parse(JSON.stringify(this.state.data));
+            const data = deepClone(this.state.data);
 
             data.count = 5;
             const min = parseFloat(data.min || 0, 10);
@@ -355,7 +355,7 @@ class JQuiState extends VisRxWidget {
         } else {
             const oid = this.getControlOid();
             if (oid) {
-                if (this.state.valueType === 'number') {
+                if (this.state.object.common.type === 'number') {
                     this.props.context.setValue(oid, parseFloat(this.state.rxData[`value${indexOrValue}`]));
                 } else {
                     this.props.context.setValue(oid, this.state.rxData[`value${indexOrValue}`]);

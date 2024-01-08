@@ -26,7 +26,7 @@ import {
 
 import { I18n, Utils } from '@iobroker/adapter-react-v5';
 
-import { calculateOverflow, isVarFinite } from '@/Utils/utils';
+import { calculateOverflow, deepClone, isVarFinite } from '@/Utils/utils';
 import {
     addClass,
     removeClass,
@@ -45,7 +45,7 @@ class VisBaseWidget extends React.Component {
     constructor(props) {
         super(props);
 
-        this.uuid = `${Date.now()}.${Math.round(Math.random() * 1000000)}`;
+        this.uuid = `${Date.now()}.${Math.round(Math.random() * 1_000_000)}`;
 
         const widget = props.context.views[props.view].widgets[props.id];
         this.refService = React.createRef();
@@ -55,8 +55,8 @@ class VisBaseWidget extends React.Component {
 
         const selected = !multiViewWidget && props.editMode && props.selectedWidgets?.includes(props.id);
 
-        const data = JSON.parse(JSON.stringify(widget.data || {}));
-        const style = JSON.parse(JSON.stringify(widget.style || {}));
+        const data = deepClone(widget.data || {});
+        const style = deepClone(widget.style || {});
         VisBaseWidget.replacePRJ_NAME(data, style, props);
 
         this.state = {
@@ -244,7 +244,7 @@ class VisBaseWidget extends React.Component {
                             // create a copy as we will substitute the values
                             if (!copied) {
                                 copied = true;
-                                widget = JSON.parse(JSON.stringify(widget));
+                                widget = deepClone(widget);
                             }
                             widget.data[attr] = result.newString || '';
                         }
@@ -299,9 +299,9 @@ class VisBaseWidget extends React.Component {
                 // detect for CanWidgets if size was changed
                 style = widget.style || { bindings: [] };
             } else {
-                data = JSON.parse(JSON.stringify(widget.data || { bindings: [] }));
+                data = deepClone(widget.data || { bindings: [] });
                 // detect for CanWidgets if size was changed
-                style = JSON.parse(JSON.stringify(widget.style || { bindings: [] }));
+                style = deepClone(widget.style || { bindings: [] });
             }
 
             // replace all _PRJ_NAME with vis.0/name
