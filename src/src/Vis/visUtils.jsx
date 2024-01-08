@@ -13,6 +13,7 @@
  * (Free for non-commercial use).
  */
 import { I18n } from '@iobroker/adapter-react-v5';
+import { deepClone } from '@/Utils/utils';
 import { store, updateWidget } from '../Store';
 
 function replaceGroupAttr(inputStr, groupAttrList) {
@@ -57,6 +58,16 @@ function getWidgetGroup(views, view, widget) {
     }
 
     return Object.keys(widgets).find(w => widgets[w].data?.members?.includes(widget));
+}
+
+/**
+ * Determine if the string is of form identifier:ioBrokerId, like, val:hm-rpc.0.device.channel.state
+ *
+ * @param {string} assignment the possible assignment to check
+ * @return {boolean}
+ */
+function isIdBinding(assignment) {
+    return !!assignment.match(/^[\d\w_]+:\s?[-.\d\w_#]+$/);
 }
 
 function extractBinding(format) {
@@ -122,7 +133,7 @@ function extractBinding(format) {
                 // eval construction
                 if (isEval) {
                     const trimmed = parts[u].trim();
-                    if (trimmed.match(/^[\d\w_]+:\s?[-.\d\w_]+$/)) { // parts[u].indexOf(':') !== -1 && parts[u].indexOf('::') === -1) {
+                    if (isIdBinding(trimmed)) { // parts[u].indexOf(':') !== -1 && parts[u].indexOf('::') === -1) {
                         const argParts = trimmed.split(':', 2);
                         let _visOid = argParts[1].trim();
                         let _systemOid = _visOid;
@@ -153,7 +164,7 @@ function extractBinding(format) {
                     } else {
                         parts[u] = parts[u].replace(/::/g, ':');
                         if (operations[0].formula) {
-                            const n = JSON.parse(JSON.stringify(operations[0]));
+                            const n = deepClone(operations[0]);
                             n.formula = parts[u];
                             operations.push(n);
                         } else {
@@ -814,7 +825,7 @@ function _loadComponentHelper(context) {
             const promise = loadComponent(_visWidgetsCollection.name, 'default', `./${_visWidgetsCollection.components[_componentKey]}`, _visWidgetsCollection.url)()
                 .then(Component => {
                     context.countRef.count++;
-                    // console.log(Component);
+
                     if (Component.default) {
                         Component.default.adapter = context.dynamicWidgetInstance._id.substring('system.adapter.'.length).replace(/\.\d*$/, '');
                         Component.default.version = context.dynamicWidgetInstance.common.version;
