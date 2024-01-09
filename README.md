@@ -233,6 +233,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 ### **WORK IN PROGRESS**
 * (foxriver76) fixed last change y-offset for some widgets
 * (foxriver76) fixed issue where JquiState did not respect data type
+* (foxriver76) fixed issues with BulkEdtior (dialog not closing and other dialog showing wrong button)
 
 ### 2.9.13 (2024-01-08)
 * (foxriver76) correctly detect IDs in bindings when they contain hash character

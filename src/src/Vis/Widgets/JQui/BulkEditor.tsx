@@ -127,7 +127,7 @@ interface BulkEditorState {
     iconDialog: null | number;
     imageDialog: null | number;
     dialog: boolean;
-    dialogDelete: null | false | number;
+    dialogDelete: null | number;
     numbers?: boolean;
 }
 
@@ -394,7 +394,7 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
                     // @ts-expect-error this is fine
                     color="grey"
                     startIcon={<Close />}
-                    onClick={() => this.setState({ dialogDelete: false })}
+                    onClick={() => this.setState({ dialogDelete: null })}
                 >
                     {I18n.t('Cancel')}
                 </Button>
@@ -696,7 +696,7 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
                 {this.state.values[i]}
                 <IconButton
                     size="small"
-                    onClick={() => this.setState({ editDialog: { add: false, index: i, value: this.state.values[i] } })}
+                    onClick={() => this.setState({ editDialog: { add: true, index: i, value: this.state.values[i] } })}
                 >
                     <Edit />
                 </IconButton>
