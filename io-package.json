@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.13",
+    "version": "2.9.14",
     "news": {
+      "2.9.14": {
+        "en": "fixed last change y-offset for some widgets\nfixed issue where JquiState did not respect data type\nfixed issues with BulkEdtior (dialog not closing and other dialog showing wrong button)\nimplemented workaround resize bug for https://github.com/devbookhq/splitter/issues/15",
+        "de": "feste letzte änderung y-offset für einige widgets\nfestes Problem, bei dem JquiState den Datentyp nicht respektiert\nbehobene Probleme mit BulkEdtior (Dialog nicht schließen und andere Dialog anzeigen falsch Taste)\nimplementiert workaround resize bug für https://github.com/devbookhq/splitter/issues/15",
+        "ru": "фиксированное последнее изменение y-offset для некоторых виджетов\nфиксированная проблема, когда JquiState не уважал тип данных\nфиксированные проблемы с BulkEdtior (диалог не закрывается и другой диалог показывает неправильную кнопку)\nреализованные обходные изменения размер клопа для https://github.com/devbookhq/splitter/issues/15",
+        "pt": "fixo última mudança y-offset para alguns widgets\nproblema fixo onde JquiState não respeita o tipo de dados\nproblemas fixos com BulkEdtior (dialog não fechando e outra caixa de diálogo mostrando botão errado)\nimplantado workaround reize bug para https://github.com/devbookhq/splitter/issues/15",
+        "nl": "laatste verandering y-offset voor sommige widgets vastzetten\nfixed issue waarbij JquiState geen gegevenstype respecteerde\nvaste problemen met BulkEdtior (dialoog niet sluiten en andere dialoog tonen verkeerde knop)\nworkaround resize bug geïmplementeerd voor https://github.com/devbookhq/splitter/issues/15",
+        "fr": "dernière modification fixe y-offset pour certains widgets\nproblème fixe dans lequel JquiState ne respectait pas le type de données\nproblèmes corrigés avec BulkEdtior (dialogue ne fermant pas et autre boîte de dialogue montrant un mauvais bouton)\nredimensionner le bug pour https://github.com/devbookhq/splitter/issues/15",
+        "it": "fisso ultima modifica y-offset per alcuni widget\nproblema fisso in cui JquiState non ha rispettato il tipo di dati\nproblemi fissi con BulkEdtior (dialogo non chiusura e altra finestra di dialogo che mostra il pulsante sbagliato)\nbug di ridimensionamento implementato per https://github.com/devbookhq/splitter/issues/15",
+        "es": "fijado último cambio y-offset para algunos widgets\ncuestión fija en que JquiState no respeta el tipo de datos\nproblemas fijos con BulkEdtior (dialog no cierre y otro diálogo mostrando el botón incorrecto)\nimplementó un error de tamaño para https://github.com/devbookhq/splitter/issues/15",
+        "pl": "ustalona ostatnia zmiana y- przesunięcie dla niektórych widżetów\nstała emisja w przypadku gdy JquiState nie przestrzegał typu danych\nstałe problemy z BulkEdtior (okno dialogowe nie zamyka się i inne okno pokazuje zły przycisk)\nzaimplementowany błąd zmiany rozmiaru dla https: / / github.com / devbookhq / splitter / issues / 15",
+        "uk": "фіксована остання зміна y-offset для деяких віджетів\nвиправлено проблему, де JquiState не поважав тип даних\nвиправлені проблеми з BulkEdtior (dialog не закриває та інше діалогове вікно, що показує неправильну кнопку)\nреалізовані помилки змінного струму для https://github.com/devbookhq/splitter/issues/15",
+        "zh-cn": "固定一些部件的上次更改 y 抵销\njqui State 不尊重数据类型的固定问题\n与 BulkEdtior (对话框不关闭, 其它对话框显示错误按钮) 的固定问题\n为 https://github.com/devbookhq/splitter/issues/15 执行工作调整错误大小"
+      },
       "2.9.13": {
         "en": "correctly detect IDs in bindings when they contain hash character\nfix crash when multiple JquiState widgets selected\nprevent showing widget in group after it is already cut out\nprevent usage of widgets which are not in group for calculating rulers on group view",
         "de": "richtig erkennen IDs in Bindungen, wenn sie Hashcharakter enthalten\ncrash beheben, wenn mehrere JquiState Widgets ausgewählt wurden\nverhindern, widget in gruppe zu zeigen, nachdem es bereits herausgeschnitten\ndie verwendung von widgets, die nicht in der gruppe zur berechnung von herrschern auf gruppenansicht",
@@ -80,19 +93,6 @@
         "pl": "ostateczne błędy, które nie są widoczne na tle, nie są widoczne\nzapobieganie krótkiego błyskawicznego widżetu z warunkowaniem widoczności na stronie obciążeniowej\nbieżący problem w przełączniku tematycznym",
         "uk": "виправлені помилки, які не відображаються етикеток для фону\nзапобігання короткого спалаху віджетів з умовою видимості на завантаження сторінки\nвиправлений номер на тему перемикач",
         "zh-cn": "b 固定的标签没有按背景标明\n防止在页装载上有可见度的突发目标\n主题转换的固定问题"
-      },
-      "2.9.7": {
-        "en": "Allowed the read only flag for Styled/Input",
-        "de": "Erlaubt die nur gelesene Flagge für Styled/Input",
-        "ru": "Разрешил читать только флаг для Styled/Input",
-        "pt": "Permite a única bandeira de leitura para Styled/Input",
-        "nl": "Staan de laad vlag alleen toe voor Styled/Input",
-        "fr": "Permet le seul drapeau de lecture pour Styled/Input",
-        "it": "Consentito la sola bandiera di lettura per Styled/Input",
-        "es": "Permitió la leída bandera única para Styled/Input",
-        "pl": "Wszystko przyzwyczajało tylko flagę Styled/Input",
-        "uk": "Дозвольте читати тільки прапор для стильного / Вхід",
-        "zh-cn": "允许仅为Styled/Input的旗帜"
       }
     },
     "title": "Visualisation Next Generation",
