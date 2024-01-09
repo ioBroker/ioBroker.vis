@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.14",
+    "version": "2.9.15",
     "news": {
+      "2.9.15": {
+        "en": "fixed issue with BulkEditor",
+        "de": "problem mit BulkEditor behoben",
+        "ru": "фиксированная проблема с BulkEditor",
+        "pt": "problema fixo com BulkEditor",
+        "nl": "vast probleem met BulkEditor",
+        "fr": "problème corrigé avec BulkEditor",
+        "it": "problema fisso con BulkEditor",
+        "es": "edición fija con BulkEditor",
+        "pl": "stałe wydanie z BulkEditor",
+        "uk": "фіксована проблема з BulkEditor",
+        "zh-cn": "与批量编辑器的固定发行"
+      },
       "2.9.14": {
         "en": "fixed last change y-offset for some widgets\nfixed issue where JquiState did not respect data type\nfixed issues with BulkEdtior (dialog not closing and other dialog showing wrong button)\nimplemented workaround resize bug for https://github.com/devbookhq/splitter/issues/15",
         "de": "feste letzte änderung y-offset für einige widgets\nfestes Problem, bei dem JquiState den Datentyp nicht respektiert\nbehobene Probleme mit BulkEdtior (Dialog nicht schließen und andere Dialog anzeigen falsch Taste)\nimplementiert workaround resize bug für https://github.com/devbookhq/splitter/issues/15",
@@ -80,19 +93,6 @@
         "pl": "umożliwia importowanie poglądów bez atrybutów aktywnych\nbasicBulb zachowuje się podobnie jak jego stara wersja\nrzeczywiście, że dane o różnych widgetach są wyświetlane w trybie edit\nostateczny problem, w którym każda aktualizacja stanu jest używana do obliczeń widoczności\nzmienił jQui, jQui Radio kroki widget by reagować\nWszystkie widgety jQui zostały migrowane do reagowania",
         "uk": "дозволяє імпортувати переглядів без активації атрибутів\nзробити BasicBulb behave більш схожий на його стару версію\nвиправлено проблему, що дані різних віджетів відображаються в режимі редагування\nвиправлений номер, який використовується для розрахунку видимості\nmigrated jQui виберіть, jQui Radio кроки віджетів, щоб реагувати\nВсі віджети JQui були мігровані для реагації",
         "zh-cn": "允许进口不属积极目标的观点\n基本Bulb的行为与旧版本更类似。\n固定问题:不同植物种的数据以配有方式显示\n每个国家更新的固定问题用于能见度计算\n移出的JQui选择, jQui电台的步骤迫使人们作出反应。\n所有Quuis的植物群被移到来反应。"
-      },
-      "2.9.8": {
-        "en": "fixed bug that no labels are shown for background\nprevent short flashing of widgets with visibility condition at page load\nfixed issue on theme switch",
-        "de": "fehler behoben, dass keine etiketten für hintergrund angezeigt werden\nverhindern kurzes aufblitzen von widgets mit sichtbedingung bei seitenlast\nfestes problem beim themaschalter",
-        "ru": "исправлена ошибка, которую никакие ярлыки не показаны для фона\nпредотвратить короткую прошивку виджетов с условием видимости на загрузке страницы\nфиксированная проблема на переключателе темы",
-        "pt": "bug fixo que nenhum rótulos são mostrados para fundo\nevitar flashing curto de widgets com condição de visibilidade na carga da página\nproblema fixo no interruptor de tema",
-        "nl": "vertaling:\nverhinderen korte flitsen met zichtbaarheidsconditie op pagina lading\n_",
-        "fr": "bug fixe qu'aucune étiquette n'est montrée pour l'arrière-plan\nempêcher l'éclairage court des widgets avec l'état de visibilité à la charge de page\nnuméro fixe sur l'interrupteur de thème",
-        "it": "bug fisso che non vengono mostrate etichette per sfondo\nevitare breve lampeggiamento di widget con condizione di visibilità al carico di pagina\nproblema fisso sull'interruttore a tema",
-        "es": "bug fijo que no se muestran etiquetas para el fondo\npreviene el flasheo corto de widgets con condición de visibilidad en la carga de la página\ncuestión fija en el interruptor de tema",
-        "pl": "ostateczne błędy, które nie są widoczne na tle, nie są widoczne\nzapobieganie krótkiego błyskawicznego widżetu z warunkowaniem widoczności na stronie obciążeniowej\nbieżący problem w przełączniku tematycznym",
-        "uk": "виправлені помилки, які не відображаються етикеток для фону\nзапобігання короткого спалаху віджетів з умовою видимості на завантаження сторінки\nвиправлений номер на тему перемикач",
-        "zh-cn": "b 固定的标签没有按背景标明\n防止在页装载上有可见度的突发目标\n主题转换的固定问题"
       }
     },
     "title": "Visualisation Next Generation",
