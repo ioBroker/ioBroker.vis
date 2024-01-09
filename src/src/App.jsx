@@ -1965,8 +1965,16 @@ class App extends Runtime {
                                         } else {
                                             splitSizes = newSizes;
                                         }
-                                        this.setState({ splitSizes });
-                                        window.localStorage.setItem('Vis.splitSizes', JSON.stringify(splitSizes));
+
+                                        const sum = splitSizes.reduce((prev, curr) => prev + curr);
+                                        if (Math.ceil(sum) !== 100) {
+                                            // https://github.com/devbookhq/splitter/issues/15
+                                            console.log('Decline resize, to work around bug in @devbookhq/splitter');
+                                            this.setState({ splitSizes: this.state.splitSizes });
+                                        } else {
+                                            this.setState({ splitSizes });
+                                            window.localStorage.setItem('Vis.splitSizes', JSON.stringify(splitSizes));
+                                        }
                                     }}
                                     theme={this.state.themeName === 'dark' ? GutterTheme.Dark : GutterTheme.Light}
                                     gutterClassName={this.state.themeName === 'dark' ? 'Dark visGutter' : 'Light visGutter'}
