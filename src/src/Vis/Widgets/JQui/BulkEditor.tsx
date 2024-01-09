@@ -106,7 +106,8 @@ interface BulkEditorState {
     editDialog?: {
         index?: number;
         value: string | number;
-        add: unknown;
+        /** True if add dialog, false if edit dialog */
+        add: boolean;
     } | null;
     textDialogFocused: unknown[];
     states: null;
@@ -561,7 +562,7 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
                     startIcon={this.state.editDialog.add ? <Add /> : <Check />}
                     onClick={() => this.onEnter()}
                 >
-                    {this.state.editDialog.add ? I18n.t('Add') : I18n.t('Delete')}
+                    {this.state.editDialog.add ? I18n.t('Add') : I18n.t('Apply')}
                 </Button>
                 <Button
                     variant="contained"
@@ -696,7 +697,7 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
                 {this.state.values[i]}
                 <IconButton
                     size="small"
-                    onClick={() => this.setState({ editDialog: { add: true, index: i, value: this.state.values[i] } })}
+                    onClick={() => this.setState({ editDialog: { add: false, index: i, value: this.state.values[i] } })}
                 >
                     <Edit />
                 </IconButton>
