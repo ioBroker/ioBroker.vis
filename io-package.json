@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.15",
+    "version": "2.9.16",
     "news": {
+      "2.9.16": {
+        "en": "use the correct fallback values for widget signals determination",
+        "de": "verwenden sie die richtigen rückfallwerte für die widget-signalbestimmung",
+        "ru": "использовать правильные значения обратной связи для определения сигналов виджета",
+        "pt": "use os valores de retorno corretos para determinação de sinais de widget",
+        "nl": "de juiste terugvalwaarden gebruiken voor het bepalen van widgetsignalen",
+        "fr": "utiliser les valeurs correctes de recul pour la détermination des signaux widget",
+        "it": "utilizzare i valori di errore corretti per la determinazione dei segnali widget",
+        "es": "utilizar los valores de retroceso correctos para la determinación de señales widget",
+        "pl": "użyj prawidłowych wartości awaryjnych dla wyznaczania sygnałów widget",
+        "uk": "використовуйте правильні значення випадання для визначення сигналів віджету",
+        "zh-cn": "使用正确的倒置值来确定部件信号"
+      },
       "2.9.15": {
         "en": "fixed issue with BulkEditor",
         "de": "problem mit BulkEditor behoben",
@@ -80,19 +93,6 @@
         "pl": "usunąć przypadkowo dodawane pliki skryptowe, które doprowadziły do katastrofy",
         "uk": "видалити випадково доданий файл скрипта, який призведе до аварії",
         "zh-cn": "删除错误的文字档案,造成事故"
-      },
-      "2.9.9": {
-        "en": "allow to import views without attribute `activeWidgets`\nmake BasicBulb behave more like its old version\nfixed issue that data of different widget is displayed in edit mode\nfixed issue that every state update is used for visibility calculation\nmigrated jQui select, jQui Radio steps widgets to react\nAll jQui widgets were migrated to react",
-        "de": "erlauben, Ansichten ohne Attribut activeWidgets zu importieren\nbasicBulb verhalten sich mehr wie seine alte Version\nfestes problem, dass daten von verschiedenen widget im bearbeitungsmodus angezeigt werden\nfestes problem, dass jedes zustandsupdate zur sichtberechnung verwendet wird\nmigrated jQui select, jQui Radio Schritte Widgets zu reagieren\nAlle jQui Widgets wurden migriert, um zu reagieren",
-        "ru": "позволяют импортировать просмотры без атрибутов activeWidgets\nсделать BasicBulb вести себя больше, как его старая версия\nисправлена проблема, что данные различного виджета отображаются в режиме редактирования\nфиксированная проблема, что каждое государственное обновление используется для расчета видимости\nmigrated jQui выбрать, jQui Radio шагает виджеты, чтобы реагировать\nВсе виджеты jQui были мигрированы, чтобы реагировать",
-        "pt": "permitir importar visualizações sem atribuir activeWidgets\nfazer BasicBulb se comportar mais como sua versão antiga\nproblema fixo que os dados do widget diferente é exibido no modo de edição\nproblema fixo que cada atualização do estado é usado para cálculo da visibilidade\nmigrado jQui select, jQui Radio passos widgets para reagir\nTodos os widgets jQui foram migrados para reagir",
-        "nl": "_\nlaat BasicBulb zich meer gedragen als zijn oude versie\n_\n_\njQui selecteert, JQui Radio stapt wijdgetten om te reageren\nAlle JQui Widgets werden gemigreerd om te reageren",
-        "fr": "permettre d'importer des vues sans attribut activeWidgets\nfaire BasicBulb se comporter plus comme son ancienne version\nproblème fixe que les données de différents widgets sont affichées en mode édition\nproblème fixe que chaque mise à jour de l'état est utilisée pour le calcul de la visibilité\nmigré jQui sélectionnez, jQui Radio étapes widgets pour réagir\nTous les widgets jQui ont été migrés pour réagir",
-        "it": "consentire di importare punti di vista senza attributo activeWidgets\nrendere BasicBulb comportarsi più come la sua vecchia versione\nproblema fisso che i dati di diversi widget vengono visualizzati in modalità di modifica\nproblema fisso che ogni aggiornamento dello stato viene utilizzato per il calcolo della visibilità\nmigrato jQui selezionare, jQui Radio passi widget per reagire\nTutti i widget jQui sono stati migrati per reagire",
-        "es": "permite importar puntos de vista sin atributos activeWidgets\nhacer BasicBulb comportarse más como su versión anterior\nedición fija que los datos de diferentes widgets se muestra en modo de edición\nproblema fijo que cada actualización del estado se utiliza para el cálculo de visibilidad\nmigrated jQui select, jQui Radio pasos widgets para reaccionar\nTodos los widgets jQui fueron migrados para reaccionar",
-        "pl": "umożliwia importowanie poglądów bez atrybutów aktywnych\nbasicBulb zachowuje się podobnie jak jego stara wersja\nrzeczywiście, że dane o różnych widgetach są wyświetlane w trybie edit\nostateczny problem, w którym każda aktualizacja stanu jest używana do obliczeń widoczności\nzmienił jQui, jQui Radio kroki widget by reagować\nWszystkie widgety jQui zostały migrowane do reagowania",
-        "uk": "дозволяє імпортувати переглядів без активації атрибутів\nзробити BasicBulb behave більш схожий на його стару версію\nвиправлено проблему, що дані різних віджетів відображаються в режимі редагування\nвиправлений номер, який використовується для розрахунку видимості\nmigrated jQui виберіть, jQui Radio кроки віджетів, щоб реагувати\nВсі віджети JQui були мігровані для реагації",
-        "zh-cn": "允许进口不属积极目标的观点\n基本Bulb的行为与旧版本更类似。\n固定问题:不同植物种的数据以配有方式显示\n每个国家更新的固定问题用于能见度计算\n移出的JQui选择, jQui电台的步骤迫使人们作出反应。\n所有Quuis的植物群被移到来反应。"
       }
     },
     "title": "Visualisation Next Generation",
