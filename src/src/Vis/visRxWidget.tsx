@@ -652,22 +652,22 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
         });
     }
 
-    isSignalVisible(index: number, val?: any) {
+    isSignalVisible(index: number) {
         const oid = this.state.rxData[`signals-oid-${index}`];
 
         if (oid) {
-            if (val === undefined || val === null) {
-                val = this.state.values[`${oid}.val`];
-            }
+            /** The state value */
+            let val = this.state.values[`${oid}.val`];
 
-            const condition = this.state.rxData[`signals-cond-${index}`];
-            let value = this.state.rxData[`signals-val-${index}`];
+            const condition = this.state.rxData[`signals-cond-${index}`] ?? '==';
+            /** The value the state value needs to match */
+            let targetValue = this.state.rxData[`signals-val-${index}`] ?? 'true';
 
             if (val === undefined || val === null) {
                 return condition === 'not exist';
             }
 
-            if (!condition || value === undefined || value === null) {
+            if (!condition || targetValue === undefined || targetValue === null) {
                 return condition === 'not exist';
             }
 
@@ -675,52 +675,53 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
                 return false;
             }
 
-            const t = typeof val;
-            if (t === 'boolean' || val === 'false' || val === 'true') {
-                value = value === 'true' || value === true || value === 1 || value === '1';
-            } else if (t === 'number') {
-                value = parseFloat(value);
-            } else if (t === 'object') {
+            const valueType = typeof val;
+
+            if (valueType === 'boolean' || val === 'false' || val === 'true') {
+                targetValue = targetValue === 'true' || targetValue === true || targetValue === 1 || targetValue === '1';
+            } else if (valueType === 'number') {
+                targetValue = parseFloat(targetValue);
+            } else if (valueType === 'object') {
                 val = JSON.stringify(val);
             }
 
             switch (condition) {
                 case '==':
-                    value = value.toString();
+                    targetValue = targetValue.toString();
                     val = val.toString();
                     if (val === '1') val = 'true';
-                    if (value === '1') value = 'true';
+                    if (targetValue === '1') targetValue = 'true';
                     if (val === '0') val = 'false';
-                    if (value === '0') value = 'false';
-                    return value === val;
+                    if (targetValue === '0') targetValue = 'false';
+                    return targetValue === val;
                 case '!=':
-                    value = value.toString();
+                    targetValue = targetValue.toString();
                     val = val.toString();
                     if (val === '1') val = 'true';
-                    if (value === '1') value = 'true';
+                    if (targetValue === '1') targetValue = 'true';
                     if (val === '0') val = 'false';
-                    if (value === '0') value = 'false';
-                    return value !== val;
+                    if (targetValue === '0') targetValue = 'false';
+                    return targetValue !== val;
                 case '>=':
-                    return val >= value;
+                    return val >= targetValue;
                 case '<=':
-                    return val <= value;
+                    return val <= targetValue;
                 case '>':
-                    return val > value;
+                    return val > targetValue;
                 case '<':
-                    return val < value;
+                    return val < targetValue;
                 case 'consist':
-                    value = value.toString();
+                    targetValue = targetValue.toString();
                     val = val.toString();
-                    return val.toString().includes(value);
+                    return val.toString().includes(targetValue);
                 case 'not consist':
-                    value = value.toString();
+                    targetValue = targetValue.toString();
                     val = val.toString();
-                    return !val.toString().includes(value);
+                    return !val.toString().includes(targetValue);
                 case 'exist':
-                    return value !== 'null';
+                    return targetValue !== 'null';
                 case 'not exist':
-                    return value === 'null';
+                    return targetValue === 'null';
                 default:
                     console.log(`Unknown signals condition for ${this.props.id}: ${condition}`);
                     return false;
