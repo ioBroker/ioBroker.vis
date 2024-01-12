@@ -3,6 +3,18 @@ import type { Connection } from '@iobroker/adapter-react-v5';
 
 export type Timer = ReturnType<typeof setTimeout>;
 
+export interface Permissions {
+    /** Accessible in Runtime */
+    read: boolean;
+    /** Accessible in Editor */
+    write: boolean;
+}
+
+interface ProjectPermissions {
+    /** Which user has read or write access for the project */
+    [user: string]: Permissions;
+}
+
 export interface ProjectSettings {
     darkReloadScreen: boolean;
     destroyViewsAfter: number;
@@ -13,6 +25,8 @@ export interface ProjectSettings {
     reloadOnSleep: number;
     statesDebounceTime: number;
     scripts: unknown;
+    /** Which user has read or write access for the project */
+    permissions?: ProjectPermissions;
 }
 
 interface SingleWidget  {

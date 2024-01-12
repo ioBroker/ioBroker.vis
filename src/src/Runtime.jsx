@@ -35,7 +35,8 @@ import {
 } from './Vis/visUtils';
 import VisWidgetsCatalog from './Vis/visWidgetsCatalog';
 
-import { store, updateProject } from './Store';
+import { store, updateActiveUser, updateProject } from './Store';
+import { hasProjectAccess } from './Utils/utils';
 
 const generateClassName = createGenerateClassName({
     productionPrefix: 'vis-r',
@@ -633,7 +634,11 @@ class Runtime extends GenericApp {
         }
 
         const userName = await this.socket.getCurrentUser(); // just name, like "admin"
+
         const currentUser = await this.socket.getObject(`system.user.${userName || 'admin'}`);
+
+        store.dispatch(updateActiveUser(currentUser.common.name));
+
         const groups = await this.socket.getGroups();
         const userGroups = {};
         groups.forEach(group => userGroups[group._id] = group);
@@ -889,6 +894,8 @@ class Runtime extends GenericApp {
     }
 
     showSmallProjectsDialog() {
+        const { visProject, activeUser } = store.getState();
+
         return <Dialog
             open={!0}
             maxWidth="sm"
@@ -909,7 +916,7 @@ class Runtime extends GenericApp {
                     </div> : null}
                     <MenuList>
                         {this.state.projects.map(project =>
-                            <ListItemButton key={project} onClick={() => window.location.href = `?${project}`}>
+                            <ListItemButton key={project} onClick={() => window.location.href = `?${project}`} disabled={!hasProjectAccess({ editMode: this.state.editMode, project: visProject, user: activeUser })}>
                                 <ListItemIcon>
                                     <IconDocument />
                                 </ListItemIcon>
@@ -967,6 +974,20 @@ class Runtime extends GenericApp {
 
         if (!this.state.runtime && this.state.showProjectsDialog) {
             return this.showSmallProjectsDialog();
+        }
+
+        const { visProject, activeUser } = store.getState();
+
+        if (!hasProjectAccess({ editMode: this.state.editMode, project: visProject, user: activeUser })) {
+            console.warn(`User ${activeUser} has no permissions for ${this.state.editMode ? 'edit mode' : 'runtime'} of project ${this.state.projectName}`);
+            if (this.state.projects) {
+                return this.showSmallProjectsDialog();
+            }
+
+            this.refreshProjects().then(() => {
+                this.setState({ showProjectsDialog: true });
+            });
+            return null;
         }
 
         return <VisEngine

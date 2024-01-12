@@ -9,11 +9,13 @@ export const updateProject = createAction<Project>('project/update');
 export const updateView = createAction<{ viewId: string; data: View }>('view/update');
 export const updateWidget = createAction<{ viewId: string; widgetId: SingleWidgetId; data: SingleWidget }>('widget/update');
 export const updateGroupWidget = createAction<{ viewId: string; widgetId: GroupWidgetId; data: GroupWidget }>('group/update');
+export const updateActiveUser = createAction<string>('activeUser/update');
 export const recalculateFields = createAction<boolean>('attributes/recalculate');
 
 const initialState = {
     visProject: {} as Project,
     recalculateFields: false,
+    activeUser: '',
 };
 
 const reducer = createReducer(
@@ -35,6 +37,9 @@ const reducer = createReducer(
                 const { viewId, widgetId, data } = action.payload;
                 state.visProject[viewId].widgets[widgetId] = data;
             })
+            .addCase(updateActiveUser, (state, action) => {
+                state.activeUser = action.payload;
+            })
             .addCase(recalculateFields, (state, action) => {
                 state.recalculateFields = action.payload;
             });
@@ -43,7 +48,7 @@ const reducer = createReducer(
 
 type StoreState = typeof initialState
 
-const selectProject = (state: StoreState) => state.visProject;
+export const selectProject = (state: StoreState) => state.visProject;
 
 export const selectView = createSelector([
     selectProject,

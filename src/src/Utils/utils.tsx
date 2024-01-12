@@ -4,7 +4,7 @@
 import type { CSSProperties } from '@mui/styles';
 import { store } from '@/Store';
 import {
-    GroupWidget, Widget, Project, SingleWidget, SingleWidgetId, GroupWidgetId, AnyWidgetId,
+    GroupWidget, Widget, Project, SingleWidget, SingleWidgetId, GroupWidgetId, AnyWidgetId, Permissions,
 } from '@/types';
 
 /** Default OID if no selected */
@@ -200,4 +200,33 @@ export function unsyncMultipleWidgets(project: Project): Project {
     }
 
     return project;
+}
+
+interface CheckAccessOptions {
+    /** The project the user wants to access */
+    project: Project;
+    /** The active user */
+    user: string;
+    /** True if running in edit mode */
+    editMode: boolean;
+}
+
+/** Default permissions if no given, user has full access */
+export const DEFAULT_PERMISSIONS: Permissions = { read: true, write: true };
+
+/**
+ * Check if the user has access to the project in given mode
+ *
+ * @param options project, user and mode information
+ */
+export function hasProjectAccess(options: CheckAccessOptions): boolean {
+    const { project, user, editMode } = options;
+
+    const permissions = project.___settings.permissions?.[user] ?? DEFAULT_PERMISSIONS;
+
+    if (editMode && permissions.write) {
+        return true;
+    }
+
+    return !editMode && permissions.read;
 }

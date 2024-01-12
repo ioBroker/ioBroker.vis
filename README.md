@@ -8,6 +8,18 @@
 
 WEB visualisation for ioBroker platform.
 
+## Overview
+- [License requirements](#license-requirements)
+- [Installation & Documentation](#installation--documentation)
+- [Bindings of objects](#bindings-of-objects)
+- [Filters](#filters)
+- [Control interface](#control-interface)
+- [Default view](#default-view)
+- [Permissions System](#permissions-system)
+- [Settings](#settings)
+- [SVG and curentColor](#svg-and-currentcolor)
+
+
 ## License requirements
 To use this adapter in `ioBroker` you need to accept the source code license of the adapter. The source code of this adapter is available under the CC BY-NC license.
 
@@ -194,6 +206,14 @@ E.g., you can create two views "Landscape-Mobile" and "Portrait-Mobile" and thes
 
 There is a helper widget "basic - Screen Resolution" that shows actual screen resolution and best suitable default view for this resolution. 
 
+## Permissions System
+In the project management dialog, you can configure `read` and `write` permissions for each ioBroker user.
+
+The `read` flag means, that the project is accessible for this user in the Runtime. 
+The `write` flag means, that the project is accessible for this user in the Edit Mode.
+
+When a new user is created via ioBroker Admin adapter, it will have both permissions by default.
+
 ## Settings
 ### Reload if sleep longer than
 There is a rule that after some disconnection period, the whole VIS page will be reloaded to synchronize the project.
@@ -230,6 +250,9 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (foxriver76) dedicated permission system on project level introduced
+
 ### 2.9.16 (2024-01-11)
 * (foxriver76) use the correct fallback values for widget signals determination
 
