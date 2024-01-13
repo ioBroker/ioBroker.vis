@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.16",
+    "version": "2.9.17",
     "news": {
+      "2.9.17": {
+        "en": "dedicated permission system on project level introduced",
+        "de": "dediziertes berechtigungssystem auf projektebene eingeführt",
+        "ru": "внедрена специальная система разрешений на уровне проекта",
+        "pt": "sistema de permissão dedicado no nível do projeto introduzido",
+        "nl": "specifiek toestemmingssysteem op projectniveau ingevoerd",
+        "fr": "système de permission dédié au niveau du projet introduit",
+        "it": "sistema di autorizzazioni dedicato a livello di progetto introdotto",
+        "es": "sistema de permisos dedicados a nivel de proyectos",
+        "pl": "dedykowany system zezwoleń na poziomie projektu wprowadzony",
+        "uk": "запроваджено систему дозволів на рівні проекту",
+        "zh-cn": "在项目一级采用专门许可制度"
+      },
       "2.9.16": {
         "en": "use the correct fallback values for widget signals determination",
         "de": "verwenden sie die richtigen rückfallwerte für die widget-signalbestimmung",
@@ -80,19 +93,6 @@
         "pl": "urządzenie do obliczeń stałych",
         "uk": "виправлена помилка з розрахунку видимості",
         "zh-cn": "b 固定的能见度计算"
-      },
-      "2.9.10": {
-        "en": "remove accidentally added script file, which lead to crash",
-        "de": "versehentlich hinzugefügte skriptdatei entfernen, die zum absturz führen",
-        "ru": "удалить случайно добавленный файл скрипта, который приведет к сбою",
-        "pt": "remover acidentalmente adicionado arquivo de script, que levam ao acidente",
-        "nl": "verwijder per ongeluk script bestand, wat leidt tot crash",
-        "fr": "supprimer accidentellement ajouté fichier de script, qui conduisent à planter",
-        "it": "rimuovere accidentalmente aggiunto file di script, che portano a crash",
-        "es": "eliminar accidentalmente añadido archivo script, que conduce a estrellarse",
-        "pl": "usunąć przypadkowo dodawane pliki skryptowe, które doprowadziły do katastrofy",
-        "uk": "видалити випадково доданий файл скрипта, який призведе до аварії",
-        "zh-cn": "删除错误的文字档案,造成事故"
       }
     },
     "title": "Visualisation Next Generation",
