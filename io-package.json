@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.17",
+    "version": "2.9.18",
     "news": {
+      "2.9.18": {
+        "en": "fixed issue, that old attributes value is shown in some scenarios\ndedicated permission system extended to view level",
+        "de": "feste ausgabe, dass der alte attributwert in einigen szenarien angezeigt wird\ndediziertes berechtigungssystem erweitert um ebene anzeigen",
+        "ru": "фиксированная проблема, что значение старых атрибутов показано в некоторых сценариях\nвыделенная система разрешений расширена для просмотра уровня",
+        "pt": "problema fixo, esse valor de atributos antigos é mostrado em alguns cenários\nsistema de permissão dedicado estendido para visualizar o nível",
+        "nl": "vast probleem, dat oude attributen waarde wordt weergegeven in sommige scenario's\ndedicated permission system uitgebreid naar view level",
+        "fr": "problème fixe, que la valeur des anciens attributs est montrée dans certains scénarios\nsystème de permission dédié étendu pour voir le niveau",
+        "it": "problema fisso, che il valore di attributi vecchi è mostrato in alcuni scenari\nsistema di autorizzazioni dedicato esteso a livello di vista",
+        "es": "cuestión fija, ese valor de atributos antiguos se muestra en algunos escenarios\nsistema de permiso dedicado ampliado para ver nivel",
+        "pl": "stałe emisji, że stare atrybuty wartość jest pokazywana w niektórych scenariuszach\ndedykowany system zezwoleń rozszerzony o poziom widoku",
+        "uk": "виправлено проблему, що значення старих атрибутів відображається в деяких сценаріях\nвиділена система дозволу продовжена до рівня зору",
+        "zh-cn": "固定问题, 在一些假设中显示旧属性值\n将专用许可系统扩展至视图级别"
+      },
       "2.9.17": {
         "en": "dedicated permission system on project level introduced",
         "de": "dediziertes berechtigungssystem auf projektebene eingeführt",
@@ -80,19 +93,6 @@
         "pl": "zoptymalizowane kopie/drapowanie w grupach",
         "uk": "оптимізоване копіювання / копіювання в групах",
         "zh-cn": "优化各组的复制/节目"
-      },
-      "2.9.11": {
-        "en": "fixed bug with visibility calculation",
-        "de": "fehler behoben mit sichtberechnung",
-        "ru": "исправлена ошибка с расчетом видимости",
-        "pt": "bug fixo com cálculo de visibilidade",
-        "nl": "vertaling:",
-        "fr": "bug fixe avec calcul de visibilité",
-        "it": "bug fisso con calcolo della visibilità",
-        "es": "bug fijo con cálculo de visibilidad",
-        "pl": "urządzenie do obliczeń stałych",
-        "uk": "виправлена помилка з розрахунку видимості",
-        "zh-cn": "b 固定的能见度计算"
       }
     },
     "title": "Visualisation Next Generation",
