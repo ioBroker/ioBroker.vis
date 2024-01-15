@@ -207,12 +207,19 @@ E.g., you can create two views "Landscape-Mobile" and "Portrait-Mobile" and thes
 There is a helper widget "basic - Screen Resolution" that shows actual screen resolution and best suitable default view for this resolution. 
 
 ## Permissions System
+### Project
 In the project management dialog, you can configure `read` and `write` permissions for each ioBroker user.
 
 The `read` flag means, that the project is accessible for this user in the Runtime. 
 The `write` flag means, that the project is accessible for this user in the Edit Mode.
 
 When a new user is created via ioBroker Admin adapter, it will have both permissions by default.
+
+### View
+You can also specify which views the user is allowed to access for runtime and edit mode. 
+When one of the access rights is not granted on project level, it does not have any effect to specify them on view level, as the project as a whole will not be accessible.
+
+Note, that whenever you try to access a view, where the current user has no permission for, the user will see the project selection panel instead.
 
 ## Settings
 ### Reload if sleep longer than
