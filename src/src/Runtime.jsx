@@ -36,7 +36,7 @@ import {
 import VisWidgetsCatalog from './Vis/visWidgetsCatalog';
 
 import { store, updateActiveUser, updateProject } from './Store';
-import { hasProjectAccess } from './Utils/utils';
+import { hasProjectAccess, hasViewAccess } from './Utils/utils';
 
 const generateClassName = createGenerateClassName({
     productionPrefix: 'vis-r',
@@ -978,8 +978,10 @@ class Runtime extends GenericApp {
 
         const { visProject, activeUser } = store.getState();
 
-        if (!hasProjectAccess({ editMode: this.state.editMode, project: visProject, user: activeUser })) {
-            console.warn(`User ${activeUser} has no permissions for ${this.state.editMode ? 'edit mode' : 'runtime'} of project ${this.state.projectName}`);
+        if (!hasProjectAccess({ editMode: this.state.editMode, project: visProject, user: activeUser }) || !hasViewAccess({
+            editMode: this.state.editMode, project: visProject, user: activeUser, view: this.state.selectedView,
+        })) {
+            console.warn(`User "${activeUser}" has no permissions for ${this.state.editMode ? 'edit mode' : 'runtime'} of project "${this.state.projectName}" with view "${this.state.selectedView}"`);
             if (this.state.projects) {
                 return this.showSmallProjectsDialog();
             }

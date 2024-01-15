@@ -1,6 +1,5 @@
-import PropTypes from 'prop-types';
-import { useEffect } from 'react';
-import { withStyles } from '@mui/styles';
+import React, { useEffect } from 'react';
+import { Styles, withStyles } from '@mui/styles';
 import { useDrag } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 
@@ -20,9 +19,9 @@ import { BiImport, BiExport } from 'react-icons/bi';
 
 import { I18n } from '@iobroker/adapter-react-v5';
 
-import { store } from '../../Store';
+import { store } from '@/Store';
 
-const styles = theme => ({
+const styles: Styles<any, any> = (theme: any) => ({
     viewManageBlock: theme.classes.viewManageBlock,
     viewManageButtonActions: theme.classes.viewManageButtonActions,
     icon: {
@@ -50,7 +49,23 @@ const styles = theme => ({
     },
 });
 
-const View = props => {
+interface ViewProps {
+    classes: Record<string, any>;
+    moveView: (view: string, folder: string) => void;
+    name: string;
+    openedViews: string[];
+    setExportDialog: (view: string) => void;
+    setImportDialog: (view: string) => void;
+    showDialog: (action: 'rename' | 'copy' | 'delete', view: string) => void;
+    toggleView: (view: string, isShow: boolean, isActivate?: boolean) => void;
+    setIsDragging: (view: string) => void;
+    isDragging: string;
+    editMode: boolean;
+    /** If permissions are given do edit this view */
+    hasPermissions: boolean;
+}
+
+const View = (props: ViewProps) => {
     const viewBlockPreview = <div className={props.classes.viewManageBlock}>
         <FileIcon />
         <Tooltip title={I18n.t(props.openedViews.includes(props.name) ? 'Hide' : 'Show')} classes={{ popper: props.classes.tooltip }}>
@@ -73,7 +88,7 @@ const View = props => {
         end: (item, monitor) => {
             const dropResult = monitor.getDropResult();
             if (item && dropResult) {
-                props.moveView(item.name, dropResult.folder.id);
+                props.moveView(item.name, (dropResult as any).folder.id);
             }
         },
         collect: monitor => ({
@@ -96,9 +111,10 @@ const View = props => {
 
     return <div className={props.isDragging === props.name ? props.classes.dragging : (props.isDragging ? props.classes.noDrop : '')}>
         <div className={props.classes.viewManageBlock}>
-            <div className={props.classes.icon} ref={dragRef} title={I18n.t('Drag me')}><FileIcon /></div>
+            {props.hasPermissions ? <div className={props.classes.icon} ref={dragRef} title={I18n.t('Drag me')}><FileIcon /></div> : <FileIcon color="disabled" />}
             <Tooltip title={I18n.t(props.openedViews.includes(props.name) ? 'Hide' : 'Show')} classes={{ popper: props.classes.tooltip }}>
                 <IconButton
+                    disabled={!props.hasPermissions}
                     size="small"
                     onClick={() => props.toggleView(props.name, !props.openedViews.includes(props.name))}
                     className={props.isDragging === props.name ? props.classes.dragging : (props.isDragging ? props.classes.noDrop : '')}
@@ -106,9 +122,9 @@ const View = props => {
                     {props.openedViews.includes(props.name) ? <VisibilityIcon className={props.classes.visibleView} /> : <VisibilityOffIcon />}
                 </IconButton>
             </Tooltip>
-            <span onClick={selectView} className={props.classes.name}>{props.name}</span>
+            {props.hasPermissions ? <span onClick={selectView} className={props.classes.name}>{props.name}</span> : <span style={{ color: 'grey' }}>{props.name}</span>}
             <span className={props.classes.viewManageButtonActions}>
-                {props.editMode ? <Tooltip title={I18n.t('Import')} classes={{ popper: props.classes.tooltip }}>
+                {props.editMode && props.hasPermissions ? <Tooltip title={I18n.t('Import')} classes={{ popper: props.classes.tooltip }}>
                     <IconButton onClick={() => props.setImportDialog(props.name)} size="small">
                         <BiImport />
                     </IconButton>
@@ -118,17 +134,17 @@ const View = props => {
                         <BiExport />
                     </IconButton>
                 </Tooltip>
-                {props.editMode ? <Tooltip title={I18n.t('Rename')} classes={{ popper: props.classes.tooltip }}>
+                {props.editMode && props.hasPermissions ? <Tooltip title={I18n.t('Rename')} classes={{ popper: props.classes.tooltip }}>
                     <IconButton onClick={() => props.showDialog('rename', props.name)} size="small">
                         <EditIcon />
                     </IconButton>
                 </Tooltip> : null}
-                {props.editMode ? <Tooltip title={I18n.t('Copy')} classes={{ popper: props.classes.tooltip }}>
+                {props.editMode && props.hasPermissions ? <Tooltip title={I18n.t('Copy')} classes={{ popper: props.classes.tooltip }}>
                     <IconButton onClick={() => props.showDialog('copy', props.name)} size="small">
                         <FileCopyIcon />
                     </IconButton>
                 </Tooltip> : null}
-                {props.editMode ? <Tooltip title={I18n.t('Delete')} classes={{ popper: props.classes.tooltip }}>
+                {props.editMode && props.hasPermissions ? <Tooltip title={I18n.t('Delete')} classes={{ popper: props.classes.tooltip }}>
                     <IconButton onClick={() => props.showDialog('delete', props.name)} size="small">
                         <DeleteIcon />
                     </IconButton>
@@ -136,20 +152,6 @@ const View = props => {
             </span>
         </div>
     </div>;
-};
-
-View.propTypes = {
-    classes: PropTypes.object,
-    moveView: PropTypes.func,
-    name: PropTypes.string,
-    openedViews: PropTypes.array,
-    setExportDialog: PropTypes.func,
-    setImportDialog: PropTypes.func,
-    showDialog: PropTypes.func,
-    toggleView: PropTypes.func,
-    setIsDragging: PropTypes.func,
-    isDragging: PropTypes.string,
-    editMode: PropTypes.bool,
 };
 
 export default withStyles(styles)(View);

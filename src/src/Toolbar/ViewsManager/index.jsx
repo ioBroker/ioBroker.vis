@@ -27,7 +27,7 @@ import FolderDialog from './FolderDialog';
 import { DndPreview, isTouchDevice } from '../../Utils';
 import { store } from '../../Store';
 import {
-    deepClone, getNewWidgetId, isGroup, pasteGroup,
+    deepClone, getNewWidgetId, hasViewAccess, isGroup, pasteGroup,
 } from '../../Utils/utils';
 
 const styles = theme => ({
@@ -82,16 +82,16 @@ const ViewsManager = props => {
         }
     }, []);
 
-    const { visProject } = store.getState();
+    const { visProject, activeUser } = store.getState();
 
     const moveFolder = (id, parentId) => {
-        const project = JSON.parse(JSON.stringify(visProject));
+        const project = deepClone(visProject);
         project.___settings.folders.find(folder => folder.id === id).parentId = parentId;
         props.changeProject(project);
     };
 
     const moveView = (name, parentId) => {
-        const project = JSON.parse(JSON.stringify(visProject));
+        const project = deepClone(visProject);
         project[name].parentId = parentId;
         props.changeProject(project);
     };
@@ -142,6 +142,9 @@ const ViewsManager = props => {
                 setImportDialog={setImportDialog}
                 {...props}
                 classes={{}}
+                hasPermissions={hasViewAccess({
+                    view: name, user: activeUser, project: visProject, editMode: props.editMode,
+                })}
             />
         </div>);
 

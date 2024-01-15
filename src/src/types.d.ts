@@ -10,7 +10,7 @@ export interface Permissions {
     write: boolean;
 }
 
-interface ProjectPermissions {
+interface UserPermissions {
     /** Which user has read or write access for the project */
     [user: string]: Permissions;
 }
@@ -26,7 +26,7 @@ export interface ProjectSettings {
     statesDebounceTime: number;
     scripts: unknown;
     /** Which user has read or write access for the project */
-    permissions?: ProjectPermissions;
+    permissions?: UserPermissions;
 }
 
 interface SingleWidget  {
@@ -57,11 +57,17 @@ export type SingleWidgetId = `w${string}`
 export type GroupWidgetId = `g${string}`
 export type AnyWidgetId = SingleWidgetId | GroupWidgetId
 
+interface ViewSettings {
+    /** Permissions for each user for the view */
+    permissions?: UserPermissions;
+    [other: string]: unknown;
+}
+
 export interface View {
     activeWidgets: string[];
     filterList: string[];
     rerender: boolean;
-    settings: Record<string, unknown>;
+    settings?: ViewSettings;
     /** Widgets on this view */
     widgets: {
         [groupId: GroupWidgetId]: GroupWidget;

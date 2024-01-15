@@ -257,6 +257,9 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (foxriver76) dedicated permission system extended to view level
+
 ### 2.9.17 (2024-01-13)
 * (foxriver76) dedicated permission system on project level introduced
 

@@ -1,6 +1,7 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
+    "moduleResolution": "Bundler",
     "baseUrl": ".",
     "checkJs": true,
     "noEmit": false,

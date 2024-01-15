@@ -230,3 +230,27 @@ export function hasProjectAccess(options: CheckAccessOptions): boolean {
 
     return !editMode && permissions.read;
 }
+
+interface CheckViewAccessOptions extends CheckAccessOptions{
+    /** Name of the view */
+    view: string;
+}
+
+/**
+ * Check if the user has access to the view in given mode
+ *
+ * @param options project, user and mode information
+ */
+export function hasViewAccess(options: CheckViewAccessOptions): boolean {
+    const {
+        project, user, editMode, view,
+    } = options;
+
+    const permissions = project[view]?.settings?.permissions?.[user] ?? DEFAULT_PERMISSIONS;
+
+    if (editMode && permissions.write) {
+        return true;
+    }
+
+    return !editMode && permissions.read;
+}
