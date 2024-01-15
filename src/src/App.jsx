@@ -1072,6 +1072,8 @@ class App extends Runtime {
             debugger;
         }
 
+        store.dispatch(recalculateFields(true));
+
         if (selectedView) {
             window.localStorage.setItem(`${this.state.projectName}.${selectedView}.widgets`, JSON.stringify(selectedWidgets));
             // changeView reads selected widgets from localStorage
@@ -1086,8 +1088,6 @@ class App extends Runtime {
                 alignValues: [],
             });
         }
-
-        store.dispatch(recalculateFields(true));
     };
 
     toggleCode = () => {

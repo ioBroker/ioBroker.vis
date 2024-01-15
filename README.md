@@ -258,6 +258,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 -->
 ## Changelog
 ### **WORK IN PROGRESS**
+* (foxriver76) fixed issue, that old attributes value is shown in some scenarios
 * (foxriver76) dedicated permission system extended to view level
 
 ### 2.9.17 (2024-01-13)
