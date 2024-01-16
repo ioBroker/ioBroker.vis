@@ -33,7 +33,7 @@ import {
 import TextDialog from './TextDialog';
 import MaterialIconSelector from '../../Components/MaterialIconSelector';
 import { findWidgetUsages } from '../../Vis/visUtils';
-import { store, recalculateFields } from '../../Store';
+import { store, recalculateFields, selectWidget } from '../../Store';
 import { deepClone } from '../../Utils/utils';
 
 const POSSIBLE_UNITS = ['px', '%', 'em', 'rem', 'vh', 'vw', 'vmin', 'vmax', 'ex', 'ch', 'cm', 'mm', 'in', 'pt', 'pc'];
@@ -704,32 +704,61 @@ const WidgetField = props => {
             }
         }
 
-        return <TextField
-            variant="standard"
-            fullWidth
-            placeholder={isDifferent ? t('different') : null}
-            error={!!error}
-            helperText={typeof error === 'string' ? I18n.t(error) : null}
-            disabled={disabled}
-            InputProps={{
-                classes: { input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) },
-                endAdornment: !isDifferent && !customValue ? <Button
-                    size="small"
-                    disabled={disabled}
-                    title={t('Convert %s to %s', unit, unit === '%' ? 'px' : '%')}
-                    onClick={() => {
-                        if (unit !== '%') {
-                            props.onPxToPercent(props.selectedWidgets, field.name, newValues => change(newValues[0]));
-                        } else {
-                            props.onPercentToPx(props.selectedWidgets, field.name, newValues => change(newValues[0]));
-                        }
-                    }}
-                >
-                    {unit}
-                </Button> : null,
-            }}
-            value={value}
-            onChange={e => change(e.target.value)}
+        /** @type string[] */
+        const options = [];
+
+        if (isDifferent && value === '') {
+            for (const wid of props.selectedWidgets) {
+                const selectedWidget = selectWidget(store.getState(), props.selectedView, wid);
+                let val = selectedWidget.style[field.name];
+                val = typeof val === 'number' ? val.toString() : val;
+
+                if (val !== undefined && val !== '' && !options.includes(val)) {
+                    options.push(val);
+                }
+            }
+        }
+
+        const strValue = typeof value === 'number' ? value.toString() : value;
+
+        if (options.length && value !== '' && !options.includes(strValue)) {
+            options.push(strValue);
+        }
+
+        return <Autocomplete
+            options={options}
+            freeSolo
+            value={strValue}
+            onChange={((e, aVal) => change(aVal))}
+            renderInput={params => <TextField
+                {...params}
+                variant="standard"
+                fullWidth
+                placeholder={isDifferent ? t('different') : null}
+                error={!!error}
+                helperText={typeof error === 'string' ? I18n.t(error) : null}
+                disabled={disabled}
+                InputProps={{
+                    ...params.InputProps,
+                    classes: { input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) },
+                    endAdornment: !isDifferent && !customValue ? <Button
+                        size="small"
+                        disabled={disabled}
+                        title={t('Convert %s to %s', unit, unit === '%' ? 'px' : '%')}
+                        onClick={() => {
+                            if (unit !== '%') {
+                                props.onPxToPercent(props.selectedWidgets, field.name, newValues => change(newValues[0]));
+                            } else {
+                                props.onPercentToPx(props.selectedWidgets, field.name, newValues => change(newValues[0]));
+                            }
+                        }}
+                    >
+                        {unit}
+                    </Button> : null,
+                }}
+                value={value}
+                onChange={e => change(e.target.value)}
+            />}
         />;
     }
 

@@ -257,6 +257,9 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (foxriver76) added select box to dimension attributes if multiple widgets selected
+
 ### 2.9.18 (2024-01-15)
 * (foxriver76) fixed issue, that old attributes value is shown in some scenarios
 * (foxriver76) dedicated permission system extended to view level
