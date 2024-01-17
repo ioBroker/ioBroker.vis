@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.18",
+    "version": "2.9.19",
     "news": {
+      "2.9.19": {
+        "en": "fixed issue when resizing widget from the left side\nadded select box to dimension attributes if multiple widgets selected",
+        "de": "festes problem bei der wiedergabe von widget von der linken seite\nhinzugefügt wählen sie feld zu dimension attributen, wenn mehrere widgets ausgewählt",
+        "ru": "фиксированная проблема при перестановке виджета с левой стороны\nдобавить поле для атрибутов измерения, если выбраны несколько виджетов",
+        "pt": "problema fixo ao redimensionar widget do lado esquerdo\nadicionado selecionar caixa para atributos de dimensão se vários widgets selecionados",
+        "nl": "vast probleem bij grootte wijzigen van widget van de linkerkant\nselectievakje toevoegen aan dimensieattributen als meerdere widgets geselecteerd zijn",
+        "fr": "problème corrigé lors du redimensionnement du widget du côté gauche\najouter une case aux attributs de dimension si plusieurs widgets sélectionnés",
+        "it": "problema fisso quando il widget di ridimensionamento dal lato sinistro\naggiunto selezionare casella agli attributi di dimensione se più widget selezionati",
+        "es": "problema fijo al redimensionar el widget del lado izquierdo\nañadir el cuadro a los atributos de dimensión si varios widgets seleccionados",
+        "pl": "stały problem przy zmianie rozmiaru widżetu z lewej strony\ndodane pole wyboru do atrybutów wymiarów jeśli wybrano wiele widżetów",
+        "uk": "виправлено проблему при пересуванні віджету з лівого боку\nдодано виберіть поле для атрибутів виміру, якщо вибрано декілька віджетів",
+        "zh-cn": "从左侧调整部件大小时的固定问题\n如果选中多个部件, 在尺寸属性中添加选中框"
+      },
       "2.9.18": {
         "en": "fixed issue, that old attributes value is shown in some scenarios\ndedicated permission system extended to view level",
         "de": "feste ausgabe, dass der alte attributwert in einigen szenarien angezeigt wird\ndediziertes berechtigungssystem erweitert um ebene anzeigen",
@@ -80,19 +93,6 @@
         "pl": "poprawnie wykryć Identyfikatory w wiązaniach, gdy zawierają znak haszu\nnaprawić awarię po wybraniu wielu widżetów JquiState\nzapobieganie pokazywaniu widżetu w grupie po jego wycięciu\nzapobieganie stosowaniu widżetów, które nie są w grupie do obliczania władców na widoku grupy",
         "uk": "правильно виявити Ідентифікатори у зв'язках, коли вони містять характер хешу\nвиправити аварійний випадок, коли кілька віджетів JquiState вибрано\nзапобігти показувати віджет в групі після того, як він вже вирізати\nзапобігання використання віджетів, які не в групі для обчислення ліній на груповому перегляді",
         "zh-cn": "正确检测 包含散列字符的装订标识\n选择多个 Jqui State 部件时修复崩溃\n阻止在已剪掉后在组中显示部件\n防止使用组内不用于在组视图中计算标尺的部件"
-      },
-      "2.9.12": {
-        "en": "optimized copy/paste/cut in groups",
-        "de": "optimierte kopie/paste/cut in gruppen",
-        "ru": "оптимизированная копия/вставить/вырезать в группах",
-        "pt": "cópia/paste/corte otimizado em grupos",
-        "nl": "optimaal kopie/paste gesneden in groepen",
-        "fr": "copie/coller/coller optimisé en groupes",
-        "it": "copia ottimizzata / incolla/taglio in gruppi",
-        "es": "copy/paste/cut optimizado en grupos",
-        "pl": "zoptymalizowane kopie/drapowanie w grupach",
-        "uk": "оптимізоване копіювання / копіювання в групах",
-        "zh-cn": "优化各组的复制/节目"
       }
     },
     "title": "Visualisation Next Generation",

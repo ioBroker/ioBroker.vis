@@ -257,7 +257,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.9.19 (2024-01-17)
 * (foxriver76) fixed issue when resizing widget from the left side
 * (foxriver76) added select box to dimension attributes if multiple widgets selected
 
