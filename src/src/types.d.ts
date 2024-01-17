@@ -29,15 +29,19 @@ export interface ProjectSettings {
     permissions?: UserPermissions;
 }
 
+export type SingleWidgetId = `w${string}`
+export type GroupWidgetId = `g${string}`
+export type AnyWidgetId = SingleWidgetId | GroupWidgetId
+
 interface SingleWidget  {
     /** Internal wid */
     _id?: string;
     data: Record<string, unknown>;
-    style: Record<string, unknown>;
+    style: Record<string, string>;
     tpl: string;
     widgetSet: string;
     /** The id of the group, if the widget is grouped */
-    groupid?: string;
+    groupid?: GroupWidgetId;
     /** If the widget is grouped */
     grouped?: boolean;
 }
@@ -52,10 +56,6 @@ interface GroupWidget extends SingleWidget {
 }
 
 export type Widget = SingleWidget | GroupWidget;
-
-export type SingleWidgetId = `w${string}`
-export type GroupWidgetId = `g${string}`
-export type AnyWidgetId = SingleWidgetId | GroupWidgetId
 
 interface ViewSettings {
     /** Permissions for each user for the view */

@@ -21,10 +21,10 @@ import {
 
 import { I18n, Icon } from '@iobroker/adapter-react-v5';
 
-import { RxWidgetInfo } from '@/types';
+import { AnyWidgetId, RxWidgetInfo } from '@/types';
 import { deepClone, calculateOverflow } from '@/Utils/utils';
 // eslint-disable-next-line import/no-cycle
-import VisBaseWidget from './visBaseWidget';
+import VisBaseWidget, { VisBaseWidgetProps } from './visBaseWidget';
 import { addClass, getUsedObjectIDsInWidget } from './visUtils';
 
 const POSSIBLE_MUI_STYLES = [
@@ -56,23 +56,13 @@ const POSSIBLE_MUI_STYLES = [
     'word-spacing',
 ];
 
-interface VisRxWidgetProps {
+interface VisRxWidgetProps extends VisBaseWidgetProps {
     /** If currently running in edit mode */
     editMode: boolean;
     /** The widget's view */
     view: string;
     /** TODO */
-    context: Record<string, any>;
-    /** TODO */
-    id: string;
-    /** TODO */
     isRelative:boolean;
-    /** TODO */
-    refParent: unknown;
-    /** TODO */
-    askView: unknown;
-    /** Current selected widgets */
-    selectedWidgets: string[];
     /** TODO */
     viewsActiveFilter: any;
 }
@@ -139,9 +129,7 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
     private readonly onStateChangedBind: (id: any, state: any, doNotApplyState: any) => void;
 
     /** If resizing is currently locked */
-    private resizeLocked: boolean;
-
-    private readonly visDynamicResizable: any;
+    protected resizeLocked: boolean;
 
     private newState?: Partial<VisRxWidgetState & { rxData: TRxData }> | null;
 
@@ -356,7 +344,7 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
         ) {
             this.updateTimer = setTimeout(() => {
                 this.updateTimer = undefined;
-                const newState = this.newState;
+                const newState = this.newState ?? null;
                 this.newState = null;
                 this.setState(newState);
             }, 50);
@@ -391,6 +379,7 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
 
     async componentDidMount() {
         super.componentDidMount();
+        // @ts-expect-error check later if types wrong or call wrong
         this.linkContext.IDs.length && (await this.props.context.socket.subscribeState(this.linkContext.IDs, this.onStateChangedBind));
     }
 
@@ -416,6 +405,7 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
     }
 
     async componentWillUnmount() {
+        // @ts-expect-error check later if types wrong or call wrong
         this.linkContext.IDs.length && (await this.props.context.socket.unsubscribeState(this.linkContext.IDs, this.onStateChangedBind));
         super.componentWillUnmount();
     }
@@ -463,9 +453,11 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
 
         // subscribe on some new IDs and remove old IDs
         const unsubscribe = oldIDs.filter(id => !this.linkContext.IDs.includes(id));
+        // @ts-expect-error check later if types wrong or call wrong
         unsubscribe.length && (await context.socket.unsubscribeState(unsubscribe, this.onStateChangedBind));
 
         const subscribe = this.linkContext.IDs.filter(id => !oldIDs.includes(id));
+        // @ts-expect-error check later if types wrong or call wrong
         subscribe.length && (await context.socket.subscribeState(subscribe, this.onStateChangedBind));
 
         this.onStateChanged();
@@ -490,6 +482,7 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
 
     // eslint-disable-next-line no-unused-vars
     wrapContent(content: any, addToHeader: any, cardContentStyle: any, headerStyle: any, onCardClick: any, components: any) {
+        // @ts-expect-error add to types
         if (this.props.context.views[this.props.view].widgets[this.props.id].usedInWidget) {
             return content;
         }
@@ -565,7 +558,7 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
         </MyCard>;
     }
 
-    renderWidgetBody(props: any) {
+    renderWidgetBody(props: any): React.JSX.Element | void {
         props.id = this.props.id;
 
         props.className = `vis-widget${this.state.rxData.class ? ` ${this.state.rxData.class}` : ''}`;
@@ -626,7 +619,7 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
     }
 
     // eslint-disable-next-line no-unused-vars
-    getWidgetInWidget(view: any, wid: string, props: any) {
+    getWidgetInWidget(view: any, wid: AnyWidgetId, props: any) {
         props = props || {};
 
         // old (can) widgets require props.refParent
@@ -811,6 +804,7 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
         return null;
     }
 
+    // @ts-expect-error fix later
     renderLastChange(widgetStyle: any) {
         const oid = this.state.rxData['lc-oid'];
         if (!oid || oid === 'nothing_selected') {
@@ -911,6 +905,7 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
         </div>;
     }
 
+    // @ts-expect-error fix later
     renderSignals() {
         const count = parseInt(this.state.rxData?.['signals-count'], 10) || 0;
         if (!count) {
