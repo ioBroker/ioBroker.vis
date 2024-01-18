@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.19",
+    "version": "2.9.20",
     "news": {
+      "2.9.20": {
+        "en": "increased timeout for project import\nadded permissions on widget level",
+        "de": "mehr zeit für projektimporte\nzusätzliche berechtigungen auf widget-ebene",
+        "ru": "увеличение сроков для импорта проектов\nдополнительные разрешения на уровне виджетов",
+        "pt": "aumento do tempo para importação de projetos\npermissões adicionadas no nível do widget",
+        "nl": "verhoogde timeout voor projectimport\ntoegangsrechten toegevoegd op widgetniveau",
+        "fr": "délai accru pour l'importation de projets\npermissions ajoutées au niveau du widget",
+        "it": "aumento del timeout per l'importazione di progetto\npermessi aggiunti sul livello dei widget",
+        "es": "mayor tiempo para la importación de proyectos\npermisos añadidos a nivel de widget",
+        "pl": "wydłużenie czasu importu projektów\ndodane uprawnienia na poziomie widget",
+        "uk": "збільшення часу для імпорту проекту\nдодано дозвіл на рівень віджету",
+        "zh-cn": "增加项目导入的超时\n在部件级别上添加权限"
+      },
       "2.9.19": {
         "en": "fixed issue when resizing widget from the left side\nadded select box to dimension attributes if multiple widgets selected",
         "de": "festes problem bei der wiedergabe von widget von der linken seite\nhinzugefügt wählen sie feld zu dimension attributen, wenn mehrere widgets ausgewählt",
@@ -80,19 +93,6 @@
         "pl": "ustalona ostatnia zmiana y- przesunięcie dla niektórych widżetów\nstała emisja w przypadku gdy JquiState nie przestrzegał typu danych\nstałe problemy z BulkEdtior (okno dialogowe nie zamyka się i inne okno pokazuje zły przycisk)\nzaimplementowany błąd zmiany rozmiaru dla https: / / github.com / devbookhq / splitter / issues / 15",
         "uk": "фіксована остання зміна y-offset для деяких віджетів\nвиправлено проблему, де JquiState не поважав тип даних\nвиправлені проблеми з BulkEdtior (dialog не закриває та інше діалогове вікно, що показує неправильну кнопку)\nреалізовані помилки змінного струму для https://github.com/devbookhq/splitter/issues/15",
         "zh-cn": "固定一些部件的上次更改 y 抵销\njqui State 不尊重数据类型的固定问题\n与 BulkEdtior (对话框不关闭, 其它对话框显示错误按钮) 的固定问题\n为 https://github.com/devbookhq/splitter/issues/15 执行工作调整错误大小"
-      },
-      "2.9.13": {
-        "en": "correctly detect IDs in bindings when they contain hash character\nfix crash when multiple JquiState widgets selected\nprevent showing widget in group after it is already cut out\nprevent usage of widgets which are not in group for calculating rulers on group view",
-        "de": "richtig erkennen IDs in Bindungen, wenn sie Hashcharakter enthalten\ncrash beheben, wenn mehrere JquiState Widgets ausgewählt wurden\nverhindern, widget in gruppe zu zeigen, nachdem es bereits herausgeschnitten\ndie verwendung von widgets, die nicht in der gruppe zur berechnung von herrschern auf gruppenansicht",
-        "ru": "правильно обнаружить Идентификаторы в привязки, когда они содержат хэш-символ\nисправление крушения при выборе нескольких виджетов JquiState\nне показывать виджет в группе после того, как он уже вырезан\nпредотвратить использование виджетов, которые не в группе для расчета правителей на групповом взгляде",
-        "pt": "detectar corretamente IDs em ligações quando contêm caracteres hash\ncorrigir acidente quando vários widgets JquiState selecionados\nevitar mostrar widget no grupo depois que já está cortado\nevitar o uso de widgets que não estão em grupo para calcular governantes na vista do grupo",
-        "nl": "correct detecteren ID's in bindingen wanneer ze hash-teken bevatten\nfix crash wanneer meerdere JquiState widgets geselecteerd\nvoorkomen dat widget in groep wordt getoond nadat het al is uitgesneden\nvoorkomen gebruik van widgets die niet in de groep voor het berekenen van liniaals op groepsweergave",
-        "fr": "détecter correctement IDs dans les liaisons lorsqu'ils contiennent un caractère de hachage\ncorrection du crash lorsque plusieurs widgets JquiState sont sélectionnés\nempêcher l'affichage du widget en groupe après qu'il soit déjà coupé\nempêcher l'utilisation de widgets qui ne sont pas en groupe pour le calcul des règles sur la vue de groupe",
-        "it": "rilevare correttamente ID in binding quando contengono carattere hash\ncorrezione crash quando più widget JquiState selezionati\nevitare di mostrare widget in gruppo dopo che è già tagliato fuori\nimpedire l'uso di widget che non sono in gruppo per il calcolo dei righelli sulla vista di gruppo",
-        "es": "detectar correctamente IDs in bindings when they containh character\narreglar fallo cuando varios widgets JquiState seleccionados\nevitar mostrar widget en grupo después de que ya está cortado\npreviene el uso de widgets que no están en grupo para calcular gobernantes en vista de grupo",
-        "pl": "poprawnie wykryć Identyfikatory w wiązaniach, gdy zawierają znak haszu\nnaprawić awarię po wybraniu wielu widżetów JquiState\nzapobieganie pokazywaniu widżetu w grupie po jego wycięciu\nzapobieganie stosowaniu widżetów, które nie są w grupie do obliczania władców na widoku grupy",
-        "uk": "правильно виявити Ідентифікатори у зв'язках, коли вони містять характер хешу\nвиправити аварійний випадок, коли кілька віджетів JquiState вибрано\nзапобігти показувати віджет в групі після того, як він вже вирізати\nзапобігання використання віджетів, які не в групі для обчислення ліній на груповому перегляді",
-        "zh-cn": "正确检测 包含散列字符的装订标识\n选择多个 Jqui State 部件时修复崩溃\n阻止在已剪掉后在组中显示部件\n防止使用组内不用于在组视图中计算标尺的部件"
       }
     },
     "title": "Visualisation Next Generation",
