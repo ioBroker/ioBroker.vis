@@ -33,10 +33,16 @@ export type SingleWidgetId = `w${string}`
 export type GroupWidgetId = `g${string}`
 export type AnyWidgetId = SingleWidgetId | GroupWidgetId
 
+interface WidgetData {
+    /** Only exists if given by user in tab general */
+    name?: string;
+    [other: string]: unknown;
+}
+
 interface SingleWidget  {
     /** Internal wid */
     _id?: string;
-    data: Record<string, unknown>;
+    data: WidgetData;
     style: Record<string, string>;
     tpl: string;
     widgetSet: string;
@@ -44,6 +50,8 @@ interface SingleWidget  {
     groupid?: GroupWidgetId;
     /** If the widget is grouped */
     grouped?: boolean;
+    /** Permissions for each user for the widget */
+    permissions?: UserPermissions;
 }
 
 interface GroupWidget extends SingleWidget {

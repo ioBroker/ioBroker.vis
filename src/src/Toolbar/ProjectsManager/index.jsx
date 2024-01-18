@@ -193,6 +193,10 @@ const ProjectsManage = props => {
                             <IconButton
                                 onClick={event => {
                                     setAnchorEl(event.currentTarget);
+                                    // TODO ensure correct project is opened
+                                    if (props.projectName !== projectName) {
+                                        props.loadProject(projectName);
+                                    }
                                     setShowPermissionsDialog(projectName);
                                 }}
                                 size="small"
@@ -248,6 +252,7 @@ const ProjectsManage = props => {
             socket={props.socket}
             changeProject={props.changeProject}
             onClose={() => setShowPermissionsDialog(false)}
+            loadProject={props.loadProject}
         /> : null}
         {importDialog ? <ImportProjectDialog
             projects={props.projects}

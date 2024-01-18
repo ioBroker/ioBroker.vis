@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react';
-// @ts-expect-error does not affect react, maybe fix later
 import { usePreview } from 'react-dnd-preview';
 import { Timer } from '@/types';
 

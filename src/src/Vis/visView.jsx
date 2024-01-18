@@ -24,7 +24,7 @@ import VisBaseWidget from './visBaseWidget';
 import VisCanWidget from './visCanWidget';
 import { addClass, parseDimension } from './visUtils';
 import VisNavigation from './visNavigation';
-import { isVarFinite } from '../Utils/utils';
+import { hasWidgetAccess, isVarFinite } from '../Utils/utils';
 import VisWidgetsCatalog from './visWidgetsCatalog';
 import { recalculateFields, selectView, store } from '../Store';
 
@@ -1355,6 +1355,13 @@ class VisView extends React.Component {
                     }
 
                     if (!this.props.selectedGroup && widget.usedInWidget) { // do not show built in widgets on view directly
+                        return;
+                    }
+
+                    if (!hasWidgetAccess({
+                        view: this.props.view, editMode: this.props.editMode, project: store.getState().visProject, user: store.getState().activeUser, wid: id,
+                    })) {
+                        // do not show widget because user has no access
                         return;
                     }
 

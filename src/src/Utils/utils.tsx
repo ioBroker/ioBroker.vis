@@ -86,7 +86,6 @@ export function getNewWidgetIdNumber(isWidgetGroup: boolean, project: Project, o
  * Get new widget id from the project
  * @param project project to determine next widget id for
  * @param offset offset, if multiple widgets are created and not yet in the project
- * @return {string}
  */
 export function getNewWidgetId(project: Project, offset = 0): SingleWidgetId {
     const newKey = getNewWidgetIdNumber(false, project, offset);
@@ -118,7 +117,7 @@ interface CopySingleWidgetOptions extends CopyWidgetOptions {
     /** The widget which should be copied */
     widget: SingleWidget;
     /** ID of the selected group if one is active */
-    selectedGroup?: string;
+    selectedGroup?: GroupWidgetId;
 }
 
 interface CopyGroupOptions extends CopyWidgetOptions {
@@ -236,10 +235,15 @@ interface CheckViewAccessOptions extends CheckAccessOptions{
     view: string;
 }
 
+interface CheckWidgetAccessOptions extends CheckViewAccessOptions {
+    /** Widget ID */
+    wid: AnyWidgetId;
+}
+
 /**
  * Check if the user has access to the view in given mode
  *
- * @param options project, user and mode information
+ * @param options project, view, user and mode information
  */
 export function hasViewAccess(options: CheckViewAccessOptions): boolean {
     const {
@@ -247,6 +251,25 @@ export function hasViewAccess(options: CheckViewAccessOptions): boolean {
     } = options;
 
     const permissions = project[view]?.settings?.permissions?.[user] ?? DEFAULT_PERMISSIONS;
+
+    if (editMode && permissions.write) {
+        return true;
+    }
+
+    return !editMode && permissions.read;
+}
+
+/**
+ * Check if the user has access to the widget in given mode
+ *
+ * @param options project, view, widget, user and mode information
+ */
+export function hasWidgetAccess(options: CheckWidgetAccessOptions): boolean {
+    const {
+        project, user, editMode, view, wid,
+    } = options;
+
+    const permissions = project[view]?.widgets[wid]?.permissions?.[user] ?? DEFAULT_PERMISSIONS;
 
     if (editMode && permissions.write) {
         return true;
