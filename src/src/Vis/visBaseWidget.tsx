@@ -1749,7 +1749,6 @@ class VisBaseWidget extends React.Component<VisBaseWidgetProps, VisBaseWidgetSta
 
             if (this.props.tpl?.toLowerCase().includes('image')) {
                 classNames.push('vis-editmode-helper');
-                style.opacity = style.opacity || 0.3;
             }
         }
 

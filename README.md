@@ -261,6 +261,9 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (foxriver76) fixed bug, that opacity is applied twice on image edit mode overlay
+
 ### 2.9.20 (2024-01-18)
 * (foxriver76) increased timeout for project import
 * (foxriver76) added permissions on widget level
