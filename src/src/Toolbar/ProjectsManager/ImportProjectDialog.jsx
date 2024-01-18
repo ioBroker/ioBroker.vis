@@ -54,7 +54,7 @@ const ImportProjectDialog = props => {
                     timeout = null;
                     setWorking(false);
                     window.alert(I18n.t('Cannot upload project: timeout'));
-                }, 40_000);
+                }, 60_000);
 
                 props.socket.getRawSocket().emit('sendToHost', host, 'writeDirAsZip', {
                     id: `${props.adapterName}.${props.instance}`,
