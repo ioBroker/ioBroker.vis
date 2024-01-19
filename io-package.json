@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.20",
+    "version": "2.9.21",
     "news": {
+      "2.9.21": {
+        "en": "fixed crash case when fixing widgets\nfixed bug, that opacity is applied twice on image edit mode overlay",
+        "de": "fester crashfall bei der befestigung von widgets\nfehler behoben, dass die opazität zweimal auf bildbearbeitung modus overlay angewendet wird",
+        "ru": "фиксированный случай аварии при фиксации виджетов\nфиксированная ошибка, что непрозрачность применяется дважды на наложение режима редактирования изображений",
+        "pt": "caso de acidente fixo ao fixar widgets\nbug fixo, que a opacidade é aplicada duas vezes na sobreposição do modo de edição de imagem",
+        "nl": "vaste crash case bij het repareren van widgets\nvaste fout, die dekking wordt twee keer toegepast op de afbeelding bewerken modus overlay",
+        "fr": "case de crash fixe lors de la fixation des widgets\nbug corrigé, que l'opacité est appliquée deux fois sur le mode d'édition d'image superposition",
+        "it": "caso di crash fisso quando si fissano widget\nbug fisso, che l'opacità viene applicata due volte sulla modalità di modifica dell'immagine sovrapposizione",
+        "es": "caso de accidente fijo al fijar widgets\nerror fijo, que la opacidad se aplica dos veces en el modo de edición de imagen superposición",
+        "pl": "stałe zderzenie przy ustawianiu widżetów\nfixed bug, że nieprzezroczystość jest stosowany dwukrotnie w trybie edycji obrazu",
+        "uk": "виправлений випадок аварії при фіксуванні віджетів\nвиправлена помилка, що opacity наноситься двічі на редагування режиму зображення",
+        "zh-cn": "修复部件时的固定崩溃大小写\n固定错误, 在图像编辑模式覆盖上两次应用不透明"
+      },
       "2.9.20": {
         "en": "increased timeout for project import\nadded permissions on widget level",
         "de": "mehr zeit für projektimporte\nzusätzliche berechtigungen auf widget-ebene",
@@ -80,19 +93,6 @@
         "pl": "stałe wydanie z BulkEditor",
         "uk": "фіксована проблема з BulkEditor",
         "zh-cn": "与批量编辑器的固定发行"
-      },
-      "2.9.14": {
-        "en": "fixed last change y-offset for some widgets\nfixed issue where JquiState did not respect data type\nfixed issues with BulkEdtior (dialog not closing and other dialog showing wrong button)\nimplemented workaround resize bug for https://github.com/devbookhq/splitter/issues/15",
-        "de": "feste letzte änderung y-offset für einige widgets\nfestes Problem, bei dem JquiState den Datentyp nicht respektiert\nbehobene Probleme mit BulkEdtior (Dialog nicht schließen und andere Dialog anzeigen falsch Taste)\nimplementiert workaround resize bug für https://github.com/devbookhq/splitter/issues/15",
-        "ru": "фиксированное последнее изменение y-offset для некоторых виджетов\nфиксированная проблема, когда JquiState не уважал тип данных\nфиксированные проблемы с BulkEdtior (диалог не закрывается и другой диалог показывает неправильную кнопку)\nреализованные обходные изменения размер клопа для https://github.com/devbookhq/splitter/issues/15",
-        "pt": "fixo última mudança y-offset para alguns widgets\nproblema fixo onde JquiState não respeita o tipo de dados\nproblemas fixos com BulkEdtior (dialog não fechando e outra caixa de diálogo mostrando botão errado)\nimplantado workaround reize bug para https://github.com/devbookhq/splitter/issues/15",
-        "nl": "laatste verandering y-offset voor sommige widgets vastzetten\nfixed issue waarbij JquiState geen gegevenstype respecteerde\nvaste problemen met BulkEdtior (dialoog niet sluiten en andere dialoog tonen verkeerde knop)\nworkaround resize bug geïmplementeerd voor https://github.com/devbookhq/splitter/issues/15",
-        "fr": "dernière modification fixe y-offset pour certains widgets\nproblème fixe dans lequel JquiState ne respectait pas le type de données\nproblèmes corrigés avec BulkEdtior (dialogue ne fermant pas et autre boîte de dialogue montrant un mauvais bouton)\nredimensionner le bug pour https://github.com/devbookhq/splitter/issues/15",
-        "it": "fisso ultima modifica y-offset per alcuni widget\nproblema fisso in cui JquiState non ha rispettato il tipo di dati\nproblemi fissi con BulkEdtior (dialogo non chiusura e altra finestra di dialogo che mostra il pulsante sbagliato)\nbug di ridimensionamento implementato per https://github.com/devbookhq/splitter/issues/15",
-        "es": "fijado último cambio y-offset para algunos widgets\ncuestión fija en que JquiState no respeta el tipo de datos\nproblemas fijos con BulkEdtior (dialog no cierre y otro diálogo mostrando el botón incorrecto)\nimplementó un error de tamaño para https://github.com/devbookhq/splitter/issues/15",
-        "pl": "ustalona ostatnia zmiana y- przesunięcie dla niektórych widżetów\nstała emisja w przypadku gdy JquiState nie przestrzegał typu danych\nstałe problemy z BulkEdtior (okno dialogowe nie zamyka się i inne okno pokazuje zły przycisk)\nzaimplementowany błąd zmiany rozmiaru dla https: / / github.com / devbookhq / splitter / issues / 15",
-        "uk": "фіксована остання зміна y-offset для деяких віджетів\nвиправлено проблему, де JquiState не поважав тип даних\nвиправлені проблеми з BulkEdtior (dialog не закриває та інше діалогове вікно, що показує неправильну кнопку)\nреалізовані помилки змінного струму для https://github.com/devbookhq/splitter/issues/15",
-        "zh-cn": "固定一些部件的上次更改 y 抵销\njqui State 不尊重数据类型的固定问题\n与 BulkEdtior (对话框不关闭, 其它对话框显示错误按钮) 的固定问题\n为 https://github.com/devbookhq/splitter/issues/15 执行工作调整错误大小"
       }
     },
     "title": "Visualisation Next Generation",
