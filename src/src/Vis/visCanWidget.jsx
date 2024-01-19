@@ -15,7 +15,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { calculateOverflow, isVarFinite } from '@/Utils/utils';
+import { calculateOverflow, isVarFinite, deepClone } from '@/Utils/utils';
 import {
     replaceGroupAttr,
     addClass,
@@ -111,7 +111,7 @@ class VisCanWidget extends VisBaseWidget {
             signals: this.props.context.linkContext.signals,
         };
 
-        getUsedObjectIDsInWidget(this.props.context.views, this.props.view, this.props.id, linkContext);
+        getUsedObjectIDsInWidget(this.props.view, this.props.id, linkContext);
 
         this.IDs = linkContext.IDs;
 
@@ -971,7 +971,7 @@ class VisCanWidget extends VisBaseWidget {
 
         try {
             widgetData = { wid, ...(widget.data || {}) };
-            widgetStyle = JSON.parse(JSON.stringify(newWidgetStyle || widget.style || {}));
+            widgetStyle = deepClone(newWidgetStyle || widget.style || {});
             // Replace _PRJ_NAME
             Object.keys(widgetData).forEach(attr => {
                 if (attr &&
@@ -1352,7 +1352,6 @@ class VisCanWidget extends VisBaseWidget {
         if (this.state.applyBindings && !this.bindingsTimer) {
             this.bindingsTimer = setTimeout(() => {
                 this.bindingsTimer = null;
-                // console.log(`[${Date.now()}] Widget bindings ${JSON.stringify(this.state.applyBindings)}`);
                 this.renderWidget(true);
             }, 10);
         }

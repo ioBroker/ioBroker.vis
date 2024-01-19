@@ -282,6 +282,6 @@ export default {
     getObjectIcon,
     allObjects,
     getNewWidgetId,
-    /** @deprecated use "getNewWidgetInfo" instead, it will give you the full wid like "w000001" */
+    /** @deprecated use "getNewWidgetId" instead, it will give you the full wid like "w000001" */
     getNewWidgetIdNumber,
 };

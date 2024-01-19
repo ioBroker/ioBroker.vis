@@ -170,7 +170,7 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
             widgetAttrInfo,
         };
 
-        getUsedObjectIDsInWidget(props.context.views, props.view, props.id, this.linkContext);
+        getUsedObjectIDsInWidget(props.view, props.id, this.linkContext);
 
         // do not change it to lambda function as onStateChanged could be inherited.
         this.onStateChangedBind = this.onStateChanged.bind(this);
@@ -445,7 +445,6 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
 
         // extract bindings anew as data or style was changes
         getUsedObjectIDsInWidget(
-            context.views,
             this.props.view,
             this.props.id,
             this.linkContext,

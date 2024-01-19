@@ -14,7 +14,7 @@
  */
 import { I18n } from '@iobroker/adapter-react-v5';
 import { deepClone } from '@/Utils/utils';
-import { store, updateWidget } from '../Store';
+import { store, updateProject, updateWidget } from '../Store';
 
 function replaceGroupAttr(inputStr, groupAttrList) {
     let newString = inputStr;
@@ -278,7 +278,8 @@ function extractBinding(format) {
 //    visibility: {} //
 //    signals: {}    //
 // }
-function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
+function getUsedObjectIDsInWidget(view, wid, linkContext) {
+    const views = deepClone(store.getState().visProject);
     // Check all attributes
     const widget = views[view].widgets[wid];
 
@@ -371,7 +372,6 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
         if (!widget.groupid) {
             store.dispatch(updateWidget({ viewId: view, widgetId: widget, data: { ...widget, groupid: getWidgetGroup(views, view, wid) } }));
         }
-        // widget.groupid = widget.groupid || getWidgetGroup(views, view, wid);
 
         if (!store.getState().visProject[view].widgets[widget.groupid]) {
             store.dispatch(updateWidget({ viewId: view, widgetId: widget, data: { ...widget, groupid: getWidgetGroup(views, view, wid) } }));
@@ -407,7 +407,7 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
                 if (typeof data[attr] === 'string') {
                     const result = replaceGroupAttr(data[attr], parentWidgetData);
                     if (result.doesMatch) {
-                        newGroupData = newGroupData || JSON.parse(JSON.stringify(data));
+                        newGroupData = newGroupData || deepClone(data);
                         newGroupData[attr] = result.newString || '';
                     }
                 }
@@ -614,9 +614,14 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
             }
         });
     }
+
+    // as we are fixing the project in this method, write it back to store
+    store.dispatch(updateProject(views));
 }
 
-function getUsedObjectIDs(views, isByViews) {
+function getUsedObjectIDs(isByViews) {
+    const views = store.getState().visProject;
+
     if (!views) {
         console.log('Check why views are not yet loaded!');
         return null;
@@ -643,7 +648,7 @@ function getUsedObjectIDs(views, isByViews) {
             linkContext.byViews[view] = [];
         }
 
-        Object.keys(views[view].widgets).forEach(wid => getUsedObjectIDsInWidget(views, view, wid, linkContext));
+        Object.keys(views[view].widgets).forEach(wid => getUsedObjectIDsInWidget(view, wid, linkContext));
     });
 
     if (isByViews) {
@@ -662,9 +667,9 @@ function getUsedObjectIDs(views, isByViews) {
                     if (widget.tpl === 'tplContainerView' && widget.data.contains_view) {
                         const ids = linkContext.byViews[widget.data.contains_view];
                         if (ids) {
-                            for (let a = 0; a < ids.length; a++) {
-                                if (ids[a] && !linkContext.byViews[view].includes(ids[a])) {
-                                    linkContext.byViews[view].push(ids[a]);
+                            for (const id of ids) {
+                                if (id && !linkContext.byViews[view].includes(id)) {
+                                    linkContext.byViews[view].push(id);
                                     changed = true;
                                 }
                             }
@@ -1061,18 +1066,6 @@ function findWidgetUsages(views, view, widgetId, _result) {
     Object.keys(views).forEach(_view => _view !== '___settings' && findWidgetUsages(views, _view, widgetId, _result));
     return result;
 }
-
-// module.exports = {
-//     getUsedObjectIDs,
-//     extractBinding,
-//     getWidgetGroup,
-//     replaceGroupAttr,
-//     getUsedObjectIDsInWidget,
-//     getUrlParameter,
-//     parseDimension,
-//     addClass,
-//     removeClass,
-// };
 
 export {
     getUsedObjectIDs,
