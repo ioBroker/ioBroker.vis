@@ -33,7 +33,6 @@ function startAdapter(options) {
             // if it is an instance object
             if (id.startsWith('system.adapter.') &&
                 id.match(/\d+$/) &&
-                id !== 'system.adapter.vis-2-beta.0' &&
                 id !== 'system.adapter.vis.0' &&
                 id !== 'system.adapter.vis-2.0'
             ) {
