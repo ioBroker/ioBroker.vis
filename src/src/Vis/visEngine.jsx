@@ -2057,7 +2057,7 @@ ${this.scripts}
             user: this.userName,
             userGroups: this.props.userGroups,
             // For internal widgets interact with the store instead
-            views: deepClone(visProject),
+            views: visProject,
             widgetHint: this.props.widgetHint,
             registerEditorCallback: this.props.runtime ? null : this.props.registerEditorCallback,
             setSelectedGroup: this.props.runtime ? null : this.props.setSelectedGroup,

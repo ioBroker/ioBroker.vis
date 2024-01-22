@@ -111,7 +111,7 @@ class VisCanWidget extends VisBaseWidget {
             signals: this.props.context.linkContext.signals,
         };
 
-        getUsedObjectIDsInWidget(this.props.view, this.props.id, linkContext);
+        getUsedObjectIDsInWidget(this.props.context.views, this.props.view, this.props.id, linkContext);
 
         this.IDs = linkContext.IDs;
 

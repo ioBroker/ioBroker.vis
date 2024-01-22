@@ -14,7 +14,7 @@
  */
 import { I18n } from '@iobroker/adapter-react-v5';
 import { deepClone } from '@/Utils/utils';
-import { store, updateProject, updateWidget } from '../Store';
+import { store, updateWidget } from '../Store';
 
 function replaceGroupAttr(inputStr, groupAttrList) {
     let newString = inputStr;
@@ -278,10 +278,9 @@ function extractBinding(format) {
 //    visibility: {} //
 //    signals: {}    //
 // }
-function getUsedObjectIDsInWidget(view, wid, linkContext) {
-    const views = deepClone(store.getState().visProject);
+function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
     // Check all attributes
-    const widget = views[view].widgets[wid];
+    const widget = deepClone(views[view].widgets[wid]);
 
     // fix error in naming
     if (widget.groupped) {
@@ -615,13 +614,11 @@ function getUsedObjectIDsInWidget(view, wid, linkContext) {
         });
     }
 
-    // as we are fixing the project in this method, write it back to store
-    store.dispatch(updateProject(views));
+    // as we are fixing the widget in this method, write it back to store
+    store.dispatch(updateWidget({ viewId: view, widgetId: wid, data: widget }));
 }
 
-function getUsedObjectIDs(isByViews) {
-    const views = store.getState().visProject;
-
+function getUsedObjectIDs(views, isByViews) {
     if (!views) {
         console.log('Check why views are not yet loaded!');
         return null;
@@ -648,7 +645,7 @@ function getUsedObjectIDs(isByViews) {
             linkContext.byViews[view] = [];
         }
 
-        Object.keys(views[view].widgets).forEach(wid => getUsedObjectIDsInWidget(view, wid, linkContext));
+        Object.keys(views[view].widgets).forEach(wid => getUsedObjectIDsInWidget(views, view, wid, linkContext));
     });
 
     if (isByViews) {
