@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.21",
+    "version": "2.9.22",
     "news": {
+      "2.9.22": {
+        "en": "try to fix problems introduced with 2.9.21",
+        "de": "versuchen, probleme mit 2.9.21 zu beheben",
+        "ru": "попытаться исправить проблемы, введенные с 2.9.21",
+        "pt": "tentar corrigir problemas introduzidos com 2.9.21",
+        "nl": "proberen problemen op te lossen die zijn geïntroduceerd met 2.9.21",
+        "fr": "essayer de résoudre les problèmes introduits avec 2.9.21",
+        "it": "cercare di risolvere i problemi introdotti con 2.9.21",
+        "es": "tratar de solucionar problemas introducidos con 2.9.21",
+        "pl": "spróbuj rozwiązać problemy wprowadzone z 2.9.21",
+        "uk": "намагатися виправити проблеми, впроваджені 2.9.21",
+        "zh-cn": "2.9.21. 试图解决提出的问题"
+      },
       "2.9.21": {
         "en": "fixed crash case when fixing widgets\nfixed bug, that opacity is applied twice on image edit mode overlay",
         "de": "fester crashfall bei der befestigung von widgets\nfehler behoben, dass die opazität zweimal auf bildbearbeitung modus overlay angewendet wird",
@@ -80,19 +93,6 @@
         "pl": "użyj prawidłowych wartości awaryjnych dla wyznaczania sygnałów widget",
         "uk": "використовуйте правильні значення випадання для визначення сигналів віджету",
         "zh-cn": "使用正确的倒置值来确定部件信号"
-      },
-      "2.9.15": {
-        "en": "fixed issue with BulkEditor",
-        "de": "problem mit BulkEditor behoben",
-        "ru": "фиксированная проблема с BulkEditor",
-        "pt": "problema fixo com BulkEditor",
-        "nl": "vast probleem met BulkEditor",
-        "fr": "problème corrigé avec BulkEditor",
-        "it": "problema fisso con BulkEditor",
-        "es": "edición fija con BulkEditor",
-        "pl": "stałe wydanie z BulkEditor",
-        "uk": "фіксована проблема з BulkEditor",
-        "zh-cn": "与批量编辑器的固定发行"
       }
     },
     "title": "Visualisation Next Generation",
