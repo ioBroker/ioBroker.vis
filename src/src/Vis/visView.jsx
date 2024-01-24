@@ -428,41 +428,39 @@ class VisView extends React.Component {
             return;
         }
 
-        if (!isRelative) {
-            this.refView.current.addEventListener('mousemove', this.onMouseWidgetMove);
-            window.document.addEventListener('mouseup', this.onMouseWidgetUp);
+        this.refView.current.addEventListener('mousemove', this.onMouseWidgetMove);
+        window.document.addEventListener('mouseup', this.onMouseWidgetUp);
 
-            this.movement = {
-                moved: false,
-                startX: e.pageX,
-                startY: e.pageY,
-                isResize,
-                x: 0,
-                y: 0,
-            };
+        this.movement = {
+            moved: false,
+            startX: e.pageX,
+            startY: e.pageY,
+            isResize,
+            x: 0,
+            y: 0,
+        };
 
-            const widgetsRefs = this.widgetsRefs;
+        const widgetsRefs = this.widgetsRefs;
 
-            this.props.selectedWidgets.forEach(selectedWidget => {
-                const widgetRect = widgetsRefs[selectedWidget].refService.current.getBoundingClientRect();
-                if (e.pageX <= widgetRect.right && e.pageX >= widgetRect.left && e.pageY <= widgetRect.bottom && e.pageY >= widgetRect.top) {
-                    this.movement.startWidget = widgetsRefs[selectedWidget].refService.current.getBoundingClientRect();
-                }
-            });
+        this.props.selectedWidgets.forEach(selectedWidget => {
+            const widgetRect = widgetsRefs[selectedWidget].refService.current.getBoundingClientRect();
+            if (e.pageX <= widgetRect.right && e.pageX >= widgetRect.left && e.pageY <= widgetRect.bottom && e.pageY >= widgetRect.top) {
+                this.movement.startWidget = widgetsRefs[selectedWidget].refService.current.getBoundingClientRect();
+            }
+        });
 
-            this.props.selectedWidgets.forEach(_wid => {
-                if (widgetsRefs[_wid]?.onMove) {
-                    widgetsRefs[_wid].onMove(); // indicate the start of movement
-                }
-            });
+        this.props.selectedWidgets.forEach(_wid => {
+            if (widgetsRefs[_wid]?.onMove) {
+                widgetsRefs[_wid].onMove(); // indicate the start of movement
+            }
+        });
 
-            // Indicate about movement start
-            Object.keys(widgetsRefs).forEach(_wid => {
-                if (widgetsRefs[_wid]?.onCommand) {
-                    widgetsRefs[_wid].onCommand('startMove');
-                }
-            });
-        }
+        // Indicate about movement start
+        Object.keys(widgetsRefs).forEach(_wid => {
+            if (widgetsRefs[_wid]?.onCommand) {
+                widgetsRefs[_wid].onCommand('startMove');
+            }
+        });
     };
 
     onIgnoreMouseEvents = ignore => {
