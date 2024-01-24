@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.23",
+    "version": "2.9.24",
     "news": {
+      "2.9.24": {
+        "en": "Image 8 widget ported to react",
+        "de": "Bild 8 Widget portiert zu reagieren",
+        "ru": "Изображение 8 виджета портируется, чтобы реагировать",
+        "pt": "Imagem 8 widget portado para reagir",
+        "nl": "Afbeelding 8 widget geporteerd om te reageren",
+        "fr": "Image 8 widget porté pour réagir",
+        "it": "Immagine 8 widget portato a reagire",
+        "es": "Imagen 8 widget portado para reaccionar",
+        "pl": "Widget obrazka 8 przeniesiony do reakcji",
+        "uk": "Image 8 віджет переглянуто для реагації",
+        "zh-cn": "图像 8 部件移植到反应"
+      },
       "2.9.23": {
         "en": "fixed another bug due to previous versions",
         "de": "einen anderen fehler aufgrund früherer versionen behoben",
@@ -80,19 +93,6 @@
         "pl": "stałe emisji, że stare atrybuty wartość jest pokazywana w niektórych scenariuszach\ndedykowany system zezwoleń rozszerzony o poziom widoku",
         "uk": "виправлено проблему, що значення старих атрибутів відображається в деяких сценаріях\nвиділена система дозволу продовжена до рівня зору",
         "zh-cn": "固定问题, 在一些假设中显示旧属性值\n将专用许可系统扩展至视图级别"
-      },
-      "2.9.17": {
-        "en": "dedicated permission system on project level introduced",
-        "de": "dediziertes berechtigungssystem auf projektebene eingeführt",
-        "ru": "внедрена специальная система разрешений на уровне проекта",
-        "pt": "sistema de permissão dedicado no nível do projeto introduzido",
-        "nl": "specifiek toestemmingssysteem op projectniveau ingevoerd",
-        "fr": "système de permission dédié au niveau du projet introduit",
-        "it": "sistema di autorizzazioni dedicato a livello di progetto introdotto",
-        "es": "sistema de permisos dedicados a nivel de proyectos",
-        "pl": "dedykowany system zezwoleń na poziomie projektu wprowadzony",
-        "uk": "запроваджено систему дозволів на рівні проекту",
-        "zh-cn": "在项目一级采用专门许可制度"
       }
     },
     "title": "Visualisation Next Generation",
