@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { GetRxDataFromWidget, RxRenderWidgetProps } from '@/types';
+import type { GetRxDataFromWidget, RxRenderWidgetProps } from '@/types';
+import { store, recalculateFields } from '@/Store';
 import VisRxWidget from '@/Vis/visRxWidget';
 
 type RxData = GetRxDataFromWidget<typeof BasicImage8>;
@@ -30,13 +31,26 @@ export default class BasicImage8 extends VisRxWidget<RxData> {
                         name: 'count',
                         type: 'number',
                         default: 1,
+                        onChange: async (_field: unknown, data: Record<string, any>, changeData: (data: Record<string, any>) => void) => {
+                            const { count } = data;
+
+                            for (let i = 0;  i < count; i++) {
+                                data[`g_images-${i}`] = true;
+                            }
+
+                            changeData(data);
+                            store.dispatch(recalculateFields(true));
+                        },
                     },
                 ],
             }, {
-                name: 'group.images',
+                name: 'images',
+                label: 'Image',
+                indexFrom: 1,
+                indexTo: 'count',
                 fields: [
                     {
-                        name: 'src_(0-count)',
+                        name: 'src_',
                         type: 'image',
                     },
                 ],
