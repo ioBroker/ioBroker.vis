@@ -445,6 +445,7 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
 
         // extract bindings anew as data or style was changes
         getUsedObjectIDsInWidget(
+            context.views,
             this.props.view,
             this.props.id,
             this.linkContext,
