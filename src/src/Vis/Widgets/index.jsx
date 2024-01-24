@@ -47,6 +47,7 @@ import JQuiInputDateTime from './JQui/JQuiInputDateTime';
 import JQuiToggle from './JQui/JQuiToggle';
 
 import TabsSliderTabs from './Tabs/TabsSliderTabs';
+import BasicImage8 from './Basic/BasicImage8';
 
 const WIDGETS = [
     BasicBar,
@@ -63,6 +64,7 @@ const WIDGETS = [
     BasicSpeechToText,
     BasicIFrame,
     BasicImage,
+    BasicImage8,
 
     JQuiButton,
     JQuiButtonBlank,
