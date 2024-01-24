@@ -261,7 +261,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.9.23 (2024-01-24)
 * (foxriver76) fixed another bug due to previous versions
 
 ### 2.9.22 (2024-01-22)

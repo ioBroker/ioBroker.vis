@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.22",
+    "version": "2.9.23",
     "news": {
+      "2.9.23": {
+        "en": "fixed another bug due to previous versions",
+        "de": "einen anderen fehler aufgrund früherer versionen behoben",
+        "ru": "исправить еще один жучок из-за предыдущих версий",
+        "pt": "corrigiu outro bug devido a versões anteriores",
+        "nl": "vaste een andere bug als gevolg van eerdere versies",
+        "fr": "correction d'un autre bug en raison des versions précédentes",
+        "it": "fisso un altro bug a causa delle versioni precedenti",
+        "es": "solucionado otro fallo debido a versiones anteriores",
+        "pl": "naprawiono kolejny błąd z powodu poprzednich wersji",
+        "uk": "виправлено ще одну помилку через попередні версії",
+        "zh-cn": "由于以前的版本而修补另一个错误"
+      },
       "2.9.22": {
         "en": "try to fix problems introduced with 2.9.21",
         "de": "versuchen, probleme mit 2.9.21 zu beheben",
@@ -80,19 +93,6 @@
         "pl": "dedykowany system zezwoleń na poziomie projektu wprowadzony",
         "uk": "запроваджено систему дозволів на рівні проекту",
         "zh-cn": "在项目一级采用专门许可制度"
-      },
-      "2.9.16": {
-        "en": "use the correct fallback values for widget signals determination",
-        "de": "verwenden sie die richtigen rückfallwerte für die widget-signalbestimmung",
-        "ru": "использовать правильные значения обратной связи для определения сигналов виджета",
-        "pt": "use os valores de retorno corretos para determinação de sinais de widget",
-        "nl": "de juiste terugvalwaarden gebruiken voor het bepalen van widgetsignalen",
-        "fr": "utiliser les valeurs correctes de recul pour la détermination des signaux widget",
-        "it": "utilizzare i valori di errore corretti per la determinazione dei segnali widget",
-        "es": "utilizar los valores de retroceso correctos para la determinación de señales widget",
-        "pl": "użyj prawidłowych wartości awaryjnych dla wyznaczania sygnałów widget",
-        "uk": "використовуйте правильні значення випадання для визначення сигналів віджету",
-        "zh-cn": "使用正确的倒置值来确定部件信号"
       }
     },
     "title": "Visualisation Next Generation",
