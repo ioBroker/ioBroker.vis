@@ -31,10 +31,22 @@ const reducer = createReducer(
             })
             .addCase(updateWidget, (state, action) => {
                 const { viewId, widgetId, data } = action.payload;
+
+                if (!(viewId in state.visProject)) {
+                    console.error(`Cannot update widget "${widgetId}". The view "${viewId}" does not exist in the project.`);
+                    return;
+                }
+
                 state.visProject[viewId].widgets[widgetId] = data;
             })
             .addCase(updateGroupWidget, (state, action) => {
                 const { viewId, widgetId, data } = action.payload;
+
+                if (!(viewId in state.visProject)) {
+                    console.error(`Cannot update group widget "${widgetId}". The view "${viewId}" does not exist in the project.`);
+                    return;
+                }
+
                 state.visProject[viewId].widgets[widgetId] = data;
             })
             .addCase(updateActiveUser, (state, action) => {
