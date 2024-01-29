@@ -296,9 +296,9 @@ const WidgetField = props => {
     let onChangeTimeout;
 
     const applyValue = newValues => {
-        const project = JSON.parse(JSON.stringify(store.getState().visProject));
+        const project = deepClone(store.getState().visProject);
         props.selectedWidgets.forEach((selectedWidget, i) => {
-            const value = Array.isArray(newValues) ? newValues[i] : newValues;
+            const value = Array.isArray(newValues) && field.type !== 'groups' ? newValues[i] : newValues;
 
             const data = props.isStyle
                 ? project[props.selectedView].widgets[selectedWidget].style

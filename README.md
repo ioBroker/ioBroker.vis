@@ -263,6 +263,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 ## Changelog
 ### **WORK IN PROGRESS**
 * (foxriver76) fixed resizing issue for relative widgets
+* (foxriver76) do not crash when using visibility "only for groups"
 
 ### 2.9.24 (2024-01-24)
 * (foxriver76) Image 8 widget ported to react

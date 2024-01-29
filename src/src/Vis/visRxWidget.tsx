@@ -70,6 +70,10 @@ interface VisRxWidgetProps extends VisBaseWidgetProps {
 interface RxData {
     _originalData: any;
     filterkey: any;
+    /** If value is hide widget should be hidden if user not in group, else disabled */
+    'visibility-groups-action': 'hide' | 'disabled';
+    /** If entry in array but user not in array, apply visibility-groups-action logic */
+    'visibility-groups': string[];
 }
 
 /** TODO move to VisBaseWidget when ported */
@@ -319,7 +323,7 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
             this.newState.rxData.filterkey = this.newState.rxData.filterkey.split(/[;,]+/).map(f => f.trim()).filter(f => f);
         }
 
-        if (userGroups && userGroups.length && !this.isUserMemberOfGroup(this.props.context.user, userGroups)) {
+        if (userGroups?.length && !this.isUserMemberOfGroup(this.props.context.user, userGroups)) {
             // @ts-expect-error fix later
             if (this.newState.rxData['visibility-groups-action'] === 'disabled') {
                 this.newState.disabled = true;
@@ -410,8 +414,36 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
         super.componentWillUnmount();
     }
 
+    /**
+     * Check if the logged-in user's group has visibility permissions for this widget
+     */
+    isWidgetVisibleForGroup(newState: typeof this.newState): boolean {
+        // @ts-expect-error fix later
+        const userGroups = newState.rxData['visibility-groups'];
+
+        // @ts-expect-error fix later
+        if (newState.rxData['visibility-groups-action'] === 'hide') {
+            if (userGroups?.length && !this.isUserMemberOfGroup(this.props.context.user, userGroups)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if widget is visible according to the state id
+     *
+     * @param stateId state id to check visibility for
+     * @param newState the new state
+     */
     checkVisibility(stateId?: string | null, newState?: typeof this.newState) {
         newState = newState || this.state;
+
+        if (!this.isWidgetVisibleForGroup(newState)) {
+            return false;
+        }
+
         if (!this.state.editMode) {
             if (!this.isWidgetFilteredOut(newState.rxData)) {
                 if (stateId) {
