@@ -1493,9 +1493,14 @@ class VisEngine extends React.Component {
                     groups[widgetSet].push({ newScript, oldScript });
                 } else {
                     // inline script
+                    let loadTimer = setTimeout(tpl => {
+                        console.error(`Cannot load ${tpl}`);
+                    }, 500, oldScript.attributes.id?.value || oldScript.attributes['data-widgetset']?.value);
                     try {
                         newScript.appendChild(document.createTextNode(oldScript.innerHTML));
                         oldScript.parentNode.replaceChild(newScript, oldScript);
+                        clearTimeout(loadTimer);
+                        loadTimer = null;
                     } catch (error) {
                         console.error(`Cannot set inner HTML of ${oldScript.text?.substring(0, 500)}: ${error}`);
                     }
