@@ -261,6 +261,9 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (foxriver76) do not show empty icon category if jquery style selected for jquery button widgets
+
 ### 2.9.25 (2024-01-29)
 * (foxriver76) fixed resizing issue for relative widgets
 * (foxriver76) do not crash when using visibility "only for groups"

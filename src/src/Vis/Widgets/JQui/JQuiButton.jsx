@@ -179,24 +179,24 @@ class JQuiButton extends VisRxWidget {
                 },
                 {
                     name: 'icon',
-                    hidden: data => !!data.externalDialog,
+                    hidden: data => !!data.externalDialog || data.jquery_style,
                     fields: [
                         {
                             name: 'src',
                             label: 'jqui_image',
                             type: 'image',
-                            hidden: data => data.icon || data.jquery_style,
+                            hidden: data => data.icon,
                         },
                         {
                             name: 'icon',
                             label: 'jqui_icon',
                             type: 'icon64',
-                            hidden: data => data.src || data.jquery_style,
+                            hidden: data => data.src,
                         },
                         {
                             name: 'invert_icon',
                             type: 'checkbox',
-                            hidden: data => (!data.icon || !data.image) && data.jquery_style,
+                            hidden: data => (!data.icon && !data.src),
                         },
                         {
                             name: 'imageHeight',
@@ -204,7 +204,7 @@ class JQuiButton extends VisRxWidget {
                             min: 0,
                             max: 200,
                             default: 100,
-                            hidden: data => !data.src || data.jquery_style,
+                            hidden: data => !data.src,
                         },
                     ],
                 },
