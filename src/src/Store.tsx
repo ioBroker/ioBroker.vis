@@ -14,7 +14,9 @@ export const recalculateFields = createAction<boolean>('attributes/recalculate')
 
 const initialState = {
     visProject: {} as Project,
+    /** If fields need to be recalculated on next render */
     recalculateFields: false,
+    /** Logged in user */
     activeUser: '',
 };
 

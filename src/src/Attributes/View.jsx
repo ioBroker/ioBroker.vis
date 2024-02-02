@@ -609,6 +609,9 @@ const View = props => {
                     type: 'checkbox', name: 'Hide menu', field: 'navigationHideMenu', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
                 },
                 {
+                    type: 'checkbox', name: 'Hide after selection', field: 'navigationHideOnSelection', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
+                },
+                {
                     type: 'text', name: 'Menu header text', field: 'navigationHeaderText', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal" || !data.navigationBar', applyToAll: true,
                 },
                 {
@@ -792,18 +795,20 @@ const View = props => {
                         selectedViewValue = selectedViewValue || '';
                     }
                     viewList.forEach(_view => {
-                        let viewValue = store.getState().visProject[_view].settings[field.field];
+                        const view = store.getState().visProject[_view];
+
+                        let viewValue = view.settings[field.field];
                         if (field.type === 'boolean') {
                             viewValue = !!viewValue;
                         } else {
                             viewValue = viewValue || '';
                         }
 
-                        if (store.getState().visProject[_view].settings.navigation &&
+                        if (view.settings.navigation &&
                             viewValue !== selectedViewValue &&
-                            !viewsToChange.includes(store.getState().visProject[_view].name || _view)
+                            !viewsToChange.includes(view.name || _view)
                         ) {
-                            viewsToChange.push(store.getState().visProject[_view].name || _view);
+                            viewsToChange.push(view.name || _view);
                         }
                     });
                 }
@@ -817,14 +822,15 @@ const View = props => {
                 selectedViewValue = selectedViewValue || '';
             }
             viewList.forEach(_view => {
-                let viewValue = store.getState().visProject[_view].settings[showAllViewDialog.field];
+                const projView = store.getState().visProject[_view];
+                let viewValue = projView.settings[showAllViewDialog.field];
                 if (showAllViewDialog.field.type === 'boolean') {
                     viewValue = !!viewValue;
                 } else {
                     viewValue = viewValue || '';
                 }
-                if (store.getState().visProject[_view].settings.navigation && viewValue !== selectedViewValue) {
-                    viewsToChange.push(store.getState().visProject[_view].name || _view);
+                if (projView.settings.navigation && viewValue !== selectedViewValue) {
+                    viewsToChange.push(projView.name || _view);
                 }
             });
         }

@@ -1227,8 +1227,14 @@ class VisView extends React.Component {
             setMenuWidth={menuWidth => {
                 window.localStorage.setItem('vis.menuWidth', menuWidth);
                 this.setState({ menuWidth });
+
+                return new Promise(resolve => {
                 // re-calculate the width of the view
-                setTimeout(() => this.updateViewWidth(), 300);
+                    setTimeout(() => {
+                        this.updateViewWidth();
+                        resolve();
+                    }, 400);
+                });
             }}
         >
             {content}

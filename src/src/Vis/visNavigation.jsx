@@ -288,7 +288,12 @@ class VisNavigation extends React.Component {
                             key={index}
                             disablePadding
                             className={Utils.clsx(this.props.classes.menuItem, this.props.activeView === item.view && this.props.classes.selectedMenu)}
-                            onClick={() => this.props.context.changeView(item.view)}
+                            onClick={async () => {
+                                if (settings.navigationHideOnSelection) {
+                                    await this.hideNavigationMenu();
+                                }
+                                await this.props.context.changeView(item.view);
+                            }}
                         >
                             <ListItemButton>
                                 <ListItemIcon>
@@ -378,10 +383,19 @@ class VisNavigation extends React.Component {
         </div>;
     }
 
+    /**
+     * Hide the navigation menu
+     */
+    async hideNavigationMenu() {
+        window.localStorage.setItem('vis.navOpened', 'hidden');
+        await this.props.setMenuWidth('hidden');
+    }
+
     render() {
         if (!this.props.context.views || !this.props.context.views[this.props.view]) {
             return null;
         }
+
         const settings = this.props.context.views[this.props.view].settings;
 
         if (settings.navigation &&
@@ -428,8 +442,7 @@ class VisNavigation extends React.Component {
                             this.props.setMenuWidth('narrow');
                         } else if (this.props.menuWidth === 'narrow') {
                             if (!settings.navigationNoHide) {
-                                window.localStorage.setItem('vis.navOpened', 'hidden');
-                                this.props.setMenuWidth('hidden');
+                                this.hideNavigationMenu();
                             } else {
                                 window.localStorage.setItem('vis.navOpened', 'full');
                                 this.props.setMenuWidth('full');

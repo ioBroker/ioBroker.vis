@@ -265,6 +265,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 ## Changelog
 ### **WORK IN PROGRESS**
 * (foxriver76) do not show empty icon category if jquery style selected for jquery button widgets
+* (foxriver76) added possibility to hide navigation after selection
 
 ### 2.9.25 (2024-01-29)
 * (foxriver76) fixed resizing issue for relative widgets
