@@ -180,9 +180,9 @@ class VisEngine extends React.Component {
         this.statesDebounce = {};
         this.onChangeCallbacks = [];
 
-        this.idControlInstance = `${this.props.adapterName}.${this.props.instance}.control.instance`;
-        this.idControlData = `${this.props.adapterName}.${this.props.instance}.control.data`;
-        this.idControlCommand = `${this.props.adapterName}.${this.props.instance}.control.command`;
+        this.ID_CONTROL_INSTANCE = `${this.props.adapterName}.${this.props.instance}.control.instance`;
+        this.ID_CONTROL_DATA = `${this.props.adapterName}.${this.props.instance}.control.data`;
+        this.ID_CONTROL_COMMAND = `${this.props.adapterName}.${this.props.instance}.control.command`;
 
         this.linkContext = {
             visibility: {},
@@ -226,9 +226,9 @@ class VisEngine extends React.Component {
                 this.vis.language = systemConfig.common.language || 'en';
                 this.systemConfig = systemConfig;
 
-                this.props.socket.subscribeState(this.idControlInstance, this.onStateChange);
-                this.props.socket.subscribeState(this.idControlData, this.onStateChange);
-                this.props.socket.subscribeState(this.idControlCommand, this.onStateChange);
+                this.props.socket.subscribeState(this.ID_CONTROL_INSTANCE, this.onStateChange);
+                this.props.socket.subscribeState(this.ID_CONTROL_DATA, this.onStateChange);
+                this.props.socket.subscribeState(this.ID_CONTROL_COMMAND, this.onStateChange);
 
                 return this.loadWidgets();
             })
@@ -317,9 +317,9 @@ class VisEngine extends React.Component {
         Object.keys(this.subscribes).forEach(id =>
             this.props.socket.unsubscribeState(id, this.onStateChange));
 
-        this.props.socket.unsubscribeState(this.idControlInstance, this.onStateChange);
-        this.props.socket.unsubscribeState(this.idControlData, this.onStateChange);
-        this.props.socket.unsubscribeState(this.idControlCommand, this.onStateChange);
+        this.props.socket.unsubscribeState(this.ID_CONTROL_INSTANCE, this.onStateChange);
+        this.props.socket.unsubscribeState(this.ID_CONTROL_DATA, this.onStateChange);
+        this.props.socket.unsubscribeState(this.ID_CONTROL_COMMAND, this.onStateChange);
 
         let userScript = window.document.getElementById('#vis_user_scripts');
         if (userScript) {
@@ -1154,9 +1154,9 @@ class VisEngine extends React.Component {
 
             },
             getUser: () => this.userName,
-            sendCommand: (instance, command, data, ack) => this.props.socket.setState(this.idControlInstance, { val: instance || 'notdefined', ack: true })
-                .then(() => this.props.socket.setState(this.idControlData, { val: data, ack: true }))
-                .then(() => this.props.socket.setState(this.idControlCommand, { val: command, ack: ack === undefined ? true : ack })),
+            sendCommand: (instance, command, data, ack) => this.props.socket.setState(this.ID_CONTROL_INSTANCE, { val: instance || 'notdefined', ack: true })
+                .then(() => this.props.socket.setState(this.ID_CONTROL_DATA, { val: data, ack: true }))
+                .then(() => this.props.socket.setState(this.ID_CONTROL_COMMAND, { val: command, ack: ack === undefined ? true : ack })),
             readFile: (filename, cb) => {
                 let adapter = this.conn.namespace;
                 if (filename[0] === '/') {
@@ -1700,18 +1700,17 @@ class VisEngine extends React.Component {
     }
 
     onStateChange = (id, state) => {
-        // console.log(`[${new Date().toISOString()}] STATE_CHANGE: ${id}`);
         if (!id || state === null || typeof state !== 'object') {
             return;
         }
 
-        if (id === this.idControlCommand) {
+        if (id === this.ID_CONTROL_COMMAND) {
             if (state.ack) {
                 return;
             }
 
             // ignore too old commands
-            if (state.ts && Date.now() - state.ts > 5000) {
+            if (state.ts && Date.now() - state.ts > 5_000) {
                 return;
             }
 
@@ -1730,7 +1729,7 @@ class VisEngine extends React.Component {
             }
 
             // if command is an object {instance: 'iii', command: 'cmd', data: 'ddd'}
-            if (state.val && state.val.instance) {
+            if (state.val?.instance) {
                 if (this.onUserCommand(state.val.instance, state.val.command, state.val.data)) {
                     // clear state
                     this.props.socket.setState(id, { val: '', ack: true })
@@ -1745,24 +1744,26 @@ class VisEngine extends React.Component {
             return;
         }
 
-        if (id === this.idControlData) {
+        if (id === this.ID_CONTROL_DATA) {
             if (state.ack) {
                 return;
             }
+
             // ignore too old commands
-            if (this._cmdData !== undefined && state.ts && Date.now() - state.ts > 5000) {
+            if (this._cmdData !== undefined && state.ts && Date.now() - state.ts > 5_000) {
                 return;
             }
             this._cmdData = state.val;
             return;
         }
 
-        if (id === this.idControlInstance) {
+        if (id === this.ID_CONTROL_INSTANCE) {
             if (state.ack) {
                 return;
             }
+
             // ignore too old commands
-            if (this._cmdInstance !== undefined && state.ts && Date.now() - state.ts > 5000) {
+            if (this._cmdInstance !== undefined && state.ts && Date.now() - state.ts > 5_000) {
                 return;
             }
             this._cmdInstance = state.val;
@@ -1796,19 +1797,16 @@ class VisEngine extends React.Component {
 
         // process visibility
         this.linkContext.visibility[id]?.forEach(item => {
-            // console.log('[' + new Date().toISOString() + '](' + item.widget + ') UPDATE_VISIBILITY: ' + id);
             this.updateWidget(item.view, item.widget, 'visibility', item);
         });
 
         // process signals
         this.linkContext.signals[id]?.forEach(item => {
-            // console.log('[' + new Date().toISOString() + '](' + item.widget + ') UPDATE_SIGNAL: ' + id);
             this.updateWidget(item.view, item.widget, 'signal', item, id);
         });
 
         // Process last update
         this.linkContext.lastChanges[id]?.forEach(item => {
-            // console.log('[' + new Date().toISOString() + '](' + item.widget + ') UPDATE_LAST_CHANGE: ' + id);
             this.updateWidget(item.view, item.widget, 'lastChange', item, id);
         });
 

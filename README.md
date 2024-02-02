@@ -189,9 +189,11 @@ You can write the JSON string or Object into `control.command` as `{instance: 'A
 
 Example for javascript adapter:
 
+```js
+setState('vis-2.0.control.command', { instance: '*', command: 'refresh', data: ''});
 ```
-setState('vis-2.0.control.command', {"instance": "*", "command": "refresh", "data": ""});
-```
+
+If you write the JSON as a string, ensure that it is parseable, e.g. `{"instance": "*", "command": "refresh", "data": ""}`, note the `"`. 
 
 ## Default view
 You can define for every view the desired resolution (Menu=>Tools=>Resolution).
