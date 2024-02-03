@@ -263,6 +263,9 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (foxriver76) correctly determine the vis instance in all cases
+
 ### 2.9.26 (2024-02-02)
 * (foxriver76) do not show empty icon category if jquery style selected for jquery button widgets
 * (foxriver76) added possibility to hide navigation after selection

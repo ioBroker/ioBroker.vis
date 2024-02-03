@@ -179,6 +179,8 @@ async function generateConfigPage(forceBuild, enabledList) {
 
     const configJs =
 `window.isLicenseError = ${isLicenseError};
+// inject the adapter instance
+window.visAdapterInstance = ${adapter.instance};
 // for back compatibility with vis.1 on cloud
 window.visConfig = {
     "widgetSets": ${JSON.stringify(widgetSets)}
