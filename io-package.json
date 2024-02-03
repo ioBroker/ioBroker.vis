@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.26",
+    "version": "2.9.27",
     "news": {
+      "2.9.27": {
+        "en": "correctly determine the vis instance in all cases",
+        "de": "die vis-instanz in allen fällen richtig bestimmen",
+        "ru": "правильно определить экземпляр vis во всех случаях",
+        "pt": "determinar corretamente a instância vis em todos os casos",
+        "nl": "de vis instantie in alle gevallen correct te bepalen",
+        "fr": "déterminer correctement l'instance vis dans tous les cas",
+        "it": "determinare correttamente l'istanza vis in tutti i casi",
+        "es": "determinar correctamente la instancia vis en todos los casos",
+        "pl": "we wszystkich przypadkach należy prawidłowo określić przypadek vis",
+        "uk": "правильно визначити в'язницю в усіх випадках",
+        "zh-cn": "在所有案件中正确确定案例"
+      },
       "2.9.26": {
         "en": "do not show empty icon category if jquery style selected for jquery button widgets\nadded possibility to hide navigation after selection",
         "de": "nicht zeigen leere icon kategorie, wenn jquery stil ausgewählt für jquery schaltfläche widgets\nmöglichkeit, die navigation nach der auswahl zu verbergen",
@@ -80,19 +93,6 @@
         "pl": "stałe zderzenie przy ustawianiu widżetów\nfixed bug, że nieprzezroczystość jest stosowany dwukrotnie w trybie edycji obrazu",
         "uk": "виправлений випадок аварії при фіксуванні віджетів\nвиправлена помилка, що opacity наноситься двічі на редагування режиму зображення",
         "zh-cn": "修复部件时的固定崩溃大小写\n固定错误, 在图像编辑模式覆盖上两次应用不透明"
-      },
-      "2.9.20": {
-        "en": "increased timeout for project import\nadded permissions on widget level",
-        "de": "mehr zeit für projektimporte\nzusätzliche berechtigungen auf widget-ebene",
-        "ru": "увеличение сроков для импорта проектов\nдополнительные разрешения на уровне виджетов",
-        "pt": "aumento do tempo para importação de projetos\npermissões adicionadas no nível do widget",
-        "nl": "verhoogde timeout voor projectimport\ntoegangsrechten toegevoegd op widgetniveau",
-        "fr": "délai accru pour l'importation de projets\npermissions ajoutées au niveau du widget",
-        "it": "aumento del timeout per l'importazione di progetto\npermessi aggiunti sul livello dei widget",
-        "es": "mayor tiempo para la importación de proyectos\npermisos añadidos a nivel de widget",
-        "pl": "wydłużenie czasu importu projektów\ndodane uprawnienia na poziomie widget",
-        "uk": "збільшення часу для імпорту проекту\nдодано дозвіл на рівень віджету",
-        "zh-cn": "增加项目导入的超时\n在部件级别上添加权限"
       }
     },
     "title": "Visualisation Next Generation",

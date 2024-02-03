@@ -263,7 +263,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.9.27 (2024-02-03)
 * (foxriver76) correctly determine the vis instance in all cases
 
 ### 2.9.26 (2024-02-02)
