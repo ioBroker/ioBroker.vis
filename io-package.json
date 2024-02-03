@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.27",
+    "version": "2.9.28",
     "news": {
+      "2.9.28": {
+        "en": "correctly determine the vis instance in all cases",
+        "de": "die vis-instanz in allen fällen richtig bestimmen",
+        "ru": "правильно определить экземпляр vis во всех случаях",
+        "pt": "determinar corretamente a instância vis em todos os casos",
+        "nl": "de vis instantie in alle gevallen correct te bepalen",
+        "fr": "déterminer correctement l'instance vis dans tous les cas",
+        "it": "determinare correttamente l'istanza vis in tutti i casi",
+        "es": "determinar correctamente la instancia vis en todos los casos",
+        "pl": "we wszystkich przypadkach należy prawidłowo określić przypadek vis",
+        "uk": "правильно визначити в'язницю в усіх випадках",
+        "zh-cn": "在所有案件中正确确定案例"
+      },
       "2.9.27": {
         "en": "correctly determine the vis instance in all cases",
         "de": "die vis-instanz in allen fällen richtig bestimmen",
@@ -80,19 +93,6 @@
         "pl": "spróbuj rozwiązać problemy wprowadzone z 2.9.21",
         "uk": "намагатися виправити проблеми, впроваджені 2.9.21",
         "zh-cn": "2.9.21. 试图解决提出的问题"
-      },
-      "2.9.21": {
-        "en": "fixed crash case when fixing widgets\nfixed bug, that opacity is applied twice on image edit mode overlay",
-        "de": "fester crashfall bei der befestigung von widgets\nfehler behoben, dass die opazität zweimal auf bildbearbeitung modus overlay angewendet wird",
-        "ru": "фиксированный случай аварии при фиксации виджетов\nфиксированная ошибка, что непрозрачность применяется дважды на наложение режима редактирования изображений",
-        "pt": "caso de acidente fixo ao fixar widgets\nbug fixo, que a opacidade é aplicada duas vezes na sobreposição do modo de edição de imagem",
-        "nl": "vaste crash case bij het repareren van widgets\nvaste fout, die dekking wordt twee keer toegepast op de afbeelding bewerken modus overlay",
-        "fr": "case de crash fixe lors de la fixation des widgets\nbug corrigé, que l'opacité est appliquée deux fois sur le mode d'édition d'image superposition",
-        "it": "caso di crash fisso quando si fissano widget\nbug fisso, che l'opacità viene applicata due volte sulla modalità di modifica dell'immagine sovrapposizione",
-        "es": "caso de accidente fijo al fijar widgets\nerror fijo, que la opacidad se aplica dos veces en el modo de edición de imagen superposición",
-        "pl": "stałe zderzenie przy ustawianiu widżetów\nfixed bug, że nieprzezroczystość jest stosowany dwukrotnie w trybie edycji obrazu",
-        "uk": "виправлений випадок аварії при фіксуванні віджетів\nвиправлена помилка, що opacity наноситься двічі на редагування режиму зображення",
-        "zh-cn": "修复部件时的固定崩溃大小写\n固定错误, 在图像编辑模式覆盖上两次应用不透明"
       }
     },
     "title": "Visualisation Next Generation",
