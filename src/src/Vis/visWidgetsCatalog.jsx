@@ -495,7 +495,8 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
         commonGroups = commonGroups || { common: 1 };
         commonFields = commonFields || {};
         const fields = deepClone(widgetParams);
-        let groupIndex = fields.findIndex(group => group.indexFrom);
+        let groupIndex = fields.findIndex(group => typeof group.indexFrom === 'number');
+
         while (groupIndex > -1) {
             const group = fields[groupIndex];
             group.singleName = group.name;
@@ -518,6 +519,7 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
             delete group.indexFrom;
             delete group.indexTo;
             const indexedGroups = [];
+
             for (let i = from; i <= to; i++) {
                 const indexedGroup = {
                     ...deepClone(group),

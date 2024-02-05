@@ -30,7 +30,7 @@ export default class BasicImage8 extends VisRxWidget<RxData> {
                     {
                         name: 'count',
                         type: 'number',
-                        default: 1,
+                        default: 0,
                         onChange: async (_field: unknown, data: Record<string, any>, changeData: (data: Record<string, any>) => void) => {
                             const { count } = data;
 
@@ -46,7 +46,7 @@ export default class BasicImage8 extends VisRxWidget<RxData> {
             }, {
                 name: 'images',
                 label: 'Image',
-                indexFrom: 1,
+                indexFrom: 0,
                 indexTo: 'count',
                 fields: [
                     {
