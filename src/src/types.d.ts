@@ -36,6 +36,12 @@ export type AnyWidgetId = SingleWidgetId | GroupWidgetId
 interface WidgetData {
     /** Only exists if given by user in tab general */
     name?: string;
+    bindings?: string[];
+    [other: string]: unknown;
+}
+
+interface WidgetStyle {
+    bindings?: string[];
     [other: string]: unknown;
 }
 
@@ -43,7 +49,7 @@ interface SingleWidget  {
     /** Internal wid */
     _id?: string;
     data: WidgetData;
-    style: Record<string, string>;
+    style: WidgetStyle;
     tpl: string;
     widgetSet: string;
     /** The id of the group, if the widget is grouped */

@@ -1711,14 +1711,6 @@ class VisView extends React.Component {
         if (this.props.selectedGroup) {
             // draw all widgets in div, that has exact size of the group
             renderedWidgets = <>
-                <div
-                    ref={this.refRelativeView}
-                    style={this.getRelativeStyle(settings, this.props.selectedGroup)}
-                    className="vis-relative-view"
-                >
-                    {rxRelativeWidgets}
-                    {rxAbsoluteWidgets}
-                </div>
                 {rxGroupWidget}
             </>;
         } else {

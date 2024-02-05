@@ -861,7 +861,7 @@ class App extends Runtime {
 
             },
         };
-        const groupId = getNewGroupId();
+        const groupId = getNewGroupId(project);
         let left = 0;
         let top = 0;
         let right = 0;
@@ -888,6 +888,20 @@ class App extends Runtime {
             widgets[selectedWidget].style.left = widgetBoundingRect.left - left;
             widgets[selectedWidget].style.top = widgetBoundingRect.top - top;
         });
+
+        if (this.state.selectedGroup) {
+            group.grouped = true;
+            group.groupid = this.state.selectedGroup;
+
+            const parentGroupWidget = widgets[this.state.selectedGroup];
+            parentGroupWidget.data.members.push(groupId);
+            // and remove the ungrouped versions
+            for (const wid of this.state.selectedWidgets) {
+                const idx = parentGroupWidget.data.members.indexOf(wid);
+                parentGroupWidget.data.members.splice(idx, 1);
+            }
+        }
+
         group.style.left = `${left}px`;
         group.style.top = `${top}px`;
         group.style.width = `${right - left}px`;
@@ -916,7 +930,24 @@ class App extends Runtime {
             delete widgets[member].grouped;
             delete widgets[member].groupid;
         }
+
+        if (this.state.selectedGroup) {
+            const parentGroupWidget = widgets[this.state.selectedGroup];
+
+            // if ungrouped nested group, re-add the single members
+            for (const member of group.data.members) {
+                parentGroupWidget.data.members.push(member);
+
+                widgets[member].grouped = true;
+                widgets[member].groupid = this.state.selectedGroup;
+            }
+
+            const idx = parentGroupWidget.data.members.indexOf(this.state.selectedWidgets[0]);
+            parentGroupWidget.data.members.splice(idx, 1);
+        }
+
         this.setSelectedWidgets(group.data.members);
+
         delete widgets[this.state.selectedWidgets[0]];
 
         return this.changeProject(project);

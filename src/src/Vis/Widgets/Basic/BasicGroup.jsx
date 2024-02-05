@@ -142,11 +142,6 @@ class BasicGroup extends VisRxWidget {
     }
 
     renderWidgetBody(props) {
-        // do not render anything if some group is editing
-        if (this.props.selectedGroup) {
-            return null;
-        }
-
         const context = this.props.context;
         super.renderWidgetBody(props);
         const widget = context.views[this.props.view].widgets[this.props.id];
@@ -197,8 +192,12 @@ class BasicGroup extends VisRxWidget {
 
                 // use the same container for relative and absolute widgets (props.refService)
                 return this.props.context.VisView.getOneWidget(index, _widget, {
+                    selectedGroup: this.props.selectedGroup,
+                    selectedWidgets: this.props.selectedWidgets,
                     context: this.props.context,
-                    editMode: false,
+                    editMode: this.props.editMode,
+                    moveAllowed: this.props.moveAllowed,
+                    mouseDownOnView: this.props.mouseDownOnView,
                     index,
                     id,
                     view: this.props.view,

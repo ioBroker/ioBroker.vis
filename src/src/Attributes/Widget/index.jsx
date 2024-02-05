@@ -626,8 +626,8 @@ class Widget extends Component {
                         }
                     });
 
-                    currentWidget.data.bindings.forEach(attr => !bindFields.includes(`data_${attr}`) && bindFields.push(`data_${attr}`));
-                    currentWidget.style.bindings.forEach(attr => !bindFields.includes(`style_${attr}`) && bindFields.push(`style_${attr}`));
+                    currentWidget.data.bindings?.forEach(attr => !bindFields.includes(`data_${attr}`) && bindFields.push(`data_${attr}`));
+                    currentWidget.style.bindings?.forEach(attr => !bindFields.includes(`style_${attr}`) && bindFields.push(`style_${attr}`));
                 }
             });
         } else {
