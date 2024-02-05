@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.28",
+    "version": "2.9.29",
     "news": {
+      "2.9.29": {
+        "en": "fixed multiple problems with nested groups\nalso made group/ungroup commands working in group view\nallow to select widgets in group via click (previously only dropdown worked)\nfixed issue, that Basic Image 8 is not configurable for 0 value",
+        "de": "mehrere probleme mit geschachtelten gruppen behoben\nauch gruppen-/ungruppe-befehle in gruppenansicht\ndie auswahl von widgets in gruppe über klick (vorher nur dropdown funktioniert)\nfeste Ausgabe, dass Basic Image 8 nicht für 0 Wert konfigurierbar ist",
+        "ru": "фиксированные множественные проблемы с вложенными группами\nтакже заставил команды группы/группы работать в групповом режиме\nпозволить выбрать виджеты в группе через щелчок (ранее только отключение отработано)\nфиксированная проблема, что Basic Image 8 не настраивается для значения 0",
+        "pt": "corrigiu vários problemas com grupos aninhados\ntambém fez comandos de grupo/ungrupo trabalhando em exibição de grupo\npermitir selecionar widgets em grupo via clique (anteriormente apenas dropdown funcionou)\nproblema fixo, que a imagem básica 8 não é configurável para 0 valor",
+        "nl": "vaste meerdere problemen met geneste groepen\nook groeps-/ungroepcommando's aan het werk in groepsweergave gemaakt\ntoestaan om widgets in groep te selecteren via klik (voorheen alleen dropdown werkte)\nvast probleem, dat Basic Image 8 is niet configureerbaar voor 0 waarde",
+        "fr": "résoudre plusieurs problèmes avec les groupes imbriqués\na également fait des commandes de groupe/ungroupe travaillant en vue de groupe\npermettre de sélectionner des widgets dans le groupe par clic (précédemment seulement le menu déroulant travaillé)\nproblème corrigé, que l'image de base 8 n'est pas configurable pour la valeur 0",
+        "it": "problemi multipli fissi con gruppi nidi\nha anche fatto funzionare i comandi di gruppo/ungruppo in vista di gruppo\nconsentire di selezionare widget in gruppo tramite clic (precedentemente solo a discesa lavorato)\nproblema fisso, che Basic Image 8 non è configurabile per 0 valore",
+        "es": "varios problemas fijos con grupos anidados\ntambién hizo comandos de grupo/ungrupo trabajando en vista de grupo\npermite seleccionar widgets en grupo a través de clic (previamente sólo desplegable trabajado)\nedición fija, que Basic Image 8 no es configurable para 0 valor",
+        "pl": "naprawiono wiele problemów z zagnieżdżonymi grupami\ntakże wykonane polecenia grupowe / niegrupowe pracujące w widoku grupowym\npozwala wybrać widżety w grupie poprzez kliknięcie (wcześniej tylko rozwijane działa)\nstałe wydanie, że obraz podstawowy 8 nie jest konfigurowalny dla wartości 0",
+        "uk": "виправлено кілька проблем з в'язаними групами\nтакож зроблені команди групи/ungroup, які працюють у груповому режимі\nдозволяє вибрати віджети в групі за допомогою кнопок (попередньо тільки відпрацьовані роботи)\nвиправлено проблему, що Basic Image 8 не налаштовує значення 0",
+        "zh-cn": "固定嵌套组的多重问题\n还在组视图中工作\n允许通过点击在组中选择部件( 以前只下拉工作)\n固定问题, 基本图像 8 无法配置 0 值"
+      },
       "2.9.28": {
         "en": "correctly determine the vis instance in all cases",
         "de": "die vis-instanz in allen fällen richtig bestimmen",
@@ -80,19 +93,6 @@
         "pl": "naprawiono kolejny błąd z powodu poprzednich wersji",
         "uk": "виправлено ще одну помилку через попередні версії",
         "zh-cn": "由于以前的版本而修补另一个错误"
-      },
-      "2.9.22": {
-        "en": "try to fix problems introduced with 2.9.21",
-        "de": "versuchen, probleme mit 2.9.21 zu beheben",
-        "ru": "попытаться исправить проблемы, введенные с 2.9.21",
-        "pt": "tentar corrigir problemas introduzidos com 2.9.21",
-        "nl": "proberen problemen op te lossen die zijn geïntroduceerd met 2.9.21",
-        "fr": "essayer de résoudre les problèmes introduits avec 2.9.21",
-        "it": "cercare di risolvere i problemi introdotti con 2.9.21",
-        "es": "tratar de solucionar problemas introducidos con 2.9.21",
-        "pl": "spróbuj rozwiązać problemy wprowadzone z 2.9.21",
-        "uk": "намагатися виправити проблеми, впроваджені 2.9.21",
-        "zh-cn": "2.9.21. 试图解决提出的问题"
       }
     },
     "title": "Visualisation Next Generation",
