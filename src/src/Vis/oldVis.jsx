@@ -638,7 +638,7 @@ class Vis {
         // First of all load project/vis-user.css
         // this.$('#project_css').attr('href', '/' + vis.conn.namespace + '/' + vis.projectPrefix + 'vis-user.css');
         if (typeof app === 'undefined') {
-            const fetchCommonCss = fetch('css/vis-common-user.css')
+            const fetchCommonCss = fetch(`/${this.conn.namespace}/vis-common-user.css`)
                 .then(data => data.text())
                 .then(data => {
                     if (data && typeof app !== 'undefined' && app.replaceFilesInViewsWeb) {

@@ -1955,7 +1955,7 @@ ${this.scripts}
             if (this.props.visCommonCss) {
                 VisEngine.applyUserStyles('vis_common_user', this.visCommonCssLoaded || '');
             } else {
-                readFile(this.props.socket, this.props.adapterName, 'css/vis-common-user.css')
+                readFile(this.props.socket, this.props.adapterId, 'vis-common-user.css')
                     .then(file => {
                         this.visCommonCssLoaded = file || true;
                         VisEngine.applyUserStyles('vis_common_user', file || '');

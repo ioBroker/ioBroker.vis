@@ -29,8 +29,8 @@ const CSS = props => {
             setTimer: setGlobalCssTimer,
             value: globalCss,
             setValue: setGlobalCss,
-            directory: props.adapterName,
-            file: 'css/vis-common-user.css',
+            directory: props.adapterId,
+            file: 'vis-common-user.css',
         },
         local: {
             timer: localCssTimer,
@@ -45,7 +45,7 @@ const CSS = props => {
     useEffect(() => {
         const load = async () => {
             try {
-                const commonCss = await readFile(props.socket, props.adapterId.split('.')[0], 'css/vis-common-user.css');
+                const commonCss = await readFile(props.socket, props.adapterId, 'vis-common-user.css');
                 setGlobalCss(commonCss);
             } catch (e) {
                 if (e !== 'Not exists') {

@@ -235,7 +235,7 @@ if (typeof exports !== 'undefined') {
     // Create common user CSS file
     let data;
     try {
-        data = await adapter.readFileAsync(adapterName, 'css/vis-common-user.css');
+        data = await adapter.readFileAsync(adapter.namespace, 'vis-common-user.css');
         if (typeof data === 'object') {
             data = data.file;
         }
@@ -244,7 +244,7 @@ if (typeof exports !== 'undefined') {
     }
 
     if (data === null || data === undefined) {
-        await adapter.writeFileAsync(adapterName, 'css/vis-common-user.css', '');
+        await adapter.writeFileAsync(adapter.namespace, 'vis-common-user.css', '');
     }
 
     return changed;

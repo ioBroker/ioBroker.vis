@@ -263,6 +263,9 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (foxriver76) global css will no longer be deleted on adapter upload/update
+
 ### 2.9.29 (2024-02-05)
 * (foxriver76) fixed multiple problems with nested groups
 * (foxriver76) also made group/ungroup commands working in group view
