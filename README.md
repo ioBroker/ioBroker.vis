@@ -263,7 +263,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.9.30 (2024-02-06)
 * (foxriver76) global css will no longer be deleted on adapter upload/update
 * (foxriver76) allow to modify style of navigation
 
