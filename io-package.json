@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.30",
+    "version": "2.9.31",
     "news": {
+      "2.9.31": {
+        "en": "apply default overflow correctly\nnavigation style fixes (fix icon background and allow to customize header text color)",
+        "de": "standardüberlauf korrekt anwenden\nnavigationsstil-behebungen (symbol-hintergrund fixieren und zulassen, header textfarbe anzupassen)",
+        "ru": "правильно применять перегрузка по умолчанию\nнавигационный стиль фиксации (справочный фон и позволяет настроить заголовок цвета текста)",
+        "pt": "aplicar o overflow padrão corretamente\nestilo de navegação correções (fixar fundo ícone e permitir personalizar a cor do texto do cabeçalho)",
+        "nl": "standaard overflow correct toepassen\nnavigation style fixes (fix pictogram achtergrond en laat toe om header tekstkleur aan te passen)",
+        "fr": "appliquer le dépassement par défaut correctement\ncorrection du style de navigation (fixer l'arrière-plan de l'icône et permettre de personnaliser la couleur du texte d'en-tête)",
+        "it": "applicare correttamente il overflow predefinito\nstile di navigazione correzioni (fondo icona fissa e permettono di personalizzare il colore del testo intestazione)",
+        "es": "aplicar el desbordamiento predeterminado correctamente\nfijaciones de estilo de navegación (fix icono fondo y permite personalizar el color de texto del encabezado)",
+        "pl": "poprawnie zastosować domyślne przepełnienie\npoprawki stylu nawigacji (naprawić tło ikon i pozwolić na dostosowanie koloru tekstu nagłówka)",
+        "uk": "застосувати зворотний потік\nнавігація стилів (фікс іконковий фон і дозволяє налаштовувати текстовий колір головки)",
+        "zh-cn": "正确应用默认溢出\n导航样式修正( 固定图标背景并允许自定义标题文本颜色)"
+      },
       "2.9.30": {
         "en": "global css will no longer be deleted on adapter upload/update\nallow to modify style of navigation",
         "de": "global css wird nicht mehr auf adapter upload/update gelöscht\nden stil der navigation ändern",
@@ -80,19 +93,6 @@
         "pl": "stały problem zmiany rozmiaru dla względnych widżetów\nnie rozbijać się przy użyciu widoczności \"tylko dla grup\"\nnie awarii, jeśli widget próbuje zaktualizować widget na nieistniejącym widoku",
         "uk": "виправлений номер для відносних віджетів\nне збій при використанні видимості \"тільки для груп\"\nне збій, якщо віджет намагається оновити віджет на нестійкому перегляді",
         "zh-cn": "固定调整相对部件的大小\n在使用“ 仅针对组” 时不崩溃\n如果部件试图在不存在视图上更新部件, 请不要崩溃"
-      },
-      "2.9.24": {
-        "en": "Image 8 widget ported to react",
-        "de": "Bild 8 Widget portiert zu reagieren",
-        "ru": "Изображение 8 виджета портируется, чтобы реагировать",
-        "pt": "Imagem 8 widget portado para reagir",
-        "nl": "Afbeelding 8 widget geporteerd om te reageren",
-        "fr": "Image 8 widget porté pour réagir",
-        "it": "Immagine 8 widget portato a reagire",
-        "es": "Imagen 8 widget portado para reaccionar",
-        "pl": "Widget obrazka 8 przeniesiony do reakcji",
-        "uk": "Image 8 віджет переглянуто для реагації",
-        "zh-cn": "图像 8 部件移植到反应"
       }
     },
     "title": "Visualisation Next Generation",
