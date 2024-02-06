@@ -265,6 +265,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 ## Changelog
 ### **WORK IN PROGRESS**
 * (foxriver76) apply default overflow correctly
+* (foxriver76) navigation style fixes (fix icon background and allow to customize header text color)
 
 ### 2.9.30 (2024-02-06)
 * (foxriver76) global css will no longer be deleted on adapter upload/update

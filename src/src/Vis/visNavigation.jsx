@@ -271,6 +271,7 @@ class VisNavigation extends React.Component {
             )}
         >
             <div
+                style={{ color: settings.navigationHeaderTextColor || undefined }}
                 className={Utils.clsx(
                     this.props.classes.menuToolbar,
                     this.props.menuWidth === 'full' && this.props.classes.menuToolbarFull,
@@ -300,7 +301,7 @@ class VisNavigation extends React.Component {
                                 <ListItemIcon>
                                     {item.icon ? <Icon
                                         src={item.icon}
-                                        style={{ color: this.props.activeView === item.view ? settings.navigationSelectedColor : settings.navigationColor }}
+                                        style={{ color: this.props.activeView === item.view ? settings.navigationSelectedColor : settings.navigationColor, backgroundColor: 'rgba(1,1,1,0)' }}
                                         className={Utils.clsx(
                                             this.props.classes.listItemIcon,
                                             this.props.activeView === item.view && this.props.classes.selectedMenu,
