@@ -540,9 +540,7 @@ class Runtime extends GenericApp {
             }
 
             // set overflow mode in runtime mode
-            if (project.___settings?.bodyOverflow) {
-                window.document.body.style.overflow = project.___settings.bodyOverflow;
-            }
+            window.document.body.style.overflow = project.___settings?.bodyOverflow || 'auto';
         } else {
             this.subscribedProject = projectName;
             // subscribe on changes
