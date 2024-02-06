@@ -265,6 +265,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 ## Changelog
 ### **WORK IN PROGRESS**
 * (foxriver76) global css will no longer be deleted on adapter upload/update
+* (foxriver76) allow to modify style of navigation
 
 ### 2.9.29 (2024-02-05)
 * (foxriver76) fixed multiple problems with nested groups

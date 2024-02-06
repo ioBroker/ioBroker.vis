@@ -606,6 +606,18 @@ const View = props => {
                     type: 'color', name: 'Background color', field: 'navigationBackground', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
                 },
                 {
+                    type: 'color', name: 'Background color if selected', field: 'navigationSelectedBackground', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
+                },
+                {
+                    type: 'color', name: 'Text color if selected', field: 'navigationSelectedColor', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
+                },
+                {
+                    type: 'color', name: 'Text color', field: 'navigationColor', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
+                },
+                {
+                    type: 'color', name: 'Chevron icon color', field: 'navigationChevronColor', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
+                },
+                {
                     type: 'checkbox', name: 'Hide menu', field: 'navigationHideMenu', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
                 },
                 {
