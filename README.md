@@ -263,6 +263,9 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (foxriver76) implemented buttons to show or hide all views in views manager
+
 ### 2.9.31 (2024-02-06)
 * (foxriver76) apply default overflow correctly
 * (foxriver76) navigation style fixes (fix icon background and allow to customize header text color)

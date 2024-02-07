@@ -12,6 +12,8 @@ import { AppBar, IconButton, Tooltip } from '@mui/material';
 import {
     Add as AddIcon,
     CreateNewFolder as CreateNewFolderIcon,
+    Visibility as VisibilityIcon,
+    VisibilityOff as VisibilityOffIcon,
 } from '@mui/icons-material';
 import { BiImport } from 'react-icons/bi';
 
@@ -207,6 +209,37 @@ const ViewsManager = props => {
                             }}
                         >
                             <CreateNewFolderIcon />
+                        </IconButton>
+                    </Tooltip> : null}
+                    {props.editMode ? <Tooltip title={I18n.t('Show all views')} classes={{ popper: props.classes.tooltip }}>
+                        <IconButton
+                            size="small"
+                            onClick={async () => {
+                                const proj = deepClone(store.getState().visProject);
+
+                                const views = Object.keys(proj).filter(name => !name.startsWith('___'));
+
+                                for (const view of views) {
+                                    proj.___settings.openedViews.push(view);
+                                }
+
+                                await props.changeProject(proj, false);
+                            }}
+                        >
+                            <VisibilityIcon />
+                        </IconButton>
+                    </Tooltip> : null}
+                    {props.editMode ? <Tooltip title={I18n.t('Hide all views')} classes={{ popper: props.classes.tooltip }}>
+                        <IconButton
+                            size="small"
+                            onClick={async () => {
+                                const proj = deepClone(store.getState().visProject);
+                                proj.___settings.openedViews = [];
+
+                                await props.changeProject(proj, false);
+                            }}
+                        >
+                            <VisibilityOffIcon />
                         </IconButton>
                     </Tooltip> : null}
                 </AppBar> : null}
