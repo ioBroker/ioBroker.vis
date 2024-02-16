@@ -263,7 +263,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.9.32 (2024-02-16)
 * (foxriver76) implemented buttons to show or hide all views in views manager
 * (foxriver76) fixed issue with signals on RxWidgets
 * (foxriver76) allow to disable Sentry only for this instance
