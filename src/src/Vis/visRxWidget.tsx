@@ -794,6 +794,7 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
             } else {
                 icon = this.state.rxData[`signals-icon-${index}`];
             }
+
             const style = {
                 color,
                 position: 'absolute',
@@ -836,7 +837,6 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
         return null;
     }
 
-    // @ts-expect-error fix later
     renderLastChange(widgetStyle: any) {
         const oid = this.state.rxData['lc-oid'];
         if (!oid || oid === 'nothing_selected') {
@@ -937,16 +937,18 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
         </div>;
     }
 
-    // @ts-expect-error fix later
-    renderSignals() {
+    renderSignals(): React.ReactNode {
         const count = parseInt(this.state.rxData?.['signals-count'], 10) || 0;
+
         if (!count) {
             return null;
         }
+
         const result = [];
         for (let i = 0; i < count; i++) {
             result.push(this.renderSignal(i));
         }
+
         return result;
     }
 

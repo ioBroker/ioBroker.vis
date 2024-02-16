@@ -109,6 +109,14 @@ interface Movement {
     order?: any;
 }
 
+/**
+ * Methods which should be optionally implemented by inherited classes
+ */
+interface VisBaseWidget {
+    renderSignals(): React.ReactNode;
+    renderLastChange(style: unknown): React.ReactNode;
+}
+
 class VisBaseWidget extends React.Component<VisBaseWidgetProps, VisBaseWidgetState> {
     static FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~]+/g; // from https://github.com/ioBroker/ioBroker.js-controller/blob/master/packages/common/lib/common/tools.js
 
@@ -147,10 +155,6 @@ class VisBaseWidget extends React.Component<VisBaseWidgetProps, VisBaseWidgetSta
     visDynamicResizable: any;
 
     isCanWidget?: boolean;
-
-    renderLastChange?: (style: unknown) => any;
-
-    renderSignals?: () => any;
 
     constructor(props: VisBaseWidgetProps) {
         super(props);
@@ -2006,6 +2010,7 @@ class VisBaseWidget extends React.Component<VisBaseWidgetProps, VisBaseWidgetSta
         }
 
         const signals = this.renderSignals ? this.renderSignals() : null;
+
         const lastChange = this.renderLastChange ? this.renderLastChange(style) : null;
 
         return <div
