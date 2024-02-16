@@ -165,22 +165,32 @@
     "adminUI": {
       "config": "json"
     },
+    "plugins": {
+      "sentry": {
+        "dsn": "https://db8b6e837c71447a876069559a00a742@sentry.iobroker.net/232"
+      }
+    },
     "compact": true,
     "materialize": true,
     "eraseOnUpload": true,
-    "welcomeScreen": {
+    "welcomeScreen": [{
       "link": "vis-2/index.html",
       "name": "vis 2 runtime",
       "img": "vis-2/img/favicon.png",
       "color": "#ffe9c8",
       "order": 0
-    },
-    "welcomeScreenPro": {
+    }],
+    "welcomeScreenPro": [{
       "link": "vis-2/edit.html",
       "name": "vis 2 editor",
       "img": "vis-2/img/faviconEdit.png",
       "color": "#c8ffe1",
       "order": 1
+    }],
+    "licenseInformation": {
+      "type": "commercial",
+      "link": "https://github.com/ioBroker/ioBroker.vis-2?tab=readme-ov-file#license-requirements",
+      "license": "CC-BY-NC-4.0"
     },
     "stopBeforeUpdate": true
   },

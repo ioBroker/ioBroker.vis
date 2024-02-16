@@ -265,6 +265,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 ## Changelog
 ### **WORK IN PROGRESS**
 * (foxriver76) implemented buttons to show or hide all views in views manager
+* (foxriver76) allow to disable Sentry only for this instance
 
 ### 2.9.31 (2024-02-06)
 * (foxriver76) apply default overflow correctly
