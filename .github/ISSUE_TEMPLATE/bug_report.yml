@@ -52,6 +52,14 @@ body:
     validations:
       required: true
 
+  - type: textarea
+    attributes:
+      label: Page or affected widget
+      render: shell
+      description: If applicable, add an export of the affected widget or page.
+    validations:
+      required: false
+
   - type: input
     attributes:
       label: Adapter version

@@ -77,7 +77,7 @@ export default class BasicImage8 extends VisRxWidget<RxData> {
 
         const srcArr: string[] = [];
 
-        for (let i = 0; i < this.state.rxData.count; i++) {
+        for (let i = 0; i <= this.state.rxData.count; i++) {
             // @ts-expect-error check this
             if (this.state.rxData[`src_${i}`])  {
                 // @ts-expect-error check this

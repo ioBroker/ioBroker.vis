@@ -263,6 +263,9 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (foxriver76) fixed issue that last image is never shown in image8 widget
+
 ### 2.9.32 (2024-02-16)
 * (foxriver76) implemented buttons to show or hide all views in views manager
 * (foxriver76) fixed issue with signals on RxWidgets
