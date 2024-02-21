@@ -5,10 +5,13 @@ import type {
     View, Project, AnyWidgetId, SingleWidgetId, SingleWidget, GroupWidget, GroupWidgetId,
 } from '@/types';
 
+/** This id is used by some special widgets to work with non-existing widgets */
+const FAKE_ID = 'fakeId';
+
 export const updateProject = createAction<Project>('project/update');
 export const updateView = createAction<{ viewId: string; data: View }>('view/update');
-export const updateWidget = createAction<{ viewId: string; widgetId: SingleWidgetId; data: SingleWidget }>('widget/update');
-export const updateGroupWidget = createAction<{ viewId: string; widgetId: GroupWidgetId; data: GroupWidget }>('group/update');
+export const updateWidget = createAction<{ viewId: string; widgetId: SingleWidgetId | typeof FAKE_ID; data: SingleWidget }>('widget/update');
+export const updateGroupWidget = createAction<{ viewId: string; widgetId: GroupWidgetId | typeof FAKE_ID; data: GroupWidget }>('group/update');
 export const updateActiveUser = createAction<string>('activeUser/update');
 export const recalculateFields = createAction<boolean>('attributes/recalculate');
 
@@ -33,7 +36,7 @@ const reducer = createReducer(
             })
             .addCase(updateWidget, (state, action) => {
                 const { viewId, widgetId, data } = action.payload;
-                if (widgetId === 'fakeId') {
+                if (widgetId === FAKE_ID) {
                     // Ignore it
                     return;
                 }
@@ -48,7 +51,7 @@ const reducer = createReducer(
             .addCase(updateGroupWidget, (state, action) => {
                 const { viewId, widgetId, data } = action.payload;
 
-                if (widgetId === 'fakeId') {
+                if (widgetId === FAKE_ID) {
                     // Ignore it
                     return;
                 }
