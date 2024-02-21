@@ -273,17 +273,17 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 
 ### 2.9.31 (2024-02-06)
 * (foxriver76) apply default overflow correctly
-* (foxriver76) navigation style fixes (fix icon background and allow to customize header text color)
+* (foxriver76) navigation style fixes (fix an icon background and allow to customize header text color)
 
 ### 2.9.30 (2024-02-06)
 * (foxriver76) global css will no longer be deleted on adapter upload/update
-* (foxriver76) allow to modify style of navigation
+* (foxriver76) allowed modifying style of navigation
 
 ### 2.9.29 (2024-02-05)
 * (foxriver76) fixed multiple problems with nested groups
 * (foxriver76) also made group/ungroup commands working in group view
-* (foxriver76) allow to select widgets in group via click (previously only dropdown worked)
-* (foxriver76) fixed issue, that Basic Image 8 is not configurable for 0 value
+* (foxriver76) allowed selecting widgets in a group via click (previously only dropdown worked)
+* (foxriver76) fixed issue, that Basic Image 8 is not configurable for value 0
 
 ### 2.9.28 (2024-02-03)
 * (foxriver76) correctly determine the vis instance in all cases

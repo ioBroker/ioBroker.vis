@@ -29,7 +29,7 @@ export interface ProjectSettings {
     permissions?: UserPermissions;
 }
 
-export type SingleWidgetId = `w${string}`
+export type SingleWidgetId = `w${string}` | 'fakeId'
 export type GroupWidgetId = `g${string}`
 export type AnyWidgetId = SingleWidgetId | GroupWidgetId
 

@@ -33,6 +33,10 @@ const reducer = createReducer(
             })
             .addCase(updateWidget, (state, action) => {
                 const { viewId, widgetId, data } = action.payload;
+                if (widgetId === 'fakeId') {
+                    // Ignore it
+                    return;
+                }
 
                 if (!(viewId in state.visProject)) {
                     console.error(`Cannot update widget "${widgetId}". The view "${viewId}" does not exist in the project.`);
@@ -43,6 +47,11 @@ const reducer = createReducer(
             })
             .addCase(updateGroupWidget, (state, action) => {
                 const { viewId, widgetId, data } = action.payload;
+
+                if (widgetId === 'fakeId') {
+                    // Ignore it
+                    return;
+                }
 
                 if (!(viewId in state.visProject)) {
                     console.error(`Cannot update group widget "${widgetId}". The view "${viewId}" does not exist in the project.`);
