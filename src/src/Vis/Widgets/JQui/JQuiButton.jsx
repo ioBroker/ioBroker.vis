@@ -131,6 +131,7 @@ class JQuiButton extends VisRxWidget {
                 },
                 {
                     name: 'style',
+                    label: 'Style',
                     hidden: data => !!data.externalDialog,
                     fields: [
                         { name: 'no_style', type: 'checkbox', hidden: data => data.jquery_style },
@@ -253,6 +254,7 @@ class JQuiButton extends VisRxWidget {
                         },
                         {
                             name: 'dialog_class',
+                            label: 'CSS Class',
                             type: 'text',
                             hidden: data => !data.html_dialog && !data.contains_view,
                         },
@@ -276,6 +278,18 @@ class JQuiButton extends VisRxWidget {
                             label: 'jqui_hide_close_button',
                             type: 'checkbox',
                             hidden: data => !data.html_dialog && !data.contains_view && !!data.closeOnClick,
+                        },
+                        {
+                            name: 'dialogBackgroundColor',
+                            label: 'Background color',
+                            type: 'color',
+                            hidden: data => !data.html_dialog && !data.contains_view,
+                        },
+                        {
+                            name: 'dialogTitleColor',
+                            type: 'color',
+                            label: 'Text color',
+                            hidden: data => !data.html_dialog && !data.contains_view,
                         },
                         /*
                         {
@@ -549,7 +563,9 @@ class JQuiButton extends VisRxWidget {
     }
 
     renderRxDialog(dialogStyle, content) {
+        console.log('test');
         if (this.state.rxData.modal) {
+            console.log('in');
             return <Dialog
                 // fullWidth
                 maxWidth="xl"
@@ -562,19 +578,22 @@ class JQuiButton extends VisRxWidget {
                     }
                 }}
             >
-                {this.state.rxData.title ? <DialogTitle>{this.state.rxData.title}</DialogTitle> : null}
-                {!this.state.rxData.hideCloseButton || !this.state.rxData.closeOnClick ? <IconButton
-                    style={{
-                        position: 'absolute',
-                        top: 0,
-                        right: 0,
-                        zIndex: 800,
-                    }}
-                    onClick={() => this.showDialog(false)}
-                >
-                    <Close />
-                </IconButton> : null}
-                <DialogContent>{content}</DialogContent>
+                <div style={{ backgroundColor: this.state.rxData.dialogBackgroundColor }}>
+                    {this.state.rxData.title ? <DialogTitle sx={{ color: this.state.rxData.dialogTitleColor }}>{this.state.rxData.title}</DialogTitle> : null}
+                    {!this.state.rxData.hideCloseButton || !this.state.rxData.closeOnClick ? <IconButton
+                        sx={{ color: this.state.rxData.dialogTitleColor }}
+                        style={{
+                            position: 'absolute',
+                            top: 0,
+                            right: 0,
+                            zIndex: 800,
+                        }}
+                        onClick={() => this.showDialog(false)}
+                    >
+                        <Close />
+                    </IconButton> : null}
+                    <DialogContent>{content}</DialogContent>
+                </div>
             </Dialog>;
         }
 
@@ -589,6 +608,7 @@ class JQuiButton extends VisRxWidget {
             dialogStyle.minHeight = 100;
         }
 
+        dialogStyle.backgroundColor = 'blue';
         const paperStyle = { ...dialogStyle };
         delete paperStyle.top;
         delete paperStyle.left;
@@ -607,7 +627,7 @@ class JQuiButton extends VisRxWidget {
             }}
         >
             <Paper
-                style={paperStyle}
+                style={{ ...paperStyle, background: 'red !important' }}
             >
                 {this.state.rxData.title ?
                     <DialogTitle style={{ padding: '16px 0 0 0' }}>
