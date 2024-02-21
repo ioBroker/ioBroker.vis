@@ -802,6 +802,8 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
                 left: `${parseInt(this.state.rxData[`signals-horz-${index}`], 10) || 0}%`,
                 zIndex: 10,
                 textAlign: 'center',
+                // make it possible to click through signal if in front of widget
+                pointerEvents: 'none',
             };
             if (icon) {
                 const imageStyle = {
