@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.32",
+    "version": "2.9.33",
     "news": {
+      "2.9.33": {
+        "en": "fixed issue that last image is never shown in image8 widget\nadded possibility to define background and title color for jqui dialog\nmake it possible to click through signal image if in front of widget",
+        "de": "fest problem, dass letztes bild nie in image8 widget gezeigt\nzusätzliche möglichkeit, hintergrund und titelfarbe für jqui dialog zu definieren\nmachen es möglich, durch das signalbild zu klicken, wenn vor widget",
+        "ru": "фиксированная проблема, что последнее изображение никогда не отображается в виджете изображения8\nдобавлена возможность определения фона и цвета заголовка для диалога jqui\nсделать возможным щелчок через изображение сигнала, если перед виджетом",
+        "pt": "problema fixo que última imagem nunca é mostrada no widget imagem8\npossibilidade adicionada para definir fundo e cor do título para jqui diálogo\ntornar possível clicar através da imagem de sinal se na frente do widget",
+        "nl": "vast probleem dat de laatste afbeelding nooit wordt getoond in image8 widget\ntoegevoegde mogelijkheid om achtergrond- en titelkleur voor jqui-dialoog te definiëren\nmaken het mogelijk om te klikken door signaalafbeelding als voor widget",
+        "fr": "problème corrigé que la dernière image n'est jamais affichée dans le widget image8\npossibilité ajoutée de définir la couleur de fond et de titre pour la boîte de dialogue jqui\npermettre de cliquer à travers l'image du signal si devant le widget",
+        "it": "problema fisso che l'ultima immagine non è mai mostrata nel widget immagine8\npossibilità aggiunta di definire sfondo e colore titolo per la finestra di dialogo jqui\nrendere possibile fare clic sull'immagine del segnale se di fronte al widget",
+        "es": "edición fija que la última imagen nunca se muestra en el widget imagen8\nañadido posibilidad de definir fondo y color de título para el diálogo jqui\nhacer posible hacer clic a través de la imagen de la señal si en frente del widget",
+        "pl": "stałe wydanie, że ostatni obraz nie jest wyświetlany w widget image8\ndodana możliwość zdefiniowania tła i koloru tytułu dla okna dialogowego jqui\numożliwia kliknięcie przez obraz sygnału, jeśli przed widget",
+        "uk": "виправлено проблему, що останнє зображення ніколи не відображається в image8 віджет\nдодано можливість визначення фону та кольору заголовка для діалогового вікна\nви можете натиснути зображення сигналу, якщо перед віджетом",
+        "zh-cn": "最后一个图像从未在图像8部件中显示的固定问题\n添加定义 jqui 对话框的背景和标题颜色的可能性\n如果在部件前面可以单击信号图像"
+      },
       "2.9.32": {
         "en": "implemented buttons to show or hide all views in views manager\nfixed issue with signals on RxWidgets\nallow to disable Sentry only for this instance",
         "de": "implementierte tasten, um alle ansichten in views manager anzeigen oder verstecken\nfestes Problem mit Signalen auf RxWidgets\ndie Möglichkeit zu deaktivieren Sentry nur für diesen Fall",
@@ -80,19 +93,6 @@
         "pl": "we wszystkich przypadkach należy prawidłowo określić przypadek vis",
         "uk": "правильно визначити в'язницю в усіх випадках",
         "zh-cn": "在所有案件中正确确定案例"
-      },
-      "2.9.26": {
-        "en": "do not show empty icon category if jquery style selected for jquery button widgets\nadded possibility to hide navigation after selection",
-        "de": "nicht zeigen leere icon kategorie, wenn jquery stil ausgewählt für jquery schaltfläche widgets\nmöglichkeit, die navigation nach der auswahl zu verbergen",
-        "ru": "не показывать пустую категорию иконок, если стиль жукки выбран для жуковой кнопки виджеты\nдобавленная возможность скрыть навигацию после выбора",
-        "pt": "não mostrar categoria de ícone vazio se estilo jquery selecionado para widgets de botão jquery\npossibilidade adicionada de esconder a navegação após a seleção",
-        "nl": "lege pictogramcategorie niet tonen als jquery-stijl geselecteerd is voor widgets van de jquery-knop\ntoegevoegd mogelijkheid om navigatie te verbergen na selectie",
-        "fr": "ne pas afficher la catégorie d'icône vide si le style jquery sélectionné pour les widgets bouton jquery\npossibilité de masquer la navigation après la sélection",
-        "it": "non mostrare la categoria di icona vuota se stile jquery selezionato per i widget di pulsante jquery\npossibilità aggiunta di nascondere la navigazione dopo la selezione",
-        "es": "no mostrar icono vacío categoría si jquery estilo seleccionado para jquery botón widgets\nposibilidad de ocultar navegación después de la selección",
-        "pl": "nie pokazuj pustej kategorii ikon, jeśli wybrano styl jquery dla widżetów przycisku jquery\ndodana możliwość ukrycia nawigacji po wyborze",
-        "uk": "не показати порожній знак категорії, якщо вибраний стиль jquery для jquery кнопка віджети\nможливість приховати навігацію після вибору",
-        "zh-cn": "如果为 jquery 按钮部件选中 jquery 样式, 不显示空图标类别\n选择后添加隐藏导航的可能性"
       }
     },
     "title": "Visualisation Next Generation",

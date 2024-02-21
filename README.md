@@ -263,7 +263,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.9.33 (2024-02-21)
 * (foxriver76) fixed issue that last image is never shown in image8 widget
 * (foxriver76) added possibility to define background and title color for jqui dialog
 * (foxriver76) make it possible to click through signal image if in front of widget
