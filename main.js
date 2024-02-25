@@ -159,15 +159,15 @@ async function generateConfigPage(forceBuild, enabledList) {
     enabledList.forEach(obj => {
         if (!obj.pack.common.visWidgets) {
             // find folder in widgets
-            let path = `${__dirname}/../node_modules/${obj.name}/widgets`;
-            if (!fs.existsSync(path)) {
-                path = `${__dirname}/../${obj.name}/widgets`;
-                if (!fs.existsSync(path)) {
-                    path = null;
+            let widgetsPath = `${__dirname}/../node_modules/${obj.name}/widgets`;
+            if (!fs.existsSync(widgetsPath)) {
+                widgetsPath = `${__dirname}/../${obj.name}/widgets`;
+                if (!fs.existsSync(widgetsPath)) {
+                    widgetsPath = '';
                 }
             }
-            if (path) {
-                fs.readdirSync(path).forEach(file => {
+            if (widgetsPath) {
+                fs.readdirSync(widgetsPath).forEach(file => {
                     if (file.match(/\.html$/)) {
                         const folderName = file.replace('.html', '');
                         !widgetSets.includes(folderName) && widgetSets.push(folderName);
@@ -569,9 +569,9 @@ async function readAdapterList() {
 /**
  * Collect Files of an adapter-specific directory from the iobroker storage
  *
- * @param path path in the adapter-specific storage space
+ * @param adapterPath path in the adapter-specific storage space
  */
-async function collectExistingFilesToDelete(path) {
+async function collectExistingFilesToDelete(adapterPath) {
     let _files = [];
     let _dirs = [];
     let files;
@@ -581,8 +581,8 @@ async function collectExistingFilesToDelete(path) {
     }
 
     try {
-        adapter.log.debug(`Scanning ${path}`);
-        files = await adapter.readDirAsync(adapterName, path);
+        adapter.log.debug(`Scanning ${adapterPath}`);
+        files = await adapter.readDirAsync(adapterName, adapterPath);
     } catch {
         // ignore err
         files = [];
@@ -593,7 +593,7 @@ async function collectExistingFilesToDelete(path) {
             if (file.file === '.' || file.file === '..') {
                 continue;
             }
-            const newPath = path + file.file;
+            const newPath = adapterPath + file.file;
             if (file.isDir) {
                 if (!_dirs.find(e => e.path === newPath)) {
                     _dirs.push({ adapter, path: newPath });
@@ -627,7 +627,6 @@ async function eraseFiles(files) {
                 return;
             }
             try {
-                // @ts-expect-error should be fixed with #1917
                 await adapter.unlinkAsync(adapterName, file);
             } catch (err) {
                 adapter.log.error(`Cannot delete file "${file}": ${err}`);
@@ -832,7 +831,7 @@ async function buildHtmlPages(forceBuild) {
     enabledList.forEach(adapter =>
         widgetInstances[adapter.name.substring('iobroker.'.length)] = adapter.pack && adapter.pack.common && adapter.pack.common.version);
 
-    const {widgetSets, filesChanged} = syncWidgetSets(enabledList, forceBuild);
+    const { widgetSets, filesChanged } = syncWidgetSets(enabledList, forceBuild);
     const widgetsChanged = await generateWidgetsHtml(widgetSets, forceBuild);
 
     let uploadedIndexHtml = '';
