@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.33",
+    "version": "2.9.34",
     "news": {
+      "2.9.34": {
+        "en": "detect admin user correctly in project permissions dialog",
+        "de": "admin-benutzer korrekt im projektberechtigungen dialog erkennen",
+        "ru": "правильно обнаружить пользователя администратора в диалоге разрешений проекта",
+        "pt": "detectar o usuário admin corretamente na caixa de diálogo de permissões do projeto",
+        "nl": "beheerder-gebruiker correct detecteren in projectrechtendialoog",
+        "fr": "détecter correctement l'utilisateur admin dans la boîte de dialogue des autorisations de projet",
+        "it": "rilevare correttamente l'utente amministratore nella finestra di dialogo autorizzazioni di progetto",
+        "es": "detectar correctamente al usuario administrador en el diálogo permisos de proyecto",
+        "pl": "poprawnie wykryj użytkownika administratora w oknie uprawnień projektu",
+        "uk": "виявляти адміністратора правильно в діалоговому вікні дозволів проекту",
+        "zh-cn": "在项目权限对话框中正确检测管理员用户"
+      },
       "2.9.33": {
         "en": "fixed issue that last image is never shown in image8 widget\nadded possibility to define background and title color for jqui dialog\nmake it possible to click through signal image if in front of widget",
         "de": "fest problem, dass letztes bild nie in image8 widget gezeigt\nzusätzliche möglichkeit, hintergrund und titelfarbe für jqui dialog zu definieren\nmachen es möglich, durch das signalbild zu klicken, wenn vor widget",
@@ -69,19 +82,6 @@
         "zh-cn": "固定嵌套组的多重问题\n还在组视图中工作\n允许通过点击在组中选择部件( 以前只下拉工作)\n固定问题, 基本图像 8 无法配置 0 值"
       },
       "2.9.28": {
-        "en": "correctly determine the vis instance in all cases",
-        "de": "die vis-instanz in allen fällen richtig bestimmen",
-        "ru": "правильно определить экземпляр vis во всех случаях",
-        "pt": "determinar corretamente a instância vis em todos os casos",
-        "nl": "de vis instantie in alle gevallen correct te bepalen",
-        "fr": "déterminer correctement l'instance vis dans tous les cas",
-        "it": "determinare correttamente l'istanza vis in tutti i casi",
-        "es": "determinar correctamente la instancia vis en todos los casos",
-        "pl": "we wszystkich przypadkach należy prawidłowo określić przypadek vis",
-        "uk": "правильно визначити в'язницю в усіх випадках",
-        "zh-cn": "在所有案件中正确确定案例"
-      },
-      "2.9.27": {
         "en": "correctly determine the vis instance in all cases",
         "de": "die vis-instanz in allen fällen richtig bestimmen",
         "ru": "правильно определить экземпляр vis во всех случаях",

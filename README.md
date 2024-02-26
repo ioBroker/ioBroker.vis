@@ -263,7 +263,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.9.34 (2024-02-26)
 * (foxriver76) detect admin user correctly in project permissions dialog
 
 ### 2.9.33 (2024-02-21)
