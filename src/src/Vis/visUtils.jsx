@@ -14,7 +14,7 @@
  */
 import { I18n } from '@iobroker/adapter-react-v5';
 import { deepClone } from '@/Utils/utils';
-import { store, updateWidget } from '../Store';
+import { store, updateView, updateWidget } from '../Store';
 
 function replaceGroupAttr(inputStr, groupAttrList) {
     let newString = inputStr;
@@ -382,7 +382,10 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
                     groupNum++;
                     gId = `g${groupNum.toString().padStart(5, '0')}`;
                 }
-                views[view].widgets[gId] = {
+
+                const currView = deepClone(views[view]);
+
+                currView.widgets[gId] = {
                     tpl: '_tplGroup',
                     data: {
                         members: [wid],
@@ -395,6 +398,8 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
                     },
                     widgetSet: null,
                 };
+
+                store.dispatch(updateView({ viewId: view, data: currView }));
             }
         }
 
