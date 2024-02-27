@@ -1980,7 +1980,7 @@ ${this.scripts}
                 readFile(this.props.socket, `${this.props.adapterName}.${this.props.instance}`, `${this.props.projectName}/vis-user.css`)
                     .then(file => {
                         this.visUserCssLoaded = file || true;
-                        VisEngine.applyUserStyles('vis_user', file?.data || '');
+                        VisEngine.applyUserStyles('vis_user', file || '');
                     })
                     .catch(e => console.warn(`User CSS "${this.props.projectName}/vis-user.css" not found: ${e}`));
             }
