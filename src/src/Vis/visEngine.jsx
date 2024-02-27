@@ -1925,6 +1925,12 @@ ${this.scripts}
         }
     }
 
+    /**
+     * We add user styles to the body, after widgets so that user style takes priority
+     *
+     * @param {string} id id of the html style element to insert
+     * @param {string} styles the actual styles to insert
+     */
     static applyUserStyles(id, styles) {
         let styleEl = window.document.getElementById(id);
         if (styleEl) {
@@ -1938,13 +1944,13 @@ ${this.scripts}
                 // try to find vis_user
                 const styleUserEl = window.document.getElementById('vis_user');
                 if (styleUserEl) {
-                    window.document.head.insertBefore(styleEl, styleUserEl);
+                    window.document.body.insertBefore(styleEl, styleUserEl);
                 } else {
-                    window.document.head.appendChild(styleEl);
+                    window.document.body.appendChild(styleEl);
                 }
             } else if (id === 'vis_user') {
                 // try to find vis_user
-                window.document.head.appendChild(styleEl);
+                window.document.body.appendChild(styleEl);
             }
         }
     }
@@ -1974,7 +1980,7 @@ ${this.scripts}
                 readFile(this.props.socket, `${this.props.adapterName}.${this.props.instance}`, `${this.props.projectName}/vis-user.css`)
                     .then(file => {
                         this.visUserCssLoaded = file || true;
-                        VisEngine.applyUserStyles('vis_user', file || '');
+                        VisEngine.applyUserStyles('vis_user', file?.data || '');
                     })
                     .catch(e => console.warn(`User CSS "${this.props.projectName}/vis-user.css" not found: ${e}`));
             }
