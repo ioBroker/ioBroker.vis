@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.35",
+    "version": "2.9.36",
     "news": {
+      "2.9.36": {
+        "en": "fixed project-specific css not being applied",
+        "de": "feste projektspezifische css nicht angewendet",
+        "ru": "не применяется",
+        "pt": "css específicos do projeto fixo não sendo aplicado",
+        "nl": "vaste projectspecifieke css wordt niet toegepast",
+        "fr": "n'est pas appliquée",
+        "it": "non applicato",
+        "es": "css fijos para proyectos específicos que no se aplican",
+        "pl": "nie stosuje się stałego, specyficznego dla danego projektu css",
+        "uk": "виправлено проектні css, які не застосовуються",
+        "zh-cn": "未应用的固定项目 cs"
+      },
       "2.9.35": {
         "en": "user-specified css has now priority over widgets css\nfixed crash case for broken grouped widgets",
         "de": "benutzerdefinierte css hat jetzt priorität gegenüber widgets css\nfester crash-fall für gebrochene gruppen widgets",
@@ -80,19 +93,6 @@
         "pl": "globalny css nie będzie już usuwany przy wysyłaniu / aktualizacji adaptera\numożliwić zmianę stylu nawigacji",
         "uk": "глобальні css більше не будуть видалені на адаптері завантаження / оновлення\nдозволяє змінювати стиль навігації",
         "zh-cn": "在适配器上传/更新时将不再删除全局 css\n允许修改导航样式"
-      },
-      "2.9.29": {
-        "en": "fixed multiple problems with nested groups\nalso made group/ungroup commands working in group view\nallow to select widgets in group via click (previously only dropdown worked)\nfixed issue, that Basic Image 8 is not configurable for 0 value",
-        "de": "mehrere probleme mit geschachtelten gruppen behoben\nauch gruppen-/ungruppe-befehle in gruppenansicht\ndie auswahl von widgets in gruppe über klick (vorher nur dropdown funktioniert)\nfeste Ausgabe, dass Basic Image 8 nicht für 0 Wert konfigurierbar ist",
-        "ru": "фиксированные множественные проблемы с вложенными группами\nтакже заставил команды группы/группы работать в групповом режиме\nпозволить выбрать виджеты в группе через щелчок (ранее только отключение отработано)\nфиксированная проблема, что Basic Image 8 не настраивается для значения 0",
-        "pt": "corrigiu vários problemas com grupos aninhados\ntambém fez comandos de grupo/ungrupo trabalhando em exibição de grupo\npermitir selecionar widgets em grupo via clique (anteriormente apenas dropdown funcionou)\nproblema fixo, que a imagem básica 8 não é configurável para 0 valor",
-        "nl": "vaste meerdere problemen met geneste groepen\nook groeps-/ungroepcommando's aan het werk in groepsweergave gemaakt\ntoestaan om widgets in groep te selecteren via klik (voorheen alleen dropdown werkte)\nvast probleem, dat Basic Image 8 is niet configureerbaar voor 0 waarde",
-        "fr": "résoudre plusieurs problèmes avec les groupes imbriqués\na également fait des commandes de groupe/ungroupe travaillant en vue de groupe\npermettre de sélectionner des widgets dans le groupe par clic (précédemment seulement le menu déroulant travaillé)\nproblème corrigé, que l'image de base 8 n'est pas configurable pour la valeur 0",
-        "it": "problemi multipli fissi con gruppi nidi\nha anche fatto funzionare i comandi di gruppo/ungruppo in vista di gruppo\nconsentire di selezionare widget in gruppo tramite clic (precedentemente solo a discesa lavorato)\nproblema fisso, che Basic Image 8 non è configurabile per 0 valore",
-        "es": "varios problemas fijos con grupos anidados\ntambién hizo comandos de grupo/ungrupo trabajando en vista de grupo\npermite seleccionar widgets en grupo a través de clic (previamente sólo desplegable trabajado)\nedición fija, que Basic Image 8 no es configurable para 0 valor",
-        "pl": "naprawiono wiele problemów z zagnieżdżonymi grupami\ntakże wykonane polecenia grupowe / niegrupowe pracujące w widoku grupowym\npozwala wybrać widżety w grupie poprzez kliknięcie (wcześniej tylko rozwijane działa)\nstałe wydanie, że obraz podstawowy 8 nie jest konfigurowalny dla wartości 0",
-        "uk": "виправлено кілька проблем з в'язаними групами\nтакож зроблені команди групи/ungroup, які працюють у груповому режимі\nдозволяє вибрати віджети в групі за допомогою кнопок (попередньо тільки відпрацьовані роботи)\nвиправлено проблему, що Basic Image 8 не налаштовує значення 0",
-        "zh-cn": "固定嵌套组的多重问题\n还在组视图中工作\n允许通过点击在组中选择部件( 以前只下拉工作)\n固定问题, 基本图像 8 无法配置 0 值"
       }
     },
     "title": "Visualisation Next Generation",
