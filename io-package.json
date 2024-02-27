@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.34",
+    "version": "2.9.35",
     "news": {
+      "2.9.35": {
+        "en": "user-specified css has now priority over widgets css\nfixed crash case for broken grouped widgets",
+        "de": "benutzerdefinierte css hat jetzt priorität gegenüber widgets css\nfester crash-fall für gebrochene gruppen widgets",
+        "ru": "sss имеет приоритет перед виджетами css\nфиксированный случай крушения для сломанных группированных виджетов",
+        "pt": "user-specified css tem agora prioridade sobre widgets css\ncaso de acidente fixo para widgets agrupados quebrados",
+        "nl": "door de gebruiker opgegeven css heeft nu voorrang boven widgets css\nvaste crash case voor gebroken gegroepeerde widgets",
+        "fr": "css spécifié par l'utilisateur a maintenant priorité sur les widgets css\ncas de crash fixe pour les widgets groupés cassés",
+        "it": "css specificato dall'utente ha ora la priorità su widgets css\ncaso di crash fisso per widget raggruppati rotti",
+        "es": "css especificado por el usuario tiene ahora prioridad sobre widgets cs\ncaso de accidente fijo para widgets agrupados rotos",
+        "pl": "user- określone css ma teraz priorytet nad widżetami css\nstałe zderzenie dla uszkodzonych widżetów zgrupowanych",
+        "uk": "javascript licenses api веб-сайт go1.13.8\nвиправлений випадок збитих групованих віджетів",
+        "zh-cn": "用户指定的 cms 现在优先于部件 cms\n已断组部件的固定崩溃大小写"
+      },
       "2.9.34": {
         "en": "detect admin user correctly in project permissions dialog",
         "de": "admin-benutzer korrekt im projektberechtigungen dialog erkennen",
@@ -80,19 +93,6 @@
         "pl": "naprawiono wiele problemów z zagnieżdżonymi grupami\ntakże wykonane polecenia grupowe / niegrupowe pracujące w widoku grupowym\npozwala wybrać widżety w grupie poprzez kliknięcie (wcześniej tylko rozwijane działa)\nstałe wydanie, że obraz podstawowy 8 nie jest konfigurowalny dla wartości 0",
         "uk": "виправлено кілька проблем з в'язаними групами\nтакож зроблені команди групи/ungroup, які працюють у груповому режимі\nдозволяє вибрати віджети в групі за допомогою кнопок (попередньо тільки відпрацьовані роботи)\nвиправлено проблему, що Basic Image 8 не налаштовує значення 0",
         "zh-cn": "固定嵌套组的多重问题\n还在组视图中工作\n允许通过点击在组中选择部件( 以前只下拉工作)\n固定问题, 基本图像 8 无法配置 0 值"
-      },
-      "2.9.28": {
-        "en": "correctly determine the vis instance in all cases",
-        "de": "die vis-instanz in allen fällen richtig bestimmen",
-        "ru": "правильно определить экземпляр vis во всех случаях",
-        "pt": "determinar corretamente a instância vis em todos os casos",
-        "nl": "de vis instantie in alle gevallen correct te bepalen",
-        "fr": "déterminer correctement l'instance vis dans tous les cas",
-        "it": "determinare correttamente l'istanza vis in tutti i casi",
-        "es": "determinar correctamente la instancia vis en todos los casos",
-        "pl": "we wszystkich przypadkach należy prawidłowo określić przypadek vis",
-        "uk": "правильно визначити в'язницю в усіх випадках",
-        "zh-cn": "在所有案件中正确确定案例"
       }
     },
     "title": "Visualisation Next Generation",

@@ -263,7 +263,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.9.35 (2024-02-27)
 * (foxriver76) user-specified css has now priority over widgets css
 * (foxriver76) fixed crash case for broken grouped widgets
 
