@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.36",
+    "version": "2.9.37",
     "news": {
+      "2.9.37": {
+        "en": "TimePicker widget now saves the time instead of date by default, if you want old behavior use checkbox `asDate`",
+        "de": "TimePicker Widget speichert jetzt die Zeit anstelle von Datum standardmäßig, wenn Sie alte Verhalten verwenden Checkbox `asDate` wollen",
+        "ru": "Виджет TimePicker теперь сохраняет время вместо даты по умолчанию, если вы хотите, чтобы старое поведение использовало флажок `asDate'",
+        "pt": "O widget do TimePicker agora salva o tempo em vez de data por padrão, se você quiser que o comportamento antigo use a caixa de seleção `asDate`",
+        "nl": "TimePicker widget bespaart nu standaard de tijd in plaats van de datum, als u oud gedrag wilt gebruiken selectievakje ",
+        "fr": "TimePicker widget économise maintenant l'heure au lieu de la date par défaut, si vous voulez vieux comportement utiliser la case `asDate`",
+        "it": "TimePicker widget ora salva l'ora invece di data per impostazione predefinita, se si desidera vecchio comportamento utilizzare checkbox `asDate`",
+        "es": "El widget TimePicker ahora ahorra el tiempo en lugar de la fecha por defecto, si desea la casilla de verificación de comportamiento viejo `asDate`",
+        "pl": "Name",
+        "uk": "TimePicker віджет тепер заощаджує час замість дати за замовчуванням, якщо ви хочете, щоб стара поведінка використовувати прапорець `asDate`",
+        "zh-cn": "TimePicker 部件现在默认保存时间而不是日期, 如果您想要使用“ asDate” 复选框"
+      },
       "2.9.36": {
         "en": "fixed project-specific css not being applied",
         "de": "feste projektspezifische css nicht angewendet",
@@ -80,19 +93,6 @@
         "pl": "poprawnie zastosować domyślne przepełnienie\npoprawki stylu nawigacji (naprawić tło ikon i pozwolić na dostosowanie koloru tekstu nagłówka)",
         "uk": "застосувати зворотний потік\nнавігація стилів (фікс іконковий фон і дозволяє налаштовувати текстовий колір головки)",
         "zh-cn": "正确应用默认溢出\n导航样式修正( 固定图标背景并允许自定义标题文本颜色)"
-      },
-      "2.9.30": {
-        "en": "global css will no longer be deleted on adapter upload/update\nallow to modify style of navigation",
-        "de": "global css wird nicht mehr auf adapter upload/update gelöscht\nden stil der navigation ändern",
-        "ru": "global css больше не будет удаляться при загрузке адаптера/обновлении\nпозволяет модифицировать стиль навигации",
-        "pt": "css global não será mais excluído no upload/update do adaptador\npermitir modificar o estilo de navegação",
-        "nl": "global css wordt niet langer verwijderd bij upload/update van adapter\ntoestaan om navigatiestijl te wijzigen",
-        "fr": "global css ne sera plus supprimé lors du téléchargement/mise à jour de l'adaptateur\npermettre de modifier le style de navigation",
-        "it": "css globale non verrà più cancellato sul caricamento dell'adattatore/aggiornamento\nconsentire di modificare lo stile di navigazione",
-        "es": "css global ya no se eliminará en la subida/actual del adaptador\npermitir modificar el estilo de navegación",
-        "pl": "globalny css nie będzie już usuwany przy wysyłaniu / aktualizacji adaptera\numożliwić zmianę stylu nawigacji",
-        "uk": "глобальні css більше не будуть видалені на адаптері завантаження / оновлення\nдозволяє змінювати стиль навігації",
-        "zh-cn": "在适配器上传/更新时将不再删除全局 css\n允许修改导航样式"
       }
     },
     "title": "Visualisation Next Generation",
