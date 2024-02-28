@@ -58,6 +58,7 @@ interface Context {
     formatUtils: any;
     socket: Connection;
     systemConfig: Record<string, any>;
+    setValue: (id: string, value: unknown) => void;
 }
 
 export interface VisBaseWidgetProps {
@@ -92,6 +93,8 @@ export interface VisBaseWidgetProps {
     mouseDownOnView: (...props: any[]) => void;
     refParent: React.RefObject<any>;
     customSettings: any;
+    classes: any;
+    socket: Connection;
 }
 
 type Resize = 'left' | 'right' | 'top' | 'bottom' | 'bottom-left' | 'bottom-right' | 'top-left' | 'top-right' | boolean
