@@ -265,13 +265,11 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 -->
 ## Changelog
 ### **WORK IN PROGRESS**
-* (bluefox) Added the possibility to add suffix by navigation widgets
-* (bluefox) Improved the license manager
-
-### 2.9.38 (2024-03-01)
 * (foxriver76) allow to use `widgetOid` in bindings
 * (foxriver76) fixed various problems with Date Picker widget
 * (foxriver76) made default option of Date Picker human readable and added option for full parseable date
+* (bluefox) Added the possibility to add suffix by navigation widgets
+* (bluefox) Improved the license manager
 
 ### 2.9.37 (2024-02-28)
 * (foxriver76) TimePicker widget now saves the time instead of date by default, if you want old behavior use checkbox `asDate`
