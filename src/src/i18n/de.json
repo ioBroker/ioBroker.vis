@@ -721,5 +721,7 @@
   "vis_2_widgets_widgets_tabs_variant_full_width": "Gesamtbreite",
   "vis_2_widgets_widgets_tabs_vertical": "Vertikal",
   "welcome_message": "Es existiert noch kein Projekt.",
-  "word-spacing": "Wortabstand"
+  "word-spacing": "Wortabstand",
+  "basic_sub_view": "Unteransicht",
+  "sub_view_tooltip": "Es wird für spezielle Zwecke verwendet, beispielsweise für die Jaeger-Design-Navigation"
 }

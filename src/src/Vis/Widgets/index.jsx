@@ -13,6 +13,7 @@ import BasicScreenResolution from './Basic/BasicScreenResolution';
 import BasicSpeechToText from './Basic/BasicSpeechToText';
 import BasicIFrame from './Basic/BasicIFrame';
 import BasicImage from './Basic/BasicImage';
+import BasicHtmlNav from './Basic/BasicHtmlNav';
 
 import JQuiButton from './JQui/JQuiButton';
 import JQuiButtonBlank from './JQui/JQuiButtonBlank';
@@ -53,6 +54,7 @@ const WIDGETS = [
     BasicBar,
     BasicBulb,
     BasicHtml,
+    BasicHtmlNav,
     BasicValueString,
     BasicViewInWidget,
     BasicViewInWidget8,

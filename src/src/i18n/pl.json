@@ -721,5 +721,7 @@
   "vis_2_widgets_widgets_tabs_variant_full_width": "pełna szerokość",
   "vis_2_widgets_widgets_tabs_vertical": "Pionowy",
   "welcome_message": "Żaden projekt jeszcze nie istnieje.",
-  "word-spacing": "odstępy między wyrazami"
+  "word-spacing": "odstępy między wyrazami",
+  "basic_sub_view": "Widok podrzędny",
+  "sub_view_tooltip": "Służy do celów specjalnych, takich jak nawigacja według projektu Jaeger"
 }

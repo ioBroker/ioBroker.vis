@@ -100,6 +100,13 @@ class JQuiButton extends VisRxWidget {
                             type: 'checkbox',
                             hidden: data => !data.nav_view,
                         },
+                        {
+                            name: 'sub_view',
+                            label: 'basic_sub_view',
+                            type: 'text',
+                            tooltip: 'sub_view_tooltip',
+                            hidden: data => !data.nav_view,
+                        },
                     ],
                 },
                 {

@@ -721,5 +721,7 @@
   "vis_2_widgets_widgets_tabs_variant_full_width": "全屏宽度",
   "vis_2_widgets_widgets_tabs_vertical": "垂直的",
   "welcome_message": "目前还没有一个项目存在。",
-  "word-spacing": "字间距"
+  "word-spacing": "字间距",
+  "basic_sub_view": "子视图",
+  "sub_view_tooltip": "它用于特殊目的，例如 jaeger-design 导航"
 }

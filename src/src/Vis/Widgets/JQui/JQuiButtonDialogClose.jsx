@@ -296,8 +296,6 @@ class JQuiButtonDialogClose extends VisRxWidget {
         let buttonText;
         if (this.state.rxData.html) {
             // ignore
-        } else if (this.state.rxData.nav_view && this.state.rxData.buttontext_view) {
-            buttonText = this.props.context.views[this.state.rxData.nav_view]?.settings?.navigationTitle || this.state.rxData.nav_view;
         } else {
             buttonText = this.state.rxData.buttontext;
         }
@@ -318,7 +316,6 @@ class JQuiButtonDialogClose extends VisRxWidget {
                 (this.state.rxData.no_style || this.state.rxData.jquery_style ?
                     <button
                         key="content"
-                        className={this.state.rxData.nav_view && this.state.rxData.nav_view === window.location.hash.slice(1) ? 'ui-state-active' : undefined}
                         type="button"
                         style={buttonStyle}
                         onClick={() => this.onClick()}

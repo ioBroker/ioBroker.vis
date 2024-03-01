@@ -721,5 +721,7 @@
   "vis_2_widgets_widgets_tabs_variant_full_width": "intera larghezza",
   "vis_2_widgets_widgets_tabs_vertical": "Verticale",
   "welcome_message": "Non esiste ancora un progetto.",
-  "word-spacing": "spaziatura delle parole"
+  "word-spacing": "spaziatura delle parole",
+  "basic_sub_view": "Vista secondaria",
+  "sub_view_tooltip": "Viene utilizzato per scopi speciali, come la navigazione Jaeger-Design"
 }
