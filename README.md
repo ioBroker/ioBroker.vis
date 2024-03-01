@@ -264,7 +264,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.9.38 (2024-03-01)
 * (foxriver76) allow to use `widgetOid` in bindings
 * (foxriver76) fixed various problems with Date Picker widget
 * (foxriver76) made default option of Date Picker human readable and added option for full parseable date
