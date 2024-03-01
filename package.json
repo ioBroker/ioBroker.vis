@@ -26,7 +26,7 @@
   ],
   "dependencies": {
     "@iobroker/adapter-core": "^3.0.4",
-    "axios": "^1.6.2",
+    "axios": "^1.6.7",
     "jsonwebtoken": "^9.0.2",
     "mime": "^3.0.0"
   },
@@ -40,7 +40,7 @@
     "chai": "^4.3.10",
     "gulp": "^4.0.2",
     "iobroker.web": "*",
-    "mocha": "^10.2.0",
+    "mocha": "^10.3.0",
     "unzipper": "^0.10.14"
   },
   "bugs": {
