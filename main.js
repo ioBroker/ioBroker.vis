@@ -252,7 +252,7 @@ if (typeof exports !== 'undefined') {
 
 // delete this function as js.controller 4.0 will be mainstream
 async function getSuitableLicenses(all, name) {
-    // activate it again as js-controller 5.0.18 will be mainstream
+    // activate it again as js-controller 5.0.19 will be mainstream
     if (false && adapter.getSuitableLicenses) {
         return adapter.getSuitableLicenses(all, name);
     } else {
@@ -290,7 +290,7 @@ async function getSuitableLicenses(all, name) {
                         ) {
                             if (
                                 decoded.name.startsWith(`iobroker.${name || adapterName}`) &&
-                                (all || !license.usedBy || license.usedBy === this.namespace)
+                                (all || !license.usedBy || license.usedBy === adapter.namespace)
                             ) {
                                 // Licenses for version ranges 0.x and 1.x are handled identically and are valid for both version ranges.
                                 //
@@ -303,7 +303,12 @@ async function getSuitableLicenses(all, name) {
                                 ) {
                                     // check the current adapter major version
                                     if (version !== '0' && version !== '1') {
-                                        return;
+                                        // exception if vis-1 has UUID, so it is valid for vis-2
+                                        const exception = decoded.name === 'iobroker.vis' && version === '2' && decoded.uuid;
+
+                                        if (!exception) {
+                                            return;
+                                        }
                                     }
                                 } else if (decoded.version && decoded.version !== version) {
                                     // Licenses for adapter versions >=2 need to match to the adapter major version,
