@@ -127,6 +127,7 @@ There are a number of different internal bindings to provide additional informat
 * `view` - name of actual view
 * `wname` - widget name
 * `widget` - is an object with all data of widget. Can be used only in JS part, like `{a:a;widget.data.name}`
+* `widgetOid` - use the oid of the widget to assign the widgets value in the assignment section, like `{t:widgetOid.val;t}`
 * `wid` - name of actual widget
 * `language` - can be `de`, `en` or `ru`.
 * `instance` - browser instance
@@ -264,6 +265,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 -->
 ## Changelog
 ### **WORK IN PROGRESS**
+* (foxriver76) allow to use `widgetOid` in bindings
 * (foxriver76) fixed various problems with Date Picker widget
 * (foxriver76) made default option of Date Picker human readable and added option for full parseable date
 

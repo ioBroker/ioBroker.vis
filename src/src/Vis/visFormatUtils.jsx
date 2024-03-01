@@ -317,8 +317,9 @@ class VisFormatUtils {
                                     continue;
                                 }
                                 value = this.getSpecialValues(operation.arg[a].visOid, view, wid, widgetData);
+
                                 if (value === undefined || value === null) {
-                                    value = values[operation.arg[a].visOid];
+                                    value = operation.arg[a].visOid.startsWith('widgetOid.') ? values[operation.arg[a].visOid.replace(/^widgetOid\./g, `${widget.data.oid}.`)] : values[operation.arg[a].visOid];
                                 }
                                 if (value === null) {
                                     string += `const ${operation.arg[a].name} = null;`;
