@@ -14,7 +14,6 @@
  */
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
 
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
@@ -31,7 +30,9 @@ import 'dayjs/locale/pl';
 import 'dayjs/locale/pt';
 import 'dayjs/locale/nl';
 
-// eslint-disable-next-line import/no-cycle
+import type { GetRxDataFromWidget, RxRenderWidgetProps } from '@/types';
+import type { TextFieldVariants } from '@mui/material';
+import dayjs from 'dayjs';
 import VisRxWidget from '../../visRxWidget';
 
 const styles = {
@@ -43,7 +44,12 @@ const styles = {
     },
 };
 
-class JQuiInputDate extends VisRxWidget {
+type RxData = GetRxDataFromWidget<typeof JQuiInputDate>
+
+class JQuiInputDate extends VisRxWidget<RxData> {
+    /** If user does not want to use full date */
+    private readonly EASY_DATE_FORMAT = 'DD.MM.YYYY';
+
     static getWidgetInfo() {
         return {
             id: 'tplJquiInputDate',
@@ -98,6 +104,11 @@ class JQuiInputDate extends VisRxWidget {
                             hidden: '!!data.disableFuture',
                         },
                         {
+                            name: 'asFullDate',
+                            label: 'jqui_asFullDate',
+                            type: 'checkbox',
+                        },
+                        {
                             name: 'displayWeekNumber',
                             label: 'jqui_displayWeekNumber',
                             type: 'checkbox',
@@ -114,7 +125,7 @@ class JQuiInputDate extends VisRxWidget {
                 width: 250,
                 height: 56,
             },
-        };
+        } as const;
     }
 
     // eslint-disable-next-line class-methods-use-this
@@ -122,24 +133,29 @@ class JQuiInputDate extends VisRxWidget {
         return JQuiInputDate.getWidgetInfo();
     }
 
-    renderWidgetBody(props) {
+    renderWidgetBody(props: RxRenderWidgetProps) {
         super.renderWidgetBody(props);
 
         return <div
             className="vis-widget-body"
-            onClick={this.state.rxData.html ? () => this.onClick() : undefined}
         >
             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={this.props.context.lang}>
                 <DatePicker
-                    value={this.state.values[`${this.state.rxData.oid}.val`] || ''}
+                    value={this.state.rxData.asFullDate ? dayjs(this.state.values[`${this.state.rxData.oid}.val`]) || '' : dayjs(this.state.values[`${this.state.rxData.oid}.val`], this.EASY_DATE_FORMAT)}
                     label={this.state.rxData.widgetTitle || null}
                     autoFocus={this.state.rxData.autoFocus || false}
-                    onChange={newValue => this.props.context.setValue(this.state.rxData.oid, newValue)}
+                    onChange={newValue => {
+                        if (!newValue) {
+                            return;
+                        }
+
+                        const val = this.state.rxData.asFullDate ? newValue.toDate() : newValue.format(this.EASY_DATE_FORMAT);
+                        this.props.context.setValue(this.state.rxData.oid, val);
+                    }}
                     formatDensity={this.state.rxData.wideFormat ? 'spacious' : 'dense'}
                     slotProps={{
                         textField: {
-                            variant: this.state.rxData.variant || 'standard',
-                            size: this.state.rxData.small ? 'small' : undefined,
+                            variant: this.state.rxData.variant as TextFieldVariants || 'standard',
                             style: {
                                 width: '100%',
                                 height: '100%',
@@ -158,13 +174,5 @@ class JQuiInputDate extends VisRxWidget {
         </div>;
     }
 }
-
-JQuiInputDate.propTypes = {
-    id: PropTypes.string.isRequired,
-    context: PropTypes.object.isRequired,
-    view: PropTypes.string.isRequired,
-    editMode: PropTypes.bool.isRequired,
-    tpl: PropTypes.string.isRequired,
-};
 
 export default withStyles(styles)(JQuiInputDate);

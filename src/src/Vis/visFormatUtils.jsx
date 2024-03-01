@@ -363,6 +363,10 @@ class VisFormatUtils {
                             try {
                                 // eslint-disable-next-line no-new-func
                                 value = new Function(string)();
+
+                                if (value && typeof value === 'object') {
+                                    value = JSON.stringify(value);
+                                }
                             } catch (e) {
                                 console.error(`Error in eval[value]: ${format}`);
                                 console.error(`Error in eval[script]: ${string}`);
@@ -497,6 +501,7 @@ class VisFormatUtils {
         } // for
 
         format = format.replace(/{{/g, '{').replace(/}}/g, '}');
+
         return format;
     }
 }

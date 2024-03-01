@@ -537,6 +537,7 @@
   "jqui_active_color": "Aktive Farbe",
   "jqui_ampm": "Vormittags/Nachmittags",
   "jqui_asDate": "Als Datum",
+  "jqui_asFullDate": "Verwendung des vollständig analysierbaren Datums",
   "jqui_as_string": "Als String",
   "jqui_auto": "Auto",
   "jqui_binary_control": "Binäre Steuerung",
