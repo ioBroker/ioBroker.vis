@@ -723,5 +723,12 @@
   "welcome_message": "No one project yet exists.",
   "word-spacing": "word-spacing",
   "basic_sub_view": "Sub-view",
-  "sub_view_tooltip": "It is used for special purposes, like jaeger-design navigation"
+  "sub_view_tooltip": "It is used for special purposes, like jaeger-design navigation",
+  "basic_no_filter_text": "\"No filter\" label",
+  "basic_no_all_option": "No \"No filter\" option",
+  "basic_filter_multiple": "Multiple selection",
+  "basic_filter_type_dropdown": "Dropdown menu",
+  "basic_filter_type_horizontal_buttons": "Horizontal buttons",
+  "basic_filter_type_vertical_buttons": "Vertical buttons",
+  "basic_no_filter": "No filter"
 }

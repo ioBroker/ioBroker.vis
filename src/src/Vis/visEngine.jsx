@@ -53,7 +53,6 @@ import VisFormatUtils from './visFormatUtils';
 import { getUrlParameter, extractBinding } from './visUtils';
 import VisWidgetsCatalog from './visWidgetsCatalog';
 import { store } from '../Store';
-import { deepClone } from '../Utils/utils';
 
 function _translateWord(text, lang, dictionary) {
     if (!text) {

@@ -810,20 +810,20 @@ const View = props => {
                         selectedViewValue = selectedViewValue || '';
                     }
                     viewList.forEach(_view => {
-                        const view = store.getState().visProject[_view];
+                        const newView = store.getState().visProject[_view];
 
-                        let viewValue = view.settings[field.field];
+                        let viewValue = newView.settings[field.field];
                         if (field.type === 'boolean') {
                             viewValue = !!viewValue;
                         } else {
                             viewValue = viewValue || '';
                         }
 
-                        if (view.settings.navigation &&
+                        if (newView.settings.navigation &&
                             viewValue !== selectedViewValue &&
-                            !viewsToChange.includes(view.name || _view)
+                            !viewsToChange.includes(newView.name || _view)
                         ) {
-                            viewsToChange.push(view.name || _view);
+                            viewsToChange.push(newView.name || _view);
                         }
                     });
                 }

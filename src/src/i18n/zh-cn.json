@@ -723,5 +723,12 @@
   "welcome_message": "目前还没有一个项目存在。",
   "word-spacing": "字间距",
   "basic_sub_view": "子视图",
-  "sub_view_tooltip": "它用于特殊目的，例如 jaeger-design 导航"
+  "sub_view_tooltip": "它用于特殊目的，例如 jaeger-design 导航",
+  "basic_no_filter_text": "“无过滤器”标签",
+  "basic_no_all_option": "没有“无过滤器”选项",
+  "basic_filter_multiple": "多项选择",
+  "basic_filter_type_dropdown": "下拉式菜单",
+  "basic_filter_type_horizontal_buttons": "水平按钮",
+  "basic_filter_type_vertical_buttons": "垂直按钮",
+  "basic_no_filter": "没有过滤器"
 }

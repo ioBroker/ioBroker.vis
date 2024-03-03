@@ -723,5 +723,12 @@
   "welcome_message": "Ни одного проекта пока не существует.",
   "word-spacing": "межсловный интервал",
   "basic_sub_view": "Подстраница",
-  "sub_view_tooltip": "Он используется для специальных целей, таких как навигация jaeger-design."
+  "sub_view_tooltip": "Он используется для специальных целей, таких как навигация jaeger-design.",
+  "basic_no_filter_text": "Ярлык «Без фильтра»",
+  "basic_no_all_option": "Нет опции «Без фильтра»",
+  "basic_filter_multiple": "Множественный выбор",
+  "basic_filter_type_dropdown": "Выпадающее меню",
+  "basic_filter_type_horizontal_buttons": "Горизонтальные кнопки",
+  "basic_filter_type_vertical_buttons": "Вертикальные кнопки",
+  "basic_no_filter": "Нет фильтра"
 }

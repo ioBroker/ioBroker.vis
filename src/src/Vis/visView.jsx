@@ -186,6 +186,8 @@ class VisView extends React.Component {
             }
         } else if (command === 'getRef') {
             return widgetsRefs[props.id];
+        } else if (command === 'changeFilter') {
+            return this.changeFilter(props);
         }
         return null;
     };
@@ -1710,9 +1712,7 @@ class VisView extends React.Component {
 
         if (this.props.selectedGroup) {
             // draw all widgets in div, that has exact size of the group
-            renderedWidgets = <>
-                {rxGroupWidget}
-            </>;
+            renderedWidgets = rxGroupWidget;
         } else {
             renderedWidgets = <>
                 {rxRelativeWidgets ? <div

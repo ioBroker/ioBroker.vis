@@ -723,5 +723,12 @@
   "welcome_message": "Żaden projekt jeszcze nie istnieje.",
   "word-spacing": "odstępy między wyrazami",
   "basic_sub_view": "Widok podrzędny",
-  "sub_view_tooltip": "Służy do celów specjalnych, takich jak nawigacja według projektu Jaeger"
+  "sub_view_tooltip": "Służy do celów specjalnych, takich jak nawigacja według projektu Jaeger",
+  "basic_no_filter_text": "Etykieta „Brak filtra”.",
+  "basic_no_all_option": "Brak opcji „Bez filtra”.",
+  "basic_filter_multiple": "Wybór wielokrotny",
+  "basic_filter_type_dropdown": "Menu rozwijane",
+  "basic_filter_type_horizontal_buttons": "Przyciski poziome",
+  "basic_filter_type_vertical_buttons": "Pionowe przyciski",
+  "basic_no_filter": "Bez filtra"
 }

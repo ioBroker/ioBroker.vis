@@ -131,6 +131,19 @@ export default BulkEditor;
 
 `);
 
+    fs.writeFileSync(`${__dirname}/runtime/src/Vis/Widgets/Basic/FiltersEditorDialog.jsx`, `
+import React from 'react';
+
+class FiltersEditorDialog extends React.Component {
+    render() {
+        return null;
+    }
+}
+
+export default FiltersEditorDialog;
+
+`);
+
     const pack = JSON.parse(fs.readFileSync(`${__dirname}/src/package.json`).toString());
     delete pack.dependencies['@devbookhq/splitter'];
     delete pack.dependencies['ace-builds'];

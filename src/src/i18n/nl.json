@@ -723,5 +723,12 @@
   "welcome_message": "Er is nog geen enkel project.",
   "word-spacing": "woordspatiëring",
   "basic_sub_view": "Subweergave",
-  "sub_view_tooltip": "Het wordt gebruikt voor speciale doeleinden, zoals navigatie in jaeger-design"
+  "sub_view_tooltip": "Het wordt gebruikt voor speciale doeleinden, zoals navigatie in jaeger-design",
+  "basic_no_filter_text": "Etiket \"Geen filter\".",
+  "basic_no_all_option": "Geen optie \"Geen filter\".",
+  "basic_filter_multiple": "Meerdere selectie",
+  "basic_filter_type_dropdown": "Drop-down menu",
+  "basic_filter_type_horizontal_buttons": "Horizontale knoppen",
+  "basic_filter_type_vertical_buttons": "Verticale knoppen",
+  "basic_no_filter": "Geen filter"
 }

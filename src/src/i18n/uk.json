@@ -723,5 +723,12 @@
   "welcome_message": "Жодного проекту ще немає.",
   "word-spacing": "міжсловний інтервал",
   "basic_sub_view": "Підвид",
-  "sub_view_tooltip": "Використовується для спеціальних цілей, як-от навігація Jaeger-design"
+  "sub_view_tooltip": "Використовується для спеціальних цілей, як-от навігація Jaeger-design",
+  "basic_no_filter_text": "Мітка «Без фільтра».",
+  "basic_no_all_option": "Немає опції \"Без фільтра\".",
+  "basic_filter_multiple": "Множинний вибір",
+  "basic_filter_type_dropdown": "Випадаюче меню",
+  "basic_filter_type_horizontal_buttons": "Горизонтальні кнопки",
+  "basic_filter_type_vertical_buttons": "Вертикальні кнопки",
+  "basic_no_filter": "Без фільтра"
 }

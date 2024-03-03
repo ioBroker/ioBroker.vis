@@ -14,6 +14,7 @@ import BasicSpeechToText from './Basic/BasicSpeechToText';
 import BasicIFrame from './Basic/BasicIFrame';
 import BasicImage from './Basic/BasicImage';
 import BasicHtmlNav from './Basic/BasicHtmlNav';
+import BasicFilterDropdown from './Basic/BasicFilterDropdown';
 
 import JQuiButton from './JQui/JQuiButton';
 import JQuiButtonBlank from './JQui/JQuiButtonBlank';
@@ -55,6 +56,7 @@ const WIDGETS = [
     BasicBulb,
     BasicHtml,
     BasicHtmlNav,
+    BasicFilterDropdown,
     BasicValueString,
     BasicViewInWidget,
     BasicViewInWidget8,

@@ -723,5 +723,12 @@
   "welcome_message": "Aún no existe ningún proyecto.",
   "word-spacing": "espacio entre palabras",
   "basic_sub_view": "Subvista",
-  "sub_view_tooltip": "Se utiliza para fines especiales, como la navegación de diseño jaeger."
+  "sub_view_tooltip": "Se utiliza para fines especiales, como la navegación de diseño jaeger.",
+  "basic_no_filter_text": "Etiqueta \"Sin filtro\"",
+  "basic_no_all_option": "No hay opción \"Sin filtro\"",
+  "basic_filter_multiple": "Selección múltiple",
+  "basic_filter_type_dropdown": "Menú desplegable",
+  "basic_filter_type_horizontal_buttons": "Botones horizontales",
+  "basic_filter_type_vertical_buttons": "Botones verticales",
+  "basic_no_filter": "Sin filtro"
 }

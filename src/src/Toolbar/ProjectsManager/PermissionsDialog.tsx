@@ -172,7 +172,7 @@ export default class PermissionsDialog extends React.Component<PermissionsDialog
     /**
      * Render the info dialog
      */
-    renderInfoDialog(): React.JSX.Element {
+    static renderInfoDialog(): React.JSX.Element {
         return <div style={{
             display: 'inline-flex', alignItems: 'center', border: '1px solid', borderRadius: '5px', width: '100%',
         }}
@@ -350,7 +350,7 @@ export default class PermissionsDialog extends React.Component<PermissionsDialog
             closeDisabled={false}
             minWidth="600px"
         >
-            {this.renderInfoDialog()}
+            {PermissionsDialog.renderInfoDialog()}
             {this.state.users.map(user =>
                 <Card sx={{ border: '1px solid rgba(211,211,211,0.6)', marginTop: '5px' }}>
                     <CardHeader

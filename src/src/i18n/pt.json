@@ -723,5 +723,12 @@
   "welcome_message": "Nenhum projeto ainda existe.",
   "word-spacing": "espaçamento entre palavras",
   "basic_sub_view": "Subvisualização",
-  "sub_view_tooltip": "É usado para fins especiais, como navegação Jaeger-design"
+  "sub_view_tooltip": "É usado para fins especiais, como navegação Jaeger-design",
+  "basic_no_filter_text": "Etiqueta \"Sem filtro\"",
+  "basic_no_all_option": "Sem opção \"Sem filtro\"",
+  "basic_filter_multiple": "Seleção múltipla",
+  "basic_filter_type_dropdown": "Menu suspenso",
+  "basic_filter_type_horizontal_buttons": "Botões horizontais",
+  "basic_filter_type_vertical_buttons": "Botões verticais",
+  "basic_no_filter": "Sem filtro"
 }

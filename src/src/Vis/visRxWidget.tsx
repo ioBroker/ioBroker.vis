@@ -70,9 +70,9 @@ interface VisRxWidgetProps extends VisBaseWidgetProps {
 interface RxData {
     _originalData: any;
     filterkey: any;
-    /** If value is hide widget should be hidden if user not in group, else disabled */
+    /** If value is hide widget should be hidden if user not in groups, else disabled */
     'visibility-groups-action': 'hide' | 'disabled';
-    /** If entry in array but user not in array, apply visibility-groups-action logic */
+    /** If entry in an array but user not in array, apply visibility-groups-action logic */
     'visibility-groups': string[];
 }
 

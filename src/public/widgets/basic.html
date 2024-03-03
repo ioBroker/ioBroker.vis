@@ -403,7 +403,7 @@
     };
     vis.binds.basic = {
         isFullScreen: false,
-        filterDropdown: function (el, filters, hideEffect, hideDuration, showEffect, showDuration) {
+        /* filterDropdown: function (el, filters, hideEffect, hideDuration, showEffect, showDuration) {
             var $this = $(el);
             if (filters) {
                 filters = filters.split(';');
@@ -419,7 +419,7 @@
             $this.find('select').change(function () {
                 vis.changeFilter(null, $this.find('select option:selected').val(), hideEffect, hideDuration, showEffect, showDuration);
             });
-        },
+        }, */
         state: function (el, oid) {
             var $this = $(el);
             oid = oid || $this.attr('data-oid');
@@ -2223,7 +2223,7 @@
     </div>
 </script-->
 
-<script id="tplFilterDropdown"
+<!--script id="tplFilterDropdown"
         type="text/ejs"
         class="vis-tpl"
         data-vis-prev='<img src="widgets/basic/img/Prev_FilterDropdown.png"></img>'
@@ -2240,7 +2240,7 @@
             </select>
         </div>
     </div>
-</script>
+</script-->
 
 <script id="tplValueFloat"
         type="text/ejs"
