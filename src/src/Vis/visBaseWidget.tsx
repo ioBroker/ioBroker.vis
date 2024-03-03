@@ -35,7 +35,7 @@ import {
 
 import VisOrderMenu from './visOrderMenu';
 
-interface Context {
+export interface Context {
     views: Record<string, View>;
     widgetHint: unknown;
     adapterName: string;

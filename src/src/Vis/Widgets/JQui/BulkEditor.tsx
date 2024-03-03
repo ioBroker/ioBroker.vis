@@ -468,9 +468,7 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
             imagePrefix="../"
             selected={value}
             filterByType="images"
-            // @ts-expect-error adapter react v5 types incomplete
-            onSelect={(selected: string, isDoubleClick: boolean) => onChange(selected, isDoubleClick)}
-            onOk={selected => onChange(selected, true)}
+            onOk={(selected: string) => onChange(selected, true)}
             socket={this.props.socket}
         />;
     }

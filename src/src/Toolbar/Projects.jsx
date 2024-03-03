@@ -102,21 +102,6 @@ const Tools = props => {
                 imagePrefix="../"
                 selected=""
                 showTypeSelector
-                onSelect={(selected, isDoubleClick) => {
-                    const projectPrefix = `${props.adapterName}.${props.instance}/${props.projectName}/`;
-                    if (selected.startsWith(projectPrefix)) {
-                        selected = `_PRJ_NAME/${selected.substring(projectPrefix.length)}`;
-                    } else if (selected.startsWith('/')) {
-                        selected = `..${selected}`;
-                    } else if (!selected.startsWith('.')) {
-                        selected = `../${selected}`;
-                    }
-                    if (isDoubleClick) {
-                        Utils.copyToClipboard(selected);
-                        setFilesDialog(false);
-                        window.alert(I18n.t('ra_Copied %s', selected));
-                    }
-                }}
                 onOk={selected => {
                     const projectPrefix = `${props.adapterName}.${props.instance}/${props.projectName}/`;
                     if (selected.startsWith(projectPrefix)) {

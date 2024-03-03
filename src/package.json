@@ -21,6 +21,7 @@
         "@sentry/browser": "^7.104.0",
         "@sentry/integrations": "^7.104.0",
         "@types/dom-speech-recognition": "^0.0.4",
+        "@types/uuid": "^9.0.8",
         "ace-builds": "^1.32.6",
         "craco-module-federation": "^1.1.0",
         "dayjs": "^1.11.10",

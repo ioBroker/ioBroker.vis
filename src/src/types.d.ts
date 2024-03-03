@@ -142,7 +142,7 @@ export interface VisLegacy {
     lastChangedView: string | null; // used in vis-2 to save last sent view name over vis-2.0.command
     updateContainers: () => void;
     renderView: (viewDiv: string, view: string, hidden: boolean, cb: () => void) => void;
-    updateFilter: (view: string) => string[];
+    updateFilter: (view?: string) => string[];
     destroyUnusedViews: () => void;
     changeFilter: (view: string, filter: string, showEffect?: string, showDuration?: number, hideEffect?: string, hideDuration?: number) => boolean;
     // setValue: this.setValue;

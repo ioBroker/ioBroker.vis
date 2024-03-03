@@ -131,7 +131,7 @@ export default BulkEditor;
 
 `);
 
-    fs.writeFileSync(`${__dirname}/runtime/src/Vis/Widgets/Basic/FiltersEditorDialog.jsx`, `
+    fs.writeFileSync(`${__dirname}/runtime/src/Vis/Widgets/Basic/FiltersEditorDialog.tsx`, `
 import React from 'react';
 
 class FiltersEditorDialog extends React.Component {

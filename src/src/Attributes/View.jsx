@@ -1177,18 +1177,6 @@ const View = props => {
                                             imagePrefix="../"
                                             selected={_value}
                                             filterByType="images"
-                                            onSelect={(selected, isDoubleClick) => {
-                                                const projectPrefix = `${props.adapterName}.${props.instance}/${props.projectName}/`;
-                                                if (selected.startsWith(projectPrefix)) {
-                                                    selected = `_PRJ_NAME/${selected.substring(projectPrefix.length)}`;
-                                                } else if (selected.startsWith('/')) {
-                                                    selected = `..${selected}`;
-                                                } else if (!selected.startsWith('.')) {
-                                                    selected = `../${selected}`;
-                                                }
-                                                change(selected);
-                                                isDoubleClick && setShowDialog(false);
-                                            }}
                                             onOk={selected => {
                                                 const projectPrefix = `${props.adapterName}.${props.instance}/${props.projectName}/`;
                                                 if (selected.startsWith(projectPrefix)) {

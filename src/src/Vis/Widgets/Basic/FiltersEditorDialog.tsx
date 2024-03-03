@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { v4 as uuid } from 'uuid';
 
 import {
@@ -27,45 +26,76 @@ import {
     SelectFile as SelectFileDialog,
 } from '@iobroker/adapter-react-v5';
 
+import { Context } from '@/Vis/visBaseWidget';
+
 import MaterialIconSelector from '../../../Components/MaterialIconSelector';
 
-class FiltersEditorDialog extends Component {
-    constructor(props) {
+interface Item {
+    id?: string;
+    label: string;
+    value: string;
+    icon?: string;
+    image?: string;
+    color?: string;
+    activeColor?: string;
+    default?: boolean;
+}
+
+interface FiltersEditorDialogProps {
+    items: Item[] | undefined;
+    onClose: (items?: Item[]) => void;
+    context: Context;
+    multiple?: boolean;
+}
+
+interface FiltersEditorDialogState {
+    filters: any[];
+    items: any[];
+    applyItems: string;
+    selectIcon: null | number;
+    selectImage: null | number;
+    anchorEl: any;
+}
+
+class FiltersEditorDialog extends Component<FiltersEditorDialogProps, FiltersEditorDialogState> {
+    private readonly originalItems: string;
+
+    constructor(props: FiltersEditorDialogProps) {
         super(props);
-        const items = (props.items || []).map(item => ({ ...item, id: uuid() }));
+        const items: Item[] = (props.items || []).map((item: Item) => ({ ...item, id: uuid() }));
 
         this.state = {
             filters: window.vis?.updateFilter() || [],
             items,
             applyItems: JSON.stringify(props.items || []),
-            selectIcon: false,
-            selectImage: false,
+            selectIcon: null,
+            selectImage: null,
             anchorEl: null,
         };
         this.originalItems = this.state.applyItems;
     }
 
-    updateItems(items) {
+    updateItems(items: Item[]) {
         const applyItems = JSON.parse(JSON.stringify(items));
-        applyItems.forEach(item => delete item.id);
+        applyItems.forEach((item: Item) => delete item.id);
 
         this.setState({ items, applyItems: JSON.stringify(applyItems) });
     }
 
     renderSelectIconDialog() {
-        if (this.state.selectIcon === false) {
+        if (this.state.selectIcon === null) {
             return null;
         }
         return <MaterialIconSelector
             themeType={this.props.context.themeType}
             value={this.state.items[this.state.selectIcon]}
-            onClose={icon => {
+            onClose={(icon: string | null) => {
                 if (icon !== null) {
                     const items = JSON.parse(JSON.stringify(this.state.items));
-                    items[this.state.selectIcon].icon = icon;
+                    items[this.state.selectIcon as number].icon = icon;
                     this.updateItems(items);
                 }
-                this.setState({ selectIcon: false });
+                this.setState({ selectIcon: null });
             }}
         />;
     }
@@ -129,11 +159,11 @@ class FiltersEditorDialog extends Component {
     }
 
     renderSelectImageDialog() {
-        if (this.state.selectImage === false) {
+        if (this.state.selectImage === null) {
             return null;
         }
 
-        let _value = this.state.items[this.state.selectImage].image || '';
+        let _value = this.state.items[this.state.selectImage as number].image || '';
         if (_value.startsWith('../')) {
             _value = _value.substring(3);
         } else if (_value.startsWith('_PRJ_NAME/')) {
@@ -142,7 +172,7 @@ class FiltersEditorDialog extends Component {
 
         return <SelectFileDialog
             title={I18n.t('Select file')}
-            onClose={() => this.setState({ selectImage: false })}
+            onClose={() => this.setState({ selectImage: null })}
             restrictToFolder={`${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}`}
             allowNonRestricted
             allowUpload
@@ -154,20 +184,6 @@ class FiltersEditorDialog extends Component {
             imagePrefix="../"
             selected={_value}
             filterByType="images"
-            onSelect={(selected, isDoubleClick) => {
-                const projectPrefix = `${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}/`;
-                if (selected.startsWith(projectPrefix)) {
-                    selected = `_PRJ_NAME/${selected.substring(projectPrefix.length)}`;
-                } else if (selected.startsWith('/')) {
-                    selected = `..${selected}`;
-                } else if (!selected.startsWith('.')) {
-                    selected = `../${selected}`;
-                }
-                const items = JSON.parse(JSON.stringify(this.state.items));
-                items[this.state.selectImage].image = selected;
-                this.updateItems(items);
-                isDoubleClick && this.setState({ selectImage: false });
-            }}
             onOk={selected => {
                 const projectPrefix = `${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}/`;
                 if (selected.startsWith(projectPrefix)) {
@@ -178,16 +194,17 @@ class FiltersEditorDialog extends Component {
                     selected = `../${selected}`;
                 }
                 const items = JSON.parse(JSON.stringify(this.state.items));
-                items[this.state.selectImage].image = selected;
+                items[this.state.selectImage as number].image = selected;
                 this.updateItems(items);
-                this.setState({ selectImage: false });
+                this.setState({ selectImage: null });
             }}
             socket={this.props.context.socket}
         />;
     }
 
-    renderTableRow(item, index) {
-        return <TableRow style={{ opacity: item.enabled !== false ? 1 : 0.5 }} key={item.id}>
+    renderTableRow(item: Item, index: number) {
+        // @ts-ignore
+        return <TableRow key={item.id}>
             <TableCell style={{ cursor: 'grab' }}>
                 {index + 1}
                 .
@@ -245,6 +262,7 @@ class FiltersEditorDialog extends Component {
                     />
                     <Button
                         variant={item.icon ? 'outlined' : undefined}
+                        // @ts-ignore
                         color={item.icon ? 'grey' : undefined}
                         onClick={() => this.setState({ selectIcon: index })}
                     >
@@ -278,6 +296,7 @@ class FiltersEditorDialog extends Component {
                     />
                     <Button
                         variant={item.image ? 'outlined' : undefined}
+                        // @ts-ignore
                         color={item.image ? 'grey' : undefined}
                         onClick={() => this.setState({ selectImage: index })}
                     >
@@ -287,7 +306,7 @@ class FiltersEditorDialog extends Component {
             </TableCell>
             <TableCell>
                 <ColorPicker
-                    fullWidth
+                    style={{ width: '100%' }}
                     value={item.color}
                     onChange={color => {
                         const items = JSON.parse(JSON.stringify(this.state.items));
@@ -298,7 +317,7 @@ class FiltersEditorDialog extends Component {
             </TableCell>
             <TableCell>
                 <ColorPicker
-                    fullWidth
+                    style={{ width: '100%' }}
                     value={item.activeColor}
                     onChange={color => {
                         const items = JSON.parse(JSON.stringify(this.state.items));
@@ -313,7 +332,7 @@ class FiltersEditorDialog extends Component {
                     onChange={e => {
                         const items = JSON.parse(JSON.stringify(this.state.items));
                         if (!this.props.multiple && e.target.checked) {
-                            items.forEach(i => i.default = false);
+                            items.forEach((item: Item) => item.default = false);
                         }
                         items[index].default = e.target.checked;
                         this.updateItems(items);
@@ -343,7 +362,6 @@ class FiltersEditorDialog extends Component {
                         <Fab
                             size="small"
                             onClick={event => this.setState({ anchorEl: event.currentTarget })}
-                            variant="outlined"
                         >
                             <Add />
                         </Fab>
@@ -390,6 +408,7 @@ class FiltersEditorDialog extends Component {
                 </Button>
                 <Button
                     variant="contained"
+                    // @ts-ignore
                     color="grey"
                     onClick={() => this.props.onClose()}
                     startIcon={<Close />}
@@ -400,12 +419,5 @@ class FiltersEditorDialog extends Component {
         </Dialog>;
     }
 }
-
-FiltersEditorDialog.propTypes = {
-    context: PropTypes.object,
-    items: PropTypes.array,
-    onClose: PropTypes.func,
-    multiple: PropTypes.bool,
-};
 
 export default FiltersEditorDialog;

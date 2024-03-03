@@ -1811,24 +1811,6 @@ class App extends Runtime {
             imagePrefix="../"
             selected={this.state.legacyFileSelector.options?.path || ''}
             filterByType="images"
-            onSelect={(selected, isDoubleClick) => {
-                const projectPrefix = `${this.adapterName}.${this.instance}/${this.state.projectName}/`;
-                if (selected.startsWith(projectPrefix)) {
-                    selected = `_PRJ_NAME/${selected.substring(projectPrefix.length)}`;
-                } else if (selected.startsWith('/')) {
-                    selected = `..${selected}`;
-                } else if (!selected.startsWith('.')) {
-                    selected = `../${selected}`;
-                }
-                if (isDoubleClick) {
-                    const parts = selected.split('/');
-                    const file = parts.pop();
-                    const path = `${parts.join('/')}/`;
-
-                    this.state.legacyFileSelector.callback({ path, file }, this.state.legacyFileSelector.options?.userArg);
-                    this.setState({ legacyFileSelector: null });
-                }
-            }}
             onOk={selected => {
                 const projectPrefix = `${this.adapterName}.${this.instance}/${this.state.projectName}/`;
                 if (selected.startsWith(projectPrefix)) {
