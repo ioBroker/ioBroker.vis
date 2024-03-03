@@ -4,6 +4,7 @@ import type { GetRxDataFromWidget, RxRenderWidgetProps } from '@/types';
 import { store, recalculateFields } from '@/Store';
 import VisRxWidget from '@/Vis/visRxWidget';
 
+// eslint-disable-next-line no-use-before-define
 type RxData = GetRxDataFromWidget<typeof BasicImage8>;
 
 export default class BasicImage8 extends VisRxWidget<RxData> {

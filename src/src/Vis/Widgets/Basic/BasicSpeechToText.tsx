@@ -8,6 +8,7 @@ import { I18n } from '@iobroker/adapter-react-v5';
 // @ts-expect-error fix import
 import type * as SpeechRecognition from 'dom-speech-recognition';
 
+// eslint-disable-next-line no-use-before-define
 type RxData = GetRxDataFromWidget<typeof BasicSpeechToText>
 
 interface BasicSpeechToTextState {

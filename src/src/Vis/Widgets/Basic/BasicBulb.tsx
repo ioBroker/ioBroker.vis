@@ -4,6 +4,7 @@ import VisRxWidget from '@/Vis/visRxWidget';
 import { GetRxDataFromWidget, RxRenderWidgetProps } from '@/types';
 import { NOTHING_SELECTED } from '@/Utils/utils';
 
+// eslint-disable-next-line no-use-before-define
 type RxData = GetRxDataFromWidget<typeof BasicBulb>
 
 export default class BasicBulb extends VisRxWidget<RxData> {
@@ -222,8 +223,8 @@ export default class BasicBulb extends VisRxWidget<RxData> {
             src = this.state.rxData.icon_on || 'img/bulb_on.png';
         }
 
-        return <div className="vis-widget-body">
-            <img src={src} alt="tplBulbOnOffCtrl" width="100%" onClick={() => this.toggle()} />
+        return <div className="vis-widget-body" onClick={() => this.toggle()}>
+            <img src={src} alt="tplBulbOnOffCtrl" width="100%" />
         </div>;
     }
 }

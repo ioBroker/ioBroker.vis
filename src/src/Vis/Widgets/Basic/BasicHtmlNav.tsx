@@ -14,13 +14,17 @@
  */
 
 import React from 'react';
-import PropTypes from 'prop-types';
 
-// eslint-disable-next-line import/no-cycle
-import VisRxWidget from '../../visRxWidget';
+
+import { GetRxDataFromWidget, RxRenderWidgetProps } from '@/types';
+import VisRxWidget from '@/Vis/visRxWidget';
+
 import DangerousHtmlWithScript from '../Utils/DangerousHtmlWithScript';
 
-class BasicHtmlNav extends VisRxWidget {
+// eslint-disable-next-line no-use-before-define
+type RxData = GetRxDataFromWidget<typeof BasicHtmlNav>
+
+class BasicHtmlNav extends VisRxWidget<RxData> {
     static getWidgetInfo() {
         return {
             id: 'tplHtmlNav',
@@ -43,7 +47,7 @@ class BasicHtmlNav extends VisRxWidget {
                         label: 'basic_sub_view',
                         type: 'text',
                         tooltip: 'sub_view_tooltip',
-                        hidden: data => !data.nav_view,
+                        hidden: '!data.nav_view',
                     },
                 ],
             }],
@@ -71,7 +75,7 @@ class BasicHtmlNav extends VisRxWidget {
      *
      * @return {Element}
      */
-    renderWidgetBody(props) {
+    renderWidgetBody(props: RxRenderWidgetProps): React.JSX.Element {
         super.renderWidgetBody(props);
         if (props.style.width === undefined) {
             props.style.width = 200;
@@ -89,12 +93,5 @@ class BasicHtmlNav extends VisRxWidget {
         />;
     }
 }
-
-BasicHtmlNav.propTypes = {
-    id: PropTypes.string.isRequired,
-    context: PropTypes.object.isRequired,
-    view: PropTypes.string.isRequired,
-    editMode: PropTypes.bool.isRequired,
-};
 
 export default BasicHtmlNav;

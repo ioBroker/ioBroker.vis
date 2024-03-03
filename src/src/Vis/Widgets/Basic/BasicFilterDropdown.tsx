@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2023 Denis Haev https://github.com/GermanBluefox,
+ *  Copyright (c) 2024 Denis Haev https://github.com/GermanBluefox,
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -14,7 +14,6 @@
  */
 
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 
 import {
     Button, ButtonGroup,
@@ -24,19 +23,42 @@ import {
 } from '@mui/material';
 import { Edit } from '@mui/icons-material';
 
-import {I18n, Icon} from '@iobroker/adapter-react-v5';
+import { I18n, Icon } from '@iobroker/adapter-react-v5';
 
-// eslint-disable-next-line import/no-cycle
-import VisRxWidget from '../../visRxWidget';
+import { GetRxDataFromWidget, RxRenderWidgetProps } from '@/types';
+import VisRxWidget from '@/Vis/visRxWidget';
+import { Context } from '@/Vis/visBaseWidget';
 import FiltersEditorDialog from './FiltersEditorDialog';
 
-const ItemsEditor = props => {
+// eslint-disable-next-line no-use-before-define
+type RxData = GetRxDataFromWidget<typeof BasicFilterDropdown>
+
+interface Item {
+    id?: string;
+    label: string;
+    value: string;
+    icon?: string;
+    image?: string;
+    color?: string;
+    activeColor?: string;
+    default?: boolean;
+}
+
+interface ItemsEditorProps {
+    data: any;
+    setData: (data: any) => void;
+    context: Context;
+}
+
+const ItemsEditor = (props: ItemsEditorProps) => {
     const [open, setOpen] = useState(false);
 
     let items = props.data.items;
     // convert data from "filters" to "items"
     if (open && !items && props.data.filters) {
-        items = props.data.filters.split(';').map(item => ({ label: item.trim(), value: item.trim() })).filter(item => item.value);
+        items = props.data.filters.split(';')
+            .map((item: string) => ({ label: item.trim(), value: item.trim() }))
+            .filter((item: Item) => item.value);
     }
     if (open && typeof items === 'string') {
         try {
@@ -71,7 +93,9 @@ const ItemsEditor = props => {
     </>;
 };
 
-class BasicFilterDropdown extends VisRxWidget {
+class BasicFilterDropdown extends VisRxWidget<RxData> {
+    private editMode: boolean | undefined;
+
     static getWidgetInfo() {
         return {
             id: 'tplFilterDropdown',
@@ -86,8 +110,7 @@ class BasicFilterDropdown extends VisRxWidget {
                         label: 'editor',
                         type: 'custom',
                         noBinding: true,
-                        component: (field, data, setData, props) => <ItemsEditor
-                            field={field}
+                        component: (_field: any, data: any, setData: (_data: any) => void, props: { context: Context }) => <ItemsEditor
                             data={data}
                             setData={setData}
                             context={props.context}
@@ -211,17 +234,20 @@ class BasicFilterDropdown extends VisRxWidget {
         if (!this.props.editMode) {
             this.editMode = false;
             const items = this.getItems();
-            if (items.find(item => item.default && item.value)) {
-                const filter = [];
-                items.forEach(item => item.default && filter.push(item.value));
-                setTimeout(() => this.props.askView('changeFilter', { filter }), 0);
+            if (items.find((item: Item) => item.default && item.value)) {
+                const filter: string[] = [];
+                items.forEach((item: Item) => item.default && filter.push(item.value));
+                setTimeout(() => {
+                    const ref = this.props.askView('getRef', { id: this.props.view });
+                    ref?.onCommand('changeFilter', { filter });
+                }, 0);
             }
         } else {
             this.editMode = true;
         }
     }
 
-    onCommand(command) {
+    onCommand(command: string): void {
         if (command === 'changeFilter') {
             // analyse filter
             this.forceUpdate();
@@ -229,15 +255,18 @@ class BasicFilterDropdown extends VisRxWidget {
         super.onCommand(command);
     }
 
-    renderDropdown(items) {
-        const viewsActiveFilter = this.props.viewsActiveFilter[this.props.view] || [];
+    renderDropdown(items: Item[]): React.JSX.Element {
+        const viewsActiveFilter: string[] = (this.props.viewsActiveFilter[this.props.view] as string[]) || [];
         let value;
         if (this.state.rxData.multiple) {
             value = viewsActiveFilter;
         } else {
             value = viewsActiveFilter[0] || '';
         }
-        return <FormControl fullWidth variant={this.state.rxData.dropdownVariant || 'standard'}>
+        return <FormControl
+            fullWidth
+            variant={(this.state.rxData.dropdownVariant as 'standard' | 'outlined' | 'filled' | undefined) || 'standard'}
+        >
             {this.state.rxData.widgetTitle ? <InputLabel>{this.state.rxData.widgetTitle}</InputLabel> : null}
             <Select
                 fullWidth
@@ -250,10 +279,11 @@ class BasicFilterDropdown extends VisRxWidget {
                     if (filter.includes('')) {
                         filter = [];
                     }
-                    this.props.askView('changeFilter', { filter });
+                    const ref = this.props.askView('getRef', { id: this.props.view });
+                    ref?.onCommand('changeFilter', { filter });
                 }}
-                multiple={this.state.rxData.multiple}
-                autoFocus={this.state.rxData.autoFocus}
+                multiple={!!this.state.rxData.multiple}
+                autoFocus={!!this.state.rxData.autoFocus}
             >
                 {this.state.rxData.noAllOption ? null : <MenuItem value=""><em>{this.state.rxData.noFilterText || I18n.t('basic_no_filter')}</em></MenuItem>}
                 {items.map(option => {
@@ -268,8 +298,8 @@ class BasicFilterDropdown extends VisRxWidget {
                     return <MenuItem
                         key={option.value}
                         value={option.value}
-                        selected={this.props.viewsActiveFilter[this.props.view].includes(option.value)}
-                        style={{ color: this.props.viewsActiveFilter[this.props.view].includes(option.value) ? option.color : (option.activeColor || option.color) }}
+                        selected={viewsActiveFilter.includes(option.value)}
+                        style={{ color: viewsActiveFilter.includes(option.value) ? option.color : (option.activeColor || option.color) }}
                     >
                         {image ? <Icon
                             src={image}
@@ -283,16 +313,18 @@ class BasicFilterDropdown extends VisRxWidget {
         </FormControl>;
     }
 
-    renderButtons(items) {
-        const viewsActiveFilter = this.props.viewsActiveFilter[this.props.view] || [];
+    renderButtons(items: Item[]): React.JSX.Element {
+        const viewsActiveFilter: string[] = (this.props.viewsActiveFilter[this.props.view] as string[]) || [];
         return <ButtonGroup
-            variant={this.state.rxData.buttonsVariant || 'contained'}
-            size={this.state.rxData.buttonsSize || 'medium'}
+            variant={(this.state.rxData.buttonsVariant as 'text' | 'outlined' | 'contained' | undefined) || 'contained'}
             orientation={this.state.rxData.type === 'horizontal_buttons' ? 'horizontal' : 'vertical'}
             style={{ width: '100%', height: '100%' }}
         >
             {this.state.rxData.noAllOption ? null : <Button
-                onClick={() => this.props.askView('changeFilter', { filter: [] })}
+                onClick={() => {
+                    const ref = this.props.askView('getRef', { id: this.props.view });
+                    ref?.onCommand('changeFilter', { filter: [] });
+                }}
             >
                 <em>{this.state.rxData.noFilterText || I18n.t('basic_no_filter')}</em>
             </Button>}
@@ -307,16 +339,16 @@ class BasicFilterDropdown extends VisRxWidget {
                 return <Button
                     key={option.value}
                     onClick={() => {
-                        let filter = option.value;
+                        let filter: string[];
                         if (this.state.rxData.multiple) {
-                            filter = this.props.viewsActiveFilter[this.props.view].includes(filter) ?
-                                this.props.viewsActiveFilter[this.props.view].filter(f => f !== filter) :
-                                [...this.props.viewsActiveFilter[this.props.view], filter];
+                            filter = viewsActiveFilter.includes(option.value) ?
+                                viewsActiveFilter.filter(f => f !== option.value) :
+                                [...viewsActiveFilter, option.value];
                         } else {
-                            filter = [filter];
+                            filter = [option.value];
                         }
-                        this.props.askView('changeFilter', { filter });
-                        this.forceUpdate();
+                        const ref = this.props.askView('getRef', { id: this.props.view });
+                        ref?.onCommand('changeFilter', { filter });
                     }}
                     sx={theme => ({
                         backgroundColor: viewsActiveFilter.includes(option.value) ? theme.palette.primary.main : undefined,
@@ -338,7 +370,9 @@ class BasicFilterDropdown extends VisRxWidget {
         let items = this.state.data.items;
         // convert data from "filters" to "items"
         if (!items && this.state.data.filters) {
-            items = this.state.data.filters.split(';').map(item => ({ label: item.trim(), value: item.trim() })).filter(item => item.value);
+            items = this.state.data.filters.split(';')
+                .map((item: string) => ({ label: item.trim(), value: item.trim() }))
+                .filter((item: Item) => item.value);
         }
         if (typeof items === 'string') {
             try {
@@ -351,12 +385,7 @@ class BasicFilterDropdown extends VisRxWidget {
         return items;
     }
 
-    /**
-     * Renders the widget
-     *
-     * @return {Element}
-     */
-    renderWidgetBody(props) {
+    renderWidgetBody(props: RxRenderWidgetProps): React.JSX.Element {
         super.renderWidgetBody(props);
         if (props.style.width === undefined) {
             props.style.width = 200;
@@ -369,10 +398,13 @@ class BasicFilterDropdown extends VisRxWidget {
         if (this.editMode !== undefined && this.editMode !== this.props.editMode) {
             this.editMode = this.props.editMode;
             // apply default filter if not in edit mode
-            if (!this.editMode && items.find(item => item.default && item.value)) {
-                const filter = [];
-                items.forEach(item => item.default && filter.push(item.value));
-                setTimeout(() => this.props.askView('changeFilter', { filter }), 0);
+            if (!this.editMode && items.find((item: Item) => item.default && item.value)) {
+                const filter: string[] = [];
+                items.forEach((item: Item) => item.default && filter.push(item.value));
+                setTimeout(() => {
+                    const ref = this.props.askView('getRef', { id: this.props.view });
+                    ref?.onCommand('changeFilter', { filter });
+                }, 0);
             }
         }
 
@@ -384,12 +416,5 @@ class BasicFilterDropdown extends VisRxWidget {
         return this.renderDropdown(items);
     }
 }
-
-BasicFilterDropdown.propTypes = {
-    id: PropTypes.string.isRequired,
-    context: PropTypes.object.isRequired,
-    view: PropTypes.string.isRequired,
-    editMode: PropTypes.bool.isRequired,
-};
 
 export default BasicFilterDropdown;

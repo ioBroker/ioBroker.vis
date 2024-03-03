@@ -3,6 +3,7 @@ import React from 'react';
 import { GetRxDataFromWidget, RxRenderWidgetProps } from '@/types';
 import VisRxWidget from '@/Vis/visRxWidget';
 
+// eslint-disable-next-line no-use-before-define
 type RxData = GetRxDataFromWidget<typeof BasicRedNumber>
 
 interface SvgProps {

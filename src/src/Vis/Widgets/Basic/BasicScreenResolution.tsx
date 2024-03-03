@@ -21,6 +21,7 @@ interface BasicScreenResolutionState extends RxWidgetState {
     essentialData: string;
 }
 
+// eslint-disable-next-line no-use-before-define
 type RxData = GetRxDataFromWidget<typeof BasicScreenResolution>
 
 export default class BasicScreenResolution extends VisRxWidget<RxData, BasicScreenResolutionState> {
@@ -41,9 +42,9 @@ export default class BasicScreenResolution extends VisRxWidget<RxData, BasicScre
             .filter(f => f !== '___settings')
             .map((viewId: string) => ({
                 id: viewId,
-                sizex: this.props.context.views[viewId].settings.sizex,
-                sizey: this.props.context.views[viewId].settings.sizey,
-                useAsDefault: this.props.context.views[viewId].settings.useAsDefault,
+                sizex: this.props.context.views[viewId]?.settings?.sizex,
+                sizey: this.props.context.views[viewId]?.settings?.sizey,
+                useAsDefault: this.props.context.views[viewId]?.settings?.useAsDefault,
             }));
     }
 
@@ -112,9 +113,9 @@ export default class BasicScreenResolution extends VisRxWidget<RxData, BasicScre
         let height;
         let defaultView;
         if (this.props.editMode) {
-            width = this.props.context.views[this.props.context.activeView].settings.sizex || window.document.documentElement.clientWidth;
-            height = this.props.context.views[this.props.context.activeView].settings.sizey || window.document.documentElement.clientHeight;
-            defaultView = window.vis.findNearestResolution(width, height);
+            width = this.props.context.views[this.props.context.activeView]?.settings?.sizex || window.document.documentElement.clientWidth;
+            height = this.props.context.views[this.props.context.activeView]?.settings?.sizey || window.document.documentElement.clientHeight;
+            defaultView = window.vis.findNearestResolution(width as number, height as number);
         } else {
             width = document.documentElement.clientWidth;
             height = document.documentElement.clientHeight;

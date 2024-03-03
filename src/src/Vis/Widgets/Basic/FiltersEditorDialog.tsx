@@ -203,7 +203,6 @@ class FiltersEditorDialog extends Component<FiltersEditorDialogProps, FiltersEdi
     }
 
     renderTableRow(item: Item, index: number) {
-        // @ts-ignore
         return <TableRow key={item.id}>
             <TableCell style={{ cursor: 'grab' }}>
                 {index + 1}
@@ -262,7 +261,7 @@ class FiltersEditorDialog extends Component<FiltersEditorDialogProps, FiltersEdi
                     />
                     <Button
                         variant={item.icon ? 'outlined' : undefined}
-                        // @ts-ignore
+                        // @ts-expect-error grey is correct
                         color={item.icon ? 'grey' : undefined}
                         onClick={() => this.setState({ selectIcon: index })}
                     >
@@ -296,7 +295,7 @@ class FiltersEditorDialog extends Component<FiltersEditorDialogProps, FiltersEdi
                     />
                     <Button
                         variant={item.image ? 'outlined' : undefined}
-                        // @ts-ignore
+                        // @ts-expect-error grey is correct
                         color={item.image ? 'grey' : undefined}
                         onClick={() => this.setState({ selectImage: index })}
                     >
@@ -332,7 +331,7 @@ class FiltersEditorDialog extends Component<FiltersEditorDialogProps, FiltersEdi
                     onChange={e => {
                         const items = JSON.parse(JSON.stringify(this.state.items));
                         if (!this.props.multiple && e.target.checked) {
-                            items.forEach((item: Item) => item.default = false);
+                            items.forEach((_item: Item) => _item.default = false);
                         }
                         items[index].default = e.target.checked;
                         this.updateItems(items);
@@ -408,7 +407,7 @@ class FiltersEditorDialog extends Component<FiltersEditorDialogProps, FiltersEdi
                 </Button>
                 <Button
                     variant="contained"
-                    // @ts-ignore
+                    // @ts-expect-error grey is correct
                     color="grey"
                     onClick={() => this.props.onClose()}
                     startIcon={<Close />}

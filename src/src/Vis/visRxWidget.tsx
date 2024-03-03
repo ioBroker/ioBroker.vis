@@ -590,7 +590,7 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
         </MyCard>;
     }
 
-    renderWidgetBody(props: any): React.JSX.Element | void {
+    renderWidgetBody(props: any): React.JSX.Element | void | null {
         props.id = this.props.id;
 
         props.className = `vis-widget${this.state.rxData.class ? ` ${this.state.rxData.class}` : ''}`;

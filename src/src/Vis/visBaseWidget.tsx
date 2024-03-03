@@ -36,29 +36,31 @@ import {
 import VisOrderMenu from './visOrderMenu';
 
 export interface Context {
-    views: Record<string, View>;
-    widgetHint: unknown;
-    adapterName: string;
-    instance: string;
-    projectName: string;
-    setSelectedWidgets: (widgetIds: string[], multiview?: string) => void;
-    setSelectedGroup: (groupId: string) => void;
-    onWidgetsChanged: (...props: any[]) => void;
-    lang: ioBroker.Languages;
-    userGroups: Record<string, any>;
-    allWidgets: Record<string, Widget>;
     /** Moment js */
-    moment: any;
-    dateFormat: string;
-    runtime: boolean;
-    themeType: string;
-    showWidgetNames: boolean;
     VisView: any;
-    user: string;
+    activeView: string;
+    adapterName: string;
+    allWidgets: Record<string, Widget>;
+    changeView: (view: string, subView?: string | null) => void;
+    dateFormat: string;
     formatUtils: any;
+    instance: string;
+    lang: ioBroker.Languages;
+    moment: any;
+    onWidgetsChanged: (...props: any[]) => void;
+    projectName: string;
+    runtime: boolean;
+    setSelectedGroup: (groupId: string) => void;
+    setSelectedWidgets: (widgetIds: string[], multiview?: string) => void;
+    setValue: (id: string, value: unknown) => void;
+    showWidgetNames: boolean;
     socket: Connection;
     systemConfig: Record<string, any>;
-    setValue: (id: string, value: unknown) => void;
+    themeType: string;
+    user: string;
+    userGroups: Record<string, any>;
+    views: Record<string, View>;
+    widgetHint: unknown;
 }
 
 export interface VisBaseWidgetProps {
@@ -87,7 +89,7 @@ export interface VisBaseWidgetProps {
     /** Some filter TODO */
     viewsActiveFilter: Record<string, unknown>;
     /** Function to register the widget */
-    askView: (method: 'register' | 'unregister' | 'getRef', props: Record<string, any>) => any;
+    askView: (method: string, props: Record<string, any>) => any;
     onIgnoreMouseEvents: (bool: boolean) => void;
     onWidgetsChanged: (...props: any[]) => void;
     mouseDownOnView: (...props: any[]) => void;
@@ -1210,7 +1212,7 @@ class VisBaseWidget extends React.Component<VisBaseWidgetProps, VisBaseWidgetSta
      * @param _props
      */
     // eslint-disable-next-line class-methods-use-this,no-unused-vars
-    renderWidgetBody(_props: VisBaseWidgetProps): React.JSX.Element | void {
+    renderWidgetBody(_props: VisBaseWidgetProps): React.JSX.Element | void | null {
         // Default render method. Normally it should be overwritten
         return <div
             style={{
@@ -1835,8 +1837,7 @@ class VisBaseWidget extends React.Component<VisBaseWidgetProps, VisBaseWidgetSta
                         this.props.context.allWidgets[this.props.id].style[attr] !== undefined
                     ) {
                         // try to steal style by canWidget
-
-                        if (!this.props.context.allWidgets[this.props.id].style[attr].includes('{')) {
+                        if (!(this.props.context.allWidgets[this.props.id].style[attr] as string).includes('{')) {
                             style[attr] = VisBaseWidget.correctStylePxValue(this.props.context.allWidgets[this.props.id].style[attr]);
                         }
                     }

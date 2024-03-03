@@ -3,6 +3,7 @@ import React from 'react';
 import { GetRxDataFromWidget, RxRenderWidgetProps } from '@/types';
 import VisRxWidget from '@/Vis/visRxWidget';
 
+// eslint-disable-next-line no-use-before-define
 type RxData = GetRxDataFromWidget<typeof BasicImage>
 
 export default class BasicImage extends VisRxWidget<RxData> {
@@ -177,7 +178,7 @@ export default class BasicImage extends VisRxWidget<RxData> {
                 }
             } else if (this.onWakeUpInstalled) {
                 this.onWakeUpInstalled = false;
-                window.vis.onWakeUp(this.props.id);
+                window.vis.onWakeUp(null, this.props.id);
             }
         }
     }

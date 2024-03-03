@@ -186,8 +186,6 @@ class VisView extends React.Component {
             }
         } else if (command === 'getRef') {
             return widgetsRefs[props.id];
-        } else if (command === 'changeFilter') {
-            return this.changeFilter(props);
         }
         return null;
     };

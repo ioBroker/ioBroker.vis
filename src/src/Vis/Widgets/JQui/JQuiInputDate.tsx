@@ -44,6 +44,7 @@ const styles = {
     },
 };
 
+// eslint-disable-next-line no-use-before-define
 type RxData = GetRxDataFromWidget<typeof JQuiInputDate>
 
 class JQuiInputDate extends VisRxWidget<RxData> {

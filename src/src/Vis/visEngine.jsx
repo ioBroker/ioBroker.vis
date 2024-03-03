@@ -549,7 +549,7 @@ class VisEngine extends React.Component {
             showWidgetHelper: (viewDiv, view, wid, isShow) => {
                 console.warn('showWidgetHelper not implemented: ', viewDiv, view, wid, isShow);
             },
-            findNearestResolution: (resultRequiredOrX, height) => this.findNearestResolution(resultRequiredOrX, height),
+            findNearestResolution: (resultRequiredOrX, height) => VisEngine.findNearestResolution(resultRequiredOrX, height),
             addFont: fontName => {
                 if (!this.fontNames.includes(fontName)) {
                     this.fontNames.push(fontName);
@@ -1236,7 +1236,7 @@ class VisEngine extends React.Component {
 
     getViewRef = view => this.refViews[view]?.ref;
 
-    findNearestResolution(resultRequiredOrX, height) {
+    static findNearestResolution(resultRequiredOrX, height) {
         let w;
         let h;
 
