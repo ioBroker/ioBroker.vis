@@ -1,15 +1,19 @@
 import React, { Component } from 'react';
 import { v4 as uuid } from 'uuid';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import { type Styles, withStyles } from '@mui/styles';
 
 import {
     Button,
-    Dialog, DialogActions, DialogContent, DialogTitle, Fab,
+    Dialog, DialogActions,
+    DialogContent, DialogTitle, Fab,
     IconButton, Menu, MenuItem,
     Table, TableBody,
     TableCell, TableHead,
     TableRow,
     TextField,
     Checkbox,
+    type Theme,
 } from '@mui/material';
 
 import {
@@ -17,6 +21,7 @@ import {
     Check, Clear as ClearIcon,
     Close,
     Delete,
+    DragHandle,
 } from '@mui/icons-material';
 
 import {
@@ -29,6 +34,41 @@ import {
 import { Context } from '@/Vis/visBaseWidget';
 
 import MaterialIconSelector from '../../../Components/MaterialIconSelector';
+
+const styles: Styles<any, any> = (theme: Theme) => ({
+    handlerCell: {
+        alignItems: 'center',
+        whiteSpace: 'nowrap',
+        padding: '1px 4px',
+        verticalAlign: 'middle',
+    },
+    grab: {
+        marginRight: 4,
+        marginTop: 12,
+    },
+    index: {
+        display: 'inline-block',
+        verticalAlign: 'top',
+        marginTop: 15,
+    },
+    cell: {
+        padding: '1px 4px',
+        verticalAlign: 'bottom',
+    },
+    cellText: {
+        padding: '12px 4px 0px 4px',
+    },
+    cellImage: {
+        padding: '0px 4px',
+        verticalAlign: 'bottom',
+    },
+    cellButton: {
+        padding: '0px 4px',
+    },
+    rowEven: {
+        backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0, 0, 0, 0.04)',
+    },
+});
 
 interface Item {
     id?: string;
@@ -46,6 +86,7 @@ interface FiltersEditorDialogProps {
     onClose: (items?: Item[]) => void;
     context: Context;
     multiple?: boolean;
+    classes: Record<string, string>;
 }
 
 interface FiltersEditorDialogState {
@@ -203,154 +244,166 @@ class FiltersEditorDialog extends Component<FiltersEditorDialogProps, FiltersEdi
     }
 
     renderTableRow(item: Item, index: number) {
-        return <TableRow key={item.id}>
-            <TableCell style={{ cursor: 'grab' }}>
-                {index + 1}
-                .
-            </TableCell>
-            <TableCell>
-                <TextField
-                    variant="standard"
-                    fullWidth
-                    value={item.value || ''}
-                    onChange={e => {
-                        const items = JSON.parse(JSON.stringify(this.state.items));
-                        items[index].value = e.target.value;
-                        this.updateItems(items);
-                    }}
-                    InputLabelProps={{ shrink: true }}
-                />
-            </TableCell>
-            <TableCell>
-                <TextField
-                    variant="standard"
-                    fullWidth
-                    value={item.label || ''}
-                    onChange={e => {
-                        const items = JSON.parse(JSON.stringify(this.state.items));
-                        items[index].label = e.target.value;
-                        this.updateItems(items);
-                    }}
-                    InputLabelProps={{ shrink: true }}
-                />
-            </TableCell>
-            <TableCell>
-                {item.image ? null : <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <TextField
-                        fullWidth
-                        size="small"
-                        variant="standard"
-                        value={item.icon}
-                        onChange={e => {
-                            const items = JSON.parse(JSON.stringify(this.state.items));
-                            items[index].icon = e.target.value;
-                            this.updateItems(items);
-                        }}
-                        InputProps={{
-                            endAdornment: item.icon ? <IconButton
-                                size="small"
-                                onClick={() => {
-                                    const items = JSON.parse(JSON.stringify(this.state.items));
-                                    items[index].icon = '';
-                                    this.updateItems(items);
-                                }}
-                            >
-                                <ClearIcon />
-                            </IconButton> : null,
-                        }}
-                    />
-                    <Button
-                        variant={item.icon ? 'outlined' : undefined}
-                        // @ts-expect-error grey is correct
-                        color={item.icon ? 'grey' : undefined}
-                        onClick={() => this.setState({ selectIcon: index })}
-                    >
-                        {item.icon ? <Icon src={item.icon} style={{ width: 36, height: 36 }} /> : '...'}
-                    </Button>
-                </div>}
-            </TableCell>
-            <TableCell>
-                {item.icon ? null : <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <TextField
-                        variant="standard"
-                        fullWidth
-                        InputProps={{
-                            endAdornment: item.image ? <IconButton
-                                size="small"
-                                onClick={() => {
-                                    const items = JSON.parse(JSON.stringify(this.state.items));
-                                    items[index].image = '';
-                                    this.updateItems(items);
-                                }}
-                            >
-                                <ClearIcon />
-                            </IconButton> : null,
-                        }}
-                        value={item.image}
-                        onChange={e => {
-                            const items = JSON.parse(JSON.stringify(this.state.items));
-                            items[index].image = e.target.value;
-                            this.updateItems(items);
-                        }}
-                    />
-                    <Button
-                        variant={item.image ? 'outlined' : undefined}
-                        // @ts-expect-error grey is correct
-                        color={item.image ? 'grey' : undefined}
-                        onClick={() => this.setState({ selectImage: index })}
-                    >
-                        {item.image ? <Icon src={item.image} style={{ width: 36, height: 36 }} /> : '...'}
-                    </Button>
-                </div>}
-            </TableCell>
-            <TableCell>
-                <ColorPicker
-                    style={{ width: '100%' }}
-                    value={item.color}
-                    onChange={color => {
-                        const items = JSON.parse(JSON.stringify(this.state.items));
-                        items[index].color = color;
-                        this.updateItems(items);
-                    }}
-                />
-            </TableCell>
-            <TableCell>
-                <ColorPicker
-                    style={{ width: '100%' }}
-                    value={item.activeColor}
-                    onChange={color => {
-                        const items = JSON.parse(JSON.stringify(this.state.items));
-                        items[index].activeColor = color;
-                        this.updateItems(items);
-                    }}
-                />
-            </TableCell>
-            <TableCell>
-                <Checkbox
-                    checked={!!item.default}
-                    onChange={e => {
-                        const items = JSON.parse(JSON.stringify(this.state.items));
-                        if (!this.props.multiple && e.target.checked) {
-                            items.forEach((_item: Item) => _item.default = false);
-                        }
-                        items[index].default = e.target.checked;
-                        this.updateItems(items);
-                    }}
-                />
-            </TableCell>
-            <TableCell>
-                <IconButton
-                    size="small"
-                    onClick={() => {
-                        const items = JSON.parse(JSON.stringify(this.state.items));
-                        items.splice(index, 1);
-                        this.updateItems(items);
-                    }}
+        return <Draggable key={item.id} draggableId={item.id || ''} index={index}>
+            {(dragProvided /* dragSnapshot */) => <TableRow
+                className={index % 2 ? this.props.classes.rowEven : ''}
+                ref={dragProvided.innerRef}
+                {...dragProvided.draggableProps}
+            >
+                <TableCell
+                    className={this.props.classes.handlerCell}
+                    {...dragProvided.dragHandleProps}
                 >
-                    <Delete />
-                </IconButton>
-            </TableCell>
-        </TableRow>;
+                    <DragHandle className={this.props.classes.grab} />
+                    <div className={this.props.classes.index}>
+                        {index + 1}
+                        .
+                    </div>
+                </TableCell>
+                <TableCell className={this.props.classes.cellText}>
+                    <TextField
+                        variant="standard"
+                        fullWidth
+                        value={item.value || ''}
+                        onChange={e => {
+                            const items = JSON.parse(JSON.stringify(this.state.items));
+                            items[index].value = e.target.value;
+                            this.updateItems(items);
+                        }}
+                        InputLabelProps={{ shrink: true }}
+                    />
+                </TableCell>
+                <TableCell className={this.props.classes.cellText}>
+                    <TextField
+                        variant="standard"
+                        fullWidth
+                        value={item.label || ''}
+                        onChange={e => {
+                            const items = JSON.parse(JSON.stringify(this.state.items));
+                            items[index].label = e.target.value;
+                            this.updateItems(items);
+                        }}
+                        InputLabelProps={{ shrink: true }}
+                    />
+                </TableCell>
+                <TableCell className={this.props.classes.cellImage}>
+                    {item.image ? null : <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <TextField
+                            fullWidth
+                            size="small"
+                            variant="standard"
+                            value={item.icon}
+                            onChange={e => {
+                                const items = JSON.parse(JSON.stringify(this.state.items));
+                                items[index].icon = e.target.value;
+                                this.updateItems(items);
+                            }}
+                            InputProps={{
+                                endAdornment: item.icon ? <IconButton
+                                    size="small"
+                                    onClick={() => {
+                                        const items = JSON.parse(JSON.stringify(this.state.items));
+                                        items[index].icon = '';
+                                        this.updateItems(items);
+                                    }}
+                                >
+                                    <ClearIcon />
+                                </IconButton> : null,
+                            }}
+                        />
+                        <Button
+                            variant={item.icon ? 'outlined' : undefined}
+                            // @ts-expect-error grey is correct
+                            color={item.icon ? 'grey' : undefined}
+                            onClick={() => this.setState({ selectIcon: index })}
+                        >
+                            {item.icon ? <Icon src={item.icon} style={{ width: 36, height: 36 }} /> : '...'}
+                        </Button>
+                    </div>}
+                </TableCell>
+                <TableCell className={this.props.classes.cellImage}>
+                    {item.icon ? null : <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <TextField
+                            variant="standard"
+                            fullWidth
+                            InputProps={{
+                                endAdornment: item.image ? <IconButton
+                                    size="small"
+                                    onClick={() => {
+                                        const items = JSON.parse(JSON.stringify(this.state.items));
+                                        items[index].image = '';
+                                        this.updateItems(items);
+                                    }}
+                                >
+                                    <ClearIcon />
+                                </IconButton> : null,
+                            }}
+                            value={item.image}
+                            onChange={e => {
+                                const items = JSON.parse(JSON.stringify(this.state.items));
+                                items[index].image = e.target.value;
+                                this.updateItems(items);
+                            }}
+                        />
+                        <Button
+                            variant={item.image ? 'outlined' : undefined}
+                            // @ts-expect-error grey is correct
+                            color={item.image ? 'grey' : undefined}
+                            onClick={() => this.setState({ selectImage: index })}
+                        >
+                            {item.image ? <Icon src={item.image} style={{ width: 36, height: 36 }} /> : '...'}
+                        </Button>
+                    </div>}
+                </TableCell>
+                <TableCell className={this.props.classes.cell}>
+                    <ColorPicker
+                        style={{ width: '100%' }}
+                        value={item.color}
+                        onChange={color => {
+                            const items = JSON.parse(JSON.stringify(this.state.items));
+                            items[index].color = color;
+                            this.updateItems(items);
+                        }}
+                    />
+                </TableCell>
+                <TableCell className={this.props.classes.cell}>
+                    <ColorPicker
+                        style={{ width: '100%' }}
+                        value={item.activeColor}
+                        onChange={color => {
+                            const items = JSON.parse(JSON.stringify(this.state.items));
+                            items[index].activeColor = color;
+                            this.updateItems(items);
+                        }}
+                    />
+                </TableCell>
+                <TableCell className={this.props.classes.cellButton}>
+                    <Checkbox
+                        checked={!!item.default}
+                        onChange={e => {
+                            const items = JSON.parse(JSON.stringify(this.state.items));
+                            if (!this.props.multiple && e.target.checked) {
+                                items.forEach((_item: Item) => _item.default = false);
+                            }
+                            items[index].default = e.target.checked;
+                            this.updateItems(items);
+                        }}
+                    />
+                </TableCell>
+                <TableCell className={this.props.classes.cellButton}>
+                    <IconButton
+                        size="small"
+                        onClick={() => {
+                            const items = JSON.parse(JSON.stringify(this.state.items));
+                            items.splice(index, 1);
+                            this.updateItems(items);
+                        }}
+                    >
+                        <Delete />
+                    </IconButton>
+                </TableCell>
+            </TableRow>}
+        </Draggable>;
     }
 
     renderTable() {
@@ -375,9 +428,25 @@ class FiltersEditorDialog extends Component<FiltersEditorDialogProps, FiltersEdi
                     <TableCell style={{ width: 40 }} />
                 </TableRow>
             </TableHead>
-            <TableBody>
-                {this.state.items.map((item, index) => this.renderTableRow(item, index))}
-            </TableBody>
+            <DragDropContext onDragEnd={data => {
+                if (!data.destination) {
+                    return;
+                }
+                const items = JSON.parse(JSON.stringify(this.state.items));
+                const [removed] = items.splice(data.source.index, 1);
+                items.splice(data.destination.index, 0, removed);
+                this.updateItems(items);
+            }}
+            >
+                <Droppable droppableId="items" type="ROW">
+                    {(dropProvided /* dropSnapshot */) => <TableBody
+                        ref={dropProvided.innerRef}
+                        {...dropProvided.droppableProps}
+                    >
+                        {this.state.items.map((item, index) => this.renderTableRow(item, index))}
+                    </TableBody>}
+                </Droppable>
+            </DragDropContext>
         </Table>;
     }
 
@@ -419,4 +488,4 @@ class FiltersEditorDialog extends Component<FiltersEditorDialogProps, FiltersEdi
     }
 }
 
-export default FiltersEditorDialog;
+export default withStyles(styles)(FiltersEditorDialog);

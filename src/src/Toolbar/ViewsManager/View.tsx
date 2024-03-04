@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Styles, withStyles } from '@mui/styles';
+import { type Styles, withStyles } from '@mui/styles';
 import { useDrag } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 

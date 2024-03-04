@@ -119,9 +119,9 @@ function readFile(socket, id, fileName, withType) {
                     }
                 }
 
-                if (file.file) {
+                if (file.file !== undefined) {
                     file = file.file; // adapter-react-v5@4.x delivers file.file
-                } else if (file.data) {
+                } else if (file.data !== undefined) {
                     file = file.data; // LegacyConnection delivers file.data
                 }
             }
