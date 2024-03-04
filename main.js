@@ -63,7 +63,7 @@ function startAdapter(options) {
         unload: callback => {
             if (synchronyzing) {
                 new Promise(resolve => stoppingPromise = resolve)
-                    .then(() => callback && callback())
+                    .then(() => callback && callback());
             } else {
                 callback && callback();
             }
@@ -839,7 +839,7 @@ async function buildHtmlPages(forceBuild) {
     const { widgetSets, filesChanged } = syncWidgetSets(enabledList, forceBuild);
     const widgetsChanged = await generateWidgetsHtml(widgetSets, forceBuild);
 
-    let uploadedIndexHtml = '';
+    let uploadedIndexHtml = null;
     let indexHtml = '';
     if (fs.existsSync(`${__dirname}/www/index.html`)) {
         indexHtml = fs.readFileSync(`${__dirname}/www/index.html`).toString('utf8');
@@ -854,7 +854,22 @@ async function buildHtmlPages(forceBuild) {
         uploadedIndexHtml = uploadedIndexHtml ? uploadedIndexHtml.toString('utf8') : uploadedIndexHtml;
     }
 
-    if (configChanged || widgetsChanged || filesChanged || uploadedIndexHtml !== indexHtml || forceBuild) {
+    let uploadedEditHtml = null;
+    let editHtml = '';
+    if (fs.existsSync(`${__dirname}/www/edit.html`)) {
+        editHtml = fs.readFileSync(`${__dirname}/www/edit.html`).toString('utf8');
+        try {
+            uploadedEditHtml = await adapter.readFileAsync(adapterName, 'edit.html');
+        } catch (err) {
+            // ignore
+        }
+        if (typeof uploadedEditHtml === 'object') {
+            uploadedEditHtml = uploadedEditHtml.file;
+        }
+        uploadedEditHtml = uploadedEditHtml ? uploadedEditHtml.toString('utf8') : uploadedEditHtml;
+    }
+
+    if (configChanged || widgetsChanged || filesChanged || uploadedIndexHtml !== indexHtml || uploadedEditHtml !== editHtml || forceBuild) {
         try {
             await uploadAdapter();
         } catch (e) {
@@ -893,21 +908,20 @@ async function checkL(license, useLicenseManager, name) {
     if (!uuidObj || !uuidObj.native || !uuidObj.native.uuid) {
         adapter.log.error('UUID not found!');
         return false;
-    } else {
-        if (useLicenseManager) {
-            license = await getSuitableLicenses(true, name);
-            license = license[0] && license[0].json;
-        }
+    }
+    if (useLicenseManager) {
+        license = await getSuitableLicenses(true, name);
+        license = license[0] && license[0].json;
+    }
 
-        if (!license) {
-            adapter.log.error(`No license found for ${name}. Please get one on https://iobroker.net !`);
-            return false;
-        } else {
-            try {
-                return !(await doLicense(license, uuidObj.native.uuid, name));
-            } catch (err) {
-                return !(await check(license, uuidObj.native.uuid, err, name));
-            }
+    if (!license) {
+        adapter.log.error(`No license found for ${name}. Please get one on https://iobroker.net !`);
+        return false;
+    } else {
+        try {
+            return !(await doLicense(license, uuidObj.native.uuid, name));
+        } catch (err) {
+            return !(await check(license, uuidObj.native.uuid, err, name));
         }
     }
 }
