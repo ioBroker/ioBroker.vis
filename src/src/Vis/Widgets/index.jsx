@@ -15,6 +15,8 @@ import BasicIFrame from './Basic/BasicIFrame';
 import BasicImage from './Basic/BasicImage';
 import BasicHtmlNav from './Basic/BasicHtmlNav';
 import BasicFilterDropdown from './Basic/BasicFilterDropdown';
+import BasicLink from './Basic/BasicLink';
+import BasicImage8 from './Basic/BasicImage8';
 
 import JQuiButton from './JQui/JQuiButton';
 import JQuiButtonBlank from './JQui/JQuiButtonBlank';
@@ -49,7 +51,6 @@ import JQuiInputDateTime from './JQui/JQuiInputDateTime';
 import JQuiToggle from './JQui/JQuiToggle';
 
 import TabsSliderTabs from './Tabs/TabsSliderTabs';
-import BasicImage8 from './Basic/BasicImage8';
 
 const WIDGETS = [
     BasicBar,
@@ -57,6 +58,7 @@ const WIDGETS = [
     BasicHtml,
     BasicHtmlNav,
     BasicFilterDropdown,
+    BasicLink,
     BasicValueString,
     BasicViewInWidget,
     BasicViewInWidget8,

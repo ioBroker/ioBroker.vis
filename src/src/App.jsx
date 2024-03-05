@@ -22,6 +22,7 @@ import {
     Palette as IconPalette,
     ListAlt as IconAttributes,
     ClearAll as ClearAllIcon,
+    Layers,
 } from '@mui/icons-material';
 
 import {
@@ -1419,7 +1420,7 @@ class App extends Runtime {
             <Tooltip title={I18n.t('Show view')}>
                 <div className={this.props.classes.tabButton}>
                     <IconButton onClick={() => this.setViewsManager(true)} size="small" disabled={!!this.state.selectedGroup}>
-                        <AddIcon className={views.length ? '' : this.props.classes.iconBlink} />
+                        <Layers className={views.length ? '' : this.props.classes.iconBlink} />
                     </IconButton>
                 </div>
             </Tooltip>
