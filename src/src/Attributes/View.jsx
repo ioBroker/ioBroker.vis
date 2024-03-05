@@ -526,6 +526,13 @@ const View = props => {
                     notStyle: true,
                 },
                 {
+                    type: 'checkbox',
+                    name: 'Only for desktop',
+                    field: 'limitScreenDesktop',
+                    hidden: '(data.sizex === undefined && data.sizey === undefined) || !data.limitScreen',
+                    notStyle: true,
+                },
+                {
                     type: 'slider',
                     name: 'Limit border width',
                     field: 'limitScreenBorderWidth',

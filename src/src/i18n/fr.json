@@ -731,5 +731,6 @@
   "basic_filter_type_horizontal_buttons": "Boutons horizontaux",
   "basic_filter_type_vertical_buttons": "Boutons verticaux",
   "basic_no_filter": "Pas de filtre",
-  "basic_all_filters": "Ajouter tout ce qui reste"
+  "basic_all_filters": "Ajouter tout ce qui reste",
+  "Only for desktop": "Uniquement pour ordinateur de bureau"
 }

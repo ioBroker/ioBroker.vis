@@ -1681,7 +1681,7 @@ class VisView extends React.Component {
 
         let limitScreenStyle = null;
         // limit screen size of desired
-        if (settings.limitScreen) {
+        if (settings.limitScreen && ((window.screen.width >= 800 && window.screen.height >= 800) || !settings.limitScreenDesktop)) {
             const ww = isVarFinite(settings.sizex) ? parseFloat(settings.sizex) : 0;
             const hh = isVarFinite(settings.sizey) ? parseFloat(settings.sizey) : 0;
             if (ww && hh) {

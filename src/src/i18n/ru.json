@@ -731,5 +731,6 @@
   "basic_filter_type_horizontal_buttons": "Горизонтальные кнопки",
   "basic_filter_type_vertical_buttons": "Вертикальные кнопки",
   "basic_no_filter": "Нет фильтра",
-  "basic_all_filters": "Добавить все, что осталось"
+  "basic_all_filters": "Добавить все, что осталось",
+  "Only for desktop": "Только для рабочего стола"
 }

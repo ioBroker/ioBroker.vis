@@ -731,5 +731,6 @@
   "basic_filter_type_horizontal_buttons": "水平按钮",
   "basic_filter_type_vertical_buttons": "垂直按钮",
   "basic_no_filter": "没有过滤器",
-  "basic_all_filters": "添加所有剩余的"
+  "basic_all_filters": "添加所有剩余的",
+  "Only for desktop": "仅适用于桌面"
 }

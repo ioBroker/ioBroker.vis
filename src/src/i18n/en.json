@@ -731,5 +731,6 @@
   "basic_filter_type_horizontal_buttons": "Horizontal buttons",
   "basic_filter_type_vertical_buttons": "Vertical buttons",
   "basic_no_filter": "No filter",
-  "basic_all_filters": "Add all left"
+  "basic_all_filters": "Add all left",
+  "Only for desktop": "Only for desktop"
 }

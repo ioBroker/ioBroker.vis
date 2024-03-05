@@ -731,5 +731,6 @@
   "basic_filter_type_horizontal_buttons": "Horizontale Tasten",
   "basic_filter_type_vertical_buttons": "Vertikale Tasten",
   "basic_no_filter": "Kein Filter",
-  "basic_all_filters": "Alle verbleibenden"
+  "basic_all_filters": "Alle verbleibenden",
+  "Only for desktop": "Nur für Desktop"
 }
