@@ -730,5 +730,6 @@
   "basic_filter_type_dropdown": "Menu a discesa",
   "basic_filter_type_horizontal_buttons": "Pulsanti orizzontali",
   "basic_filter_type_vertical_buttons": "Pulsanti verticali",
-  "basic_no_filter": "Senza Filtro"
+  "basic_no_filter": "Senza Filtro",
+  "basic_all_filters": "Aggiungi tutto quello che resta"
 }

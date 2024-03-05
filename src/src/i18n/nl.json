@@ -730,5 +730,6 @@
   "basic_filter_type_dropdown": "Drop-down menu",
   "basic_filter_type_horizontal_buttons": "Horizontale knoppen",
   "basic_filter_type_vertical_buttons": "Verticale knoppen",
-  "basic_no_filter": "Geen filter"
+  "basic_no_filter": "Geen filter",
+  "basic_all_filters": "Voeg alles links toe"
 }

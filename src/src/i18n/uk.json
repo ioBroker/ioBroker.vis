@@ -730,5 +730,6 @@
   "basic_filter_type_dropdown": "Випадаюче меню",
   "basic_filter_type_horizontal_buttons": "Горизонтальні кнопки",
   "basic_filter_type_vertical_buttons": "Вертикальні кнопки",
-  "basic_no_filter": "Без фільтра"
+  "basic_no_filter": "Без фільтра",
+  "basic_all_filters": "Додайте всі ліві"
 }

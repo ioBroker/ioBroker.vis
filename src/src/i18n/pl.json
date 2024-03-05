@@ -730,5 +730,6 @@
   "basic_filter_type_dropdown": "Menu rozwijane",
   "basic_filter_type_horizontal_buttons": "Przyciski poziome",
   "basic_filter_type_vertical_buttons": "Pionowe przyciski",
-  "basic_no_filter": "Bez filtra"
+  "basic_no_filter": "Bez filtra",
+  "basic_all_filters": "Dodaj wszystko, co zostało"
 }

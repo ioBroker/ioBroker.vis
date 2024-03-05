@@ -145,7 +145,7 @@ class FiltersEditorDialog extends Component<FiltersEditorDialogProps, FiltersEdi
         if (!this.state.anchorEl) {
             return null;
         }
-        const filters = this.state.filters.filter(filter => !this.state.items.find(item => item.filter === filter.value));
+        const filters = this.state.filters.filter(filter => !this.state.items.find(item => item.value === filter));
 
         return <Menu
             anchorEl={this.state.anchorEl}

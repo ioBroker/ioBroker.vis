@@ -132,11 +132,11 @@ class VisView extends React.Component {
                     filterValues = this.widgetsRefs[wid]?.onCommand('collectFilters');
                 } else {
                     filterValues = widgets[wid]?.data?.filterkey;
+                }
+                if (filterValues) {
                     if (filterValues && typeof filterValues === 'string') {
                         filterValues = filterValues.split(',').map(f => f.trim()).filter(f => f);
                     }
-                }
-                if (filterValues) {
                     filterValues.forEach(f => !filterList.includes(f) && filterList.push(f));
                 }
             });
@@ -186,6 +186,8 @@ class VisView extends React.Component {
             }
         } else if (command === 'getRef') {
             return widgetsRefs[props.id];
+        } else if (command === 'getViewClass') {
+            return this;
         }
         return null;
     };

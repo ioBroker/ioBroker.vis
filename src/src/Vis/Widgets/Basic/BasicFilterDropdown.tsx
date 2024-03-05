@@ -81,7 +81,7 @@ const ItemsEditor = (props: ItemsEditorProps) => {
             context={props.context}
             items={items || []}
             multiple={props.data.multiple}
-            onClose={newItems => {
+            onClose={(newItems: Item[]) => {
                 if (newItems) {
                     const data = JSON.parse(JSON.stringify(props.data));
                     data.items = JSON.stringify(newItems);
@@ -238,8 +238,8 @@ class BasicFilterDropdown extends VisRxWidget<RxData> {
                 const filter: string[] = [];
                 items.forEach((item: Item) => item.default && filter.push(item.value));
                 setTimeout(() => {
-                    const ref = this.props.askView('getRef', { id: this.props.view });
-                    ref?.onCommand('changeFilter', { filter });
+                    const view = this.props.askView('getViewClass', {});
+                    view.onCommand('changeFilter', { filter });
                 }, 0);
             }
         } else {
@@ -279,8 +279,8 @@ class BasicFilterDropdown extends VisRxWidget<RxData> {
                     if (filter.includes('')) {
                         filter = [];
                     }
-                    const ref = this.props.askView('getRef', { id: this.props.view });
-                    ref?.onCommand('changeFilter', { filter });
+                    const view = this.props.askView('getViewClass', {});
+                    view.onCommand('changeFilter', { filter });
                 }}
                 multiple={!!this.state.rxData.multiple}
                 autoFocus={!!this.state.rxData.autoFocus}
@@ -322,8 +322,8 @@ class BasicFilterDropdown extends VisRxWidget<RxData> {
         >
             {this.state.rxData.noAllOption ? null : <Button
                 onClick={() => {
-                    const ref = this.props.askView('getRef', { id: this.props.view });
-                    ref?.onCommand('changeFilter', { filter: [] });
+                    const view = this.props.askView('getViewClass', {});
+                    view.onCommand('changeFilter', { filter: [] });
                 }}
             >
                 <em>{this.state.rxData.noFilterText || I18n.t('basic_no_filter')}</em>
@@ -347,8 +347,8 @@ class BasicFilterDropdown extends VisRxWidget<RxData> {
                         } else {
                             filter = [option.value];
                         }
-                        const ref = this.props.askView('getRef', { id: this.props.view });
-                        ref?.onCommand('changeFilter', { filter });
+                        const view = this.props.askView('getViewClass', {});
+                        view.onCommand('changeFilter', { filter });
                     }}
                     sx={theme => ({
                         backgroundColor: viewsActiveFilter.includes(option.value) ? theme.palette.primary.main : undefined,
@@ -402,8 +402,8 @@ class BasicFilterDropdown extends VisRxWidget<RxData> {
                 const filter: string[] = [];
                 items.forEach((item: Item) => item.default && filter.push(item.value));
                 setTimeout(() => {
-                    const ref = this.props.askView('getRef', { id: this.props.view });
-                    ref?.onCommand('changeFilter', { filter });
+                    const view = this.props.askView('getViewClass', {});
+                    view.onCommand('changeFilter', { filter });
                 }, 0);
             }
         }
