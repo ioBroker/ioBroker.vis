@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.39",
+    "version": "2.9.40",
     "news": {
+      "2.9.40": {
+        "en": "Migrated the filter widget to react\nMigrated the basic link widget to react",
+        "de": "Das Filter-Widget migriert\nDas grundlegende Link-Widget migriert",
+        "ru": "Мигрировал виджет фильтра, чтобы реагировать\nМигрировал основной виджет ссылки, чтобы реагировать",
+        "pt": "Migrado o widget do filtro para reagir\nMigrado o widget de link básico para reagir",
+        "nl": "Het filterwidget migreren om te reageren\nDe basisverbindingswidget migreren om te reageren",
+        "fr": "Migré le widget filtre pour réagir\nMigré le widget de lien de base pour réagir",
+        "it": "Migrato il widget del filtro per reagire\nMigrato il widget di collegamento di base per reagire",
+        "es": "Migramos el widget del filtro para reaccionar\nMigramos el widget de enlace básico para reaccionar",
+        "pl": "Migrował widżet filtra do reakcji\nMigrował podstawowy widget link do reakcji",
+        "uk": "Віджет фільтра для реагації\nМіграція базового посилання віджету для реагації",
+        "zh-cn": "移动过滤部件以反应\n移动基本链接部件以反应"
+      },
       "2.9.39": {
         "en": "allow to use `widgetOid` in bindings\nfixed various problems with Date Picker widget\nmade default option of Date Picker human readable and added option for full parseable date\nAdded the possibility to add suffix by navigation widgets\nImproved the license manager",
         "de": "`widget verwenden Oid` in Bindungen\nverschiedene Probleme mit Date Picker Widget behoben\nstandardoption von Date Picker human lesbar und hinzugefügt Option für volles parseable Datum\nHinzufügen der Möglichkeit, Suffix durch Navigation Widgets\nVerbessert den Lizenzmanager",
@@ -80,19 +93,6 @@
         "pl": "stałe wydanie, że ostatni obraz nie jest wyświetlany w widget image8\ndodana możliwość zdefiniowania tła i koloru tytułu dla okna dialogowego jqui\numożliwia kliknięcie przez obraz sygnału, jeśli przed widget",
         "uk": "виправлено проблему, що останнє зображення ніколи не відображається в image8 віджет\nдодано можливість визначення фону та кольору заголовка для діалогового вікна\nви можете натиснути зображення сигналу, якщо перед віджетом",
         "zh-cn": "最后一个图像从未在图像8部件中显示的固定问题\n添加定义 jqui 对话框的背景和标题颜色的可能性\n如果在部件前面可以单击信号图像"
-      },
-      "2.9.32": {
-        "en": "implemented buttons to show or hide all views in views manager\nfixed issue with signals on RxWidgets\nallow to disable Sentry only for this instance",
-        "de": "implementierte tasten, um alle ansichten in views manager anzeigen oder verstecken\nfestes Problem mit Signalen auf RxWidgets\ndie Möglichkeit zu deaktivieren Sentry nur für diesen Fall",
-        "ru": "реализованные кнопки, чтобы показать или скрыть все взгляды в менеджере просмотров\nфиксированная проблема с сигналами на RxWidgets\nпозволяют отключить Только для этого случая",
-        "pt": "botões implementados para mostrar ou ocultar todas as visualizações no gerenciador de visualizações\nproblema fixo com sinais em RxWidgets\npermitir desativar Enviado apenas para esta instância",
-        "nl": "geïmplementeerde knoppen om alle weergaven in weergavebeheer te tonen of te verbergen\nvast probleem met signalen op RxWidgets\ntoestaan om uit te schakelen Sentry alleen voor dit voorbeeld",
-        "fr": "boutons implémentés pour afficher ou masquer toutes les vues dans le gestionnaire de vues\nproblème fixe avec des signaux sur RxWidgets\npermettre de désactiver Sentry seulement pour cette instance",
-        "it": "pulsanti implementati per mostrare o nascondere tutte le viste in view manager\nproblema fisso con segnali su RxWidgets\nconsentire di disabilitare Sentry solo per questo caso",
-        "es": "botones implementados para mostrar o ocultar todas las vistas en el administrador de vistas\nemisión fija con señales en RxWidgets\npermitir desactivar Sentry sólo por este caso",
-        "pl": "zaimplementowane przyciski wyświetlają lub ukrywają wszystkie widoki w menedżerze widoków\nstały problem z sygnałami na RxWidgets\numożliwić wyłączenie Czujnik tylko w tym przypadku",
-        "uk": "реалізовані кнопки, щоб показати або приховати всі перегляди менеджера\nфіксована проблема з сигналами на RxWidgets\nдозволяє відключити Стирання тільки для цього екземпляра",
-        "zh-cn": "执行按钮以显示或隐藏视图管理器中的所有视图\nrxWidgets 上的信号的固定发行\n允许禁用 仅此而已的哨兵"
       }
     },
     "title": "Visualisation Next Generation",

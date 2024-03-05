@@ -264,7 +264,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.9.40 (2024-03-05)
 * (bluefox) Migrated the filter widget to react
 * (bluefox) Migrated the basic link widget to react
 
