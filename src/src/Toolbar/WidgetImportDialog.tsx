@@ -21,9 +21,9 @@ import CustomAceEditor from '../Components/CustomAceEditor';
 interface WidgetImportDialogProps {
     changeProject: (project: Project) => void;
     onClose:() => void;
-    themeType: string;
+    themeType: 'dark' | 'light';
     selectedView: string;
-    selectedGroup: GroupWidgetId;
+    selectedGroup?: GroupWidgetId;
 }
 
 const WidgetImportDialog = (props: WidgetImportDialogProps) => {
@@ -136,4 +136,5 @@ const WidgetImportDialog = (props: WidgetImportDialogProps) => {
         </DialogActions>
     </Dialog>;
 };
+
 export default WidgetImportDialog;

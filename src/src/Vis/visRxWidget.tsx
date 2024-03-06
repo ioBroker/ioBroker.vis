@@ -26,8 +26,6 @@ import { deepClone, calculateOverflow } from '@/Utils/utils';
 // eslint-disable-next-line import/no-cycle
 import VisBaseWidget, { VisBaseWidgetProps } from './visBaseWidget';
 import { addClass, getUsedObjectIDsInWidget } from './visUtils';
-import {store} from "@/Store";
-import helpers from "@/Components/WizardHelpers";
 
 const POSSIBLE_MUI_STYLES = [
     'background-color',

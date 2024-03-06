@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+import React from 'react';
 import { useState } from 'react';
 import { NestedMenuItem, IconMenuItem } from 'mui-nested-menu/index';
 
@@ -6,8 +6,19 @@ import { Menu } from '@mui/material';
 
 import { I18n } from '@iobroker/adapter-react-v5';
 
-const contextMenuItems = (items, open, onClose) =>
-    items.map((item, key) => {
+interface MenuItem {
+    label: string;
+    subLabel?: string;
+    hide?: boolean;
+    items?: MenuItem[];
+    leftIcon?: React.ReactNode;
+    disabled?: boolean;
+    onClick?: () => void;
+    style?: React.CSSProperties;
+}
+
+const contextMenuItems = (items: MenuItem[], open: boolean, onClose: () => void) =>
+    items.map((item, key: number) => {
         if (!item || item.hide) {
             return null;
         }
@@ -17,6 +28,7 @@ const contextMenuItems = (items, open, onClose) =>
                 key={key}
                 leftIcon={item.leftIcon}
                 disabled={item.disabled}
+                // @ts-expect-error we can provide an Element here too and it works
                 label={<span style={{ width: 40 }}>{I18n.t(item.label)}</span>}
                 parentMenuOpen={open}
                 onContextMenu={e => {
@@ -31,10 +43,11 @@ const contextMenuItems = (items, open, onClose) =>
         return <IconMenuItem
             key={key}
             onClick={() => {
-                item.onClick();
+                item.onClick && item.onClick();
                 onClose();
             }}
             disabled={item.disabled}
+            // @ts-expect-error we can provide an Element here too and it works
             label={[
                 <span key="main" style={{ display: 'flex', alignItems: 'center', ...item.style }}>
                     <span style={{ width: 40 }}>{item.leftIcon}</span>
@@ -53,19 +66,25 @@ const contextMenuItems = (items, open, onClose) =>
                     {item.subLabel}
                 </span> : null,
             ]}
-            onContextMenu={e => {
+            onContextMenu={(e: React.MouseEvent<HTMLDivElement>) => {
                 e.stopPropagation();
                 e.preventDefault();
-                item.onClick();
+                item.onClick && item.onClick();
                 onClose();
             }}
         />;
     });
 
-const IOContextMenu = props => {
-    const [menuPosition, setMenuPosition] = useState(null);
+interface IOContextMenuProps {
+    children: React.ReactNode;
+    disabled: boolean;
+    menuItemsData: (position: { top: number; left: number }) => any;
+}
 
-    const handleRightClick = async event => {
+const IOContextMenu = (props: IOContextMenuProps) => {
+    const [menuPosition, setMenuPosition] = useState<null | { top: number; left: number }>(null);
+
+    const handleRightClick: React.MouseEventHandler<HTMLDivElement> = async (event: React.MouseEvent<HTMLDivElement>)  => {
         if (props.disabled || event.ctrlKey || event.shiftKey) {
             return;
         }
@@ -84,21 +103,15 @@ const IOContextMenu = props => {
 
     return <div onContextMenu={handleRightClick} style={{ height: '100%', width: '100%' }}>
         {props.children}
-        <Menu
-            open={!!menuPosition}
+        {menuPosition ? <Menu
+            open={!0}
             onClose={() => setMenuPosition(null)}
             anchorReference="anchorPosition"
             anchorPosition={menuPosition}
         >
             {contextMenuItems(props.menuItemsData(menuPosition), !!menuPosition, () => setMenuPosition(null))}
-        </Menu>
+        </Menu> : null}
     </div>;
-};
-
-IOContextMenu.propTypes = {
-    children: PropTypes.any,
-    disabled: PropTypes.bool,
-    menuItemsData: PropTypes.func,
 };
 
 export default IOContextMenu;

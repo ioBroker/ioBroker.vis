@@ -62,6 +62,8 @@ interface SingleWidget  {
     grouped?: boolean;
     /** Permissions for each user for the widget */
     permissions?: UserPermissions;
+    /** This widget was taken from marketplace */
+    marketplace?: any;
 }
 
 interface GroupWidget extends SingleWidget {

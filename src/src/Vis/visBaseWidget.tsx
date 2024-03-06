@@ -56,7 +56,7 @@ export interface Context {
     showWidgetNames: boolean;
     socket: Connection;
     systemConfig: Record<string, any>;
-    themeType: string;
+    themeType: 'dark' | 'light';
     user: string;
     userGroups: Record<string, any>;
     views: Record<string, View>;

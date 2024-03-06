@@ -154,7 +154,7 @@ interface VisOrderMenuProps {
     anchorEl: any;
     order: string[];
     views: Record<string, any>;
-    themeType: string;
+    themeType: 'dark' | 'light';
     onClose: (order?: string[]) => void;
     classes: Record<string, string>;
 }

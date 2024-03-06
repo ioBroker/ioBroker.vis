@@ -4,7 +4,7 @@ import CustomAceEditor from '../Components/CustomAceEditor';
 
 interface ScriptsProps {
     changeProject: (project: any) => void;
-    themeType: string;
+    themeType: 'dark' | 'light';
     editMode: boolean;
 }
 

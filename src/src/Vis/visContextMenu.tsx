@@ -1,5 +1,4 @@
-import PropTypes from 'prop-types';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { toPng } from 'html-to-image';
 
 import {
@@ -20,14 +19,43 @@ import {
 
 import { I18n } from '@iobroker/adapter-react-v5';
 
-import { store } from '../Store';
+import { store } from '@/Store';
+import {
+    AnyWidgetId,
+    Project,
+    GroupWidgetId,
+    SingleWidgetId,
+    View, SingleWidget,
+    GroupWidget,
+} from '@/types';
 
 import IOContextMenu from '../Components/IOContextMenu';
 import WidgetExportDialog from '../Toolbar/WidgetExportDialog';
 import WidgetImportDialog from '../Toolbar/WidgetImportDialog';
-import { getWidgetTypes } from './visWidgetsCatalog';
+import {getWidgetTypes, WidgetType} from './visWidgetsCatalog';
 
-const VisContextMenu = props => {
+interface VisContextMenuProps {
+    changeProject: (project: Project) => void;
+    children: any;
+    copyWidgets: () => void;
+    cutWidgets: () => void;
+    deleteWidgets: () => void;
+    disabled: boolean;
+    groupWidgets: () => void;
+    lockWidgets: (action: 'lock' | 'unlock') => void;
+    orderWidgets: (action: 'front' | 'back') => void;
+    pasteWidgets: () => void;
+    selectedView: string;
+    selectedWidgets: AnyWidgetId[];
+    setSelectedGroup: (group: GroupWidgetId) => void;
+    setSelectedWidgets: (widgets: AnyWidgetId[]) => void;
+    ungroupWidgets: () => void;
+    widgetsClipboard: Record<string, any>;
+    themeType: 'dark' | 'light';
+    setMarketplaceDialog: (data: { addPage: boolean; widget: { widget: (SingleWidget | GroupWidget)[]; image: string } }) => void;
+}
+
+const VisContextMenu = (props: VisContextMenuProps) => {
     const [exportDialog, setExportDialog] = useState(false);
     const [importDialog, setImportDialog] = useState(false);
 
@@ -35,17 +63,17 @@ const VisContextMenu = props => {
         return null;
     }
 
-    const menuItemsData = menuPosition => {
-        const view = store.getState().visProject[props.selectedView];
-        const coordinatesWidgets = menuPosition ? Object.keys(view.widgets)
+    const menuItemsData = (menuPosition: { top: number; left: number }) => {
+        const view: View = store.getState().visProject[props.selectedView];
+        const coordinatesWidgets: AnyWidgetId[] = menuPosition ? Object.keys(view.widgets)
             .filter(widget => {
                 const rect = window.document.getElementById(widget)?.getBoundingClientRect();
-                if (view.widgets[widget].grouped) {
+                if (view.widgets[widget as AnyWidgetId].grouped) {
                     return false;
                 }
 
                 return rect && menuPosition.left >= rect.left && menuPosition.left <= rect.right && menuPosition.top >= rect.top && menuPosition.top <= rect.bottom;
-            }) : [];
+            }) as AnyWidgetId[] : [];
 
         // find name and widget type
         let widgetType = null;
@@ -57,8 +85,8 @@ const VisContextMenu = props => {
                 showSelect = true;
             }
             widgetName = coordinatesWidgets[0];
-            if (view.widgets[coordinatesWidgets[0]].data && view.widgets[coordinatesWidgets[0]].data.name) {
-                widgetName = view.widgets[coordinatesWidgets[0]].data.name;
+            if (view.widgets[coordinatesWidgets[0]].data?.name) {
+                widgetName = view.widgets[coordinatesWidgets[0]].data.name as string;
                 widgetType = coordinatesWidgets[0];
             } else {
                 const tpl = view.widgets[coordinatesWidgets[0]].tpl;
@@ -78,6 +106,8 @@ const VisContextMenu = props => {
                 //     u.version > view.widgets[coordinatesWidgets[0]].marketplace.version);
             }
         }
+
+        const selectedWidget: SingleWidget | GroupWidget = store.getState().visProject[props.selectedView].widgets[props.selectedWidgets[0]];
 
         return [
             {
@@ -112,14 +142,14 @@ const VisContextMenu = props => {
             {
                 leftIcon: <AiOutlineUngroup />,
                 label: 'Ungroup',
-                subLabel: store.getState().visProject[props.selectedView].widgets[props.selectedWidgets[0]]?.marketplace ?
+                subLabel: selectedWidget?.marketplace ?
                     I18n.t('convert from widgeteria widget') :
                     null,
                 onClick: () => props.ungroupWidgets(),
                 hide: props.selectedWidgets.length !== 1 ||
-                    store.getState().visProject[props.selectedView].widgets[props.selectedWidgets[0]].tpl !== '_tplGroup',
+                    selectedWidget.tpl !== '_tplGroup',
             },
-            window.VisMarketplace ? {
+            (window as any).VisMarketplace ? {
                 leftIcon: <img
                     src="./img/marketplace.png"
                     alt="widgeteria"
@@ -133,11 +163,11 @@ const VisContextMenu = props => {
                         w._id = wid;
                         w.isRoot = true;
                         delete w.marketplace;
-                        w.widgetSet = window.visWidgetTypes.find(type => type.name === w.tpl).set;
+                        w.widgetSet = (window as any).visWidgetTypes.find((type: WidgetType) => type.name === w.tpl).set;
                         return w;
                     });
 
-                    const groupWidgets = [];
+                    const groupWidgets: SingleWidgetId[] = [];
 
                     let gIdx = 1;
                     let wIdx = 1;
@@ -150,20 +180,20 @@ const VisContextMenu = props => {
                             gIdx++;
 
                             if (widget.data && widget.data.members) {
-                                const members = [];
-                                widget.data.members.forEach(member => {
+                                const members: SingleWidgetId[] = [];
+                                widget.data.members.forEach((member: SingleWidgetId) => {
                                     if (groupWidgets.includes(member)) {
                                         return;
                                     }
                                     const memberWidget = JSON.parse(JSON.stringify(store.getState().visProject[props.selectedView].widgets[member]));
                                     memberWidget._id = `i${wIdx.toString().padStart(6, '0')}`;
-                                    memberWidget.widgetSet = window.visWidgetTypes.find(type => type.name === memberWidget.tpl).set;
+                                    memberWidget.widgetSet = (window as any).visWidgetTypes.find((type: WidgetType) => type.name === memberWidget.tpl).set;
                                     wIdx++;
                                     members.push(memberWidget._id);
                                     memberWidget.groupid = newId;
                                     memberWidget.grouped = true;
                                     delete memberWidget.isRoot;
-                                    delete w.marketplace;
+                                    delete memberWidget.marketplace;
                                     widgets.push(memberWidget);
                                     groupWidgets.push(member);
                                 });
@@ -183,32 +213,42 @@ const VisContextMenu = props => {
                         }
                     }
 
-                    Array.from(document.getElementsByClassName('vis-editmode-resizer')).forEach(el => el.style.display = 'none');
-                    const cachePosition = document.getElementById(props.selectedWidgets[0]).style.position;
-                    document.getElementById(props.selectedWidgets[0]).style.position = 'initial';
+                    const resizers = document.getElementsByClassName('vis-editmode-resizer');
+                    for (let i = 0; i < resizers.length; i++) {
+                        const el = resizers[i] as HTMLElement;
+                        el.style.display = 'none';
+                    }
+                    const el = document.getElementById(props.selectedWidgets[0]);
+                    if (el) {
+                        const cachePosition = el.style.position;
+                        el.style.position = 'initial';
+                        const dataUrl = await toPng(el);
+                        el.style.position = cachePosition;
+                        // create image of widget
 
-                    // create image of widget
-                    const dataUrl = await toPng(document.getElementById(props.selectedWidgets[0]));
-                    document.getElementById(props.selectedWidgets[0]).style.position = cachePosition;
-                    Array.from(document.getElementsByClassName('vis-editmode-resizer')).forEach(el => el.style.display = 'block');
-                    // console.log(document.getElementById(props.selectedWidgets[0]));
+                        for (let i = 0; i < resizers.length; i++) {
+                            const el_ = resizers[i] as HTMLElement;
+                            el_.style.display = 'block';
+                        }
+                        // console.log(document.getElementById(props.selectedWidgets[0]));
 
-                    props.setMarketplaceDialog({
-                        addPage: true,
-                        widget: { widget: widgets, image: dataUrl },
-                    });
+                        props.setMarketplaceDialog({
+                            addPage: true,
+                            widget: { widget: widgets, image: dataUrl },
+                        });
+                    }
                 },
                 hide: props.selectedWidgets.length !== 1 ||
-                    store.getState().visProject[props.selectedView].widgets[props.selectedWidgets[0]].tpl !== '_tplGroup' ||
-                    store.getState().visProject[props.selectedView].widgets[props.selectedWidgets[0]].marketplace,
+                    selectedWidget.tpl !== '_tplGroup' ||
+                    selectedWidget.marketplace,
             } : null,
             {
             // leftIcon: <AiOutlineUngroup />,
                 label: 'Edit group',
-                onClick: () => props.setSelectedGroup(props.selectedWidgets[0]),
+                onClick: () => props.setSelectedGroup(props.selectedWidgets[0] as GroupWidgetId),
                 hide: props.selectedWidgets.length !== 1 ||
-                    store.getState().visProject[props.selectedView].widgets[props.selectedWidgets[0]].tpl !== '_tplGroup' ||
-                    store.getState().visProject[props.selectedView].widgets[props.selectedWidgets[0]].marketplace,
+                    selectedWidget.tpl !== '_tplGroup' ||
+                    selectedWidget.marketplace,
             },
             {
                 leftIcon: <BiCopy />,
@@ -285,38 +325,17 @@ const VisContextMenu = props => {
             {props.children}
         </IOContextMenu>
         {importDialog ? <WidgetImportDialog
-            open={importDialog}
             onClose={() => setImportDialog(false)}
             changeProject={props.changeProject}
             selectedView={props.selectedView}
-            project={store.getState().visProject}
+            themeType={props.themeType}
         /> : null}
         {exportDialog ? <WidgetExportDialog
-            open={exportDialog}
             onClose={() => setExportDialog(false)}
             widgets={store.getState().visProject[props.selectedView].widgets}
             selectedWidgets={props.selectedWidgets}
         /> : null}
     </>;
-};
-
-VisContextMenu.propTypes = {
-    changeProject: PropTypes.func,
-    children: PropTypes.any,
-    copyWidgets: PropTypes.func,
-    cutWidgets: PropTypes.func,
-    deleteWidgets: PropTypes.func,
-    disabled: PropTypes.bool,
-    groupWidgets: PropTypes.func,
-    lockWidgets: PropTypes.func,
-    orderWidgets: PropTypes.func,
-    pasteWidgets: PropTypes.func,
-    selectedView: PropTypes.string,
-    selectedWidgets: PropTypes.array,
-    setSelectedGroup: PropTypes.func,
-    setSelectedWidgets: PropTypes.func,
-    ungroupWidgets: PropTypes.func,
-    widgetsClipboard: PropTypes.object,
 };
 
 export default VisContextMenu;

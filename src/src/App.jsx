@@ -1589,6 +1589,7 @@ class App extends Runtime {
                             ungroupWidgets={this.ungroupWidgets}
                             setSelectedGroup={this.setSelectedGroup}
                             setMarketplaceDialog={this.setMarketplaceDialog}
+                            themeType={this.state.themeType}
                         >
                             {visEngine}
                         </VisContextMenu>

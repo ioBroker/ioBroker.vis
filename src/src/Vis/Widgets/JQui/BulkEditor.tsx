@@ -91,7 +91,7 @@ interface BulkEditorData {
 interface BulkEditorProps {
     socket: Connection;
     data: BulkEditorData;
-    themeType: string;
+    themeType: 'dark' | 'light';
     adapterName: string;
     instance: number;
     projectName: string;
