@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2022-2023 Denis Haev https://github.com/GermanBluefox,
+ *  Copyright (c) 2022-2024 Denis Haev https://github.com/GermanBluefox,
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/

@@ -1,8 +1,19 @@
+import React from 'react';
+import { type Connection } from '@iobroker/adapter-react-v5';
+import { GroupWidgetId, Project, SingleWidgetId } from '@/types';
+import type VisRxWidget from '@/Vis/visRxWidget';
+import {
+    type WidgetAttributesGroupInfo,
+    type CustomPaletteProperties,
+    type WidgetAttributeInfo,
+    type WidgetAttributeType,
+} from '@/Vis/visRxWidget';
+
 import { getRemoteWidgets } from './visUtils';
 // eslint-disable-next-line import/no-cycle
 import WIDGETS from './Widgets';
 
-const DEFAULT_SET_COLORS = {
+const DEFAULT_SET_COLORS: Record<string, string> = {
     basic: '#f1f1f1',
     bars: '#f6594e',
     dwd: '#cb8928',
@@ -17,14 +28,82 @@ const DEFAULT_SET_COLORS = {
     'spotify-premium': '#00ae03',
 };
 
+interface WidgetAttributesGroupInfoStored {
+    name?: string;
+    singleName?: string;
+    index?: number;
+    fields?: WidgetAttributeInfo[];
+    indexFrom?: number | string;
+    indexTo?: number | string;
+    iterable?: {
+        group: string;
+        isFirst: boolean;
+        isLast: boolean;
+        indexTo: number | string | undefined;
+        indexFrom: number | string | undefined;
+    };
+}
+
+interface WidgetAttributeInfoStored extends WidgetAttributeInfo {
+    onChangeFunc?: string;
+    filter?: string;
+    filterFile?: string;
+    filterName?: string;
+    filterAttrs?: string;
+    removeName?: string;
+    singleName?: string;
+    set?: string;
+    index?: number;
+    indexFrom?: string | number;
+    indexTo?: string | number;
+    iterable?: {
+        group: string;
+        isFirst: boolean;
+        isLast: boolean;
+        indexTo: number | string | undefined;
+        indexFrom: number | string | undefined;
+    };
+}
+
+export interface WidgetType {
+    name: string;
+    title?: string;
+    label?: string;
+    preview?: string;
+    help?: string;
+    set?: string;
+    imageHTML?: string;
+    init?: string;
+    color?: string;
+    resizable?: boolean;
+    resizeLocked?: boolean;
+    draggable?: boolean;
+    params: string | WidgetAttributesGroupInfo[];
+
+    setLabel?: string;
+    setColor?: string;
+    setIcon?: string;
+
+    order?: number;
+    hidden?: boolean;
+    style?: React.CSSProperties;
+    customPalette?: (context: CustomPaletteProperties) => React.JSX.Element;
+
+    adapter?: string;
+    version?: string;
+    rx?: boolean;
+    developerMode?: boolean;
+    i18nPrefix?: string;
+}
+
 class VisWidgetsCatalog {
-    static rxWidgets = null;
+    static rxWidgets: Record<string, VisRxWidget<any>> | null = null;
 
-    static allWidgetsList = null;
+    static allWidgetsList: string[] | null = null;
 
-    static getUsedWidgetSets(project) {
+    static getUsedWidgetSets(project: Project): string[] | false {
         let anyWithoutSet = false;
-        const widgetSets = [];
+        const widgetSets: string[] = [];
 
         // load in runtime only used widget sets
         const views = Object.keys(project);
@@ -33,7 +112,7 @@ class VisWidgetsCatalog {
                 continue;
             }
             const widgets = project[views[v]].widgets;
-            const keys = Object.keys(widgets);
+            const keys: (GroupWidgetId | SingleWidgetId)[] = Object.keys(widgets) as (GroupWidgetId | SingleWidgetId)[];
             for (let w = 0; w < keys.length; w++) {
                 const widgetSet = widgets[keys[w]].widgetSet;
                 if (!widgetSet || widgets[keys[w]].set || widgets[keys[w]].wSet) {
@@ -54,10 +133,10 @@ class VisWidgetsCatalog {
         return anyWithoutSet ? false : widgetSets;
     }
 
-    static setUsedWidgetSets(project) {
+    static setUsedWidgetSets(project: Project) {
         // provide for all widgets the widget set and set
         let views;
-        const widgetTypes = window.visWidgetTypes; // getWidgetTypes();
+        const widgetTypes = (window as any).visWidgetTypes as WidgetType[]; // getWidgetTypes();
         const viewKeys = Object.keys(project);
 
         for (let v = 0; v < viewKeys.length; v++) {
@@ -65,7 +144,7 @@ class VisWidgetsCatalog {
                 continue;
             }
             const widgets = project[viewKeys[v]].widgets;
-            const keys = Object.keys(widgets);
+            const keys: (GroupWidgetId | SingleWidgetId)[] = Object.keys(widgets) as (GroupWidgetId | SingleWidgetId)[];
             for (let w = 0; w < keys.length; w++) {
                 // remove deprecated attributes
                 if (widgets[keys[w]].set) {
@@ -97,11 +176,15 @@ class VisWidgetsCatalog {
         return views;
     }
 
-    static collectRxInformation(socket, project, changeProject) {
+    static collectRxInformation(
+        socket: Connection,
+        project: Project,
+        changeProject?: (newProject: Project) => void,
+    ): Promise<Record<string, VisRxWidget<any>>> {
         if (!VisWidgetsCatalog.rxWidgets) {
             VisWidgetsCatalog.rxWidgets = {};
             // collect all widget sets used in a project
-            let usedWidgetSets = null;
+            let usedWidgetSets: string[] | false | null = null;
             if (project) {
                 usedWidgetSets = VisWidgetsCatalog.getUsedWidgetSets(project);
             }
@@ -109,9 +192,10 @@ class VisWidgetsCatalog {
             return new Promise(resolve => {
                 setTimeout(() =>
                     getRemoteWidgets(socket, !changeProject && usedWidgetSets)
-                        .then(widgetSets => {
-                            const collectedWidgets = [...WIDGETS, ...widgetSets];
-                            collectedWidgets.forEach(Widget => {
+                        .then((widgetSets: VisRxWidget<any>[]) => {
+                            const collectedWidgets = [...WIDGETS, ...widgetSets] as VisRxWidget<any>[];
+
+                            collectedWidgets.forEach((Widget: VisRxWidget<any>) => {
                                 if (!Widget.getWidgetInfo) {
                                     console.error(`Invalid widget without getWidgetInfo: ${Widget.constructor.name}`);
                                 } else {
@@ -122,15 +206,23 @@ class VisWidgetsCatalog {
 
                                     if (!info.id) {
                                         console.error(`No id in info for "${Widget.constructor.name}"`);
-                                    } else {
+                                    } else if (VisWidgetsCatalog.rxWidgets) {
                                         VisWidgetsCatalog.rxWidgets[info.id] = Widget;
                                     }
                                 }
                             });
 
                             // init all widgets
-                            // eslint-disable-next-line no-use-before-define
-                            getWidgetTypes(!changeProject && usedWidgetSets);
+                            if (changeProject) {
+                                // eslint-disable-next-line no-use-before-define
+                                getWidgetTypes();
+                            } else if (usedWidgetSets) {
+                                // eslint-disable-next-line no-use-before-define
+                                getWidgetTypes(usedWidgetSets);
+                            } else {
+                                // eslint-disable-next-line no-use-before-define
+                                getWidgetTypes();
+                            }
 
                             if (usedWidgetSets === false && changeProject) {
                                 // some widgets without set found
@@ -141,7 +233,7 @@ class VisWidgetsCatalog {
                                 }
                             }
 
-                            resolve(VisWidgetsCatalog.rxWidgets);
+                            resolve(VisWidgetsCatalog.rxWidgets as Record<string, VisRxWidget<any>>);
                         }), 0);
             });
         }
@@ -150,46 +242,54 @@ class VisWidgetsCatalog {
     }
 }
 
-export const getWidgetTypes = usedWidgetSets => {
-    if (!window.visWidgetTypes) {
-        window.visSets = {};
+export const getWidgetTypes: (_usedWidgetSets?: string[]) => WidgetType[] = (usedWidgetSets?: string[]) => {
+    if (!(window as any).visWidgetTypes) {
+        (window as any).visSets = {};
         VisWidgetsCatalog.allWidgetsList = [];
 
+        if (!VisWidgetsCatalog.rxWidgets) {
+            return [];
+        }
+
         // Old CanJS widgets
-        window.visWidgetTypes = Array.from(document.querySelectorAll('script[type="text/ejs"]'))
+        (window as any).visWidgetTypes = Array.from(document.querySelectorAll('script[type="text/ejs"]'))
             .map(script => {
-                const name = script.attributes.id.value;
+                const name: string | null = script.getAttribute('id');
+                if (!name || !VisWidgetsCatalog.rxWidgets) {
+                    return null;
+                }
                 // only if RX widget with the same name not found
                 let info;
-                if (VisWidgetsCatalog.rxWidgets[name] && VisWidgetsCatalog.rxWidgets[name].getWidgetInfo) {
+                // @ts-expect-error we must check getWidgetInfo
+                if (VisWidgetsCatalog.rxWidgets[name]?.getWidgetInfo) {
                     info = VisWidgetsCatalog.rxWidgets[name].getWidgetInfo();
                     if (info?.visAttrs && typeof info.visAttrs !== 'string') {
                         return null;
                     }
                 }
 
-                const widgetSet = script.attributes['data-vis-set'] ? script.attributes['data-vis-set'].value : 'basic';
+                const widgetSet = script.getAttribute('data-vis-set') || 'basic';
                 if (usedWidgetSets && !usedWidgetSets.includes(widgetSet)) {
                     console.log(`Ignored ${widgetSet}/${name} because not used in project`);
                     return null;
                 }
 
-                const color = script.attributes['data-vis-color']?.value;
-                window.visSets[widgetSet] = window.visSets[widgetSet] || {};
+                const color = script.getAttribute('data-vis-color');
+                (window as any).visSets[widgetSet] = (window as any).visSets[widgetSet] || {};
                 if (color) {
-                    window.visSets[widgetSet].color = color;
-                } else if (!window.visSets[widgetSet].color && DEFAULT_SET_COLORS[widgetSet]) {
-                    window.visSets[widgetSet].color = DEFAULT_SET_COLORS[widgetSet];
+                    (window as any).visSets[widgetSet].color = color;
+                } else if (!(window as any).visSets[widgetSet].color && DEFAULT_SET_COLORS[widgetSet]) {
+                    (window as any).visSets[widgetSet].color = DEFAULT_SET_COLORS[widgetSet];
                 }
-                const widgetObj = {
+                const widgetObj: WidgetType = {
                     name,
-                    title: info?.visName || script.attributes['data-vis-name']?.value,
-                    label: info?.visWidgetLabel ? info.visWidgetLabel : (info?.visWidgetLabel === '' ? '' : undefined), // new style with translation
-                    preview: info?.visPrev || script.attributes['data-vis-prev']?.value,
-                    help: script.attributes['data-vis-help']?.value,
+                    title: info?.visName || script.getAttribute('data-vis-name') || undefined,
+                    label: info?.visWidgetLabel || info?.visWidgetLabel === '' ? info.visWidgetLabel : undefined, // new style with translation
+                    preview: info?.visPrev || script.getAttribute('data-vis-prev') || undefined,
+                    help: script.getAttribute('data-vis-help') || undefined,
                     set: info?.visSet || widgetSet,
-                    imageHTML: script.attributes['data-vis-prev'] ? script.attributes['data-vis-prev'].value : '',
-                    init: script.attributes['data-vis-init']?.value,
+                    imageHTML: script.getAttribute('data-vis-prev') || '',
+                    init: script.getAttribute('data-vis-init') || undefined,
                     color: info?.visWidgetColor || undefined,
                     params: info?.visAttrs || Object.values(script.attributes)
                         .filter(attribute => attribute.name.startsWith('data-vis-attrs'))
@@ -197,21 +297,22 @@ export const getWidgetTypes = usedWidgetSets => {
                         .join(''),
                     setLabel: info?.visSetLabel || undefined,
                     setColor: info?.visSetColor || undefined,
-                    order: info?.visOrder === undefined || info?.visOrder === null ? 1000 : parseInt(info.visOrder, 10),
-                    hidden: script.attributes['data-vis-no-palette']?.value === 'true',
+                    order: info?.visOrder === undefined || info?.visOrder === null ? 1000 : (typeof info.visOrder === 'string' ? parseInt(info.visOrder, 10) : info.visOrder),
+                    hidden: script.getAttribute('data-vis-no-palette') === 'true',
                 };
 
-                VisWidgetsCatalog.allWidgetsList.push(widgetObj.name);
+                VisWidgetsCatalog.allWidgetsList?.push(widgetObj.name);
 
                 return widgetObj;
             }).filter(w => w);
 
         // React widgets
-        Object.values(VisWidgetsCatalog.rxWidgets).forEach(widget => {
+        const widgets = Object.values(VisWidgetsCatalog.rxWidgets) as VisRxWidget<any>[];
+        widgets.forEach(widget => {
             const widgetInfo = widget.getWidgetInfo();
             const i18nPrefix = widget.i18nPrefix || '';
 
-            const widgetObj = {
+            const widgetObj: WidgetType = {
                 name: widgetInfo.id,
                 preview: widgetInfo.visPrev,
                 title: widgetInfo.visName, // old style without translation
@@ -230,19 +331,19 @@ export const getWidgetTypes = usedWidgetSets => {
                 version: widget.version || undefined,
                 hidden: widget.visHidden,
                 order: widgetInfo.visOrder === undefined ? 1000 : widgetInfo.visOrder,
-                custom: widgetInfo.custom,
+                // custom: widgetInfo.custom, not used
                 customPalette: widgetInfo.customPalette,
                 rx: true,
                 developerMode: widget.url?.startsWith('http://'),
                 i18nPrefix,
             };
-            !VisWidgetsCatalog.allWidgetsList.includes(widgetObj.name) && VisWidgetsCatalog.allWidgetsList.push(widgetObj.name);
+            VisWidgetsCatalog.allWidgetsList && !VisWidgetsCatalog.allWidgetsList.includes(widgetObj.name) && VisWidgetsCatalog.allWidgetsList.push(widgetObj.name);
 
-            const index = window.visWidgetTypes.findIndex(item => item.name === widgetObj.name);
+            const index = (window as any).visWidgetTypes.findIndex((item: WidgetType) => item.name === widgetObj.name);
             if (index > -1) {
-                window.visWidgetTypes[index] = widgetObj; // replace old widget with RX widget
+                (window as any).visWidgetTypes[index] = widgetObj; // replace old widget with RX widget
             } else {
-                window.visWidgetTypes.push(widgetObj);
+                (window as any).visWidgetTypes.push(widgetObj);
             }
 
             if (i18nPrefix && typeof widgetInfo.visAttrs === 'object') {
@@ -274,12 +375,31 @@ export const getWidgetTypes = usedWidgetSets => {
         });
     }
 
-    return window.visWidgetTypes;
+    return (window as any).visWidgetTypes;
 };
 
-const deepClone = obj => {
-    const newObj = Array.isArray(obj) ? [] : {};
-    for (const key in obj) {
+const deepClone = (obj: any[] | Record<string, any>) => {
+    if (Array.isArray(obj)) {
+        const newObj: any[] = [];
+        for (const key in obj as any[]) {
+            if (obj[key] !== undefined) {
+                if (Array.isArray(obj[key]) || typeof obj[key] === 'object') {
+                    // If it is ReactJS object
+                    if (Object.prototype.hasOwnProperty.call(obj, '$$typeof')) {
+                        newObj[key] = obj[key];
+                    } else {
+                        newObj[key] = deepClone(obj[key]);
+                    }
+                } else {
+                    newObj[key] = obj[key];
+                }
+            }
+        }
+        return newObj;
+    }
+
+    const newObj: Record<string, any> = {};
+    for (const key in obj as Record<string, any>) {
         if (obj[key] !== undefined) {
             if (Array.isArray(obj[key]) || typeof obj[key] === 'object') {
                 // If it is ReactJS object
@@ -296,27 +416,41 @@ const deepClone = obj => {
     return newObj;
 };
 
-export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonFields, widgetSet, widgetData) => {
+interface CommonGroups {
+    common: number;
+    [key: string]: number;
+}
+
+export const parseAttributes = (
+    widgetParams: string | WidgetAttributesGroupInfo[],
+    widgetIndex?: number,
+    commonGroups?: CommonGroups,
+    commonFields?: Record<string, any>,
+    widgetSet?: string,
+    widgetData?: Record<string, any>,
+) => {
     if (typeof widgetParams === 'string') {
         let groupName = 'common';
-        let indexedGroups = {};
+        let indexedGroups: {[key: number]: WidgetAttributesGroupInfoStored} = {};
         let isIndexedGroup = false;
         commonGroups = commonGroups || { common: 1 };
         commonFields = commonFields || {};
-        const fields = [{
+        const fields: WidgetAttributesGroupInfoStored[] = [{
             name: 'common',
             singleName: 'common',
             fields: [],
         }];
-        let currentGroup = fields[0];
+        let currentGroup: WidgetAttributesGroupInfoStored | undefined = fields[0];
+        widgetIndex = widgetIndex || 0;
 
         widgetParams.split(';').forEach(fieldString => {
             if (!fieldString) {
                 return;
             }
+
             if (fieldString.split('/')[0].startsWith('group.')) {
                 groupName = fieldString.split('/')[0].split('.')[1];
-                if (widgetIndex > 0 && commonGroups && !commonGroups[groupName]) {
+                if (widgetIndex !== undefined && widgetIndex > 0 && commonGroups && !commonGroups[groupName]) {
                     return;
                 }
                 indexedGroups = {};
@@ -332,20 +466,34 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
                         );
                         currentGroup = fields[fields.length - 1];
                     }
-                    if (!commonGroups[groupName]) {
-                        commonGroups[groupName] = 0;
+                    if (commonGroups) {
+                        if (!commonGroups[groupName]) {
+                            commonGroups[groupName] = 0;
+                        }
+                        commonGroups[groupName]++;
                     }
-                    commonGroups[groupName]++;
                     isIndexedGroup = false;
                 } else {
                     isIndexedGroup = true;
                 }
             } else {
                 const match = fieldString.match(/([a-zA-Z0-9._-]+)(\([a-zA-Z.0-9-_]*\))?(\[.*])?(\/[-_,^§~\s:/.a-zA-Z0-9]+)?/);
+                if (!match) {
+                    console.warn(`Invalid attribute ${fieldString}`);
+                    return;
+                }
 
                 const repeats = match[2];
-                const [type, onChangeFunc] = match[4] ? match[4].substring(1).split('/') : [];
-                const field = {
+                let type: WidgetAttributeType;
+                let onChangeFunc: string | undefined;
+                if (match[4]) {
+                    const parts = match[4].substring(1).split('/');
+                    type = parts[0] as WidgetAttributeType;
+                    onChangeFunc = parts[1];
+                } else {
+                    type = 'text';
+                }
+                const field: WidgetAttributeInfoStored = {
                     name: match[1],
                     default: match[3] ? match[3].substring(1, match[3].length - 1) : undefined, // remove []
                     type,
@@ -357,9 +505,9 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
                         .replace(/§/g, ';')
                         .replace(/~/g, '/')
                         .replace(/\^/g, '"')
-                        .replace(/\^\^/g, '^');
+                        .replace(/\^\^/g, '^') as WidgetAttributeType;
                 }
-                if (field.default) {
+                if (typeof field.default === 'string') {
                     field.default = field.default
                         .replace(/§/g, ';')
                         .replace(/~/g, '/')
@@ -373,7 +521,7 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
                     delete field.onChangeFunc;
                 }
 
-                if (widgetIndex > 0 && !repeats && commonFields && !commonFields[`${groupName}.${field.name}`]) {
+                if (widgetIndex && widgetIndex > 0 && !repeats && commonFields && !commonFields[`${groupName}.${field.name}`]) {
                     return;
                 }
 
@@ -392,16 +540,18 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
                 }
 
                 if (field.type && (field.type.startsWith('id,'))) {
-                    [field.type, field.filter] = field.type.split(','); // options
+                    const options = field.type.split(',');
+                    field.type = options[0] as WidgetAttributeType;
+                    field.filter = options[1];
                 }
                 if (field.type && (field.type.startsWith('select,') || field.type.startsWith('nselect,') || field.type.startsWith('auto,'))) {
                     const options = field.type.split(',');
-                    [field.type] = options;
+                    field.type = options[0] as WidgetAttributeType;
                     field.options = options.slice(1);
                 }
                 if (field.type && (field.type.startsWith('slider,') || field.type.startsWith('number,'))) {
                     const options = field.type.split(',');
-                    field.type = options[0];
+                    field.type = options[0] as WidgetAttributeType;
                     field.min = parseInt(options[1]);
                     field.max = parseInt(options[2]);
                     field.step = parseInt(options[3]);
@@ -411,19 +561,19 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
                 }
                 if (field.type && field.type.startsWith('style,')) {
                     const options = field.type.split(',');
-                    field.type = options[0];
+                    field.type = options[0] as WidgetAttributeType;
                     field.filterFile = options[1];
                     field.filterName = options[2];
                     field.filterAttrs = options[3];
                     field.removeName = options[4];
-                    if (!field.step) {
+                    if (!field.step && field.max !== undefined && field.min !== undefined) {
                         field.step = (field.max - field.min / 100);
                     }
                 }
                 // remove comma from type
                 if (field.type?.startsWith('style,')) {
                     console.warn(`Attribute "${field.name}" of ${widgetSet} has wrong type: ${field.type}`);
-                    field.type = field.type.split(',')[0];
+                    field.type = field.type.split(',')[0] as WidgetAttributeType;
                 }
 
                 field.singleName = field.name;
@@ -432,18 +582,20 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
                     const repeatsMatch = repeats.match(/\(([0-9a-z_]+)-([0-9a-z_]+)\)/i);
                     const name = field.name;
                     if (repeatsMatch) {
+                        let from = 1;
+                        let to = 1;
                         if (!repeatsMatch[1].match(/^[0-9]$/)) {
-                            repeatsMatch[1] = widgetData ? parseInt(widgetData[repeatsMatch[1]]) : 0;
+                            from = widgetData ? parseInt(widgetData[repeatsMatch[1]]) : 0;
                         }
                         if (!repeatsMatch[2].match(/^[0-9]$/)) {
-                            repeatsMatch[2] = widgetData ? parseInt(widgetData[repeatsMatch[2]]) : 0;
+                            to = widgetData ? parseInt(widgetData[repeatsMatch[2]]) : 0;
                         }
-                        for (let i = repeatsMatch[1]; i <= repeatsMatch[2]; i++) {
+                        for (let i = from; i <= to; i++) {
                             if (isIndexedGroup) {
-                                if (widgetIndex > 0 && !commonGroups[`${groupName}-${i}`]) {
+                                if (commonGroups && widgetIndex && widgetIndex > 0 && !commonGroups[`${groupName}-${i}`]) {
                                     return;
                                 }
-                                if (widgetIndex > 0 && !commonFields[`${groupName}-${i}.${field.name}`]) {
+                                if (commonFields && widgetIndex && widgetIndex > 0 && !commonFields[`${groupName}-${i}.${field.name}`]) {
                                     return;
                                 }
                                 if (!indexedGroups[i]) {
@@ -456,34 +608,42 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
                                     indexedGroups[i] = currentGroup;
                                     fields.push(currentGroup);
                                 }
-                                if (!commonGroups[`${groupName}-${i}`]) {
-                                    commonGroups[`${groupName}-${i}`] = 0;
+                                if (commonGroups) {
+                                    if (!commonGroups[`${groupName}-${i}`]) {
+                                        commonGroups[`${groupName}-${i}`] = 0;
+                                    }
+                                    commonGroups[`${groupName}-${i}`]++;
                                 }
-                                commonGroups[`${groupName}-${i}`]++;
 
                                 field.name = `${name}${i}`;
-                                indexedGroups[i].fields.push({ ...field });
-                                if (!commonFields[`${groupName}-${i}.${field.name}`]) {
-                                    commonFields[`${groupName}-${i}.${field.name}`] = 0;
+                                indexedGroups[i]?.fields?.push({ ...field });
+                                if (commonFields) {
+                                    if (!commonFields[`${groupName}-${i}.${field.name}`]) {
+                                        commonFields[`${groupName}-${i}.${field.name}`] = 0;
+                                    }
+                                    commonFields[`${groupName}-${i}.${field.name}`]++;
                                 }
-                                commonFields[`${groupName}-${i}.${field.name}`]++;
                             } else {
                                 field.name = `${name}${i}`;
                                 field.index = i;
-                                currentGroup.fields.push({ ...field });
-                                if (!commonFields[`${groupName}.${field.name}`]) {
-                                    commonFields[`${groupName}.${field.name}`] = 0;
+                                currentGroup?.fields?.push({ ...field });
+                                if (commonFields) {
+                                    if (!commonFields[`${groupName}.${field.name}`]) {
+                                        commonFields[`${groupName}.${field.name}`] = 0;
+                                    }
+                                    commonFields[`${groupName}.${field.name}`]++;
                                 }
-                                commonFields[`${groupName}.${field.name}`]++;
                             }
                         }
                     }
                 } else {
-                    currentGroup.fields.push(field);
-                    if (!commonFields[`${groupName}.${field.name}`]) {
-                        commonFields[`${groupName}.${field.name}`] = 0;
+                    currentGroup?.fields?.push(field);
+                    if (commonFields) {
+                        if (!commonFields[`${groupName}.${field.name}`]) {
+                            commonFields[`${groupName}.${field.name}`] = 0;
+                        }
+                        commonFields[`${groupName}.${field.name}`]++;
                     }
-                    commonFields[`${groupName}.${field.name}`]++;
                 }
             }
         });
@@ -494,26 +654,27 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
     if (Array.isArray(widgetParams)) {
         commonGroups = commonGroups || { common: 1 };
         commonFields = commonFields || {};
-        const fields = deepClone(widgetParams);
+        const fields = deepClone(widgetParams) as WidgetAttributesGroupInfoStored[];
         let groupIndex = fields.findIndex(group => typeof group.indexFrom === 'number');
 
+        // if enumerable
         while (groupIndex > -1) {
-            const group = fields[groupIndex];
+            const group = fields[groupIndex] as WidgetAttributesGroupInfoStored;
             group.singleName = group.name;
-            let from;
+            let from: number;
             let indexFrom;
             if (Number.isInteger(group.indexFrom)) {
-                from = group.indexFrom;
+                from = group.indexFrom as number;
             } else {
-                from = parseInt(widgetData?.[group.indexFrom]);
+                from = parseInt(widgetData?.[group.indexFrom || 1]);
                 indexFrom = from;
             }
-            let to;
+            let to: number;
             let indexTo;
             if (Number.isInteger(group.indexTo)) {
-                to = group.indexTo;
+                to = parseInt((group.indexTo as string) || '1', 10);
             } else {
-                to = parseInt(widgetData?.[group.indexTo]);
+                to = parseInt(widgetData?.[group.indexTo || 1]);
                 indexTo = group.indexTo;
             }
             delete group.indexFrom;
@@ -521,36 +682,38 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
             const indexedGroups = [];
 
             for (let i = from; i <= to; i++) {
-                const indexedGroup = {
+                const indexedGroup: WidgetAttributesGroupInfoStored = {
                     ...deepClone(group),
                     index: i,
                     name: `${group.singleName}-${i}`,
                     iterable: {
-                        group: group.singleName,
+                        group: group.singleName || '',
                         isFirst: i === from,
                         isLast: i === to,
                         indexTo,
                         indexFrom,
                     },
                 };
-                indexedGroup.fields.forEach((field, ii) => {
+                indexedGroup.fields?.forEach((field: WidgetAttributeInfoStored, ii) => {
                     field.singleName = field.name;
                     field.name = `${field.name}${i}`;
                     field.index = i;
-                    if (typeof group.fields[ii].hidden === 'function') {
-                        field.hidden = group.fields[ii].hidden;
-                    }
-                    if (typeof group.fields[ii].component === 'function') {
-                        field.component = group.fields[ii].component;
-                    }
-                    if (typeof group.fields[ii].onChange === 'function') {
-                        field.onChange = group.fields[ii].onChange;
-                    }
-                    if (typeof group.fields[ii].disabled === 'function') {
-                        field.disabled = group.fields[ii].disabled;
-                    }
-                    if (typeof group.fields[ii].error === 'function') {
-                        field.error = group.fields[ii].error;
+                    if (group.fields && group.fields[ii]) {
+                        if (typeof group.fields[ii].hidden === 'function') {
+                            field.hidden = group.fields[ii].hidden;
+                        }
+                        if (typeof group.fields[ii].component === 'function') {
+                            field.component = group.fields[ii].component;
+                        }
+                        if (typeof group.fields[ii].onChange === 'function') {
+                            field.onChange = group.fields[ii].onChange;
+                        }
+                        if (typeof group.fields[ii].disabled === 'function') {
+                            field.disabled = group.fields[ii].disabled;
+                        }
+                        if (typeof group.fields[ii].error === 'function') {
+                            field.error = group.fields[ii].error;
+                        }
                     }
                 });
 
@@ -559,68 +722,77 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
             fields.splice(groupIndex, 1, ...indexedGroups);
             groupIndex = fields.findIndex(_group => _group.indexFrom);
         }
+
         fields.forEach(group => {
+            if (!group.name) {
+                group.name = 'common';
+            }
             if (!group.singleName) {
                 group.singleName = group.name;
             }
-            if (!commonGroups[group.name]) {
-                commonGroups[group.name] = 0;
+            if (commonGroups) {
+                if (!commonGroups[group.name]) {
+                    commonGroups[group.name] = 0;
+                }
+                commonGroups[group.name]++;
             }
-            commonGroups[group.name]++;
-            let fieldIndex = group.fields.findIndex(field => field.indexFrom);
-            while (fieldIndex > -1) {
-                const field = group.fields[fieldIndex];
-                field.singleName = field.name;
-                let from;
-                let indexFrom;
-                if (Number.isInteger(field.indexFrom)) {
-                    from = field.indexFrom;
-                } else {
-                    from = parseInt(widgetData?.[field.indexFrom]);
-                    indexFrom = from;
-                }
-                let to;
-                let indexTo;
-                if (Number.isInteger(field.indexTo)) {
-                    to = field.indexTo;
-                } else {
-                    to = parseInt(widgetData?.[field.indexTo]);
-                    indexTo = field.indexTo;
-                }
-                delete field.indexFrom;
-                delete field.indexTo;
-                const indexedFields = [];
-                for (let i = from; i <= to; i++) {
-                    const indexedField = {
-                        ...deepClone(field),
-                        index: i,
-                        name: `${field.singleName}${i}`,
-                        iterable: {
+            if (group.fields) {
+                // fields can be interable too
+                let fieldIndex = group.fields.findIndex((field: WidgetAttributeInfoStored) => field.indexFrom);
+                while (fieldIndex > -1) {
+                    const field = group.fields[fieldIndex] as WidgetAttributeInfoStored;
+                    field.singleName = field.name;
+                    let from = 1;
+                    let indexFrom;
+                    if (Number.isInteger(field.indexFrom)) {
+                        from = parseInt(field.indexFrom as string, 10);
+                    } else if (typeof field.indexFrom === 'string') {
+                        from = parseInt(widgetData?.[field.indexFrom]);
+                        indexFrom = from;
+                    }
+                    let to = 1;
+                    let indexTo;
+                    if (Number.isInteger(field.indexTo)) {
+                        to = parseInt(field.indexTo as string, 10);
+                    } else if (typeof field.indexTo === 'string') {
+                        to = parseInt(widgetData?.[field.indexTo]);
+                        indexTo = field.indexTo;
+                    }
+                    delete field.indexFrom;
+                    delete field.indexTo;
+                    const indexedFields = [];
+                    for (let i = from; i <= to; i++) {
+                        const indexedField = deepClone(field) as WidgetAttributeInfoStored;
+                        indexedField.index = i;
+                        indexedField.name = `${field.singleName}${i}`;
+                        indexedField.iterable = {
                             group: field.singleName,
                             isFirst: i === from,
                             isLast: i === to,
                             indexFrom,
                             indexTo,
-                        },
-                    };
-                    indexedFields.push(indexedField);
+                        };
+                        indexedFields.push(indexedField);
+                    }
+
+                    group.fields?.splice(fieldIndex, 1, ...indexedFields);
+
+                    fieldIndex = group.fields.findIndex((_field: WidgetAttributeInfoStored) => _field.indexFrom);
                 }
 
-                group.fields.splice(fieldIndex, 1, ...indexedFields);
-
-                fieldIndex = group.fields.findIndex(_field => _field.indexFrom);
+                group.fields.forEach((field: WidgetAttributeInfoStored) => {
+                    if (!field.singleName) {
+                        field.singleName = field.name;
+                    }
+                    field.set = widgetSet;
+                    if (commonFields) {
+                        if (!commonFields[`${group.name}.${field.name}`]) {
+                            commonFields[`${group.name}.${field.name}`] = 0;
+                        }
+                        commonFields[`${group.name}.${field.name}`]++;
+                    }
+                });
             }
-
-            group.fields.forEach(field => {
-                if (!field.singleName) {
-                    field.singleName = field.name;
-                }
-                field.set = widgetSet;
-                if (!commonFields[`${group.name}.${field.name}`]) {
-                    commonFields[`${group.name}.${field.name}`] = 0;
-                }
-                commonFields[`${group.name}.${field.name}`]++;
-            });
         });
 
         return fields;

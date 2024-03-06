@@ -101,7 +101,7 @@ gulp.task('runtime-1-copy-src', done => {
     copyFolder(`${__dirname}/src/src/Vis`, `${__dirname}/runtime/src/Vis`,  ['visContextMenu.jsx', 'oldVis.jsx', 'visOrderMenu.jsx', 'BulkEditor.tsx']);
     copyFolder(`${__dirname}/src/src/img`, `${__dirname}/runtime/src/img`);
 
-    fs.writeFileSync(`${__dirname}/runtime/src/Vis/visOrderMenu.jsx`, `
+    fs.writeFileSync(`${__dirname}/runtime/src/Vis/visOrderMenu.tsx`, `
 import React from 'react';
 
 class VisOrderMenu extends React.Component {
@@ -154,7 +154,9 @@ export default FiltersEditorDialog;
     delete pack.dependencies['react-dnd-html5-backend'];
     delete pack.dependencies['react-dnd-preview'];
     delete pack.dependencies['react-dnd-touch-backend'];
+    delete pack.dependencies['react-beautiful-dnd'];
     delete pack.dependencies['react-dropzone'];
+    delete pack.dependencies['html-to-image'];
 
     fs.writeFileSync(`${__dirname}/runtime/package.json`, JSON.stringify(pack, null, 2));
     fs.writeFileSync(`${__dirname}/runtime/craco.config.js`, fs.readFileSync(`${__dirname}/src/craco.config.js`));

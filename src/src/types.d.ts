@@ -50,6 +50,10 @@ interface SingleWidget  {
     _id?: string;
     data: WidgetData;
     style: WidgetStyle;
+    /** @deprecated The widget type */
+    set?: string;
+    /** The widget type */
+    wSet?: string;
     tpl: string;
     widgetSet: string;
     /** The id of the group, if the widget is grouped */

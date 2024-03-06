@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2022-2023 Denis Haev https://github.com/GermanBluefox,
+ *  Copyright (c) 2022-2024 Denis Haev https://github.com/GermanBluefox,
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -19,13 +19,15 @@ import {
     CardContent,
 } from '@mui/material';
 
-import { I18n, Icon } from '@iobroker/adapter-react-v5';
+import { Connection, I18n, Icon } from '@iobroker/adapter-react-v5';
 
-import { AnyWidgetId, RxWidgetInfo } from '@/types';
+import { Project, AnyWidgetId, RxWidgetInfo } from '@/types';
 import { deepClone, calculateOverflow } from '@/Utils/utils';
 // eslint-disable-next-line import/no-cycle
 import VisBaseWidget, { VisBaseWidgetProps } from './visBaseWidget';
 import { addClass, getUsedObjectIDsInWidget } from './visUtils';
+import {store} from "@/Store";
+import helpers from "@/Components/WizardHelpers";
 
 const POSSIBLE_MUI_STYLES = [
     'background-color',
@@ -107,6 +109,98 @@ interface VisRxWidgetStateValues {
     [timestamp: `${string}.lc`]: number;
 }
 
+export interface CustomWidgetProperties {
+    context: {
+        socket: Connection;
+        projectName: string;
+        instance: number;
+        adapterName: string;
+        views: Project;
+    };
+    selectedView: string;
+    selectedWidgets: AnyWidgetId[];
+    selectedWidget: AnyWidgetId;
+}
+
+export type WidgetAttributeType = 'instance' | 'number' | 'password' | 'image' | 'history' | 'hid' | 'icon' | 'dimension' | 'text' | 'color' | 'checkbox' | 'select' | 'slider' | 'id' | 'nselect' | 'fontname' | 'widget' | 'select-views' | 'groups' | 'auto' | 'class' | 'filters' | 'views' | 'style' | 'custom' | 'html' | 'json' | 'icon64' | 'help' | 'delimiter' | 'sound' | 'effect' | 'effect-options';
+
+export interface WidgetAttributeInfo {
+    name: string;
+    type: WidgetAttributeType;
+    min?: number;
+    max? : number;
+    step?: number;
+    label?: string;
+    default?: boolean | string | number;
+    hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    options?: { value: string; label: string }[] | string[];
+    multiple?: boolean;
+    noTranslation?: boolean;
+    tooltip?: string;
+    disabled?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    error?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    component?: (field: WidgetAttributeInfo, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, props: CustomWidgetProperties) => React.JSX.Element;
+    noBinding?: boolean;
+    onChange?: (field: WidgetAttributeInfo, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+}
+
+export interface WidgetAttributesGroupInfo {
+    name: string;
+    label?: string;
+    fields: WidgetAttributeInfo[];
+    indexFrom?: number;
+    indexTo?: string;
+    hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+}
+
+export interface CustomPaletteProperties {
+    socket: Connection;
+    project: Project;
+    changeProject: (project: Project, ignoreHistory?: boolean) => Promise<void>;
+    selectedView: string;
+    themeType: 'dark' | 'light';
+    helpers: Record<string, any>; // todo: add types
+}
+
+interface WidgetInfo {
+    /** Unique ID of the widget. Starts with 'tpl...' */
+    id: string;
+
+    /** Name of a widget set */
+    visSet: string;
+    /** Label of widget set for GUI (normally it exists a translation in i18n for it) */
+    visSetLabel?: string;
+    /** Icon of a widget set */
+    visSetIcon?: string;
+    /** Color of a widget set */
+    visSetColor?: string;
+
+    /** Name of widget */
+    visName: string;
+    /** Label of widget for GUI (normally it exists a translation in i18n for it) */
+    visWidgetLabel?: string;
+    /** Preview link (image URL, like 'widgets/basic/img/Prev_RedNumber.png') */
+    visPrev: string;
+    /** Color of widget in palette. If not set, the visSetColor will be taken */
+    visWidgetColor?: string;
+
+    /** Groups of attributes */
+    visAttrs: WidgetAttributesGroupInfo[];
+    /** Default style for widget */
+    visDefaultStyle?: React.CSSProperties;
+    /** Position in the widget set */
+    visOrder?: number;
+    /* required, that width is always equal to height (quadratic widget) */
+    visResizeLocked?: boolean;
+    /* if false, if widget is not resizable */
+    visResizable?: boolean;
+    /* if false, if widget is not draggable  */
+    visDraggable?: boolean;
+
+    /* Function to generate custom palette element */
+    customPalette?: (context: CustomPaletteProperties) => React.JSX.Element;
+}
+
 interface VisRxWidgetState extends VisBaseWidgetState {
     rxData: RxData;
     values: VisRxWidgetStateValues;
@@ -114,11 +208,19 @@ interface VisRxWidgetState extends VisBaseWidgetState {
 
 /** TODO: this overload can be removed as soon as VisBaseWidget is written correctly in TS */
 interface VisRxWidget<TRxData extends Record<string, any>, TState extends Record<string, any> = Record<string, never>> extends VisBaseWidget {
-   state: VisRxWidgetState & TState & { rxData: TRxData };
+    i18nPrefix?: string;
+    visHidden?: boolean;
+    adapter?: string;
+    version?: string;
+    url?: string;
+    custom?: any;
+    state: VisRxWidgetState & TState & { rxData: TRxData };
 }
 
 class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
     static POSSIBLE_MUI_STYLES = POSSIBLE_MUI_STYLES;
+
+    static i18nPrefix: string | undefined;
 
     private linkContext: {
         IDs: string[];
@@ -998,7 +1100,7 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
      * Get information about specific widget, needs to be implemented by widget class
      */
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo(): Record<string, any> {
+    getWidgetInfo(): WidgetInfo {
         throw new Error('not implemented');
     }
 }

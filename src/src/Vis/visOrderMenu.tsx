@@ -1,6 +1,5 @@
 import React, { useRef } from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from '@mui/styles';
+import { type Styles, withStyles } from '@mui/styles';
 import { useDrag, useDrop, DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
@@ -9,9 +8,9 @@ import { Menu, MenuItem } from '@mui/material';
 import { I18n, Utils } from '@iobroker/adapter-react-v5';
 
 // eslint-disable-next-line import/no-cycle
-import { getWidgetTypes } from './visWidgetsCatalog';
+import { getWidgetTypes, type WidgetType } from './visWidgetsCatalog';
 
-const styles = () => ({
+const styles: Styles<string, any> = () => ({
     widgetIcon: {
         overflow: 'hidden',
         width: 40,
@@ -57,6 +56,20 @@ const WIDGET_ICON_HEIGHT = 34;
 
 const IMAGE_TYPES = ['.png', '.jpg', '.svg', '.gif', '.apng', '.avif', '.webp'];
 
+interface WidgetProps {
+    id: string;
+    children: React.JSX.Element | React.JSX.Element[];
+    index: number;
+    moveCard: (dragIndex: number, hoverIndex: number) => void;
+    onDropped: (index?: number) => void;
+    selected: boolean;
+}
+
+interface Item {
+    id: string;
+    index: number;
+}
+
 const Widget = ({
     id,
     children,
@@ -64,7 +77,7 @@ const Widget = ({
     moveCard,
     onDropped,
     selected,
-}) => {
+}: WidgetProps) => {
     const ref = useRef(null);
     const [{ handlerId }, drop] = useDrop({
         accept: 'widget',
@@ -80,22 +93,22 @@ const Widget = ({
             if (!ref.current) {
                 return;
             }
-            const dragIndex = item.index;
+            const dragIndex = (item as Item).index;
             const hoverIndex = index;
             // Don't replace items with themselves
             if (dragIndex === hoverIndex) {
                 return;
             }
             // Determine rectangle on screen
-            const hoverBoundingRect = ref.current?.getBoundingClientRect();
+            const hoverBoundingRect = (ref.current as HTMLElement)?.getBoundingClientRect();
             // Get vertical middle
             const hoverMiddleY =
                 (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
             // Determine mouse position
             const clientOffset = monitor.getClientOffset();
             // Get pixels to the top
-            const hoverClientY = clientOffset.y - hoverBoundingRect.top;
-            // Only perform the move when the mouse has crossed half of the items height
+            const hoverClientY = (clientOffset?.y || 0) - hoverBoundingRect.top;
+            // Only perform the move when the mouse has crossed half of the item's height
             // When dragging downwards, only move when the cursor is below 50%
             // When dragging upwards, only move when the cursor is above 50%
             // Dragging downwards
@@ -112,7 +125,7 @@ const Widget = ({
             // Generally it's better to avoid mutations,
             // but it's good here for the sake of performance
             // to avoid expensive index searches.
-            item.index = hoverIndex;
+            (item as Item).index = hoverIndex;
         },
     });
 
@@ -135,8 +148,27 @@ const Widget = ({
     </MenuItem>;
 };
 
-class VisOrderMenu extends React.Component {
-    constructor(props) {
+interface VisOrderMenuProps {
+    wid: string;
+    view: string;
+    anchorEl: any;
+    order: string[];
+    views: Record<string, any>;
+    themeType: string;
+    onClose: (order?: string[]) => void;
+    classes: Record<string, string>;
+}
+
+interface VisOrderMenuState {
+    order: string[];
+}
+
+class VisOrderMenu extends React.Component<VisOrderMenuProps, VisOrderMenuState> {
+    private readonly imageRef: React.RefObject<HTMLDivElement>[];
+
+    private readonly widgetTypes: WidgetType[];
+
+    constructor(props: VisOrderMenuProps) {
         super(props);
         this.widgetTypes = getWidgetTypes();
         this.imageRef = [];
@@ -152,15 +184,15 @@ class VisOrderMenu extends React.Component {
     componentDidUpdate(/* prevProps, prevState, snapshot */) {
         for (let i = 0; i < this.state.order.length; i++) {
             if (this.imageRef[i].current?.children[0]) {
-                const height = this.imageRef[i].current.children[0].clientHeight;
+                const height = (this.imageRef[i].current as HTMLElement).children[0].clientHeight;
                 if (height > WIDGET_ICON_HEIGHT) {
-                    this.imageRef[i].current.style.transform = `scale(${WIDGET_ICON_HEIGHT / height})`;
+                    (this.imageRef[i].current as HTMLElement).style.transform = `scale(${WIDGET_ICON_HEIGHT / height})`;
                 }
             }
         }
     }
 
-    moveCard = (dragIndex, hoverIndex) => {
+    moveCard = (dragIndex: number, hoverIndex: number) => {
         const order = [...this.state.order];
         const dragCard = order[dragIndex];
         order.splice(dragIndex, 1);
@@ -168,7 +200,7 @@ class VisOrderMenu extends React.Component {
         this.setState({ order });
     };
 
-    getWidgetDiv(id, index) {
+    getWidgetDiv(id: string, index: number) {
         const widget = this.props.views[this.props.view].widgets[id];
         const tpl = widget.tpl;
         const _widgetType = this.widgetTypes.find(foundWidgetType => foundWidgetType.name === tpl);
@@ -189,7 +221,9 @@ class VisOrderMenu extends React.Component {
             const widgetWithSetLabel = this.widgetTypes.find(w => w.set === setLabel && w.setLabel);
             if (widgetWithSetLabel) {
                 widgetColor = widgetWithSetLabel.setColor;
-                setLabel = I18n.t(widgetWithSetLabel.setLabel);
+                if (widgetWithSetLabel.setLabel) {
+                    setLabel = I18n.t(widgetWithSetLabel.setLabel);
+                }
             }
         }
 
@@ -207,16 +241,19 @@ class VisOrderMenu extends React.Component {
             if (m) {
                 img = <img src={m[1]} className={this.props.classes.icon} alt={id} />;
             }
-        } else if (_widgetType?.preview && IMAGE_TYPES.find(ext => _widgetType.preview.toLowerCase().endsWith(ext))) {
-            img = <img src={_widgetType?.preview} className={this.props.classes.icon} alt={id} />;
+        } else if (_widgetType?.preview) {
+            const preview = _widgetType.preview.toLowerCase();
+            if (IMAGE_TYPES.find(ext => preview.endsWith(ext))) {
+                img = <img src={_widgetType?.preview} className={this.props.classes.icon} alt={id} />;
+            }
         }
 
-        if (!img) {
+        if (!img && _widgetType?.preview) {
             img = <span
                 className={this.props.classes.widgetImage}
                 ref={this.imageRef[index]}
                 // eslint-disable-next-line react/no-danger
-                dangerouslySetInnerHTML={{ __html: _widgetType?.preview }}
+                dangerouslySetInnerHTML={{ __html: _widgetType.preview }}
             />;
         }
 
@@ -265,7 +302,7 @@ class VisOrderMenu extends React.Component {
         </Widget>;
     }
 
-    onMove(index) {
+    onMove(index?: number): void {
         if (index !== undefined) {
             // move actual widget to the index
             const order = [...this.state.order];
@@ -309,15 +346,5 @@ class VisOrderMenu extends React.Component {
         </Menu>;
     }
 }
-
-VisOrderMenu.propTypes = {
-    wid: PropTypes.string,
-    view: PropTypes.string,
-    anchorEl: PropTypes.object,
-    order: PropTypes.array,
-    views: PropTypes.object,
-    themeType: PropTypes.string,
-    onClose: PropTypes.func,
-};
 
 export default withStyles(styles)(VisOrderMenu);

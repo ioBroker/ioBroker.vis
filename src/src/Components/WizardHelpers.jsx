@@ -20,7 +20,7 @@ import {
 
 import { TbVacuumCleaner } from 'react-icons/tb';
 import ChannelDetector from '@iobroker/type-detector';
-import { getNewWidgetIdNumber, getNewWidgetId } from '../Utils/utils';
+import { getNewWidgetIdNumber, getNewWidgetId } from '@/Utils/utils';
 
 const deviceIcons = {
     blind: <Blinds />,
