@@ -32,7 +32,7 @@ import {
 import IOContextMenu from '../Components/IOContextMenu';
 import WidgetExportDialog from '../Toolbar/WidgetExportDialog';
 import WidgetImportDialog from '../Toolbar/WidgetImportDialog';
-import {getWidgetTypes, WidgetType} from './visWidgetsCatalog';
+import { getWidgetTypes, WidgetType } from './visWidgetsCatalog';
 
 interface VisContextMenuProps {
     changeProject: (project: Project) => void;

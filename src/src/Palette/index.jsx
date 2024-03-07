@@ -6,7 +6,7 @@ import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
-    IconButton, LinearProgress,
+    IconButton, InputAdornment, LinearProgress,
     TextField,
     Tooltip,
     Typography,
@@ -17,6 +17,7 @@ import {
     Clear as ClearIcon,
     UnfoldMore as UnfoldMoreIcon,
     UnfoldLess as UnfoldLessIcon,
+    Search,
 } from '@mui/icons-material';
 
 import { I18n, Utils, Icon } from '@iobroker/adapter-react-v5';
@@ -82,6 +83,11 @@ const styles = theme => ({
         opacity: 0.7,
         fontStyle: 'italic',
         textAlign: 'left',
+    },
+    searchLabel: {
+        '& label': {
+            marginLeft: 32,
+        },
     },
 });
 
@@ -302,12 +308,16 @@ const Palette = props => {
                 fullWidth
                 value={filter}
                 onChange={e => setFilter(e.target.value)}
-                label={filter ? ' ' : I18n.t('Filter')}
+                label={filter ? ' ' : I18n.t('Search')}
+                className={props.classes.searchLabel}
                 InputProps={{
                     className: props.classes.clearPadding,
                     endAdornment: filter ? <IconButton size="small" onClick={() => setFilter('')}>
                         <ClearIcon />
                     </IconButton> : null,
+                    startAdornment: <InputAdornment position="start">
+                        <Search />
+                    </InputAdornment>,
                 }}
                 InputLabelProps={{
                     shrink: false,

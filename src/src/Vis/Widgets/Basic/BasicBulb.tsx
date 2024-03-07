@@ -79,7 +79,7 @@ export default class BasicBulb extends VisRxWidget<RxData> {
                     },
                 ],
             }],
-        } as const;
+        };
     }
 
     /**
@@ -105,8 +105,12 @@ export default class BasicBulb extends VisRxWidget<RxData> {
         let oidFalseValueFinal: string | boolean | number = oidFalseValue ?? '';
 
         if (oidTrue || urlTrue) {
-            if (!oidFalse && oidTrue) oidFalse = oidTrue;
-            if (!urlFalse && urlTrue) urlFalse = urlTrue;
+            if (!oidFalse && oidTrue) {
+                oidFalse = oidTrue;
+            }
+            if (!urlFalse && urlTrue) {
+                urlFalse = urlTrue;
+            }
 
             if (finalMax !== '') {
                 if (finalMax === 'true')  finalMax = true;
@@ -122,7 +126,7 @@ export default class BasicBulb extends VisRxWidget<RxData> {
             if (finalMin === '' || finalMin === 'false' || finalMin === null) finalMin = false;
             if (finalMax === '' || finalMax === 'true'  || finalMax === null) finalMax = true;
 
-            if (oidTrue) {
+            if (oidTrue && typeof oidTrue === 'string') {
                 if (val) {
                     if (oidTrueValueFinal === '') oidTrueValueFinal = finalMax;
                     if (oidTrueValueFinal === 'false') oidTrueValueFinal = false;
@@ -132,7 +136,7 @@ export default class BasicBulb extends VisRxWidget<RxData> {
                         if (f.toString() === oidTrueValueFinal) oidTrueValueFinal = f;
                     }
                     this.props.context.setValue(oidTrue, oidTrueValueFinal);
-                } else {
+                } else if (typeof oidFalse === 'string') {
                     if (oidFalseValueFinal === '') oidFalseValueFinal = finalMin;
                     if (oidFalseValueFinal === 'false') oidFalseValueFinal = false;
                     if (oidFalseValueFinal === 'true')  oidFalseValueFinal = true;
@@ -153,14 +157,18 @@ export default class BasicBulb extends VisRxWidget<RxData> {
             }
         } else if ((finalMin === '' && (val === null || val === '' || val === undefined || val === false || val === 'false')) ||
                         (finalMin !== '' && finalMin === val)) {
-            this.props.context.setValue(oid, finalMax !== '' ? finalMax : true);
+            typeof oid === 'string' && this.props.context.setValue(oid, finalMax !== '' ? finalMax : true);
         } else
             if ((finalMax === '' && (val === true || val === 'true')) ||
                         (finalMax !== '' && val === finalMax)) {
-                this.props.context.setValue(oid,  finalMin !== '' ? finalMin : false);
-            } else {
+                typeof oid === 'string' && this.props.context.setValue(oid,  finalMin !== '' ? finalMin : false);
+            } else if (typeof oid === 'string') {
                 val = parseFloat(val);
-                if (finalMin !== '' && finalMax !== '') {
+                if (finalMin !== '' &&
+                    finalMax !== '' &&
+                    (typeof finalMax === 'number' || typeof finalMax === 'string') &&
+                    (typeof finalMin === 'number' || typeof finalMin === 'string')
+                ) {
                     if (val >= (parseFloat(finalMax) - parseFloat(finalMin)) / 2) {
                         val = finalMin;
                     } else {
@@ -184,7 +192,7 @@ export default class BasicBulb extends VisRxWidget<RxData> {
      * @param max max value
      */
     // eslint-disable-next-line class-methods-use-this
-    isFalse(val: any, min?: string, max?: string): boolean {
+    isFalse(val: any, min?: string | number, max?: string | number): boolean {
         if (min !== undefined && min !== null && min !== '') {
             if (val !== undefined && typeof val !== 'string') {
                 val = val.toString();
@@ -197,10 +205,16 @@ export default class BasicBulb extends VisRxWidget<RxData> {
             return val === min;
         }
 
-        if (val === undefined || val === null || val === false || val === 'false' || val === 'FALSE' || val === 'False' || val === 'OFF' || val === 'Off' || val === 'off' || val === '') return true;
-        if (val === '0' || val === 0) return true;
+        if (val === undefined || val === null || val === false || val === 'false' || val === 'FALSE' || val === 'False' || val === 'OFF' || val === 'Off' || val === 'off' || val === '') {
+            return true;
+        }
+        if (val === '0' || val === 0) {
+            return true;
+        }
         const f = parseFloat(val);
-        if (f.toString() !== 'NaN') return !f;
+        if (f.toString() !== 'NaN') {
+            return !f;
+        }
         return false;
     }
 
@@ -213,7 +227,7 @@ export default class BasicBulb extends VisRxWidget<RxData> {
         super.renderWidgetBody(props);
 
         const val = this.state.values[`${this.state.rxData.oid}.val`];
-        const isOff = this.isFalse(val, this.state.rxData.min, this.state.rxData.max);
+        const isOff = this.isFalse(val, this.state.rxData.min as string, this.state.rxData.max as string);
 
         let src;
 
@@ -224,7 +238,7 @@ export default class BasicBulb extends VisRxWidget<RxData> {
         }
 
         return <div className="vis-widget-body" onClick={() => this.toggle()}>
-            <img src={src} alt="tplBulbOnOffCtrl" width="100%" />
+            <img src={src.toString()} alt="tplBulbOnOffCtrl" width="100%" />
         </div>;
     }
 }

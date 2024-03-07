@@ -1,5 +1,9 @@
 import type React from 'react';
 import type { Connection } from '@iobroker/adapter-react-v5';
+import { CustomPaletteProperties, WidgetAttributeInfo, WidgetAttributesGroupInfo } from '@/Vis/visRxWidget';
+import { CommonType } from '@iobroker/types/build/objects';
+import { store } from '@/Store';
+import { RxWidgetAttributeType, RxWidgetInfoAttributesField } from '@/allInOneTypes';
 
 export type Timer = ReturnType<typeof setTimeout>;
 
@@ -284,83 +288,79 @@ export interface RxWidgetProps extends RxRenderWidgetProps {
     viewsActiveFilter: Record<string, string[]>;
 }
 
-type RxWidgetAttributeType = 'id' | 'number' | 'slider' | 'image' | 'checkbox' | 'color';
-
-type RxWidgetInfoAttributesField = {
-    /** Name of the widget field */
-    name: string;
-    /** Field default value */
-    default?: string;
-    /** Field type */
-    type?: 'id' | 'image' | 'color';
-} | {
-    /** Name of the widget field */
-    name: string;
-    /** Field type */
-    type: 'select';
-    /** Field default value */
-    default?: string;
-    /** Options for select type */
-    options: { value: string; label: string }[];
-} | {
-    /** Name of the widget field */
-    name: string;
-    /** Field type */
-    type: 'checkbox';
-    /** Field default value */
-    default?: boolean;
-} | {
-    /** Name of the widget field */
-    name: string;
-    /** Field type */
-    type: 'number';
-    /** Field default value */
-    default?: number;
-} | {
-    /** Name of the widget field */
-    name: string;
-    /** Field type */
-    type: 'slider';
-    /** Field default value */
-    default?: number;
-    /** Slider min value */
-    min: number;
-    /** Slider max value */
-    max: number;
-    /** Slider max value */
-    step?: number;
+export interface CustomPaletteProperties {
+    socket: Connection;
+    project: Project;
+    changeProject: (project: Project, ignoreHistory?: boolean) => Promise<void>;
+    selectedView: string;
+    themeType: 'dark' | 'light';
+    helpers: {
+        deviceIcons: Record<string, React.JSX.Element>
+        detectDevices: (socket: Connection) => Promise<any[]>;
+        getObjectIcon: (obj: ioBroker.Object, id?: string, imagePrefix?: string) => React.JSX.Element;
+        allObjects: (socket: Connection) => Promise<Record<string, ioBroker.Object>>;
+        getNewWidgetId: (project: Project, offset = 0) => SingleWidgetId;
+        /** @deprecated use "getNewWidgetId" instead, it will give you the full wid like "w000001" */
+        getNewWidgetIdNumber: (isWidgetGroup: boolean, project: Project, offset = 0) => number;
+    };
 }
+
 
 interface RxWidgetInfoAttributes {
     /** Name of the attributes section */
     name: string;
     /** Fields of this attribute section */
     fields: RxWidgetInfoAttributesField[];
+    /** I18n Label */
+    label?: string;
+    indexFrom?: number;
+    indexTo?: string;
+    hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
 }
 
 interface RxWidgetInfo {
-    /** ID of the widget */
+    /** Unique ID of the widget. Starts with 'tpl...' */
     id: string;
-    /** Vis widget set name */
+
+    /** Name of a widget set */
     visSet: string;
-    /** Name in vis */
+    /** Label of widget set for GUI (normally it exists a translation in i18n for it) */
+    visSetLabel?: string;
+    /** Icon of a widget set */
+    visSetIcon?: string;
+    /** Color of a widget set */
+    visSetColor?: string;
+
+    /** Name of widget */
     visName: string;
-    /** Preview image */
+    /** Label of widget for GUI (normally it exists a translation in i18n for it) */
+    visWidgetLabel?: string;
+    /** Preview link (image URL, like 'widgets/basic/img/Prev_RedNumber.png') */
     visPrev: string;
-    /** Defines the widget attributes */
+    /** Color of widget in palette. If not set, the visSetColor will be taken */
+    visWidgetColor?: string;
+
+    /** Groups of attributes */
     visAttrs: RxWidgetInfoAttributes[];
-    /** TODO */
+    /** Default style for widget */
+    visDefaultStyle?: React.CSSProperties;
+    /** Position in the widget set */
+    visOrder?: number;
+    /* required, that width is always equal to height (quadratic widget) */
     visResizeLocked?: boolean;
-    /** TODO */
-    resizable?: boolean;
-    /** TODO */
+    /* if false, if widget is not resizable */
     visResizable?: boolean;
-    /** TODO */
+    /* @deprecated use visResizable */
+    resizable?: boolean;
+    /* if false, if widget is not draggable  */
     visDraggable?: boolean;
-    /** TODO */
-    resizeHandles?: string[];
-    /** TODO */
-    visResizeHandles?: string[];
+    /* Show specific handlers  */
+    visResizeHandles?: ('n' | 'e' |'s' | 'w' | 'nw' | 'ne' | 'sw' | 'se')[];
+    /* @deprecated use visResizeHandles */
+    resizeHandles?: ('n' | 'e' |'s' | 'w' | 'nw' | 'ne' | 'sw' | 'se')[];
+
+    /* Function to generate custom palette element */
+    customPalette?: (context: CustomPaletteProperties) => React.JSX.Element;
 }
 
 type AttributeTypeToDataType<TType extends RxWidgetAttributeType> = TType extends 'checkbox' ? boolean : TType extends 'number' | 'slider' ? number :

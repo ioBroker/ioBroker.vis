@@ -69,7 +69,7 @@ const allObjects = async socket => {
 function getObjectIcon(obj, id, imagePrefix) {
     imagePrefix = imagePrefix || '.'; // http://localhost:8081';
     let src = '';
-    const common = obj && obj.common;
+    const common = obj?.common;
 
     if (common) {
         const cIcon = common.icon;

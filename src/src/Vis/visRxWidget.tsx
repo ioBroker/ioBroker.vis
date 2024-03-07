@@ -61,10 +61,10 @@ interface VisRxWidgetProps extends VisBaseWidgetProps {
     editMode: boolean;
     /** The widget's view */
     view: string;
+    /** if the widget will be shown in relative position */
+    isRelative: boolean;
     /** TODO */
-    isRelative:boolean;
-    /** TODO */
-    viewsActiveFilter: any;
+    viewsActiveFilter: { [view: string]: string[] };
 }
 
 interface RxData {
@@ -118,85 +118,6 @@ export interface CustomWidgetProperties {
     selectedView: string;
     selectedWidgets: AnyWidgetId[];
     selectedWidget: AnyWidgetId;
-}
-
-export type WidgetAttributeType = 'instance' | 'number' | 'password' | 'image' | 'history' | 'hid' | 'icon' | 'dimension' | 'text' | 'color' | 'checkbox' | 'select' | 'slider' | 'id' | 'nselect' | 'fontname' | 'widget' | 'select-views' | 'groups' | 'auto' | 'class' | 'filters' | 'views' | 'style' | 'custom' | 'html' | 'json' | 'icon64' | 'help' | 'delimiter' | 'sound' | 'effect' | 'effect-options';
-
-export interface WidgetAttributeInfo {
-    name: string;
-    type: WidgetAttributeType;
-    min?: number;
-    max? : number;
-    step?: number;
-    label?: string;
-    default?: boolean | string | number;
-    hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
-    options?: { value: string; label: string }[] | string[];
-    multiple?: boolean;
-    noTranslation?: boolean;
-    tooltip?: string;
-    disabled?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
-    error?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
-    component?: (field: WidgetAttributeInfo, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, props: CustomWidgetProperties) => React.JSX.Element;
-    noBinding?: boolean;
-    onChange?: (field: WidgetAttributeInfo, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
-}
-
-export interface WidgetAttributesGroupInfo {
-    name: string;
-    label?: string;
-    fields: WidgetAttributeInfo[];
-    indexFrom?: number;
-    indexTo?: string;
-    hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
-}
-
-export interface CustomPaletteProperties {
-    socket: Connection;
-    project: Project;
-    changeProject: (project: Project, ignoreHistory?: boolean) => Promise<void>;
-    selectedView: string;
-    themeType: 'dark' | 'light';
-    helpers: Record<string, any>; // todo: add types
-}
-
-interface WidgetInfo {
-    /** Unique ID of the widget. Starts with 'tpl...' */
-    id: string;
-
-    /** Name of a widget set */
-    visSet: string;
-    /** Label of widget set for GUI (normally it exists a translation in i18n for it) */
-    visSetLabel?: string;
-    /** Icon of a widget set */
-    visSetIcon?: string;
-    /** Color of a widget set */
-    visSetColor?: string;
-
-    /** Name of widget */
-    visName: string;
-    /** Label of widget for GUI (normally it exists a translation in i18n for it) */
-    visWidgetLabel?: string;
-    /** Preview link (image URL, like 'widgets/basic/img/Prev_RedNumber.png') */
-    visPrev: string;
-    /** Color of widget in palette. If not set, the visSetColor will be taken */
-    visWidgetColor?: string;
-
-    /** Groups of attributes */
-    visAttrs: WidgetAttributesGroupInfo[];
-    /** Default style for widget */
-    visDefaultStyle?: React.CSSProperties;
-    /** Position in the widget set */
-    visOrder?: number;
-    /* required, that width is always equal to height (quadratic widget) */
-    visResizeLocked?: boolean;
-    /* if false, if widget is not resizable */
-    visResizable?: boolean;
-    /* if false, if widget is not draggable  */
-    visDraggable?: boolean;
-
-    /* Function to generate custom palette element */
-    customPalette?: (context: CustomPaletteProperties) => React.JSX.Element;
 }
 
 interface VisRxWidgetState extends VisBaseWidgetState {
@@ -254,7 +175,7 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
     constructor(props: VisRxWidgetProps) {
         super(props);
 
-        const options = this.getWidgetInfo() as RxWidgetInfo;
+        const options = this.getWidgetInfo();
 
         const widgetAttrInfo: Record<string, any> = {};
         // collect all attributes (only types)
@@ -1098,7 +1019,7 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
      * Get information about specific widget, needs to be implemented by widget class
      */
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo(): WidgetInfo {
+    getWidgetInfo(): RxWidgetInfo {
         throw new Error('not implemented');
     }
 }

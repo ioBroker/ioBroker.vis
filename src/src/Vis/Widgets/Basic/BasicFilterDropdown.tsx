@@ -25,7 +25,7 @@ import { Edit } from '@mui/icons-material';
 
 import { I18n, Icon } from '@iobroker/adapter-react-v5';
 
-import { GetRxDataFromWidget, RxRenderWidgetProps } from '@/types';
+import { GetRxDataFromWidget, RxRenderWidgetProps, RxWidgetInfo } from '@/types';
 import VisRxWidget from '@/Vis/visRxWidget';
 import { Context } from '@/Vis/visBaseWidget';
 import FiltersEditorDialog from './FiltersEditorDialog';
@@ -191,19 +191,19 @@ class BasicFilterDropdown extends VisRxWidget<RxData> {
                         noTranslation: true,
                         options: [
                             {
-                                value: 'contained',
-                                label: 'contained',
-                            },
-                            {
                                 value: 'outlined',
                                 label: 'outlined',
+                            },
+                            {
+                                value: 'contained',
+                                label: 'contained',
                             },
                             {
                                 value: 'text',
                                 label: 'text',
                             },
                         ],
-                        default: 'contained',
+                        default: 'outlined',
                         hidden: 'data.type === "dropdown"',
                     },
                     {
@@ -225,7 +225,7 @@ class BasicFilterDropdown extends VisRxWidget<RxData> {
 
     // eslint-disable-next-line class-methods-use-this
     getWidgetInfo() {
-        return BasicFilterDropdown.getWidgetInfo();
+        return BasicFilterDropdown.getWidgetInfo() as RxWidgetInfo;
     }
 
     async componentDidMount() {
@@ -270,22 +270,32 @@ class BasicFilterDropdown extends VisRxWidget<RxData> {
             {this.state.rxData.widgetTitle ? <InputLabel>{this.state.rxData.widgetTitle}</InputLabel> : null}
             <Select
                 fullWidth
-                value={value}
+                value={value || '_'}
                 onChange={e => {
-                    let filter = e.target.value;
+                    let filter: string | string[] = e.target.value === '_' ? [] : e.target.value;
                     if (typeof filter === 'string') {
                         filter = filter.split(',');
                     }
-                    if (filter.includes('')) {
+                    if (filter.includes('') || filter.includes('_')) {
                         filter = [];
                     }
                     const view = this.props.askView('getViewClass', {});
                     view.onCommand('changeFilter', { filter });
                 }}
+                renderValue={val => {
+                    const option = items.find(item => item.value === val);
+                    if (option) {
+                        return <span style={{ color: option.color }}>{option.label}</span>;
+                    }
+                    if (val === '_' || !val) {
+                        return this.state.rxData.noAllOption ? '' : I18n.t('basic_no_filter');
+                    }
+                    return val;
+                }}
                 multiple={!!this.state.rxData.multiple}
                 autoFocus={!!this.state.rxData.autoFocus}
             >
-                {this.state.rxData.noAllOption ? null : <MenuItem value=""><em>{this.state.rxData.noFilterText || I18n.t('basic_no_filter')}</em></MenuItem>}
+                {this.state.rxData.noAllOption ? null : <MenuItem value="_"><em>{this.state.rxData.noFilterText || I18n.t('basic_no_filter')}</em></MenuItem>}
                 {items.map(option => {
                     let image = option.icon;
                     if (!image && option.image) {
@@ -321,6 +331,9 @@ class BasicFilterDropdown extends VisRxWidget<RxData> {
             style={{ width: '100%', height: '100%' }}
         >
             {this.state.rxData.noAllOption ? null : <Button
+                style={{
+                    flexGrow: 1,
+                }}
                 onClick={() => {
                     const view = this.props.askView('getViewClass', {});
                     view.onCommand('changeFilter', { filter: [] });
@@ -350,9 +363,14 @@ class BasicFilterDropdown extends VisRxWidget<RxData> {
                         const view = this.props.askView('getViewClass', {});
                         view.onCommand('changeFilter', { filter });
                     }}
+                    color={viewsActiveFilter.includes(option.value) ? 'primary' : undefined}
                     sx={theme => ({
-                        backgroundColor: viewsActiveFilter.includes(option.value) ? theme.palette.primary.main : undefined,
-                        color: viewsActiveFilter.includes(option.value) ? theme.palette.primary.contrastText : undefined,
+                        backgroundColor: viewsActiveFilter.includes(option.value) ? (this.state.rxData.buttonsVariant === 'contained' ? theme.palette.secondary.main : theme.palette.primary.main) : undefined,
+                        color: viewsActiveFilter.includes(option.value) ? (this.state.rxData.buttonsVariant === 'contained' ? theme.palette.secondary.contrastText : theme.palette.primary.contrastText) : undefined,
+                        '&:hover': {
+                            backgroundColor: viewsActiveFilter.includes(option.value) ? (this.state.rxData.buttonsVariant === 'contained' ? theme.palette.secondary.light : theme.palette.primary.light) : undefined,
+                            color: viewsActiveFilter.includes(option.value) ? (this.state.rxData.buttonsVariant === 'contained' ? theme.palette.secondary.contrastText : theme.palette.primary.contrastText) : undefined,
+                        },
                     })}
                     startIcon={image ? <Icon src={image} alt={option.label} style={{ height: 24 }} /> : null}
                     style={{
