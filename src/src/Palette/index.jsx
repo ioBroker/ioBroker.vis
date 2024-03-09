@@ -87,6 +87,7 @@ const styles = theme => ({
     searchLabel: {
         '& label': {
             marginLeft: 32,
+            marginTop: -5,
         },
     },
 });
