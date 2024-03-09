@@ -264,7 +264,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.9.42 (2024-03-09)
 * (bluefox) Allowed limiting the view size only on desktop
 * (bluefox) Change word "Filter" to "Search"
 
