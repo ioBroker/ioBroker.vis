@@ -180,7 +180,7 @@ onChange: async (field, data, changeData, socket) => {
   - `fontname` - Font selector
   - `effect` - Effect selector. One of `['','show','blind', 'bounce', 'clip', 'drop', 'explode', 'fade', 'fold', 'highlight', 'puff', 'pulsate', 'scale', 'shake', 'size', 'slide']`. It used for old jQuery widgets.
   - `widget` - Widget ID selector. It could have additional settings:
-    - `tpl` - [optional] type of the widget, like `tplMaterial2Switches`
+    - `tpl` - [optional] type of the widget, like `tplMaterial2Switches`. You can use wildcards like `tplMaterial2*` to show all widgets of the set.
     - `all` - [optional] if true, all widgets of all views will be shown, not only from the current view. Default is false.
     - `withGroups` - [optional] if true, grouped widgets will be shown too. Default is false.
     - `withSelf` - [optional] if true, current widget will be shown in the list too.

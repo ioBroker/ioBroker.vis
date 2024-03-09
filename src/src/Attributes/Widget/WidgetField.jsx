@@ -862,7 +862,19 @@ const WidgetField = props => {
                     }));
             }
             if (field.tpl) {
-                options = options.filter(item => item.tpl === field.tpl);
+                if (field.tpl.includes('*')) {
+                    if (field.tpl.endsWith('*')) {
+                        const word = field.tpl.substring(0, field.tpl.length - 1);
+                        options = options.filter(item => item.tpl.startsWith(word));
+                    } else if (field.tpl.startsWith('*')) {
+                        const word = field.tpl.substring(1);
+                        options = options.filter(item => item.tpl.endsWith(word));
+                    } else {
+                        console.warn('"*" can be only at the beginning or at the end of "tpl" attribute');
+                    }
+                } else {
+                    options = options.filter(item => item.tpl === field.tpl);
+                }
             }
             options = options.map(item => ({
                 value: item.wid,

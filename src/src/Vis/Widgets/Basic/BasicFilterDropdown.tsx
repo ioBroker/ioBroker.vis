@@ -44,6 +44,32 @@ interface Item {
     default?: boolean;
 }
 
+function processFilter(filters: string[]) {
+    const len = filters.length;
+    for (let f = 0; f < len; f++) {
+        const filter = filters[f];
+        if (filter.includes(',')) {
+            const ff = filter.split(',').map(t => t.trim()).filter(t => t);
+            const first = ff.shift();
+            if (first) {
+                filters[f] = first;
+                if (ff.length) {
+                    filters.push(...ff);
+                }
+            }
+        } else if (filter.includes(';')) {
+            const ff = filter.split(';').map(t => t.trim()).filter(t => t);
+            const first = ff.shift();
+            if (first) {
+                filters[f] = first;
+                if (ff.length) {
+                    filters.push(...ff);
+                }
+            }
+        }
+    }
+}
+
 interface ItemsEditorProps {
     data: any;
     setData: (data: any) => void;
@@ -237,6 +263,7 @@ class BasicFilterDropdown extends VisRxWidget<RxData> {
             if (items.find((item: Item) => item.default && item.value)) {
                 const filter: string[] = [];
                 items.forEach((item: Item) => item.default && filter.push(item.value));
+                processFilter(filter);
                 setTimeout(() => {
                     const view = this.props.askView('getViewClass', {});
                     view.onCommand('changeFilter', { filter });
@@ -279,6 +306,7 @@ class BasicFilterDropdown extends VisRxWidget<RxData> {
                     if (filter.includes('') || filter.includes('_')) {
                         filter = [];
                     }
+                    processFilter(filter);
                     const view = this.props.askView('getViewClass', {});
                     view.onCommand('changeFilter', { filter });
                 }}
@@ -361,6 +389,7 @@ class BasicFilterDropdown extends VisRxWidget<RxData> {
                             filter = [option.value];
                         }
                         const view = this.props.askView('getViewClass', {});
+                        processFilter(filter);
                         view.onCommand('changeFilter', { filter });
                     }}
                     color={viewsActiveFilter.includes(option.value) ? 'primary' : undefined}
@@ -419,6 +448,7 @@ class BasicFilterDropdown extends VisRxWidget<RxData> {
             if (!this.editMode && items.find((item: Item) => item.default && item.value)) {
                 const filter: string[] = [];
                 items.forEach((item: Item) => item.default && filter.push(item.value));
+                processFilter(filter);
                 setTimeout(() => {
                     const view = this.props.askView('getViewClass', {});
                     view.onCommand('changeFilter', { filter });

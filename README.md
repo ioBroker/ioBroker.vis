@@ -266,6 +266,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 ## Changelog
 ### **WORK IN PROGRESS**
 * (bluefox) Allowed limiting the view size only on desktop
+* (bluefox) Change word "Filter" to "Search"
 
 ### 2.9.40 (2024-03-05)
 * (bluefox) Migrated the filter widget to react
