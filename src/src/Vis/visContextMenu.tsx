@@ -55,6 +55,27 @@ interface VisContextMenuProps {
     setMarketplaceDialog: (data: { addPage: boolean; widget: { widget: (SingleWidget | GroupWidget)[]; image: string } }) => void;
 }
 
+interface VisMarketplaceProps {
+    language: ioBroker.Languages;
+    addPage?: boolean;
+    widget: { name: string; date: string; widget_id: string; image_id: string; };
+    installWidget: (widget: { name: string; date: string; widget_id: string; image_id: string; }) => Promise<void>;
+    installedWidgets?: {id: string}[];
+    themeName: string;
+    onAdded?: () => void;
+}
+
+declare global {
+    interface Window {
+        VisMarketplace?: {
+            api: {
+                apiGetWidgetRevision(widgetId: string, id: string): Promise<any>;
+            },
+            default: React.Component<VisMarketplaceProps>
+        };
+    }
+}
+
 const VisContextMenu = (props: VisContextMenuProps) => {
     const [exportDialog, setExportDialog] = useState(false);
     const [importDialog, setImportDialog] = useState(false);
@@ -149,7 +170,7 @@ const VisContextMenu = (props: VisContextMenuProps) => {
                 hide: props.selectedWidgets.length !== 1 ||
                     selectedWidget.tpl !== '_tplGroup',
             },
-            (window as any).VisMarketplace ? {
+            window.VisMarketplace ? {
                 leftIcon: <img
                     src="./img/marketplace.png"
                     alt="widgeteria"

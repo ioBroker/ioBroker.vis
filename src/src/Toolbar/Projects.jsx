@@ -69,7 +69,7 @@ const Tools = props => {
         /> : null}
         {
             objectsDialog ? <SelectID
-                imagePrefix="../.."
+                imagePrefix="../"
                 ready
                 onClose={() => setObjectsDialog(false)}
                 socket={props.socket}

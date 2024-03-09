@@ -376,7 +376,7 @@
   "This widget is already used in \"%s\"": "Dieses Widget wird bereits in „%s“ verwendet",
   "Title": "Titel",
   "To use it, define by some widget the filter key": "Um es zu verwenden, definieren Sie über ein Widget den Filterschlüssel",
-  "Toggle runtime": "Laufzeit umschalten",
+  "Toggle runtime": "Runtime umschalten",
   "Toggle widget hint (dark)": "Widget-Hinweis umschalten (dunkel)",
   "Toggle widget hint (hide)": "Widget-Hinweis umschalten (ausblenden)",
   "Toggle widget hint (light)": "Widget-Hinweis umschalten (hell)",

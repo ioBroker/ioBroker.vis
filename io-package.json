@@ -3,19 +3,6 @@
     "name": "vis-2",
     "version": "2.9.41",
     "news": {
-      "2.9.41": {
-        "en": "Allowed limiting the view size only on desktop\nChange word \"Filter\" to \"Search\"",
-        "de": "Erlaubt, die Ansichtsgröße nur auf dem Desktop zu begrenzen\nWort \"Filter\" zu \"Search\" ändern",
-        "ru": "Разрешено ограничивать размер обзора только на настольном\nСменить слово \"Фильтер\" на \"Сеарх\"",
-        "pt": "Permite limitar o tamanho da vista apenas na área de trabalho\nAlterar palavra \"Filter\" para \"Search\"",
-        "nl": "Toegestaan om de weergavegrootte alleen op bureaublad te beperken\nWijzig woord \"Filter\" in \"Zoeken\"",
-        "fr": "Limiter la taille de la vue uniquement sur le bureau\nChanger le mot \"Filter\" en \"Rechercher\"",
-        "it": "Limitare la dimensione della vista solo sul desktop\nCambia la parola \"Filter\" a \"Search\"",
-        "es": "Permitido limitar el tamaño de la vista sólo en el escritorio\nCambiar la palabra \"Filter\" a \"Search\"",
-        "pl": "Dozwolone ograniczenie rozmiaru widoku tylko na pulpicie\nZmień słowo \"Filtr\" na \"Szukaj\"",
-        "uk": "Допускається обмеження розміру переглядів тільки на робочому столі\nЗміна слова \"Фільтр\" в \"Пошук\"",
-        "zh-cn": "只允许限制桌面上的视图大小\n将\"Filter\"改为\"Search\""
-      },
       "2.9.40": {
         "en": "Migrated the filter widget to react\nMigrated the basic link widget to react",
         "de": "Das Filter-Widget migriert\nDas grundlegende Link-Widget migriert",

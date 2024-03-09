@@ -204,7 +204,7 @@ class FiltersEditorDialog extends Component<FiltersEditorDialogProps, FiltersEdi
             return null;
         }
 
-        let _value = this.state.items[this.state.selectImage as number].image || '';
+        let _value = this.state.items[this.state.selectImage].image || '';
         if (_value.startsWith('../')) {
             _value = _value.substring(3);
         } else if (_value.startsWith('_PRJ_NAME/')) {
@@ -244,6 +244,15 @@ class FiltersEditorDialog extends Component<FiltersEditorDialogProps, FiltersEdi
     }
 
     renderTableRow(item: Item, index: number) {
+        let image = item.image;
+        if (image) {
+            if (image.startsWith('../')) {
+                image = image.substring(3);
+            } else if (image.startsWith('_PRJ_NAME/')) {
+                image = image.replace('_PRJ_NAME/', `../${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}/`);
+            }
+        }
+
         return <Draggable key={item.id} draggableId={item.id || ''} index={index}>
             {(dragProvided /* dragSnapshot */) => <TableRow
                 className={index % 2 ? this.props.classes.rowEven : ''}
@@ -346,12 +355,12 @@ class FiltersEditorDialog extends Component<FiltersEditorDialogProps, FiltersEdi
                             }}
                         />
                         <Button
-                            variant={item.image ? 'outlined' : undefined}
+                            variant={image ? 'outlined' : undefined}
                             // @ts-expect-error grey is correct
-                            color={item.image ? 'grey' : undefined}
+                            color={image ? 'grey' : undefined}
                             onClick={() => this.setState({ selectImage: index })}
                         >
-                            {item.image ? <Icon src={item.image} style={{ width: 36, height: 36 }} /> : '...'}
+                            {image ? <Icon src={image} style={{ width: 36, height: 36 }} /> : '...'}
                         </Button>
                     </div>}
                 </TableCell>

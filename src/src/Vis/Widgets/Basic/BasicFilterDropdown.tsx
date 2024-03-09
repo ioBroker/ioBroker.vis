@@ -144,10 +144,6 @@ class BasicFilterDropdown extends VisRxWidget<RxData> {
                         default: '[]',
                     },
                     {
-                        name: 'widgetTitle',
-                        label: 'name',
-                    },
-                    {
                         name: 'type',
                         label: 'Type',
                         type: 'select',
@@ -166,6 +162,11 @@ class BasicFilterDropdown extends VisRxWidget<RxData> {
                             },
                         ],
                         default: 'horizontal_buttons',
+                    },
+                    {
+                        name: 'widgetTitle',
+                        label: 'name',
+                        hidden: 'data.type !== "dropdown"',
                     },
                     {
                         name: 'autoFocus',
@@ -404,7 +405,7 @@ class BasicFilterDropdown extends VisRxWidget<RxData> {
                     startIcon={image ? <Icon src={image} alt={option.label} style={{ height: 24 }} /> : null}
                     style={{
                         flexGrow: 1,
-                        color: viewsActiveFilter.includes(option.value) ? option.color : (option.activeColor || option.color),
+                        color: viewsActiveFilter.includes(option.value) ? (option.activeColor || option.color) : option.color,
                     }}
                 >
                     {option.label}

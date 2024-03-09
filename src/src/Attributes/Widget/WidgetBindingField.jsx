@@ -1027,7 +1027,7 @@ class WidgetBindingField extends Component {
         }
         return <SelectID
             key="selectDialog"
-            imagePrefix="../.."
+            imagePrefix="../"
             selected={this.state.selectionValue}
             onOk={async selected => {
                 // insert on cursor and replace selected text

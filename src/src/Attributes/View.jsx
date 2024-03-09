@@ -306,7 +306,7 @@ const View = props => {
                 {
                     name: 'Width',
                     field: 'bg-width',
-                    type: 'type',
+                    type: 'text',
                     hidden: '!data["bg-image"]',
                     notStyle: true,
                 },

@@ -12,16 +12,24 @@
  * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
  * (Free for non-commercial use).
  */
+declare global {
+    interface Window {
+        systemDictionary?: Record<string, Record<ioBroker.Languages, string>>;
+        systemLang?: ioBroker.Languages;
+        _: (text: string, arg1?: boolean | number | string, arg2?: boolean | number | string, arg3?: boolean | number | string) => string;
+        addWords: (words: Record<string, Record<ioBroker.Languages, string>>) => void;
+    }
+}
 
 window.systemDictionary = {};
 window.systemLang = 'en';
 
-function translateWord(text, lang, dictionary) {
+function translateWord(text: string, lang?: ioBroker.Languages, dictionary?: Record<string, Record<ioBroker.Languages, string>>): string {
     if (!text) {
         return '';
     }
-    lang = lang || window.systemLang;
-    dictionary = dictionary || window.systemDictionary;
+    lang = lang || window.systemLang as ioBroker.Languages || 'en';
+    dictionary = dictionary || window.systemDictionary || {};
 
     if (dictionary[text]) {
         let newText = dictionary[text][lang];
@@ -44,32 +52,32 @@ function translateWord(text, lang, dictionary) {
 }
 
 // make possible _('words to translate')
-window._ = (text, arg1, arg2, arg3) => {
+window._ = (text: string, arg1?: boolean | number | string, arg2?: boolean | number | string, arg3?: boolean | number | string) => {
     text = translateWord(text);
 
     let pos = text.indexOf('%s');
     if (pos !== -1) {
-        text = text.replace('%s', arg1);
+        text = text.replace('%s', arg1?.toString() || '');
     } else {
         return text;
     }
 
     pos = text.indexOf('%s');
     if (pos !== -1) {
-        text = text.replace('%s', arg2);
+        text = text.replace('%s', arg2?.toString() || '');
     } else {
         return text;
     }
 
     pos = text.indexOf('%s');
     if (pos !== -1) {
-        text = text.replace('%s', arg3);
+        text = text.replace('%s', arg3?.toString() || '');
     }
 
     return text;
 };
 
-window.addWords = words => Object.assign(window.systemDictionary, words);
+window.addWords = words => Object.assign(window.systemDictionary || {}, words);
 
 window.addWords({
     'No connection to Server': {
@@ -82,6 +90,7 @@ window.addWords({
         it: 'Nessuna connessione al server',
         es: 'Sin conexión al servidor',
         pl: 'Brak połączenia z serwerem',
+        uk: 'Немає з\'єднання з сервером',
         'zh-cn': '没有与服务器的连接',
     },
     'Loading Views...': {
@@ -94,6 +103,7 @@ window.addWords({
         it: 'Caricamento pagine ...',
         es: 'Cargando páginas ...',
         pl: 'Ładowanie stron ...',
+        uk: 'Завантаження сторінок ...',
         'zh-cn': '加载页面......',
     },
     'Connecting to Server...': {
@@ -106,6 +116,7 @@ window.addWords({
         it: 'Connessione al server...',
         es: 'Conectando al servidor...',
         pl: 'Łączenie z serwerem...',
+        uk: 'З\'єднання з сервером...',
         'zh-cn': '连接到服务器...',
     },
     'Loading data objects...': {
@@ -118,6 +129,7 @@ window.addWords({
         it: 'Caricamento dati...',
         es: 'Cargando datos...',
         pl: 'Ładowanie danych...',
+        uk: 'Завантаження даних...',
         'zh-cn': '加载数据中...',
     },
     'Loading data values...': {
@@ -130,6 +142,7 @@ window.addWords({
         it: 'Caricamento valori ...',
         es: 'Cargando valores ...',
         pl: 'Ładowanie wartości ...',
+        uk: 'Завантаження значень ...',
         'zh-cn': '载入值...',
     },
     'error - View doesn\'t exist': {
@@ -142,6 +155,7 @@ window.addWords({
         it: 'errore - La pagina non esiste',
         es: 'error - la página no existe',
         pl: 'błąd - strona nie istnieje',
+        uk: 'помилка - сторінка не існує',
         'zh-cn': '错误 - 页面不存在',
     },
     'no views found!': {
@@ -154,6 +168,7 @@ window.addWords({
         it: 'Nessuna pagina trovata!',
         es: 'No se encontraron páginas!',
         pl: 'Nie znaleziono stron!',
+        uk: 'Не знайдено сторінок!',
         'zh-cn': '找不到页面！',
     },
     'No valid license found!': {
@@ -166,6 +181,7 @@ window.addWords({
         it: 'Nessuna licenza valida trovata! Si prega di controllare di persona.',
         es: 'No se encontró ninguna licencia válida! Por favor, compruebe la instancia de visita.',
         pl: 'Nie znaleziono ważnej licencji! Proszę sprawdzić vis instance.',
+        uk: 'Не знайдено дійсної ліцензії! Будь ласка, перевірте налаштування vis.',
         'zh-cn': '找不到有效的许可证！请检查vis实例。',
     },
     'No Views found on Server': {
@@ -178,6 +194,7 @@ window.addWords({
         it: 'Nessuna pagina trovata sul server',
         es: 'No se encontraron páginas en el servidor',
         pl: 'Nie znaleziono stron na serwerze',
+        uk: 'На сервері не знайдено жодних сторінок',
         'zh-cn': '在服务器上找不到页面',
     },
     'All changes are saved locally. To reset changes clear the cache.': {
@@ -190,6 +207,7 @@ window.addWords({
         it: 'Tutte le modifiche sono salvate localmente. Per ripristinare le modifiche, cancellare la cache del browser.',
         es: 'Todos los cambios se guardan localmente. Para restablecer los cambios borra el caché del navegador.',
         pl: 'Wszystkie zmiany są zapisywane lokalnie. Aby zresetować zmiany, wyczyść pamięć podręczną przeglądarki.',
+        uk: 'Всі зміни зберігаються локально. Щоб скинути зміни, очистіть кеш браузера.',
         'zh-cn': '所有更改都保存在本地。要重置更改，请清除浏览器缓存。',
     },
     'please use /vis/edit.html instead of /vis/?edit': {
@@ -202,6 +220,7 @@ window.addWords({
         it: 'Utilizza /vis/edit.html invece di /vis/?edit',
         es: 'Utilice /vis/edit.html en lugar de /vis/?edit',
         pl: 'Użyj /vis/edit.html zamiast /vis/?edit',
+        uk: 'Будь ласка, використовуйте /vis/edit.html замість /vis/?edit',
         'zh-cn': '请使用/vis/edit.html而不是/vis/?edit',
     },
     'no views found on server.\nCreate new %s ?': {
@@ -214,6 +233,7 @@ window.addWords({
         it: 'nessuna vista trovata sul server.\nCrea nuovo %s?',
         es: 'No se han encontrado vistas en el servidor.\nCrear nuevo %s?',
         pl: 'nie znaleziono widoków na serwerze.\nUtwórz nowy %s?',
+        uk: 'на сервері не знайдено жодних сторінок.\nСтворити новий %s?',
         'zh-cn': '在服务器上找不到任何视图\n创建新的 %s？',
     },
     'Update found, loading new Files...': {
@@ -226,6 +246,7 @@ window.addWords({
         it: 'Aggiornamento trovato. <br/> Caricamento di nuovi file ...',
         es: 'Actualización encontrada. <br/> Cargando nuevos archivos ...',
         pl: 'Znaleziono aktualizację. <br/> Ładowanie nowych plików ...',
+        uk: 'Оновлення знайдено. <br/> Завантаження нових файлів ...',
         'zh-cn': '找到更新。<br/>加载新文件...',
     },
     'Loading Widget-Sets...': {
@@ -238,6 +259,7 @@ window.addWords({
         it: 'Caricamento widget-set ...',
         es: 'Cargando conjuntos de widgets ...',
         pl: 'Ładowanie zestawów widgetów ...',
+        uk: 'Завантаження наборів віджетів ...',
         'zh-cn': '正在加载Widget-Sets ...',
     },
     'error: view not found.': {
@@ -250,6 +272,7 @@ window.addWords({
         it: 'Errore: pagina non trovata',
         es: 'Error: página no encontrada',
         pl: 'Błąd: strona nie znaleziona',
+        uk: 'Помилка: сторінка не знайдена',
         'zh-cn': '错误：找不到页面',
     },
     'error: view container recursion.': {
@@ -262,6 +285,7 @@ window.addWords({
         it: 'Errore: ricorsione del contenitore della pagina',
         es: 'Error: página de recursión del contenedor.',
         pl: 'Błąd: rekursja kontenera strony',
+        uk: 'Помилка: рекурсія контейнера сторінки',
         'zh-cn': '错误：页面容器递归',
     },
     'Cannot execute %s for %s, because of insufficient permissions': {
@@ -274,6 +298,7 @@ window.addWords({
         it: 'Impossibile eseguire %s per %s, a causa di autorizzazioni insufficienti.',
         es: 'No se puede ejecutar %s para %s, debido a permisos insuficientes.',
         pl: 'Nie można wykonać %s dla %s, z powodu niewystarczających uprawnień.',
+        uk: 'Неможливо виконати %s для %s через недостатні права.',
         'zh-cn': '由于权限不足，无法为％s执行%s。',
     },
     'Insufficient permissions': {
@@ -286,6 +311,7 @@ window.addWords({
         it: 'Permessi insufficienti',
         es: 'Permisos insuficientes',
         pl: 'Niewystarczające uprawnienia',
+        uk: 'Недостатньо прав',
         'zh-cn': '权限不足',
     },
     'View disabled for user %s': {
@@ -298,6 +324,7 @@ window.addWords({
         it: 'Visualizza disabilitato per l\'utente <b>%s</b>',
         es: 'Vista deshabilitada para el usuario <b>%s</b>',
         pl: 'Widok wyłączony dla użytkownika <b>%s</b>',
+        uk: 'Відображення вимкнено для користувача <b>%s</b>',
         'zh-cn': '用户<b>%s</b>的视图已停用',
     },
     Today: {
@@ -310,6 +337,7 @@ window.addWords({
         it: 'Oggi',
         es: 'Hoy',
         pl: 'Dzisiaj',
+        uk: 'Сьогодні',
         'zh-cn': '今天',
     },
     Yesterday: {
@@ -322,6 +350,7 @@ window.addWords({
         it: 'Ieri',
         es: 'Ayer',
         pl: 'Wczoraj',
+        uk: 'Вчора',
         'zh-cn': '昨天',
     },
 });

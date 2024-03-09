@@ -1,5 +1,4 @@
-import * as React from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import { withStyles } from '@mui/styles';
 
 import {
@@ -12,7 +11,7 @@ import {
     ListItemText,
     Tooltip,
     Tabs,
-    Tab,
+    Tab, type Theme,
 } from '@mui/material';
 
 import {
@@ -21,12 +20,13 @@ import {
 } from '@mui/icons-material';
 
 import { Utils, Icon } from '@iobroker/adapter-react-v5';
+import { ViewSettings } from "@/types";
 
 const MENU_WIDTH_FULL = 200;
 const MENU_WIDTH_NARROW = 56;
 const TOOLBAR_SIZE = 48;
 
-const styles = theme => ({
+const styles: Record<string, any> = (theme: Theme) => ({
     root: {
         width: '100%',
         height: '100%',
@@ -67,7 +67,7 @@ const styles = theme => ({
         height: TOOLBAR_SIZE,
         overflow: 'hidden',
         lineHeight: `${TOOLBAR_SIZE}px`,
-        backgroundColor: theme.palette.primary.secondary,
+        backgroundColor: theme.palette.primary.main,
         zIndex: 450,
     },
     toolBarWithClosedMenu: {
@@ -204,9 +204,34 @@ const styles = theme => ({
     },
 });
 
-class VisNavigation extends React.Component {
-    renderMenu(settings) {
-        const items = [];
+interface VisNavigationProps {
+    context: Record<string, any>;
+    view: string;
+    activeView: string;
+    editMode: boolean;
+    menuWidth: string;
+    setMenuWidth: (width: string) => void;
+    classes: Record<string, any>;
+    visInWidget: boolean;
+    children: React.ReactNode;
+}
+
+interface VisNavigationState {
+    menuWidth: string;
+}
+
+interface MenuItem {
+    text: string;
+    color: string;
+    icon: string;
+    noText: boolean;
+    order: number;
+    view: string;
+}
+
+class VisNavigation extends React.Component<VisNavigationProps, VisNavigationState> {
+    renderMenu(settings: ViewSettings) {
+        const items: MenuItem[] = [];
 
         Object.keys(this.props.context.views).forEach(view => {
             if (view === '___settings') {
@@ -249,7 +274,7 @@ class VisNavigation extends React.Component {
                         iconPosition="start"
                         key={index}
                         style={{ minHeight: 48, minWidth: item.noText ? 20 : undefined }}
-                        icon={item.icon ? <Icon src={item.icon} className={this.props.classes.listItemIcon} /> : null}
+                        icon={item.icon ? <Icon src={item.icon} className={this.props.classes.listItemIcon} /> : undefined}
                         onClick={() => this.props.context.changeView(item.view)}
                         value={item.view}
                         label={item.text}
@@ -261,7 +286,7 @@ class VisNavigation extends React.Component {
         return <div
             style={{
                 opacity: this.props.editMode ? 0.4 : 1,
-                backgroundColor: settings.navigationBackground || undefined,
+                backgroundColor: (settings.navigationBackground as string) || undefined,
             }}
             className={Utils.clsx(
                 this.props.classes.menu,
@@ -271,7 +296,7 @@ class VisNavigation extends React.Component {
             )}
         >
             <div
-                style={{ color: settings.navigationHeaderTextColor || undefined }}
+                style={{ color: (settings.navigationHeaderTextColor as string) || undefined }}
                 className={Utils.clsx(
                     this.props.classes.menuToolbar,
                     this.props.menuWidth === 'full' && this.props.classes.menuToolbarFull,
@@ -279,7 +304,7 @@ class VisNavigation extends React.Component {
                     this.props.menuWidth === 'hidden' && this.props.classes.menuToolbarNarrow,
                 )}
             >
-                {settings.navigationHeaderText || ''}
+                {(settings.navigationHeaderText as string) || ''}
             </div>
             <Divider />
             <div className={this.props.classes.menuList}>
@@ -289,7 +314,7 @@ class VisNavigation extends React.Component {
                             key={index}
                             disablePadding
                             className={Utils.clsx(this.props.classes.menuItem, this.props.activeView === item.view && this.props.classes.selectedMenu)}
-                            style={{ backgroundColor: this.props.activeView === item.view ? settings.navigationSelectedBackground : undefined }}
+                            style={{ backgroundColor: this.props.activeView === item.view ? (settings.navigationSelectedBackground as string) : undefined }}
                             onClick={async () => {
                                 if (settings.navigationHideOnSelection) {
                                     await this.hideNavigationMenu();
@@ -301,7 +326,7 @@ class VisNavigation extends React.Component {
                                 <ListItemIcon>
                                     {item.icon ? <Icon
                                         src={item.icon}
-                                        style={{ color: this.props.activeView === item.view ? settings.navigationSelectedColor : settings.navigationColor, backgroundColor: 'rgba(1,1,1,0)' }}
+                                        style={{ color: this.props.activeView === item.view ? (settings.navigationSelectedColor as string) : (settings.navigationColor as string), backgroundColor: 'rgba(1,1,1,0)' }}
                                         className={Utils.clsx(
                                             this.props.classes.listItemIcon,
                                             this.props.activeView === item.view && this.props.classes.selectedMenu,
@@ -309,14 +334,14 @@ class VisNavigation extends React.Component {
                                     /> :
                                         <>
                                             <DashboardIcon
-                                                style={{ color: this.props.activeView === item.view ? settings.navigationSelectedColor : settings.navigationColor, backgroundColor: 'rgba(1,1,1,0)' }}
+                                                style={{ color: this.props.activeView === item.view ? (settings.navigationSelectedColor as string) : (settings.navigationColor as string), backgroundColor: 'rgba(1,1,1,0)' }}
                                                 className={Utils.clsx(
                                                     this.props.activeView === item.view && this.props.classes.selectedMenu,
                                                     this.props.menuWidth !== 'full' && this.props.classes.transparent,
                                                 )}
                                             />
                                             {item.text ? <span
-                                                style={{ color: this.props.activeView === item.view ? settings.navigationSelectedColor : settings.navigationColor }}
+                                                style={{ color: this.props.activeView === item.view ? (settings.navigationSelectedColor as string) : (settings.navigationColor as string) }}
                                                 className={Utils.clsx(
                                                     this.props.classes.listItemIconText,
                                                     this.props.menuWidth === 'full' && this.props.classes.transparent,
@@ -328,7 +353,7 @@ class VisNavigation extends React.Component {
                                 </ListItemIcon>
                                 <ListItemText
                                     primary={item.text}
-                                    style={{ color: this.props.activeView === item.view ? settings.navigationSelectedColor : settings.navigationColor }}
+                                    style={{ color: this.props.activeView === item.view ? (settings.navigationSelectedColor as string) : (settings.navigationColor as string) }}
                                     classes={{
                                         primary: Utils.clsx(
                                             this.props.classes.listItemText,
@@ -353,23 +378,23 @@ class VisNavigation extends React.Component {
         </div>;
     }
 
-    renderToolbar(settings) {
+    renderToolbar(settings: ViewSettings) {
         if (!settings.navigationBar) {
             return null;
         }
-        let style;
+        let style: React.CSSProperties;
         if (settings.navigationBarColor) {
             style = {
-                backgroundColor: settings.navigationBarColor,
-                color: Utils.getInvertedColor(settings.navigationBarColor, this.props.context.themeType, true),
+                backgroundColor: settings.navigationBarColor as string,
+                color: Utils.getInvertedColor(settings.navigationBarColor as string, this.props.context.themeType, true),
             };
         } else {
             style = {};
         }
         style.opacity = this.props.editMode ? 0.4 : 1;
 
-        let icon = settings.navigationBarIcon || settings.navigationBarImage;
-        if (icon && icon.startsWith('_PRJ_NAME/')) {
+        let icon: string = (settings.navigationBarIcon || settings.navigationBarImage) as string;
+        if (icon?.startsWith('_PRJ_NAME/')) {
             icon = `../${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}${icon.substring(9)}`;  // "_PRJ_NAME".length = 9
         }
 
@@ -384,7 +409,7 @@ class VisNavigation extends React.Component {
                 src={icon}
                 className={this.props.classes.toolbarIcon}
             /> : null}
-            {settings.navigationBarText || this.props.activeView}
+            {(settings.navigationBarText as string) || this.props.activeView}
         </div>;
     }
 
@@ -401,7 +426,7 @@ class VisNavigation extends React.Component {
             return null;
         }
 
-        const settings = this.props.context.views[this.props.view].settings;
+        const settings: ViewSettings = this.props.context.views[this.props.view].settings;
 
         if (settings.navigation &&
             !this.props.visInWidget &&
@@ -438,7 +463,7 @@ class VisNavigation extends React.Component {
                     this.props.menuWidth === 'narrow' && this.props.classes.openMenuButtonNarrow,
                     this.props.menuWidth === 'hidden' && this.props.classes.openMenuButtonHidden,
                 )}
-                style={settings.navigationBar && this.props.menuWidth === 'hidden' ? { opacity: 1 } : null}
+                style={settings.navigationBar && this.props.menuWidth === 'hidden' ? { opacity: 1 } : undefined}
             >
                 <IconButton
                     onClick={() => {
@@ -458,13 +483,13 @@ class VisNavigation extends React.Component {
                         }
                     }}
                     style={{
-                        backgroundColor: this.props.menuWidth === 'hidden' && settings.navigationButtonBackground ? settings.navigationSelectedBackground || (this.props.context.themeType === 'dark' ? 'white' : 'black') : 'inherit',
-                        color: this.props.menuWidth === 'hidden' && settings.navigationButtonBackground ? settings.navigationSelectedColor || (this.props.context.themeType === 'dark' ? 'black' : 'white')  : 'inherit',
+                        backgroundColor: this.props.menuWidth === 'hidden' && settings.navigationButtonBackground ? settings.navigationButtonBackground || (this.props.context.themeType === 'dark' ? 'white' : 'black') : 'inherit',
+                        color: this.props.menuWidth === 'hidden' && settings.navigationButtonBackground ? settings.navigationButtonBackground || (this.props.context.themeType === 'dark' ? 'black' : 'white')  : 'inherit',
                     }}
                 >
                     <ChevronLeftIcon
                         className={this.props.menuWidth === 'hidden' || (this.props.menuWidth === 'narrow' && settings.navigationNoHide) ? this.props.classes.openMenuButtonIconHidden : ''}
-                        style={settings.navigationBar && this.props.menuWidth === 'hidden' ? { color: settings.navigationChevronColor || (this.props.context.themeType === 'dark' ? '#000' : '#FFF') } : { color: settings.navigationChevronColor }}
+                        style={settings.navigationBar && this.props.menuWidth === 'hidden' ? { color: settings.navigationChevronColor || (this.props.context.themeType === 'dark' ? '#000' : '#FFF') } : { color: (settings.navigationChevronColor as string) }}
                     />
                 </IconButton>
             </div> : null}
@@ -485,14 +510,5 @@ class VisNavigation extends React.Component {
         </div>;
     }
 }
-
-VisNavigation.propTypes = {
-    context: PropTypes.object,
-    view: PropTypes.string,
-    activeView: PropTypes.string,
-    editMode: PropTypes.bool,
-    menuWidth: PropTypes.string,
-    setMenuWidth: PropTypes.func,
-};
 
 export default withStyles(styles)(VisNavigation);

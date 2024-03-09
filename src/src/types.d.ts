@@ -81,10 +81,89 @@ interface GroupWidget extends SingleWidget {
 
 export type Widget = SingleWidget | GroupWidget;
 
-interface ViewSettings {
+export interface ViewSettings {
     /** Permissions for each user for the view */
     permissions?: UserPermissions;
-    [other: string]: unknown;
+    display?: 'flex' | 'grid' | null | '';
+    comment?: string;
+    class?: string;
+    filterkey?: string;
+    group?: string[];
+    theme?: string;
+    group_action?: 'disabled' | 'hide' | null | '';
+
+    'bg-image'?: string;
+    'bg-position-x'?: string;
+    'bg-position-y'?: string;
+    'bg-width'?: string;
+    'bg-height'?: string;
+    'bg-color'?: string;
+    background_class?: string;
+    useBackground?: boolean;
+    background?: string;
+    'background-color'?: string;
+    'background-image'?: string;
+    'background-repeat'?:  'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat' | 'initial' | 'inherit' | null | '';
+    'background-attachment'?: 'scroll' | 'fixed' | 'local' | 'initial' | 'inherit' | null | '';
+    'background-position'?: 'left top' | 'left center' | 'left bottom' | 'right top' | 'right center' | 'right bottom' | 'center top' | 'center center' | 'center bottom' | 'initial' | 'inherit' | null | '';
+    'background-size'?: 'auto' | 'cover' | 'contain' | 'initial' | 'inherit' | null | '';
+    'background-clip'?: 'border-box' | 'padding-box' | 'content-box' | 'initial' | 'inherit' | null | '';
+    'background-origin'?: 'padding-box' | 'border-box' | 'content-box' | 'initial' | 'inherit' | null | '';
+
+    color?: string;
+    'text-shadow'?: string;
+    'font-family'?: string;
+    'font-style'?: string;
+    'font-variant'?: string;
+    'font-weight'?: string;
+    'font-size'?: string;
+    'line-height'?: string;
+    'letter-spacing'?: string;
+    'word-spacing'?: string;
+
+    useAsDefault?: boolean;
+    alwaysRender?: boolean;
+    snapType?: 0 | 1 | 2 | null;
+    snapColor?: string;
+    gridSize?: number;
+    sizex?: number;
+    sizey?: number;
+    limitScreen?: boolean;
+    limitScreenDesktop?: boolean;
+    limitScreenBorderWidth?: number;
+    limitScreenBorderColor?: string;
+    limitScreenBorderStyle?: string;
+    limitScreenBackgroundColor?: string;
+
+    navigation?: boolean;
+    navigationTitle?: string;
+    navigationOrder?: number;
+    navigationIcon?: string;
+    navigationImage?: string;
+    navigationOrientation?: 'horizontal' | 'vertical';
+    navigationOnlyIcon?: boolean;
+    navigationBackground?: string;
+    navigationSelectedBackground?: string;
+    navigationSelectedColor?: string;
+    navigationHeaderTextColor?: string;
+    navigationColor?: string;
+
+    navigationChevronColor?: string;
+    navigationHideMenu?: boolean;
+    navigationHideOnSelection?: boolean;
+    navigationHeaderText?: string;
+    navigationNoHide?: boolean;
+    navigationButtonBackground?: string;
+
+    navigationBar?: boolean;
+    navigationBarColor?: string;
+    navigationBarText?: string;
+    navigationBarIcon?: string;
+    navigationBarImage?: string;
+
+    columnWidth?: number;
+    columnGap?: number;
+    rowGap?: number;
 }
 
 export interface View {
