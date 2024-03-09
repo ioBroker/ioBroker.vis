@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.40",
+    "version": "2.9.41",
     "news": {
+      "2.9.41": {
+        "en": "Allowed limiting the view size only on desktop\nChange word \"Filter\" to \"Search\"",
+        "de": "Erlaubt, die Ansichtsgröße nur auf dem Desktop zu begrenzen\nWort \"Filter\" zu \"Search\" ändern",
+        "ru": "Разрешено ограничивать размер обзора только на настольном\nСменить слово \"Фильтер\" на \"Сеарх\"",
+        "pt": "Permite limitar o tamanho da vista apenas na área de trabalho\nAlterar palavra \"Filter\" para \"Search\"",
+        "nl": "Toegestaan om de weergavegrootte alleen op bureaublad te beperken\nWijzig woord \"Filter\" in \"Zoeken\"",
+        "fr": "Limiter la taille de la vue uniquement sur le bureau\nChanger le mot \"Filter\" en \"Rechercher\"",
+        "it": "Limitare la dimensione della vista solo sul desktop\nCambia la parola \"Filter\" a \"Search\"",
+        "es": "Permitido limitar el tamaño de la vista sólo en el escritorio\nCambiar la palabra \"Filter\" a \"Search\"",
+        "pl": "Dozwolone ograniczenie rozmiaru widoku tylko na pulpicie\nZmień słowo \"Filtr\" na \"Szukaj\"",
+        "uk": "Допускається обмеження розміру переглядів тільки на робочому столі\nЗміна слова \"Фільтр\" в \"Пошук\"",
+        "zh-cn": "只允许限制桌面上的视图大小\n将\"Filter\"改为\"Search\""
+      },
       "2.9.40": {
         "en": "Migrated the filter widget to react\nMigrated the basic link widget to react",
         "de": "Das Filter-Widget migriert\nDas grundlegende Link-Widget migriert",
@@ -80,19 +93,6 @@
         "pl": "poprawnie wykryj użytkownika administratora w oknie uprawnień projektu",
         "uk": "виявляти адміністратора правильно в діалоговому вікні дозволів проекту",
         "zh-cn": "在项目权限对话框中正确检测管理员用户"
-      },
-      "2.9.33": {
-        "en": "fixed issue that last image is never shown in image8 widget\nadded possibility to define background and title color for jqui dialog\nmake it possible to click through signal image if in front of widget",
-        "de": "fest problem, dass letztes bild nie in image8 widget gezeigt\nzusätzliche möglichkeit, hintergrund und titelfarbe für jqui dialog zu definieren\nmachen es möglich, durch das signalbild zu klicken, wenn vor widget",
-        "ru": "фиксированная проблема, что последнее изображение никогда не отображается в виджете изображения8\nдобавлена возможность определения фона и цвета заголовка для диалога jqui\nсделать возможным щелчок через изображение сигнала, если перед виджетом",
-        "pt": "problema fixo que última imagem nunca é mostrada no widget imagem8\npossibilidade adicionada para definir fundo e cor do título para jqui diálogo\ntornar possível clicar através da imagem de sinal se na frente do widget",
-        "nl": "vast probleem dat de laatste afbeelding nooit wordt getoond in image8 widget\ntoegevoegde mogelijkheid om achtergrond- en titelkleur voor jqui-dialoog te definiëren\nmaken het mogelijk om te klikken door signaalafbeelding als voor widget",
-        "fr": "problème corrigé que la dernière image n'est jamais affichée dans le widget image8\npossibilité ajoutée de définir la couleur de fond et de titre pour la boîte de dialogue jqui\npermettre de cliquer à travers l'image du signal si devant le widget",
-        "it": "problema fisso che l'ultima immagine non è mai mostrata nel widget immagine8\npossibilità aggiunta di definire sfondo e colore titolo per la finestra di dialogo jqui\nrendere possibile fare clic sull'immagine del segnale se di fronte al widget",
-        "es": "edición fija que la última imagen nunca se muestra en el widget imagen8\nañadido posibilidad de definir fondo y color de título para el diálogo jqui\nhacer posible hacer clic a través de la imagen de la señal si en frente del widget",
-        "pl": "stałe wydanie, że ostatni obraz nie jest wyświetlany w widget image8\ndodana możliwość zdefiniowania tła i koloru tytułu dla okna dialogowego jqui\numożliwia kliknięcie przez obraz sygnału, jeśli przed widget",
-        "uk": "виправлено проблему, що останнє зображення ніколи не відображається в image8 віджет\nдодано можливість визначення фону та кольору заголовка для діалогового вікна\nви можете натиснути зображення сигналу, якщо перед віджетом",
-        "zh-cn": "最后一个图像从未在图像8部件中显示的固定问题\n添加定义 jqui 对话框的背景和标题颜色的可能性\n如果在部件前面可以单击信号图像"
       }
     },
     "title": "Visualisation Next Generation",
