@@ -1,17 +1,18 @@
 import React from 'react';
 import { type Connection } from '@iobroker/adapter-react-v5';
-import { GroupWidgetId, Project, SingleWidgetId } from '@/types';
-import type VisRxWidget from '@/Vis/visRxWidget';
 import {
-    type WidgetAttributesGroupInfo,
-    type CustomPaletteProperties,
-    type WidgetAttributeInfo,
-    type WidgetAttributeType,
-} from '@/Vis/visRxWidget';
+    GroupWidgetId,
+    Project,
+    RxWidgetInfoAttributes,
+    SingleWidgetId,
+    CustomPaletteProperties,
+} from '@/types';
+import type VisRxWidget from '@/Vis/visRxWidget';
 
 import { getRemoteWidgets } from './visUtils';
 // eslint-disable-next-line import/no-cycle
 import WIDGETS from './Widgets';
+import { RxWidgetInfoAttributesField, RxWidgetAttributeType } from "@/allInOneTypes";
 
 const DEFAULT_SET_COLORS: Record<string, string> = {
     basic: '#f1f1f1',
@@ -32,7 +33,7 @@ interface WidgetAttributesGroupInfoStored {
     name?: string;
     singleName?: string;
     index?: number;
-    fields?: WidgetAttributeInfo[];
+    fields?: RxWidgetInfoAttributesField[];
     indexFrom?: number | string;
     indexTo?: number | string;
     iterable?: {
@@ -44,9 +45,8 @@ interface WidgetAttributesGroupInfoStored {
     };
 }
 
-interface WidgetAttributeInfoStored extends WidgetAttributeInfo {
+interface WidgetAttributeInfoStored extends RxWidgetInfoAttributesField {
     onChangeFunc?: string;
-    filter?: string;
     filterFile?: string;
     filterName?: string;
     filterAttrs?: string;
@@ -78,7 +78,7 @@ export interface WidgetType {
     resizable?: boolean;
     resizeLocked?: boolean;
     draggable?: boolean;
-    params: string | WidgetAttributesGroupInfo[];
+    params: string | RxWidgetInfoAttributes[];
 
     setLabel?: string;
     setColor?: string;
@@ -422,7 +422,7 @@ interface CommonGroups {
 }
 
 export const parseAttributes = (
-    widgetParams: string | WidgetAttributesGroupInfo[],
+    widgetParams: string | RxWidgetInfoAttributes[],
     widgetIndex?: number,
     commonGroups?: CommonGroups,
     commonFields?: Record<string, any>,
@@ -484,11 +484,11 @@ export const parseAttributes = (
                 }
 
                 const repeats = match[2];
-                let type: WidgetAttributeType;
+                let type: RxWidgetAttributeType;
                 let onChangeFunc: string | undefined;
                 if (match[4]) {
                     const parts = match[4].substring(1).split('/');
-                    type = parts[0] as WidgetAttributeType;
+                    type = parts[0] as RxWidgetAttributeType;
                     onChangeFunc = parts[1];
                 } else {
                     type = 'text';
@@ -505,7 +505,7 @@ export const parseAttributes = (
                         .replace(/§/g, ';')
                         .replace(/~/g, '/')
                         .replace(/\^/g, '"')
-                        .replace(/\^\^/g, '^') as WidgetAttributeType;
+                        .replace(/\^\^/g, '^') as RxWidgetAttributeType;
                 }
                 if (typeof field.default === 'string') {
                     field.default = field.default
@@ -541,17 +541,17 @@ export const parseAttributes = (
 
                 if (field.type && (field.type.startsWith('id,'))) {
                     const options = field.type.split(',');
-                    field.type = options[0] as WidgetAttributeType;
+                    field.type = options[0] as RxWidgetAttributeType;
                     field.filter = options[1];
                 }
                 if (field.type && (field.type.startsWith('select,') || field.type.startsWith('nselect,') || field.type.startsWith('auto,'))) {
                     const options = field.type.split(',');
-                    field.type = options[0] as WidgetAttributeType;
+                    field.type = options[0] as RxWidgetAttributeType;
                     field.options = options.slice(1);
                 }
                 if (field.type && (field.type.startsWith('slider,') || field.type.startsWith('number,'))) {
                     const options = field.type.split(',');
-                    field.type = options[0] as WidgetAttributeType;
+                    field.type = options[0] as RxWidgetAttributeType;
                     field.min = parseInt(options[1]);
                     field.max = parseInt(options[2]);
                     field.step = parseInt(options[3]);
@@ -561,7 +561,7 @@ export const parseAttributes = (
                 }
                 if (field.type && field.type.startsWith('style,')) {
                     const options = field.type.split(',');
-                    field.type = options[0] as WidgetAttributeType;
+                    field.type = options[0] as RxWidgetAttributeType;
                     field.filterFile = options[1];
                     field.filterName = options[2];
                     field.filterAttrs = options[3];
@@ -573,7 +573,7 @@ export const parseAttributes = (
                 // remove comma from type
                 if (field.type?.startsWith('style,')) {
                     console.warn(`Attribute "${field.name}" of ${widgetSet} has wrong type: ${field.type}`);
-                    field.type = field.type.split(',')[0] as WidgetAttributeType;
+                    field.type = field.type.split(',')[0] as RxWidgetAttributeType;
                 }
 
                 field.singleName = field.name;

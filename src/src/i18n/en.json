@@ -731,5 +731,7 @@
   "basic_filter_type_vertical_buttons": "Vertical buttons",
   "basic_no_filter": "No filter",
   "basic_all_filters": "Add all left",
-  "Only for desktop": "Only for desktop"
+  "Only for desktop": "Only for desktop",
+  "Include widget?": "Include widget?",
+  "Do you want to include \"%s\" widget into \"%s\"?": "Do you want to include \"%s\" widget into \"%s\"?"
 }

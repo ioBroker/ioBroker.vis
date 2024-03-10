@@ -41,7 +41,7 @@ export type RxWidgetInfoAttributesField = {
             role?: string | string[];
         };
         type?: ioBroker.ObjectType | ioBroker.ObjectType[];
-    };
+    } | string;
     /** Additionally, you can provide `adapter` to filter the instances of specific adapter. With special adapter name `_dataSources` you can get all adapters with flag `common.getHistory`. */
     adapter?: string;
     /** In this case only instance number (like `0`) is shown and not `history.0`. It can be set to true only with non-empty `adapter` setting. */

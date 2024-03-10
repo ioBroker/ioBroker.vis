@@ -731,5 +731,7 @@
   "basic_filter_type_vertical_buttons": "Botones verticales",
   "basic_no_filter": "Sin filtro",
   "basic_all_filters": "Añadir todo lo que queda",
-  "Only for desktop": "Sólo para escritorio"
+  "Only for desktop": "Sólo para escritorio",
+  "Include widget?": "¿Incluir widget?",
+  "Do you want to include \"%s\" widget into \"%s\"?": "¿Quieres incluir el widget \"%s\" en \"%s\"?"
 }

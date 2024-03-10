@@ -4,6 +4,10 @@ import { CustomPaletteProperties, WidgetAttributeInfo, WidgetAttributesGroupInfo
 import { CommonType } from '@iobroker/types/build/objects';
 import { store } from '@/Store';
 import { RxWidgetAttributeType, RxWidgetInfoAttributesField } from '@/allInOneTypes';
+import type moment from 'moment';
+import VisFormatUtils from '@/Vis/visFormatUtils';
+import VisView from '@/Vis/visView';
+import type { Theme } from '@mui/material';
 
 export type Timer = ReturnType<typeof setTimeout>;
 
@@ -40,13 +44,69 @@ export type AnyWidgetId = SingleWidgetId | GroupWidgetId
 interface WidgetData {
     /** Only exists if given by user in tab general */
     name?: string;
-    bindings?: string[];
-    [other: string]: unknown;
+    filterkey?: string;
+    members?: AnyWidgetId[];
+    [other: string]: any;
 }
 
-interface WidgetStyle {
-    bindings?: string[];
-    [other: string]: unknown;
+export interface WidgetStyle {
+    position?: '' | 'absolute' | 'relative' | 'sticky' | 'static' | null;
+    display?: '' | 'inline-block' | null;
+    top?: string | number | null;
+    left?: string | number | null;
+    width?: string | number | null;
+    right?: string | number | null;
+    bottom?: string | number | null;
+    /** if widget become relative, here is stored the original width, so when we toggle it to the absolute width again, it has some width  */
+    absoluteWidth?: string | number | null;
+    height?: string | number | null;
+    'z-index'?: number | null;
+    'overflow-x'?: '' | 'visible' | 'hidden' | 'scroll' | 'auto' | 'initial' | 'inherit' | null;
+    'overflow-y'?: '' | 'visible' | 'hidden' | 'scroll' | 'auto' | 'initial' | 'inherit' | null;
+    opacity?: number | null;
+    cursor?: 'alias' | 'all-scroll' | 'auto' | 'cell' | 'col-resize' | 'context-menu' | 'copy' | 'crosshair' | 'default' | 'e-resize' | 'ew-resize' | 'grab' | 'grabbing' | 'help' | 'move' | 'n-resize' | 'ne-resize' | 'nesw-resize' | 'ns-resize' | 'nw-resize' | 'nwse-resize' | 'no-drop' | 'none' | 'not-allowed' | 'pointer' | 'progress' | 'row-resize' | 's-resize' | 'se-resize' | 'sw-resize' | 'text' | 'vertical-text' | 'w-resize' | 'wait' | 'zoom-in' | 'zoom-out' | 'initial' | 'inherit' | null;
+    transform?: string;
+
+    color?: string;
+    'text-align'?: '' | 'left' | 'right' | 'center' | 'justify' | 'initial' | 'inherit' | null;
+    'text-shadow'?: string | null;
+    'font-family'?: string | null;
+    'font-style'?: '' | 'normal' | 'italic' | 'oblique' | 'initial' | 'inherit' | null;
+    'font-variant'?: '' | 'normal' | 'small-caps' | 'initial' | 'inherit' | null;
+    'font-weight'?: string;
+    'font-size'?: string;
+    'line-height'?: string;
+    'letter-spacing'?: string;
+    'word-spacing'?: string;
+
+    background?: string;
+    'background-color'?: string;
+    'background-image'?: string;
+    'background-repeat'?: '' | 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat' | 'initial' | 'inherit' | null;
+    'background-repeat'?: '' | 'scroll' | 'fixed' | 'local' | 'initial' | 'inherit' | null;
+    'background-position'?: string | null;
+    'background-size'?: string | null;
+    'background-clip'?: '' | 'border-box' | 'padding-box' | 'content-box' | 'initial' | 'inherit' | null;
+    'background-origin'?: '' | 'padding-box' | 'border-box' | 'content-box' | 'initial' | 'inherit' | null;
+
+    'border-width'?: string | null;
+    'border-style'?: '' | 'dotted' | 'dashed' | 'solid' | 'double' | 'groove' | 'ridge' | 'inset' | 'outset' | 'hidden' | null;
+    'border-color'?: string | null;
+    'border-radius'?: string | null;
+
+    padding?: string | null;
+    'padding-left'?: string | null;
+    'padding-top'?: string | null;
+    'padding-right'?: string | null;
+    'padding-bottom'?: string | null;
+    'box-shadow'?: string | null;
+    'margin-left'?: string | null;
+    'margin-top'?: string | null;
+    'margin-right'?: string | null;
+    'margin-bottom'?: string | null;
+
+    /** relative property, if the widget must be shown on the new line */
+    newLine?: boolean;
 }
 
 interface SingleWidget  {
@@ -68,15 +128,16 @@ interface SingleWidget  {
     permissions?: UserPermissions;
     /** This widget was taken from marketplace */
     marketplace?: any;
+    usedInWidget?: AnyWidgetId;
 }
 
-interface GroupWidget extends SingleWidget {
+interface GroupData extends WidgetData {
+    /** Widget IDs of the members */
+    members: AnyWidgetId[];
+}
+export interface GroupWidget extends SingleWidget {
     tpl: '_tplGroup';
-    data: {
-        /** Widget IDs of the members */
-        members: string[];
-        [other: string]: unknown;
-    };
+    data: GroupData;
 }
 
 export type Widget = SingleWidget | GroupWidget;
@@ -84,7 +145,6 @@ export type Widget = SingleWidget | GroupWidget;
 export interface ViewSettings {
     /** Permissions for each user for the view */
     permissions?: UserPermissions;
-    display?: 'flex' | 'grid' | null | '';
     comment?: string;
     class?: string;
     filterkey?: string;
@@ -92,34 +152,37 @@ export interface ViewSettings {
     theme?: string;
     group_action?: 'disabled' | 'hide' | null | '';
 
+    useBackground?: boolean;
     'bg-image'?: string;
     'bg-position-x'?: string;
     'bg-position-y'?: string;
     'bg-width'?: string;
     'bg-height'?: string;
     'bg-color'?: string;
-    background_class?: string;
-    useBackground?: boolean;
-    background?: string;
-    'background-color'?: string;
-    'background-image'?: string;
-    'background-repeat'?:  'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat' | 'initial' | 'inherit' | null | '';
-    'background-attachment'?: 'scroll' | 'fixed' | 'local' | 'initial' | 'inherit' | null | '';
-    'background-position'?: 'left top' | 'left center' | 'left bottom' | 'right top' | 'right center' | 'right bottom' | 'center top' | 'center center' | 'center bottom' | 'initial' | 'inherit' | null | '';
-    'background-size'?: 'auto' | 'cover' | 'contain' | 'initial' | 'inherit' | null | '';
-    'background-clip'?: 'border-box' | 'padding-box' | 'content-box' | 'initial' | 'inherit' | null | '';
-    'background-origin'?: 'padding-box' | 'border-box' | 'content-box' | 'initial' | 'inherit' | null | '';
+    style?: {
+        display?: 'flex' | 'grid' | 'none' | null | '';
+        background_class?: string;
+        background?: string;
+        'background-color'?: string;
+        'background-image'?: string;
+        'background-repeat'?:  'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat' | 'initial' | 'inherit' | null | '';
+        'background-attachment'?: 'scroll' | 'fixed' | 'local' | 'initial' | 'inherit' | null | '';
+        'background-position'?: 'left top' | 'left center' | 'left bottom' | 'right top' | 'right center' | 'right bottom' | 'center top' | 'center center' | 'center bottom' | 'initial' | 'inherit' | null | '';
+        'background-size'?: 'auto' | 'cover' | 'contain' | 'initial' | 'inherit' | null | '';
+        'background-clip'?: 'border-box' | 'padding-box' | 'content-box' | 'initial' | 'inherit' | null | '';
+        'background-origin'?: 'padding-box' | 'border-box' | 'content-box' | 'initial' | 'inherit' | null | '';
 
-    color?: string;
-    'text-shadow'?: string;
-    'font-family'?: string;
-    'font-style'?: string;
-    'font-variant'?: string;
-    'font-weight'?: string;
-    'font-size'?: string;
-    'line-height'?: string;
-    'letter-spacing'?: string;
-    'word-spacing'?: string;
+        color?: string;
+        'text-shadow'?: string;
+        'font-family'?: string;
+        'font-style'?: string;
+        'font-variant'?: string;
+        'font-weight'?: string;
+        'font-size'?: string;
+        'line-height'?: string;
+        'letter-spacing'?: string;
+        'word-spacing'?: string;
+    }
 
     useAsDefault?: boolean;
     alwaysRender?: boolean;
@@ -163,7 +226,9 @@ export interface ViewSettings {
 
     columnWidth?: number;
     columnGap?: number;
-    rowGap?: number;
+    rowGap?: number | string;
+    /** relative widget order */
+    order?: AnyWidgetId[];
 }
 
 export interface View {
@@ -176,6 +241,8 @@ export interface View {
         [groupId: GroupWidgetId]: GroupWidget;
         [widgetId: SingleWidgetId]: SingleWidget;
     };
+    filterWidgets?: AnyWidgetId[];
+    filterInvert?: boolean;
 }
 
 export interface Project {
@@ -205,12 +272,23 @@ interface Subscribing {
     IDs: string[];
 }
 
+export interface VisRxWidgetStateValues {
+    /** State value */
+    [values: `${string}.val`]: any;
+    /** State from */
+    [from: `${string}.from`]: string;
+    /** State timestamp */
+    [timestamp: `${string}.ts`]: number;
+    /** State last change */
+    [timestamp: `${string}.lc`]: number;
+}
+
 export interface VisLegacy {
     instance: string;
     navChangeCallbacks: (() => void)[];
     findNearestResolution: (width?: number, height?: number) => string;
     version: number;
-    states: any;
+    states: VisRxWidgetStateValues;
     objects: Record<string, any>;
     isTouch: boolean;
     activeWidgets: string[];
@@ -274,6 +352,8 @@ export interface Window {
     vis: VisLegacy;
 }
 
+type ResizeHandler = 'n' | 'e' | 's' | 'w' | 'nw' | 'ne' | 'sw' | 'se';
+
 export interface BaseWidgetState extends React.ComponentState {
     width: number;
     height: number;
@@ -287,7 +367,7 @@ export interface BaseWidgetState extends React.ComponentState {
     selected: boolean;
     selectedOne: boolean;
     resizable: boolean;
-    resizeHandles: string[];
+    resizeHandles: ResizeHandler[];
     widgetHint: string;
     isHidden: boolean;
     gap: number;
@@ -307,52 +387,89 @@ export interface CanWidgetStore {
     wid: string;
 }
 
+interface VisLinkContextItem {
+    view: string;
+    widget: AnyWidgetId;
+}
+
+interface VisLinkContextBinding extends VisLinkContextItem {
+    type?: 'style' | 'data';
+    attr?: string;
+}
+
+interface VisLinkContext {
+    /** list of widgets, that depends on this state */
+    visibility: Record<string, VisLinkContextItem>;
+    signals: Record<string, VisLinkContextItem>;
+    lastChanges: Record<string, VisLinkContextItem>;
+    /** list of widgets, that depends on this state */
+    bindings: Record<string, VisLinkContextBinding>;
+    unregisterChangeHandler: (wid: AnyWidgetId, cb: (type: string, item: VisLinkContextBinding, stateId: string, state: ioBroker.State) => void) => void;
+    registerChangeHandler: (wid: AnyWidgetId, cb: (type: 'style' | 'signal' | 'visibility' | 'lastChange' | 'binding', item: VisLinkContextBinding, stateId: string, state: ioBroker.State) => void) => void;
+    subscribe: (stateId: string | string[]) => void;
+    unsubscribe: (stateId: string | string[]) => void;
+    getViewRef: (view: string) => React.RefObject<HTMLDivElement> | null;
+    registerViewRef: (view: string, ref: React.RefObject<HTMLDivElement>, onCommand: (command: ViewCommand, options?: ViewCommandOptions) => any) => void;
+    unregisterViewRef: (view: string, ref: React.RefObject<HTMLDivElement>) => void;
+}
+
+
 export interface VisContext {
     // $$: any;
-    // VisView: any;
+    VisView: VisView;
     activeView: string;
     adapterName: string;
     allWidgets: Record<string, CanWidgetStore>;
-    askAboutInclude: (wid: string, toWid: string, cb: () => void) => void;
+    askAboutInclude: (wid: AnyWidgetId, toWid: AnyWidgetId, cb: (wid: AnyWidgetId, toWid: AnyWidgetId) => void) => void;
     buildLegacyStructures: () => void;
     // can: any;
     // canStates: any;
     changeProject: (project: Project, ignoreHistory?: boolean) => Promise<void>;
     changeView: (view: string, subView?: string) => void;
     dateFormat: string;
+    disableInteraction: boolean;
     editModeComponentClass: string;
-    // formatUtils: this.formatUtils;
-    instance: string; // vis instance number (not browser instance)
+    formatUtils: VisFormatUtils;
+    instance: number; // vis instance number (not browser instance)
     // jQuery: any;
-    lang: string;
-    // linkContext: any;
+    lang: ioBroker.Languages;
+    linkContext: VisLinkContext;
     lockDragging: boolean;
-    // onWidgetsChanged: (changedData: any, view?: string, viewSettings?: any) => void | null;
+    moment: moment;
+    // onCommand: (view: string, command: string, data?: any) => void
+    onWidgetsChanged: (
+        changedData: {
+            wid: AnyWidgetId;
+            view: string;
+            style?: Record<string, any>;
+            data?: Record<string, any>;
+        }[] | null,
+        view?: string,
+        viewSettings?: ViewSettings,
+    ) => void | null;
+    onIgnoreMouseEvents: (ignore: boolean) => void;
     projectName: string;
+    registerEditorCallback: (name: 'onStealStyle' | 'onPxToPercent' | 'pxToPercent' | 'onPercentToPx', view: string, cb?: any) => void;
     runtime: boolean;
+    setSelectedGroup: (groupId: string) => void;
+    setSelectedWidgets: (widgets: AnyWidgetId[], view?: string, cb?: () => void) => void;
     setTimeInterval: (timeInterval: string) => void;
     setTimeStart: (timeStart: string) => void;
     setValue: (id: string, value: string | boolean | number | null) => void;
     showWidgetNames: boolean;
     socket: Connection;
-    // systemConfig: any;
-    // theme: any;
+    systemConfig: ioBroker.Object;
+    theme: Theme;
     themeName: string;
-    themeType: string;
+    themeType: 'dark' | 'light';
     timeInterval: string;
-    timeStart:string;
+    timeStart: string;
+    toggleTheme: () => void;
     user: string;
-    userGroups: Record<string, string[]>;
+    userGroups: Record<string, ioBroker.Object>;
     views: Project; // project
     widgetHint: 'light' | 'dark' | 'hide';
-    // registerEditorCallback: (name: string, view: string, cb: any) => void | null;
-    setSelectedGroup: (groupId: string) => void;
-    setSelectedWidgets: (widgets: string[]) => void;
-    onIgnoreMouseEvents: (ignore: boolean) => void;
-    // disableInteraction: this.props.disableInteraction;
-    toggleTheme: () => void;
-    // onCommand: (view: string, command: string, data?: any) => void
-    // moment: any;
+    container?: boolean;
 }
 
 export interface RxWidgetProps extends RxRenderWidgetProps {
@@ -434,9 +551,9 @@ interface RxWidgetInfo {
     /* if false, if widget is not draggable  */
     visDraggable?: boolean;
     /* Show specific handlers  */
-    visResizeHandles?: ('n' | 'e' |'s' | 'w' | 'nw' | 'ne' | 'sw' | 'se')[];
+    visResizeHandles?: ResizeHandler[];
     /* @deprecated use visResizeHandles */
-    resizeHandles?: ('n' | 'e' |'s' | 'w' | 'nw' | 'ne' | 'sw' | 'se')[];
+    resizeHandles?: ResizeHandler[];
 
     /* Function to generate custom palette element */
     customPalette?: (context: CustomPaletteProperties) => React.JSX.Element;

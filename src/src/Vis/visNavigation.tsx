@@ -212,7 +212,7 @@ interface VisNavigationProps {
     menuWidth: string;
     setMenuWidth: (width: string) => void;
     classes: Record<string, any>;
-    visInWidget: boolean;
+    visInWidget?: boolean;
     children: React.ReactNode;
 }
 

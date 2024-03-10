@@ -64,8 +64,8 @@ class BasicHtml extends VisRxWidget {
 
     async componentDidMount() {
         super.componentDidMount();
-        if (this.state.rxData.refreshInterval) {
-            this.interval = setInterval(() => this.forceUpdate(), this.state.rxData.refreshInterval);
+        if (parseInt(this.state.rxData.refreshInterval, 10)) {
+            this.interval = setInterval(() => this.forceUpdate(), parseInt(this.state.rxData.refreshInterval, 10));
         }
     }
 
@@ -75,8 +75,8 @@ class BasicHtml extends VisRxWidget {
             clearInterval(this.interval);
             this.interval = null;
         }
-        if (this.state.rxData.refreshInterval) {
-            this.interval = setInterval(() => this.forceUpdate(), this.state.rxData.refreshInterval);
+        if (parseInt(this.state.rxData.refreshInterval, 10)) {
+            this.interval = setInterval(() => this.forceUpdate(), parseInt(this.state.rxData.refreshInterval, 10));
         }
     }
 

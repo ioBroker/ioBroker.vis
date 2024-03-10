@@ -731,5 +731,7 @@
   "basic_filter_type_vertical_buttons": "Pulsanti verticali",
   "basic_no_filter": "Senza Filtro",
   "basic_all_filters": "Aggiungi tutto quello che resta",
-  "Only for desktop": "Solo per desktop"
+  "Only for desktop": "Solo per desktop",
+  "Include widget?": "Includere il widget?",
+  "Do you want to include \"%s\" widget into \"%s\"?": "Vuoi includere il widget \"%s\" in \"%s\"?"
 }

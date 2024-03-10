@@ -14,7 +14,7 @@
  */
 import { I18n } from '@iobroker/adapter-react-v5';
 import { deepClone } from '@/Utils/utils';
-import { store, updateView, updateWidget } from '../Store';
+import { store, updateView, updateWidget } from '@/Store';
 
 function replaceGroupAttr(inputStr, groupAttrList) {
     let newString = inputStr;

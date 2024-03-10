@@ -885,7 +885,7 @@ class VisCanWidget extends VisBaseWidget {
                         // widget exists in the visibility list
                         this.props.context.linkContext.visibility[id].splice(widgetIndex, 1);
                     } else if (widgetIndex < 0 && id === oid) {
-                        // widget does not exists in the visibility list
+                        // widget does not exist in the visibility list
                         this.props.context.linkContext.visibility[id].push(obj);
                     }
                 });

@@ -18,7 +18,7 @@ interface BasicScreenResolutionState extends RxWidgetState {
     width: number;
     height: number;
     defaultView: string;
-    essentialData: string;
+    essentialData?: string;
 }
 
 // eslint-disable-next-line no-use-before-define
@@ -109,19 +109,20 @@ export default class BasicScreenResolution extends VisRxWidget<RxData, BasicScre
     }
 
     onResize = () => {
-        let width;
-        let height;
-        let defaultView;
+        let width: number;
+        let height: number;
+        let defaultView: string;
         if (this.props.editMode) {
             width = this.props.context.views[this.props.context.activeView]?.settings?.sizex || window.document.documentElement.clientWidth;
             height = this.props.context.views[this.props.context.activeView]?.settings?.sizey || window.document.documentElement.clientHeight;
             defaultView = window.vis.findNearestResolution(width as number, height as number);
         } else {
-            width = document.documentElement.clientWidth;
+            width = document.documentElement.clientWidth || 0;
             height = document.documentElement.clientHeight;
             defaultView = window.vis.findNearestResolution();
         }
         this.setState({
+            // @ts-expect-error unknown error
             width,
             height,
             defaultView,

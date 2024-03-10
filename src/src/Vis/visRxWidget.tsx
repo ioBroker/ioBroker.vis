@@ -21,10 +21,19 @@ import {
 
 import { Connection, I18n, Icon } from '@iobroker/adapter-react-v5';
 
-import { Project, AnyWidgetId, RxWidgetInfo } from '@/types';
+import {
+    Project, AnyWidgetId, RxWidgetInfo,
+    WidgetData, VisRxWidgetStateValues,
+} from '@/types';
 import { deepClone, calculateOverflow } from '@/Utils/utils';
 // eslint-disable-next-line import/no-cycle
-import VisBaseWidget, { VisBaseWidgetProps } from './visBaseWidget';
+import VisBaseWidget, {
+    VisBaseWidgetProps,
+    VisBaseWidgetState,
+    WidgetStyleState,
+    WidgetDataState,
+    GroupDataState,
+} from './visBaseWidget';
 import { addClass, getUsedObjectIDsInWidget } from './visUtils';
 
 const POSSIBLE_MUI_STYLES = [
@@ -57,14 +66,7 @@ const POSSIBLE_MUI_STYLES = [
 ];
 
 interface VisRxWidgetProps extends VisBaseWidgetProps {
-    /** If currently running in edit mode */
-    editMode: boolean;
-    /** The widget's view */
-    view: string;
-    /** if the widget will be shown in relative position */
-    isRelative: boolean;
-    /** TODO */
-    viewsActiveFilter: { [view: string]: string[] };
+
 }
 
 interface RxData {
@@ -77,35 +79,24 @@ interface RxData {
 }
 
 /** TODO move to VisBaseWidget when ported */
-interface VisBaseWidgetState {
-    data: any;
-    style: any;
-    applyBindings: boolean;
-    editMode: boolean;
-    multiViewWidget: any;
-    selected: any;
-    selectedOne: any;
-    resizable: boolean;
-    resizeHandles: string[];
-    widgetHint:any;
-    isHidden: any;
-    gap: number;
-    rxStyle: any;
-    visible: boolean;
-    draggable: boolean;
-    disabled: boolean;
-}
-
-interface VisRxWidgetStateValues {
-    /** State value */
-    [values: `${string}.val`]: any;
-    /** State from */
-    [from: `${string}.from`]: string;
-    /** State timestamp */
-    [timestamp: `${string}.ts`]: number;
-    /** State last change */
-    [timestamp: `${string}.lc`]: number;
-}
+// interface VisBaseWidgetState {
+//     data: any;
+//     style: any;
+//     applyBindings: boolean;
+//     editMode: boolean;
+//     multiViewWidget: any;
+//     selected: any;
+//     selectedOne: any;
+//     resizable: boolean;
+//     resizeHandles: string[];
+//     widgetHint:any;
+//     isHidden: any;
+//     gap: number;
+//     rxStyle: any;
+//     visible: boolean;
+//     draggable: boolean;
+//     disabled: boolean;
+// }
 
 export interface CustomWidgetProperties {
     context: {
@@ -123,6 +114,8 @@ export interface CustomWidgetProperties {
 interface VisRxWidgetState extends VisBaseWidgetState {
     rxData: RxData;
     values: VisRxWidgetStateValues;
+    visible?: boolean;
+    disabled?: boolean;
 }
 
 /** TODO: this overload can be removed as soon as VisBaseWidget is written correctly in TS */
@@ -136,7 +129,7 @@ interface VisRxWidget<TRxData extends Record<string, any>, TState extends Record
     state: VisRxWidgetState & TState & { rxData: TRxData };
 }
 
-class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
+class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget<VisRxWidgetState> {
     static POSSIBLE_MUI_STYLES = POSSIBLE_MUI_STYLES;
 
     static i18nPrefix: string | undefined;
@@ -277,7 +270,7 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
         return I18n.getLanguage();
     }
 
-    onCommand(command: string) {
+    onCommand(command: VisWidgetCommand, _option?: any) {
         const result = super.onCommand(command);
         if (result === false) {
             if (command === 'collectFilters') {
@@ -310,15 +303,21 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
     onStateChanged(id?: string | null, state?: typeof this.state | null, doNotApplyState?: boolean) {
         this.newState = this.newState || {
             values: deepClone(this.state.values || {}),
-            rxData: { ...this.state.data },
-            rxStyle: { ...this.state.style },
+            rxData: { ...this.state.data } as WidgetDataState | GroupDataState,
+            rxStyle: { ...this.state.style } as WidgetStyleState,
             editMode: this.props.editMode,
             applyBindings: false,
         };
 
+        if (!this.newState) {
+            return null;
+        }
+
         // @ts-expect-error fix later
         delete this.newState.rxData._originalData;
-        delete this.newState.rxStyle._originalData;
+        if (this.newState.rxStyle) {
+            delete this.newState.rxStyle._originalData;
+        }
 
         if (id && state) {
             // @ts-expect-error fix later
@@ -371,7 +370,7 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
                 this.updateTimer = undefined;
                 const newState = this.newState ?? null;
                 this.newState = null;
-                this.setState(newState);
+                newState && this.setState(newState);
             }, 50);
         } else {
             this.newState = null;
@@ -388,7 +387,7 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
                 view: item.view,
                 wid: this.props.id,
                 widget: this.props.context.views[item.view].widgets[this.props.id],
-                widgetData: newState.rxData,
+                widgetData: newState.rxData as WidgetData,
                 values: newState.values,
                 moment: this.props.context.moment,
             });
@@ -396,7 +395,8 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
             if (item.type === 'data') {
                 // @ts-expect-error fix later
                 newState.rxData[item.attr] = value;
-            } else {
+            } else if (newState.rxStyle) {
+                // @ts-expect-error fix later
                 newState.rxStyle[item.attr] = value;
             }
         });
@@ -431,7 +431,9 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
 
     async componentWillUnmount() {
         // @ts-expect-error check later if types wrong or call wrong
-        this.linkContext.IDs.length && (await this.props.context.socket.unsubscribeState(this.linkContext.IDs, this.onStateChangedBind));
+        if (this.linkContext.IDs.length) {
+            await this.props.context.socket.unsubscribeState(this.linkContext.IDs, this.onStateChangedBind);
+        }
         super.componentWillUnmount();
     }
 
@@ -507,11 +509,15 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
         // subscribe on some new IDs and remove old IDs
         const unsubscribe = oldIDs.filter(id => !this.linkContext.IDs.includes(id));
         // @ts-expect-error check later if types wrong or call wrong
-        unsubscribe.length && (await context.socket.unsubscribeState(unsubscribe, this.onStateChangedBind));
+        if (unsubscribe.length) {
+            await context.socket.unsubscribeState(unsubscribe, this.onStateChangedBind);
+        }
 
         const subscribe = this.linkContext.IDs.filter(id => !oldIDs.includes(id));
         // @ts-expect-error check later if types wrong or call wrong
-        subscribe.length && (await context.socket.subscribeState(subscribe, this.onStateChangedBind));
+        if (subscribe.length) {
+            await context.socket.subscribeState(subscribe, this.onStateChangedBind);
+        }
 
         this.onStateChanged();
     }
@@ -535,7 +541,6 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
 
     // eslint-disable-next-line no-unused-vars
     wrapContent(content: any, addToHeader: any, cardContentStyle: any, headerStyle: any, onCardClick: any, components: any) {
-        // @ts-expect-error add to types
         if (this.props.context.views[this.props.view].widgets[this.props.id].usedInWidget) {
             return content;
         }
@@ -551,8 +556,8 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
         };
 
         // apply style from the element
-        Object.keys(this.state.rxStyle).forEach(attr => {
-            const value = this.state.rxStyle[attr];
+        Object.keys(this.state.rxStyle as Record<string, any>).forEach(attr => {
+            const value = (this.state.rxStyle as Record<string, any>)[attr];
             if (value !== null &&
                 value !== undefined &&
                 POSSIBLE_MUI_STYLES.includes(attr)
@@ -611,7 +616,7 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
         </MyCard>;
     }
 
-    renderWidgetBody(props: any): React.JSX.Element | void | null {
+    renderWidgetBody(props: any): React.JSX.Element | null {
         props.id = this.props.id;
 
         props.className = `vis-widget${this.state.rxData.class ? ` ${this.state.rxData.class}` : ''}`;
@@ -620,8 +625,8 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
             props.className = addClass(props.className, 'vis-user-disabled');
         }
 
-        Object.keys(this.state.rxStyle).forEach(attr => {
-            const value = this.state.rxStyle[attr];
+        Object.keys(this.state.rxStyle as Record<string, any>).forEach(attr => {
+            const value = (this.state.rxStyle as Record<string, any>)[attr];
             if (value !== null && value !== undefined) {
                 if (!this.wrappedContent || !POSSIBLE_MUI_STYLES.includes(attr)) {
                     attr = attr.replace(
@@ -635,7 +640,7 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
         });
 
         if (this.props.isRelative) {
-            props.style.position = this.state.rxStyle.position || 'relative';
+            props.style.position = this.state.rxStyle?.position || 'relative';
             delete props.style.top;
             delete props.style.left;
         } else {
@@ -643,7 +648,7 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
         }
 
         if (this.state.editMode) {
-            const zIndex = parseInt((this.state.rxStyle['z-index'] || 0), 10);
+            const zIndex = this.state.rxStyle ? parseInt(((this.state.rxStyle['z-index'] as unknown as string) || '0'), 10) : 0;
             if (this.state.selected) {
                 // move widget to foreground
                 props.style.zIndex = 800 + zIndex;
@@ -651,6 +656,8 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget {
                 props.style.zIndex = zIndex;
             }
         }
+
+        return null;
     }
 
     getWidgetView(view: any, props: any) {

@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2022-2023 Denis Haev https://github.com/GermanBluefox,
+ *  Copyright (c) 2022-2024 Denis Haev https://github.com/GermanBluefox,
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -2041,6 +2041,7 @@ ${this.scripts}
             changeProject: this.props.changeProject,
             changeView: this.changeView,
             dateFormat: this.vis.dateFormat,
+            disableInteraction: this.props.disableInteraction,
             editModeComponentClass: this.props.editModeComponentClass,
             formatUtils: this.formatUtils,
             instance: this.props.instance,
@@ -2048,9 +2049,15 @@ ${this.scripts}
             lang: this.props.lang,
             linkContext: this.linkContext,
             lockDragging: this.props.lockDragging,
+            moment,
+            onCommand: this.onCommand,
+            onIgnoreMouseEvents: this.props.runtime ? null : this.props.onIgnoreMouseEvents,
             onWidgetsChanged: this.props.runtime ? null : this.props.onWidgetsChanged,
             projectName: this.props.projectName,
+            registerEditorCallback: this.props.runtime ? null : this.props.registerEditorCallback,
             runtime: this.props.runtime,
+            setSelectedGroup: this.props.runtime ? null : this.props.setSelectedGroup,
+            setSelectedWidgets: this.props.runtime ? null : this.props.setSelectedWidgets,
             setTimeInterval: this.setTimeInterval,
             setTimeStart: this.setTimeStart,
             setValue: this.setValue,
@@ -2062,19 +2069,12 @@ ${this.scripts}
             themeType: this.props.themeType,
             timeInterval: this.state.timeInterval,
             timeStart: this.state.timeStart,
+            toggleTheme: this.props.toggleTheme,
             user: this.userName,
             userGroups: this.props.userGroups,
             // For internal widgets interact with the store instead
             views: visProject,
             widgetHint: this.props.widgetHint,
-            registerEditorCallback: this.props.runtime ? null : this.props.registerEditorCallback,
-            setSelectedGroup: this.props.runtime ? null : this.props.setSelectedGroup,
-            setSelectedWidgets: this.props.runtime ? null : this.props.setSelectedWidgets,
-            onIgnoreMouseEvents: this.props.runtime ? null : this.props.onIgnoreMouseEvents,
-            disableInteraction: this.props.disableInteraction,
-            toggleTheme: this.props.toggleTheme,
-            onCommand: this.onCommand,
-            moment,
         };
 
         const views = Object.keys(visProject).map(view => {

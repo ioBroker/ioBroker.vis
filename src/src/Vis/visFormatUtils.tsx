@@ -13,10 +13,23 @@
  * (Free for non-commercial use).
  */
 import { extractBinding } from './visUtils';
-import { deepClone } from '../Utils/utils';
+import { deepClone } from '@/Utils/utils';
+import {
+    VisLegacy, AnyWidgetId, WidgetData,
+    SingleWidget, GroupWidget, VisRxWidgetStateValues,
+} from '@/types';
+import { type Moment } from 'moment';
+
+interface VisFormatUtilsProps {
+    vis: VisLegacy;
+}
 
 class VisFormatUtils {
-    constructor(props) {
+    private readonly vis: VisLegacy;
+
+    private readonly bindingsCache: Record<string, any>;
+
+    constructor(props: VisFormatUtilsProps) {
         this.vis = props.vis;
         this.bindingsCache = {};
         // required options in vis
@@ -31,21 +44,22 @@ class VisFormatUtils {
     }
 
     // get value of Obj property PropPath. PropPath is string like "Prop1" or "Prop1.Prop2" ...
-    static getObjPropValue(obj, propPath) {
+    static getObjPropValue(obj: ioBroker.Object, propPath: string) {
         if (!obj) {
             return undefined;
         }
         const parts = propPath.split('.');
+        let _obj = obj as Record<string, any>;
         for (const part of parts) {
-            obj = obj[part];
-            if (!obj) {
+            _obj = _obj[part];
+            if (!_obj && _obj !== 0) {
                 return undefined;
             }
         }
-        return obj;
+        return _obj;
     }
 
-    getSpecialValues(name, view, wid, widgetData) {
+    getSpecialValues(name: string, view: string, wid: AnyWidgetId, widgetData: WidgetData) {
         switch (name) {
             case 'username.val':
                 return this.vis.user;
@@ -66,10 +80,10 @@ class VisFormatUtils {
         }
     }
 
-    static formatValue(value, decimals, _format) {
+    static formatValue(value: number | string, decimals?: number | string, _format?: string) {
         if (typeof decimals !== 'number') {
             decimals = 2;
-            _format = decimals;
+            _format = decimals as unknown as string;
         }
 
         // format = (_format === undefined) ? (this.vis.isFloatComma) ? ".," : ",." : _format;
@@ -83,52 +97,53 @@ class VisFormatUtils {
         return Number.isNaN(value) ? '' : value.toFixed(decimals || 0).replace(format[0], format[1]).replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
     }
 
-    formatMomentDate(dateObj, _format, useTodayOrYesterday, moment) {
+    formatMomentDate(dateObj: string | number | Date, _format?: string, useTodayOrYesterday?: boolean, moment?: any) {
         useTodayOrYesterday = typeof useTodayOrYesterday !== 'undefined' ? useTodayOrYesterday : false;
 
-        if (!dateObj) return '';
+        if (!dateObj) {
+            return '';
+        }
+        let momentObject: Moment | undefined;
         const type = typeof dateObj;
         if (type === 'string') {
-            dateObj = moment(dateObj);
-        }
-
-        if (type !== 'object') {
-            const j = parseInt(dateObj, 10);
+            momentObject = moment(dateObj);
+        } else if (type !== 'object') {
+            const j = parseInt(dateObj as string, 10);
             if (j === dateObj) {
                 // maybe this is an interval?
                 if (j < 946681200) {
-                    dateObj = moment(dateObj);
+                    momentObject = moment(dateObj);
                 } else {
                     // if less 2000.01.01 00:00:00
-                    dateObj = (j < 946681200000) ? moment(j * 1000) : moment(j);
+                    momentObject = j < 946681200000 ? moment(j * 1000) : moment(j);
                 }
             } else {
-                dateObj = moment(dateObj);
+                momentObject = moment(dateObj);
             }
         }
         const format = _format || this.vis.dateFormat || 'DD.MM.YYYY';
 
         let result;
 
-        if (useTodayOrYesterday) {
-            if (dateObj.isSame(moment(), 'day')) {
+        if (useTodayOrYesterday && momentObject && moment) {
+            if (momentObject.isSame(moment(), 'day')) {
                 const todayStr = this.vis._('Today');
-                result = moment(dateObj).format(format.replace('dddd', todayStr).replace('ddd', todayStr).replace('dd', todayStr)) || '';
-            } if (dateObj.isSame(moment().subtract(1, 'day'), 'day')) {
+                result = moment(momentObject).format(format.replace('dddd', todayStr).replace('ddd', todayStr).replace('dd', todayStr)) || '';
+            } if (momentObject.isSame(moment().subtract(1, 'day'), 'day')) {
                 const yesterdayStr = this.vis._('Yesterday');
-                result = moment(dateObj).format(format.replace('dddd', yesterdayStr).replace('ddd', yesterdayStr).replace('dd', yesterdayStr)) || '';
+                result = moment(momentObject).format(format.replace('dddd', yesterdayStr).replace('ddd', yesterdayStr).replace('dd', yesterdayStr)) || '';
             }
         } else {
-            result = moment(dateObj).format(format) || '';
+            result = moment(momentObject).format(format) || '';
         }
 
         return result;
     }
 
-    static _put(ss, dateObj, result) {
-        let v = '';
+    static _put(token: string, dateObj: Date, result: string) {
+        let v: string | number = '';
 
-        switch (ss) {
+        switch (token) {
             case 'YYYY':
             case 'JJJJ':
             case 'ГГГГ':
@@ -136,7 +151,7 @@ class VisFormatUtils {
             case 'JJ':
             case 'ГГ':
                 v = dateObj.getFullYear();
-                if (ss.length === 2) {
+                if (token.length === 2) {
                     v %= 100;
                 }
                 break;
@@ -145,7 +160,7 @@ class VisFormatUtils {
             case 'ММ':
             case 'М':
                 v = dateObj.getMonth() + 1;
-                if ((v < 10) && (ss.length === 2)) {
+                if ((v < 10) && (token.length === 2)) {
                     v = `0${v}`;
                 }
                 break;
@@ -156,7 +171,7 @@ class VisFormatUtils {
             case 'ДД':
             case 'Д':
                 v = dateObj.getDate();
-                if (v < 10 && ss.length === 2) {
+                if (v < 10 && token.length === 2) {
                     v = `0${v}`;
                 }
                 break;
@@ -167,7 +182,7 @@ class VisFormatUtils {
             case 'чч':
             case 'ч':
                 v = dateObj.getHours();
-                if (v < 10 && ss.length === 2) {
+                if (v < 10 && token.length === 2) {
                     v = `0${v}`;
                 }
                 break;
@@ -176,7 +191,7 @@ class VisFormatUtils {
             case 'мм':
             case 'м':
                 v = dateObj.getMinutes();
-                if (v < 10 && ss.length === 2) {
+                if (v < 10 && token.length === 2) {
                     v = `0${v}`;
                 }
                 break;
@@ -185,7 +200,7 @@ class VisFormatUtils {
             case 'cc':
             case 'c':
                 v = dateObj.getSeconds();
-                if (v < 10 && ss.length === 2) {
+                if (v < 10 && token.length === 2) {
                     v = `0${v}`;
                 }
                 v = v.toString();
@@ -208,7 +223,7 @@ class VisFormatUtils {
         return result;
     }
 
-    formatDate(dateObj, isDuration, _format) {
+    formatDate(dateObj: string | Date | number, isDuration?: boolean | string, _format?: string): string {
         // copied from js-controller/lib/adapter.js
         if ((typeof isDuration === 'string' && isDuration.toLowerCase() === 'duration') || isDuration === true) {
             isDuration = true;
@@ -221,47 +236,51 @@ class VisFormatUtils {
         if (!dateObj) {
             return '';
         }
+        let realDateObj: Date | undefined = undefined
         const type = typeof dateObj;
         if (type === 'string') {
-            dateObj = new Date(dateObj);
+            realDateObj = new Date(dateObj);
         } else if (type !== 'object') {
-            const j = parseInt(dateObj, 10);
+            const j = parseInt(dateObj as string, 10);
             if (j === dateObj) {
                 // maybe this is an interval
                 if (j < 946681200) {
                     isDuration = true;
-                    dateObj = new Date(dateObj);
+                    realDateObj = new Date(dateObj);
                 } else {
                     // if less 2000.01.01 00:00:00
-                    dateObj = (j < 946681200000) ? new Date(j * 1000) : new Date(j);
+                    realDateObj = (j < 946681200000) ? new Date(j * 1000) : new Date(j);
                 }
             } else {
-                dateObj = new Date(dateObj);
+                realDateObj = new Date(dateObj);
             }
         }
-        const format = _format || this.vis.dateFormat || 'DD.MM.YYYY';
-
-        isDuration && dateObj.setMilliseconds(dateObj.getMilliseconds() + dateObj.getTimezoneOffset() * 60 * 1000);
-
-        const validFormatChars = 'YJГMМDTДhSчmмsс';
-        let s = '';
         let result = '';
+        if (realDateObj) {
+            const format = _format || this.vis.dateFormat || 'DD.MM.YYYY';
 
-        for (let i = 0; i < format.length; i++) {
-            if (validFormatChars.includes(format[i])) {
-                // combine format character
-                s += format[i];
-            } else {
-                result = VisFormatUtils._put(s, dateObj, result);
-                s = '';
-                result += format[i];
+            isDuration && realDateObj.setMilliseconds(realDateObj.getMilliseconds() + realDateObj.getTimezoneOffset() * 60 * 1000);
+
+            const validFormatChars = 'YJГMМDTДhSчmмsс';
+            let s = '';
+
+            for (let i = 0; i < format.length; i++) {
+                if (validFormatChars.includes(format[i])) {
+                    // combine format character
+                    s += format[i];
+                } else {
+                    result = VisFormatUtils._put(s, realDateObj, result);
+                    s = '';
+                    result += format[i];
+                }
             }
+            result = VisFormatUtils._put(s, realDateObj, result);
         }
-        result = VisFormatUtils._put(s, dateObj, result);
+
         return result;
     }
 
-    extractBinding(format) {
+    extractBinding(format: string) {
         if (!format) {
             return null;
         }
@@ -279,31 +298,35 @@ class VisFormatUtils {
         return result;
     }
 
-    /** @typedef {{ format: string, view: any, wid: string, widget: any, widgetData: any, values?: any, moment: any }} FormatBindingOptions */
 
     /**
      * Format given binding
-     *
-     * @param {FormatBindingOptions} options
-     * @return {*}
      */
-    formatBinding(options) {
+    formatBinding(options: {
+        format: string,
+        view: string,
+        wid: AnyWidgetId,
+        widget: SingleWidget | GroupWidget,
+        widgetData: WidgetData,
+        values?: VisRxWidgetStateValues,
+        moment: any,
+    }): string {
         const {
             view, wid, widget, widgetData, moment,
         } = options;
 
-        let { format, values } = options;
+        let { format } = options;
 
-        values = values || this.vis.states;
+        const _values = options.values || this.vis.states;
 
-        const oids = this.extractBinding(format);
+        const oids = this.extractBinding(options.format);
 
         for (const oid of oids) {
-            let value;
+            let value: any;
             if (oid.visOid) {
                 value = this.getSpecialValues(oid.visOid, view, wid, widgetData);
                 if (value === undefined || value === null) {
-                    value = values[oid.visOid];
+                    value = (_values as Record<string, any>)[oid.visOid];
                 }
             }
 
@@ -319,7 +342,9 @@ class VisFormatUtils {
                                 value = this.getSpecialValues(operation.arg[a].visOid, view, wid, widgetData);
 
                                 if (value === undefined || value === null) {
-                                    value = operation.arg[a].visOid.startsWith('widgetOid.') ? values[operation.arg[a].visOid.replace(/^widgetOid\./g, `${widget.data.oid}.`)] : values[operation.arg[a].visOid];
+                                    value = operation.arg[a].visOid.startsWith('widgetOid.') ?
+                                        (_values as Record<string, any>)[operation.arg[a].visOid.replace(/^widgetOid\./g, `${widget.data.oid}.`)] :
+                                        (_values as Record<string, any>)[operation.arg[a].visOid];
                                 }
                                 if (value === null) {
                                     string += `const ${operation.arg[a].name} = null;`;
