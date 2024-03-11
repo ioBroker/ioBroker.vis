@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { type Connection } from '@iobroker/adapter-react-v5';
 import {
     GroupWidgetId,
@@ -8,11 +9,11 @@ import {
     CustomPaletteProperties,
 } from '@/types';
 import type VisRxWidget from '@/Vis/visRxWidget';
+import { RxWidgetInfoAttributesField, RxWidgetAttributeType } from '@/allInOneTypes';
 
 import { getRemoteWidgets } from './visLoadWidgets';
 // eslint-disable-next-line import/no-cycle
 import WIDGETS from './Widgets';
-import { RxWidgetInfoAttributesField, RxWidgetAttributeType } from "@/allInOneTypes";
 
 const DEFAULT_SET_COLORS: Record<string, string> = {
     basic: '#f1f1f1',

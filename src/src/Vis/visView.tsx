@@ -15,7 +15,7 @@
 
 import React from 'react';
 import { ThemeProvider, StyledEngineProvider, createTheme } from '@mui/material/styles';
-import {StylesProvider, createGenerateClassName, CSSProperties} from '@mui/styles';
+import { StylesProvider, createGenerateClassName, CSSProperties } from '@mui/styles';
 
 import { Utils, Theme } from '@iobroker/adapter-react-v5';
 
@@ -53,8 +53,8 @@ type WidgetReference = {
     uuid: string;
     widDiv: HTMLElement;
     refService: React.RefObject<HTMLElement>;
-    onMove: (x?: number, y?: number, save?: boolean, calculateRelativeWidgetPosition?: null | ((...props: any[]) => void)) => void,
-    onResize: () => void,
+    onMove: (x?: number, y?: number, save?: boolean, calculateRelativeWidgetPosition?: null | ((...props: any[]) => void)) => void;
+    onResize: () => void;
     onTempSelect: (selected?: boolean) => void;
     onCommand: (command: VisWidgetCommand, options?: any) => any;
     canHaveWidgets?: boolean;
@@ -103,8 +103,8 @@ interface CreateWidgetOptions {
     moveAllowed: boolean;
     ignoreMouseEvents: boolean;
     onIgnoreMouseEvents: (ignore: boolean) => void;
-    refParent: React.RefObject<HTMLElement>,
-    askView: (command: AskViewCommand, props?: WidgetReference) => any,
+    refParent: React.RefObject<HTMLElement>;
+    askView: (command: AskViewCommand, props?: WidgetReference) => any;
     relativeWidgetOrder: AnyWidgetId[];
     selectedGroup: GroupWidgetId;
     selectedWidgets: AnyWidgetId[];
@@ -115,7 +115,7 @@ interface CreateWidgetOptions {
 
 interface VisViewState {
     mounted: boolean;
-    rulers: { type: 'horizontal' | 'vertical', value: number }[];
+    rulers: { type: 'horizontal' | 'vertical'; value: number }[];
     loadedjQueryTheme: string;
     themeCode: string;
     width: number;
@@ -151,20 +151,20 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
 
     private oldFilter: string;
 
-    private registerDone: boolean = false;
+    private registerDone = false;
 
-    private lastClick: number = 0;
+    private lastClick = 0;
 
     private nextClickIsSteal: {
         attr: string;
         cb: (value: string | number | boolean | null) => void;
     } | null = null;
 
-    private loadingTheme: boolean = false;
+    private loadingTheme = false;
 
     private moveTimer: ReturnType<typeof setTimeout> | null = null;
 
-    private keysHandlerInstalled: boolean = false;
+    private keysHandlerInstalled = false;
 
     constructor(props: VisViewProps) {
         super(props);
@@ -501,7 +501,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
                         !store.getState().visProject[this.props.view].widgets[id as AnyWidgetId].data.locked &&
                         this.props.selectedGroup !== id
                     ) {
-                        this.widgetsRefs[id as AnyWidgetId].onTempSelect(true)
+                        this.widgetsRefs[id as AnyWidgetId].onTempSelect(true);
                     }
                 });
                 // deselect
@@ -617,7 +617,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
     };
 
     onMouseWidgetMove = !this.props.context.runtime ? (e: MouseEvent) => {
-        if (!this.movement || !this.refView.current || this.props.selectedWidgets.includes(this.props.selectedGroup) && !this.movement.isResize) {
+        if (!this.movement || !this.refView.current || (this.props.selectedWidgets.includes(this.props.selectedGroup) && !this.movement.isResize)) {
             return;
         }
         const widgetsRefs = this.widgetsRefs;
@@ -840,9 +840,9 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         this.showRulers(true);
     } : null;
 
-    editWidgetsRect(widget: AnyWidgetId): { top: number; left: number; width: number; height: number } | null{
+    editWidgetsRect(widget: AnyWidgetId): { top: number; left: number; width: number; height: number } | null {
         if (!this.refView.current) {
-            return null
+            return null;
         }
         const viewLeft = this.refView.current.offsetLeft;
         const viewTop = this.refView.current.offsetTop;
@@ -872,9 +872,9 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         };
     }
 
-    pxToPercent = (oldStyle: WidgetStyle, newStyle: WidgetStyle) => {
+    pxToPercent = (oldStyle: WidgetStyle, newStyle: WidgetStyle): null | WidgetStyle => {
         if (!this.refView.current) {
-            return;
+            return null;
         }
         const pRect = {
             left: this.refView.current.clientLeft,
@@ -1057,9 +1057,9 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         // context, id, isRelative, refParent, askView, mouseDownOnView, view,
         // relativeWidgetOrder, moveAllowed, editMode, multiView, ignoreMouseEvents, selectedGroup
         // viewsActiveFilter, customSettings, onIgnoreMouseEvents
-        const Widget = VisWidgetsCatalog.rxWidgets[widget.tpl] || (VisWidgetsCatalog.allWidgetsList?.includes(widget.tpl) ? VisCanWidget : VisBaseWidget);
+        const Widget = (VisWidgetsCatalog.rxWidgets[widget.tpl] || (VisWidgetsCatalog.allWidgetsList?.includes(widget.tpl) ? VisCanWidget : VisBaseWidget));
 
-        // @ts-ignore
+        // @ts-expect-error I don#t know how to solve it
         return <Widget
             key={`${index}_${options.id}`}
             tpl={widget.tpl}

@@ -582,7 +582,7 @@ export interface VisContext {
     ) => void | null;
     onIgnoreMouseEvents: (ignore: boolean) => void;
     projectName: string;
-    registerEditorCallback: (name: 'onStealStyle' | 'onPxToPercent' | 'pxToPercent' | 'onPercentToPx', view: string, cb?: any) => void;
+    registerEditorCallback: (name: 'onStealStyle' | 'onPxToPercent' | 'pxToPercent' | 'onPercentToPx', view: string, cb?: (...args?: any) => any) => void;
     runtime: boolean;
     setSelectedGroup: (groupId: string) => void;
     setSelectedWidgets: (widgets: AnyWidgetId[], view?: string, cb?: () => void) => void;
