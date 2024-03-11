@@ -739,39 +739,37 @@ function getUrlParameter(attr: string): string | true {
     return '';
 }
 
-function readFile(socket: Connection, id: string, fileName: string, withType?: boolean) {
-    return socket.readFile(id, fileName)
-        .then(file => {
-            let mimeType = '';
-            let data: string = '';
-            if (typeof file === 'object') {
-                if (withType) {
-                    if (file.mimeType) {
-                        mimeType = file.mimeType;
-                    } else
-                        // @ts-expect-error LegacyConnection delivers file.type
-                        if (file.type) {
-                            // @ts-expect-error LegacyConnection delivers file.type
-                            mimeType = file.type;
-                        }
+async function readFile(socket: Connection, id: string, fileName: string, withType?: boolean): Promise<string | { file: string; mimeType: string }> {
+    const file = await socket.readFile(id, fileName);
+    let mimeType = '';
+    let data: string = '';
+    if (typeof file === 'object') {
+        if (withType) {
+            if (file.mimeType) {
+                mimeType = file.mimeType;
+            } else
+                // @ts-expect-error LegacyConnection delivers file.type
+                if (file.type) {
+                    // @ts-expect-error LegacyConnection delivers file.type
+                    mimeType = file.type;
                 }
+        }
 
-                if (file.file) {
-                    data = file.file; // adapter-react-v5@4.x delivers file.file
-                } else
-                    // @ts-expect-error LegacyConnection delivers file.data
-                    if (file.data) {
-                        // @ts-expect-error LegacyConnection delivers file.data
-                        data = file.data; // LegacyConnection delivers file.data
-                    }
-            } else {
-                data = file;
+        if (file.file) {
+            data = file.file; // adapter-react-v5@4.x delivers file.file
+        } else
+            // @ts-expect-error LegacyConnection delivers file.data
+            if (file.data) {
+                // @ts-expect-error LegacyConnection delivers file.data
+                data = file.data; // LegacyConnection delivers file.data
             }
-            if (withType) {
-                return { file: data, mimeType };
-            }
-            return file;
-        });
+    } else {
+        data = file;
+    }
+    if (withType) {
+        return { file: data, mimeType };
+    }
+    return data;
 }
 
 function addClass(actualClass: string, toAdd: string | undefined): string {
