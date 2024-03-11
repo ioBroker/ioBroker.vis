@@ -18,6 +18,7 @@ import {
     UnfoldMore as UnfoldMoreIcon,
     UnfoldLess as UnfoldLessIcon,
     Search,
+    Palette as IconPalette,
 } from '@mui/icons-material';
 
 import { I18n, Utils, Icon } from '@iobroker/adapter-react-v5';
@@ -25,7 +26,7 @@ import { I18n, Utils, Icon } from '@iobroker/adapter-react-v5';
 import Widget from './Widget';
 import { getWidgetTypes } from '../Vis/visWidgetsCatalog';
 import MarketplacePalette from '../Marketplace/MarketplacePalette';
-import { loadComponent } from '../Vis/visUtils';
+import { loadComponent } from '../Vis/visLoadWidgets';
 import { store } from '../Store';
 
 const styles = theme => ({
@@ -268,6 +269,7 @@ const Palette = props => {
             className={Utils.clsx(props.classes.blockHeader, props.classes.lightedPanel)}
             style={{ display: 'flex', lineHeight: '34px' }}
         >
+            <IconPalette />
             <span style={{ verticalAlign: 'middle' }}>{I18n.t('Palette')}</span>
             <div style={{ flex: 1 }} />
             {!allOpened ? <Tooltip title={I18n.t('Expand all')}>

@@ -31,8 +31,8 @@ import {
     extractBinding,
     findWidgetUsages,
     readFile,
-    registerWidgetsLoadIndicator,
 } from './Vis/visUtils';
+import { registerWidgetsLoadIndicator } from './Vis/visLoadWidgets';
 import VisWidgetsCatalog from './Vis/visWidgetsCatalog';
 
 import { store, updateActiveUser, updateProject } from './Store';

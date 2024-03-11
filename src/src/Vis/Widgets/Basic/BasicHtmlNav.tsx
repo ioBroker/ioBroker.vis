@@ -66,7 +66,7 @@ class BasicHtmlNav extends VisRxWidget<RxData> {
 
     onNavigate = () => {
         if (this.state.rxData.nav_view) {
-            this.props.context.changeView(this.state.rxData.nav_view, this.state.rxData.sub_view || null);
+            this.props.context.changeView(this.state.rxData.nav_view, this.state.rxData.sub_view || undefined);
         }
     };
 

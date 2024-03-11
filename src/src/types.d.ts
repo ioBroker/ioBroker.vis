@@ -112,22 +112,27 @@ export interface WidgetStyle {
 interface SingleWidget  {
     /** Internal wid */
     _id?: string;
+    /** Widget type */
+    tpl: string;
     data: WidgetData;
     style: WidgetStyle;
-    /** @deprecated The widget type */
+    /** @deprecated The widget set Use widgetSet */
     set?: string;
-    /** The widget type */
+    /** @deprecated The widget set. Use widgetSet */
     wSet?: string;
-    tpl: string;
-    widgetSet: string;
+    /** The widget set name. Groups have widget set null */
+    widgetSet: string | null;
     /** The id of the group, if the widget is grouped */
     groupid?: GroupWidgetId;
     /** If the widget is grouped */
     grouped?: boolean;
+    /** @deprecated it was typo */
+    groupped?: boolean;
     /** Permissions for each user for the widget */
     permissions?: UserPermissions;
     /** This widget was taken from marketplace */
     marketplace?: any;
+    /** Indicator, that this widget is used in another widget (e.g. in panel) */
     usedInWidget?: AnyWidgetId;
 }
 
@@ -392,84 +397,45 @@ interface VisLinkContextItem {
     widget: AnyWidgetId;
 }
 
-interface VisLinkContextBinding extends VisLinkContextItem {
-    type?: 'style' | 'data';
-    attr?: string;
+interface VisLinkContextSignalItem extends VisLinkContextItem {
+    index: number;
 }
 
-interface VisLinkContext {
-    /** list of widgets, that depends on this state */
-    visibility: Record<string, VisLinkContextItem>;
-    signals: Record<string, VisLinkContextItem>;
-    lastChanges: Record<string, VisLinkContextItem>;
-    /** list of widgets, that depends on this state */
-    bindings: Record<string, VisLinkContextBinding>;
-    unregisterChangeHandler: (wid: AnyWidgetId, cb: (type: string, item: VisLinkContextBinding, stateId: string, state: ioBroker.State) => void) => void;
-    registerChangeHandler: (wid: AnyWidgetId, cb: (type: 'style' | 'signal' | 'visibility' | 'lastChange' | 'binding', item: VisLinkContextBinding, stateId: string, state: ioBroker.State) => void) => void;
-    subscribe: (stateId: string | string[]) => void;
-    unsubscribe: (stateId: string | string[]) => void;
-    getViewRef: (view: string) => React.RefObject<HTMLDivElement> | null;
-    registerViewRef: (view: string, ref: React.RefObject<HTMLDivElement>, onCommand: (command: ViewCommand, options?: ViewCommandOptions) => any) => void;
-    unregisterViewRef: (view: string, ref: React.RefObject<HTMLDivElement>) => void;
+type StateID = string;
+
+type VisBindingOperationType = 'eval' | '*' | '+' | '-' | '/' | '%' | 'min' | 'max' | 'date' | 'momentDate' | 'value' | 'array' | 'pow' | 'round' | 'random' | 'json' | '';
+
+interface VisBindingOperationArgument {
+    name: string;
+    /** ioBroker state ID plus '.val', '.ts', '.ack' or '.lc' */
+    visOid: StateID;
+    /** ioBroker state ID */
+    systemOid: StateID;
 }
 
+interface VisBindingOperation {
+    op: VisBindingOperationType,
+    arg?: VisBindingOperationArgument[] | string | number | string[],
+    formula?: string;
+}
 
-export interface VisContext {
-    // $$: any;
-    VisView: VisView;
-    activeView: string;
-    adapterName: string;
-    allWidgets: Record<string, CanWidgetStore>;
-    askAboutInclude: (wid: AnyWidgetId, toWid: AnyWidgetId, cb: (wid: AnyWidgetId, toWid: AnyWidgetId) => void) => void;
-    buildLegacyStructures: () => void;
-    // can: any;
-    // canStates: any;
-    changeProject: (project: Project, ignoreHistory?: boolean) => Promise<void>;
-    changeView: (view: string, subView?: string) => void;
-    dateFormat: string;
-    disableInteraction: boolean;
-    editModeComponentClass: string;
-    formatUtils: VisFormatUtils;
-    instance: number; // vis instance number (not browser instance)
-    // jQuery: any;
-    lang: ioBroker.Languages;
-    linkContext: VisLinkContext;
-    lockDragging: boolean;
-    moment: moment;
-    // onCommand: (view: string, command: string, data?: any) => void
-    onWidgetsChanged: (
-        changedData: {
-            wid: AnyWidgetId;
-            view: string;
-            style?: Record<string, any>;
-            data?: Record<string, any>;
-        }[] | null,
-        view?: string,
-        viewSettings?: ViewSettings,
-    ) => void | null;
-    onIgnoreMouseEvents: (ignore: boolean) => void;
-    projectName: string;
-    registerEditorCallback: (name: 'onStealStyle' | 'onPxToPercent' | 'pxToPercent' | 'onPercentToPx', view: string, cb?: any) => void;
-    runtime: boolean;
-    setSelectedGroup: (groupId: string) => void;
-    setSelectedWidgets: (widgets: AnyWidgetId[], view?: string, cb?: () => void) => void;
-    setTimeInterval: (timeInterval: string) => void;
-    setTimeStart: (timeStart: string) => void;
-    setValue: (id: string, value: string | boolean | number | null) => void;
-    showWidgetNames: boolean;
-    socket: Connection;
-    systemConfig: ioBroker.Object;
-    theme: Theme;
-    themeName: string;
-    themeType: 'dark' | 'light';
-    timeInterval: string;
-    timeStart: string;
-    toggleTheme: () => void;
-    user: string;
-    userGroups: Record<string, ioBroker.Object>;
-    views: Project; // project
-    widgetHint: 'light' | 'dark' | 'hide';
-    container?: boolean;
+interface VisBinding {
+    /** ioBroker state ID plus '.val', '.ts', '.ack' or '.lc' */
+    visOid: StateID;
+    /** ioBroker state ID */
+    systemOid: StateID;
+    /** Part of the string, like {id.ack} */
+    token: string,
+    operations?: VisBindingOperation[],
+    format: string;
+    isSeconds: boolean;
+}
+
+interface VisLinkContextBinding extends VisBinding {
+    type: 'style' | 'data';
+    attr: string;
+    view: string;
+    widget: AnyWidgetId;
 }
 
 export interface RxWidgetProps extends RxRenderWidgetProps {
@@ -557,6 +523,86 @@ interface RxWidgetInfo {
 
     /* Function to generate custom palette element */
     customPalette?: (context: CustomPaletteProperties) => React.JSX.Element;
+}
+
+interface VisStateUsage {
+    /** list of widgets, that depends on this state */
+    visibility: Record<string, VisLinkContextItem[]>;
+    signals: Record<string, VisLinkContextSignalItem[]>;
+    lastChanges: Record<string, VisLinkContextItem[]>;
+    /** list of widgets, that depends on this state */
+    bindings: Record<StateID, VisLinkContextBinding[]>;
+    IDs: StateID[];
+    byViews?: Record<string, string[]>;
+    widgetAttrInfo?: Record<string, RxWidgetInfoAttributesField>;
+}
+
+interface VisLinkContext extends VisStateUsage {
+    unregisterChangeHandler: (wid: AnyWidgetId, cb: (type: 'style' | 'signal' | 'visibility' | 'lastChange' | 'binding', item: VisLinkContextBinding | VisLinkContextItem, stateId: string, state: ioBroker.State) => void) => void;
+    registerChangeHandler: (wid: AnyWidgetId, cb: (type: 'style' | 'signal' | 'visibility' | 'lastChange' | 'binding', item: VisLinkContextBinding | VisLinkContextItem, stateId: string, state: ioBroker.State) => void) => void;
+    subscribe: (stateId: string | string[]) => void;
+    unsubscribe: (stateId: string | string[]) => void;
+    getViewRef: (view: string) => React.RefObject<HTMLDivElement> | null;
+    registerViewRef: (view: string, ref: React.RefObject<HTMLDivElement>, onCommand: (command: ViewCommand, options?: ViewCommandOptions) => any) => void;
+    unregisterViewRef: (view: string, ref: React.RefObject<HTMLDivElement>) => void;
+}
+
+export interface VisContext {
+    // $$: any;
+    VisView: VisView;
+    activeView: string;
+    adapterName: string;
+    allWidgets: Record<string, CanWidgetStore>;
+    askAboutInclude: (wid: AnyWidgetId, toWid: AnyWidgetId, cb: (wid: AnyWidgetId, toWid: AnyWidgetId) => void) => void;
+    buildLegacyStructures: () => void;
+    // can: any;
+    // canStates: any;
+    changeProject: (project: Project, ignoreHistory?: boolean) => Promise<void>;
+    changeView: (view: string, subView?: string) => void;
+    dateFormat: string;
+    disableInteraction: boolean;
+    editModeComponentClass: string;
+    formatUtils: VisFormatUtils;
+    instance: number; // vis instance number (not browser instance)
+    // jQuery: any;
+    lang: ioBroker.Languages;
+    linkContext: VisLinkContext;
+    lockDragging: boolean;
+    moment: moment;
+    // onCommand: (view: string, command: string, data?: any) => void
+    onWidgetsChanged: (
+        changedData: {
+            wid: AnyWidgetId;
+            view: string;
+            style?: Record<string, any>;
+            data?: Record<string, any>;
+        }[] | null,
+        view?: string,
+        viewSettings?: ViewSettings,
+    ) => void | null;
+    onIgnoreMouseEvents: (ignore: boolean) => void;
+    projectName: string;
+    registerEditorCallback: (name: 'onStealStyle' | 'onPxToPercent' | 'pxToPercent' | 'onPercentToPx', view: string, cb?: any) => void;
+    runtime: boolean;
+    setSelectedGroup: (groupId: string) => void;
+    setSelectedWidgets: (widgets: AnyWidgetId[], view?: string, cb?: () => void) => void;
+    setTimeInterval: (timeInterval: string) => void;
+    setTimeStart: (timeStart: string) => void;
+    setValue: (id: string, value: string | boolean | number | null) => void;
+    showWidgetNames: boolean;
+    socket: Connection;
+    systemConfig: ioBroker.Object;
+    theme: Theme;
+    themeName: string;
+    themeType: 'dark' | 'light';
+    timeInterval: string;
+    timeStart: string;
+    toggleTheme: () => void;
+    user: string;
+    userGroups: Record<string, ioBroker.Object>;
+    views: Project; // project
+    widgetHint: 'light' | 'dark' | 'hide';
+    container?: boolean;
 }
 
 type AttributeTypeToDataType<TType extends RxWidgetAttributeType> = TType extends 'checkbox' ? boolean : TType extends 'number' | 'slider' ? number :

@@ -1,9 +1,24 @@
 import type React from 'react';
 import { WidgetAttributeInfo } from '@/Vis/visRxWidget';
 import type { Connection } from '@iobroker/adapter-react-v5';
-import { AnyWidgetId, Project } from '@/types';
+import { AnyWidgetId, Project, WidgetData } from '@/types';
 
 export type RxWidgetAttributeType = 'text' | 'delimiter' | 'help' | 'html' | 'json' | 'id' | 'instance' | 'select' | 'nselect' | 'auto' | 'checkbox' | 'number' | 'select-views' | 'custom' | 'image' | 'color' | 'password' | 'history' | 'hid' | 'icon' | 'dimension' | 'fontname' | 'groups' | 'class' | 'filters' | 'views' | 'style' | 'icon64' | string;
+
+export interface RxWidgetInfoCustomComponentContext {
+    socket: Connection;
+    projectName: string;
+    instance: number;
+    adapterName: string;
+    views: Project;
+};
+
+export interface RxWidgetInfoCustomComponentProperties {
+    context: RxWidgetInfoCustomComponentContext;
+    selectedView: string;
+    selectedWidgets: AnyWidgetId[];
+    selectedWidget: AnyWidgetId;
+}
 
 export type RxWidgetInfoAttributesField = {
     /** Field type */
@@ -75,20 +90,9 @@ export type RxWidgetInfoAttributesField = {
     /** if false, only one view can be selected. Default is true. */
     component?: (
         field: RxWidgetInfoAttributesField,
-        data: Record<string, any>,
-        onDataChange: (newData: Record<string, any>) => void,
-        props: {
-            context: {
-                socket: Connection;
-                projectName: string;
-                instance: number;
-                adapterName: string;
-                views: Project;
-            };
-            selectedView: string;
-            selectedWidgets: AnyWidgetId[];
-            selectedWidget: AnyWidgetId;
-        },
+        data: WidgetData,
+        onDataChange: (newData: WidgetData) => void,
+        props: RxWidgetInfoCustomComponentProperties,
     ) => React.JSX.Element | React.JSX.Element[] ;
 
     /** Name of the widget field */

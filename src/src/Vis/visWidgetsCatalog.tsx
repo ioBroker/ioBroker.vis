@@ -9,7 +9,7 @@ import {
 } from '@/types';
 import type VisRxWidget from '@/Vis/visRxWidget';
 
-import { getRemoteWidgets } from './visUtils';
+import { getRemoteWidgets } from './visLoadWidgets';
 // eslint-disable-next-line import/no-cycle
 import WIDGETS from './Widgets';
 import { RxWidgetInfoAttributesField, RxWidgetAttributeType } from "@/allInOneTypes";
@@ -191,12 +191,12 @@ class VisWidgetsCatalog {
 
             return new Promise(resolve => {
                 setTimeout(() =>
-                    getRemoteWidgets(socket, !changeProject && usedWidgetSets)
-                        .then((widgetSets: VisRxWidget<any>[]) => {
-                            const collectedWidgets = [...WIDGETS, ...widgetSets] as VisRxWidget<any>[];
+                    getRemoteWidgets(socket, !changeProject && usedWidgetSets ? usedWidgetSets : false)
+                        .then((widgetSets: void | VisRxWidget<any>[]) => {
+                            const collectedWidgets: VisRxWidget<any>[] = [...WIDGETS, ...(widgetSets || [])] as VisRxWidget<any>[];
 
                             collectedWidgets.forEach((Widget: VisRxWidget<any>) => {
-                                if (!Widget.getWidgetInfo) {
+                                if (!Widget?.getWidgetInfo) {
                                     console.error(`Invalid widget without getWidgetInfo: ${Widget.constructor.name}`);
                                 } else {
                                     const info = Widget.getWidgetInfo();

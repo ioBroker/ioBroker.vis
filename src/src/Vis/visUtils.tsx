@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2022-2023 Denis Haev https://github.com/GermanBluefox,
+ *  Copyright (c) 2022-2024 Denis Haev https://github.com/GermanBluefox,
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -12,11 +12,26 @@
  * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
  * (Free for non-commercial use).
  */
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n, type Connection } from '@iobroker/adapter-react-v5';
+import {
+    Project,
+    AnyWidgetId,
+    GroupWidgetId,
+    VisStateUsage,
+    VisLinkContextBinding,
+    StateID, VisBindingOperation, VisBindingOperationArgument,
+    GroupData, WidgetData, VisBinding, VisBindingOperationType,
+} from '@/types';
 import { deepClone } from '@/Utils/utils';
 import { store, updateView, updateWidget } from '@/Store';
 
-function replaceGroupAttr(inputStr, groupAttrList) {
+declare global {
+    interface Window {
+        __widgetsLoadIndicator: (process: number, max: number) => void;
+    }
+}
+
+function replaceGroupAttr(inputStr: string, groupAttrList: WidgetData): { doesMatch: boolean, newString: string } {
     let newString = inputStr;
     let match = false;
     // old style: groupAttr0, groupAttr1, groupAttr2, ...
@@ -37,7 +52,7 @@ function replaceGroupAttr(inputStr, groupAttrList) {
     ms = inputStr.match(/%([-_a-zA-Z\d]+)+?%/g);
     if (ms) {
         match = true;
-        ms.forEach(m => {
+        ms.forEach((m: string) => {
             const attr = m.substring(1, m.length - 1);
             const val = groupAttrList[attr];
             if (val === null || val === undefined) {
@@ -51,28 +66,29 @@ function replaceGroupAttr(inputStr, groupAttrList) {
     return { doesMatch: match, newString };
 }
 
-function getWidgetGroup(views, view, widget) {
+function getWidgetGroup(views: Project, view: string, widget: AnyWidgetId): GroupWidgetId | undefined {
     const widgets = views[view].widgets;
-    if (widgets[widget]?.groupid && widgets[widgets[widget].groupid]) {
+    const groupId: GroupWidgetId | undefined = widgets[widget]?.groupid;
+    if (groupId && widgets[groupId]) {
         return views[view].widgets[widget].groupid;
     }
-
-    return Object.keys(widgets).find(w => widgets[w].data?.members?.includes(widget));
+    const widgetKeys: AnyWidgetId[] = Object.keys(widgets) as AnyWidgetId[];
+    return widgetKeys.find(w => widgets[w].data?.members?.includes(widget)) as GroupWidgetId;
 }
 
 /**
  * Determine if the string is of form identifier:ioBrokerId, like, val:hm-rpc.0.device.channel.state
- *
- * @param {string} assignment the possible assignment to check
- * @return {boolean}
  */
-function isIdBinding(assignment) {
+function isIdBinding(
+    /** the possible assignment to check */
+    assignment: string
+): boolean {
     return !!assignment.match(/^[\d\w_]+:\s?[-.\d\w_#]+$/);
 }
 
-function extractBinding(format) {
+function extractBinding(format: string): VisBinding[] | null {
     const oid = format.match(/{(.+?)}/g);
-    let result = null;
+    let result: VisBinding[] | null = null;
 
     if (oid) {
         if (oid.length > 50) {
@@ -110,7 +126,7 @@ function extractBinding(format) {
             } else if (test2 === '.lc' || test2 === '.ts') {
                 systemOid = systemOid.substring(0, systemOid.length - 3);
             }
-            let operations = null;
+            let operations: VisBindingOperation[] | null = null;
             const isEval = visOid.match(/^[\d\w_]+:\s?[-._/ :!#$%&()+=@^{}|~\p{Ll}\p{Lu}\p{Nd}]+$/u) || (!visOid.length && parts.length > 0); // (visOid.indexOf(':') !== -1) && (visOid.indexOf('::') === -1);
 
             if (isEval) {
@@ -127,11 +143,9 @@ function extractBinding(format) {
                         systemOid,
                     }],
                 });
-            }
 
-            for (let u = 1; u < parts.length; u++) {
-                // eval construction
-                if (isEval) {
+                for (let u = 1; u < parts.length; u++) {
+                    // eval construction
                     const trimmed = parts[u].trim();
                     if (isIdBinding(trimmed)) { // parts[u].indexOf(':') !== -1 && parts[u].indexOf('::') === -1) {
                         const argParts = trimmed.split(':', 2);
@@ -156,6 +170,7 @@ function extractBinding(format) {
                             }
                         }
 
+                        // @ts-ignore
                         operations[0].arg.push({
                             name: argParts[0].trim(),
                             visOid: _visOid,
@@ -171,85 +186,83 @@ function extractBinding(format) {
                             operations[0].formula = parts[u];
                         }
                     }
-                } else {
+                }
+            } else {
+                for (let u = 1; u < parts.length; u++) {
                     const parse = parts[u].match(/([\w\s/+*-]+)(\(.+\))?/);
                     if (parse && parse[1]) {
-                        parse[1] = parse[1].trim();
+                        const op = parse[1].trim();
                         // operators requires parameter
-                        if (parse[1] === '*' ||
-                            parse[1] === '+' ||
-                            parse[1] === '-' ||
-                            parse[1] === '/' ||
-                            parse[1] === '%' ||
-                            parse[1] === 'min' ||
-                            parse[1] === 'max'
+                        if (op === '*' ||
+                            op === '+' ||
+                            op === '-' ||
+                            op === '/' ||
+                            op === '%' ||
+                            op === 'min' ||
+                            op === 'max'
                         ) {
                             if (parse[2] === undefined) {
                                 console.log(`Invalid format of format string: ${format}`);
-                                parse[2] = null;
                             } else {
-                                parse[2] = (parse[2] || '').trim().replace(',', '.');
-                                parse[2] = parse[2].substring(1, parse[2].length - 1);
-                                parse[2] = parseFloat(parse[2].trim());
+                                // try to extract number
+                                let argStr: string = (parse[2] || '').trim().replace(',', '.');
+                                argStr = argStr.substring(1, argStr.length - 1).trim();
+                                const arg: number = parseFloat(argStr);
 
-                                if (parse[2].toString() === 'NaN') {
+                                if (arg.toString() === 'NaN') {
                                     console.log(`Invalid format of format string: ${format}`);
-                                    parse[2] = null;
                                 } else {
                                     operations = operations || [];
-                                    operations.push({ op: parse[1], arg: parse[2] });
+                                    operations.push({ op, arg });
                                 }
                             }
-                        } else if (parse[1] === 'date' || parse[1] === 'momentDate') {
+                        } else if (op === 'date' || op === 'momentDate') {
                             // date formatting
                             operations = operations || [];
-                            parse[2] = (parse[2] || '').trim();
-                            parse[2] = parse[2].substring(1, parse[2].length - 1);
-                            operations.push({ op: parse[1], arg: parse[2] });
-                        } else if (parse[1] === 'array') {
+                            let arg: string = (parse[2] || '').trim();
+                            // Remove braces from {momentDate(format)}
+                            arg = arg.substring(1, arg.length - 1);
+                            operations.push({ op, arg });
+                        } else if (op === 'array') {
                             // returns array[value]. e.g.: {id.ack;array(ack is false,ack is true)}
                             operations = operations || [];
-                            let param = (parse[2] || '').trim();
+                            let param: string = (parse[2] || '').trim();
                             param = param.substring(1, param.length - 1);
-                            param = param.split(',');
-                            if (Array.isArray(param)) {
-                                operations.push({ op: parse[1], arg: param }); // xxx
-                            }
-                        } else if (parse[1] === 'value') {
+                            operations.push({ op, arg: param.split(',') }); // xxx
+                        } else if (op === 'value') {
                             // value formatting
                             operations = operations || [];
-                            let param = (parse[2] === undefined) ? '(2)' : (parse[2] || '');
-                            param = param.trim();
-                            param = param.substring(1, param.length - 1);
-                            operations.push({ op: parse[1], arg: param });
-                        } else if (parse[1] === 'pow' || parse[1] === 'round' || parse[1] === 'random') {
+                            let arg: string = parse[2] === undefined ? '(2)' : (parse[2] || '');
+                            arg = arg.trim();
+                            arg = arg.substring(1, arg.length - 1);
+                            operations.push({ op, arg });
+                        } else if (op === 'pow' || op === 'round' || op === 'random') {
                             // operators have optional parameter
                             if (parse[2] === undefined) {
                                 operations = operations || [];
-                                operations.push({ op: parse[1] });
+                                operations.push({ op });
                             } else {
-                                parse[2] = (parse[2] || '').trim().replace(',', '.');
-                                parse[2] = parse[2].substring(1, parse[2].length - 1);
-                                parse[2] = parseFloat(parse[2].trim());
+                                let argStr: string = (parse[2] || '').trim().replace(',', '.');
+                                argStr = argStr.substring(1, argStr.length - 1);
+                                const arg = parseFloat(argStr.trim());
 
-                                if (parse[2].toString() === 'NaN') {
+                                if (arg.toString() === 'NaN') {
                                     console.log(`Invalid format of format string: ${format}`);
-                                    parse[2] = null;
                                 } else {
                                     operations = operations || [];
-                                    operations.push({ op: parse[1], arg: parse[2] });
+                                    operations.push({ op, arg });
                                 }
                             }
-                        } else if (parse[1] === 'json') {
+                        } else if (op === 'json') {
                             // json(objPropPath)  ex: json(prop1);  json(prop1.propA)
                             operations = operations || [];
-                            parse[2] = (parse[2] || '').trim();
-                            parse[2] = parse[2].substring(1, parse[2].length - 1);
-                            operations.push({ op: parse[1], arg: parse[2] });
+                            let arg = (parse[2] || '').trim();
+                            arg = arg.substring(1, arg.length - 1);
+                            operations.push({ op, arg });
                         } else {
                             // operators without parameter
                             operations = operations || [];
-                            operations.push({ op: parse[1] });
+                            operations.push({ op: op as VisBindingOperationType });
                         }
                     } else {
                         console.log(`Invalid format ${format}`);
@@ -278,7 +291,7 @@ function extractBinding(format) {
 //    visibility: {} //
 //    signals: {}    //
 // }
-function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
+function getUsedObjectIDsInWidget(views: Project, view: string, wid: AnyWidgetId, linkContext: VisStateUsage) {
     // Check all attributes
     const widget = deepClone(views[view].widgets[wid]);
 
@@ -368,16 +381,23 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
 
     // if widget is in the group => replace groupAttrX values
     if (widget.grouped) {
+        // if groupid is not defined => fix it and find it
         if (!widget.groupid) {
-            store.dispatch(updateWidget({ viewId: view, widgetId: widget, data: { ...widget, groupid: getWidgetGroup(views, view, wid) } }));
+            store.dispatch(updateWidget({
+                viewId: view,
+                widgetId: wid,
+                data: { ...widget, groupid: getWidgetGroup(views, view, wid) },
+            }));
         }
 
-        if (!store.getState().visProject[view].widgets[widget.groupid]) {
-            store.dispatch(updateWidget({ viewId: view, widgetId: widget, data: { ...widget, groupid: getWidgetGroup(views, view, wid) } }));
+        // If the group, to which the widget belongs to does not exist, fix it
+        if (widget.groupid && !store.getState().visProject[view].widgets[widget.groupid]) {
+            store.dispatch(updateWidget({ viewId: view, widgetId: wid, data: { ...widget, groupid: getWidgetGroup(views, view, wid) } }));
+
             if (!widget.groupid) {
                 // create a fictive group
                 let groupNum = 1;
-                let gId = `g${groupNum.toString().padStart(5, '0')}`;
+                let gId: GroupWidgetId = `g${groupNum.toString().padStart(5, '0')}`;
                 while (views[view].widgets[gId]) {
                     groupNum++;
                     gId = `g${groupNum.toString().padStart(5, '0')}`;
@@ -403,24 +423,26 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
             }
         }
 
-        const parentWidgetData = views[view].widgets[widget.groupid]?.data;
-        if (parentWidgetData) {
-            let newGroupData;
+        if (widget.groupid) {
+            const parentWidgetData = views[view].widgets[widget.groupid]?.data;
+            if (parentWidgetData) {
+                let newGroupData: GroupData | undefined = undefined;
 
-            Object.keys(data).forEach(attr => {
-                if (typeof data[attr] === 'string') {
-                    const result = replaceGroupAttr(data[attr], parentWidgetData);
-                    if (result.doesMatch) {
-                        newGroupData = newGroupData || deepClone(data);
-                        newGroupData[attr] = result.newString || '';
+                Object.keys(data).forEach(attr => {
+                    if (typeof data[attr] === 'string') {
+                        const result = replaceGroupAttr(data[attr], parentWidgetData);
+                        if (result.doesMatch) {
+                            newGroupData = newGroupData || (deepClone(data) as GroupData);
+                            newGroupData[attr] = result.newString || '';
+                        }
                     }
+                });
+                if (newGroupData) {
+                    data = newGroupData;
                 }
-            });
-            if (newGroupData) {
-                data = newGroupData;
+            } else {
+                console.error(`Invalid group id "${widget.groupid}" in widget "${wid}"`);
             }
-        } else {
-            console.error(`Invalid group id "${widget.groupid}" in widget "${wid}"`);
         }
     }
 
@@ -432,11 +454,11 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
         if (typeof data[attr] === 'string') {
             let m;
             // Process bindings in data attributes
-            const OIDs = extractBinding(data[attr]);
+            const OIDs: VisLinkContextBinding[] = extractBinding(data[attr]) as VisLinkContextBinding[];
 
             if (OIDs) {
                 OIDs.forEach(item => {
-                    const systemOid = item.systemOid;
+                    const systemOid: StateID = item.systemOid;
                     if (systemOid) {
                         // Save id for subscribing
                         !linkContext.IDs.includes(systemOid) && linkContext.IDs.push(systemOid);
@@ -453,17 +475,20 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
 
                         linkContext.bindings[systemOid].push(item);
                     }
+                    const operation0: VisBindingOperation | undefined = item.operations && item.operations[0];
 
-                    if (item.operations && Array.isArray(item.operations[0].arg)) {
-                        for (let ww = 0; ww < item.operations[0].arg.length; ww++) {
-                            const _systemOid = item.operations[0].arg[ww].systemOid;
+                    // If we have more than one argument
+                    if (operation0 && Array.isArray(operation0.arg)) {
+                        for (let ww = 0; ww < operation0.arg.length; ww++) {
+                            const arg: VisBindingOperationArgument = operation0.arg[ww] as VisBindingOperationArgument;
+                            const _systemOid = arg.systemOid;
                             if (!_systemOid) {
                                 continue;
                             }
 
                             !linkContext.IDs.includes(_systemOid) && linkContext.IDs.push(_systemOid);
 
-                            if (linkContext.byViews && linkContext.byViews[view].includes(_systemOid)) {
+                            if (linkContext.byViews && !linkContext.byViews[view].includes(_systemOid)) {
                                 linkContext.byViews[view].push(_systemOid);
                             }
 
@@ -475,7 +500,7 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
                     }
                 });
             } else if (attr !== 'oidTrueValue' && attr !== 'oidFalseValue' && data[attr] && data[attr] !== 'nothing_selected') {
-                let isID = attr.match(/oid\d{0,2}$/);
+                let isID = !!attr.match(/oid\d{0,2}$/);
                 if (attr.startsWith('oid')) {
                     isID = true;
                 } else if (attr.startsWith('signals-oid-')) {
@@ -574,8 +599,9 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
     // build bindings for styles
     if (style) {
         Object.keys(style).forEach(cssAttr => {
-            if (cssAttr && typeof style[cssAttr] === 'string') {
-                const OIDs = extractBinding(style[cssAttr]);
+            const styleValue = (style as Record<string, any>)[cssAttr];
+            if (cssAttr && styleValue && typeof styleValue === 'string') {
+                const OIDs: VisLinkContextBinding[] = extractBinding(styleValue) as VisLinkContextBinding[];
                 if (OIDs) {
                     OIDs.forEach(item => {
                         const systemOid = item.systemOid;
@@ -595,9 +621,12 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
                             linkContext.bindings[systemOid].push(item);
                         }
 
-                        if (item.operations && Array.isArray(item.operations[0].arg)) {
-                            for (let w = 0; w < item.operations[0].arg.length; w++) {
-                                const _systemOid = item.operations[0].arg[w].systemOid;
+                        const operation0: VisBindingOperation | undefined = item.operations && item.operations[0];
+
+                        if (operation0 && Array.isArray(operation0.arg)) {
+                            for (let w = 0; w < operation0.arg.length; w++) {
+                                const arg: VisBindingOperationArgument = operation0.arg[w] as VisBindingOperationArgument;
+                                const _systemOid = arg.systemOid;
                                 if (!_systemOid) {
                                     continue;
                                 }
@@ -623,13 +652,22 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
     store.dispatch(updateWidget({ viewId: view, widgetId: wid, data: widget }));
 }
 
-function getUsedObjectIDs(views, isByViews) {
+interface UsedObjectsResult {
+    IDs: [],
+    visibility: {},
+    bindings: {},
+    lastChanges: {},
+    signals: {},
+    byViews?: Record<string, string[]>;
+}
+
+function getUsedObjectIDs(views: Project, isByViews?: boolean): UsedObjectsResult | null {
     if (!views) {
         console.log('Check why views are not yet loaded!');
         return null;
     }
 
-    const linkContext = {
+    const linkContext: UsedObjectsResult = {
         IDs: [],
         visibility: {},
         bindings: {},
@@ -650,7 +688,7 @@ function getUsedObjectIDs(views, isByViews) {
             linkContext.byViews[view] = [];
         }
 
-        Object.keys(views[view].widgets).forEach(wid => getUsedObjectIDsInWidget(views, view, wid, linkContext));
+        Object.keys(views[view].widgets).forEach(wid => getUsedObjectIDsInWidget(views, view, wid as AnyWidgetId, linkContext));
     });
 
     if (isByViews) {
@@ -666,7 +704,7 @@ function getUsedObjectIDs(views, isByViews) {
 
                 Object.values(views[view].widgets).forEach(widget => {
                     // Add all OIDs from this view to parent
-                    if (widget.tpl === 'tplContainerView' && widget.data.contains_view) {
+                    if (widget.tpl === 'tplContainerView' && widget.data.contains_view && linkContext.byViews) {
                         const ids = linkContext.byViews[widget.data.contains_view];
                         if (ids) {
                             for (const id of ids) {
@@ -687,7 +725,7 @@ function getUsedObjectIDs(views, isByViews) {
     return linkContext;
 }
 
-function getUrlParameter(attr) {
+function getUrlParameter(attr: string): string | true {
     const sURLVariables = window.location.search.substring(1).split('&');
 
     for (let i = 0; i < sURLVariables.length; i++) {
@@ -701,322 +739,54 @@ function getUrlParameter(attr) {
     return '';
 }
 
-function readFile(socket, id, fileName, withType) {
+function readFile(socket: Connection, id: string, fileName: string, withType?: boolean) {
     return socket.readFile(id, fileName)
         .then(file => {
             let mimeType = '';
+            let data: string = '';
             if (typeof file === 'object') {
                 if (withType) {
                     if (file.mimeType) {
                         mimeType = file.mimeType;
-                    } else if (file.type) {
-                        mimeType = file.type;
-                    }
+                    } else
+                        // @ts-expect-error LegacyConnection delivers file.type
+                        if (file.type) {
+                            // @ts-expect-error LegacyConnection delivers file.type
+                            mimeType = file.type;
+                        }
                 }
 
                 if (file.file) {
-                    file = file.file; // adapter-react-v5@4.x delivers file.file
-                } else if (file.data) {
-                    file = file.data; // LegacyConnection delivers file.data
-                }
+                    data = file.file; // adapter-react-v5@4.x delivers file.file
+                } else
+                    // @ts-expect-error LegacyConnection delivers file.data
+                    if (file.data) {
+                        // @ts-expect-error LegacyConnection delivers file.data
+                        data = file.data; // LegacyConnection delivers file.data
+                    }
+            } else {
+                data = file;
             }
             if (withType) {
-                return { file, mimeType };
+                return { file: data, mimeType };
             }
             return file;
         });
 }
 
-const getOrLoadRemote = (remote, shareScope, remoteFallbackUrl = undefined) => {
-    window[`_promise_${remote}`] = window[`_promise_${remote}`] || new Promise((resolve, reject) => {
-        // check if remote exists on window
-        // search dom to see if remote tag exists, but might still be loading (async)
-        const existingRemote = document.querySelector(`[data-webpack="${remote}"]`);
-        // when remote is loaded...
-        const onload = async () => {
-            // check if it was initialized
-            if (!window[remote]) {
-                if (remoteFallbackUrl.startsWith('http://') || remoteFallbackUrl.startsWith('https://')) {
-                    console.error(`Cannot load remote from url "${remoteFallbackUrl}"`);
-                } else {
-                    reject(new Error(`Cannot load ${remote} from ${remoteFallbackUrl}`));
-                }
-                resolve();
-                return;
-            }
-            if (!window[remote].__initialized) {
-                // if share scope doesn't exist (like in webpack 4) then expect shareScope to be a manual object
-                // eslint-disable-next-line camelcase
-                if (typeof __webpack_share_scopes__ === 'undefined') {
-                    // use the default share scope object, passed in manually
-                    await window[remote].init(shareScope.default);
-                } else if (window[remote].init) {
-                    // otherwise, init share scope as usual
-
-                    try {
-                        // eslint-disable-next-line camelcase,no-undef
-                        await window[remote].init(__webpack_share_scopes__[shareScope]);
-                    } catch (e) {
-                        console.error(`Cannot init remote "${remote}" with "${shareScope}"`);
-                        console.error(e);
-                        reject(new Error(`Cannot init remote "${remote}" with "${shareScope}"`));
-                        reject(e);
-                        return;
-                    }
-                } else {
-                    reject(new Error(`Remote init function not found for ${remote} from ${remoteFallbackUrl}`));
-                    return;
-                }
-                // mark remote as initialized
-                window[remote].__initialized = true;
-            }
-            // resolve promise so marking remote as loaded
-            resolve();
-        };
-        if (existingRemote) {
-            console.warn(`SOMEONE IS LOADING THE REMOTE ${remote}`);
-            // if existing remote but not loaded, hook into its onload and wait for it to be ready
-            // existingRemote.onload = onload;
-            // existingRemote.onerror = reject;
-            resolve();
-            // check if remote fallback exists as param passed to function
-            // TODO: should scan public config for a matching key if no override exists
-        } else if (remoteFallbackUrl) {
-            // inject remote if a fallback exists and call the same onload function
-            const d = document;
-            const script = d.createElement('script');
-            script.type = 'text/javascript';
-            // mark as data-webpack so runtime can track it internally
-            script.setAttribute('data-webpack', `${remote}`);
-            script.async = true;
-            script.onerror = () => {
-                if (!remoteFallbackUrl.includes('iobroker.net')) {
-                    reject(new Error(`Cannot load ${remote} from ${remoteFallbackUrl}`));
-                } else {
-                    resolve();
-                }
-            };
-            script.onload = onload;
-            script.src = remoteFallbackUrl;
-            d.getElementsByTagName('head')[0].appendChild(script);
-        } else {
-            // no remote and no fallback exist, reject
-            reject(new Error(`Cannot Find Remote ${remote} to inject`));
-        }
-    });
-
-    return window[`_promise_${remote}`];
-};
-
-export const loadComponent = (remote, sharedScope, module, url) =>
-    () => getOrLoadRemote(remote, sharedScope, url)
-        .then(() => window[remote] && window[remote].get(module))
-        .then(factory => factory && factory());
-
-function registerWidgetsLoadIndicator(cb) {
-    window.__widgetsLoadIndicator = cb;
-}
-
-function _loadComponentHelper(context) {
-    // expected in context
-    // visWidgetsCollection
-    // countRef
-    // dynamicWidgetInstance
-    // i18nPrefix
-    // result
-    const promises = [];
-
-    for (const componentKey in context.visWidgetsCollection.components) {
-        ((_componentKey, _visWidgetsCollection) => {
-            // const start = Date.now();
-            const promise = loadComponent(_visWidgetsCollection.name, 'default', `./${_visWidgetsCollection.components[_componentKey]}`, _visWidgetsCollection.url)()
-                .then(Component => {
-                    context.countRef.count++;
-
-                    if (Component.default) {
-                        Component.default.adapter = context.dynamicWidgetInstance._id.substring('system.adapter.'.length).replace(/\.\d*$/, '');
-                        Component.default.version = context.dynamicWidgetInstance.common.version;
-                        Component.default.url = _visWidgetsCollection.url;
-                        if (context.i18nPrefix) {
-                            Component.default.i18nPrefix = context.i18nPrefix;
-                        }
-                        context.result.push(Component.default);
-                    } else {
-                        console.error(`Cannot load widget ${context.dynamicWidgetInstance._id}. No default found`);
-                    }
-                    window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(context.countRef.count, context.promises.length);
-                })
-                .catch(e => {
-                    console.error(`Cannot load widget ${context.dynamicWidgetInstance._id}: ${e.toString()}`);
-                    console.error(`Cannot load widget ${context.dynamicWidgetInstance._id}: ${JSON.stringify(e)}`);
-                });
-
-            promises.push(promise);
-        })(componentKey, context.visWidgetsCollection);
-    }
-
-    return Promise.all(promises);
-}
-
-function getRemoteWidgets(socket, onlyWidgetSets) {
-    return socket.getObjectViewSystem(
-        'instance',
-        'system.adapter.',
-        'system.adapter.\u9999',
-    )
-        .then(objects => {
-            const result = [];
-            const countRef = { count: 0 };
-            const instances = Object.values(objects);
-            const dynamicWidgetInstances = instances.filter(obj =>
-                obj.common.visWidgets &&
-                !obj.common.visWidgets.ignoreInVersions?.includes(2) &&
-                (!onlyWidgetSets || onlyWidgetSets.includes(obj.common.name)));
-
-            const promises = [];
-            for (let i = 0; i < dynamicWidgetInstances.length; i++) {
-                const dynamicWidgetInstance = dynamicWidgetInstances[i];
-                for (const widgetSetName in dynamicWidgetInstance.common.visWidgets) {
-                    if (widgetSetName === 'i18n') {
-                        // ignore
-                        // find first widget set that is not i18n
-                        const _widgetSetName = Object.keys(dynamicWidgetInstance.common.visWidgets).find(name => name !== 'i18n');
-                        console.warn(`common.visWidgets.i18n is deprecated. Use common.visWidgets.${_widgetSetName}.i18n instead.`);
-                    } else {
-                        const visWidgetsCollection = dynamicWidgetInstance.common.visWidgets[widgetSetName];
-                        if (!visWidgetsCollection.url?.startsWith('http')) {
-                            visWidgetsCollection.url = `./widgets/${visWidgetsCollection.url}`;
-                        }
-                        if (visWidgetsCollection.components) {
-                            ((collection, instance) => {
-                                try {
-                                    let i18nPrefix = false;
-                                    let i18nPromiseWait;
-
-                                    // 1. Load language file ------------------
-                                    // instance.common.visWidgets.i18n is deprecated
-                                    if (collection.url && (collection.i18n === true || instance.common.visWidgets.i18n === true)) {
-                                        // load i18n from files
-                                        const pos = collection.url.lastIndexOf('/');
-                                        let i18nURL;
-                                        if (pos !== -1) {
-                                            i18nURL = collection.url.substring(0, pos);
-                                        } else {
-                                            i18nURL = collection.url;
-                                        }
-                                        const lang = I18n.getLanguage();
-
-                                        const i18nPromise = fetch(`${i18nURL}/i18n/${lang}.json`)
-                                            .then(data => data.json())
-                                            .then(json => {
-                                                countRef.count++;
-                                                I18n.extendTranslations(json, lang);
-                                                window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(countRef.count, promises.length);
-                                            })
-                                            .catch(error => {
-                                                if (lang !== 'en') {
-                                                    // try to load English
-                                                    return fetch(`${i18nURL}/i18n/en.json`)
-                                                        .then(data => data.json())
-                                                        .then(json => {
-                                                            countRef.count++;
-                                                            I18n.extendTranslations(json, lang);
-                                                            window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(countRef.count, promises.length);
-                                                        })
-                                                        .catch(_error => console.log(`Cannot load i18n "${i18nURL}/i18n/${lang}.json": ${_error}`));
-                                                }
-                                                console.log(`Cannot load i18n "${i18nURL}/i18n/${lang}.json": ${error}`);
-                                                return null;
-                                            });
-                                        promises.push(i18nPromise);
-                                    } else if (collection.url && (collection.i18n === 'component' || instance.common.visWidgets.i18n === 'component')) {
-                                        // instance.common.visWidgets.i18n is deprecated
-
-                                        i18nPromiseWait = loadComponent(collection.name, 'default', './translations', collection.url)()
-                                            .then(translations => {
-                                                countRef.count++;
-
-                                                // add automatic prefix to all translations
-                                                if (translations.default.prefix === true) {
-                                                    translations.default.prefix = `${instance.common.name}_`;
-                                                }
-                                                i18nPrefix = translations.default.prefix;
-
-                                                I18n.extendTranslations(translations.default);
-                                                window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(countRef.count, promises.length);
-                                            })
-                                            .catch(error =>
-                                                console.log(`Cannot load i18n "${collection.name}": ${error}`));
-                                    } else if (collection.i18n && typeof collection.i18n === 'object') {
-                                        try {
-                                            I18n.extendTranslations(collection.i18n);
-                                        } catch (error) {
-                                            console.error(`Cannot import i18n: ${error}`);
-                                        }
-                                    }
-
-                                    // 2. Load all components ------------------
-                                    if (collection.components) {
-                                        if (i18nPromiseWait) {
-                                            // we must wait for it as the flag i18nPrefix will be used in the component
-                                            promises.push(i18nPromiseWait
-                                                .then(() => _loadComponentHelper({
-                                                    visWidgetsCollection: collection,
-                                                    countRef,
-                                                    dynamicWidgetInstance: instance,
-                                                    i18nPrefix,
-                                                    result,
-                                                })));
-                                        } else {
-                                            // do not wait for languages
-                                            promises.push(_loadComponentHelper({
-                                                visWidgetsCollection: collection,
-                                                countRef,
-                                                dynamicWidgetInstance: instance,
-                                                i18nPrefix,
-                                                result,
-                                            }));
-                                        }
-                                    } else if (i18nPromiseWait) {
-                                        promises.push(i18nPromiseWait);
-                                    }
-                                } catch (e) {
-                                    console.error(e);
-                                }
-                            })(visWidgetsCollection, dynamicWidgetInstance);
-                        }
-                    }
-                }
-
-                // deprecated
-                if (dynamicWidgetInstance.common.visWidgets?.i18n && typeof dynamicWidgetInstance.common.visWidgets?.i18n === 'object') {
-                    try {
-                        I18n.extendTranslations(dynamicWidgetInstance.common.visWidgets.i18n);
-                    } catch (error) {
-                        console.error(`Cannot import i18n: ${error}`);
-                    }
-                }
-            }
-
-            return Promise.all(promises)
-                .then(() => result);
-        })
-        .catch(e => console.error('Cannot read instances', e));
-}
-
-function addClass(actualClass, toAdd) {
+function addClass(actualClass: string, toAdd: string | undefined): string {
     if (actualClass) {
         const parts = actualClass.split(' ').map(cl => cl.trim()).filter(cl => cl);
-        if (!parts.includes(toAdd)) {
+        if (toAdd && !parts.includes(toAdd)) {
             parts.push(toAdd);
         }
         return parts.join(' ');
     }
 
-    return toAdd;
+    return toAdd || '';
 }
 
-function removeClass(actualClass, toRemove) {
+function removeClass(actualClass: string, toRemove: string): string {
     if (actualClass) {
         const parts = actualClass.split(' ').map(cl => cl.trim()).filter(cl => cl);
         const pos = parts.indexOf(toRemove);
@@ -1029,7 +799,7 @@ function removeClass(actualClass, toRemove) {
     return '';
 }
 
-function parseDimension(field) {
+function parseDimension(field: string | number | null | undefined): { value: number; dimension: string } {
     const result = { value: 0, dimension: 'px' };
     if (!field) {
         return result;
@@ -1043,7 +813,7 @@ function parseDimension(field) {
     return result;
 }
 
-function findWidgetUsages(views, view, widgetId, _result) {
+function findWidgetUsages(views: Project, view: string, widgetId: AnyWidgetId, _result: { view: string, wid: AnyWidgetId, attr: string }[]): { view: string, wid: AnyWidgetId, attr: string }[] {
     if (view) {
         _result = _result || [];
         // search in specific view
@@ -1052,11 +822,11 @@ function findWidgetUsages(views, view, widgetId, _result) {
             if (wid === widgetId) {
                 return;
             }
-            const oWidget = views[view].widgets[wid];
+            const oWidget = views[view].widgets[wid as AnyWidgetId];
             const attrs = Object.keys(oWidget.data);
             attrs.forEach(attr => {
                 if (attr.startsWith('widget') && oWidget.data[attr] === widgetId) {
-                    _result.push({ view, wid, attr });
+                    _result.push({ view, wid: wid as AnyWidgetId, attr });
                 }
             });
         });
@@ -1064,7 +834,7 @@ function findWidgetUsages(views, view, widgetId, _result) {
     }
 
     // search in all views
-    const result = [];
+    const result: { view: string, wid: AnyWidgetId, attr: string }[] = [];
     Object.keys(views).forEach(_view => _view !== '___settings' && findWidgetUsages(views, _view, widgetId, _result));
     return result;
 }
@@ -1079,8 +849,6 @@ export {
     parseDimension,
     addClass,
     removeClass,
-    getRemoteWidgets,
-    registerWidgetsLoadIndicator,
     readFile,
     findWidgetUsages,
 };

@@ -65,6 +65,7 @@ declare global {
         _lastAppliedStyle: string;
     }
 }
+
 interface VisViewMovement {
     selectedWidgetsWithRectangle?: AnyWidgetId[];
     moved?: boolean;

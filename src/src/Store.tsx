@@ -10,7 +10,7 @@ const FAKE_ID = 'fakeId';
 
 export const updateProject = createAction<Project>('project/update');
 export const updateView = createAction<{ viewId: string; data: View }>('view/update');
-export const updateWidget = createAction<{ viewId: string; widgetId: SingleWidgetId | typeof FAKE_ID; data: SingleWidget }>('widget/update');
+export const updateWidget = createAction<{ viewId: string; widgetId: GroupWidgetId | SingleWidgetId | typeof FAKE_ID; data: SingleWidget }>('widget/update');
 export const updateGroupWidget = createAction<{ viewId: string; widgetId: GroupWidgetId | typeof FAKE_ID; data: GroupWidget }>('group/update');
 export const updateActiveUser = createAction<string>('activeUser/update');
 export const recalculateFields = createAction<boolean>('attributes/recalculate');
@@ -46,7 +46,7 @@ const reducer = createReducer(
                     return;
                 }
 
-                state.visProject[viewId].widgets[widgetId] = data;
+                state.visProject[viewId].widgets[widgetId as SingleWidgetId] = data;
             })
             .addCase(updateGroupWidget, (state, action) => {
                 const { viewId, widgetId, data } = action.payload;

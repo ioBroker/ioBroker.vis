@@ -27,8 +27,9 @@ import { I18n, Icon } from '@iobroker/adapter-react-v5';
 
 import { GetRxDataFromWidget, RxRenderWidgetProps, RxWidgetInfo } from '@/types';
 import VisRxWidget from '@/Vis/visRxWidget';
-import { Context } from '@/Vis/visBaseWidget';
+import { WidgetData } from '@/types';
 import FiltersEditorDialog from './FiltersEditorDialog';
+import { RxWidgetInfoAttributesField, RxWidgetInfoCustomComponentProperties, RxWidgetInfoCustomComponentContext } from "@/allInOneTypes";
 
 // eslint-disable-next-line no-use-before-define
 type RxData = GetRxDataFromWidget<typeof BasicFilterDropdown>
@@ -73,7 +74,7 @@ function processFilter(filters: string[]) {
 interface ItemsEditorProps {
     data: any;
     setData: (data: any) => void;
-    context: Context;
+    context: RxWidgetInfoCustomComponentContext;
 }
 
 const ItemsEditor = (props: ItemsEditorProps) => {
@@ -136,9 +137,14 @@ class BasicFilterDropdown extends VisRxWidget<RxData> {
                         label: 'editor',
                         type: 'custom',
                         noBinding: true,
-                        component: (_field: any, data: any, setData: (_data: any) => void, props: { context: Context }) => <ItemsEditor
+                        component: (
+                            _field: RxWidgetInfoAttributesField,
+                            data: WidgetData,
+                            onDataChange: (newData: WidgetData) => void,
+                            props: RxWidgetInfoCustomComponentProperties,
+                        ) => <ItemsEditor
                             data={data}
-                            setData={setData}
+                            setData={onDataChange}
                             context={props.context}
                         />,
                         default: '[]',
@@ -342,7 +348,6 @@ class BasicFilterDropdown extends VisRxWidget<RxData> {
                     >
                         {image ? <Icon
                             src={image}
-                            alt={option.label}
                             style={{ width: 24, height: 24, marginRight: 8 }}
                         /> : null}
                         {option.label}

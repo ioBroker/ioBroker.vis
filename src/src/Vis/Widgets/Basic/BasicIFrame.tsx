@@ -4,9 +4,21 @@ import { GetRxDataFromWidget, RxRenderWidgetProps } from '@/types';
 import VisRxWidget from '@/Vis/visRxWidget';
 
 // eslint-disable-next-line no-use-before-define
-type RxData = GetRxDataFromWidget<typeof BasicIFrame>
+// type RxData = GetRxDataFromWidget<typeof BasicIFrame>
 
-export default class BasicIFrame extends VisRxWidget<RxData> {
+interface BasicIFrameData {
+    src: string;
+    refreshInterval: number;
+    refreshWithNoQuery: boolean;
+    noSandbox: boolean;
+    refreshOnViewChange: boolean;
+    refreshOnWakeUp: boolean;
+    scrollX: boolean;
+    scrollY: boolean;
+    seamless: boolean;
+}
+
+export default class BasicIFrame extends VisRxWidget<BasicIFrameData> {
     private refreshInterval: ReturnType<typeof setInterval> | null = null;
 
     private readonly frameRef: React.RefObject<HTMLIFrameElement>;
@@ -84,7 +96,7 @@ export default class BasicIFrame extends VisRxWidget<RxData> {
                 width: 600,
                 height: 320,
             },
-        } as const;
+        };
     }
 
     async componentDidMount(): Promise<void> {
