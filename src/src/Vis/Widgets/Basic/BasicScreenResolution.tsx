@@ -3,10 +3,9 @@ import React from 'react';
 import { I18n } from '@iobroker/adapter-react-v5';
 
 import {
-    RxRenderWidgetProps, VisLegacy,
-    RxWidgetState, RxWidgetProps, GetRxDataFromWidget,
+    RxRenderWidgetProps, VisLegacy, RxWidgetProps, GetRxDataFromWidget,
 } from '@/types';
-import VisRxWidget from '@/Vis/visRxWidget';
+import VisRxWidget, { VisRxWidgetState } from '@/Vis/visRxWidget';
 
 declare global {
     interface Window {
@@ -14,7 +13,7 @@ declare global {
     }
 }
 
-interface BasicScreenResolutionState extends RxWidgetState {
+interface BasicScreenResolutionState extends VisRxWidgetState {
     width: number;
     height: number;
     defaultView: string;
@@ -30,9 +29,11 @@ export default class BasicScreenResolution extends VisRxWidget<RxData, BasicScre
     constructor(props: RxWidgetProps) {
         // @ts-expect-error refactor types to extend from parent types
         super(props);
-        const state = this.state;
-        state.width = document.documentElement.clientWidth;
-        state.height = document.documentElement.clientHeight;
+        this.state = {
+            ...this.state,
+            width: document.documentElement.clientWidth,
+            height: document.documentElement.clientHeight,
+        };
         this.essentialData = JSON.stringify(this.buildEssentialProjectData());
     }
 
@@ -63,7 +64,7 @@ export default class BasicScreenResolution extends VisRxWidget<RxData, BasicScre
                 width: 170,
                 height: 75,
             },
-        };
+        } as const;
     }
 
     async componentDidMount(): Promise<void> {
@@ -122,7 +123,6 @@ export default class BasicScreenResolution extends VisRxWidget<RxData, BasicScre
             defaultView = window.vis.findNearestResolution();
         }
         this.setState({
-            // @ts-expect-error unknown error
             width,
             height,
             defaultView,

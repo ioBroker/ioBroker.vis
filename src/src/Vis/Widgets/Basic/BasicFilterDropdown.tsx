@@ -25,11 +25,13 @@ import { Edit } from '@mui/icons-material';
 
 import { I18n, Icon } from '@iobroker/adapter-react-v5';
 
-import { GetRxDataFromWidget, RxRenderWidgetProps, RxWidgetInfo } from '@/types';
+import {
+    GetRxDataFromWidget, RxRenderWidgetProps, RxWidgetInfo, WidgetData,
+} from '@/types';
 import VisRxWidget from '@/Vis/visRxWidget';
-import { WidgetData } from '@/types';
+import { RxWidgetInfoAttributesField, RxWidgetInfoCustomComponentProperties, RxWidgetInfoCustomComponentContext } from '@/allInOneTypes';
+import { VisWidgetCommand } from '@/Vis/visBaseWidget';
 import FiltersEditorDialog from './FiltersEditorDialog';
-import { RxWidgetInfoAttributesField, RxWidgetInfoCustomComponentProperties, RxWidgetInfoCustomComponentContext } from "@/allInOneTypes";
 
 // eslint-disable-next-line no-use-before-define
 type RxData = GetRxDataFromWidget<typeof BasicFilterDropdown>
@@ -281,7 +283,7 @@ class BasicFilterDropdown extends VisRxWidget<RxData> {
         }
     }
 
-    onCommand(command: string): void {
+    onCommand(command: VisWidgetCommand): void {
         if (command === 'changeFilter') {
             // analyse filter
             this.forceUpdate();

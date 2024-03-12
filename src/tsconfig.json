@@ -1,9 +1,10 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
+    "module": "ES2020",
     "moduleResolution": "Bundler",
     "baseUrl": ".",
-    "checkJs": true,
+    "checkJs": false,
     "noEmit": false,
     "outDir": "./build",
     "sourceMap": true,

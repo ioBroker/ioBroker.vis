@@ -90,7 +90,7 @@ export default class BasicSvgShape extends VisRxWidget<RxData> {
                 width: 100,
                 height: 100,
             },
-        };
+        } as const;
     }
 
     /**

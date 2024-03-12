@@ -65,7 +65,7 @@ export default class BasicBar extends VisRxWidget<RxData> {
                 width: 200,
                 height: 130,
             },
-        };
+        } as const;
     }
 
     /**

@@ -14,6 +14,7 @@ import {
 import { useFocus } from '@/Utils';
 import { store } from '@/Store';
 import {
+    AnyWidgetId,
     GroupWidget, GroupWidgetId, Project, Widget,
 } from '@/types';
 import CustomAceEditor from '../Components/CustomAceEditor';
@@ -59,7 +60,7 @@ const WidgetImportDialog = (props: WidgetImportDialogProps) => {
                 newWidgets[newKey] = widget;
                 if (widget.grouped && widget.groupid && newWidgets[widget.groupid]?.data?.members) {
                     // find group
-                    const pos = (newWidgets[widget.groupid] as GroupWidget).data.members.indexOf(widget._id as string);
+                    const pos = (newWidgets[widget.groupid] as GroupWidget).data.members.indexOf(widget._id as AnyWidgetId);
                     if (pos !== -1) {
                         (newWidgets[widget.groupid] as GroupWidget).data.members[pos] = newKey;
                     }
@@ -73,7 +74,7 @@ const WidgetImportDialog = (props: WidgetImportDialogProps) => {
             if (!isGroup(newWidgets[wid]) && props.selectedGroup !== undefined) {
                 newWidgets[wid].grouped = true;
                 newWidgets[wid].groupid = props.selectedGroup;
-                (project[props.selectedView].widgets[props.selectedGroup] as GroupWidget).data.members.push(wid);
+                (project[props.selectedView].widgets[props.selectedGroup] as GroupWidget).data.members.push(wid as AnyWidgetId);
             }
         });
 

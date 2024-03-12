@@ -35,12 +35,13 @@
     "@alcalzone/release-script-plugin-iobroker": "^3.7.0",
     "@alcalzone/release-script-plugin-license": "^3.7.0",
     "@iobroker/vis-2-widgets-testing": "^1.0.0",
-    "@tsconfig/node16": "^16.1.1",
+    "@tsconfig/node18": "^18.2.2",
     "@types/mocha": "^10.0.6",
     "chai": "^4.3.10",
     "gulp": "^4.0.2",
     "iobroker.web": "*",
     "mocha": "^10.3.0",
+    "typescript": "^5.4.2",
     "unzipper": "^0.10.14"
   },
   "bugs": {
@@ -57,6 +58,7 @@
     "main.js"
   ],
   "scripts": {
+    "check-ts": "tsc --project src/tsconfig.json",
     "start": "cd src && npm run start",
     "test": "mocha ./test/*.engine.js --exit",
     "test-gui": "mocha ./test/*.gui.js --exit",

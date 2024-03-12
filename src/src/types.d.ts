@@ -187,7 +187,7 @@ export interface ViewSettings {
         'line-height'?: string;
         'letter-spacing'?: string;
         'word-spacing'?: string;
-    }
+    };
 
     useAsDefault?: boolean;
     alwaysRender?: boolean;
@@ -414,8 +414,8 @@ interface VisBindingOperationArgument {
 }
 
 interface VisBindingOperation {
-    op: VisBindingOperationType,
-    arg?: VisBindingOperationArgument[] | string | number | string[],
+    op: VisBindingOperationType;
+    arg?: VisBindingOperationArgument[] | string | number | string[];
     formula?: string;
 }
 
@@ -425,8 +425,8 @@ interface VisBinding {
     /** ioBroker state ID */
     systemOid: StateID;
     /** Part of the string, like {id.ack} */
-    token: string,
-    operations?: VisBindingOperation[],
+    token: string;
+    operations?: VisBindingOperation[];
     format: string;
     isSeconds: boolean;
 }
@@ -457,7 +457,7 @@ export interface CustomPaletteProperties {
     selectedView: string;
     themeType: 'dark' | 'light';
     helpers: {
-        deviceIcons: Record<string, React.JSX.Element>
+        deviceIcons: Record<string, React.JSX.Element>;
         detectDevices: (socket: Connection) => Promise<any[]>;
         getObjectIcon: (obj: ioBroker.Object, id?: string, imagePrefix?: string) => React.JSX.Element;
         allObjects: (socket: Connection) => Promise<Record<string, ioBroker.Object>>;
@@ -467,12 +467,11 @@ export interface CustomPaletteProperties {
     };
 }
 
-
 interface RxWidgetInfoAttributes {
     /** Name of the attributes section */
     readonly name: string;
     /** Fields of this attribute section */
-    readonly fields: RxWidgetInfoAttributesField[];
+    fields: readonly RxWidgetInfoAttributesField[];
     /** I18n Label */
     readonly label?: string;
     readonly indexFrom?: number;
@@ -503,7 +502,7 @@ interface RxWidgetInfo {
     readonly visWidgetColor?: string;
 
     /** Groups of attributes */
-    readonly visAttrs: RxWidgetInfoAttributes[];
+    visAttrs: (readonly RxWidgetInfoAttributes[]);
     /** Default style for widget */
     readonly visDefaultStyle?: React.CSSProperties;
     /** Position in the widget set */
@@ -614,4 +613,4 @@ type GetRxDataFromVisAttrs<T extends Record<string, any>> = {
 }
 
 /** Infers the RxData from a given Widget */
-type GetRxDataFromWidget<T extends { getWidgetInfo: () => Record<string, any> }> =  GetRxDataFromVisAttrs<ReturnType<(T['getWidgetInfo'])>>
+type GetRxDataFromWidget<T extends { getWidgetInfo: () => Record<string, any> }> = GetRxDataFromVisAttrs<ReturnType<(T['getWidgetInfo'])>>

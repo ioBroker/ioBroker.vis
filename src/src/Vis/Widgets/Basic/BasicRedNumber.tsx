@@ -85,7 +85,7 @@ export default class BasicRedNumber extends VisRxWidget<RxData> {
                 width: 52,
                 height: 30,
             },
-        };
+        } as const;
     }
 
     /**
@@ -123,7 +123,7 @@ export default class BasicRedNumber extends VisRxWidget<RxData> {
                         top: 0,
                         left: 0,
                         zIndex: 0,
-                        color: this.state.rxData.backgroundColor || 'red',
+                        color: this.state.rxData.background || 'red',
                     }}
                 />
                 <div
@@ -154,7 +154,7 @@ export default class BasicRedNumber extends VisRxWidget<RxData> {
             borderColor: this.state.rxData.borderColor ||  'white',
             borderWidth: 3,
             borderStyle: 'solid',
-            backgroundColor: this.state.rxData.backgroundColor || 'red',
+            backgroundColor: this.state.rxData.background || 'red',
             minWidth: 21,
             textAlign: 'center',
             color: props.style.color || 'white',

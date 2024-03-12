@@ -56,7 +56,7 @@ export default class BasicImage8 extends VisRxWidget<RxData> {
                     },
                 ],
             }],
-        };
+        } as const;
     }
 
     /**

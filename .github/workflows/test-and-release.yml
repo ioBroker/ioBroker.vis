@@ -40,6 +40,9 @@ jobs:
       - name: Build
         run: NODE_OPTIONS=--max_old_space_size=8192 npm run build
 
+      - name: Test TypeScript
+        run: npm run check-ts
+
       - name: Run local tests
         run: npm run test-gui
 

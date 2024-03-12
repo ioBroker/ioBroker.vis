@@ -107,7 +107,7 @@ export interface VisBaseWidgetState {
     widgetHint?: 'light' | 'dark' | 'hide';
     hideHelper?: boolean;
     isHidden?: boolean;
-    gap?: number,
+    gap?: number;
     draggable?: boolean;
     showRelativeMoveMenu?: boolean;
 }
@@ -148,7 +148,7 @@ interface VisBaseWidget {
     renderLastChange(style: unknown): React.ReactNode;
 }
 
-class VisBaseWidget extends React.Component<VisBaseWidgetProps, VisBaseWidgetState> {
+class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetState> extends React.Component<VisBaseWidgetProps, TState & VisBaseWidgetState> {
     static FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~]+/g; // from https://github.com/ioBroker/ioBroker.js-controller/blob/master/packages/common/lib/common/tools.js
 
     /** We do not store the SVG Element in the state because it is cyclic */
@@ -219,7 +219,7 @@ class VisBaseWidget extends React.Component<VisBaseWidgetProps, VisBaseWidgetSta
             ),
             hideHelper: false,
             gap: style.position === 'relative' ? (isVarFinite(props.context.views[props.view].settings?.rowGap) ? parseFloat(props.context.views[props.view].settings?.rowGap as string) : 0) : 0,
-        };
+        } as TState & VisBaseWidgetState;
 
         this.onCommandBound = this.onCommand.bind(this);
     }
@@ -399,8 +399,8 @@ class VisBaseWidget extends React.Component<VisBaseWidgetProps, VisBaseWidgetSta
         }
 
         // take actual (old) style and data
-        let styleStr: string = state.style?._originalData ? state.style._originalData : JSON.stringify(state.style);
-        let dataStr: string = state.data?._originalData ? state.data._originalData : JSON.stringify(state.data);
+        const styleStr: string = state.style?._originalData ? state.style._originalData : JSON.stringify(state.style);
+        const dataStr: string = state.data?._originalData ? state.data._originalData : JSON.stringify(state.data);
 
         const isHidden = VisBaseWidget.isWidgetFilteredOutStatic(
             props.viewsActiveFilter,

@@ -65,9 +65,7 @@ const POSSIBLE_MUI_STYLES = [
     'word-spacing',
 ];
 
-interface VisRxWidgetProps extends VisBaseWidgetProps {
-
-}
+type VisRxWidgetProps = VisBaseWidgetProps
 
 interface RxData {
     _originalData: any;
@@ -111,24 +109,14 @@ export interface CustomWidgetProperties {
     selectedWidget: AnyWidgetId;
 }
 
-interface VisRxWidgetState extends VisBaseWidgetState {
+export interface VisRxWidgetState extends VisBaseWidgetState {
     rxData: RxData;
     values: VisRxWidgetStateValues;
     visible: boolean;
     disabled?: boolean;
 }
 
-/** TODO: this overload can be removed as soon as VisBaseWidget is written correctly in TS */
-interface VisRxWidget<TRxData extends Record<string, any>, TState extends Record<string, any> = Record<string, never>> extends VisBaseWidget {
-    visHidden?: boolean;
-    adapter?: string;
-    version?: string;
-    url?: string;
-    custom?: any;
-    state: VisRxWidgetState & TState & { rxData: TRxData };
-}
-
-class VisRxWidget<TRxData extends Record<string, any>, TState extends Record<string, any> = Record<string, never>> extends VisBaseWidget<TState>{
+class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<VisRxWidgetState> = VisRxWidgetState> extends VisBaseWidget<VisRxWidgetState & TState & { rxData: TRxData }> {
     static POSSIBLE_MUI_STYLES = POSSIBLE_MUI_STYLES;
 
     static i18nPrefix: string | undefined;
@@ -432,7 +420,6 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Record<str
     }
 
     async componentWillUnmount() {
-        // @ts-expect-error check later if types wrong or call wrong
         if (this.linkContext.IDs.length) {
             await this.props.context.socket.unsubscribeState(this.linkContext.IDs, this.onStateChangedBind);
         }
@@ -510,14 +497,14 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Record<str
 
         // subscribe on some new IDs and remove old IDs
         const unsubscribe = oldIDs.filter(id => !this.linkContext.IDs.includes(id));
-        // @ts-expect-error check later if types wrong or call wrong
         if (unsubscribe.length) {
+            // @ts-expect-error check later if types wrong or call wrong
             await context.socket.unsubscribeState(unsubscribe, this.onStateChangedBind);
         }
 
         const subscribe = this.linkContext.IDs.filter(id => !oldIDs.includes(id));
-        // @ts-expect-error check later if types wrong or call wrong
         if (subscribe.length) {
+            // @ts-expect-error check later if types wrong or call wrong
             await context.socket.subscribeState(subscribe, this.onStateChangedBind);
         }
 
@@ -1028,7 +1015,7 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Record<str
      * Get information about specific widget, needs to be implemented by widget class
      */
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo(): Record<string, any> {
+    getWidgetInfo(): Readonly<RxWidgetInfo> {
         throw new Error('not implemented');
     }
 }
