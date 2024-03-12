@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
     IconButton,
@@ -10,7 +10,7 @@ import {
 import {
     Clear as ClearIcon,
     UnfoldMore as UnfoldMoreIcon,
-    UnfoldLess as UnfoldLessIcon,
+    UnfoldLess as UnfoldLessIcon, ListAlt as IconAttributes,
 } from '@mui/icons-material';
 
 import { I18n, Utils } from '@iobroker/adapter-react-v5';
@@ -69,6 +69,7 @@ const Attributes = props => {
                 height: 34,
             }}
         >
+            <IconAttributes style={{ marginTop: 4, marginRight: 4 }} />
             {I18n.t('Attributes')}
             <div style={{ flex: 1 }}></div>
             {selected === 'View' || selected === 'Widget' ? <div style={{ textAlign: 'right' }}>

@@ -470,59 +470,59 @@ export interface CustomPaletteProperties {
 
 interface RxWidgetInfoAttributes {
     /** Name of the attributes section */
-    name: string;
+    readonly name: string;
     /** Fields of this attribute section */
-    fields: RxWidgetInfoAttributesField[];
+    readonly fields: RxWidgetInfoAttributesField[];
     /** I18n Label */
-    label?: string;
-    indexFrom?: number;
-    indexTo?: string;
-    hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly label?: string;
+    readonly indexFrom?: number;
+    readonly indexTo?: string;
+    readonly hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
 }
 
 interface RxWidgetInfo {
     /** Unique ID of the widget. Starts with 'tpl...' */
-    id: string;
+    readonly id: string;
 
     /** Name of a widget set */
-    visSet: string;
+    readonly visSet: string;
     /** Label of widget set for GUI (normally it exists a translation in i18n for it) */
-    visSetLabel?: string;
+    readonly visSetLabel?: string;
     /** Icon of a widget set */
-    visSetIcon?: string;
+    readonly visSetIcon?: string;
     /** Color of a widget set */
-    visSetColor?: string;
+    readonly visSetColor?: string;
 
     /** Name of widget */
-    visName: string;
+    readonly visName: string;
     /** Label of widget for GUI (normally it exists a translation in i18n for it) */
-    visWidgetLabel?: string;
+    readonly visWidgetLabel?: string;
     /** Preview link (image URL, like 'widgets/basic/img/Prev_RedNumber.png') */
-    visPrev: string;
+    readonly visPrev: string;
     /** Color of widget in palette. If not set, the visSetColor will be taken */
-    visWidgetColor?: string;
+    readonly visWidgetColor?: string;
 
     /** Groups of attributes */
-    visAttrs: RxWidgetInfoAttributes[];
+    readonly visAttrs: RxWidgetInfoAttributes[];
     /** Default style for widget */
-    visDefaultStyle?: React.CSSProperties;
+    readonly visDefaultStyle?: React.CSSProperties;
     /** Position in the widget set */
-    visOrder?: number;
+    readonly visOrder?: number;
     /* required, that width is always equal to height (quadratic widget) */
-    visResizeLocked?: boolean;
+    readonly visResizeLocked?: boolean;
     /* if false, if widget is not resizable */
-    visResizable?: boolean;
+    readonly visResizable?: boolean;
     /* @deprecated use visResizable */
-    resizable?: boolean;
+    readonly resizable?: boolean;
     /* if false, if widget is not draggable  */
-    visDraggable?: boolean;
+    readonly visDraggable?: boolean;
     /* Show specific handlers  */
-    visResizeHandles?: ResizeHandler[];
+    readonly visResizeHandles?: ResizeHandler[];
     /* @deprecated use visResizeHandles */
-    resizeHandles?: ResizeHandler[];
+    readonly resizeHandles?: ResizeHandler[];
 
     /* Function to generate custom palette element */
-    customPalette?: (context: CustomPaletteProperties) => React.JSX.Element;
+    readonly customPalette?: (context: CustomPaletteProperties) => React.JSX.Element;
 }
 
 interface VisStateUsage {

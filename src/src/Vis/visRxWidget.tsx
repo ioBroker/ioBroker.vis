@@ -23,7 +23,7 @@ import { Connection, I18n, Icon } from '@iobroker/adapter-react-v5';
 
 import {
     Project, AnyWidgetId, RxWidgetInfo,
-    WidgetData, VisRxWidgetStateValues,
+    WidgetData, VisRxWidgetStateValues, RxWidgetInfoAttributes,
 } from '@/types';
 import { deepClone, calculateOverflow } from '@/Utils/utils';
 // eslint-disable-next-line import/no-cycle
@@ -32,7 +32,7 @@ import VisBaseWidget, {
     VisBaseWidgetState,
     WidgetStyleState,
     WidgetDataState,
-    GroupDataState,
+    GroupDataState, VisWidgetCommand,
 } from './visBaseWidget';
 import { addClass, getUsedObjectIDsInWidget } from './visUtils';
 
@@ -114,13 +114,12 @@ export interface CustomWidgetProperties {
 interface VisRxWidgetState extends VisBaseWidgetState {
     rxData: RxData;
     values: VisRxWidgetStateValues;
-    visible?: boolean;
+    visible: boolean;
     disabled?: boolean;
 }
 
 /** TODO: this overload can be removed as soon as VisBaseWidget is written correctly in TS */
 interface VisRxWidget<TRxData extends Record<string, any>, TState extends Record<string, any> = Record<string, never>> extends VisBaseWidget {
-    i18nPrefix?: string;
     visHidden?: boolean;
     adapter?: string;
     version?: string;
@@ -129,7 +128,7 @@ interface VisRxWidget<TRxData extends Record<string, any>, TState extends Record
     state: VisRxWidgetState & TState & { rxData: TRxData };
 }
 
-class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget<VisRxWidgetState> {
+class VisRxWidget<TRxData extends Record<string, any>, TState extends Record<string, any> = Record<string, never>> extends VisBaseWidget<TState>{
     static POSSIBLE_MUI_STYLES = POSSIBLE_MUI_STYLES;
 
     static i18nPrefix: string | undefined;
@@ -168,7 +167,7 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget<Vis
     constructor(props: VisRxWidgetProps) {
         super(props);
 
-        const options = this.getWidgetInfo();
+        const options: RxWidgetInfo = this.getWidgetInfo() as RxWidgetInfo;
 
         const widgetAttrInfo: Record<string, any> = {};
         // collect all attributes (only types)
@@ -204,9 +203,12 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget<Vis
 
         // find in fields visResizable name
         // if resizable exists, take the resizable from data
-        this.visDynamicResizable = VisRxWidget.findField(options, 'visResizable');
-        if (this.visDynamicResizable) {
-            this.visDynamicResizable = { default: this.visDynamicResizable.default !== undefined ? this.visDynamicResizable.default : true, desiredSize: this.visDynamicResizable.desiredSize };
+        const visResizable = VisRxWidget.findField(options, 'visResizable');
+        if (visResizable) {
+            this.visDynamicResizable = {
+                default: visResizable.default !== undefined ? visResizable.default : true,
+                desiredSize: visResizable.desiredSize,
+            };
         } else {
             this.visDynamicResizable = null;
         }
@@ -1026,7 +1028,7 @@ class VisRxWidget<TRxData extends Record<string, any>> extends VisBaseWidget<Vis
      * Get information about specific widget, needs to be implemented by widget class
      */
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo(): RxWidgetInfo {
+    getWidgetInfo(): Record<string, any> {
         throw new Error('not implemented');
     }
 }

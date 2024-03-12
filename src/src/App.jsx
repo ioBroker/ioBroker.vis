@@ -1498,7 +1498,7 @@ class App extends Runtime {
                     </IconButton>
                 </div>
             </Tooltip> : null}
-            {this.state.hideAttributes ? <Tooltip title={I18n.t('Show palette')}>
+            {this.state.hideAttributes ? <Tooltip title={I18n.t('Show attributes')}>
                 <div className={this.props.classes.tabButton}>
                     <IconButton
                         size="small"

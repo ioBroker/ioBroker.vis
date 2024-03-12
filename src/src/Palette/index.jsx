@@ -269,7 +269,7 @@ const Palette = props => {
             className={Utils.clsx(props.classes.blockHeader, props.classes.lightedPanel)}
             style={{ display: 'flex', lineHeight: '34px' }}
         >
-            <IconPalette />
+            <IconPalette style={{ marginTop: 4, marginRight: 4 }} />
             <span style={{ verticalAlign: 'middle' }}>{I18n.t('Palette')}</span>
             <div style={{ flex: 1 }} />
             {!allOpened ? <Tooltip title={I18n.t('Expand all')}>

@@ -193,7 +193,7 @@ export default class BasicSpeechToText extends VisRxWidget<RxData, BasicSpeechTo
                 width: 500,
                 height: 77,
             },
-        };
+        } as const;
     }
 
     /**

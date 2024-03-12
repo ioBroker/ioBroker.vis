@@ -93,11 +93,11 @@ export interface WidgetStyleState extends WidgetStyle {
     _originalData?: string;
 }
 
-interface VisBaseWidgetStateUpdate {
-    data?: WidgetDataState | GroupDataState;
-    style?: WidgetStyleState;
+export interface VisBaseWidgetState {
+    data: WidgetDataState | GroupDataState;
+    style: WidgetStyleState;
+    editMode: boolean;
     rxStyle?: WidgetStyleState;
-    editMode?: boolean;
     applyBindings?: false | true | { top: string | number; left: string | number };
     multiViewWidget?: boolean;
     selected?: boolean;
@@ -110,12 +110,6 @@ interface VisBaseWidgetStateUpdate {
     gap?: number,
     draggable?: boolean;
     showRelativeMoveMenu?: boolean;
-}
-
-export interface VisBaseWidgetState extends VisBaseWidgetStateUpdate {
-    data: WidgetDataState | GroupDataState;
-    style: WidgetStyleState;
-    editMode: boolean;
 }
 
 export interface VisBaseWidgetMovement {
@@ -158,40 +152,40 @@ class VisBaseWidget extends React.Component<VisBaseWidgetProps, VisBaseWidgetSta
     static FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~]+/g; // from https://github.com/ioBroker/ioBroker.js-controller/blob/master/packages/common/lib/common/tools.js
 
     /** We do not store the SVG Element in the state because it is cyclic */
-    relativeMoveMenu?: EventTarget & SVGSVGElement;
+    private relativeMoveMenu?: EventTarget & SVGSVGElement;
 
     /** if currently resizing */
-    resize: Resize = false;
+    private resize: Resize = false;
 
-    readonly uuid = `${Date.now()}.${Math.round(Math.random() * 1_000_000)}`;
+    private readonly uuid = `${Date.now()}.${Math.round(Math.random() * 1_000_000)}`;
 
-    refService = React.createRef<HTMLDivElement>();
+    protected refService = React.createRef<HTMLDivElement>();
 
-    widDiv: null | HTMLDivElement = null;
+    protected widDiv: null | HTMLDivElement = null;
 
     readonly onCommandBound: typeof this.onCommand;
 
-    onResize: undefined | (() => void);
+    private onResize: undefined | (() => void);
 
-    updateInterval?: ReturnType<typeof setTimeout>;
+    private updateInterval?: ReturnType<typeof setTimeout>;
 
-    pressTimeout?: ReturnType<typeof setTimeout>;
+    private pressTimeout?: ReturnType<typeof setTimeout>;
 
-    shadowDiv: any;
+    private shadowDiv: any;
 
-    stealCursor?: string;
+    private stealCursor?: string;
 
-    beforeIncludeColor?: string;
+    private beforeIncludeColor?: string;
 
-    lastClick?: number;
+    private lastClick?: number;
 
-    movement?: VisBaseWidgetMovement;
+    protected movement?: VisBaseWidgetMovement;
 
     protected resizeLocked?: boolean;
 
-    visDynamicResizable: any;
+    protected visDynamicResizable: undefined | null | { default: boolean; desiredSize: { width: number; height: number } | boolean };
 
-    isCanWidget?: boolean;
+    protected isCanWidget?: boolean;
 
     constructor(props: VisBaseWidgetProps) {
         super(props);
@@ -373,7 +367,7 @@ class VisBaseWidget extends React.Component<VisBaseWidgetProps, VisBaseWidgetSta
 
     static getDerivedStateFromProps(props: VisBaseWidgetProps, state: VisBaseWidgetState) {
         const context = props.context;
-        let newState: VisBaseWidgetStateUpdate | null = null; // No change to state by default
+        let newState: Partial<VisBaseWidgetState> | null = null; // No change to state by default
         let widget = context.views[props.view].widgets[props.id];
         const gap = widget.style.position === 'relative' ?
             (isVarFinite(context.views[props.view].settings?.rowGap) ? parseFloat(context.views[props.view].settings?.rowGap as string) : 0) : 0;
