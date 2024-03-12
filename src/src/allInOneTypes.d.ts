@@ -46,7 +46,7 @@ export type RxWidgetInfoAttributesField = {
      - `{type: ['channel', 'device']}` - show only channels and devices
      - `{common: {type: 'number'}` - show only states of type 'number
      - `{common: {type: ['number', 'string']}` - show only states of type 'number and string
-     - `{common: {role: 'switch']}` - show only states with roles starting from switch
+     - `{common: {role: 'switch'}` - show only states with roles starting from switch
      - `{common: {role: ['switch', 'button]}` - show only states with roles starting from `switch` and `button`
      */
     readonly filter?: {
@@ -66,9 +66,9 @@ export type RxWidgetInfoAttributesField = {
     /** Number min value */
     readonly min?: number;
     /** Number max value */
-    readonly max? : number;
+    readonly max?: number;
     /** Number step */
-    readonly step? : number;
+    readonly step?: number;
     /** Slider marks?: array of possible marks. Like `[{value: 1, label: 'one'}, {value: 10}, {value: 100}] */
     readonly marks?: { readonly value: number; readonly label: string }[];
     /** Controls when the value label is displayed: `auto` the value label will display when the thumb is hovered or focused. `on` will display persistently. `off` will never display. */

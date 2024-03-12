@@ -3,7 +3,7 @@ import type { Connection } from '@iobroker/adapter-react-v5';
 import { CustomPaletteProperties, WidgetAttributeInfo, WidgetAttributesGroupInfo } from '@/Vis/visRxWidget';
 import { CommonType } from '@iobroker/types/build/objects';
 import { store } from '@/Store';
-import { RxWidgetAttributeType, RxWidgetInfoAttributesField } from '@/allInOneTypes';
+import { RxWidgetAttributeType, RxWidgetInfoAttributesField } from '@/detailedTypes';
 import type moment from 'moment';
 import VisFormatUtils from '@/Vis/visFormatUtils';
 import VisView from '@/Vis/visView';
