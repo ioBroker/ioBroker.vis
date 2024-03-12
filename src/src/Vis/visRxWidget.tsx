@@ -24,6 +24,7 @@ import { Connection, I18n, Icon } from '@iobroker/adapter-react-v5';
 import {
     Project, AnyWidgetId, RxWidgetInfo,
     WidgetData, VisRxWidgetStateValues, RxWidgetInfoAttributes,
+    StateID, RxWidgetInfoAttributesFieldSelectSimple,
 } from '@/types';
 import { deepClone, calculateOverflow } from '@/Utils/utils';
 // eslint-disable-next-line import/no-cycle
@@ -31,9 +32,9 @@ import VisBaseWidget, {
     VisBaseWidgetProps,
     VisBaseWidgetState,
     WidgetStyleState,
-    WidgetDataState,
-    GroupDataState, VisWidgetCommand,
+    VisWidgetCommand,
 } from './visBaseWidget';
+import VisView from './visView';
 import { addClass, getUsedObjectIDsInWidget } from './visUtils';
 
 const POSSIBLE_MUI_STYLES = [
@@ -131,12 +132,13 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
     };
 
     /** Method called when state changed */
-    private readonly onStateChangedBind: (id: any, state: any, doNotApplyState: any) => void;
+    private readonly onStateChangedBind: (id: StateID, state: ioBroker.State, doNotApplyState?: any) => void;
 
     /** If resizing is currently locked */
     protected resizeLocked: boolean;
 
-    private newState?: Partial<VisRxWidgetState & { rxData: TRxData }> | null;
+    // private newState?: Partial<VisRxWidgetState & TState & { rxData: TRxData }> | null;
+    private newState?: Partial<VisRxWidgetState & TState & { rxData: TRxData }> | null;
 
     private wrappedContent?: boolean;
 
@@ -160,9 +162,9 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
         const widgetAttrInfo: Record<string, any> = {};
         // collect all attributes (only types)
         if (Array.isArray(options.visAttrs)) {
-            options.visAttrs.forEach(group =>
+            options.visAttrs.forEach((group: RxWidgetInfoAttributes) =>
                 group.fields && group.fields.forEach(item => {
-                    widgetAttrInfo[item.name] = { type: item.type };
+                    widgetAttrInfo[item.name] = { type: (item as RxWidgetInfoAttributesFieldSelectSimple).type || '' };
                 }));
         }
 
@@ -279,32 +281,44 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,class-methods-use-this
-    onStateUpdated(id: string, state: typeof this.state) {
+    onStateUpdated(id: string, state: ioBroker.State) {
 
     }
+
+    onIoBrokerStateChanged = (id: StateID, state: ioBroker.State | null | undefined) => {
+        this.onStateChanged(id, state);
+    };
 
     /**
      * Called if ioBroker state changed
      *
-     * @param id state id
      * @param state state object
      * @param doNotApplyState if state should not be set
      */
-    onStateChanged(id?: string | null, state?: typeof this.state | null, doNotApplyState?: boolean) {
-        this.newState = this.newState || {
-            values: deepClone(this.state.values || {}),
-            rxData: { ...this.state.data } as WidgetDataState | GroupDataState,
-            rxStyle: { ...this.state.style } as WidgetStyleState,
-            editMode: this.props.editMode,
-            applyBindings: false,
-        };
+    onStateChanged(
+        id?: StateID | null,
+        state?: ioBroker.State | null | undefined,
+        /** if state should not be set */
+        doNotApplyState?: boolean,
+    ) {
+        if (!this.newState) {
+            // @ts-expect-error fix later
+            this.newState = {
+                values: deepClone(this.state.values || {}),
+                rxData: { ...this.state.data } as unknown as TRxData,
+                rxStyle: { ...this.state.style } as WidgetStyleState,
+                editMode: this.props.editMode,
+                applyBindings: false,
+            };
+        }
 
         if (!this.newState) {
             return null;
         }
 
-        // @ts-expect-error fix later
-        delete this.newState.rxData._originalData;
+        if (this.newState.rxData) {
+            delete this.newState.rxData._originalData;
+        }
         if (this.newState.rxStyle) {
             delete this.newState.rxStyle._originalData;
         }
@@ -323,22 +337,20 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
             this.newState.visible = this.checkVisibility(id, this.newState);
         }
 
-        // @ts-expect-error fix later
-        const userGroups = this.newState.rxData['visibility-groups'];
-        this.newState.disabled = false;
+        if (this.newState.rxData) {
+            const userGroups = this.newState.rxData['visibility-groups'];
+            this.newState.disabled = false;
 
-        // @ts-expect-error fix later
-        if (this.newState.rxData.filterkey && typeof this.newState.rxData.filterkey === 'string') {
-            // @ts-expect-error fix later
-            this.newState.rxData.filterkey = this.newState.rxData.filterkey.split(/[;,]+/).map(f => f.trim()).filter(f => f);
-        }
+            if (this.newState.rxData.filterkey && typeof this.newState.rxData.filterkey === 'string') {
+                this.newState.rxData.filterkey = this.newState.rxData.filterkey.split(/[;,]+/).map(f => f.trim()).filter(f => f);
+            }
 
-        if (userGroups?.length && !this.isUserMemberOfGroup(this.props.context.user, userGroups)) {
-            // @ts-expect-error fix later
-            if (this.newState.rxData['visibility-groups-action'] === 'disabled') {
-                this.newState.disabled = true;
-            } else {
-                this.newState.visible = false;
+            if (userGroups?.length && !this.isUserMemberOfGroup(this.props.context.user, userGroups)) {
+                if (this.newState.rxData['visibility-groups-action'] === 'disabled') {
+                    this.newState.disabled = true;
+                } else {
+                    this.newState.visible = false;
+                }
             }
         }
 
@@ -360,6 +372,7 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
                 this.updateTimer = undefined;
                 const newState = this.newState ?? null;
                 this.newState = null;
+                // @ts-expect-error fix later
                 newState && this.setState(newState);
             }, 50);
         } else {
@@ -394,17 +407,18 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
 
     async componentDidMount() {
         super.componentDidMount();
-        // @ts-expect-error check later if types wrong or call wrong
-        this.linkContext.IDs.length && (await this.props.context.socket.subscribeState(this.linkContext.IDs, this.onStateChangedBind));
+        for (let i = 0; i < this.linkContext.IDs.length; i++) {
+            await this.props.context.socket.subscribeState(this.linkContext.IDs[i], this.onIoBrokerStateChanged);
+        }
     }
 
     // eslint-disable-next-line no-unused-vars,class-methods-use-this
-    onRxDataChanged(prevRxData: typeof this.state.rxData) {
+    onRxDataChanged(_prevRxData: typeof this.state.rxData) {
 
     }
 
     // eslint-disable-next-line no-unused-vars,class-methods-use-this
-    onRxStyleChanged(prevRxStyle: typeof this.state.rxStyle) {
+    onRxStyleChanged(_prevRxStyle: typeof this.state.rxStyle) {
 
     }
 
@@ -421,7 +435,9 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
 
     async componentWillUnmount() {
         if (this.linkContext.IDs.length) {
-            await this.props.context.socket.unsubscribeState(this.linkContext.IDs, this.onStateChangedBind);
+            for (let i = 0; i < this.linkContext.IDs.length; i++) {
+                await this.props.context.socket.unsubscribeState(this.linkContext.IDs[i], this.onIoBrokerStateChanged);
+            }
         }
         super.componentWillUnmount();
     }
@@ -498,14 +514,16 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
         // subscribe on some new IDs and remove old IDs
         const unsubscribe = oldIDs.filter(id => !this.linkContext.IDs.includes(id));
         if (unsubscribe.length) {
-            // @ts-expect-error check later if types wrong or call wrong
-            await context.socket.unsubscribeState(unsubscribe, this.onStateChangedBind);
+            for (let s = 0; s < unsubscribe.length; s++) {
+                await context.socket.unsubscribeState(unsubscribe[s], this.onIoBrokerStateChanged);
+            }
         }
 
         const subscribe = this.linkContext.IDs.filter(id => !oldIDs.includes(id));
         if (subscribe.length) {
-            // @ts-expect-error check later if types wrong or call wrong
-            await context.socket.subscribeState(subscribe, this.onStateChangedBind);
+            for (let k = 0; k < subscribe.length; k++) {
+                await context.socket.subscribeState(subscribe[k], this.onIoBrokerStateChanged);
+            }
         }
 
         this.onStateChanged();
@@ -651,10 +669,11 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
 
     getWidgetView(view: any, props: any) {
         const context = this.props.context;
-        const VisView = context.VisView;
+        const VisViewComponent = context.VisView as VisView;
         props = props || {};
 
-        return <VisView
+        // @ts-expect-error I don't know how to solve it
+        return <VisViewComponent
             context={this.props.context}
             viewsActiveFilter={this.props.viewsActiveFilter}
             activeView={view}
@@ -672,7 +691,7 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
         props = props || {};
 
         // old (can) widgets require props.refParent
-        return this.props.context.VisView.getOneWidget(props.index || 0, this.props.context.views[view].widgets[wid], {
+        return VisView.getOneWidget(props.index || 0, this.props.context.views[view].widgets[wid], {
             // custom attributes
             context: this.props.context,
             editMode: this.state.editMode,

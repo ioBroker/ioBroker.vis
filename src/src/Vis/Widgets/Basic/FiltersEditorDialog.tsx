@@ -31,7 +31,7 @@ import {
     SelectFile as SelectFileDialog,
 } from '@iobroker/adapter-react-v5';
 
-import { Context } from '@/Vis/visBaseWidget';
+import { VisContext } from '@/types';
 
 import MaterialIconSelector from '../../../Components/MaterialIconSelector';
 
@@ -84,7 +84,7 @@ interface Item {
 interface FiltersEditorDialogProps {
     items: Item[] | undefined;
     onClose: (items?: Item[]) => void;
-    context: Context;
+    context: VisContext;
     multiple?: boolean;
     classes: Record<string, string>;
 }

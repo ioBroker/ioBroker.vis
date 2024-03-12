@@ -7,9 +7,9 @@ import {
     RxWidgetInfoAttributes,
     SingleWidgetId,
     CustomPaletteProperties,
+    RxWidgetInfoAttributesField, RxWidgetAttributeType,
 } from '@/types';
 import type VisRxWidget from '@/Vis/visRxWidget';
-import { RxWidgetInfoAttributesField, RxWidgetAttributeType } from '@/allInOneTypes';
 
 import { getRemoteWidgets } from './visLoadWidgets';
 // eslint-disable-next-line import/no-cycle

@@ -1,13 +1,455 @@
 import type React from 'react';
-import type { Connection } from '@iobroker/adapter-react-v5';
-import { CustomPaletteProperties, WidgetAttributeInfo, WidgetAttributesGroupInfo } from '@/Vis/visRxWidget';
-import { CommonType } from '@iobroker/types/build/objects';
-import { store } from '@/Store';
-import { RxWidgetAttributeType, RxWidgetInfoAttributesField } from '@/detailedTypes';
+import type { Theme } from '@mui/material';
 import type moment from 'moment';
+import type { Connection } from '@iobroker/adapter-react-v5';
+import { AnyWidgetId, Project, WidgetData } from '@/types';
+import { CustomPaletteProperties, WidgetAttributeInfo } from '@/Vis/visRxWidget';
 import VisFormatUtils from '@/Vis/visFormatUtils';
 import VisView from '@/Vis/visView';
-import type { Theme } from '@mui/material';
+import { type ViewCommand, type ViewCommandOptions } from '@/Vis/visView';
+
+export interface RxWidgetInfoCustomComponentContext {
+    readonly socket: Connection;
+    readonly projectName: string;
+    readonly instance: number;
+    readonly adapterName: string;
+    readonly views: Project;
+}
+
+export interface RxWidgetInfoCustomComponentProperties {
+    readonly context: RxWidgetInfoCustomComponentContext;
+    readonly selectedView: string;
+    readonly selectedWidgets: AnyWidgetId[];
+    readonly selectedWidget: AnyWidgetId;
+}
+
+export type RxWidgetAttributeType = 'text' | 'delimiter' | 'help' | 'html' | 'json' | 'id' | 'instance' | 'select' | 'nselect' | 'auto' | 'checkbox' | 'number' | 'select-views' | 'custom' | 'image' | 'color' | 'password' | 'history' | 'hid' | 'icon' | 'dimension' | 'fontname' | 'groups' | 'class' | 'filters' | 'views' | 'style' | 'icon64';
+
+export type RxWidgetInfoAttributesFieldText = {
+    /** Field type */
+    readonly type: 'text';
+    /** Field default value */
+    readonly default?: string;
+    /** if true, no edit button will be shown. Default is true. */
+    readonly noButton?: boolean;
+
+    /** Name of the widget field */
+    readonly name: string;
+    /** Field label (i18n) */
+    readonly label?: string;
+    /** JS Function for conditional visibility */
+    readonly hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** Tooltip (i18n) */
+    readonly tooltip?: string;
+    /** JS Function for conditional disability */
+    readonly disabled?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** JS Function for error */
+    readonly error?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** Do not show binding symbol fot this field */
+    readonly noBinding?: boolean;
+    /** Callback called if the field value changed */
+    readonly onChange?: (field: WidgetAttributeInfo, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+}
+
+export type RxWidgetInfoAttributesFieldDelimiter = {
+    /** Field type */
+    readonly type: 'delimiter';
+    /** It is not required here */
+    readonly name: string;
+    /** JS Function for conditional visibility */
+    readonly hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+}
+export type RxWidgetInfoAttributesFieldHelp = {
+    /** Field type */
+    readonly type: 'help';
+    /** i18n help text - This text will be shown without a label */
+    readonly text: string;
+    /** if true, the text will not be translated  */
+    readonly noTranslation?: boolean;
+    /** this style will be applied to the text */
+    readonly style?: React.CSSProperties;
+
+    /** Name of the widget field */
+    readonly name: string;
+    /** Field label (i18n) */
+    readonly label?: string;
+    /** JS Function for conditional visibility */
+    readonly hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+}
+
+export type RxWidgetInfoAttributesFieldHTML = {
+    /** Field type */
+    readonly type: 'html' | 'json';
+    /** Field default value */
+    readonly default?: string;
+    /** show multi-line editor */
+    readonly multiline?: boolean;
+
+    /** Name of the widget field */
+    readonly name: string;
+    /** Field label (i18n) */
+    readonly label?: string;
+    /** JS Function for conditional visibility */
+    readonly hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** Tooltip (i18n) */
+    readonly tooltip?: string;
+    /** JS Function for conditional disability */
+    readonly disabled?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** JS Function for error */
+    readonly error?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** Do not show binding symbol fot this field */
+    readonly noBinding?: boolean;
+    /** Callback called if the field value changed */
+    readonly onChange?: (field: WidgetAttributeInfo, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+}
+
+export type RxWidgetInfoAttributesFieldID = {
+    /** Field type */
+    readonly type: 'id';
+    /** Field default value */
+    readonly default?: string;
+    /** Do not write 'nothing_selected' into the field by creation */
+    readonly noInit?: boolean;
+    /** Do not subscribe on changes of the object */
+    readonly noSubscribe?: boolean;
+    /** Filter of objects (not JSON string, it is an object), like:
+     - `{common: {custom: true}}` - show only objects with some custom settings
+     - `{common: {custom: 'sql.0'}}` - show only objects with sql.0 custom settings (only of the specific instance)
+     - `{common: {custom: '_dataSources'}}` - show only objects of adapters `influxdb' or 'sql' or 'history'
+     - `{common: {custom: 'adapterName.'}}` - show only objects of the custom settings for specific adapter (all instances)
+     - `{type: 'channel'}` - show only channels
+     - `{type: ['channel', 'device']}` - show only channels and devices
+     - `{common: {type: 'number'}` - show only states of type 'number
+     - `{common: {type: ['number', 'string']}` - show only states of type 'number and string
+     - `{common: {role: 'switch'}` - show only states with roles starting from switch
+     - `{common: {role: ['switch', 'button']}` - show only states with roles starting from `switch` and `button`
+     */
+    readonly filter?: {
+        readonly common?: {
+            readonly custom?: true | string | '_dataSources';
+            readonly type?: ioBroker.CommonType | ioBroker.CommonType[];
+            readonly role?: string | string[];
+        };
+        readonly type?: ioBroker.ObjectType | ioBroker.ObjectType[];
+    };
+
+    /** Name of the widget field */
+    readonly name: string;
+    /** Field label (i18n) */
+    readonly label?: string;
+    /** JS Function for conditional visibility */
+    readonly hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** Tooltip (i18n) */
+    readonly tooltip?: string;
+    /** JS Function for conditional disability */
+    readonly disabled?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** JS Function for error */
+    readonly error?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** Do not show binding symbol fot this field */
+    readonly noBinding?: boolean;
+    /** Callback called if the field value changed */
+    readonly onChange?: (field: WidgetAttributeInfo, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+}
+
+export type RxWidgetInfoAttributesFieldInstance = {
+    /** Field type */
+    readonly type: 'instance';
+    /** Field default value */
+    readonly default?: string;
+    /** Additionally, you can provide `adapter` to filter the instances of specific adapter. With special adapter name `_dataSources` you can get all adapters with flag `common.getHistory`. */
+    readonly adapter?: string;
+    /** In this case, only instance number (like `0`) is shown and not `history.0`. It can be set to true only with non-empty `adapter` setting. */
+    readonly iShort?: boolean;
+
+    /** Name of the widget field */
+    readonly name: string;
+    /** Field label (i18n) */
+    readonly label?: string;
+    /** JS Function for conditional visibility */
+    readonly hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** Tooltip (i18n) */
+    readonly tooltip?: string;
+    /** JS Function for conditional disability */
+    readonly disabled?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** JS Function for error */
+    readonly error?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** Do not show binding symbol fot this field */
+    readonly noBinding?: boolean;
+    /** Callback called if the field value changed */
+    readonly onChange?: (field: WidgetAttributeInfo, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+}
+
+export type RxWidgetInfoAttributesFieldSelect = {
+    /** Field type */
+    readonly type: 'select' | 'nselect' | 'auto';
+    /** Options for a select type */
+    readonly options: { value: string; label: string }[] | string[];
+    /** Field default value */
+    readonly default?: string;
+    /** Do not translate options */
+    readonly noTranslation?: boolean;
+
+    /** Name of the widget field */
+    readonly name: string;
+    /** Field label (i18n) */
+    readonly label?: string;
+    /** JS Function for conditional visibility */
+    readonly hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** Tooltip (i18n) */
+    readonly tooltip?: string;
+    /** JS Function for conditional disability */
+    readonly disabled?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** JS Function for error */
+    readonly error?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** Do not show binding symbol fot this field */
+    readonly noBinding?: boolean;
+    /** Callback called if the field value changed */
+    readonly onChange?: (field: WidgetAttributeInfo, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+}
+
+export type RxWidgetInfoAttributesFieldCheckbox = {
+    /** Field type */
+    readonly type: 'checkbox';
+    /** Field default value */
+    readonly default?: boolean;
+
+    /** Name of the widget field */
+    readonly name: string;
+    /** Field label (i18n) */
+    readonly label?: string;
+    /** JS Function for conditional visibility */
+    readonly hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** Tooltip (i18n) */
+    readonly tooltip?: string;
+    /** JS Function for conditional disability */
+    readonly disabled?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** JS Function for error */
+    readonly error?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** Do not show binding symbol fot this field */
+    readonly noBinding?: boolean;
+    /** Callback called if the field value changed */
+    readonly onChange?: (field: WidgetAttributeInfo, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+}
+
+export type RxWidgetInfoAttributesFieldNumber = {
+    /** Field type */
+    readonly type: 'number';
+    /** Field default value */
+    readonly default?: number;
+    /** Number min value */
+    readonly min?: number;
+    /** Number max value */
+    readonly max?: number;
+    /** Number step */
+    readonly step?: number;
+
+    /** Name of the widget field */
+    readonly name: string;
+    /** Field label (i18n) */
+    readonly label?: string;
+    /** JS Function for conditional visibility */
+    readonly hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** Tooltip (i18n) */
+    readonly tooltip?: string;
+    /** JS Function for conditional disability */
+    readonly disabled?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** JS Function for error */
+    readonly error?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** Do not show binding symbol fot this field */
+    readonly noBinding?: boolean;
+    /** Callback called if the field value changed */
+    readonly onChange?: (field: WidgetAttributeInfo, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+}
+
+export type RxWidgetInfoAttributesFieldSlider = {
+    /** Field type */
+    readonly type: 'slider';
+    /** Field default value */
+    readonly default?: number;
+    /** Slider min value */
+    readonly min: number;
+    /** Slider max value */
+    readonly max: number;
+    /** Slider max value */
+    readonly step?: number;
+    /** Slider marks?: array of possible marks. Like `[{value: 1, label: 'one'}, {value: 10}, {value: 100}] */
+    readonly marks?: { value: number; label: string }[];
+    /** Controls when the value label is displayed: `auto` the value label will display when the thumb is hovered or focused. `on` will display persistently. `off` will never display. */
+    readonly valueLabelDisplay?: 'on' | 'off' | 'auto';
+
+    /** Name of the widget field */
+    readonly name: string;
+    /** Field label (i18n) */
+    readonly label?: string;
+    /** JS Function for conditional visibility */
+    readonly hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** Tooltip (i18n) */
+    readonly tooltip?: string;
+    /** JS Function for conditional disability */
+    readonly disabled?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** JS Function for error */
+    readonly error?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** Do not show binding symbol fot this field */
+    readonly noBinding?: boolean;
+    /** Callback called if the field value changed */
+    readonly onChange?: (field: WidgetAttributeInfo, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+}
+
+export type RxWidgetInfoAttributesFieldWidget = {
+    /** Field type */
+    readonly type: 'widget';
+    /** Field default value */
+    readonly default?: string;
+    /** type of the widget, like `tplMaterial2Switches` */
+    readonly tpl?: string;
+    /** if true, all widgets of all views will be shown, not only from the current view. Default is false. */
+    readonly all?: boolean;
+    /**  if true, grouped widgets will be shown too. Default is false. */
+    readonly withGroups?: boolean;
+    /** if true, the current widget will be shown in the list too. */
+    readonly withSelf?: boolean;
+    /** if true, it will be checked if the widget is used somewhere else and user will be asked. */
+    readonly checkUsage?: boolean;
+    /** if true, only widgets will be shown, which are not used in some view. Default is false. */
+    readonly hideUsed?: boolean;
+
+    /** Name of the widget field */
+    readonly name: string;
+    /** Field label (i18n) */
+    readonly label?: string;
+    /** JS Function for conditional visibility */
+    readonly hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** Tooltip (i18n) */
+    readonly tooltip?: string;
+    /** JS Function for conditional disability */
+    readonly disabled?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** JS Function for error */
+    readonly error?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** Do not show binding symbol fot this field */
+    readonly noBinding?: boolean;
+    /** Callback called if the field value changed */
+    readonly onChange?: (field: WidgetAttributeInfo, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+}
+
+export type RxWidgetInfoAttributesFieldSelectViews = {
+    /** Field type */
+    readonly type: 'select-views';
+    /** Field default value */
+    readonly default?: string;
+    /** if false, only one view can be selected. Default is true. */
+    readonly multiple?: boolean;
+
+    /** Name of the widget field */
+    readonly name: string;
+    /** Field label (i18n) */
+    readonly label?: string;
+    /** JS Function for conditional visibility */
+    readonly hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** Tooltip (i18n) */
+    readonly tooltip?: string;
+    /** JS Function for conditional disability */
+    readonly disabled?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** JS Function for error */
+    readonly error?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** Do not show binding symbol fot this field */
+    readonly noBinding?: boolean;
+    /** Callback called if the field value changed */
+    readonly onChange?: (field: WidgetAttributeInfo, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+}
+
+export type RxWidgetInfoAttributesFieldSelectCustom = {
+    /** Field type */
+    readonly type: 'custom';
+    /** Field default value */
+    readonly default?: string | number | boolean;
+    /** if false, only one view can be selected. Default is true. */
+    readonly component: (
+        field: RxWidgetInfoAttributesField,
+        data: WidgetData,
+        onDataChange: (newData: WidgetData) => void,
+        props: RxWidgetInfoCustomComponentProperties,
+    ) => React.JSX.Element | React.JSX.Element[] ;
+
+    /** Name of the widget field */
+    readonly name: string;
+    /** Field label (i18n) */
+    readonly label?: string;
+    /** JS Function for conditional visibility */
+    readonly hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** Tooltip (i18n) */
+    readonly tooltip?: string;
+    /** JS Function for conditional disability */
+    readonly disabled?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** JS Function for error */
+    readonly error?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** Do not show binding symbol fot this field */
+    readonly noBinding?: boolean;
+    /** Callback called if the field value changed */
+    readonly onChange?: (field: WidgetAttributeInfo, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+}
+
+export type RxWidgetInfoAttributesFieldSelectSimple = {
+    /** Field type */
+    readonly type: 'image' | 'color' | 'password' | 'history' | 'hid' | 'icon' | 'dimension' | 'fontname' | 'groups' | 'class' | 'filters' | 'views' | 'style' | 'icon64';
+    /** Field default value */
+    readonly default?: string;
+
+    /** Name of the widget field */
+    readonly name: string;
+    /** Field label (i18n) */
+    readonly label?: string;
+    /** JS Function for conditional visibility */
+    readonly hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** Tooltip (i18n) */
+    readonly tooltip?: string;
+    /** JS Function for conditional disability */
+    readonly disabled?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** JS Function for error */
+    readonly error?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** Do not show binding symbol fot this field */
+    readonly noBinding?: boolean;
+    /** Callback called if the field value changed */
+    readonly onChange?: (field: WidgetAttributeInfo, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+}
+
+export type RxWidgetInfoAttributesFieldSelectDefault = {
+    /** Field default value */
+    readonly default?: string;
+
+    /** Name of the widget field */
+    readonly name: string;
+    /** Field label (i18n) */
+    readonly label?: string;
+    /** JS Function for conditional visibility */
+    readonly hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** Tooltip (i18n) */
+    readonly tooltip?: string;
+    /** JS Function for conditional disability */
+    readonly disabled?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** JS Function for error */
+    readonly error?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** Do not show binding symbol fot this field */
+    readonly noBinding?: boolean;
+    /** Callback called if the field value changed */
+    readonly onChange?: (field: WidgetAttributeInfo, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+}
+
+export type RxWidgetInfoAttributesField =
+    RxWidgetInfoAttributesFieldText |
+    RxWidgetInfoAttributesFieldDelimiter |
+    RxWidgetInfoAttributesFieldHelp |
+    RxWidgetInfoAttributesFieldHTML |
+    RxWidgetInfoAttributesFieldID |
+    RxWidgetInfoAttributesFieldInstance |
+    RxWidgetInfoAttributesFieldSelect |
+    RxWidgetInfoAttributesFieldCheckbox |
+    RxWidgetInfoAttributesFieldNumber |
+    RxWidgetInfoAttributesFieldSlider |
+    RxWidgetInfoAttributesFieldWidget |
+    RxWidgetInfoAttributesFieldSelectViews |
+    RxWidgetInfoAttributesFieldSelectCustom |
+    RxWidgetInfoAttributesFieldSelectSimple |
+    RxWidgetInfoAttributesFieldSelectDefault;
 
 export type Timer = ReturnType<typeof setTimeout>;
 
@@ -40,9 +482,11 @@ export interface ProjectSettings {
 export type SingleWidgetId = `w${string}`
 export type GroupWidgetId = `g${string}`
 export type AnyWidgetId = SingleWidgetId | GroupWidgetId
+/** Used for the attributes and variables, where the state ID stored */
+export type StateID = string;
 
 interface WidgetData {
-    /** Only exists if given by user in tab general */
+    /** Only exists if given by user in a tab general */
     name?: string;
     filterkey?: string;
     members?: AnyWidgetId[];
@@ -83,7 +527,6 @@ export interface WidgetStyle {
     'background-color'?: string;
     'background-image'?: string;
     'background-repeat'?: '' | 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat' | 'initial' | 'inherit' | null;
-    'background-repeat'?: '' | 'scroll' | 'fixed' | 'local' | 'initial' | 'inherit' | null;
     'background-position'?: string | null;
     'background-size'?: string | null;
     'background-clip'?: '' | 'border-box' | 'padding-box' | 'content-box' | 'initial' | 'inherit' | null;
@@ -130,9 +573,9 @@ interface SingleWidget  {
     groupped?: boolean;
     /** Permissions for each user for the widget */
     permissions?: UserPermissions;
-    /** This widget was taken from marketplace */
+    /** This widget was taken from a marketplace */
     marketplace?: any;
-    /** Indicator, that this widget is used in another widget (e.g. in panel) */
+    /** Indicator that this widget is used in another widget (e.g., in panel) */
     usedInWidget?: AnyWidgetId;
 }
 
@@ -355,6 +798,10 @@ export interface VisLegacy {
 
 export interface Window {
     vis: VisLegacy;
+    systemDictionary?: Record<string, Record<ioBroker.Languages, string>>;
+    systemLang?: ioBroker.Languages;
+    _: (text: string, arg1?: boolean | number | string, arg2?: boolean | number | string, arg3?: boolean | number | string) => string;
+    addWords: (words: Record<string, Record<ioBroker.Languages, string>>) => void;
 }
 
 type ResizeHandler = 'n' | 'e' | 's' | 'w' | 'nw' | 'ne' | 'sw' | 'se';
@@ -392,17 +839,6 @@ export interface CanWidgetStore {
     wid: string;
 }
 
-interface VisLinkContextItem {
-    view: string;
-    widget: AnyWidgetId;
-}
-
-interface VisLinkContextSignalItem extends VisLinkContextItem {
-    index: number;
-}
-
-type StateID = string;
-
 type VisBindingOperationType = 'eval' | '*' | '+' | '-' | '/' | '%' | 'min' | 'max' | 'date' | 'momentDate' | 'value' | 'array' | 'pow' | 'round' | 'random' | 'json' | '';
 
 interface VisBindingOperationArgument {
@@ -436,6 +872,95 @@ interface VisLinkContextBinding extends VisBinding {
     attr: string;
     view: string;
     widget: AnyWidgetId;
+}
+
+interface VisLinkContextItem {
+    view: string;
+    widget: AnyWidgetId;
+}
+
+interface VisLinkContextSignalItem extends VisLinkContextItem {
+    index: number;
+}
+
+interface VisStateUsage {
+    /** list of widgets, that depends on this state */
+    visibility: Record<string, VisLinkContextItem[]>;
+    signals: Record<string, VisLinkContextSignalItem[]>;
+    lastChanges: Record<string, VisLinkContextItem[]>;
+    /** list of widgets, that depends on this state */
+    bindings: Record<StateID, VisLinkContextBinding[]>;
+    IDs: StateID[];
+    byViews?: Record<string, string[]>;
+    widgetAttrInfo?: Record<string, RxWidgetInfoAttributesField>;
+}
+
+interface VisLinkContext extends VisStateUsage {
+    unregisterChangeHandler: (wid: AnyWidgetId, cb: (type: 'style' | 'signal' | 'visibility' | 'lastChange' | 'binding', item: VisLinkContextBinding | VisLinkContextItem, stateId: string, state: ioBroker.State) => void) => void;
+    registerChangeHandler: (wid: AnyWidgetId, cb: (type: 'style' | 'signal' | 'visibility' | 'lastChange' | 'binding', item: VisLinkContextBinding | VisLinkContextItem, stateId: string, state: ioBroker.State) => void) => void;
+    subscribe: (stateId: string | string[]) => void;
+    unsubscribe: (stateId: string | string[]) => void;
+    getViewRef: (view: string) => React.RefObject<HTMLDivElement> | null;
+    registerViewRef: (view: string, ref: React.RefObject<HTMLDivElement>, onCommand: (command: ViewCommand, options?: ViewCommandOptions) => any) => void;
+    unregisterViewRef: (view: string, ref: React.RefObject<HTMLDivElement>) => void;
+}
+
+export interface VisContext {
+    // $$: any;
+    VisView: VisView;
+    activeView: string;
+    adapterName: string;
+    allWidgets: Record<string, CanWidgetStore>;
+    askAboutInclude: (wid: AnyWidgetId, toWid: AnyWidgetId, cb: (_wid: AnyWidgetId, _toWid: AnyWidgetId) => void) => void;
+    buildLegacyStructures: () => void;
+    // can: any;
+    // canStates: any;
+    changeProject: (project: Project, ignoreHistory?: boolean) => Promise<void>;
+    changeView: (view: string, subView?: string) => void;
+    dateFormat: string;
+    disableInteraction: boolean;
+    editModeComponentClass: string;
+    formatUtils: VisFormatUtils;
+    instance: number; // vis instance number (not browser instance)
+    // jQuery: any;
+    lang: ioBroker.Languages;
+    linkContext: VisLinkContext;
+    lockDragging: boolean;
+    moment: moment;
+    // onCommand: (view: string, command: string, data?: any) => void
+    onWidgetsChanged: (
+        changedData: {
+            wid: AnyWidgetId;
+            view: string;
+            style?: Record<string, any>;
+            data?: Record<string, any>;
+        }[] | null,
+        view?: string,
+        viewSettings?: ViewSettings,
+    ) => void | null;
+    onIgnoreMouseEvents: (ignore: boolean) => void;
+    projectName: string;
+    registerEditorCallback: (name: 'onStealStyle' | 'onPxToPercent' | 'pxToPercent' | 'onPercentToPx', view: string, cb?: (...args?: any) => any) => void;
+    runtime: boolean;
+    setSelectedGroup: (groupId: string) => void;
+    setSelectedWidgets: (widgets: AnyWidgetId[], view?: string, cb?: () => void) => void;
+    setTimeInterval: (timeInterval: string) => void;
+    setTimeStart: (timeStart: string) => void;
+    setValue: (id: string, value: string | boolean | number | null) => void;
+    showWidgetNames: boolean;
+    socket: Connection;
+    systemConfig: ioBroker.Object;
+    theme: Theme;
+    themeName: string;
+    themeType: 'dark' | 'light';
+    timeInterval: string;
+    timeStart: string;
+    toggleTheme: () => void;
+    user: string;
+    userGroups: Record<string, ioBroker.Object>;
+    views: Project; // project
+    widgetHint: 'light' | 'dark' | 'hide';
+    container?: boolean;
 }
 
 export interface RxWidgetProps extends RxRenderWidgetProps {
@@ -522,86 +1047,6 @@ interface RxWidgetInfo {
 
     /* Function to generate custom palette element */
     readonly customPalette?: (context: CustomPaletteProperties) => React.JSX.Element;
-}
-
-interface VisStateUsage {
-    /** list of widgets, that depends on this state */
-    visibility: Record<string, VisLinkContextItem[]>;
-    signals: Record<string, VisLinkContextSignalItem[]>;
-    lastChanges: Record<string, VisLinkContextItem[]>;
-    /** list of widgets, that depends on this state */
-    bindings: Record<StateID, VisLinkContextBinding[]>;
-    IDs: StateID[];
-    byViews?: Record<string, string[]>;
-    widgetAttrInfo?: Record<string, RxWidgetInfoAttributesField>;
-}
-
-interface VisLinkContext extends VisStateUsage {
-    unregisterChangeHandler: (wid: AnyWidgetId, cb: (type: 'style' | 'signal' | 'visibility' | 'lastChange' | 'binding', item: VisLinkContextBinding | VisLinkContextItem, stateId: string, state: ioBroker.State) => void) => void;
-    registerChangeHandler: (wid: AnyWidgetId, cb: (type: 'style' | 'signal' | 'visibility' | 'lastChange' | 'binding', item: VisLinkContextBinding | VisLinkContextItem, stateId: string, state: ioBroker.State) => void) => void;
-    subscribe: (stateId: string | string[]) => void;
-    unsubscribe: (stateId: string | string[]) => void;
-    getViewRef: (view: string) => React.RefObject<HTMLDivElement> | null;
-    registerViewRef: (view: string, ref: React.RefObject<HTMLDivElement>, onCommand: (command: ViewCommand, options?: ViewCommandOptions) => any) => void;
-    unregisterViewRef: (view: string, ref: React.RefObject<HTMLDivElement>) => void;
-}
-
-export interface VisContext {
-    // $$: any;
-    VisView: VisView;
-    activeView: string;
-    adapterName: string;
-    allWidgets: Record<string, CanWidgetStore>;
-    askAboutInclude: (wid: AnyWidgetId, toWid: AnyWidgetId, cb: (wid: AnyWidgetId, toWid: AnyWidgetId) => void) => void;
-    buildLegacyStructures: () => void;
-    // can: any;
-    // canStates: any;
-    changeProject: (project: Project, ignoreHistory?: boolean) => Promise<void>;
-    changeView: (view: string, subView?: string) => void;
-    dateFormat: string;
-    disableInteraction: boolean;
-    editModeComponentClass: string;
-    formatUtils: VisFormatUtils;
-    instance: number; // vis instance number (not browser instance)
-    // jQuery: any;
-    lang: ioBroker.Languages;
-    linkContext: VisLinkContext;
-    lockDragging: boolean;
-    moment: moment;
-    // onCommand: (view: string, command: string, data?: any) => void
-    onWidgetsChanged: (
-        changedData: {
-            wid: AnyWidgetId;
-            view: string;
-            style?: Record<string, any>;
-            data?: Record<string, any>;
-        }[] | null,
-        view?: string,
-        viewSettings?: ViewSettings,
-    ) => void | null;
-    onIgnoreMouseEvents: (ignore: boolean) => void;
-    projectName: string;
-    registerEditorCallback: (name: 'onStealStyle' | 'onPxToPercent' | 'pxToPercent' | 'onPercentToPx', view: string, cb?: (...args?: any) => any) => void;
-    runtime: boolean;
-    setSelectedGroup: (groupId: string) => void;
-    setSelectedWidgets: (widgets: AnyWidgetId[], view?: string, cb?: () => void) => void;
-    setTimeInterval: (timeInterval: string) => void;
-    setTimeStart: (timeStart: string) => void;
-    setValue: (id: string, value: string | boolean | number | null) => void;
-    showWidgetNames: boolean;
-    socket: Connection;
-    systemConfig: ioBroker.Object;
-    theme: Theme;
-    themeName: string;
-    themeType: 'dark' | 'light';
-    timeInterval: string;
-    timeStart: string;
-    toggleTheme: () => void;
-    user: string;
-    userGroups: Record<string, ioBroker.Object>;
-    views: Project; // project
-    widgetHint: 'light' | 'dark' | 'hide';
-    container?: boolean;
 }
 
 type AttributeTypeToDataType<TType extends RxWidgetAttributeType> = TType extends 'checkbox' ? boolean : TType extends 'number' | 'slider' ? number :

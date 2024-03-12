@@ -27,9 +27,9 @@ import { I18n, Icon } from '@iobroker/adapter-react-v5';
 
 import {
     GetRxDataFromWidget, RxRenderWidgetProps, RxWidgetInfo, WidgetData,
+    RxWidgetInfoAttributesField, RxWidgetInfoCustomComponentProperties, RxWidgetInfoCustomComponentContext,
 } from '@/types';
 import VisRxWidget from '@/Vis/visRxWidget';
-import { RxWidgetInfoAttributesField, RxWidgetInfoCustomComponentProperties, RxWidgetInfoCustomComponentContext } from '@/allInOneTypes';
 import { VisWidgetCommand } from '@/Vis/visBaseWidget';
 import FiltersEditorDialog from './FiltersEditorDialog';
 
@@ -274,7 +274,7 @@ class BasicFilterDropdown extends VisRxWidget<RxData> {
                 items.forEach((item: Item) => item.default && filter.push(item.value));
                 processFilter(filter);
                 setTimeout(() => {
-                    const view = this.props.askView('getViewClass', {});
+                    const view = this.props.askView('getViewClass');
                     view.onCommand('changeFilter', { filter });
                 }, 0);
             }
@@ -316,7 +316,7 @@ class BasicFilterDropdown extends VisRxWidget<RxData> {
                         filter = [];
                     }
                     processFilter(filter);
-                    const view = this.props.askView('getViewClass', {});
+                    const view = this.props.askView('getViewClass');
                     view.onCommand('changeFilter', { filter });
                 }}
                 renderValue={val => {
@@ -371,7 +371,7 @@ class BasicFilterDropdown extends VisRxWidget<RxData> {
                     flexGrow: 1,
                 }}
                 onClick={() => {
-                    const view = this.props.askView('getViewClass', {});
+                    const view = this.props.askView('getViewClass');
                     view.onCommand('changeFilter', { filter: [] });
                 }}
             >
@@ -396,7 +396,7 @@ class BasicFilterDropdown extends VisRxWidget<RxData> {
                         } else {
                             filter = [option.value];
                         }
-                        const view = this.props.askView('getViewClass', {});
+                        const view = this.props.askView('getViewClass');
                         processFilter(filter);
                         view.onCommand('changeFilter', { filter });
                     }}
@@ -458,7 +458,7 @@ class BasicFilterDropdown extends VisRxWidget<RxData> {
                 items.forEach((item: Item) => item.default && filter.push(item.value));
                 processFilter(filter);
                 setTimeout(() => {
-                    const view = this.props.askView('getViewClass', {});
+                    const view = this.props.askView('getViewClass');
                     view.onCommand('changeFilter', { filter });
                 }, 0);
             }

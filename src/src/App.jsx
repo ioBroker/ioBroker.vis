@@ -1983,9 +1983,18 @@ class App extends Runtime {
 
                                         const sum = splitSizes.reduce((prev, curr) => prev + curr);
                                         if (Math.ceil(sum) !== 100) {
-                                            // https://github.com/devbookhq/splitter/issues/15
-                                            console.log('Decline resize, to work around bug in @devbookhq/splitter');
-                                            this.setState({ splitSizes: this.state.splitSizes });
+                                            if (Math.ceil(sum) === 101 || Math.ceil(sum) === 99) {
+                                                // Round the first 2 sizes to 0.01 and calculate the last
+                                                splitSizes[0] = Math.round(splitSizes[0] * 100) / 100;
+                                                splitSizes[1] = Math.round(splitSizes[1] * 100) / 100;
+                                                splitSizes[2] = 100 - splitSizes[0] - splitSizes[1];
+                                                this.setState({ splitSizes });
+                                                window.localStorage.setItem('Vis.splitSizes', JSON.stringify(splitSizes));
+                                            } else {
+                                                // https://github.com/devbookhq/splitter/issues/15
+                                                console.log('Decline resize, to work around bug in @devbookhq/splitter');
+                                                this.setState({splitSizes: this.state.splitSizes});
+                                            }
                                         } else {
                                             this.setState({ splitSizes });
                                             window.localStorage.setItem('Vis.splitSizes', JSON.stringify(splitSizes));

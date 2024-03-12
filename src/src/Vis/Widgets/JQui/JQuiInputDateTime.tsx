@@ -155,7 +155,7 @@ class JQuiInputDateTime extends VisRxWidget<RxData> {
                             return;
                         }
 
-                        const res = !asDate ? value.format('HH:mm') : value.second(0).millisecond(0).toDate();
+                        const res = !asDate ? value.format('HH:mm') : value.second(0).millisecond(0).toDate().toString();
 
                         this.props.context.setValue(this.state.rxData.oid, res);
                     }}

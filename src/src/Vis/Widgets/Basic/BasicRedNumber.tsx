@@ -150,7 +150,7 @@ export default class BasicRedNumber extends VisRxWidget<RxData> {
 
         const style: React.CSSProperties = {
             padding: 3,
-            borderRadius: this.state.rxData.borderRadius !== undefined && this.state.rxData.borderRadius !== null ? parseFloat(this.state.rxData.borderRadius) : 16,
+            borderRadius: this.state.rxData.borderRadius !== undefined && this.state.rxData.borderRadius !== null ? parseFloat(this.state.rxData.borderRadius as unknown as string) : 16,
             borderColor: this.state.rxData.borderColor ||  'white',
             borderWidth: 3,
             borderStyle: 'solid',

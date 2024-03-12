@@ -12,26 +12,17 @@
  * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
  * (Free for non-commercial use).
  */
-declare global {
-    interface Window {
-        systemDictionary?: Record<string, Record<ioBroker.Languages, string>>;
-        systemLang?: ioBroker.Languages;
-        _: (text: string, arg1?: boolean | number | string, arg2?: boolean | number | string, arg3?: boolean | number | string) => string;
-        addWords: (words: Record<string, Record<ioBroker.Languages, string>>) => void;
-    }
-}
-
-window.systemDictionary = {};
-window.systemLang = 'en';
+(window as any).systemDictionary = {};
+(window as any).systemLang = 'en';
 
 function translateWord(text: string, lang?: ioBroker.Languages, dictionary?: Record<string, Record<ioBroker.Languages, string>>): string {
     if (!text) {
         return '';
     }
-    lang = lang || window.systemLang as ioBroker.Languages || 'en';
-    dictionary = dictionary || window.systemDictionary || {};
+    lang = lang || (window as any).systemLang as ioBroker.Languages || 'en';
+    dictionary = dictionary || (window as any).systemDictionary || {};
 
-    if (dictionary[text]) {
+    if (dictionary && dictionary[text]) {
         let newText = dictionary[text][lang];
         if (newText) {
             return newText;
@@ -52,7 +43,7 @@ function translateWord(text: string, lang?: ioBroker.Languages, dictionary?: Rec
 }
 
 // make possible _('words to translate')
-window._ = (text: string, arg1?: boolean | number | string, arg2?: boolean | number | string, arg3?: boolean | number | string) => {
+(window as any)._ = (text: string, arg1?: boolean | number | string, arg2?: boolean | number | string, arg3?: boolean | number | string) => {
     text = translateWord(text);
 
     let pos = text.indexOf('%s');
@@ -77,9 +68,9 @@ window._ = (text: string, arg1?: boolean | number | string, arg2?: boolean | num
     return text;
 };
 
-window.addWords = words => Object.assign(window.systemDictionary || {}, words);
+(window as any).addWords = (words: Record<string, Record<string, string>>) => Object.assign((window as any).systemDictionary || {}, words);
 
-window.addWords({
+(window as any).addWords({
     'No connection to Server': {
         en: 'No connection to Server',
         de: 'Keine Verbindung zum Server',

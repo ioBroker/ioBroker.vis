@@ -28,7 +28,7 @@ import { type Connection, I18n, Utils } from '@iobroker/adapter-react-v5';
 import { calculateOverflow, deepClone, isVarFinite } from '@/Utils/utils';
 import {
     AnyWidgetId, ResizeHandler,
-    VisContext, GroupData, WidgetData, WidgetStyle,
+    VisContext, GroupData, WidgetData, WidgetStyle, GroupWidgetId,
 } from '@/types';
 import {
     addClass,
@@ -37,6 +37,7 @@ import {
 } from './visUtils';
 
 import VisOrderMenu from './visOrderMenu';
+import type { AskViewCommand, WidgetReference } from './visView';
 
 export interface VisBaseWidgetProps {
     /** Widget ID */
@@ -56,7 +57,7 @@ export interface VisBaseWidgetProps {
     /** If moving of widget is allowed */
     moveAllowed: boolean;
     /** Currently selected group */
-    selectedGroup: string;
+    selectedGroup: GroupWidgetId;
     /** Additional context */
     context: VisContext;
     /** TPL type */
@@ -64,13 +65,13 @@ export interface VisBaseWidgetProps {
     /** Some filter */
     viewsActiveFilter: { [view: string]: string[] };
     /** Function to register the widget */
-    askView: (method: string, props: Record<string, any>) => any;
+    askView: (command: AskViewCommand, props?: WidgetReference) => any;
     onIgnoreMouseEvents: (bool: boolean) => void;
     onWidgetsChanged: (...props: any[]) => void;
     mouseDownOnView: (...props: any[]) => void;
     refParent: React.RefObject<any>;
     customSettings: any;
-    classes: any;
+    classes: Record<string, string>;
     socket: Connection;
 }
 
@@ -165,7 +166,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
 
     readonly onCommandBound: typeof this.onCommand;
 
-    private onResize: undefined | (() => void);
+    protected onResize: undefined | (() => void);
 
     private updateInterval?: ReturnType<typeof setTimeout>;
 
@@ -657,7 +658,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
         return this.state.resizable;
     }
 
-    onMove = (x: number, y: number, save?: boolean, calculateRelativeWidgetPosition?: null | ((...props: any[]) => void)) => {
+    onMove = (x: number | undefined, y: number | undefined, save?: boolean, calculateRelativeWidgetPosition?: null | ((...props: any[]) => void)) => {
         if (this.state.multiViewWidget || !this.state.editMode) {
             return;
         }
@@ -689,7 +690,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
                     item._storedOpacity = item.style.opacity;
                     item.style.opacity = '0.3';
                 });
-            } else if (movement) {
+            } else if (movement && y !== undefined && x !== undefined) {
                 if (this.resize === 'top') {
                     this.refService.current.style.top = `${movement.top + y}px`;
                     this.refService.current.style.height = `${movement.height - y}px`;
@@ -861,7 +862,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
                 // create shadow widget
                 this.createWidgetMovementShadow();
             }
-        } else if (this.movement) {
+        } else if (this.movement && y !== undefined && x !== undefined) {
             // move widget
             const left = `${this.movement.left + x}px`;
             const top = `${this.movement.top + y}px`;
@@ -2020,7 +2021,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
         }
 
         const overlay =
-            !this.state.hideHelper &&                        // if the helper not hidden
+            !this.state.hideHelper &&                        // if the helper isn't hidden
             !widget.usedInWidget &&                          // not used in another widget, that has own overlay
             this.state.editMode &&                           // if edit mode
             !widget.data.locked &&                           // if not locked

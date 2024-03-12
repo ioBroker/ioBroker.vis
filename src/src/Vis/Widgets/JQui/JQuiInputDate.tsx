@@ -150,7 +150,7 @@ class JQuiInputDate extends VisRxWidget<RxData> {
                             return;
                         }
 
-                        const val = this.state.rxData.asFullDate ? newValue.toDate() : newValue.format(this.EASY_DATE_FORMAT);
+                        const val = this.state.rxData.asFullDate ? newValue.toDate().toString() : newValue.format(this.EASY_DATE_FORMAT);
                         this.props.context.setValue(this.state.rxData.oid, val);
                     }}
                     formatDensity={this.state.rxData.wideFormat ? 'spacious' : 'dense'}

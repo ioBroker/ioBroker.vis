@@ -12,7 +12,7 @@
  * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
  * (Free for non-commercial use).
  */
-import { I18n, type Connection } from '@iobroker/adapter-react-v5';
+import { type Connection } from '@iobroker/adapter-react-v5';
 import {
     Project,
     AnyWidgetId,
@@ -21,6 +21,7 @@ import {
     VisLinkContextBinding,
     StateID, VisBindingOperation, VisBindingOperationArgument,
     GroupData, WidgetData, VisBinding, VisBindingOperationType,
+    RxWidgetInfoAttributesFieldID,
 } from '@/types';
 import { deepClone } from '@/Utils/utils';
 import { store, updateView, updateWidget } from '@/Store';
@@ -507,7 +508,7 @@ function getUsedObjectIDsInWidget(views: Project, view: string, wid: AnyWidgetId
                     isID = true;
                 } else if (linkContext.widgetAttrInfo) {
                     const _attr = attr.replace(/\d{0,2}$/, '');
-                    if (linkContext.widgetAttrInfo[_attr]?.type === 'id' && linkContext.widgetAttrInfo[_attr].noSubscribe !== true) {
+                    if ((linkContext.widgetAttrInfo[_attr] as RxWidgetInfoAttributesFieldID)?.type === 'id' && (linkContext.widgetAttrInfo[_attr] as RxWidgetInfoAttributesFieldID).noSubscribe !== true) {
                         isID = true;
                     }
                 }
