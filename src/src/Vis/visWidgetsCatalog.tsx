@@ -4,12 +4,14 @@ import { type Connection } from '@iobroker/adapter-react-v5';
 import {
     GroupWidgetId,
     Project,
-    RxWidgetInfoAttributes,
+    RxWidgetInfoGroup,
     SingleWidgetId,
     CustomPaletteProperties,
     RxWidgetInfoAttributesField, RxWidgetAttributeType,
+    WidgetData,
+    RxWidgetInfoCustomComponentProperties,
 } from '@/types';
-import type VisRxWidget from '@/Vis/visRxWidget';
+import VisRxWidget from '@/Vis/visRxWidget';
 
 import { getRemoteWidgets } from './visLoadWidgets';
 // eslint-disable-next-line import/no-cycle
@@ -30,23 +32,100 @@ const DEFAULT_SET_COLORS: Record<string, string> = {
     'spotify-premium': '#00ae03',
 };
 
-interface WidgetAttributesGroupInfoStored {
-    name?: string;
-    singleName?: string;
-    index?: number;
-    fields?: RxWidgetInfoAttributesField[];
-    indexFrom?: number | string;
-    indexTo?: number | string;
-    iterable?: {
-        group: string;
-        isFirst: boolean;
-        isLast: boolean;
-        indexTo: number | string | undefined;
-        indexFrom: number | string | undefined;
-    };
+type RxWidgetInfoAttributesFieldAll = {
+    /** Field type */
+    type?: RxWidgetAttributeType;
+    /** Field default value */
+    default?: string | number | boolean;
+    /** if true, no edit button will be shown. Default is true. */
+    readonly noButton?: boolean;
+    /** if true, the text will not be translated  */
+    readonly noTranslation?: boolean;
+    /** this style will be applied to the text */
+    readonly style?: React.CSSProperties;
+    /** show multi-line editor */
+    readonly multiline?: boolean;
+    /** Do not write 'nothing_selected' into the field by creation */
+    readonly noInit?: boolean;
+    /** Do not subscribe on changes of the object */
+    readonly noSubscribe?: boolean;
+    /** Filter of objects (not JSON string, it is an object), like:
+     - `{common: {custom: true}}` - show only objects with some custom settings
+     - `{common: {custom: 'sql.0'}}` - show only objects with sql.0 custom settings (only of the specific instance)
+     - `{common: {custom: '_dataSources'}}` - show only objects of adapters `influxdb' or 'sql' or 'history'
+     - `{common: {custom: 'adapterName.'}}` - show only objects of the custom settings for specific adapter (all instances)
+     - `{type: 'channel'}` - show only channels
+     - `{type: ['channel', 'device']}` - show only channels and devices
+     - `{common: {type: 'number'}` - show only states of type 'number
+     - `{common: {type: ['number', 'string']}` - show only states of type 'number and string
+     - `{common: {role: 'switch']}` - show only states with roles starting from switch
+     - `{common: {role: ['switch', 'button]}` - show only states with roles starting from `switch` and `button`
+     */
+    filter?: {
+        readonly common?: {
+            readonly custom?: true | string | '_dataSources';
+            readonly type?: ioBroker.CommonType | ioBroker.CommonType[];
+            readonly role?: string | string[];
+        };
+        readonly type?: ioBroker.ObjectType | ioBroker.ObjectType[];
+    } | string;
+    /** Additionally, you can provide `adapter` to filter the instances of specific adapter. With special adapter name `_dataSources` you can get all adapters with flag `common.getHistory`. */
+    readonly adapter?: string;
+    /** In this case, only instance number (like `0`) is shown and not `history.0`. It can be set to true only with non-empty `adapter` setting. */
+    readonly iShort?: boolean;
+    /** Options for a select type */
+    options?: { readonly value: string; label: string }[] | string[];
+    /** Number min value */
+    min?: number;
+    /** Number max value */
+    max?: number;
+    /** Number step */
+    step?: number;
+    /** Slider marks?: array of possible marks. Like `[{value: 1, label: 'one'}, {value: 10}, {value: 100}] */
+    readonly marks?: { readonly value: number; label: string }[];
+    /** Controls when the value label is displayed: `auto` the value label will display when the thumb is hovered or focused. `on` will display persistently. `off` will never display. */
+    readonly valueLabelDisplay?: 'on' | 'off' | 'auto';
+    /** type of the widget, like `tplMaterial2Switches` */
+    readonly tpl?: string;
+    /** if true, all widgets of all views will be shown, not only from the current view. Default is false. */
+    readonly all?: boolean;
+    /**  if true, grouped widgets will be shown too. Default is false. */
+    readonly withGroups?: boolean;
+    /** if true, the current widget will be shown in the list too. */
+    readonly withSelf?: boolean;
+    /** if true, it will be checked if the widget is used somewhere else and user will be asked. */
+    readonly checkUsage?: boolean;
+    /** if true, only widgets will be shown, which are not used in some view. Default is false. */
+    readonly hideUsed?: boolean;
+    /** if false, only one view can be selected. Default is true. */
+    readonly multiple?: boolean;
+    /** if false, only one view can be selected. Default is true. */
+    component?: (
+        field: RxWidgetInfoAttributesField,
+        data: WidgetData,
+        onDataChange: (newData: WidgetData) => void,
+        props: RxWidgetInfoCustomComponentProperties,
+    ) => React.JSX.Element | React.JSX.Element[];
+
+    /** Name of the widget field */
+    name: string;
+    /** Field label (i18n) */
+    label?: string;
+    /** JS Function for conditional visibility */
+    hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** Tooltip (i18n) */
+    tooltip?: string;
+    /** JS Function for conditional disability */
+    disabled?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** JS Function for error */
+    error?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    /** Do not show binding symbol fot this field */
+    readonly noBinding?: boolean;
+    /** Callback called if the field value changed */
+    onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void> | string;
 }
 
-interface WidgetAttributeInfoStored extends RxWidgetInfoAttributesField {
+interface WidgetAttributeInfoStored extends RxWidgetInfoAttributesFieldAll {
     onChangeFunc?: string;
     filterFile?: string;
     filterName?: string;
@@ -57,6 +136,23 @@ interface WidgetAttributeInfoStored extends RxWidgetInfoAttributesField {
     index?: number;
     indexFrom?: string | number;
     indexTo?: string | number;
+    iterable?: {
+        group: string;
+        isFirst: boolean;
+        isLast: boolean;
+        indexTo: number | string | undefined;
+        indexFrom: number | string | undefined;
+    };
+}
+
+interface WidgetAttributesGroupInfoStored {
+    name?: string;
+    label?: string;
+    singleName?: string;
+    index?: number;
+    fields?: RxWidgetInfoAttributesFieldAll[];
+    indexFrom?: number | string;
+    indexTo?: number | string;
     iterable?: {
         group: string;
         isFirst: boolean;
@@ -79,7 +175,7 @@ export interface WidgetType {
     resizable?: boolean;
     resizeLocked?: boolean;
     draggable?: boolean;
-    params: string | RxWidgetInfoAttributes[];
+    params: string | readonly RxWidgetInfoGroup[];
 
     setLabel?: string;
     setColor?: string;
@@ -97,8 +193,16 @@ export interface WidgetType {
     i18nPrefix?: string;
 }
 
+interface VisRxWidgetLoaded extends VisRxWidget<any> {
+    readonly i18nPrefix?: string | undefined;
+    readonly adapter?: string;
+    readonly version?: string;
+    readonly visHidden?: boolean;
+    readonly url?: string;
+}
+
 class VisWidgetsCatalog {
-    static rxWidgets: Record<string, VisRxWidget<any>> | null = null;
+    static rxWidgets: Record<string, VisRxWidgetLoaded> | null = null;
 
     static allWidgetsList: string[] | null = null;
 
@@ -308,7 +412,8 @@ export const getWidgetTypes: (_usedWidgetSets?: string[]) => WidgetType[] = (use
             }).filter(w => w);
 
         // React widgets
-        const widgets = Object.values(VisWidgetsCatalog.rxWidgets) as VisRxWidget<any>[];
+        // We have here two types of widgets: native (from this repository - function) and loaded via getRemoteWidgets (objects)
+        const widgets = Object.values(VisWidgetsCatalog.rxWidgets) as VisRxWidgetLoaded[];
         widgets.forEach(widget => {
             const widgetInfo = widget.getWidgetInfo();
             const i18nPrefix = widget.i18nPrefix || '';
@@ -350,18 +455,19 @@ export const getWidgetTypes: (_usedWidgetSets?: string[]) => WidgetType[] = (use
             if (i18nPrefix && typeof widgetInfo.visAttrs === 'object') {
                 widgetInfo.visAttrs.forEach(group => {
                     if (group.label && !group.label.startsWith(i18nPrefix)) {
-                        group.label = i18nPrefix + group.label;
+                        (group as WidgetAttributesGroupInfoStored).label = i18nPrefix + group.label;
                     }
                     if (group.fields) {
                         group.fields.forEach(field => {
-                            if (field.label && !field.label.startsWith(i18nPrefix)) {
-                                field.label = i18nPrefix + field.label;
+                            const _field = field as unknown as WidgetAttributeInfoStored;
+                            if (_field.label && !_field.label.startsWith(i18nPrefix)) {
+                                _field.label = i18nPrefix + _field.label;
                             }
-                            if (field.tooltip && !field.tooltip.startsWith(i18nPrefix)) {
-                                field.tooltip = i18nPrefix + field.tooltip;
+                            if (_field.tooltip && !_field.tooltip.startsWith(i18nPrefix)) {
+                                _field.tooltip = i18nPrefix + _field.tooltip;
                             }
-                            if (field.options && !field.noTranslation && Array.isArray(field.options)) {
-                                field.options.forEach(option => {
+                            if (_field.options && !_field.noTranslation && Array.isArray(_field.options)) {
+                                _field.options.forEach(option => {
                                     if (typeof option === 'object') {
                                         if (option.label && !option.label.startsWith(i18nPrefix)) {
                                             option.label = i18nPrefix + option.label;
@@ -423,7 +529,7 @@ interface CommonGroups {
 }
 
 export const parseAttributes = (
-    widgetParams: string | RxWidgetInfoAttributes[],
+    widgetParams: string | RxWidgetInfoGroup[],
     widgetIndex?: number,
     commonGroups?: CommonGroups,
     commonFields?: Record<string, any>,
@@ -432,7 +538,7 @@ export const parseAttributes = (
 ) => {
     if (typeof widgetParams === 'string') {
         let groupName = 'common';
-        let indexedGroups: {[key: number]: WidgetAttributesGroupInfoStored} = {};
+        let indexedGroups: { [key: number]: WidgetAttributesGroupInfoStored } = {};
         let isIndexedGroup = false;
         commonGroups = commonGroups || { common: 1 };
         commonFields = commonFields || {};
@@ -533,11 +639,14 @@ export const parseAttributes = (
                 } else if (field.name.match(/nav_view$/)) {
                     field.type = 'views';
                 } else if (field.name === 'sound') {
-                    field.type = 'sound';
+                    // field.type = 'sound';
+                    field.type = 'text';
                 } else if (field.name.includes('_effect')) {
-                    field.type = 'effect';
+                    // field.type = 'effect';
+                    field.type = 'text';
                 } else if (field.name.includes('_eff_opt')) {
-                    field.type = 'effect-options';
+                    // field.type = 'effect-options';
+                    field.type = 'text';
                 }
 
                 if (field.type && (field.type.startsWith('id,'))) {

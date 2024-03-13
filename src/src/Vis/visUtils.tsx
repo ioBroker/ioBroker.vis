@@ -32,7 +32,7 @@ declare global {
     }
 }
 
-function replaceGroupAttr(inputStr: string, groupAttrList: WidgetData): { doesMatch: boolean, newString: string } {
+function replaceGroupAttr(inputStr: string, groupAttrList: WidgetData): { doesMatch: boolean; newString: string } {
     let newString = inputStr;
     let match = false;
     // old style: groupAttr0, groupAttr1, groupAttr2, ...
@@ -82,7 +82,7 @@ function getWidgetGroup(views: Project, view: string, widget: AnyWidgetId): Grou
  */
 function isIdBinding(
     /** the possible assignment to check */
-    assignment: string
+    assignment: string,
 ): boolean {
     return !!assignment.match(/^[\d\w_]+:\s?[-.\d\w_#]+$/);
 }
@@ -171,8 +171,7 @@ function extractBinding(format: string): VisBinding[] | null {
                             }
                         }
 
-                        // @ts-ignore
-                        operations[0].arg.push({
+                        (operations[0].arg as VisBindingOperationArgument[])?.push({
                             name: argParts[0].trim(),
                             visOid: _visOid,
                             systemOid: _systemOid,
@@ -427,7 +426,7 @@ function getUsedObjectIDsInWidget(views: Project, view: string, wid: AnyWidgetId
         if (widget.groupid) {
             const parentWidgetData = views[view].widgets[widget.groupid]?.data;
             if (parentWidgetData) {
-                let newGroupData: GroupData | undefined = undefined;
+                let newGroupData: GroupData | undefined;
 
                 Object.keys(data).forEach(attr => {
                     if (typeof data[attr] === 'string') {
@@ -653,22 +652,13 @@ function getUsedObjectIDsInWidget(views: Project, view: string, wid: AnyWidgetId
     store.dispatch(updateWidget({ viewId: view, widgetId: wid, data: widget }));
 }
 
-interface UsedObjectsResult {
-    IDs: [],
-    visibility: {},
-    bindings: {},
-    lastChanges: {},
-    signals: {},
-    byViews?: Record<string, string[]>;
-}
-
-function getUsedObjectIDs(views: Project, isByViews?: boolean): UsedObjectsResult | null {
+function getUsedObjectIDs(views: Project, isByViews?: boolean): VisStateUsage | null {
     if (!views) {
         console.log('Check why views are not yet loaded!');
         return null;
     }
 
-    const linkContext: UsedObjectsResult = {
+    const linkContext: VisStateUsage = {
         IDs: [],
         visibility: {},
         bindings: {},
@@ -743,7 +733,7 @@ function getUrlParameter(attr: string): string | true {
 async function readFile(socket: Connection, id: string, fileName: string, withType?: boolean): Promise<string | { file: string; mimeType: string }> {
     const file = await socket.readFile(id, fileName);
     let mimeType = '';
-    let data: string = '';
+    let data = '';
     if (typeof file === 'object') {
         if (withType) {
             if (file.mimeType) {
@@ -812,7 +802,12 @@ function parseDimension(field: string | number | null | undefined): { value: num
     return result;
 }
 
-function findWidgetUsages(views: Project, view: string, widgetId: AnyWidgetId, _result: { view: string, wid: AnyWidgetId, attr: string }[]): { view: string, wid: AnyWidgetId, attr: string }[] {
+function findWidgetUsages(
+    views: Project,
+    view: string,
+    widgetId: AnyWidgetId,
+    _result: { view: string; wid: AnyWidgetId; attr: string }[],
+): { view: string; wid: AnyWidgetId; attr: string }[] {
     if (view) {
         _result = _result || [];
         // search in specific view
@@ -833,7 +828,7 @@ function findWidgetUsages(views: Project, view: string, widgetId: AnyWidgetId, _
     }
 
     // search in all views
-    const result: { view: string, wid: AnyWidgetId, attr: string }[] = [];
+    const result: { view: string; wid: AnyWidgetId; attr: string }[] = [];
     Object.keys(views).forEach(_view => _view !== '___settings' && findWidgetUsages(views, _view, widgetId, _result));
     return result;
 }

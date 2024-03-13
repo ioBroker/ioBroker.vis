@@ -20,7 +20,7 @@ import {
 } from '@mui/icons-material';
 
 import { Utils, Icon } from '@iobroker/adapter-react-v5';
-import { ViewSettings } from "@/types";
+import { ViewSettings } from '@/types';
 
 const MENU_WIDTH_FULL = 200;
 const MENU_WIDTH_NARROW = 56;

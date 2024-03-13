@@ -58,8 +58,8 @@ interface VisContextMenuProps {
 interface VisMarketplaceProps {
     language: ioBroker.Languages;
     addPage?: boolean;
-    widget: { name: string; date: string; widget_id: string; image_id: string; };
-    installWidget: (widget: { name: string; date: string; widget_id: string; image_id: string; }) => Promise<void>;
+    widget: { name: string; date: string; widget_id: string; image_id: string };
+    installWidget: (widget: { name: string; date: string; widget_id: string; image_id: string }) => Promise<void>;
     installedWidgets?: {id: string}[];
     themeName: string;
     onAdded?: () => void;
@@ -70,8 +70,8 @@ declare global {
         VisMarketplace?: {
             api: {
                 apiGetWidgetRevision(widgetId: string, id: string): Promise<any>;
-            },
-            default: React.Component<VisMarketplaceProps>
+            };
+            default: React.Component<VisMarketplaceProps>;
         };
     }
 }

@@ -211,9 +211,9 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
 
         // @ts-expect-error it is a trick
         if (this.refView.current?._originalParent) {
-            // @ts-ignore it is a trick
+            // @ts-expect-error it is a trick
             this.refView.current._originalParent.appendChild(this.refView.current);
-            // @ts-ignore it is a trick
+            // @ts-expect-error it is a trick
             this.refView.current._originalParent = null;
         }
 
@@ -413,7 +413,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         };
     };
 
-    doubleClickOnView = (_e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    doubleClickOnView = () => {
         if (this.props.editMode &&
             this.props.selectedWidgets &&
             this.props.selectedWidgets.length === 1 &&
@@ -878,7 +878,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
                         if (onCommand) {
                             onCommand('include', _wid);
                         }
-                    })
+                    });
                 }
             }
         }
@@ -1979,7 +1979,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
             ref={this.refView}
             id={`visview_${this.props.view.replace(/\s/g, '_')}`}
             onMouseDown={!this.props.context.runtime ? e => this.props.editMode && this.mouseDownLocal && this.mouseDownLocal(e) : undefined}
-            onDoubleClick={this.props.context.runtime ? e => this.props.editMode && this.doubleClickOnView && this.doubleClickOnView(e) : undefined}
+            onDoubleClick={this.props.context.runtime ? () => this.props.editMode && this.doubleClickOnView && this.doubleClickOnView() : undefined}
             style={style}
         >
             <style>{this.state.themeCode}</style>

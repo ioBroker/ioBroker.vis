@@ -802,6 +802,20 @@ export interface Window {
     systemLang?: ioBroker.Languages;
     _: (text: string, arg1?: boolean | number | string, arg2?: boolean | number | string, arg3?: boolean | number | string) => string;
     addWords: (words: Record<string, Record<ioBroker.Languages, string>>) => void;
+    VisMarketplace?: {
+        api: {
+            apiGetWidgetRevision(widgetId: string, id: string): Promise<any>;
+        };
+        default: React.Component<VisMarketplaceProps>;
+    };
+    [promiseName: PromiseName]: Promise<any>;
+    [widgetSetName: WidgetSetName]: {
+        __initialized: boolean;
+        get: (module: string) => () => void;
+        init?: (shareScope: any) => Promise<void>;
+    };
+    __widgetsLoadIndicator: (process: number, max: number) => void;
+    _lastAppliedStyle: string;
 }
 
 type ResizeHandler = 'n' | 'e' | 's' | 'w' | 'nw' | 'ne' | 'sw' | 'se';
@@ -992,7 +1006,7 @@ export interface CustomPaletteProperties {
     };
 }
 
-interface RxWidgetInfoAttributes {
+interface RxWidgetInfoGroup {
     /** Name of the attributes section */
     readonly name: string;
     /** Fields of this attribute section */
@@ -1027,25 +1041,25 @@ interface RxWidgetInfo {
     readonly visWidgetColor?: string;
 
     /** Groups of attributes */
-    visAttrs: (readonly RxWidgetInfoAttributes[]);
+    visAttrs: (readonly RxWidgetInfoGroup[]);
     /** Default style for widget */
     readonly visDefaultStyle?: React.CSSProperties;
     /** Position in the widget set */
     readonly visOrder?: number;
-    /* required, that width is always equal to height (quadratic widget) */
+    /** required, that width is always equal to height (quadratic widget) */
     readonly visResizeLocked?: boolean;
-    /* if false, if widget is not resizable */
+    /** if false, if widget is not resizable */
     readonly visResizable?: boolean;
-    /* @deprecated use visResizable */
+    /** @deprecated use visResizable */
     readonly resizable?: boolean;
-    /* if false, if widget is not draggable  */
+    /** if false, if widget is not draggable  */
     readonly visDraggable?: boolean;
-    /* Show specific handlers  */
+    /** Show specific handlers  */
     readonly visResizeHandles?: ResizeHandler[];
-    /* @deprecated use visResizeHandles */
+    /** @deprecated use visResizeHandles */
     readonly resizeHandles?: ResizeHandler[];
 
-    /* Function to generate custom palette element */
+    /** Function to generate custom palette element */
     readonly customPalette?: (context: CustomPaletteProperties) => React.JSX.Element;
 }
 

@@ -9,7 +9,7 @@ import {
     Whatshot,
     Water,
     Lock,
-    Window,
+    Window as WindowIcon,
     Palette,
     PlayArrowRounded,
     Power,
@@ -46,8 +46,8 @@ const deviceIcons = {
     volume: <VolumeUp />,
     volumeGroup: <VolumeUp />,
     weatherForecast: <WbSunny />,
-    window: <Window />,
-    windowTilt: <Window />,
+    window: <WindowIcon />,
+    windowTilt: <WindowIcon />,
 };
 
 const allObjects = async socket => {

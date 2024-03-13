@@ -122,10 +122,10 @@ function registerWidgetsLoadIndicator(cb: (process: number, max: number) => void
 
 interface VisLoadComponentContext {
     visWidgetsCollection: ioBroker.VisWidget;
-    countRef: { count: number, max: number };
+    countRef: { count: number; max: number };
     dynamicWidgetInstance: ioBroker.InstanceObject;
-    i18nPrefix: string
-    // List of custom react components
+    i18nPrefix: string;
+    // List of custom React components
     result: VisRxWidget<any>[];
 }
 
@@ -138,7 +138,7 @@ function _loadComponentHelper(context: VisLoadComponentContext): Promise<void[]>
     // result
     const promises: Promise<void>[] = [];
 
-    for (let i: number = 0; i < context.visWidgetsCollection.components.length; i++) {
+    for (let i = 0; i < context.visWidgetsCollection.components.length; i++) {
         ((index: number, _visWidgetsCollection) => {
             context.countRef.max++;
 
@@ -206,8 +206,8 @@ function getRemoteWidgets(socket: Connection, onlyWidgetSets?: false | string[])
                         if (visWidgetsCollection.components) {
                             ((collection, instance) => {
                                 try {
-                                    let i18nPrefix: string = '';
-                                    let i18nPromiseWait: Promise<void | null> | undefined = undefined;
+                                    let i18nPrefix = '';
+                                    let i18nPromiseWait: Promise<void | null> | undefined;
 
                                     // 1. Load language file ------------------
                                     // instance.common.visWidgets.i18n is deprecated

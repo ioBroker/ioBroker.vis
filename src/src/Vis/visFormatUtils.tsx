@@ -12,13 +12,14 @@
  * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
  * (Free for non-commercial use).
  */
-import { extractBinding } from './visUtils';
+import { type Moment } from 'moment';
 import { deepClone } from '@/Utils/utils';
 import {
     VisLegacy, AnyWidgetId, WidgetData,
     SingleWidget, GroupWidget, VisRxWidgetStateValues,
 } from '@/types';
-import { type Moment } from 'moment';
+
+import { extractBinding } from './visUtils';
 
 interface VisFormatUtilsProps {
     vis: VisLegacy;
@@ -236,7 +237,7 @@ class VisFormatUtils {
         if (!dateObj) {
             return '';
         }
-        let realDateObj: Date | undefined = undefined
+        let realDateObj: Date | undefined;
         const type = typeof dateObj;
         if (type === 'string') {
             realDateObj = new Date(dateObj);
@@ -298,18 +299,17 @@ class VisFormatUtils {
         return result;
     }
 
-
     /**
      * Format given binding
      */
     formatBinding(options: {
-        format: string,
-        view: string,
-        wid: AnyWidgetId,
-        widget: SingleWidget | GroupWidget,
-        widgetData: WidgetData,
-        values?: VisRxWidgetStateValues,
-        moment: any,
+        format: string;
+        view: string;
+        wid: AnyWidgetId;
+        widget: SingleWidget | GroupWidget;
+        widgetData: WidgetData;
+        values?: VisRxWidgetStateValues;
+        moment: any;
     }): string {
         const {
             view, wid, widget, widgetData, moment,

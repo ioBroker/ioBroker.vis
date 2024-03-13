@@ -23,7 +23,7 @@ import { Connection, I18n, Icon } from '@iobroker/adapter-react-v5';
 
 import {
     Project, AnyWidgetId, RxWidgetInfo,
-    WidgetData, VisRxWidgetStateValues, RxWidgetInfoAttributes,
+    WidgetData, VisRxWidgetStateValues, RxWidgetInfoGroup,
     StateID, RxWidgetInfoAttributesFieldSelectSimple,
 } from '@/types';
 import { deepClone, calculateOverflow } from '@/Utils/utils';
@@ -120,8 +120,6 @@ export interface VisRxWidgetState extends VisBaseWidgetState {
 class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<VisRxWidgetState> = VisRxWidgetState> extends VisBaseWidget<VisRxWidgetState & TState & { rxData: TRxData }> {
     static POSSIBLE_MUI_STYLES = POSSIBLE_MUI_STYLES;
 
-    static i18nPrefix: string | undefined;
-
     private linkContext: {
         IDs: string[];
         bindings: Record<string, any>;
@@ -162,7 +160,7 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
         const widgetAttrInfo: Record<string, any> = {};
         // collect all attributes (only types)
         if (Array.isArray(options.visAttrs)) {
-            options.visAttrs.forEach((group: RxWidgetInfoAttributes) =>
+            options.visAttrs.forEach((group: RxWidgetInfoGroup) =>
                 group.fields && group.fields.forEach(item => {
                     widgetAttrInfo[item.name] = { type: (item as RxWidgetInfoAttributesFieldSelectSimple).type || '' };
                 }));
@@ -433,10 +431,10 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
         }
     }
 
-    async componentWillUnmount() {
+    componentWillUnmount() {
         if (this.linkContext.IDs.length) {
             for (let i = 0; i < this.linkContext.IDs.length; i++) {
-                await this.props.context.socket.unsubscribeState(this.linkContext.IDs[i], this.onIoBrokerStateChanged);
+                this.props.context.socket.unsubscribeState(this.linkContext.IDs[i], this.onIoBrokerStateChanged);
             }
         }
         super.componentWillUnmount();
