@@ -67,6 +67,11 @@ const styles = theme => ({
         display: 'inline-block',
         height: 24,
     },
+    menuToolbar: {
+        paddingLeft: 8,
+        paddingRight: 8,
+        backgroundColor: theme.palette.mode === 'dark' ? theme.palette.secondary.dark : theme.palette.secondary.light,
+    },
 });
 
 class MultiSelect extends Component {
@@ -154,9 +159,22 @@ class MultiSelect extends Component {
                 anchorEl={this.state.elAnchor}
                 onClose={() => this.setState({ elAnchor: null })}
             >
-                <div>
-                    <Button onClick={() => this.props.setSelectedWidgets(props.options.map(item => item.value))}>{I18n.t('Select all')}</Button>
-                    <Button onClick={() => this.props.setSelectedWidgets([])}>{I18n.t('Unselect all')}</Button>
+                <div className={this.props.classes.menuToolbar}>
+                    {I18n.t('All')}
+                    <Button
+                        disabled={value.length === props.options.length}
+                        onClick={() => this.props.setSelectedWidgets(props.options.map(item => item.value))}
+                        startIcon={<Checkbox style={{ opacity: value.length === props.options.length ? 0.5 : 1 }} checked />}
+                    >
+                        {I18n.t('Select')}
+                    </Button>
+                    <Button
+                        disabled={!value.length}
+                        onClick={() => this.props.setSelectedWidgets([])}
+                        startIcon={<Checkbox  style={{ opacity: !value.length ? 0.5 : 1 }} />}
+                    >
+                        {I18n.t('Unselect')}
+                    </Button>
                 </div>
                 {props.options.map(item => <MenuItem
                     value={item.value}

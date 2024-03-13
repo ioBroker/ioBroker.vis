@@ -387,7 +387,6 @@
   "Uninstall": "Désinstaller",
   "Unknown widget type \"%s\"": "Type de widget inconnu \"%s\"",
   "Unlock": "Ouvrir",
-  "Unselect all": "Tout déselectionner",
   "Update": "Mettre à jour",
   "Usage of widget %s": "Utilisation du widget %s",
   "Use background": "Utiliser l'arrière-plan",
@@ -733,5 +732,7 @@
   "basic_all_filters": "Ajouter tout ce qui reste",
   "Only for desktop": "Uniquement pour ordinateur de bureau",
   "Include widget?": "Inclure le widget ?",
-  "Do you want to include \"%s\" widget into \"%s\"?": "Voulez-vous inclure le widget « %s » dans « %s » ?"
+  "Do you want to include \"%s\" widget into \"%s\"?": "Voulez-vous inclure le widget « %s » dans « %s » ?",
+  "Unselect": "Désélectionner",
+  "All": "Tous"
 }

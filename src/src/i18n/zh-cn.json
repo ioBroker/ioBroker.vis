@@ -387,7 +387,6 @@
   "Uninstall": "卸载",
   "Unknown widget type \"%s\"": "未知的小部件类型“%s”",
   "Unlock": "开锁",
-  "Unselect all": "全部取消选择",
   "Update": "更新",
   "Usage of widget %s": "小部件 %s 的使用",
   "Use background": "使用背景",
@@ -733,5 +732,7 @@
   "basic_all_filters": "添加所有剩余的",
   "Only for desktop": "仅适用于桌面",
   "Include widget?": "包括小部件吗？",
-  "Do you want to include \"%s\" widget into \"%s\"?": "您想将“%s”小部件包含到“%s”中吗？"
+  "Do you want to include \"%s\" widget into \"%s\"?": "您想将“%s”小部件包含到“%s”中吗？",
+  "Unselect": "取消选择",
+  "All": "全部"
 }

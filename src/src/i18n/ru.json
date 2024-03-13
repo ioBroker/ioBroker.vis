@@ -387,7 +387,6 @@
   "Uninstall": "Удалить",
   "Unknown widget type \"%s\"": "Неизвестный тип виджета \"%s\"",
   "Unlock": "Разблокировать",
-  "Unselect all": "Снять все",
   "Update": "Обновить",
   "Usage of widget %s": "Использование виджета %s",
   "Use background": "Использовать фон",
@@ -733,5 +732,7 @@
   "basic_all_filters": "Добавить все, что осталось",
   "Only for desktop": "Только для рабочего стола",
   "Include widget?": "Включить виджет?",
-  "Do you want to include \"%s\" widget into \"%s\"?": "Вы хотите включить виджет «%s» в «%s»?"
+  "Do you want to include \"%s\" widget into \"%s\"?": "Вы хотите включить виджет «%s» в «%s»?",
+  "Unselect": "Отменить выбор",
+  "All": "Все"
 }

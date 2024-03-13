@@ -387,7 +387,6 @@
   "Uninstall": "Odinstaluj",
   "Unknown widget type \"%s\"": "Nieznany typ widżetu „%s”",
   "Unlock": "Odblokować",
-  "Unselect all": "Odznacz wszystko",
   "Update": "Aktualizacja",
   "Usage of widget %s": "Użycie widżetu %s",
   "Use background": "Użyj tła",
@@ -733,5 +732,7 @@
   "basic_all_filters": "Dodaj wszystko, co zostało",
   "Only for desktop": "Tylko na komputery stacjonarne",
   "Include widget?": "Dołącz widżet?",
-  "Do you want to include \"%s\" widget into \"%s\"?": "Czy chcesz dołączyć widżet „%s” do „%s”?"
+  "Do you want to include \"%s\" widget into \"%s\"?": "Czy chcesz dołączyć widżet „%s” do „%s”?",
+  "Unselect": "Odznacz",
+  "All": "Wszystko"
 }

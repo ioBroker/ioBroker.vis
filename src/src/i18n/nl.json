@@ -387,7 +387,6 @@
   "Uninstall": "Verwijderen",
   "Unknown widget type \"%s\"": "Onbekend widgettype \"%s\"",
   "Unlock": "Ontgrendelen",
-  "Unselect all": "Deselecteer alles",
   "Update": "Update",
   "Usage of widget %s": "Gebruik van widget %s",
   "Use background": "Achtergrond gebruiken",
@@ -733,5 +732,7 @@
   "basic_all_filters": "Voeg alles links toe",
   "Only for desktop": "Alleen voor desktop",
   "Include widget?": "Widget toevoegen?",
-  "Do you want to include \"%s\" widget into \"%s\"?": "Wilt u de widget \"%s\" opnemen in \"%s\"?"
+  "Do you want to include \"%s\" widget into \"%s\"?": "Wilt u de widget \"%s\" opnemen in \"%s\"?",
+  "Unselect": "Deselecteer",
+  "All": "Alle"
 }

@@ -222,7 +222,7 @@ function getRemoteWidgets(socket: Connection, onlyWidgetSets?: false | string[])
                                         }
                                         const lang = I18n.getLanguage();
 
-                                        const i18nPromise = fetch(`${i18nURL}/i18n/${lang}.json`)
+                                        i18nPromiseWait = fetch(`${i18nURL}/i18n/${lang}.json`)
                                             .then(data => data.json())
                                             .then(json => {
                                                 countRef.count++;
@@ -244,10 +244,9 @@ function getRemoteWidgets(socket: Connection, onlyWidgetSets?: false | string[])
                                                 console.log(`Cannot load i18n "${i18nURL}/i18n/${lang}.json": ${error}`);
                                                 return null;
                                             });
-                                        promises.push(i18nPromise);
+                                        promises.push(i18nPromiseWait);
                                     } else if (collection.url && collection.i18n === 'component') {
                                         // instance.common.visWidgets.i18n is deprecated
-
                                         i18nPromiseWait = loadComponent(collection.name, 'default', './translations', collection.url)()
                                             .then((translations: any) => {
                                                 countRef.count++;
