@@ -17,7 +17,7 @@ import {
 } from '@mui/icons-material';
 import { BiImport, BiExport } from 'react-icons/bi';
 
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n, Utils } from '@iobroker/adapter-react-v5';
 
 import { store } from '@/Store';
 
@@ -47,6 +47,9 @@ const styles: Styles<any, any> = (theme: any) => ({
     visibleView: {
         color: theme.palette.primary.main,
     },
+    selected: {
+        backgroundColor: theme.palette.mode === 'dark' ? theme.palette.primary.dark : theme.palette.primary.light,
+    },
 });
 
 interface ViewProps {
@@ -61,7 +64,8 @@ interface ViewProps {
     setIsDragging: (view: string) => void;
     isDragging: string;
     editMode: boolean;
-    /** If permissions are given do edit this view */
+    selectedView: string;
+    /** If permissions are given, do edit this view */
     hasPermissions: boolean;
 }
 
@@ -109,7 +113,12 @@ const View = (props: ViewProps) => {
         props.toggleView(props.name, true, true);
     };
 
-    return <div className={props.isDragging === props.name ? props.classes.dragging : (props.isDragging ? props.classes.noDrop : '')}>
+    return <div
+        className={Utils.clsx(
+            props.isDragging === props.name ? props.classes.dragging : (props.isDragging ? props.classes.noDrop : ''),
+            props.selectedView === props.name && props.classes.selected,
+        )}
+    >
         <div className={props.classes.viewManageBlock}>
             {props.hasPermissions ? <div className={props.classes.icon} ref={dragRef} title={I18n.t('Drag me')}><FileIcon /></div> : <FileIcon color="disabled" />}
             <Tooltip title={I18n.t(props.openedViews.includes(props.name) ? 'Hide' : 'Show')} classes={{ popper: props.classes.tooltip }}>

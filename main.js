@@ -22,6 +22,7 @@ let lastProgressUpdate;
 let widgetInstances  = {};
 let stoppingPromise = false;
 let synchronyzing = false;
+let vendorPrefix = '';
 
 function startAdapter(options) {
     options = options || {};
@@ -181,6 +182,11 @@ async function generateConfigPage(forceBuild, enabledList) {
 `window.isLicenseError = ${isLicenseError};
 // inject the adapter instance
 window.visAdapterInstance = ${adapter.instance};
+window.vendorPrefix = '${vendorPrefix || 'MV'}';
+window.disableDataReporting = ${adapter.common.disableDataReporting ? 'true' : 'false'};
+window.loadingBackgroundColor = '${adapter.config.loadingBackgroundColor || ''}';
+window.loadingBackgroundImage = '${adapter.config.loadingBackgroundImage ? `files/${adapter.namespace}/loading-bg.png` : ''}';
+window.loadingHideLogo = ${adapter.config.loadingHideLogo ? 'true' : 'false'};
 // for back compatibility with vis.1 on cloud
 window.visConfig = {
     "widgetSets": ${JSON.stringify(widgetSets)}
@@ -1014,6 +1020,25 @@ async function main() {
         // controller will do restart
         return;
     }
+
+    let systemConfig;
+    try {
+        systemConfig = await adapter.getForeignObjectAsync('system.config');
+    } catch (e) {
+        adapter.log.warn(`Cannot read systemConfig: ${e}`);
+    }
+
+    if (!systemConfig) {
+        adapter.log.error('Cannot find object system.config');
+    }
+
+    let uuid = null;
+    try {
+        uuid = await adapter.getForeignObjectAsync('system.meta.uuid');
+    } catch (e) {
+        adapter.log.warn(`Cannot read UUID: ${e}`);
+    }
+    vendorPrefix = systemConfig?.native?.vendor?.uuidPrefix || (uuid?.native?.uuid?.length > 36 ? uuid.native.uuid.substring(0, 2) : '');
 
     // first check license
     if (!adapter.config.useLicenseManager && (!adapter.config.license || typeof adapter.config.license !== 'string')) {

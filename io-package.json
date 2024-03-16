@@ -202,7 +202,10 @@
     "defaultFileMode": 1604,
     "license": "",
     "useLicenseManager": 0,
-    "doNotShowProjectDialog": false
+    "doNotShowProjectDialog": false,
+    "loadingBackgroundColor": "",
+    "loadingHideLogo": false,
+    "loadingBackgroundImage": false
   },
   "instanceObjects": [
     {

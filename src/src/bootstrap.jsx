@@ -14,7 +14,9 @@ window.adapterName = 'vis-2';
 const themeName = Utils.getThemeName();
 
 console.log(`iobroker.${window.adapterName}@${packageJson.version} using theme "${themeName}"`);
-window.sentryDSN = 'https://db8b6e837c71447a876069559a00a742@sentry.iobroker.net/232';
+if (!window.disableDataReporting) {
+    window.sentryDSN = 'https://db8b6e837c71447a876069559a00a742@sentry.iobroker.net/232';
+}
 
 import('./Vis/visRxWidget').then(VisRxWidget =>
     window.visRxWidget = VisRxWidget.default);

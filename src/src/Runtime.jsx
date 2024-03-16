@@ -24,7 +24,10 @@ import IconDocument from '@mui/icons-material/FileCopy';
 import { BiImport } from 'react-icons/bi';
 
 import GenericApp from '@iobroker/adapter-react-v5/GenericApp';
-import { I18n, Loader, LegacyConnection } from '@iobroker/adapter-react-v5';
+import {
+    I18n, Loader, LegacyConnection,
+    LoaderMV, LoaderPT, LoaderVendor,
+} from '@iobroker/adapter-react-v5';
 
 import VisEngine from './Vis/visEngine';
 import {
@@ -66,7 +69,9 @@ class Runtime extends GenericApp {
         };
 
         extendedProps.Connection = LegacyConnection;
-        extendedProps.sentryDSN = window.sentryDSN;
+        if (!window.disableDataReporting) {
+            extendedProps.sentryDSN = window.sentryDSN;
+        }
 
         if (window.location.port === '3000') {
             extendedProps.socket = {
@@ -78,7 +83,7 @@ class Runtime extends GenericApp {
             window.socketUrl = `${window.location.protocol}//${window.location.hostname}${window.socketUrl}`;
         }
 
-        // for projects starting with numbers, adapter-react extracts wrong instance number, as we have no instance in url explicitly
+        // for projects starting with numbers, adapter-react extracts the wrong instance number, as we have no instance in url explicitly
         extendedProps.instance = window.visAdapterInstance;
 
         super(props, extendedProps);
@@ -1041,15 +1046,29 @@ class Runtime extends GenericApp {
         />;
     }
 
+    renderLoader() {
+        window.vendorPrefix = 'MV';
+        if (window.loadingHideLogo === true) {
+            return null;
+        }
+        if (window.vendorPrefix === 'MV') {
+            return <LoaderMV themeType={this.state.themeType} backgroundColor={window.loadingBackgroundColor} backgroundImage={window.loadingBackgroundImage} />;
+        }
+        if (window.vendorPrefix === 'PT') {
+            return <LoaderPT themeType={this.state.themeType} backgroundColor={window.loadingBackgroundColor} backgroundImage={window.loadingBackgroundImage} />;
+        }
+        if (window.vendorPrefix && window.vendorPrefix !== '@@vendorPrefix@@') {
+            return <LoaderVendor themeType={this.state.themeType} backgroundColor={window.loadingBackgroundColor} backgroundImage={window.loadingBackgroundImage} />;
+        }
+        return <Loader themeType={this.state.themeType} backgroundColor={window.loadingBackgroundColor} backgroundImage={window.loadingBackgroundImage} />;
+    }
+
     render() {
         return <StylesProvider generateClassName={generateClassName}>
             <StyledEngineProvider injectFirst>
                 <ThemeProvider theme={this.state.theme}>
-                    {
-                        !this.state.loaded || !store.getState().visProject.___settings ?
-                            <Loader theme={this.state.themeType} /> :
-                            this.getVisEngine()
-                    }
+                    {!this.state.loaded || !store.getState().visProject.___settings ?
+                        this.renderLoader() : this.getVisEngine()}
                     {this.state.projectDoesNotExist ? this.renderProjectDoesNotExist() : null}
                     {this.state.showProjectsDialog ? this.showSmallProjectsDialog() : null}
                 </ThemeProvider>

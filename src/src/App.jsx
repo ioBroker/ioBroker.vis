@@ -29,6 +29,9 @@ import {
     I18n,
     Utils,
     Loader,
+    LoaderMV,
+    LoaderPT,
+    LoaderVendor,
     Confirm as ConfirmDialog,
     Message as MessageDialog,
     SelectFile as SelectFileDialog, Icon,
@@ -1857,7 +1860,7 @@ class App extends Runtime {
             return <StylesProvider generateClassName={generateClassName}>
                 <StyledEngineProvider injectFirst>
                     <ThemeProvider theme={this.state.theme}>
-                        <Loader theme={this.state.themeType} />
+                        {this.renderLoader()}
                     </ThemeProvider>
                 </StyledEngineProvider>
             </StylesProvider>;

@@ -4,5 +4,10 @@
   "instruction": "Pour utiliser <b> vis </b>, vous devez obtenir la clé de licence. <br> <b>vis</b> est libre pour un usage privé, mais pour un usage commercial, il a un prix. <br> Vous peut obtenir la licence sur <a href='https://iobroker.net' target='_blank'>iobroker.net</a> après une brève inscription.",
   "Suitable license found": "Licence appropriée trouvée",
   "Force pages rebuild": "Forcer la reconstruction des pages",
-  "Do not show project dialog if URL is wrong": "Ne pas afficher la boîte de dialogue du projet si l'URL est incorrecte"
+  "Do not show project dialog if URL is wrong": "Ne pas afficher la boîte de dialogue du projet si l'URL est incorrecte",
+  "Background color of the loading screen": "Couleur de fond de l'écran de chargement",
+  "Hide logo": "Masquer le logo",
+  "Use background image": "Utiliser l'image d'arrière-plan",
+  "Upload image": "Télécharger une image",
+  "Loading background": "Chargement de l'arrière-plan"
 }

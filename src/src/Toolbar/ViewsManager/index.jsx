@@ -142,6 +142,7 @@ const ViewsManager = props => {
                 moveView={moveView}
                 setExportDialog={setExportDialog}
                 setImportDialog={setImportDialog}
+                selectedView={props.selectedView}
                 {...props}
                 classes={{}}
                 hasPermissions={hasViewAccess({
@@ -303,6 +304,7 @@ ViewsManager.propTypes = {
     themeName: PropTypes.string,
     toggleView: PropTypes.func,
     editMode: PropTypes.bool,
+    selectedView: PropTypes.string,
 };
 
 export default withStyles(styles)(ViewsManager);

@@ -4,5 +4,10 @@
   "instruction": "To use <b>vis</b>, you must get the license key for it.<br><b>vis</b> is free for private use, but for commercial use it has a price.<br>You can get the license on <a href='https://iobroker.net' target='_blank'>iobroker.net</a> after short registration.",
   "Force pages rebuild": "Force pages rebuild",
   "Suitable license found": "Suitable license found",
-  "Do not show project dialog if URL is wrong": "Do not show project dialog if URL is wrong"
+  "Do not show project dialog if URL is wrong": "Do not show project dialog if URL is wrong",
+  "Background color of the loading screen": "Background color of the loading screen",
+  "Hide logo": "Hide logo",
+  "Use background image": "Use background image",
+  "Upload image": "Upload image",
+  "Loading background": "Loading background"
 }

@@ -21,19 +21,26 @@
     <script type="text/javascript" src="_socket/info.js"></script>
     <script type="text/javascript" src="config.js"></script> <!-- this file must be before vis.js -->
     <script>
-        // window.apiUrl = 'http://localhost:3009'; // Marketplace server
-        // window.webPrefix = ''; // Prefix for marketplace client
-        // window.marketplaceClient = 'http://localhost:3002';
-        window.apiUrl = 'https://iobroker.net'; // Marketplace server
-        window.webPrefix = '/market'; // Prefix for the marketplace client
-        window.marketplaceClient = 'https://iobroker.net/market';
+      // window.apiUrl = 'http://localhost:3009'; // Marketplace server
+      // window.webPrefix = ''; // Prefix for marketplace client
+      // window.marketplaceClient = 'http://localhost:3002';
+      window.apiUrl = 'https://iobroker.net'; // Marketplace server
+      window.webPrefix = '/market'; // Prefix for the marketplace client
+      window.marketplaceClient = 'https://iobroker.net/market';
+      window.vendorPrefix = window.vendorPrefix || '@@vendorPrefix@@';
+      window.disableDataReporting = window.disableDataReporting || '@@disableDataReporting@@';
+      window.loadingBackgroundColor = window.loadingBackgroundColor || '@@loadingBackgroundColor@@';
+      window.loadingBackgroundImage = window.loadingBackgroundImage || '@@loadingBackgroundImage@@';
+      window.loadingHideLogo = window.loadingHideLogo || '@@loadingHideLogo@@';
     </script>
     <script>
       var script = document.createElement('script');
       window.registerSocketOnLoad = function (cb) {
         window.socketLoadedHandler = cb;
       };
-      script.onload = function () { typeof window.socketLoadedHandler === 'function' && window.socketLoadedHandler(); };
+      script.onload = function () {
+        typeof window.socketLoadedHandler === 'function' && window.socketLoadedHandler();
+      };
       setTimeout(() => {
         script.src = window.location.port.startsWith('300') ? window.location.protocol + '//' + window.location.hostname + ':8082/lib/js/socket.io.js' : '%PUBLIC_URL%/../../lib/js/socket.io.js';
       }, 1000);
@@ -43,7 +50,7 @@
     <!--script type="text/javascript" src="%PUBLIC_URL%/../../socket.io/socket.io.js"></script-->
   </head>
   <body>
-    <div id="root"></div>
+  <div id="root"></div>
   </body>
   <script>
     // set background as early as possible
