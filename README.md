@@ -264,7 +264,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.9.44 (2024-03-17)
 * (bluefox) Showed selected view in the view dialog
 * (bluefox) Added customization of loading screen
 * (bluefox) Respected the sentry disable flag in GUI
