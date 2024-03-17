@@ -28,10 +28,6 @@ import {
 import {
     I18n,
     Utils,
-    Loader,
-    LoaderMV,
-    LoaderPT,
-    LoaderVendor,
     Confirm as ConfirmDialog,
     Message as MessageDialog,
     SelectFile as SelectFileDialog, Icon,
