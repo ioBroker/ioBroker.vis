@@ -225,13 +225,14 @@ class FiltersEditorDialog extends Component<FiltersEditorDialogProps, FiltersEdi
             imagePrefix="../"
             selected={_value}
             filterByType="images"
-            onOk={selected => {
+            onOk={selectedOrArray => {
+                let selected = selectedOrArray ? (Array.isArray(selectedOrArray) ? selectedOrArray[0] : selectedOrArray) : '';
                 const projectPrefix = `${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}/`;
-                if (selected.startsWith(projectPrefix)) {
+                if (selected?.startsWith(projectPrefix)) {
                     selected = `_PRJ_NAME/${selected.substring(projectPrefix.length)}`;
-                } else if (selected.startsWith('/')) {
+                } else if (selected?.startsWith('/')) {
                     selected = `..${selected}`;
-                } else if (!selected.startsWith('.')) {
+                } else if (selected && !selected.startsWith('.')) {
                     selected = `../${selected}`;
                 }
                 const items = JSON.parse(JSON.stringify(this.state.items));

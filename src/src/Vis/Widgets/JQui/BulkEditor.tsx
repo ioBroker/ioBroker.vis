@@ -435,18 +435,18 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
             value = value.replace('_PRJ_NAME/', `../${this.props.adapterName}.${this.props.instance}/${this.props.projectName}/`);
         }
 
-        const onChange = (selected: string, isClose: boolean) => {
+        const onChange = (selected: string | undefined, isClose: boolean) => {
             const projectPrefix = `${this.props.adapterName}.${this.props.instance}/${this.props.projectName}/`;
-            if (selected.startsWith(projectPrefix)) {
+            if (selected?.startsWith(projectPrefix)) {
                 selected = `_PRJ_NAME/${selected.substring(projectPrefix.length)}`;
-            } else if (selected.startsWith('/')) {
+            } else if (selected?.startsWith('/')) {
                 selected = `..${selected}`;
-            } else if (!selected.startsWith('.')) {
+            } else if (selected && !selected.startsWith('.')) {
                 selected = `../${selected}`;
             }
             const images = [...this.state.images];
             if (typeof this.state.imageDialog === 'number') {
-                images[this.state.imageDialog] = selected;
+                images[this.state.imageDialog] = selected || '';
             }
             this.setState({ images });
 
@@ -468,7 +468,8 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
             imagePrefix="../"
             selected={value}
             filterByType="images"
-            onOk={(selected: string) => onChange(selected, true)}
+            onOk={(selectedOrArray: string | string[] | undefined) =>
+                onChange(Array.isArray(selectedOrArray) ? selectedOrArray[0] : selectedOrArray, true)}
             socket={this.props.socket}
         />;
     }
