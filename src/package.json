@@ -1,6 +1,6 @@
 {
     "name": "vis-2-gui",
-    "version": "2.9.42",
+    "version": "2.9.43",
     "private": true,
     "dependencies": {
         "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
