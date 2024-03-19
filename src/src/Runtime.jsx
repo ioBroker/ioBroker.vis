@@ -1047,7 +1047,6 @@ class Runtime extends GenericApp {
     }
 
     renderLoader() {
-        window.vendorPrefix = 'MV';
         if (window.loadingHideLogo === true) {
             return null;
         }

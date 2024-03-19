@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
-import {
+import React, {
     useEffect,
     useRef,
     useState,
-    useMemo,
+    useMemo, RefObject,
 } from 'react';
 import { withStyles } from '@mui/styles';
 
@@ -23,6 +23,7 @@ import {
     Slider,
     Input,
     Tooltip,
+    type SelectChangeEvent,
 } from '@mui/material';
 
 import {
@@ -39,15 +40,17 @@ import {
     IconPicker,
     SelectFile as SelectFileDialog,
     Confirm as ConfirmDialog,
-    TextWithIcon, Icon,
+    TextWithIcon, Icon, type Connection,
 } from '@iobroker/adapter-react-v5';
 
-import { theme, background } from './ViewData';
-import MaterialIconSelector from '../Components/MaterialIconSelector';
-import { store } from '../Store';
-import { deepClone } from '../Utils/utils';
+import { store } from '@/Store';
+import { deepClone } from '@/Utils/utils';
+import { Project, View } from '@/types';
 
-const styles = _theme => ({
+import { theme as ViewTheme, background } from './ViewData';
+import MaterialIconSelector from '../Components/MaterialIconSelector';
+
+const styles: Record<string, any> = {
     backgroundClass: {
         display: 'flex',
         alignItems: 'center',
@@ -106,7 +109,7 @@ const styles = _theme => ({
             padding: '2px',
         },
     },
-    lightedPanel: _theme.classes.lightedPanel,
+    // lightedPanel: theme.classes.lightedPanel,
     fieldContentSlider: {
         display: 'inline',
         width: 'calc(100% - 82px)',
@@ -124,7 +127,7 @@ const styles = _theme => ({
         float: 'right',
         fontSize: 16,
     },
-});
+};
 
 const resolution = [
     { value: 'none', label: 'not defined' },
@@ -165,14 +168,17 @@ const resolution = [
     { value: '1920x1080', label: 'Full HD - Landscape' },
 ];
 
-const checkFunction = (funcText, settings) => {
+const checkFunction = (
+    funcText: string | ((settings: Record<string, any>) => boolean),
+    settings: Record<string, any>,
+): boolean => {
     try {
-        let _func;
+        let _func: (dataSettings: Record<string, any>) => boolean;
         if (typeof funcText === 'function') {
             _func = funcText;
         } else {
             // eslint-disable-next-line no-new-func
-            _func = new Function('data', `return ${funcText}`);
+            _func = (new Function('data', `return ${funcText}`)) as (dataSettings: Record<string, any>) => boolean;
         }
         return _func(settings);
     } catch (e) {
@@ -181,8 +187,53 @@ const checkFunction = (funcText, settings) => {
     return false;
 };
 
-function isPropertySameInAllViews(project, field, selectedView, views) {
-    let value = project[selectedView].settings[field];
+interface Field {
+    label: string;
+    attr: string;
+    type: string;
+    options?: { label: string; value: string }[];
+    field: string;
+    itemModify?: (item: any) => React.JSX.Element;
+    renderValue?: (value: string | number) => React.JSX.Element;
+    hidden?: boolean | string | ((settings: Record<string, any>) => boolean);
+    notStyle?: boolean;
+    applyToAll?: boolean;
+    groupApply?: boolean;
+    noTranslation?: boolean;
+    title?: string;
+    min?: number;
+    max?: number;
+    step?: number;
+    Component?: React.JSX.Element;
+    disabled?: boolean | string | ((settings: Record<string, any>) => boolean);
+    error?: string | ((settings: Record<string, any>) => boolean);
+    width?: number;
+    value?: any;
+    onChange?: (e: SelectChangeEvent<string | number>) => void;
+    marks?: boolean | {
+        value: number;
+        label?: string;
+    }[];
+    valueLabelDisplay?: 'on' | 'auto' | 'off';
+}
+
+interface FieldGroup {
+    label: string;
+    fields: Field[];
+    hidden?: string | ((settings: Record<string, any>) => boolean);
+}
+
+interface ApplyField extends Field {
+    group?: FieldGroup;
+}
+
+function isPropertySameInAllViews(
+    project: Project,
+    field: Field,
+    selectedView: string,
+    views: string[],
+) {
+    let value = (project[selectedView].settings as Record<string, any>)?.[field.attr];
     views = views || Object.keys(project).filter(v => v !== '___settings' && v !== selectedView);
     if (field.type === 'checkbox') {
         value = !!value;
@@ -195,7 +246,7 @@ function isPropertySameInAllViews(project, field, selectedView, views) {
     }
 
     for (let v = 0; v < views.length; v++) {
-        let val = project[views[v]].settings[field];
+        let val = (project[views[v]].settings as Record<string, any>)?.[field.attr];
         if (field.type === 'checkbox') {
             val = !!val;
         } else {
@@ -210,31 +261,52 @@ function isPropertySameInAllViews(project, field, selectedView, views) {
     return true;
 }
 
-const View = props => {
+interface ViewProps {
+    selectedView: string;
+    editMode: boolean;
+    changeProject: (project: Record<string, any>) => void;
+    classes: Record<string, any>;
+    triggerAllOpened: number;
+    triggerAllClosed: number;
+    isAllClosed: boolean;
+    setIsAllClosed: (closed: boolean) => void;
+    isAllOpened: boolean;
+    setIsAllOpened: (opened: boolean) => void;
+    userGroups: Record<string, ioBroker.GroupObject>;
+    adapterName: string;
+    themeType: string;
+    instance: number;
+    projectName: string;
+    socket: Connection;
+}
+
+const ViewAttributes = (props: ViewProps) => {
     if (!store.getState().visProject || !store.getState().visProject[props.selectedView]) {
         return null;
     }
 
     const [triggerAllOpened, setTriggerAllOpened] = useState(0);
     const [triggerAllClosed, setTriggerAllClosed] = useState(0);
-    const [showAllViewDialog, setShowAllViewDialog] = useState(null);
+    const [showAllViewDialog, setShowAllViewDialog] = useState<ApplyField | null>(null);
 
-    const view = store.getState().visProject[props.selectedView];
+    const view: View = store.getState().visProject[props.selectedView];
 
-    let resolutionSelect = `${view.settings.sizex}x${view.settings.sizey}`;
-    if (view.settings.sizex === undefined && view.settings.sizey === undefined) {
+    let resolutionSelect = 'none';
+    if (!view.settings || (view.settings.sizex === undefined && view.settings.sizey === undefined)) {
         resolutionSelect = 'none';
     } else if (!resolution.find(item => item.value === resolutionSelect)) {
         resolutionSelect = 'user';
+    } else {
+        resolutionSelect = `${view.settings.sizex}x${view.settings.sizey}`;
     }
 
-    const fields = useMemo(() => ([
+    const fields: FieldGroup[] = useMemo(() => ([
         {
-            name: 'CSS Common',
+            label: 'CSS Common',
             fields: [
                 {
-                    name: 'display',
-                    field: 'display',
+                    label: 'display',
+                    attr: 'display',
                     type: 'select',
                     options: [
                         { label: 'flex', value: 'flex' },
@@ -243,29 +315,29 @@ const View = props => {
                     noTranslation: true,
                     title: 'For widgets with relative position',
                 },
-                { name: 'Comment', field: 'comment', notStyle: true },
-                { name: 'CSS Class', field: 'class', notStyle: true },
+                { label: 'Comment', attr: 'comment', notStyle: true },
+                { label: 'CSS Class', attr: 'class', notStyle: true },
                 {
-                    name: 'Initial filter', field: 'filterkey', notStyle: true, type: 'filter',
+                    label: 'Initial filter', attr: 'filterkey', notStyle: true, type: 'filter',
                 },
                 {
-                    name: 'Only for groups',
-                    field: 'group',
+                    label: 'Only for groups',
+                    attr: 'group',
                     notStyle: true,
                     type: 'groups',
                     title: 'This view will be shown only to defined groups',
                 },
                 {
-                    name: 'Theme',
-                    field: 'theme',
+                    label: 'Theme',
+                    attr: 'theme',
                     notStyle: true,
                     type: 'select',
-                    options: theme,
+                    options: ViewTheme,
                     noTranslation: true,
                 },
                 {
-                    name: 'If user not in group',
-                    field: 'group_action',
+                    label: 'If user not in group',
+                    attr: 'group_action',
                     notStyle: true,
                     type: 'select',
                     options: [
@@ -273,21 +345,21 @@ const View = props => {
                         { label: 'Hide', value: 'hide' },
                     ],
                 },
-            ],
+            ] as Field[],
         },
         {
-            name: 'CSS background (background-...)',
+            label: 'CSS background (background-...)',
             fields: [
                 {
-                    name: 'Image',
-                    field: 'bg-image',
+                    label: 'Image',
+                    attr: 'bg-image',
                     type: 'image',
                     hidden: 'data.useBackground || (data.style && (!!data.style.background_class || !!data.style["background-color"] || !!data.style["background-image"] || !!data.style["background-size"] || !!data.style["background-repeat"] || !!data.style["background-position"] || !!data.style["background-attachment"]))',
                     notStyle: true,
                 },
                 {
-                    name: 'Position left',
-                    field: 'bg-position-x',
+                    label: 'Position left',
+                    attr: 'bg-position-x',
                     type: 'slider',
                     hidden: '!data["bg-image"]',
                     notStyle: true,
@@ -295,8 +367,8 @@ const View = props => {
                     max: 500,
                 },
                 {
-                    name: 'Position top',
-                    field: 'bg-position-y',
+                    label: 'Position top',
+                    attr: 'bg-position-y',
                     type: 'slider',
                     hidden: '!data["bg-image"]',
                     notStyle: true,
@@ -304,128 +376,131 @@ const View = props => {
                     max: 500,
                 },
                 {
-                    name: 'Width',
-                    field: 'bg-width',
+                    label: 'Width',
+                    attr: 'bg-width',
                     type: 'text',
                     hidden: '!data["bg-image"]',
                     notStyle: true,
                 },
                 {
-                    name: 'Height',
-                    field: 'bg-height',
+                    label: 'Height',
+                    attr: 'bg-height',
                     type: 'text',
                     hidden: '!data["bg-image"]',
                     notStyle: true,
                 },
                 {
-                    name: 'Color',
-                    field: 'bg-color',
+                    label: 'Color',
+                    attr: 'bg-color',
                     type: 'color',
                     hidden: '!data["bg-image"]',
                     notStyle: true,
                 },
                 {
-                    name: 'Background class',
+                    label: 'Background class',
                     type: 'select',
                     options: background,
-                    field: 'background_class',
+                    attr: 'background_class',
                     // eslint-disable-next-line react/no-unstable-nested-components
                     itemModify: item => <>
                         <span className={`${props.classes.backgroundClassSquare} ${item.value}`} />
                         {I18n.t(item.label)}
                     </>,
-                    renderValue: value => <div className={props.classes.backgroundClass}>
-                        <span className={`${props.classes.backgroundClassSquare} ${value}`} />
-                        {I18n.t(background.find(item => item.value === value).label)}
-                    </div>,
+                    renderValue: (value: string) => {
+                        const backItem = background.find(item => item?.value === value);
+                        return <div className={props.classes.backgroundClass}>
+                            <span className={`${props.classes.backgroundClassSquare} ${value}`} />
+                            {I18n.t(backItem?.label || value)}
+                        </div>;
+                    },
                     hidden: '!!data["bg-image"]',
                 },
                 {
-                    name: 'One parameter',
+                    label: 'One parameter',
                     type: 'checkbox',
-                    field: 'useBackground',
+                    attr: 'useBackground',
                     notStyle: true,
                     hidden: '!!data.background_class || !!data["bg-image"]',
                 },
-                { name: 'background', field: 'background', hidden: '!data.useBackground || !!data.background_class || !!data["bg-image"]'  },
+                { label: 'background', attr: 'background', hidden: '!data.useBackground || !!data.background_class || !!data["bg-image"]'  },
                 {
-                    name: '-color', type: 'color', field: 'background-color', hidden: 'data.useBackground || !!data.background_class || !!data["bg-image"]',
+                    label: '-color', type: 'color', attr: 'background-color', hidden: 'data.useBackground || !!data.background_class || !!data["bg-image"]',
                 },
-                { name: '-image', field: 'background-image', hidden: 'data.useBackground || !!data.background_class || !!data["bg-image"]' },
+                { label: '-image', attr: 'background-image', hidden: 'data.useBackground || !!data.background_class || !!data["bg-image"]' },
                 {
-                    name: '-repeat',
+                    label: '-repeat',
                     type: 'autocomplete',
-                    field: 'background-repeat',
+                    attr: 'background-repeat',
                     hidden: 'data.useBackground || !!data.background_class || !!data["bg-image"]',
                     options: [
                         'repeat', 'repeat-x', 'repeat-y', 'no-repeat', 'initial', 'inherit',
                     ],
                 },
                 {
-                    name: '-attachment',
-                    field: 'background-attachment',
+                    label: '-attachment',
+                    attr: 'background-attachment',
                     type: 'autocomplete',
                     hidden: 'data.useBackground || !!data.background_class || !!data["bg-image"]',
                     options: ['scroll', 'fixed', 'local', 'initial', 'inherit'],
                 },
                 {
-                    name: '-position',
-                    field: 'background-position',
+                    label: '-position',
+                    attr: 'background-position',
                     type: 'autocomplete',
                     hidden: 'data.useBackground || !!data.background_class || !!data["bg-image"]',
                     options: ['left top', 'left center', 'left bottom', 'right top', 'right center', 'right bottom', 'center top', 'center center', 'center bottom', 'initial', 'inherit'],
                 },
                 {
-                    name: '-size',
-                    field: 'background-size',
+                    label: '-size',
+                    attr: 'background-size',
                     type: 'autocomplete',
                     hidden: 'data.useBackground || !!data.background_class || !!data["bg-image"]',
                     options: ['auto', 'cover', 'contain', 'initial', 'inherit'],
                 },
                 {
-                    name: '-clip',
-                    field: 'background-clip',
+                    label: '-clip',
+                    attr: 'background-clip',
                     type: 'autocomplete',
                     hidden: 'data.useBackground || !!data.background_class || !!data["bg-image"]',
                     options: ['border-box', 'padding-box', 'content-box', 'initial', 'inherit'],
                 },
                 {
-                    name: '-origin',
-                    field: 'background-origin',
+                    label: '-origin',
+                    attr: 'background-origin',
                     type: 'autocomplete',
                     hidden: 'data.useBackground || !!data.background_class || !!data["bg-image"]',
                     options: ['border-box', 'padding-box', 'content-box', 'initial', 'inherit'],
                 },
-            ],
+            ] as Field[],
         },
         {
-            name: 'CSS Font & Text',
+            label: 'CSS Font & Text',
             fields: [
-                { name: 'color', type: 'color', field: 'color' },
-                { name: 'text-shadow', field: 'text-shadow' },
-                { name: 'font-family', field: 'font-family' },
-                { name: 'font-style', field: 'font-style' },
-                { name: 'font-variant', field: 'font-variant' },
-                { name: 'font-weight', field: 'font-weight' },
-                { name: 'font-size', field: 'font-size' },
-                { name: 'line-height', field: 'line-height' },
-                { name: 'letter-spacing', field: 'letter-spacing' },
-                { name: 'word-spacing', field: 'word-spacing' },
-            ],
+                { label: 'color', type: 'color', attr: 'color' },
+                { label: 'text-shadow', attr: 'text-shadow' },
+                { label: 'font-family', attr: 'font-family' },
+                { label: 'font-style', attr: 'font-style' },
+                { label: 'font-variant', attr: 'font-variant' },
+                { label: 'font-weight', attr: 'font-weight' },
+                { label: 'font-size', attr: 'font-size' },
+                { label: 'line-height', attr: 'line-height' },
+                { label: 'letter-spacing', attr: 'letter-spacing' },
+                { label: 'word-spacing', attr: 'word-spacing' },
+            ] as Field[],
         },
         {
-            name: 'Options',
+            label: 'Options',
             fields: [
                 {
-                    type: 'checkbox', name: 'Default', field: 'useAsDefault', notStyle: true,
+                    type: 'checkbox', label: 'Default', attr: 'useAsDefault', notStyle: true,
                 },
                 {
-                    type: 'checkbox', name: 'Render always', field: 'alwaysRender', notStyle: true,
+                    type: 'checkbox', label: 'Render always', attr: 'alwaysRender', notStyle: true,
                 },
                 {
                     type: 'select',
-                    name: 'Grid',
-                    field: 'snapType',
+                    label: 'Grid',
+                    attr: 'snapType',
                     options: [
                         { label: 'Disabled', value: 0 },
                         { label: 'Elements', value: 1 },
@@ -435,25 +510,25 @@ const View = props => {
                 },
                 {
                     type: 'color',
-                    name: 'Grid color',
-                    field: 'snapColor',
+                    label: 'Grid color',
+                    attr: 'snapColor',
                     hidden: 'data.snapType !== 2',
                     notStyle: true,
                 },
                 {
                     type: 'number',
-                    name: 'Grid size',
-                    field: 'gridSize',
+                    label: 'Grid size',
+                    attr: 'gridSize',
                     notStyle: true,
                     hidden: 'data.snapType !== 2',
                 },
                 {
                     type: 'select',
-                    name: 'Resolution',
+                    label: 'Resolution',
                     options: resolution,
                     width: 236,
                     value: resolutionSelect,
-                    onChange: e => {
+                    onChange: (e: React.ChangeEvent<HTMLSelectElement>) => {
                         const project = JSON.parse(JSON.stringify(store.getState().visProject));
                         if (e.target.value === 'none') {
                             delete project[props.selectedView].settings.sizex;
@@ -467,8 +542,10 @@ const View = props => {
                             }
                         } else {
                             const match = e.target.value.match(/^([0-9]+)x([0-9]+)$/);
-                            project[props.selectedView].settings.sizex = match[1];
-                            project[props.selectedView].settings.sizey = match[2];
+                            if (match) {
+                                project[props.selectedView].settings.sizex = match[1];
+                                project[props.selectedView].settings.sizey = match[2];
+                            }
                         }
                         props.changeProject(project);
                     },
@@ -476,12 +553,12 @@ const View = props => {
                 },
                 {
                     type: 'raw',
-                    name: 'Width x height (px)',
+                    label: 'Width x height (px)',
                     hidden: 'data.sizex === undefined && data.sizey === undefined',
                     Component: <span style={{ display: 'flex', alignItems: 'center' }}>
                         <TextField
                             variant="standard"
-                            value={view.settings.sizex === undefined ? '' : view.settings.sizex}
+                            value={view.settings?.sizex === undefined ? '' : view.settings.sizex}
                             disabled={!props.editMode || resolutionSelect !== 'user'}
                             InputProps={{
                                 classes: {
@@ -502,7 +579,7 @@ const View = props => {
                         />
                         <TextField
                             variant="standard"
-                            value={view.settings.sizey === undefined ? '' : view.settings.sizey}
+                            value={view.settings?.sizey === undefined ? '' : view.settings.sizey}
                             disabled={!props.editMode || resolutionSelect !== 'user'}
                             InputProps={{
                                 classes: {
@@ -520,22 +597,22 @@ const View = props => {
                 },
                 {
                     type: 'checkbox',
-                    name: 'Limit screen',
-                    field: 'limitScreen',
+                    label: 'Limit screen',
+                    attr: 'limitScreen',
                     hidden: 'data.sizex === undefined && data.sizey === undefined',
                     notStyle: true,
                 },
                 {
                     type: 'checkbox',
-                    name: 'Only for desktop',
-                    field: 'limitScreenDesktop',
+                    label: 'Only for desktop',
+                    attr: 'limitScreenDesktop',
                     hidden: '(data.sizex === undefined && data.sizey === undefined) || !data.limitScreen',
                     notStyle: true,
                 },
                 {
                     type: 'slider',
-                    name: 'Limit border width',
-                    field: 'limitScreenBorderWidth',
+                    label: 'Limit border width',
+                    attr: 'limitScreenBorderWidth',
                     min: 0,
                     max: 20,
                     hidden: '(data.sizex === undefined && data.sizey === undefined) || !data.limitScreen',
@@ -543,15 +620,15 @@ const View = props => {
                 },
                 {
                     type: 'color',
-                    name: 'Limit border color',
-                    field: 'limitScreenBorderColor',
+                    label: 'Limit border color',
+                    attr: 'limitScreenBorderColor',
                     hidden: '(data.sizex === undefined && data.sizey === undefined) || !data.limitScreen || !data.limitScreenBorderWidth',
                     notStyle: true,
                 },
                 {
                     type: 'select',
-                    name: 'Limit border style',
-                    field: 'limitScreenBorderStyle',
+                    label: 'Limit border style',
+                    attr: 'limitScreenBorderStyle',
                     noTranslation: true,
                     options: [
                         { label: 'solid', value: 'solid' },
@@ -568,35 +645,35 @@ const View = props => {
                 },
                 {
                     type: 'color',
-                    name: 'Limit background color',
-                    field: 'limitScreenBackgroundColor',
+                    label: 'Limit background color',
+                    attr: 'limitScreenBackgroundColor',
                     hidden: '(data.sizex === undefined && data.sizey === undefined) || !data.limitScreen',
                     notStyle: true,
                 },
-            ],
+            ] as Field[],
         },
         {
-            name: 'Navigation',
+            label: 'Navigation',
             fields: [
                 {
-                    type: 'checkbox', name: 'Show navigation', field: 'navigation', notStyle: true, applyToAll: true, groupApply: true,
+                    type: 'checkbox', label: 'Show navigation', attr: 'navigation', notStyle: true, applyToAll: true, groupApply: true,
                 },
                 {
-                    type: 'text', name: 'Title', field: 'navigationTitle', notStyle: true, hidden: '!data.navigation',
+                    type: 'text', label: 'Title', attr: 'navigationTitle', notStyle: true, hidden: '!data.navigation',
                 },
                 {
-                    type: 'number', name: 'Order', field: 'navigationOrder', notStyle: true, hidden: '!data.navigation',
+                    type: 'number', label: 'Order', attr: 'navigationOrder', notStyle: true, hidden: '!data.navigation',
                 },
                 {
-                    type: 'icon64', name: 'Icon', field: 'navigationIcon', notStyle: true, hidden: '!data.navigation || data.navigationImage',
+                    type: 'icon64', label: 'Icon', attr: 'navigationIcon', notStyle: true, hidden: '!data.navigation || data.navigationImage',
                 },
                 {
-                    type: 'image', name: 'Image', field: 'navigationImage', notStyle: true, hidden: '!data.navigation || data.navigationIcon',
+                    type: 'image', label: 'Image', attr: 'navigationImage', notStyle: true, hidden: '!data.navigation || data.navigationIcon',
                 },
                 {
                     type: 'select',
-                    name: 'Orientation',
-                    field: 'navigationOrientation',
+                    label: 'Orientation',
+                    attr: 'navigationOrientation',
                     notStyle: true,
                     default: 'vertical',
                     hidden: '!data.navigation',
@@ -607,72 +684,72 @@ const View = props => {
                     ],
                 },
                 {
-                    type: 'checkbox', name: 'Only icon', field: 'navigationOnlyIcon', notStyle: true, default: true, hidden: '!data.navigation || data.navigationOrientation !== "horizontal"', applyToAll: true,
+                    type: 'checkbox', label: 'Only icon', attr: 'navigationOnlyIcon', notStyle: true, default: true, hidden: '!data.navigation || data.navigationOrientation !== "horizontal"', applyToAll: true,
                 },
                 {
-                    type: 'color', name: 'Background color', field: 'navigationBackground', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
+                    type: 'color', label: 'Background color', attr: 'navigationBackground', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
                 },
                 {
-                    type: 'color', name: 'Background color if selected', field: 'navigationSelectedBackground', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
+                    type: 'color', label: 'Background color if selected', attr: 'navigationSelectedBackground', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
                 },
                 {
-                    type: 'color', name: 'Text color if selected', field: 'navigationSelectedColor', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
+                    type: 'color', label: 'Text color if selected', attr: 'navigationSelectedColor', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
                 },
                 {
-                    type: 'color', name: 'Menu header text color', field: 'navigationHeaderTextColor', notStyle: true, hidden: '!data.navigation',
+                    type: 'color', label: 'Menu header text color', attr: 'navigationHeaderTextColor', notStyle: true, hidden: '!data.navigation',
                 },
                 {
-                    type: 'color', name: 'Text color', field: 'navigationColor', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
+                    type: 'color', label: 'Text color', attr: 'navigationColor', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
                 },
                 {
-                    type: 'color', name: 'Chevron icon color', field: 'navigationChevronColor', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
+                    type: 'color', label: 'Chevron icon color', attr: 'navigationChevronColor', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
                 },
                 {
-                    type: 'checkbox', name: 'Hide menu', field: 'navigationHideMenu', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
+                    type: 'checkbox', label: 'Hide menu', attr: 'navigationHideMenu', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
                 },
                 {
-                    type: 'checkbox', name: 'Hide after selection', field: 'navigationHideOnSelection', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
+                    type: 'checkbox', label: 'Hide after selection', attr: 'navigationHideOnSelection', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
                 },
                 {
-                    type: 'text', name: 'Menu header text', field: 'navigationHeaderText', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal" || !data.navigationBar', applyToAll: true,
+                    type: 'text', label: 'Menu header text', attr: 'navigationHeaderText', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal" || !data.navigationBar', applyToAll: true,
                 },
                 {
-                    type: 'checkbox', name: 'Do not hide menu', field: 'navigationNoHide', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
+                    type: 'checkbox', label: 'Do not hide menu', attr: 'navigationNoHide', notStyle: true, hidden: '!data.navigation || data.navigationOrientation === "horizontal"', applyToAll: true,
                 },
                 {
-                    type: 'checkbox', name: 'Show background of button', field: 'navigationButtonBackground', notStyle: true, hidden: '!data.navigation || data.navigationNoHide || data.navigationOrientation === "horizontal"', applyToAll: true,
+                    type: 'checkbox', label: 'Show background of button', attr: 'navigationButtonBackground', notStyle: true, hidden: '!data.navigation || data.navigationNoHide || data.navigationOrientation === "horizontal"', applyToAll: true,
                 },
-            ],
+            ] as Field[],
         },
         {
-            name: 'App bar',
+            label: 'App bar',
             hidden: '!!data.navigation && data.navigationOrientation === "horizontal"',
             fields: [
                 {
-                    type: 'checkbox', name: 'Show app bar', field: 'navigationBar', notStyle: true, default: true, applyToAll: true, groupApply: true,
+                    type: 'checkbox', label: 'Show app bar', attr: 'navigationBar', notStyle: true, default: true, applyToAll: true, groupApply: true,
                 },
                 {
-                    type: 'color', name: 'Bar color', field: 'navigationBarColor', notStyle: true, hidden: '!data.navigationBar', applyToAll: true,
+                    type: 'color', label: 'Bar color', attr: 'navigationBarColor', notStyle: true, hidden: '!data.navigationBar', applyToAll: true,
                 },
                 {
-                    type: 'text', name: 'Bar text', field: 'navigationBarText', notStyle: true, hidden: '!data.navigationBar', applyToAll: true,
+                    type: 'text', label: 'Bar text', attr: 'navigationBarText', notStyle: true, hidden: '!data.navigationBar', applyToAll: true,
                 },
                 {
-                    type: 'icon64', name: 'Bar icon', field: 'navigationBarIcon', notStyle: true, hidden: '!data.navigationBar || !!data.navigationBarImage', applyToAll: true,
+                    type: 'icon64', label: 'Bar icon', attr: 'navigationBarIcon', notStyle: true, hidden: '!data.navigationBar || !!data.navigationBarImage', applyToAll: true,
                 },
                 {
-                    type: 'image', name: 'Bar image', field: 'navigationBarImage', notStyle: true, hidden: '!data.navigationBar || !!data.navigationBarIcon', applyToAll: true,
+                    type: 'image', label: 'Bar image', attr: 'navigationBarImage', notStyle: true, hidden: '!data.navigationBar || !!data.navigationBarIcon', applyToAll: true,
                 },
-            ],
+            ] as Field[],
         },
         {
-            name: 'Responsive settings',
+            label: 'Responsive settings',
             fields: [
                 /*
                 {
                     type: 'select',
-                    name: 'Direction',
-                    field: 'flexDirection',
+                    label: 'Direction',
+                    attr: 'flexDirection',
                     notStyle: true,
                     options: [
                         { label: 'Column', value: 'column' },
@@ -681,8 +758,8 @@ const View = props => {
                 },
                 {
                     type: 'select',
-                    name: 'Wrap',
-                    field: 'flexWrap',
+                    label: 'Wrap',
+                    attr: 'flexWrap',
                     notStyle: true,
                     options: [
                         { label: 'Wrap', value: 'wrap' },
@@ -691,8 +768,8 @@ const View = props => {
                 },
                 {
                     type: 'select',
-                    name: 'Justify content',
-                    field: 'justifyContent',
+                    label: 'Justify content',
+                    attr: 'justifyContent',
                     notStyle: true,
                     options: [
                         { label: 'flex-start', value: 'flex-start' },
@@ -705,8 +782,8 @@ const View = props => {
                 },
                 {
                     type: 'select',
-                    name: 'Align items',
-                    field: 'alignItems',
+                    label: 'Align items',
+                    attr: 'alignItems',
                     notStyle: true,
                     options: [
                         { label: 'flex-start', value: 'flex-start' },
@@ -718,8 +795,8 @@ const View = props => {
                 },
                 {
                     type: 'select',
-                    name: 'Align content',
-                    field: 'alignContent',
+                    label: 'Align content',
+                    attr: 'alignContent',
                     hidden: data => data.flexWrap === 'nowrap',
                     notStyle: true,
                     options: [
@@ -734,8 +811,8 @@ const View = props => {
                 */
                 {
                     type: 'slider',
-                    name: 'Column width',
-                    field: 'columnWidth',
+                    label: 'Column width',
+                    attr: 'columnWidth',
                     min: 200,
                     max: 2000,
                     step: 10,
@@ -743,8 +820,8 @@ const View = props => {
                 },
                 {
                     type: 'slider',
-                    name: 'Column gap',
-                    field: 'columnGap',
+                    label: 'Column gap',
+                    attr: 'columnGap',
                     min: 0,
                     max: 200,
                     step: 1,
@@ -752,39 +829,39 @@ const View = props => {
                 },
                 {
                     type: 'slider',
-                    name: 'Row gap',
-                    field: 'rowGap',
+                    label: 'Row gap',
+                    attr: 'rowGap',
                     min: 0,
                     max: 200,
                     step: 1,
                     notStyle: true,
                 },
-            ],
+            ] as Field[],
         },
-    ]), [resolutionSelect, `${view.settings.sizex}x${view.settings.sizey}`, props.classes.backgroundClassSquare]);
+    ]), [resolutionSelect, view.settings?.sizex, view.settings?.sizey, props.classes.backgroundClassSquare]);
 
     const [accordionOpen, setAccordionOpen] = useState(
         window.localStorage.getItem('attributesView')
-            ? JSON.parse(window.localStorage.getItem('attributesView'))
+            ? JSON.parse(window.localStorage.getItem('attributesView') || '')
             : fields.map(() => false),
     );
     const [showDialog, setShowDialog] = useState(false);
     const [showDialog64, setShowDialog64] = useState(false);
     const [textDialogFocused, setTextDialogFocused] = useState(false);
     const [textDialogEnabled, setTextDialogEnabled] = useState(true);
-    const textRef = useRef();
+    const textRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        const newAccordionOpen = {};
+        const newAccordionOpen: Record<string, boolean> = {};
         if (props.triggerAllOpened !== triggerAllOpened) {
             fields.forEach((group, key) => newAccordionOpen[key] = true);
-            setTriggerAllOpened(props.triggerAllOpened);
+            setTriggerAllOpened(props.triggerAllOpened || 0);
             window.localStorage.setItem('attributesView', JSON.stringify(newAccordionOpen));
             setAccordionOpen(newAccordionOpen);
         }
         if (props.triggerAllClosed !== triggerAllClosed) {
             fields.forEach((group, key) => newAccordionOpen[key] = false);
-            setTriggerAllClosed(props.triggerAllClosed);
+            setTriggerAllClosed(props.triggerAllClosed || 0);
             window.localStorage.setItem('attributesView', JSON.stringify(newAccordionOpen));
             setAccordionOpen(newAccordionOpen);
         }
@@ -804,54 +881,55 @@ const View = props => {
 
     let allViewDialog = null;
     if (showAllViewDialog) {
-        const viewsToChange = [];
-        if (showAllViewDialog.groupApply) {
+        const viewsToChange: string[] = [];
+        if (showAllViewDialog.groupApply && showAllViewDialog.group) {
             // find all fields with applyToAll flag, and if any is not equal show button
             for (let f = 0; f < showAllViewDialog.group.fields.length; f++) {
                 const field = showAllViewDialog.group.fields[f];
                 if (field.applyToAll && !field.groupApply) {
-                    let selectedViewValue = store.getState().visProject[props.selectedView].settings[field.field];
+                    let selectedViewValue: any = (store.getState().visProject[props.selectedView].settings as Record<string, any>)?.[field.attr];
                     if (field.type === 'boolean') {
                         selectedViewValue = !!selectedViewValue;
                     } else {
                         selectedViewValue = selectedViewValue || '';
                     }
                     viewList.forEach(_view => {
-                        const newView = store.getState().visProject[_view];
+                        const newView: View = store.getState().visProject[_view];
+                        if (newView.settings) {
+                            let viewValue: any = (newView.settings as Record<string, any>)[field.attr];
+                            if (field.type === 'boolean') {
+                                viewValue = !!viewValue;
+                            } else if (viewValue !== 0) {
+                                viewValue = viewValue || '';
+                            }
 
-                        let viewValue = newView.settings[field.field];
-                        if (field.type === 'boolean') {
-                            viewValue = !!viewValue;
-                        } else {
-                            viewValue = viewValue || '';
-                        }
-
-                        if (newView.settings.navigation &&
-                            viewValue !== selectedViewValue &&
-                            !viewsToChange.includes(newView.name || _view)
-                        ) {
-                            viewsToChange.push(newView.name || _view);
+                            if (newView.settings.navigation &&
+                                viewValue !== selectedViewValue &&
+                                !viewsToChange.includes(newView.name || _view)
+                            ) {
+                                viewsToChange.push(newView.name || _view);
+                            }
                         }
                     });
                 }
             }
         } else {
-            let selectedViewValue =  store.getState().visProject[props.selectedView].settings[showAllViewDialog.field];
+            let selectedViewValue = (store.getState().visProject[props.selectedView].settings as Record<string, any>)?.[showAllViewDialog.attr];
 
-            if (showAllViewDialog.field.type === 'boolean') {
+            if (showAllViewDialog.type === 'boolean') {
                 selectedViewValue = !!selectedViewValue;
             } else {
                 selectedViewValue = selectedViewValue || '';
             }
             viewList.forEach(_view => {
                 const projView = store.getState().visProject[_view];
-                let viewValue = projView.settings[showAllViewDialog.field];
-                if (showAllViewDialog.field.type === 'boolean') {
+                let viewValue = (projView.settings as Record<string, any>)?.[showAllViewDialog.attr];
+                if (showAllViewDialog.type === 'boolean') {
                     viewValue = !!viewValue;
                 } else {
                     viewValue = viewValue || '';
                 }
-                if (projView.settings.navigation && viewValue !== selectedViewValue) {
+                if (projView.settings?.navigation && viewValue !== selectedViewValue) {
                     viewsToChange.push(projView.name || _view);
                 }
             });
@@ -863,14 +941,14 @@ const View = props => {
             onClose={result => {
                 if (result) {
                     const project = JSON.parse(JSON.stringify(store.getState().visProject));
-                    if (showAllViewDialog.groupApply) {
+                    if (showAllViewDialog.groupApply && showAllViewDialog.group) {
                         // find all fields with applyToAll flag, and if any is not equal show button
                         for (let f = 0; f < showAllViewDialog.group.fields.length; f++) {
                             const field = showAllViewDialog.group.fields[f];
                             if (field.applyToAll && !field.groupApply) {
                                 viewList.forEach(_view => {
                                     if (project[_view].settings.navigation) {
-                                        project[_view].settings[field.field] = project[props.selectedView].settings[field.field];
+                                        project[_view].settings[field.attr] = project[props.selectedView].settings[field.attr];
                                     }
                                 });
                             }
@@ -878,7 +956,7 @@ const View = props => {
                     } else {
                         viewList.forEach(_view => {
                             if (project[_view].settings.navigation) {
-                                project[_view].settings[showAllViewDialog.field] = project[props.selectedView].settings[showAllViewDialog.field];
+                                project[_view].settings[showAllViewDialog.attr] = project[props.selectedView].settings[showAllViewDialog.attr];
                             }
                         });
                     }
@@ -892,7 +970,7 @@ const View = props => {
 
     return <div style={{ height: '100%', overflowY: 'auto' }}>
         {fields.map((group, key) => {
-            if (group.hidden && checkFunction(group.hidden, store.getState().visProject[props.selectedView].settings)) {
+            if (group.hidden && checkFunction(group.hidden, store.getState().visProject[props.selectedView]?.settings || {})) {
                 return null;
             }
             return <Accordion
@@ -917,11 +995,11 @@ const View = props => {
                             ? props.classes.groupSummaryExpanded : props.classes.groupSummary, props.classes.lightedPanel),
                         content: props.classes.clearPadding,
                         expanded: props.classes.clearPadding,
-                        expandIcon: props.classes.clearPadding,
+                        expandIconWrapper: props.classes.clearPadding,
                     }}
                     expandIcon={<ExpandMoreIcon />}
                 >
-                    {I18n.t(group.name)}
+                    {I18n.t(group.label)}
                 </AccordionSummary>
                 {accordionOpen[key] ? <AccordionDetails style={{ flexDirection: 'column', padding: 0, margin: 0 }}>
                     <table style={{ width: '100%' }}>
@@ -929,37 +1007,39 @@ const View = props => {
                             {group.fields.map((field, key2) => {
                                 let error;
                                 let disabled = false;
-                                if (field.hidden) {
+                                if (field.hidden !== undefined) {
                                     if (field.hidden === true) {
                                         return null;
                                     }
-                                    if (field.hidden !== false && checkFunction(field.hidden, store.getState().visProject[props.selectedView].settings)) {
+                                    if (field.hidden !== false && checkFunction(field.hidden, store.getState().visProject[props.selectedView].settings || {})) {
                                         return null;
                                     }
                                 }
                                 if (field.error) {
-                                    error = checkFunction(field.error, store.getState().visProject[props.selectedView].settings);
+                                    error = checkFunction(field.error, store.getState().visProject[props.selectedView].settings || {});
                                 }
-                                if (field.disabled) {
+                                if (field.disabled !== undefined) {
                                     if (field.disabled === true) {
                                         disabled = true;
                                     } else if (field.disabled === false) {
                                         disabled = false;
                                     } else {
-                                        disabled = !!checkFunction(field.disabled, store.getState().visProject[props.selectedView].settings);
+                                        disabled = !!checkFunction(field.disabled, store.getState().visProject[props.selectedView].settings || {});
                                     }
                                 }
-                                let value = field.notStyle ? view.settings[field.field] : view.settings.style[field.field];
+                                let value: any = field.notStyle ? (view.settings as Record<string, any>)?.[field.attr] : (view.settings as Record<string, any>)?.style[field.attr];
                                 if (value === null || value === undefined) {
                                     value = '';
                                 }
 
-                                const change = changeValue => {
+                                const change = (changeValue: boolean | number | string | null) => {
                                     const project = deepClone(store.getState().visProject);
-                                    if (field.notStyle) {
-                                        project[props.selectedView].settings[field.field] = changeValue;
-                                    } else {
-                                        project[props.selectedView].settings.style[field.field] = changeValue;
+                                    if (project[props.selectedView].settings) {
+                                        if (field.notStyle) {
+                                            (project[props.selectedView].settings as Record<string, any>)[field.attr] = changeValue;
+                                        } else {
+                                            (project[props.selectedView].settings as Record<string, any>).style[field.attr] = changeValue;
+                                        }
                                     }
                                     props.changeProject(project);
                                 };
@@ -986,7 +1066,7 @@ const View = props => {
                                     </Fade>}
                                 </Popper> : null;
 
-                                let result;
+                                let result: React.JSX.Element | undefined;
 
                                 if (field.type === 'autocomplete' || field.type === 'filter') {
                                     let options;
@@ -994,7 +1074,7 @@ const View = props => {
                                         options = window.vis ? window.vis.updateFilter() : [];
                                         options.unshift('');
                                     } else {
-                                        options = field.options;
+                                        options = field.options || [];
                                     }
 
                                     result = <Autocomplete
@@ -1034,11 +1114,11 @@ const View = props => {
                                             root: props.classes.clearPadding,
                                             select: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding),
                                         }}
-                                        onChange={field.onChange ? field.onChange : e => change(e.target.value)}
+                                        onChange={field.onChange ? field.onChange : (e: SelectChangeEvent<string | number>) => change(e.target.value)}
                                         renderValue={field.renderValue}
                                         fullWidth
                                     >
-                                        {field.options.map(selectItem => <MenuItem
+                                        {field.options?.map(selectItem => <MenuItem
                                             value={selectItem.value}
                                             key={selectItem.value}
                                         >
@@ -1059,7 +1139,7 @@ const View = props => {
                                         multiple
                                         fullWidth
                                     >
-                                        {field.options.map(selectItem => <MenuItem
+                                        {field.options?.map(selectItem => <MenuItem
                                             value={selectItem.value}
                                             key={selectItem.value}
                                         >
@@ -1085,7 +1165,6 @@ const View = props => {
                                                     <span key={_group._id} style={{ padding: '4px 4px' }}>
                                                         <TextWithIcon
                                                             value={_group._id}
-                                                            t={I18n.t}
                                                             lang={I18n.getLanguage()}
                                                             list={[_group]}
                                                         />
@@ -1103,7 +1182,6 @@ const View = props => {
                                             />
                                             <TextWithIcon
                                                 value={_group._id}
-                                                t={I18n.t}
                                                 lang={I18n.getLanguage()}
                                                 list={[_group]}
                                             />
@@ -1118,12 +1196,9 @@ const View = props => {
                                         disabled={!props.editMode || disabled}
                                         onChange={color => change(color)}
                                         openAbove
-                                        color={field.value || ''}
                                     />;
                                 } else if (field.type === 'icon') {
                                     result = <IconPicker
-                                        t={I18n.t}
-                                        lang={I18n.getLanguage()}
                                         value={value}
                                         onChange={fileBlob => change(fileBlob)}
                                         previewClassName={props.classes.iconPreview}
@@ -1184,14 +1259,17 @@ const View = props => {
                                             imagePrefix="../"
                                             selected={_value}
                                             filterByType="images"
-                                            onOk={selected => {
+                                            onOk={selectedOrArray => {
+                                                let selected: string | undefined | null = Array.isArray(selectedOrArray) ? selectedOrArray[0] : selectedOrArray;
                                                 const projectPrefix = `${props.adapterName}.${props.instance}/${props.projectName}/`;
-                                                if (selected.startsWith(projectPrefix)) {
+                                                if (selected?.startsWith(projectPrefix)) {
                                                     selected = `_PRJ_NAME/${selected.substring(projectPrefix.length)}`;
-                                                } else if (selected.startsWith('/')) {
+                                                } else if (selected?.startsWith('/')) {
                                                     selected = `..${selected}`;
-                                                } else if (!selected.startsWith('.')) {
+                                                } else if (selected && !selected.startsWith('.')) {
                                                     selected = `../${selected}`;
+                                                } else if (!selected) {
+                                                    selected = null;
                                                 }
                                                 change(selected);
                                                 setShowDialog(false);
@@ -1205,7 +1283,7 @@ const View = props => {
                                             disabled={!props.editMode || disabled}
                                             className={props.classes.fieldContentSlider}
                                             size="small"
-                                            onChange={(e, newValue) => change(newValue)}
+                                            onChange={(_e, newValue) => change(Array.isArray(newValue) ? newValue[0] : newValue)}
                                             value={typeof value === 'number' ? value : 0}
                                             min={field.min}
                                             max={field.max}
@@ -1255,6 +1333,7 @@ const View = props => {
                                         <Button
                                             disabled={!props.editMode || disabled}
                                             variant={value ? 'outlined' : undefined}
+                                            // @ts-expect-error grey is a valid color
                                             color={value ? 'grey' : undefined}
                                             onClick={() => setShowDialog64(true)}
                                         >
@@ -1264,7 +1343,7 @@ const View = props => {
                                             <MaterialIconSelector
                                                 themeType={props.themeType}
                                                 value={value}
-                                                onClose={icon => {
+                                                onClose={(icon: string | null) => {
                                                     setShowDialog64(false);
                                                     if (icon !== null) {
                                                         change(icon);
@@ -1302,7 +1381,7 @@ const View = props => {
                                         // find all fields with applyToAll flag, and if any is not equal show button
                                         const isShow = group.fields.find(_field =>
                                             _field.applyToAll &&
-                                            !isPropertySameInAllViews(store.getState().visProject, _field.field, props.selectedView, viewList));
+                                            !isPropertySameInAllViews(store.getState().visProject, _field, props.selectedView, viewList));
 
                                         if (isShow) {
                                             result = <div style={{ display: 'flex', width: '100%' }}>
@@ -1330,7 +1409,7 @@ const View = props => {
                                                 </Tooltip>
                                             </div>;
                                         }
-                                    } else if (!isPropertySameInAllViews(store.getState().visProject, field.field, props.selectedView, viewList)) {
+                                    } else if (!isPropertySameInAllViews(store.getState().visProject, field, props.selectedView, viewList)) {
                                         result = <div style={{ display: 'flex', width: '100%' }}>
                                             <div
                                                 style={{
@@ -1361,9 +1440,9 @@ const View = props => {
                                 return <tr key={key2}>
                                     <td
                                         className={props.classes.fieldTitle}
-                                        title={!field.title ? null : I18n.t(field.title)}
+                                        title={!field.title ? undefined : I18n.t(field.title)}
                                     >
-                                        {I18n.t(field.name)}
+                                        {I18n.t(field.label)}
                                         {helpText}
                                     </td>
                                     <td className={props.classes.fieldContent}>{result}</td>
@@ -1378,7 +1457,7 @@ const View = props => {
     </div>;
 };
 
-View.propTypes = {
+ViewAttributes.propTypes = {
     changeProject: PropTypes.func,
     classes: PropTypes.object,
     userGroups: PropTypes.object,
@@ -1397,4 +1476,4 @@ View.propTypes = {
     projectName: PropTypes.string,
 };
 
-export default withStyles(styles)(View);
+export default withStyles(styles)(ViewAttributes);

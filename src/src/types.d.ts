@@ -683,6 +683,7 @@ export interface View {
     activeWidgets: string[];
     filterList: string[];
     rerender: boolean;
+    name?: string;
     settings?: ViewSettings;
     /** Widgets on this view */
     widgets: {
