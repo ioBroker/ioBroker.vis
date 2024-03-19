@@ -182,7 +182,7 @@ async function generateConfigPage(forceBuild, enabledList) {
 `window.isLicenseError = ${isLicenseError};
 // inject the adapter instance
 window.visAdapterInstance = ${adapter.instance};
-window.vendorPrefix = '${vendorPrefix || 'MV'}';
+window.vendorPrefix = '${vendorPrefix}';
 window.disableDataReporting = ${adapter.common.disableDataReporting ? 'true' : 'false'};
 window.loadingBackgroundColor = '${adapter.config.loadingBackgroundColor || ''}';
 window.loadingBackgroundImage = '${adapter.config.loadingBackgroundImage ? `files/${adapter.namespace}/loading-bg.png` : ''}';
