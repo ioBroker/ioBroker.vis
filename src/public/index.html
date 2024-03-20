@@ -54,7 +54,7 @@
   </body>
   <script>
     // set background as early as possible
-    var themeType = window.localStorage.getItem('App.themeType');
+    var themeType = window.localStorage.getItem('Editor.themeType');
     themeType = themeType || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
     if (themeType === 'dark') {
       window.document.body.className += 'body-dark';

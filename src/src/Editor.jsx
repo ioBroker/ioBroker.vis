@@ -190,7 +190,7 @@ const ViewDrop = props => {
     </div>;
 };
 
-class App extends Runtime {
+class Editor extends Runtime {
     onIgnoreMouseEvents = ignore => {
         if (this.state.ignoreMouseEvents !== ignore) {
             setTimeout(() => this.setState({ ignoreMouseEvents: ignore }), 100);
@@ -576,7 +576,7 @@ class App extends Runtime {
         for (const clipboardWidgetId of Object.keys(this.state.widgetsClipboard.widgets)) {
             const newWidget = deepClone(this.state.widgetsClipboard.widgets[clipboardWidgetId]);
             if (this.state.widgetsClipboard.type === 'copy' && this.state.selectedView === this.state.widgetsClipboard.view) {
-                const boundingRect = App.getWidgetRelativeRect(clipboardWidgetId);
+                const boundingRect = Editor.getWidgetRelativeRect(clipboardWidgetId);
                 newWidget.style = this.pxToPercent(newWidget.style, {
                     left: `${(boundingRect?.left ?? 0) + 10}px`,
                     top: `${(boundingRect?.top ?? 0) + 10}px`,
@@ -612,7 +612,7 @@ class App extends Runtime {
         const newKeys = [];
         this.state.selectedWidgets.forEach(selectedWidget => {
             const newWidget = deepClone(widgets[selectedWidget]);
-            const boundingRect = App.getWidgetRelativeRect(selectedWidget);
+            const boundingRect = Editor.getWidgetRelativeRect(selectedWidget);
             newWidget.style = this.pxToPercent(newWidget.style, {
                 left: boundingRect.left + 10,
                 top: boundingRect.top + 10,
@@ -643,7 +643,7 @@ class App extends Runtime {
         };
         const selectedWidgets = [];
         this.state.selectedWidgets.forEach(selectedWidget => {
-            const boundingRect = App.getWidgetRelativeRect(selectedWidget);
+            const boundingRect = Editor.getWidgetRelativeRect(selectedWidget);
             selectedWidgets.push({ id: selectedWidget, widget: widgets[selectedWidget], coordinate: boundingRect });
         });
         if (type === 'left') {
@@ -869,7 +869,7 @@ class App extends Runtime {
         this.state.selectedWidgets.forEach(selectedWidget => {
             widgets[selectedWidget].grouped = true;
             widgets[selectedWidget].groupid = groupId;
-            const widgetBoundingRect = App.getWidgetRelativeRect(selectedWidget);
+            const widgetBoundingRect = Editor.getWidgetRelativeRect(selectedWidget);
             if (!left || widgetBoundingRect.left < left) {
                 left = widgetBoundingRect.left;
             }
@@ -884,7 +884,7 @@ class App extends Runtime {
             }
         });
         this.state.selectedWidgets.forEach(selectedWidget => {
-            const widgetBoundingRect = App.getWidgetRelativeRect(selectedWidget);
+            const widgetBoundingRect = Editor.getWidgetRelativeRect(selectedWidget);
             widgets[selectedWidget].style.left = widgetBoundingRect.left - left;
             widgets[selectedWidget].style.top = widgetBoundingRect.top - top;
         });
@@ -918,7 +918,7 @@ class App extends Runtime {
         const group = widgets[this.state.selectedWidgets[0]];
 
         for (const member of group.data.members) {
-            const widgetBoundingRect = App.getWidgetRelativeRect(member);
+            const widgetBoundingRect = Editor.getWidgetRelativeRect(member);
 
             if (widgetBoundingRect) {
                 widgets[member].style.left = `${widgetBoundingRect.left}px`;
@@ -2034,9 +2034,9 @@ class App extends Runtime {
     }
 }
 
-App.propTypes = {
+Editor.propTypes = {
     onThemeChange: PropTypes.func,
     version: PropTypes.string,
 };
 
-export default withStyles(styles)(App);
+export default withStyles(styles)(Editor);

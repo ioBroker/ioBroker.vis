@@ -79,13 +79,14 @@ declare global {
 const VisContextMenu = (props: VisContextMenuProps) => {
     const [exportDialog, setExportDialog] = useState(false);
     const [importDialog, setImportDialog] = useState(false);
+    const visProject = store.getState().visProject;
 
-    if (!store.getState().visProject[props.selectedView]) {
+    if (!visProject[props.selectedView] && Object.keys(visProject).length > 1) {
         return null;
     }
 
-    const menuItemsData = (menuPosition: { top: number; left: number }) => {
-        const view: View = store.getState().visProject[props.selectedView];
+    const menuItemsData = Object.keys(visProject).length <= 1 ? null : (menuPosition: { top: number; left: number }) => {
+        const view: View = visProject[props.selectedView];
         const coordinatesWidgets: AnyWidgetId[] = menuPosition ? Object.keys(view.widgets)
             .filter(widget => {
                 const rect = window.document.getElementById(widget)?.getBoundingClientRect();
@@ -122,13 +123,13 @@ const VisContextMenu = (props: VisContextMenuProps) => {
 
             if (view.widgets[coordinatesWidgets[0]].marketplace) {
                 widgetType = `${view.widgets[coordinatesWidgets[0]].marketplace.name} (${I18n.t('version')} ${view.widgets[coordinatesWidgets[0]].marketplace.version})`;
-                // marketplaceUpdate = store.getState().visProject.___settings.marketplace.find(u =>
+                // marketplaceUpdate = visProject.___settings.marketplace.find(u =>
                 //     u.widget_id === view.widgets[coordinatesWidgets[0]].marketplace.widget_id &&
                 //     u.version > view.widgets[coordinatesWidgets[0]].marketplace.version);
             }
         }
 
-        const selectedWidget: SingleWidget | GroupWidget = store.getState().visProject[props.selectedView].widgets[props.selectedWidgets[0]];
+        const selectedWidget: SingleWidget | GroupWidget = visProject[props.selectedView].widgets[props.selectedWidgets[0]];
 
         return [
             {
@@ -180,7 +181,7 @@ const VisContextMenu = (props: VisContextMenuProps) => {
                 onClick: async () => {
                     // copy all selected widgets
                     const widgets = props.selectedWidgets.map(wid => {
-                        const w = JSON.parse(JSON.stringify(store.getState().visProject[props.selectedView].widgets[wid]));
+                        const w = JSON.parse(JSON.stringify(visProject[props.selectedView].widgets[wid]));
                         w._id = wid;
                         w.isRoot = true;
                         delete w.marketplace;
@@ -206,7 +207,7 @@ const VisContextMenu = (props: VisContextMenuProps) => {
                                     if (groupWidgets.includes(member)) {
                                         return;
                                     }
-                                    const memberWidget = JSON.parse(JSON.stringify(store.getState().visProject[props.selectedView].widgets[member]));
+                                    const memberWidget = JSON.parse(JSON.stringify(visProject[props.selectedView].widgets[member]));
                                     memberWidget._id = `i${wIdx.toString().padStart(6, '0')}`;
                                     memberWidget.widgetSet = (window as any).visWidgetTypes.find((type: WidgetType) => type.name === memberWidget.tpl).set;
                                     wIdx++;
@@ -339,12 +340,12 @@ const VisContextMenu = (props: VisContextMenuProps) => {
     };
 
     return <>
-        <IOContextMenu
+        {menuItemsData ? <IOContextMenu
             menuItemsData={menuItemsData}
             disabled={props.disabled}
         >
             {props.children}
-        </IOContextMenu>
+        </IOContextMenu> : props.children}
         {importDialog ? <WidgetImportDialog
             onClose={() => setImportDialog(false)}
             changeProject={props.changeProject}
@@ -353,7 +354,7 @@ const VisContextMenu = (props: VisContextMenuProps) => {
         /> : null}
         {exportDialog ? <WidgetExportDialog
             onClose={() => setExportDialog(false)}
-            widgets={store.getState().visProject[props.selectedView].widgets}
+            widgets={visProject[props.selectedView].widgets}
             selectedWidgets={props.selectedWidgets}
         /> : null}
     </>;

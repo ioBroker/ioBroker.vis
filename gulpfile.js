@@ -161,7 +161,7 @@ export default FiltersEditorDialog;
     fs.writeFileSync(`${__dirname}/runtime/package.json`, JSON.stringify(pack, null, 2));
     fs.writeFileSync(`${__dirname}/runtime/craco.config.js`, fs.readFileSync(`${__dirname}/src/craco.config.js`));
     fs.writeFileSync(`${__dirname}/runtime/modulefederation.config.js`, fs.readFileSync(`${__dirname}/src/modulefederation.config.js`));
-    fs.writeFileSync(`${__dirname}/runtime/src/App.jsx`, fs.readFileSync(`${__dirname}/src/src/Runtime.jsx`));
+    fs.writeFileSync(`${__dirname}/runtime/src/Editor.jsx`, fs.readFileSync(`${__dirname}/src/src/Runtime.jsx`));
     fs.writeFileSync(`${__dirname}/runtime/tsconfig.json`, fs.readFileSync(`${__dirname}/src/tsconfig.json`));
     fs.writeFileSync(`${__dirname}/runtime/src/Store.tsx`, fs.readFileSync(`${__dirname}/src/src/Store.tsx`));
     fs.writeFileSync(`${__dirname}/runtime/src/Utils/utils.tsx`, fs.readFileSync(`${__dirname}/src/src/Utils/utils.tsx`));

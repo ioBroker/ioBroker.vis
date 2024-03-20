@@ -5,7 +5,7 @@ import { StylesProvider, createGenerateClassName } from '@mui/styles';
 
 import './index.css';
 import { Utils } from '@iobroker/adapter-react-v5';
-import App from './App';
+import App from './Editor';
 import * as serviceWorker from './serviceWorker';
 import packageJson from '../package.json';
 import theme from './theme';
