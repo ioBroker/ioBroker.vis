@@ -1254,7 +1254,7 @@ const WidgetField = props => {
                 key={_instance.id}
             >
                 <ListItemIcon>
-                    <img src={`../${_instance.name}.admin/${_instance.icon}`} width="24" height="24" alt={_instance.name} />
+                    <Icon src={`../${_instance.name}.admin/${_instance.icon}`} width="24" height="24" alt={_instance.name} />
                 </ListItemIcon>
                 <ListItemText>{field.isShort ? _instance.idShort : _instance.id}</ListItemText>
             </MenuItem>)}

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { Icon } from '@iobroker/adapter-react-v5';
 import { GetRxDataFromWidget, RxRenderWidgetProps } from '@/types';
 import VisRxWidget from '@/Vis/visRxWidget';
 
@@ -20,7 +21,7 @@ export default class BasicImage extends VisRxWidget<RxData> {
     constructor(props: RxRenderWidgetProps) {
         // @ts-expect-error refactor types to extend from parent types
         super(props);
-        this.imageRef = React.createRef();
+        this.imageRef = React.createRef<HTMLImageElement>();
     }
 
     /**
@@ -217,7 +218,7 @@ export default class BasicImage extends VisRxWidget<RxData> {
         const src = this.state.rxData.src || '';
 
         return src ? <div className="vis-widget-body" style={{ overflow: 'hidden' }}>
-            <img
+            <Icon
                 style={style}
                 ref={this.imageRef}
                 src={this.state.rxData.src}

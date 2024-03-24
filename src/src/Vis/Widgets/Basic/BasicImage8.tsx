@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { Icon } from '@iobroker/adapter-react-v5';
 import type { GetRxDataFromWidget, RxRenderWidgetProps } from '@/types';
 import { store, recalculateFields } from '@/Store';
 import VisRxWidget from '@/Vis/visRxWidget';
@@ -87,7 +88,7 @@ export default class BasicImage8 extends VisRxWidget<RxData> {
         }
 
         return <div className={classes.join(' ')}>
-            <img
+            <Icon
                 className="vis-widget-element"
                 style={{ position: 'absolute', width: '100%' }}
                 src={this.getImage(srcArr)}

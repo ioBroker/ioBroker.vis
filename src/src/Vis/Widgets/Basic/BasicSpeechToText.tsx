@@ -1,12 +1,14 @@
 import React from 'react';
+// @ts-expect-error fix import
+import type * as SpeechRecognition from 'dom-speech-recognition';
+
+import { I18n, Icon } from '@iobroker/adapter-react-v5';
+
 // eslint-disable-next-line import/no-cycle
 import VisRxWidget from '@/Vis/visRxWidget';
 import type {
     GetRxDataFromWidget, RxRenderWidgetProps,
 } from '@/types';
-import { I18n } from '@iobroker/adapter-react-v5';
-// @ts-expect-error fix import
-import type * as SpeechRecognition from 'dom-speech-recognition';
 import type { VisBaseWidgetState } from '@/Vis/visBaseWidget';
 
 // eslint-disable-next-line no-use-before-define
@@ -446,27 +448,29 @@ export default class BasicSpeechToText extends VisRxWidget<RxData, BasicSpeechTo
                     }
                 }}
             >
-                <tr>
-                    <td style={{ display: this.state.rxData.noImage ? 'none' : undefined }}>
-                        <img
-                            alt="mic"
-                            style={{ height: `${this.state.rxData.imageHeightPx}px`, width: `${this.state.rxData.imageWidthPx}px` }}
-                            src={this.state.image}
-                        />
-                    </td>
-                    <td className="mic-text" style={{ width: '100%' }}>
-                        <div
-                            style={{ display: this.state.rxData.noText ? 'none' : undefined }}
-                            /* eslint-disable-next-line react/no-danger */
-                            dangerouslySetInnerHTML={{ __html:  this.state.text }}
-                        />
-                        <div
-                            style={{ display: this.state.rxData.noResults ? 'none' : undefined, color: this.state.resultColor }}
-                            /* eslint-disable-next-line react/no-danger */
-                            dangerouslySetInnerHTML={{ __html:  this.state.result }}
-                        />
-                    </td>
-                </tr>
+                <tbody>
+                    <tr>
+                        <td style={{ display: this.state.rxData.noImage ? 'none' : undefined }}>
+                            <Icon
+                                alt="mic"
+                                style={{ height: `${this.state.rxData.imageHeightPx}px`, width: `${this.state.rxData.imageWidthPx}px` }}
+                                src={this.state.image}
+                            />
+                        </td>
+                        <td className="mic-text" style={{ width: '100%' }}>
+                            <div
+                                style={{ display: this.state.rxData.noText ? 'none' : undefined }}
+                                /* eslint-disable-next-line react/no-danger */
+                                dangerouslySetInnerHTML={{ __html:  this.state.text }}
+                            />
+                            <div
+                                style={{ display: this.state.rxData.noResults ? 'none' : undefined, color: this.state.resultColor }}
+                                /* eslint-disable-next-line react/no-danger */
+                                dangerouslySetInnerHTML={{ __html:  this.state.result }}
+                            />
+                        </td>
+                    </tr>
+                </tbody>
             </table>
         </div>;
     }
