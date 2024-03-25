@@ -49,7 +49,8 @@
                             .then(text => {
                                 const newScript = document.createElement('script');
                                 newScript.innerHTML = text;
-                                script.parentNode.replaceChild(newScript, document.getElementById(scriptId));
+                                const oldScript = document.getElementById(scriptId);
+                                oldScript.parentNode.replaceChild(newScript, oldScript);
                                 resolveScript();
                             });
                     }
