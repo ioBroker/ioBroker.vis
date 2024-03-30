@@ -19,7 +19,7 @@ import {
     CardContent,
 } from '@mui/material';
 
-import { Connection, I18n, Icon } from '@iobroker/adapter-react-v5';
+import { type LegacyConnection, I18n, Icon } from '@iobroker/adapter-react-v5';
 
 import {
     Project, AnyWidgetId, RxWidgetInfo,
@@ -99,7 +99,7 @@ interface RxData {
 
 export interface CustomWidgetProperties {
     context: {
-        socket: Connection;
+        socket: LegacyConnection;
         projectName: string;
         instance: number;
         adapterName: string;
@@ -512,16 +512,14 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
         // subscribe on some new IDs and remove old IDs
         const unsubscribe = oldIDs.filter(id => !this.linkContext.IDs.includes(id));
         if (unsubscribe.length) {
-            for (let s = 0; s < unsubscribe.length; s++) {
-                await context.socket.unsubscribeState(unsubscribe[s], this.onIoBrokerStateChanged);
-            }
+            // legacy connection can process arrays
+            context.socket.unsubscribeState(unsubscribe, this.onIoBrokerStateChanged);
         }
 
         const subscribe = this.linkContext.IDs.filter(id => !oldIDs.includes(id));
         if (subscribe.length) {
-            for (let k = 0; k < subscribe.length; k++) {
-                await context.socket.subscribeState(subscribe[k], this.onIoBrokerStateChanged);
-            }
+            // legacy connection can process arrays
+            context.socket.subscribeState(subscribe, this.onIoBrokerStateChanged);
         }
 
         this.onStateChanged();

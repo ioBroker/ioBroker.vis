@@ -3,6 +3,8 @@ import { v4 as uuid } from 'uuid';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { type Styles, withStyles } from '@mui/styles';
 
+import type { Connection } from '@iobroker/adapter-react-v5';
+
 import {
     Button,
     Dialog, DialogActions,
@@ -240,7 +242,7 @@ class FiltersEditorDialog extends Component<FiltersEditorDialogProps, FiltersEdi
                 this.updateItems(items);
                 this.setState({ selectImage: null });
             }}
-            socket={this.props.context.socket}
+            socket={this.props.context.socket as any as Connection}
         />;
     }
 

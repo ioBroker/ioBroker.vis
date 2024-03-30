@@ -12,7 +12,7 @@
  * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
  * (Free for non-commercial use).
  */
-import { I18n, type Connection } from '@iobroker/adapter-react-v5';
+import { I18n, type LegacyConnection } from '@iobroker/adapter-react-v5';
 import type VisRxWidget from '@/Vis/visRxWidget';
 
 type WidgetSetName = string;
@@ -171,8 +171,15 @@ function _loadComponentHelper(context: VisLoadComponentContext): Promise<void[]>
     return Promise.all(promises);
 }
 
+function getText(text: string | ioBroker.StringOrTranslated): string {
+    if (typeof text === 'object') {
+        return text[I18n.getLanguage()] || text.en || '';
+    }
+    return (text || '').toString();
+}
+
 /* Do not make this funktion async, because is optimized to simultaneously load the widget sets */
-function getRemoteWidgets(socket: Connection, onlyWidgetSets?: false | string[]): Promise<void | VisRxWidget<any>[]> {
+function getRemoteWidgets(socket: LegacyConnection, onlyWidgetSets?: false | string[]): Promise<void | VisRxWidget<any>[]> {
     return socket.getObjectViewSystem(
         'instance',
         'system.adapter.',
@@ -181,12 +188,15 @@ function getRemoteWidgets(socket: Connection, onlyWidgetSets?: false | string[])
         .then(objects => {
             const result: VisRxWidget<any>[] = [];
             const countRef = { count: 0, max: 0 };
-            const instances = Object.values(objects);
-            const dynamicWidgetInstances = instances.filter(obj =>
-                obj.common.visWidgets &&
-                // @ts-expect-error will be fixed in js-controller@5.0.20
-                !obj.common.visWidgets.ignoreInVersions?.includes(2) &&
-                (!onlyWidgetSets || onlyWidgetSets.includes(obj.common.name)));
+            const instances: ioBroker.InstanceObject[] = Object.values(objects as Record<string, ioBroker.InstanceObject>);
+            const dynamicWidgetInstances: ioBroker.InstanceObject[] = instances.filter(obj  => {
+                if (!(obj as ioBroker.InstanceObject).common.visWidgets) {
+                    return false;
+                }
+                const ignoreVersions: number[] = ((obj as ioBroker.InstanceObject).common.visWidgets as any).ignoreInVersions || [];
+                return !ignoreVersions.includes(2) &&
+                    (!onlyWidgetSets || onlyWidgetSets.includes(getText((obj as ioBroker.InstanceObject).common.name)));
+            });
 
             const promises: Promise<void[] | void | null>[] = [];
             for (let i = 0; i < dynamicWidgetInstances.length; i++) {

@@ -14,7 +14,7 @@ import CardContent from '@mui/material/CardContent';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import Collapse from '@mui/material/Collapse';
-import { type Connection, I18n } from '@iobroker/adapter-react-v5';
+import { type LegacyConnection, I18n } from '@iobroker/adapter-react-v5';
 import {
     AnyWidgetId, Permissions, Project, Widget,
 } from '@/types';
@@ -28,7 +28,7 @@ interface PermissionsDialogProps {
     /** Modify the active project */
     changeProject: (project: Project) => void;
     /** The socket connection */
-    socket: Connection;
+    socket: LegacyConnection;
 }
 
 /** Permissions assignment to username */
@@ -85,7 +85,7 @@ export default class PermissionsDialog extends React.Component<PermissionsDialog
      * Lifecycle hook called when component is mounted
      */
     async componentDidMount(): Promise<void> {
-        const userView: Record<string, ioBroker.UserObject> = await this.props.socket.getObjectViewSystem('user', 'system.user.', 'system.user.\u9999');
+        const userView: Record<string, ioBroker.UserObject> = await this.props.socket.getObjectViewSystem('user', 'system.user.', 'system.user.\u9999') as Record<string, ioBroker.UserObject>;
         const { visProject } = store.getState();
         const projectPermissions = new Map<string, Permissions>();
         const viewPermissions: Record<string, PermissionsMap> = {};

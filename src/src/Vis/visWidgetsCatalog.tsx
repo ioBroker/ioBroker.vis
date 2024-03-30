@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { type Connection } from '@iobroker/adapter-react-v5';
+import { type LegacyConnection } from '@iobroker/adapter-react-v5';
 import {
     GroupWidgetId,
     Project,
@@ -122,7 +122,7 @@ type RxWidgetInfoAttributesFieldAll = {
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
-    onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void> | string;
+    onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: LegacyConnection, index?: number) => Promise<void> | string;
 }
 
 interface WidgetAttributeInfoStored extends RxWidgetInfoAttributesFieldAll {
@@ -282,7 +282,7 @@ class VisWidgetsCatalog {
     }
 
     static collectRxInformation(
-        socket: Connection,
+        socket: LegacyConnection,
         project: Project,
         changeProject?: (newProject: Project) => void,
     ): Promise<Record<string, VisRxWidget<any>>> {

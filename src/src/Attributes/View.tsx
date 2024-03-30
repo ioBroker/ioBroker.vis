@@ -40,7 +40,8 @@ import {
     IconPicker,
     SelectFile as SelectFileDialog,
     Confirm as ConfirmDialog,
-    TextWithIcon, Icon, type Connection,
+    TextWithIcon, Icon, type LegacyConnection,
+    type Connection,
 } from '@iobroker/adapter-react-v5';
 
 import { store } from '@/Store';
@@ -277,7 +278,7 @@ interface ViewProps {
     themeType: string;
     instance: number;
     projectName: string;
-    socket: Connection;
+    socket: LegacyConnection;
 }
 
 const ViewAttributes = (props: ViewProps) => {
@@ -1274,7 +1275,7 @@ const ViewAttributes = (props: ViewProps) => {
                                                 change(selected);
                                                 setShowDialog(false);
                                             }}
-                                            socket={props.socket}
+                                            socket={props.socket as any as Connection}
                                         /> : null}
                                     </>;
                                 } else if (field.type === 'slider') {

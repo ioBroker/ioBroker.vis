@@ -1,6 +1,6 @@
 import React from 'react';
 import { withStyles } from '@mui/styles';
-import type { Connection } from '@iobroker/adapter-react-v5';
+import type { LegacyConnection, Connection } from '@iobroker/adapter-react-v5';
 
 import {
     Button,
@@ -89,7 +89,7 @@ interface BulkEditorData {
 }
 
 interface BulkEditorProps {
-    socket: Connection;
+    socket: LegacyConnection;
     data: BulkEditorData;
     themeType: 'dark' | 'light';
     adapterName: string;
@@ -183,7 +183,7 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
             });
     }
 
-    static async generateFields(data: BulkEditorData, socket: Connection) {
+    static async generateFields(data: BulkEditorData, socket: LegacyConnection) {
         const oid = data.oid;
         if (!oid || oid === 'nothing_selected') {
             return false;
@@ -424,7 +424,7 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
         />;
     }
 
-    renderImageDialog() {
+    renderImageDialog(): React.JSX.Element | null {
         if (this.state.imageDialog === null) {
             return null;
         }
@@ -470,7 +470,7 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
             filterByType="images"
             onOk={(selectedOrArray: string | string[] | undefined) =>
                 onChange(Array.isArray(selectedOrArray) ? selectedOrArray[0] : selectedOrArray, true)}
-            socket={this.props.socket}
+            socket={this.props.socket as any as Connection}
         />;
     }
 

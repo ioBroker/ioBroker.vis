@@ -50,7 +50,7 @@ import './visWords';
 
 import VisView from './visView';
 import VisFormatUtils from './visFormatUtils';
-import { getUrlParameter, extractBinding } from './visUtils';
+import { getUrlParameter, extractBinding, readFile } from './visUtils';
 import VisWidgetsCatalog from './visWidgetsCatalog';
 import { store } from '../Store';
 
@@ -104,32 +104,6 @@ function translate(text, arg1, arg2, arg3) {
     }
 
     return text;
-}
-
-function readFile(socket, id, fileName, withType) {
-    return socket.readFile(id, fileName)
-        .then(file => {
-            let mimeType = '';
-            if (typeof file === 'object') {
-                if (withType) {
-                    if (file.mimeType) {
-                        mimeType = file.mimeType;
-                    } else if (file.type) {
-                        mimeType = file.type;
-                    }
-                }
-
-                if (file.file !== undefined) {
-                    file = file.file; // adapter-react-v5@4.x delivers file.file
-                } else if (file.data !== undefined) {
-                    file = file.data; // LegacyConnection delivers file.data
-                }
-            }
-            if (withType) {
-                return { file, mimeType };
-            }
-            return file;
-        });
 }
 
 class VisEngine extends React.Component {

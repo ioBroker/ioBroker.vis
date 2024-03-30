@@ -12,7 +12,7 @@
  * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
  * (Free for non-commercial use).
  */
-import { type Connection } from '@iobroker/adapter-react-v5';
+import { type LegacyConnection } from '@iobroker/adapter-react-v5';
 import {
     Project,
     AnyWidgetId,
@@ -730,30 +730,17 @@ function getUrlParameter(attr: string): string | true {
     return '';
 }
 
-async function readFile(socket: Connection, id: string, fileName: string, withType?: boolean): Promise<string | { file: string; mimeType: string }> {
+async function readFile(socket: LegacyConnection, id: string, fileName: string, withType?: boolean): Promise<string | { file: string; mimeType: string }> {
     const file = await socket.readFile(id, fileName);
     let mimeType = '';
     let data = '';
     if (typeof file === 'object') {
         if (withType) {
-            if (file.mimeType) {
-                mimeType = file.mimeType;
-            } else
-                // @ts-expect-error LegacyConnection delivers file.type
-                if (file.type) {
-                    // @ts-expect-error LegacyConnection delivers file.type
-                    mimeType = file.type;
-                }
+            // @ts-expect-error LegacyConnection delivers file.mimeType
+            mimeType = file.mimeType ? file.mimeType : (file.type ? file.type : '');
         }
-
-        if (file.file) {
-            data = file.file; // adapter-react-v5@4.x delivers file.file
-        } else
-            // @ts-expect-error LegacyConnection delivers file.data
-            if (file.data) {
-                // @ts-expect-error LegacyConnection delivers file.data
-                data = file.data; // LegacyConnection delivers file.data
-            }
+        // @ts-expect-error LegacyConnection delivers file.data
+        data = file.file || file.data;
     } else {
         data = file;
     }

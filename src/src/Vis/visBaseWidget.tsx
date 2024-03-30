@@ -23,7 +23,7 @@ import {
     KeyboardReturn,
 } from '@mui/icons-material';
 
-import { type Connection, I18n, Utils } from '@iobroker/adapter-react-v5';
+import { type LegacyConnection, I18n, Utils } from '@iobroker/adapter-react-v5';
 
 import { calculateOverflow, deepClone, isVarFinite } from '@/Utils/utils';
 import {
@@ -72,7 +72,7 @@ export interface VisBaseWidgetProps {
     refParent: React.RefObject<any>;
     customSettings: any;
     classes: Record<string, string>;
-    socket: Connection;
+    socket: LegacyConnection;
 }
 
 export type VisWidgetCommand = 'includePossible' | 'includePossibleNOT' | 'startStealMode' | 'cancelStealMode' | 'startMove' | 'startResize' | 'stopMove' | 'stopResize' | 'collectFilters' | 'changeFilter' | 'updateContainers' | 'closeDialog' | 'openDialog' | 'updatePosition' | 'include';

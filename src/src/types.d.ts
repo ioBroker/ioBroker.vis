@@ -1,7 +1,7 @@
 import type React from 'react';
 import type { Theme } from '@mui/material';
 import type moment from 'moment';
-import type { Connection } from '@iobroker/adapter-react-v5';
+import type { LegacyConnection } from '@iobroker/adapter-react-v5';
 import { AnyWidgetId, Project, WidgetData } from '@/types';
 import { CustomPaletteProperties, WidgetAttributeInfo } from '@/Vis/visRxWidget';
 import VisFormatUtils from '@/Vis/visFormatUtils';
@@ -963,7 +963,7 @@ export interface VisContext {
     setTimeStart: (timeStart: string) => void;
     setValue: (id: string, value: string | boolean | number | null) => void;
     showWidgetNames: boolean;
-    socket: Connection;
+    socket: LegacyConnection;
     systemConfig: ioBroker.Object;
     theme: Theme;
     themeName: string;
