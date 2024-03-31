@@ -203,9 +203,14 @@ class VisEngine extends React.Component {
                 this.props.socket.subscribeState(this.ID_CONTROL_DATA, this.onStateChange);
                 this.props.socket.subscribeState(this.ID_CONTROL_COMMAND, this.onStateChange);
 
+                this.props.setLoadingText && this.props.setLoadingText('Load widgets...');
+
                 return this.loadWidgets();
             })
-            .then(() => this.setState({ ready: true }));
+            .then(() => {
+                this.props.setLoadingText && this.props.setLoadingText(null);
+                this.setState({ ready: true });
+            });
     }
 
     static getCurrentPath() {
@@ -320,6 +325,7 @@ class VisEngine extends React.Component {
             return Promise.resolve();
         }
 
+        this.props.setLoadingText && this.props.setLoadingText('Loading objects...');
         return this.conn.getObjects()
             .then(objects => this.vis.objects = objects);
     }
@@ -2121,6 +2127,7 @@ VisEngine.propTypes = {
     showLegacyFileSelector: PropTypes.func,
     toggleTheme: PropTypes.func,
     askAboutInclude: PropTypes.func,
+    setLoadingText: PropTypes.func,
 };
 
 export default VisEngine;

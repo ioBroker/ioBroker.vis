@@ -13,5 +13,8 @@
   "Project \"%s\" does not exist": "Project \"%s\" does not exist",
   "welcome_message": "No one project yet exists.",
   "Select vis-2 project": "Select \"vis-2\" project",
-  "Create or import new \"vis-2\" project": "Create or import new \"vis-2\" project"
+  "Create or import new \"vis-2\" project": "Create or import new \"vis-2\" project",
+  "Load project file...": "Loading project file...",
+  "Load widgets...": "Loading widgets...",
+  "Loading objects...": "Loading objects..."
 }

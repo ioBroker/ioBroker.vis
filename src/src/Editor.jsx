@@ -149,6 +149,21 @@ const styles = theme => ({
         height: 24,
         marginRight: 8,
     },
+    loadingText: {
+        position: 'absolute',
+        height: 50,
+        backgroundColor: theme.palette.mode === 'dark' ? 'rgba(0,0,0,0.8)' : 'rgba(255,255,255,0.8)',
+        color: theme.palette.mode === 'dark' ? 'white' : 'black',
+        width: 320,
+        zIndex: 2000,
+        top: 50,
+        borderRadius: 10,
+        left: 'calc(50% - 160px)',
+        padding: 8,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
 });
 
 const ViewDrop = props => {
@@ -249,6 +264,7 @@ class Editor extends Runtime {
             hidePalette: window.localStorage.getItem('Vis.hidePalette') === 'true',
             hideAttributes: window.localStorage.getItem('Vis.hideAttributes') === 'true',
             loadingProgress: { step: 0, total: 0 },
+            loadingText: null,
             showCodeDialog: null,
             confirmDialog: null,
             showProjectUpdateDialog: false,
@@ -1743,6 +1759,10 @@ class Editor extends Runtime {
         />;
     }
 
+    setLoadingText = text => {
+        this.setState({ loadingText: I18n.t(text) });
+    };
+
     renderDeleteDialog() {
         return this.state.deleteWidgetsDialog ?
             <ConfirmDialog
@@ -1831,6 +1851,13 @@ class Editor extends Runtime {
         /> : null;
     }
 
+    renderLoadingText() {
+        if (!this.state.loadingText) {
+            return null;
+        }
+        return <div className={this.props.classes.loadingText}>{this.state.loadingText}</div>;
+    }
+
     render() {
         if (this.state.projectDoesNotExist) {
             return <StylesProvider generateClassName={generateClassName}>
@@ -1856,6 +1883,7 @@ class Editor extends Runtime {
             return <StylesProvider generateClassName={generateClassName}>
                 <StyledEngineProvider injectFirst>
                     <ThemeProvider theme={this.state.theme}>
+                        {this.renderLoadingText()}
                         {this.renderLoader()}
                     </ThemeProvider>
                 </StyledEngineProvider>
@@ -2009,6 +2037,7 @@ class Editor extends Runtime {
                             </DndProvider>
                         </div>
                     </div>
+                    {this.renderLoadingText()}
                     {this.renderCreateFirstProjectDialog()}
                     {this.renderDeleteDialog()}
                     {this.renderUpdateDialog()}

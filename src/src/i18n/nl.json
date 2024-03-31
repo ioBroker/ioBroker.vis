@@ -734,5 +734,8 @@
   "Include widget?": "Widget toevoegen?",
   "Do you want to include \"%s\" widget into \"%s\"?": "Wilt u de widget \"%s\" opnemen in \"%s\"?",
   "Unselect": "Deselecteer",
-  "All": "Alle"
+  "All": "Alle",
+  "Load project file...": "Projectbestand laden...",
+  "Load widgets...": "Widgets laden...",
+  "Loading objects...": "Objecten laden..."
 }

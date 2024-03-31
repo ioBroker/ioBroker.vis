@@ -13,5 +13,8 @@
   "Project \"%s\" does not exist": "项目“%s”不存在",
   "welcome_message": "目前还没有一个项目存在。",
   "Select vis-2 project": "选择“vis-2”项目",
-  "Create or import new \"vis-2\" project": "创建或导入新的“vis-2”项目"
+  "Create or import new \"vis-2\" project": "创建或导入新的“vis-2”项目",
+  "Load project file...": "正在加载项目文件...",
+  "Load widgets...": "正在加载小部件...",
+  "Loading objects...": "正在加载对象..."
 }

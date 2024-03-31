@@ -56,7 +56,7 @@ const getOrLoadRemote = (remote: string, shareScope: string | { default: any }, 
                     // otherwise, init share scope as usual
 
                     try {
-                        // eslint-disable-next-line camelcase,no-undef
+                        // eslint-disable-next-line camelcase, no-undef
                         // @ts-expect-error this is a trick
                         await window[remote].init(__webpack_share_scopes__[shareScope]);
                     } catch (e) {

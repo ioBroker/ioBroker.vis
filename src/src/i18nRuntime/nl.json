@@ -13,5 +13,8 @@
   "Project \"%s\" does not exist": "Project \"%s\" bestaat niet",
   "welcome_message": "Er is nog geen enkel project.",
   "Select vis-2 project": "Selecteer het \"vis-2\"-project",
-  "Create or import new \"vis-2\" project": "Creëer of importeer een nieuw \"vis-2\" project"
+  "Create or import new \"vis-2\" project": "Creëer of importeer een nieuw \"vis-2\" project",
+  "Load project file...": "Projectbestand laden...",
+  "Load widgets...": "Widgets laden...",
+  "Loading objects...": "Objecten laden..."
 }

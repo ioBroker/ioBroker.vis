@@ -443,12 +443,14 @@ class Runtime extends GenericApp {
 
     loadProject = async (projectName, file) => {
         if (!file) {
+            this.setLoadingText && this.setLoadingText('Load project file...');
             try {
                 file = await readFile(this.socket, this.adapterId, `${projectName}/vis-views.json`);
             } catch (err) {
                 console.warn(`Cannot read project file "${projectName}/vis-views.json": ${err}`);
                 file = '{}';
             }
+            this.setLoadingText && this.setLoadingText(null);
         }
 
         if (!file || file === '{}') {
@@ -1028,6 +1030,7 @@ class Runtime extends GenericApp {
             adapterId={this.adapterId}
             editModeComponentClass={this.props.classes?.editModeComponentClass}
             onIgnoreMouseEvents={this.onIgnoreMouseEvents}
+            setLoadingText={this.setLoadingText}
             onConfirmDialog={(message, title, icon, width, callback) => this.showConfirmDialog && this.showConfirmDialog({
                 message,
                 title,

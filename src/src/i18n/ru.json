@@ -734,5 +734,8 @@
   "Include widget?": "Включить виджет?",
   "Do you want to include \"%s\" widget into \"%s\"?": "Вы хотите включить виджет «%s» в «%s»?",
   "Unselect": "Отменить выбор",
-  "All": "Все"
+  "All": "Все",
+  "Load project file...": "Загрузка файла проекта...",
+  "Load widgets...": "Загрузка виджетов...",
+  "Loading objects...": "Загрузка объектов..."
 }

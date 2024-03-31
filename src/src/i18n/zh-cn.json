@@ -734,5 +734,8 @@
   "Include widget?": "包括小部件吗？",
   "Do you want to include \"%s\" widget into \"%s\"?": "您想将“%s”小部件包含到“%s”中吗？",
   "Unselect": "取消选择",
-  "All": "全部"
+  "All": "全部",
+  "Load project file...": "正在加载项目文件...",
+  "Load widgets...": "正在加载小部件...",
+  "Loading objects...": "正在加载对象..."
 }

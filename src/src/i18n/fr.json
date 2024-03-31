@@ -734,5 +734,8 @@
   "Include widget?": "Inclure le widget ?",
   "Do you want to include \"%s\" widget into \"%s\"?": "Voulez-vous inclure le widget « %s » dans « %s » ?",
   "Unselect": "Désélectionner",
-  "All": "Tous"
+  "All": "Tous",
+  "Load project file...": "Chargement du fichier de projet...",
+  "Load widgets...": "Chargement des widgets...",
+  "Loading objects...": "Chargement d'objets..."
 }
