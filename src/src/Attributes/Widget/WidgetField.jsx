@@ -921,7 +921,7 @@ const WidgetField = props => {
                     const text = item ? (field.type === 'select' && !field.noTranslation ? t(item.label) : item.label) : _value;
                     if (withIcons && item.icon) {
                         return <>
-                            <Icon src={item.icon} />
+                            <Icon src={item.icon} style={{ width: 24, height: 24 }} />
                             <span style={item.color ? { color: item.color } : null}>{text}</span>
                         </>;
                     }
@@ -937,7 +937,7 @@ const WidgetField = props => {
                 style={{ fontFamily: field.type === 'fontname' ? selectItem : null }}
             >
                 {selectItem.icon ? <ListItemIcon>
-                    <Icon src={selectItem.icon} style={{ width: 24 }} />
+                    <Icon src={selectItem.icon} style={{ width: 24, height: 24 }} />
                 </ListItemIcon>
                     :
                     (withIcons ? <ListItemIcon><div style={{ width: 24 }} /></ListItemIcon> : null)}
@@ -1254,7 +1254,7 @@ const WidgetField = props => {
                 key={_instance.id}
             >
                 <ListItemIcon>
-                    <Icon src={`../${_instance.name}.admin/${_instance.icon}`} width="24" height="24" alt={_instance.name} />
+                    <Icon src={`../${_instance.name}.admin/${_instance.icon}`} style={{ width: 24, height: 24 }} alt={_instance.name} />
                 </ListItemIcon>
                 <ListItemText>{field.isShort ? _instance.idShort : _instance.id}</ListItemText>
             </MenuItem>)}

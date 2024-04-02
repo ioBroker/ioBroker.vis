@@ -23,7 +23,7 @@ import {
     Link as LinkIcon,
 } from '@mui/icons-material';
 
-import { I18n, Utils } from '@iobroker/adapter-react-v5';
+import { I18n, Icon, Utils } from '@iobroker/adapter-react-v5';
 import {
     store, recalculateFields, updateWidget, selectWidget,
 } from '../../Store';
@@ -1194,7 +1194,7 @@ class Widget extends Component {
                         {label}
                         {field.type === 'image' && !this.state.isDifferent[field.name] && selectedWidget?.data[field.name] ?
                             <div className={this.props.classes.smallImageDiv}>
-                                <img
+                                <Icon
                                     src={selectedWidget.data[field.name].startsWith('_PRJ_NAME/') ?
                                         selectedWidget.data[field.name].replace('_PRJ_NAME/', `../${this.props.adapterName}.${this.props.instance}/${this.props.projectName}/`)
                                         :

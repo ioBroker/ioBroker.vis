@@ -25,8 +25,8 @@
     "vis-2"
   ],
   "dependencies": {
-    "@iobroker/adapter-core": "^3.0.4",
-    "axios": "^1.6.7",
+    "@iobroker/adapter-core": "^3.0.6",
+    "axios": "^1.6.8",
     "jsonwebtoken": "^9.0.2",
     "mime": "^3.0.0"
   },
@@ -35,13 +35,13 @@
     "@alcalzone/release-script-plugin-iobroker": "^3.7.0",
     "@alcalzone/release-script-plugin-license": "^3.7.0",
     "@iobroker/vis-2-widgets-testing": "^1.0.0",
-    "@tsconfig/node18": "^18.2.2",
+    "@tsconfig/node18": "^18.2.4",
     "@types/mocha": "^10.0.6",
-    "chai": "^4.3.10",
+    "chai": "^5.1.0",
     "gulp": "^4.0.2",
     "iobroker.web": "*",
-    "mocha": "^10.3.0",
-    "typescript": "^5.4.2",
+    "mocha": "^10.4.0",
+    "typescript": "^5.4.3",
     "unzipper": "^0.10.14"
   },
   "bugs": {
