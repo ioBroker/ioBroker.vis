@@ -264,6 +264,9 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Corrected the scroll buttons in Tabs widget
+
 ### 2.9.48 (2024-03-30)
 * (bluefox) Showed selected view in the view dialog
 * (bluefox) Added customization of loading screen

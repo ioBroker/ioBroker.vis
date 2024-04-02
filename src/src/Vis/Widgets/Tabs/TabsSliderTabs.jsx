@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2022-2023 Denis Haev https://github.com/GermanBluefox,
+ *  Copyright (c) 2022-2024 Denis Haev https://github.com/GermanBluefox,
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -222,7 +222,7 @@ class TabsSliderTabs extends VisRxWidget {
                 flexDirection: this.state.rxData.vertical ? 'row' : 'column',
             }}
         >
-            <div>
+            <div style={{ width: '100%', overflow: 'hidden' }}>
                 <Tabs
                     TabIndicatorProps={{
                         style: {
@@ -236,7 +236,7 @@ class TabsSliderTabs extends VisRxWidget {
                     }}
                     scrollButtons="auto"
                     centered={this.state.rxData.variant === 'centered'}
-                    variant={this.state.rxData.variant === 'fullWidth' ? 'fullWidth' : undefined}
+                    variant={this.state.rxData.variant === 'fullWidth' ? 'fullWidth' : (this.state.rxData.variant === 'centered' ? undefined : 'scrollable')}
                     orientation={this.state.rxData.vertical ? 'vertical' : undefined}
                 >
                     {tabs}

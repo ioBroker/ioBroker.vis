@@ -1875,7 +1875,11 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
         }
 
         // convert string to number+'px'
-        ['top', 'left', 'width', 'height', 'right', 'bottom'].forEach(attr => {
+        ['top', 'left', 'width', 'height', 'right', 'bottom',
+            'borderRadius', 'paddingLeft', 'paddingTop',
+            'paddingRight', 'paddingBottom', 'marginTop',
+            'marginBottom', 'marginLeft', 'marginRight',
+        ].forEach(attr => {
             if (style[attr] !== undefined && typeof style[attr] === 'string') {
                 // eslint-disable-next-line no-restricted-properties
                 if (isVarFinite(style[attr])) {
