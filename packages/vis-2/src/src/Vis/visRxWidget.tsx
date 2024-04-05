@@ -132,9 +132,6 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
     /** Method called when state changed */
     private readonly onStateChangedBind: (id: StateID, state: ioBroker.State, doNotApplyState?: any) => void;
 
-    /** If resizing is currently locked */
-    protected resizeLocked: boolean;
-
     // private newState?: Partial<VisRxWidgetState & TState & { rxData: TRxData }> | null;
     private newState?: Partial<VisRxWidgetState & TState & { rxData: TRxData }> | null;
 
@@ -206,13 +203,10 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
             resizable: options.resizable === undefined ? (options.visResizable === undefined ? true : options.visResizable) : options.resizable,
             draggable: options.visDraggable === undefined ? true : options.visDraggable,
             resizeHandles: options.resizeHandles === undefined ? (options.visResizeHandles === undefined ? ['n', 'e', 's', 'w', 'nw', 'ne', 'sw', 'se'] : options.visResizeHandles) : options.resizeHandles,
-            // @ts-expect-error fix later
             rxData: newState.rxData,
-            // @ts-expect-error fix later
             rxStyle: newState.rxStyle,
             /** @type {Record<string, any>} */
             values: {},
-            // @ts-expect-error fix later
             visible: newState.visible,
             disabled: false,
         };
@@ -444,10 +438,8 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
      * Check if the logged-in user's group has visibility permissions for this widget
      */
     isWidgetVisibleForGroup(newState: typeof this.newState): boolean {
-        // @ts-expect-error fix later
         const userGroups = newState.rxData['visibility-groups'];
 
-        // @ts-expect-error fix later
         if (newState.rxData['visibility-groups-action'] === 'hide') {
             if (userGroups?.length && !this.isUserMemberOfGroup(this.props.context.user, userGroups)) {
                 return false;

@@ -16,7 +16,7 @@ admin/i18n/flat.txt
 *.vis.code-workspace
 beta
 
-src/build
+build
 /.vscode
 src/dist
 **/www

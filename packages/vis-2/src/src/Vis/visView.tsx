@@ -129,6 +129,8 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         WIDGET_SERVICE_DIV: 1200,
     };
 
+    private calculateRelativeWidgetPosition?: null = null;
+
     static themeCache: Record<string, string> = {};
 
     private promiseToCollect: Promise<Record<string, VisRxWidget<any>>>;
@@ -231,7 +233,6 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
             // send to all widgets the command
             Object.keys(this.widgetsRefs).forEach(wid => {
                 if (this.widgetsRefs[wid as AnyWidgetId]?.onCommand) {
-                    // @ts-expect-error I don't know
                     this.widgetsRefs[wid as AnyWidgetId].onCommand('updateContainers');
                 }
             });
@@ -246,7 +247,6 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
 
         if (command === 'closeDialog' || command === 'openDialog') {
             if (this.widgetsRefs[options as AnyWidgetId]?.onCommand) {
-                // @ts-expect-error I don't know
                 this.widgetsRefs[options as AnyWidgetId].onCommand(command);
             }
             return null;
@@ -260,7 +260,6 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
                 let filterValues: string[] | string;
                 if (this.widgetsRefs[wid as AnyWidgetId]?.onCommand) {
                     // take bound information
-                    // @ts-expect-error I don't know
                     filterValues = this.widgetsRefs[wid as AnyWidgetId]?.onCommand('collectFilters') as string[];
                 } else {
                     filterValues = widgets[wid as AnyWidgetId]?.data?.filterkey as string[] | string;
@@ -291,7 +290,6 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
             // inform every widget about changed filter
             Object.keys(this.widgetsRefs).forEach(wid => {
                 if (this.widgetsRefs[wid as AnyWidgetId]?.onCommand) {
-                    // @ts-expect-error I don't know
                     this.widgetsRefs[wid as AnyWidgetId].onCommand('changeFilter');
                 }
             });
@@ -353,7 +351,6 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         };
         Object.keys(this.widgetsRefs).forEach(wid => {
             if (this.widgetsRefs[wid as AnyWidgetId]?.onCommand) {
-                // @ts-expect-error I don't know
                 this.widgetsRefs[wid as AnyWidgetId].onCommand('startStealMode');
             }
         });
@@ -471,8 +468,6 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         return widgets as AnyWidgetId[];
     }
 
-    calculateRelativeWidgetPosition = null;
-
     onMouseViewMove = !this.props.context.runtime ? (e: MouseEvent) => {
         if (this.ignoreMouseEvents || !this.movement) {
             return;
@@ -517,7 +512,6 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
                         this.props.selectedGroup !== id
                     ) {
                         if (this.widgetsRefs[id as AnyWidgetId]?.onTempSelect) {
-                            // @ts-expect-error I don't know
                             this.widgetsRefs[id as AnyWidgetId].onTempSelect(true);
                         }
                     }
@@ -525,7 +519,6 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
                 // deselect
                 this.movement.selectedWidgetsWithRectangle.forEach(id => {
                     if (!widgets.includes(id) && this.widgetsRefs[id]?.onTempSelect) {
-                        // @ts-expect-error I don't know
                         this.widgetsRefs[id].onTempSelect(false);
                     }
                 });
@@ -617,7 +610,6 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
 
         this.props.selectedWidgets.forEach(_wid => {
             if (widgetsRefs[_wid]?.onMove) {
-                // @ts-expect-error I don't know
                 widgetsRefs[_wid].onMove(); // indicate the start of movement
             }
         });
@@ -625,7 +617,6 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         // Indicate about movement start
         Object.keys(widgetsRefs).forEach(_wid => {
             if (widgetsRefs[_wid as AnyWidgetId]?.onCommand) {
-                // @ts-expect-error I don't know
                 widgetsRefs[_wid as AnyWidgetId].onCommand('startMove');
             }
         });

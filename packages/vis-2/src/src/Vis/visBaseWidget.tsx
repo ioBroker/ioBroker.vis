@@ -182,6 +182,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
 
     protected movement?: VisBaseWidgetMovement;
 
+    /** If resizing is currently locked */
     protected resizeLocked?: boolean;
 
     protected visDynamicResizable: undefined | null | { default: boolean; desiredSize: { width: number; height: number } | boolean };

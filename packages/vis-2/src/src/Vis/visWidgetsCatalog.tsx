@@ -365,7 +365,6 @@ export const getWidgetTypes: (_usedWidgetSets?: string[]) => WidgetType[] = (use
                 }
                 // only if RX widget with the same name not found
                 let info;
-                // @ts-expect-error we must check getWidgetInfo
                 if (VisWidgetsCatalog.rxWidgets[name]?.getWidgetInfo) {
                     info = VisWidgetsCatalog.rxWidgets[name].getWidgetInfo();
                     if (info?.visAttrs && typeof info.visAttrs !== 'string') {

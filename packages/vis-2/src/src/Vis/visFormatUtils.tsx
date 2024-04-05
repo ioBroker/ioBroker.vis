@@ -53,7 +53,7 @@ class VisFormatUtils {
         let _obj = obj as Record<string, any>;
         for (const part of parts) {
             _obj = _obj[part];
-            if (!_obj && _obj !== 0) {
+            if (!_obj) {
                 return undefined;
             }
         }

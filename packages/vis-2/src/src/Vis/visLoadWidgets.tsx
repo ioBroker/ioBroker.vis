@@ -50,7 +50,6 @@ const getOrLoadRemote = (remote: string, shareScope: string | { default: any }, 
                 // @ts-expect-error this is a trick
                 if (typeof __webpack_share_scopes__ === 'undefined' && window[remote].init) {
                     // use the default share scope object, passed in manually
-                    // @ts-expect-error no idea why
                     await window[remote].init((shareScope as { default: any })?.default);
                 } else if (window[remote].init) {
                     // otherwise, init share scope as usual
