@@ -1,0 +1,13 @@
+{
+  "name": "@iobroker/types-vis-2",
+  "version": "2.9.48",
+  "description": "Types for vis-2",
+  "files": [
+    "index.d.ts",
+    "LICENSE"
+  ],
+  "types": "index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  }
+}

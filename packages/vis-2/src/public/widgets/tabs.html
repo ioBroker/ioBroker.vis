@@ -1,0 +1,14 @@
+<script type="text/ejs"
+        id="tplSTab"
+        class="vis-tpl"
+        data-vis-prev='<div id="prev_tplSTab" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee" style="top: 76px; left: 23px; width: 138px; height: 121px; position: absolute;" > <div class="vis-widget-prev-body"> <span style="width:100%;height:100%" class="ui-slider-tabs"> <!-- Unordered list representing the tabs --> <div class="ui-slider-tabs-list-wrapper"><div class="ui-slider-tabs-list-container" style="margin: 0px 35px;"><ul class="ui-slider-tabs-list" style="margin-left: 0px; width: 166px;"> <li class="selected" style="height: 32px;"><a href="#w00016_st1" style="height: 32px;">Tab</a></li><li style="height: 32px;"><a href="#w00016_st2" style="height: 32px;">Tab</a></li><li style="height: 32px;"><a href="#w00016_st3" style="height: 32px;">Tab</a></li></ul><a href="#" class="ui-slider-left-arrow edge" style="width: 35px; height: 32px;"><div></div></a><a href="#" class="ui-slider-right-arrow" style="width: 35px; height: 32px;"><div></div></a></div></div><div class="ui-slider-tabs-content-container" style="height: 86px;"><div style="padding-left: 0px; height: 100%; display: block; left: 0px; width: 126px;" class="ui-slider-tab-content selected"> <div class="editmode-helper"></div> <div data-vis-contains="hallo" class="vis-widget-body vis-view-container"></div> </div><div style="padding-left: 0px; height: 100%; left: 138px; width: 126px;" class="ui-slider-tab-content"> <div class="editmode-helper"></div> <div data-vis-contains="" class="vis-widget-body vis-view-container"></div> </div><div style="padding-left: 0px; height: 100%; left: 138px; width: 126px;" class="ui-slider-tab-content"> <div class="editmode-helper"></div> <div data-vis-contains="" class="vis-widget-body vis-view-container"></div> </div></div></span> </div> </div>'
+        data-vis-set="tabs"
+        data-vis-update-style="true"
+        data-vis-name="SliderTabs"
+        data-vis-attrs="height[100]/slider,20,1000,1;show_tabs[1]/slider,1,8,1;title_tab_(1-show_tabs)[Tab];contains_view_(1-show_tabs)/views">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 250px; height: 250px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <% vis.binds.tabs.stabs(this.view, this.data.attr('wid'), data) %>
+        </div>
+    </div>
+</script>
