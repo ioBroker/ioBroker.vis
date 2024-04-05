@@ -34,17 +34,17 @@ jobs:
         with:
           node-version: 18.x
 
-      - name: Install Dependencies
-        run: npm install
+      - name: Install Monorepo
+        run: npm run install-monorepo
 
       - name: Build
         run: NODE_OPTIONS=--max_old_space_size=8192 npm run build
 
       - name: Test TypeScript
-        run: npm run check-ts
+        run: npm run check-ts -w packages/vis-2
 
       - name: Run local tests
-        run: npm run test-gui
+        run: npm run test-gui -w packages/vis-2
 
       - name: Archive screenshots
         if: always()
@@ -89,15 +89,16 @@ jobs:
           echo "::set-output name=BODY::$BODY"
 
       - name: Install Dependencies
-        run: npm install --ignore-scripts
+        run: npm run install-monorepo
 
       - name: Create a clean build
         run: npm run build
+
       - name: Publish package to npm
         run: |
           npm config set //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
           npm whoami
-          npm publish
+          npx lerna publish from-package --yes
 
       - name: Create Github Release
         uses: actions/create-release@v1
