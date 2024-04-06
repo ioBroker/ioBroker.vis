@@ -13,21 +13,33 @@
  * (Free for non-commercial use).
  */
 import { I18n, type LegacyConnection } from '@iobroker/adapter-react-v5';
-import type VisRxWidget from '@/Vis/visRxWidget';
+import VisRxWidget, { VisRxWidgetState } from '@/Vis/visRxWidget';
 
 type WidgetSetName = string;
 type PromiseName = `_promise_${WidgetSetName}`;
+
+interface VisRxWidgetWithInfo<TRxData extends Record<string, any>, TState extends Partial<VisRxWidgetState> = VisRxWidgetState> extends VisRxWidget<TRxData, TState> {
+    adapter: string;
+    version: string;
+    url: string;
+    i18nPrefix?: string;
+}
+
 declare global {
     interface Window {
         [promiseName: PromiseName]: Promise<any>;
         [widgetSetName: WidgetSetName]: {
             __initialized: boolean;
-            get: (module: string) => () => void;
-            init?: (shareScope: any) => Promise<void>;
+            get: (module: string) => () => { default: VisRxWidgetWithInfo<any> };
+            init?: (shareScope: string) => Promise<void>;
         };
     }
 }
-const getOrLoadRemote = (remote: string, shareScope: string | { default: any }, remoteFallbackUrl?: string): Promise<null> => {
+const getOrLoadRemote = (
+    remote: string,
+    shareScope: string,
+    remoteFallbackUrl?: string,
+): Promise<null> => {
     window[`_promise_${remote}`] = window[`_promise_${remote}`] || new Promise((resolve, reject) => {
         // check if remote exists on window
         // search dom to see if remote tag exists, but might still be loading (async)
@@ -51,10 +63,9 @@ const getOrLoadRemote = (remote: string, shareScope: string | { default: any }, 
                 if (typeof __webpack_share_scopes__ === 'undefined' && window[remote].init) {
                     // use the default share scope object, passed in manually
                     // @ts-expect-error no idea why
-                    await window[remote].init((shareScope as { default: any })?.default);
+                    await window[remote].init(shareScope);
                 } else if (window[remote].init) {
                     // otherwise, init share scope as usual
-
                     try {
                         // eslint-disable-next-line camelcase, no-undef
                         // @ts-expect-error this is a trick
@@ -111,10 +122,19 @@ const getOrLoadRemote = (remote: string, shareScope: string | { default: any }, 
     return window[`_promise_${remote}`];
 };
 
-export const loadComponent = (remote: WidgetSetName, sharedScope: string, module: string, url: string): (() => any) =>
-    () => getOrLoadRemote(remote, sharedScope, url)
-        .then(() => window[remote] && window[remote].get(module))
-        .then(factory => factory && factory());
+export const loadComponent = (
+    remote: WidgetSetName,
+    sharedScope: string,
+    module: string,
+    url: string,
+): () => Promise<{ default: VisRxWidgetWithInfo<any> } | null> => async (): Promise<{ default: VisRxWidgetWithInfo<any> } | null> => {
+    await getOrLoadRemote(remote, sharedScope, url);
+    if (window[remote]) {
+        const factory: () => { default: VisRxWidgetWithInfo<any> } | null = window[remote].get(module) as () => { default: VisRxWidgetWithInfo<any> } | null;
+        return factory ? factory() : null;
+    }
+    return null;
+};
 
 function registerWidgetsLoadIndicator(cb: (process: number, max: number) => void) {
     window.__widgetsLoadIndicator = cb;
@@ -126,7 +146,7 @@ interface VisLoadComponentContext {
     dynamicWidgetInstance: ioBroker.InstanceObject;
     i18nPrefix: string;
     // List of custom React components
-    result: VisRxWidget<any>[];
+    result: VisRxWidgetWithInfo<any>[];
 }
 
 function _loadComponentHelper(context: VisLoadComponentContext): Promise<void[]> {
@@ -143,21 +163,23 @@ function _loadComponentHelper(context: VisLoadComponentContext): Promise<void[]>
             context.countRef.max++;
 
             const promise = loadComponent(_visWidgetsCollection.name, 'default', `./${_visWidgetsCollection.components[index]}`, _visWidgetsCollection.url)()
-                .then((CustomComponent: any) => {
-                    context.countRef.count++;
+                .then(CustomComponent => {
+                    if (CustomComponent) {
+                        context.countRef.count++;
 
-                    if (CustomComponent.default) {
-                        CustomComponent.default.adapter = context.dynamicWidgetInstance._id.substring('system.adapter.'.length).replace(/\.\d*$/, '');
-                        CustomComponent.default.version = context.dynamicWidgetInstance.common.version;
-                        CustomComponent.default.url = _visWidgetsCollection.url;
-                        if (context.i18nPrefix) {
-                            CustomComponent.default.i18nPrefix = context.i18nPrefix;
+                        if (CustomComponent.default) {
+                            CustomComponent.default.adapter = context.dynamicWidgetInstance._id.substring('system.adapter.'.length).replace(/\.\d*$/, '');
+                            CustomComponent.default.version = context.dynamicWidgetInstance.common.version;
+                            CustomComponent.default.url = _visWidgetsCollection.url;
+                            if (context.i18nPrefix) {
+                                CustomComponent.default.i18nPrefix = context.i18nPrefix;
+                            }
+                            context.result.push(CustomComponent.default);
+                        } else {
+                            console.error(`Cannot load widget ${context.dynamicWidgetInstance._id}. No default found`);
                         }
-                        context.result.push(CustomComponent.default);
-                    } else {
-                        console.error(`Cannot load widget ${context.dynamicWidgetInstance._id}. No default found`);
+                        window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(context.countRef.count, context.countRef.max);
                     }
-                    window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(context.countRef.count, context.countRef.max);
                 })
                 .catch((e: any) => {
                     console.error(`Cannot load widget ${context.dynamicWidgetInstance._id}: ${e.toString()}`);
@@ -179,14 +201,14 @@ function getText(text: string | ioBroker.StringOrTranslated): string {
 }
 
 /* Do not make this funktion async, because is optimized to simultaneously load the widget sets */
-function getRemoteWidgets(socket: LegacyConnection, onlyWidgetSets?: false | string[]): Promise<void | VisRxWidget<any>[]> {
+function getRemoteWidgets(socket: LegacyConnection, onlyWidgetSets?: false | string[]): Promise<void | VisRxWidgetWithInfo<any>[]> {
     return socket.getObjectViewSystem(
         'instance',
         'system.adapter.',
         'system.adapter.\u9999',
     )
         .then(objects => {
-            const result: VisRxWidget<any>[] = [];
+            const result: VisRxWidgetWithInfo<any>[] = [];
             const countRef = { count: 0, max: 0 };
             const instances: ioBroker.InstanceObject[] = Object.values(objects as Record<string, ioBroker.InstanceObject>);
             const dynamicWidgetInstances: ioBroker.InstanceObject[] = instances.filter(obj  => {
