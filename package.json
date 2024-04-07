@@ -1,5 +1,5 @@
 {
-  "name": "iobroker.admin-mono",
+  "name": "iobroker.vis-2-mono",
   "private": true,
   "workspaces": [
     "packages/*"
