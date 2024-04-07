@@ -63,6 +63,7 @@
     "test": "mocha ./test/*.engine.js --exit",
     "test-gui": "mocha ./test/*.gui.js --exit",
     "prepublishOnly": "gulp",
+    "clean": "rimraf runtime src/build www",
     "build": "gulp",
     "release": "release-script",
     "release-patch": "release-script patch --yes --no-update-lockfile",

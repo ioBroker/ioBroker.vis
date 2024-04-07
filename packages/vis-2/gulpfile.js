@@ -99,14 +99,14 @@ gulp.task('runtime-1-copy-src', done => {
         fs.writeFileSync(`${__dirname}/runtime/public/index.html`, runtimeText);
     }
 
-    copyFolder(`${__dirname}/src/src/Vis`, `${__dirname}/runtime/src/Vis`,  ['visContextMenu.jsx', 'oldVis.jsx', 'visOrderMenu.jsx', 'BulkEditor.tsx']);
+    copyFolder(`${__dirname}/src/src/Vis`, `${__dirname}/runtime/src/Vis`,  ['visContextMenu.tsx', 'oldVis.jsx', 'visOrderMenu.tsx', 'BulkEditor.tsx']);
     copyFolder(`${__dirname}/src/src/img`, `${__dirname}/runtime/src/img`);
 
     fs.writeFileSync(`${__dirname}/runtime/src/Vis/visOrderMenu.tsx`, `
 import React from 'react';
 
-class VisOrderMenu extends React.Component {
-    render() {
+class VisOrderMenu extends React.Component<any, any> {
+    render(): React.ReactNode {
         return null;
     }
 }
@@ -118,12 +118,12 @@ export default VisOrderMenu;
     fs.writeFileSync(`${__dirname}/runtime/src/Vis/Widgets/JQui/BulkEditor.tsx`, `
 import React from 'react';
 
-class BulkEditor extends React.Component {
-    render() {
+class BulkEditor extends React.Component<any, any> {
+    render(): React.ReactNode  {
         return null;
     }
     
-    static async generateFields() {
+    static async generateFields(): Promise<any> {
         return false;
     }
 }
@@ -135,8 +135,8 @@ export default BulkEditor;
     fs.writeFileSync(`${__dirname}/runtime/src/Vis/Widgets/Basic/FiltersEditorDialog.tsx`, `
 import React from 'react';
 
-class FiltersEditorDialog extends React.Component {
-    render() {
+class FiltersEditorDialog extends React.Component<any, any> {
+    render(): React.ReactNode {
         return null;
     }
 }

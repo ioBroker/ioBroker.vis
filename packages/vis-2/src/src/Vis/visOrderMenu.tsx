@@ -7,7 +7,6 @@ import { Menu, MenuItem } from '@mui/material';
 
 import { I18n, Utils } from '@iobroker/adapter-react-v5';
 
-// eslint-disable-next-line import/no-cycle
 import { getWidgetTypes, type WidgetType } from './visWidgetsCatalog';
 
 const styles: Styles<string, any> = () => ({

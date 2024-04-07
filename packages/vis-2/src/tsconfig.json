@@ -1,9 +1,9 @@
 {
-  "extends": "../../../tsconfig.json",
   "compilerOptions": {
     "skipLibCheck": true,
-    "module": "ES2020",
     "moduleResolution": "Bundler",
+    "module": "esnext",
+    "target": "esnext",
     "baseUrl": ".",
     "checkJs": false,
     "allowJs": true,
@@ -23,7 +23,8 @@
     "paths": {
       "@/*": [
         "./src/*"
-      ]
+      ],
+      "@iobroker/types-vis-2": ["./packages/types-vis-2"]
     }
   },
   "include": ["./**/*"]
