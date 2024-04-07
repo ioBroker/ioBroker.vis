@@ -1,12 +1,13 @@
 import type React from 'react';
 import type { Theme } from '@mui/material';
-import type moment from 'moment';
-import type { LegacyConnection } from '@iobroker/adapter-react-v5';
-import { AnyWidgetId, Project, WidgetData } from '@/types';
-import { CustomPaletteProperties, WidgetAttributeInfo } from '@/Vis/visRxWidget';
-import VisFormatUtils from '@/Vis/visFormatUtils';
-import VisView from '@/Vis/visView';
+import type { Connection, LegacyConnection } from '@iobroker/adapter-react-v5';
+import type VisFormatUtils from '@/Vis/visFormatUtils';
+import type VisView from '@/Vis/visView';
 import { type ViewCommand, type ViewCommandOptions } from '@/Vis/visView';
+import type { VisMarketplaceProps } from '@/Vis/visContextMenu';
+import type moment from 'moment';
+import type { PromiseName, WidgetSetName } from '@/Vis/visLoadWidgets';
+import type { RxWidgetAttributeType } from '@iobroker/types-vis-2';
 
 export interface RxWidgetInfoCustomComponentContext {
     readonly socket: Connection;
@@ -22,8 +23,6 @@ export interface RxWidgetInfoCustomComponentProperties {
     readonly selectedWidgets: AnyWidgetId[];
     readonly selectedWidget: AnyWidgetId;
 }
-
-export type RxWidgetAttributeType = 'text' | 'delimiter' | 'help' | 'html' | 'json' | 'id' | 'instance' | 'select' | 'nselect' | 'auto' | 'checkbox' | 'number' | 'select-views' | 'custom' | 'image' | 'color' | 'password' | 'history' | 'hid' | 'icon' | 'dimension' | 'fontname' | 'groups' | 'class' | 'filters' | 'views' | 'style' | 'icon64';
 
 export type RxWidgetInfoAttributesFieldText = {
     /** Field type */
@@ -48,7 +47,7 @@ export type RxWidgetInfoAttributesFieldText = {
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
-    readonly onChange?: (field: WidgetAttributeInfo, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
 }
 
 export type RxWidgetInfoAttributesFieldDelimiter = {
@@ -100,7 +99,7 @@ export type RxWidgetInfoAttributesFieldHTML = {
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
-    readonly onChange?: (field: WidgetAttributeInfo, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
 }
 
 export type RxWidgetInfoAttributesFieldID = {
@@ -148,7 +147,7 @@ export type RxWidgetInfoAttributesFieldID = {
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
-    readonly onChange?: (field: WidgetAttributeInfo, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
 }
 
 export type RxWidgetInfoAttributesFieldInstance = {
@@ -176,7 +175,7 @@ export type RxWidgetInfoAttributesFieldInstance = {
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
-    readonly onChange?: (field: WidgetAttributeInfo, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
 }
 
 export type RxWidgetInfoAttributesFieldSelect = {
@@ -204,7 +203,7 @@ export type RxWidgetInfoAttributesFieldSelect = {
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
-    readonly onChange?: (field: WidgetAttributeInfo, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
 }
 
 export type RxWidgetInfoAttributesFieldCheckbox = {
@@ -228,7 +227,7 @@ export type RxWidgetInfoAttributesFieldCheckbox = {
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
-    readonly onChange?: (field: WidgetAttributeInfo, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
 }
 
 export type RxWidgetInfoAttributesFieldNumber = {
@@ -258,7 +257,7 @@ export type RxWidgetInfoAttributesFieldNumber = {
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
-    readonly onChange?: (field: WidgetAttributeInfo, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
 }
 
 export type RxWidgetInfoAttributesFieldSlider = {
@@ -292,7 +291,7 @@ export type RxWidgetInfoAttributesFieldSlider = {
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
-    readonly onChange?: (field: WidgetAttributeInfo, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
 }
 
 export type RxWidgetInfoAttributesFieldWidget = {
@@ -328,7 +327,7 @@ export type RxWidgetInfoAttributesFieldWidget = {
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
-    readonly onChange?: (field: WidgetAttributeInfo, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
 }
 
 export type RxWidgetInfoAttributesFieldSelectViews = {
@@ -354,7 +353,7 @@ export type RxWidgetInfoAttributesFieldSelectViews = {
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
-    readonly onChange?: (field: WidgetAttributeInfo, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
 }
 
 export type RxWidgetInfoAttributesFieldSelectCustom = {
@@ -385,7 +384,7 @@ export type RxWidgetInfoAttributesFieldSelectCustom = {
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
-    readonly onChange?: (field: WidgetAttributeInfo, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
 }
 
 export type RxWidgetInfoAttributesFieldSelectSimple = {
@@ -409,7 +408,7 @@ export type RxWidgetInfoAttributesFieldSelectSimple = {
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
-    readonly onChange?: (field: WidgetAttributeInfo, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
 }
 
 export type RxWidgetInfoAttributesFieldSelectDefault = {
@@ -431,7 +430,7 @@ export type RxWidgetInfoAttributesFieldSelectDefault = {
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
-    readonly onChange?: (field: WidgetAttributeInfo, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
 }
 
 export type RxWidgetInfoAttributesField =
@@ -941,7 +940,7 @@ export interface VisContext {
     lang: ioBroker.Languages;
     linkContext: VisLinkContext;
     lockDragging: boolean;
-    moment: moment;
+    moment: typeof moment;
     // onCommand: (view: string, command: string, data?: any) => void
     onWidgetsChanged: (
         changedData: {
@@ -955,7 +954,7 @@ export interface VisContext {
     ) => void | null;
     onIgnoreMouseEvents: (ignore: boolean) => void;
     projectName: string;
-    registerEditorCallback: (name: 'onStealStyle' | 'onPxToPercent' | 'pxToPercent' | 'onPercentToPx', view: string, cb?: (...args?: any) => any) => void;
+    registerEditorCallback: (name: 'onStealStyle' | 'onPxToPercent' | 'pxToPercent' | 'onPercentToPx', view: string, cb?: (...args: any) => any) => void;
     runtime: boolean;
     setSelectedGroup: (groupId: string) => void;
     setSelectedWidgets: (widgets: AnyWidgetId[], view?: string, cb?: () => void) => void;
@@ -1001,9 +1000,9 @@ export interface CustomPaletteProperties {
         detectDevices: (socket: Connection) => Promise<any[]>;
         getObjectIcon: (obj: ioBroker.Object, id?: string, imagePrefix?: string) => React.JSX.Element;
         allObjects: (socket: Connection) => Promise<Record<string, ioBroker.Object>>;
-        getNewWidgetId: (project: Project, offset = 0) => SingleWidgetId;
+        getNewWidgetId: (project: Project, offset?: number) => SingleWidgetId;
         /** @deprecated use "getNewWidgetId" instead, it will give you the full wid like "w000001" */
-        getNewWidgetIdNumber: (isWidgetGroup: boolean, project: Project, offset = 0) => number;
+        getNewWidgetIdNumber: (isWidgetGroup: boolean, project: Project, offset?:number) => number;
     };
 }
 
@@ -1074,3 +1073,8 @@ type GetRxDataFromVisAttrs<T extends Record<string, any>> = {
 
 /** Infers the RxData from a given Widget */
 type GetRxDataFromWidget<T extends { getWidgetInfo: () => Record<string, any> }> = GetRxDataFromVisAttrs<ReturnType<(T['getWidgetInfo'])>>
+
+/** Branded type functionality */
+declare const __brand: unique symbol;
+type Brand<B> = { [__brand]: B }
+export type Branded<T, B> = T & Brand<B>

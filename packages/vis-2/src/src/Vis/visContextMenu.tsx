@@ -30,6 +30,7 @@ import {
 } from '@/types';
 
 import IOContextMenu from '../Components/IOContextMenu';
+// @ts-expect-error it is jsx
 import WidgetExportDialog from '../Toolbar/WidgetExportDialog';
 import WidgetImportDialog from '../Toolbar/WidgetImportDialog';
 import { getWidgetTypes, WidgetType } from './visWidgetsCatalog';
@@ -55,7 +56,7 @@ interface VisContextMenuProps {
     setMarketplaceDialog: (data: { addPage: boolean; widget: { widget: (SingleWidget | GroupWidget)[]; image: string } }) => void;
 }
 
-interface VisMarketplaceProps {
+export interface VisMarketplaceProps {
     language: ioBroker.Languages;
     addPage?: boolean;
     widget: { name: string; date: string; widget_id: string; image_id: string };

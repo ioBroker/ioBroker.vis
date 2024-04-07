@@ -1,6 +1,7 @@
 {
-  "extends": "../tsconfig.json",
+  "extends": "../../../tsconfig.json",
   "compilerOptions": {
+    "skipLibCheck": true,
     "module": "ES2020",
     "moduleResolution": "Bundler",
     "baseUrl": ".",
@@ -24,12 +25,5 @@
       ]
     }
   },
-  "include": [
-    "./**/*.ts",
-    "./**/*.tsx",
-  ],
-  "exclude": [
-    "./**/*.test.ts",
-    "./**/*.test.tsx"
-  ]
+  "include": ["./**/*"]
 }

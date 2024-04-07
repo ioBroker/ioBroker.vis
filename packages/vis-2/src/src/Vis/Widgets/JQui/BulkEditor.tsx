@@ -39,6 +39,7 @@ import {
     Utils,
 } from '@iobroker/adapter-react-v5';
 
+// @ts-expect-error it is jsx
 import MaterialIconSelector from '@/Components/MaterialIconSelector';
 
 const BUTTONS: Record<string, string> = {

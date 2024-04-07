@@ -17,6 +17,7 @@ import {
     deepClone, getNewWidgetId, isGroup, pasteGroup,
 } from '@/Utils/utils';
 import { useFocus } from '@/Utils';
+// @ts-expect-error it is jsx
 import IODialog from '@/Components/IODialog';
 import { Project, SingleWidgetId } from '@/types';
 

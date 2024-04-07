@@ -24,6 +24,7 @@ module.exports = {
     webpack: {
         alias: {
             '@': path.resolve(__dirname, 'src'),
+            '@iobroker/types-vis-2': path.resolve(__dirname, '..', '..', 'types-vis-2'),
         },
         output: {
             publicPath: './',

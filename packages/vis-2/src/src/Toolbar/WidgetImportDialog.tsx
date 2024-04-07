@@ -17,6 +17,7 @@ import {
     AnyWidgetId,
     GroupWidget, GroupWidgetId, Project, Widget,
 } from '@/types';
+// @ts-expect-error it is jsx
 import CustomAceEditor from '../Components/CustomAceEditor';
 
 interface WidgetImportDialogProps {
@@ -95,11 +96,13 @@ const WidgetImportDialog = (props: WidgetImportDialogProps) => {
                 type="json"
                 error={error}
                 themeType={props.themeType}
+                // @ts-expect-error needs ace editor tsx
                 refEditor={node => {
                     editor.current = node;
                     inputField.current = node;
                 }}
                 value={data}
+                // @ts-expect-error needs ace editor tsx
                 onChange={newValue => {
                     try {
                         newValue && JSON.parse(newValue);

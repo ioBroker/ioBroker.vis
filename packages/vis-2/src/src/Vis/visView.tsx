@@ -31,6 +31,7 @@ import { Property } from 'csstype';
 
 import VisBaseWidget from './visBaseWidget';
 import { type VisWidgetCommand } from './visBaseWidget';
+// @ts-expect-error it is jsx
 import VisCanWidget from './visCanWidget';
 import { addClass, parseDimension } from './visUtils';
 import VisNavigation from './visNavigation';
@@ -1096,7 +1097,6 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         // viewsActiveFilter, customSettings, onIgnoreMouseEvents
         const Widget = (VisWidgetsCatalog.rxWidgets[widget.tpl] || (VisWidgetsCatalog.allWidgetsList?.includes(widget.tpl) ? VisCanWidget : VisBaseWidget));
 
-        // @ts-expect-error I don#t know how to solve it
         return <Widget
             key={`${index}_${options.id}`}
             tpl={widget.tpl}

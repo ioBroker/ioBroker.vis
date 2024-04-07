@@ -14,9 +14,10 @@
  */
 import { I18n, type LegacyConnection } from '@iobroker/adapter-react-v5';
 import type VisRxWidget from '@/Vis/visRxWidget';
+import { Branded } from '@/types';
 
-type WidgetSetName = string;
-type PromiseName = `_promise_${WidgetSetName}`;
+export type WidgetSetName = Branded<string, 'WidgetSetName'>;
+export type PromiseName = `_promise_${WidgetSetName}`;
 declare global {
     interface Window {
         [promiseName: PromiseName]: Promise<any>;
@@ -28,6 +29,7 @@ declare global {
     }
 }
 const getOrLoadRemote = (remote: string, shareScope: string | { default: any }, remoteFallbackUrl?: string): Promise<null> => {
+    // @ts-expect-error todo fix
     window[`_promise_${remote}`] = window[`_promise_${remote}`] || new Promise((resolve, reject) => {
         // check if remote exists on window
         // search dom to see if remote tag exists, but might still be loading (async)
@@ -35,6 +37,7 @@ const getOrLoadRemote = (remote: string, shareScope: string | { default: any }, 
         // when remote is loaded...
         const onload = async () => {
             // check if it was initialized
+            // @ts-expect-error todo fix
             if (!window[remote]) {
                 if (remoteFallbackUrl && (remoteFallbackUrl.startsWith('http://') || remoteFallbackUrl.startsWith('https://'))) {
                     console.error(`Cannot load remote from url "${remoteFallbackUrl}"`);
@@ -44,13 +47,16 @@ const getOrLoadRemote = (remote: string, shareScope: string | { default: any }, 
                 resolve(null);
                 return;
             }
+            // @ts-expect-error todo fix
             if (!window[remote].__initialized) {
                 // if share scope doesn't exist (like in webpack 4) then expect shareScope to be a manual object
                 // eslint-disable-next-line camelcase
                 // @ts-expect-error this is a trick
                 if (typeof __webpack_share_scopes__ === 'undefined' && window[remote].init) {
                     // use the default share scope object, passed in manually
+                    // @ts-expect-error todo fix
                     await window[remote].init((shareScope as { default: any })?.default);
+                    // @ts-expect-error todo fix
                 } else if (window[remote].init) {
                     // otherwise, init share scope as usual
 
@@ -70,6 +76,7 @@ const getOrLoadRemote = (remote: string, shareScope: string | { default: any }, 
                     return;
                 }
                 // mark remote as initialized
+                // @ts-expect-error todo fix
                 window[remote].__initialized = true;
             }
             // resolve promise so marking remote as loaded
@@ -107,6 +114,7 @@ const getOrLoadRemote = (remote: string, shareScope: string | { default: any }, 
         }
     });
 
+    // @ts-expect-error todo fix
     return window[`_promise_${remote}`];
 };
 
@@ -141,6 +149,7 @@ function _loadComponentHelper(context: VisLoadComponentContext): Promise<void[]>
         ((index: number, _visWidgetsCollection) => {
             context.countRef.max++;
 
+            // @ts-expect-error todo fix
             const promise = loadComponent(_visWidgetsCollection.name, 'default', `./${_visWidgetsCollection.components[index]}`, _visWidgetsCollection.url)()
                 .then((CustomComponent: any) => {
                     context.countRef.count++;
@@ -256,6 +265,7 @@ function getRemoteWidgets(socket: LegacyConnection, onlyWidgetSets?: false | str
                                         promises.push(i18nPromiseWait);
                                     } else if (collection.url && collection.i18n === 'component') {
                                         // instance.common.visWidgets.i18n is deprecated
+                                        // @ts-expect-error todo fix
                                         i18nPromiseWait = loadComponent(collection.name, 'default', './translations', collection.url)()
                                             .then((translations: any) => {
                                                 countRef.count++;
