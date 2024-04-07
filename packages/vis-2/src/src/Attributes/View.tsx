@@ -49,7 +49,6 @@ import { deepClone } from '@/Utils/utils';
 import { Project, View } from '@/types';
 
 import { theme as ViewTheme, background } from './ViewData';
-// @ts-expect-error not yet a tsx file
 import MaterialIconSelector from '../Components/MaterialIconSelector';
 
 const styles: Record<string, any> = {

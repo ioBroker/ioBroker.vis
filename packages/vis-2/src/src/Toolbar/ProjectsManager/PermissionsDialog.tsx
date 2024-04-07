@@ -20,7 +20,6 @@ import {
 } from '@/types';
 import { store } from '@/Store';
 import { deepClone, DEFAULT_PERMISSIONS } from '@/Utils/utils';
-// @ts-expect-error not a tsx file yet
 import IODialog from '../../Components/IODialog';
 
 interface PermissionsDialogProps {

@@ -35,7 +35,6 @@ import {
 
 import { VisContext } from '@/types';
 
-// @ts-expect-error it is jsx
 import MaterialIconSelector from '../../../Components/MaterialIconSelector';
 
 const styles: Styles<any, any> = (theme: Theme) => ({

@@ -6,6 +6,7 @@
     "moduleResolution": "Bundler",
     "baseUrl": ".",
     "checkJs": false,
+    "allowJs": true,
     "noEmit": false,
     "outDir": "./build",
     "sourceMap": true,

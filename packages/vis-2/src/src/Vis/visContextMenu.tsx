@@ -30,7 +30,6 @@ import {
 } from '@/types';
 
 import IOContextMenu from '../Components/IOContextMenu';
-// @ts-expect-error it is jsx
 import WidgetExportDialog from '../Toolbar/WidgetExportDialog';
 import WidgetImportDialog from '../Toolbar/WidgetImportDialog';
 import { getWidgetTypes, WidgetType } from './visWidgetsCatalog';

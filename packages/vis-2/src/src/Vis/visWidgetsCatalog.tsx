@@ -16,7 +16,6 @@ import type { RxWidgetAttributeType } from '@iobroker/types-vis-2';
 
 import { getRemoteWidgets } from './visLoadWidgets';
 // eslint-disable-next-line import/no-cycle
-// @ts-expect-error it is jsx
 import WIDGETS from './Widgets';
 
 const DEFAULT_SET_COLORS: Record<string, string> = {
