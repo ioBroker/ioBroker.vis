@@ -6,7 +6,7 @@
 
 [![NPM](https://nodei.co/npm/iobroker.vis-2.png?downloads=true)](https://nodei.co/npm/iobroker.vis-2/)
 
-WEB visualisation for ioBroker platform.
+WEB visualization for ioBroker platform.
 
 ## Overview
 - [License requirements](#license-requirements)
@@ -30,8 +30,8 @@ Additionally, you need a license to use the adapter. The following license editi
 
 ## Installation & Documentation
 
-![Demo interface](img/user0.png)
-![Demo interface](img/user7.png)
+![Demo interface](packages/vis-2/img/user0.png)
+![Demo interface](packages/vis-2/img/user7.png)
 
 [Online Demos](https://iobroker.click/)
 
@@ -56,7 +56,7 @@ value = await (async function () {
 
 or 
 
-`{h:javascript.0.myCustom.height;w:javascript.0.myCustom.width;h*w}` will just multiply height with width.
+`{h:javascript.0.myCustom.height;w:javascript.0.myCustom.width;h*w}` will simply multiply height with width.
 
 
 You can use *any* javascript (browser) functions. Arguments must be defined with ':', if not, it will be interpreted as formula.
@@ -241,7 +241,7 @@ Sometimes (in the night) it is required to have the dark loading screen. With th
 
 Notice that these settings are valid only for reconnection and not for the first connecting.
 
-![Dark](img/dark_screen.png)
+![Dark](packages/vis-2/img/dark_screen.png)
 
 ## SVG and currentColor
 The currentColor keyword in CSS allows elements to inherit the current text color from their parent element.
