@@ -213,8 +213,8 @@ There is a helper widget "basic - Screen Resolution" that shows actual screen re
 ### Project
 In the project management dialog, you can configure `read` and `write` permissions for each ioBroker user.
 
-The `read` flag means, that the project is accessible for this user in the Runtime. 
-The `write` flag means, that the project is accessible for this user in the Edit Mode.
+The `read` flag means that the project is accessible for this user in the Runtime. 
+The `write` flag means that the project is accessible for this user in the Edit Mode.
 
 When a new user is created via ioBroker Admin adapter, it will have both permissions by default.
 
@@ -222,7 +222,7 @@ When a new user is created via ioBroker Admin adapter, it will have both permiss
 You can also specify which views the user is allowed to access for runtime and edit mode. 
 When one of the access rights is not granted on project level, it does not have any effect to specify them on view level, as the project as a whole will not be accessible.
 
-Note, that whenever you try to access a view, where the current user has no permission for, the user will see the project selection panel instead.
+Note that whenever you try to access a view, where the current user has no permission for, the user will see the project selection panel instead.
 
 ### Widget
 If the user has no `read` permissions, the widget will not be rendered in the runtime. If user has no `write` permissions, the widget
@@ -266,6 +266,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
 ## Changelog
 ### **WORK IN PROGRESS**
 * (bluefox) Corrected the scroll buttons in Tabs widget
+* (bluefox) Corrected resizers if the border width is set
 
 ### 2.9.48 (2024-03-30)
 * (bluefox) Showed selected view in the view dialog

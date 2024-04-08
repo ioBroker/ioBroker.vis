@@ -101,8 +101,8 @@ interface CreateWidgetOptions {
     isRelative: boolean;
     mouseDownOnView: null | ((e: MouseEvent, wid: AnyWidgetId, isRelative: boolean, isResize: boolean, isDoubleClick: boolean) => void);
     moveAllowed: boolean;
-    ignoreMouseEvents: boolean | undefined;
-    onIgnoreMouseEvents: (ignore: boolean) => void;
+    ignoreMouseEvents?: boolean | undefined;
+    onIgnoreMouseEvents?: (ignore: boolean) => void;
     refParent: React.RefObject<HTMLElement>;
     askView: (command: AskViewCommand, props?: WidgetReference) => any;
     relativeWidgetOrder: AnyWidgetId[];
@@ -111,6 +111,7 @@ interface CreateWidgetOptions {
     view: string;
     viewsActiveFilter: Record<string, string[]>;
     customSettings: Record<string, any> | undefined;
+    index?: number;
 }
 
 interface VisViewState {

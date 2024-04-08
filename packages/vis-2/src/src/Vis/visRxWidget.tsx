@@ -547,6 +547,7 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
             width: 'calc(100% - 8px)',
             height: 'calc(100% - 8px)',
             margin: 4,
+            boxSizing: 'border-box',
             ...this.props.customSettings?.viewStyle?.visCard,
         };
 

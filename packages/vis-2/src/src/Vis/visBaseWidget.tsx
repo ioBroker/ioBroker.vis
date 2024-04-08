@@ -28,7 +28,7 @@ import { type LegacyConnection, I18n, Utils } from '@iobroker/adapter-react-v5';
 import { calculateOverflow, deepClone, isVarFinite } from '@/Utils/utils';
 import {
     AnyWidgetId, ResizeHandler,
-    VisContext, GroupData, WidgetData, WidgetStyle, GroupWidgetId,
+    VisContext, GroupData, WidgetData, WidgetStyle, GroupWidgetId, GroupWidget, SingleWidget,
 } from '@/types';
 import {
     addClass,
@@ -69,10 +69,14 @@ export interface VisBaseWidgetProps {
     onIgnoreMouseEvents: (bool: boolean) => void;
     onWidgetsChanged: (...props: any[]) => void;
     mouseDownOnView: (...props: any[]) => void;
-    refParent: React.RefObject<any>;
+    refParent: React.RefObject<HTMLElement>;
     customSettings: any;
     classes: Record<string, string>;
     socket: LegacyConnection;
+}
+
+interface HTMLDivElementResizers extends HTMLDivElement {
+    _storedOpacity: string;
 }
 
 export type VisWidgetCommand = 'includePossible' | 'includePossibleNOT' | 'startStealMode' | 'cancelStealMode' | 'startMove' | 'startResize' | 'stopMove' | 'stopResize' | 'collectFilters' | 'changeFilter' | 'updateContainers' | 'closeDialog' | 'openDialog' | 'updatePosition' | 'include';
@@ -626,9 +630,12 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
             }
         }
 
-        let parentDiv: any = this.props.refParent;
-        if (Object.prototype.hasOwnProperty.call(parentDiv, 'current')) {
+        let parentDiv: HTMLElement;
+        if (Object.prototype.hasOwnProperty.call(this.props.refParent, 'current')) {
+            // @ts-expect-error support ref and direct HTMLElement
             parentDiv = parentDiv.current;
+        } else {
+            parentDiv = this.props.refParent as any as HTMLElement;
         }
 
         if (this.widDiv) {
@@ -820,7 +827,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
 
             // end of resize
             if (save) {
-                const resizers = this.refService.current?.querySelectorAll('.vis-editmode-resizer') as NodeListOf<any>;
+                const resizers = this.refService.current?.querySelectorAll('.vis-editmode-resizer') as NodeListOf<HTMLDivElementResizers>;
                 resizers?.forEach(item => {
                     if (item._storedOpacity !== undefined) {
                         item.style.opacity = item._storedOpacity;
@@ -896,9 +903,12 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
                 resizers.forEach(item => item.style.display = 'block');
 
                 if (this.props.isRelative) {
-                    let parentDiv: any = this.props.refParent;
-                    if (Object.prototype.hasOwnProperty.call(parentDiv, 'current')) {
+                    let parentDiv: HTMLElement;
+                    if (Object.prototype.hasOwnProperty.call(this.props.refParent, 'current')) {
+                        // @ts-expect-error support ref and direct HTMLElement
                         parentDiv = parentDiv.current;
+                    } else {
+                        parentDiv = this.props.refParent as any as HTMLElement;
                     }
                     // create shadow widget
                     if (this.widDiv) {
@@ -975,7 +985,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
         this.props.mouseDownOnView(e, this.props.id, this.props.isRelative, true);
     }
 
-    getResizeHandlers(selected: any, widget: any) {
+    getResizeHandlers(selected: boolean, widget: GroupWidget | SingleWidget, borderWidth: string) {
         if (!this.state.editMode || !selected || this.props.selectedWidgets?.length !== 1) {
             return null;
         }
@@ -984,11 +994,11 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
         const shift = 0.3;
         const square = 0.4;
 
-        const squareShift = `${shift - square}em`;
+        const squareShift = `calc(${shift - square}em - ${borderWidth})`;
         const squareWidthHeight = `${square}em`;
         const shiftEm = `${shift}em`;
         const thicknessEm = `${thickness}em`;
-        const offsetEm = `${shift - thickness}em`;
+        const offsetEm = `calc(${shift - thickness}em - ${borderWidth})`;
 
         const widgetWidth100 = widget.style.width === '100%';
         const widgetHeight100 = widget.style.height === '100%';
@@ -1729,7 +1739,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
         if (typeof value === 'string') {
             // eslint-disable-next-line no-restricted-properties
             if (isVarFinite(value)) {
-                return parseFloat(value);
+                return parseFloat(value) || 0;
             }
         }
 
@@ -1852,7 +1862,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
         }
 
         if (this.props.isRelative && isVarFinite(this.props.context.views[this.props.view].settings?.rowGap as string)) {
-            style.marginBottom = parseFloat(this.props.context.views[this.props.view].settings?.rowGap as string);
+            style.marginBottom = parseFloat(this.props.context.views[this.props.view].settings?.rowGap as string) || 0;
         }
 
         const rxWidget = this.renderWidgetBody(props as any);
@@ -1880,11 +1890,12 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
             'borderRadius', 'paddingLeft', 'paddingTop',
             'paddingRight', 'paddingBottom', 'marginTop',
             'marginBottom', 'marginLeft', 'marginRight',
+            'borderWidth',
         ].forEach(attr => {
             if (style[attr] !== undefined && typeof style[attr] === 'string') {
                 // eslint-disable-next-line no-restricted-properties
                 if (isVarFinite(style[attr])) {
-                    style[attr] = parseFloat(style[attr]);
+                    style[attr] = parseFloat(style[attr]) || 0;
                 } else if (style[attr].includes('{')) {
                     // try to steal style by rxWidget
                     const value = (this.state.rxStyle as Record<string, string | undefined>)?.[attr];
@@ -1909,6 +1920,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
 
         let widgetName = null;
         let widgetMoveButtons = null;
+        const borderWidth = (typeof style.borderWidth === 'number' ? `${style.borderWidth}px` : style.borderWidth) || '0px';
         if (this.state.widgetHint !== 'hide' &&
             !this.state.hideHelper &&
             this.state.editMode &&
@@ -1941,6 +1953,9 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
                     widgetNameBottom && 'vis-editmode-widget-name-bottom',
                     this.props.isRelative && resizable && 'vis-editmode-widget-name-long',
                 )}
+                style={{
+                    top: widgetNameBottom ? undefined : `calc(-14px - ${borderWidth})`,
+                }}
             >
                 <span>{this.state.multiViewWidget ? I18n.t('%s from %s', multiId as string, multiView as string) : (widget.data?.name || this.props.id)}</span>
                 {this.state.multiViewWidget || widget.usedInWidget ? null :
@@ -2078,7 +2093,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
             {widgetName}
             {widgetMoveButtons}
             {overlay}
-            {this.getResizeHandlers(selected, widget)}
+            {this.getResizeHandlers(selected, widget, borderWidth)}
             {rxWidget}
             {groupInstructions}
             {this.state.showRelativeMoveMenu && this.renderRelativeMoveMenu()}
