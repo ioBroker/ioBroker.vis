@@ -1,0 +1,13 @@
+{
+  "License": "Лицензия",
+  "Use license manager": "Использовать менеджер лицензий",
+  "instruction": "Для пользования <b>vis</b> необходимо получить лицензионный ключ.<br><b>vis</b> бесплатен для личного использования в некоммерческих целях. Для использования <b>vis</b> в коммерческих целях необходимо заплатить за лицензию.<br>Лицензионный ключ можно получить здесь <a href='https://iobroker.net/accountLicenses' target='_blank'>iobroker.net</a> после регистрации.",
+  "Suitable license found": "Подходящая лицензия найдена",
+  "Force pages rebuild": "Принудительно перестроить страницы",
+  "Do not show project dialog if URL is wrong": "Не показывать диалог проекта, если URL-адрес неверен",
+  "Background color of the loading screen": "Цвет фона экрана загрузки",
+  "Hide logo": "Скрыть логотип",
+  "Use background image": "Использовать фоновое изображение",
+  "Upload image": "Загрузить изображение",
+  "Loading background": "Загрузка фона"
+}

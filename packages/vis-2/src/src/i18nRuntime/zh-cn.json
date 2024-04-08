@@ -1,0 +1,20 @@
+{
+  "Create new project": "创建新项目",
+  "Cancel": "取消",
+  "Message": "信息",
+  "Ok": "好的",
+  "Received user command: %s": "收到用户命令：%s",
+  "Unknown widget type \"%s\"": "未知的小部件类型“%s”",
+  "vis_2_widgets_basic_cannot_recursive": "不能使用递归视图",
+  "vis_2_widgets_basic_contains_view": "使用视图",
+  "vis_2_widgets_basic_view_in_widget": "在小部件中查看",
+  "vis_2_widgets_basic_view_not_defined": "查看未定义",
+  "Project name": "项目名",
+  "Project \"%s\" does not exist": "项目“%s”不存在",
+  "welcome_message": "目前还没有一个项目存在。",
+  "Select vis-2 project": "选择“vis-2”项目",
+  "Create or import new \"vis-2\" project": "创建或导入新的“vis-2”项目",
+  "Load project file...": "正在加载项目文件...",
+  "Load widgets...": "正在加载小部件...",
+  "Loading objects...": "正在加载对象..."
+}

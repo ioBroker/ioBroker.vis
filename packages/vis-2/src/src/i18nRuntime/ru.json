@@ -1,0 +1,20 @@
+{
+  "Create new project": "Создать новый проект",
+  "Cancel": "Отмена",
+  "Message": "Сообщение",
+  "Ok": "Хорошо",
+  "Received user command: %s": "Полученная пользовательская команда: %s",
+  "Unknown widget type \"%s\"": "Неизвестный тип виджета \"%s\"",
+  "vis_2_widgets_basic_cannot_recursive": "Невозможно использовать рекурсивные представления",
+  "vis_2_widgets_basic_contains_view": "Использовать вид",
+  "vis_2_widgets_basic_view_in_widget": "Посмотреть в виджете",
+  "vis_2_widgets_basic_view_not_defined": "Вид не определен",
+  "Project name": "Название проекта",
+  "Project \"%s\" does not exist": "Проект \"%s\" не существует",
+  "welcome_message": "Ни одного проекта пока не существует.",
+  "Select vis-2 project": "Выбрать проект \"vis-2\"",
+  "Create or import new \"vis-2\" project": "Создать или импортировать новый проект \"vis-2\"",
+  "Load project file...": "Загрузка файла проекта...",
+  "Load widgets...": "Загрузка виджетов...",
+  "Loading objects...": "Загрузка объектов..."
+}

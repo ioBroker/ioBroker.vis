@@ -1,0 +1,13 @@
+{
+  "License": "Lizenz",
+  "Use license manager": "Lizenzmanager verwenden",
+  "instruction": "Man braucht eine Lizenz um <b>vis</b> zu nutzen.<br><b>vis</b> ist kostenlos für private Nutzung. Nur für kommerzielle Gebrauch muss man für eine Lizenz bezahlen.<br>Man kann eine Lizenz auf <a href='https://iobroker.net' target='_blank'>iobroker.net</a> nach der Registrierung bekommen.",
+  "Suitable license found": "Passende Lizenz gefunden",
+  "Force pages rebuild": "Neuaufbau der Seiten erzwingen",
+  "Do not show project dialog if URL is wrong": "Projektdialog nicht anzeigen, wenn URL falsch ist",
+  "Background color of the loading screen": "Hintergrundfarbe des Ladebildschirms",
+  "Hide logo": "Logo ausblenden",
+  "Use background image": "Hintergrundbild verwenden",
+  "Upload image": "Bild hochladen",
+  "Loading background": "Hintergrund wird geladen"
+}

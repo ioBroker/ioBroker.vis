@@ -1,0 +1,290 @@
+{
+  "common": {
+    "name": "vis-2",
+    "version": "2.9.48",
+    "news": {
+      "2.9.48": {
+        "en": "Showed selected view in the view dialog\nAdded customization of loading screen\nRespected the sentry disable flag in GUI",
+        "de": "Gezeigte ausgewählte Ansicht im Ansichtsdialog\nHinzugefügt Anpassung des Ladebildschirms\nRespected the sentry disable flag in GUI",
+        "ru": "Показать выбранный вид в диалоге просмотра\nДобавлена настройка экрана загрузки\nУважение отсылочного флага в GUI",
+        "pt": "Visualização selecionada na caixa de diálogo visualização\nAdicionado personalização da tela de carregamento\nRespeitado a bandeira de desativação de sentinela em GUI",
+        "nl": "Geselecteerde weergave tonen in het weergavevenster\nAanpassen van het laadscherm toegevoegd\nRespecteerde de wachtersvlag in GUI",
+        "fr": "Affichage de la vue sélectionnée dans la boîte de dialogue vue\nAjout de la personnalisation de l'écran de chargement\nRespecté le drapeau de désactivation de sentinelle dans GUI",
+        "it": "Mostrata la vista selezionata nella finestra di dialogo vista\nAggiunta personalizzazione dello schermo di caricamento\nRispettato la bandiera disattiva della sentinella GUI",
+        "es": "Visualización de la vista seleccionada en el diálogo de vista\nAñadido la personalización de la pantalla de carga\nRespetó la bandera desactiva del centinela en GUI",
+        "pl": "Pokazał zaznaczony widok w oknie widoku\nDodano dostosowanie ekranu ładowania\nUszanowana flaga Sentry wyłącza w GUI",
+        "uk": "Показати вибраний вигляд у діалоговому вікні перегляду\nДодано налаштування екрану завантаження\nУвімкніть прапор відправника в GUI",
+        "zh-cn": "在视图对话框中显示选中视图\n添加加载屏幕的定制\n遵守了图形界面中的监视禁用旗"
+      },
+      "2.9.47": {
+        "en": "Showed selected view in the view dialog\nAdded customization of loading screen\nRespected the sentry disable flag in GUI",
+        "de": "Gezeigte ausgewählte Ansicht im Ansichtsdialog\nHinzugefügt Anpassung des Ladebildschirms\nRespected the sentry disable flag in GUI",
+        "ru": "Показать выбранный вид в диалоге просмотра\nДобавлена настройка экрана загрузки\nУважение отсылочного флага в GUI",
+        "pt": "Visualização selecionada na caixa de diálogo visualização\nAdicionado personalização da tela de carregamento\nRespeitado a bandeira de desativação de sentinela em GUI",
+        "nl": "Geselecteerde weergave tonen in het weergavevenster\nAanpassen van het laadscherm toegevoegd\nRespecteerde de wachtersvlag in GUI",
+        "fr": "Affichage de la vue sélectionnée dans la boîte de dialogue vue\nAjout de la personnalisation de l'écran de chargement\nRespecté le drapeau de désactivation de sentinelle dans GUI",
+        "it": "Mostrata la vista selezionata nella finestra di dialogo vista\nAggiunta personalizzazione dello schermo di caricamento\nRispettato la bandiera disattiva della sentinella GUI",
+        "es": "Visualización de la vista seleccionada en el diálogo de vista\nAñadido la personalización de la pantalla de carga\nRespetó la bandera desactiva del centinela en GUI",
+        "pl": "Pokazał zaznaczony widok w oknie widoku\nDodano dostosowanie ekranu ładowania\nUszanowana flaga Sentry wyłącza w GUI",
+        "uk": "Показати вибраний вигляд у діалоговому вікні перегляду\nДодано налаштування екрану завантаження\nУвімкніть прапор відправника в GUI",
+        "zh-cn": "在视图对话框中显示选中视图\n添加加载屏幕的定制\n遵守了图形界面中的监视禁用旗"
+      },
+      "2.9.42": {
+        "en": "Allowed limiting the view size only on desktop\nChange word \"Filter\" to \"Search\"",
+        "de": "Erlaubt, die Ansichtsgröße nur auf dem Desktop zu begrenzen\nWort \"Filter\" zu \"Search\" ändern",
+        "ru": "Разрешено ограничивать размер обзора только на настольном\nСменить слово \"Фильтер\" на \"Сеарх\"",
+        "pt": "Permite limitar o tamanho da vista apenas na área de trabalho\nAlterar palavra \"Filter\" para \"Search\"",
+        "nl": "Toegestaan om de weergavegrootte alleen op bureaublad te beperken\nWijzig woord \"Filter\" in \"Zoeken\"",
+        "fr": "Limiter la taille de la vue uniquement sur le bureau\nChanger le mot \"Filter\" en \"Rechercher\"",
+        "it": "Limitare la dimensione della vista solo sul desktop\nCambia la parola \"Filter\" a \"Search\"",
+        "es": "Permitido limitar el tamaño de la vista sólo en el escritorio\nCambiar la palabra \"Filter\" a \"Search\"",
+        "pl": "Dozwolone ograniczenie rozmiaru widoku tylko na pulpicie\nZmień słowo \"Filtr\" na \"Szukaj\"",
+        "uk": "Допускається обмеження розміру переглядів тільки на робочому столі\nЗміна слова \"Фільтр\" в \"Пошук\"",
+        "zh-cn": "只允许限制桌面上的视图大小\n将\"Filter\"改为\"Search\""
+      },
+      "2.9.40": {
+        "en": "Migrated the filter widget to react\nMigrated the basic link widget to react",
+        "de": "Das Filter-Widget migriert\nDas grundlegende Link-Widget migriert",
+        "ru": "Мигрировал виджет фильтра, чтобы реагировать\nМигрировал основной виджет ссылки, чтобы реагировать",
+        "pt": "Migrado o widget do filtro para reagir\nMigrado o widget de link básico para reagir",
+        "nl": "Het filterwidget migreren om te reageren\nDe basisverbindingswidget migreren om te reageren",
+        "fr": "Migré le widget filtre pour réagir\nMigré le widget de lien de base pour réagir",
+        "it": "Migrato il widget del filtro per reagire\nMigrato il widget di collegamento di base per reagire",
+        "es": "Migramos el widget del filtro para reaccionar\nMigramos el widget de enlace básico para reaccionar",
+        "pl": "Migrował widżet filtra do reakcji\nMigrował podstawowy widget link do reakcji",
+        "uk": "Віджет фільтра для реагації\nМіграція базового посилання віджету для реагації",
+        "zh-cn": "移动过滤部件以反应\n移动基本链接部件以反应"
+      },
+      "2.9.39": {
+        "en": "allow to use `widgetOid` in bindings\nfixed various problems with Date Picker widget\nmade default option of Date Picker human readable and added option for full parseable date\nAdded the possibility to add suffix by navigation widgets\nImproved the license manager",
+        "de": "`widget verwenden Oid` in Bindungen\nverschiedene Probleme mit Date Picker Widget behoben\nstandardoption von Date Picker human lesbar und hinzugefügt Option für volles parseable Datum\nHinzufügen der Möglichkeit, Suffix durch Navigation Widgets\nVerbessert den Lizenzmanager",
+        "ru": "разрешить использование `widget Oid' in bindings\nфиксированные различные проблемы свиданий пикера виджет\nсделал по умолчанию опцию Date Picker человека читаемой и добавленной опцией для полной номинальной даты\nДобавлена возможность добавления суффикса на навигационные виджеты\nУлучшен лицензионный менеджер",
+        "pt": "permitir usar `widget Oid` em ligações\ncorrigiu vários problemas com o widget Data Picker\nopção padrão feita de Data Picker humana legível e opção adicionada para data parseable completa\nAdicionado a possibilidade de adicionar sufixo por widgets de navegação\nMelhorou o gerenciador de licenças",
+        "nl": "toestaan om te gebruiken Widget Bindmiddelen\nverschillende problemen opgelost met Date Picker widget\nmade default optie van Date Picker menselijk leesbaar en toegevoegd optie voor volledige ontleedbare datum\nDe mogelijkheid toegevoegd om achtervoegsel toe te voegen door navigatie-widgets\nVerbeterde licentiebeheerder",
+        "fr": "permettre d'utiliser `widget Oid` dans les fixations\ncorrection de différents problèmes avec le widget Date Picker\noption par défaut de Date Picker lisable humaine et option ajoutée pour la date d'analyse complète\nAjout de la possibilité d'ajouter suffixe par widgets de navigation\nAmélioration du gestionnaire de licence",
+        "it": "consentire di utilizzare `widget Oid` in leganti\nrisolto vari problemi con il widget Data Picker\nfatto l'opzione predefinita di Data Picker umano leggibile e aggiunta opzione per la data completa parseable\nAggiunto la possibilità di aggiungere suffisso da widget di navigazione\nMigliorato il gestore della licenza",
+        "es": "permite utilizar `widget Oid` in bindings\nvarios problemas fijos con el widget Date Picker\nhecho opción predeterminada de Date Picker humano legible y opción agregada para la fecha total parseable\nAñadido la posibilidad de añadir sufijo por widgets de navegación\nMejora del administrador de licencias",
+        "pl": "pozwala na użycie 'widget Oid \"w wiązaniach\nnaprawiono różne problemy z widżetem Date Picker\nopcja domyślna Date Picker czytelna dla człowieka i dodana opcja dla pełnej daty parseable\nDodano możliwość dodania przyrostka przez widżety nawigacyjne\nUlepszenie menedżera licencji",
+        "uk": "дозволити використовувати `widget Oid` в зв’язках\nвиправлено різні проблеми з віджетом Date Picker\nзроблено опцію за замовчуванням для читання та додано параметр для повної дати\nДодайте можливість додати Suffix навігаційні віджети\nПокращити менеджера ліцензії",
+        "zh-cn": "允许使用“widget” Oid ' 装订\n解决了 Date Picker 部件的各种问题\n将 Date Picker 人类可读的默认选项和全解析日期添加选项\n添加通过导航部件添加后缀的可能性\n改进许可证管理"
+      },
+      "2.9.37": {
+        "en": "TimePicker widget now saves the time instead of date by default, if you want old behavior use checkbox `asDate`",
+        "de": "TimePicker Widget speichert jetzt die Zeit anstelle von Datum standardmäßig, wenn Sie alte Verhalten verwenden Checkbox `asDate` wollen",
+        "ru": "Виджет TimePicker теперь сохраняет время вместо даты по умолчанию, если вы хотите, чтобы старое поведение использовало флажок `asDate'",
+        "pt": "O widget do TimePicker agora salva o tempo em vez de data por padrão, se você quiser que o comportamento antigo use a caixa de seleção `asDate`",
+        "nl": "TimePicker widget bespaart nu standaard de tijd in plaats van de datum, als u oud gedrag wilt gebruiken selectievakje ",
+        "fr": "TimePicker widget économise maintenant l'heure au lieu de la date par défaut, si vous voulez vieux comportement utiliser la case `asDate`",
+        "it": "TimePicker widget ora salva l'ora invece di data per impostazione predefinita, se si desidera vecchio comportamento utilizzare checkbox `asDate`",
+        "es": "El widget TimePicker ahora ahorra el tiempo en lugar de la fecha por defecto, si desea la casilla de verificación de comportamiento viejo `asDate`",
+        "pl": "Name",
+        "uk": "TimePicker віджет тепер заощаджує час замість дати за замовчуванням, якщо ви хочете, щоб стара поведінка використовувати прапорець `asDate`",
+        "zh-cn": "TimePicker 部件现在默认保存时间而不是日期, 如果您想要使用“ asDate” 复选框"
+      },
+      "2.9.36": {
+        "en": "fixed project-specific css not being applied",
+        "de": "feste projektspezifische css nicht angewendet",
+        "ru": "не применяется",
+        "pt": "css específicos do projeto fixo não sendo aplicado",
+        "nl": "vaste projectspecifieke css wordt niet toegepast",
+        "fr": "n'est pas appliquée",
+        "it": "non applicato",
+        "es": "css fijos para proyectos específicos que no se aplican",
+        "pl": "nie stosuje się stałego, specyficznego dla danego projektu css",
+        "uk": "виправлено проектні css, які не застосовуються",
+        "zh-cn": "未应用的固定项目 cs"
+      }
+    },
+    "title": "Visualisation Next Generation",
+    "titleLang": {
+      "en": "Visualisation Next Generation",
+      "de": "Visualisierung Next Generation",
+      "ru": "Визуализация Next Generation",
+      "pt": "Visualização Next Generation",
+      "nl": "Visualisatie Next Generation",
+      "fr": "Visualisation Next Generation",
+      "it": "Visualizzazione Next Generation",
+      "es": "Visualización Next Generation",
+      "pl": "Wizualizacja Next Generation",
+      "uk": "Візуалізація Next Generation",
+      "zh-cn": "可视化 Next Generation"
+    },
+    "desc": {
+      "en": "Extended GUI for ioBroker",
+      "de": "Erweiterte GUI für ioBroker",
+      "ru": "Расширенный GUI для ioBroker",
+      "pt": "GUI estendido para ioBroker",
+      "nl": "Uitgebreide GUI voor ioBroker",
+      "fr": "Interface graphique étendue pour ioBroker",
+      "it": "Interfaccia grafica estesa per ioBroker",
+      "es": "Interfaz gráfica extendida para ioBroker",
+      "pl": "Rozszerzone GUI dla ioBroker",
+      "uk": "Розширений GUI для ioBroker",
+      "zh-cn": "ioBroker的扩展GUI"
+    },
+    "platform": "Javascript/Node.js",
+    "loglevel": "info",
+    "icon": "vis-2.png",
+    "enabled": true,
+    "mode": "daemon",
+    "nogit": true,
+    "extIcon": "https://raw.githubusercontent.com/iobroker/iobroker.vis-2/master/admin/vis-2.png",
+    "keywords": [
+      "DashUI",
+      "GUI",
+      "graphical",
+      "scada"
+    ],
+    "messagebox": true,
+    "readme": "https://github.com/iobroker/iobroker.vis-2/blob/master/README.md",
+    "authors": [
+      "bluefox <dogafox@gmail.com>"
+    ],
+    "localLinks": {
+      "_default": "%web_protocol%://%ip%:%web_port%/vis-2/edit.html"
+    },
+    "license": "CC-BY-NC-4.0",
+    "dependencies": [
+      {
+        "web": ">=5.4.0"
+      },
+      {
+        "js-controller": ">=5.0.0"
+      }
+    ],
+    "restartAdapters": [
+      "vis-2"
+    ],
+    "serviceStates": "lib/states.js",
+    "singleton": true,
+    "type": "visualization",
+    "connectionType": "local",
+    "dataSource": "push",
+    "tier": 3,
+    "noConfig": false,
+    "adminUI": {
+      "config": "json"
+    },
+    "plugins": {
+      "sentry": {
+        "dsn": "https://db8b6e837c71447a876069559a00a742@sentry.iobroker.net/232"
+      }
+    },
+    "compact": true,
+    "materialize": true,
+    "eraseOnUpload": true,
+    "welcomeScreen": [
+      {
+        "link": "vis-2/index.html",
+        "name": "vis 2 runtime",
+        "img": "vis-2/img/favicon.png",
+        "color": "#ffe9c8",
+        "order": 0
+      }
+    ],
+    "welcomeScreenPro": [
+      {
+        "link": "vis-2/edit.html",
+        "name": "vis 2 editor",
+        "img": "vis-2/img/faviconEdit.png",
+        "color": "#c8ffe1",
+        "order": 1
+      }
+    ],
+    "licenseInformation": {
+      "type": "commercial",
+      "link": "https://github.com/ioBroker/ioBroker.vis-2?tab=readme-ov-file#license-requirements",
+      "license": "CC-BY-NC-4.0"
+    },
+    "stopBeforeUpdate": true
+  },
+  "native": {
+    "defaultFileMode": 1604,
+    "license": "",
+    "useLicenseManager": 0,
+    "doNotShowProjectDialog": false,
+    "loadingBackgroundColor": "",
+    "loadingHideLogo": false,
+    "loadingBackgroundImage": false
+  },
+  "instanceObjects": [
+    {
+      "_id": "",
+      "type": "meta",
+      "common": {
+        "name": "user files and images for vis-2",
+        "type": "meta.user"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info",
+      "type": "channel",
+      "common": {
+        "name": "info"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.uploaded",
+      "type": "state",
+      "common": {
+        "name": "Files were uploaded",
+        "type": "number",
+        "role": "value.time"
+      },
+      "native": {}
+    },
+    {
+      "_id": "control",
+      "type": "channel",
+      "common": {
+        "name": "Control vis-2"
+      },
+      "native": {}
+    },
+    {
+      "_id": "control.instance",
+      "type": "state",
+      "common": {
+        "name": "Control vis-2",
+        "type": "string",
+        "desc": "Write here browser instance ID to control or 'FFFFFFFF' to control all instances"
+      },
+      "native": {}
+    },
+    {
+      "_id": "control.command",
+      "type": "state",
+      "common": {
+        "name": "Command for vis-2",
+        "type": "string",
+        "desc": "Writing this variable act as the trigger. Instance and data must be preset before 'command' will be written. 'changedView' will be signalled too",
+        "role": "state",
+        "states": {
+          "alert": "alert",
+          "changeView": "changeView",
+          "refresh": "refresh",
+          "reload": "reload",
+          "dialog": "dialog",
+          "dialogClose": "dialogClose",
+          "popup": "popup",
+          "playSound": "playSound",
+          "changedView": "changedView",
+          "tts": "tts"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "control.data",
+      "type": "state",
+      "common": {
+        "name": "Data for control vis-2",
+        "type": "string",
+        "desc": "Used for: alert, changeView, dialog, popup, playSound, changedView"
+      },
+      "native": {}
+    }
+  ]
+}

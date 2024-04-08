@@ -1,0 +1,13 @@
+{
+  "License": "执照",
+  "Use license manager": "使用许可证管理器",
+  "instruction": "如果要使用<b>vis</b>, 您必须获取它的注册码.<br><b>vis</b>对个人免费使用, 但是对商业项目有偿使用.<br>您可以在<a href='https://iobroker.net' target='_blank'>iobroker.net</a>网页上购买注册码。",
+  "Suitable license found": "找到合适的许可证",
+  "Force pages rebuild": "强制页面重建",
+  "Do not show project dialog if URL is wrong": "如果 URL 错误，不显示项目对话框",
+  "Background color of the loading screen": "加载屏幕的背景颜色",
+  "Hide logo": "隐藏标志",
+  "Use background image": "使用背景图片",
+  "Upload image": "上传图片",
+  "Loading background": "加载背景"
+}

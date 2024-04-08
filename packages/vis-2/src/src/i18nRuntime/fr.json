@@ -1,0 +1,20 @@
+{
+  "Create new project": "Créer un nouveau projet",
+  "Cancel": "Annuler",
+  "Message": "Message",
+  "Ok": "D'accord",
+  "Received user command: %s": "Commande utilisateur reçue : %s",
+  "Unknown widget type \"%s\"": "Type de widget inconnu \"%s\"",
+  "vis_2_widgets_basic_cannot_recursive": "Impossible d'utiliser les vues récursives",
+  "vis_2_widgets_basic_contains_view": "Utiliser la vue",
+  "vis_2_widgets_basic_view_in_widget": "Afficher dans le widget",
+  "vis_2_widgets_basic_view_not_defined": "Vue non définie",
+  "Project name": "Nom du projet",
+  "Project \"%s\" does not exist": "Le projet \"%s\" n'existe pas",
+  "welcome_message": "Aucun projet n'existe encore.",
+  "Select vis-2 project": "Sélectionnez le projet \"vis-2\"",
+  "Create or import new \"vis-2\" project": "Créer ou importer un nouveau projet \"vis-2\"",
+  "Load project file...": "Chargement du fichier de projet...",
+  "Load widgets...": "Chargement des widgets...",
+  "Loading objects...": "Chargement d'objets..."
+}

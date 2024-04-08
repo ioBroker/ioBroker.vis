@@ -1,0 +1,13 @@
+{
+  "License": "Licencia",
+  "Use license manager": "Usar administrador de licencias",
+  "instruction": "Para usar <b> vis </b>, debe obtener la clave de licencia correspondiente. <br> <b> vis </b> es gratuito para uso privado, pero para uso comercial tiene un precio. <br> Usted puede obtener la licencia en <a href='https://iobroker.net' target='_blank'>iobroker.net</a> después de un breve registro.",
+  "Suitable license found": "Licencia adecuada encontrada",
+  "Force pages rebuild": "Forzar la reconstrucción de páginas",
+  "Do not show project dialog if URL is wrong": "No mostrar el diálogo del proyecto si la URL es incorrecta",
+  "Background color of the loading screen": "Color de fondo de la pantalla de carga.",
+  "Hide logo": "Ocultar logotipo",
+  "Use background image": "Usar imagen de fondo",
+  "Upload image": "Cargar imagen",
+  "Loading background": "Cargando fondo"
+}

@@ -1,0 +1,174 @@
+<link rel="stylesheet" type="text/css" href="widgets/jqplot/css/jquery.jqplot.min.css" />
+
+<script type="text/javascript" src="widgets/jqplot/js/jquery.jqplot.min.js"></script>
+
+<script type="text/javascript">
+
+    if (vis.editMode) {
+        // Add words for basic widgets
+        $.extend(true, systemDictionary, {
+            "background":           {"en": "Background",            "de": "Hintergrund",                    "ru": "Фон"},
+            "group_ticks":          {"en": "Ticks",                 "de": "Tick",                           "ru": "Штрихи"},
+            "ticks":                {"en": "Ticks-Namen",           "de": "Tick-Beschriftungen",            "ru": "Подписи штрихов"},
+            "ticks_tooltip":        {"en": "Divide with semicolon, e.g '10;50;70'", "de": "Mit Semikolon trennen, z.B. '10;50;70'", "ru": "Разделять точкой запятой, например '10;50;70'"},
+            "showTickLabels":       {"en": "Show tick labels",      "de": "Zeige Tick-Beschriftungen",      "ru": "Показать подписи"},
+            "tickPadding":          {"en": "Tick padding",          "de": "Tick-Abstand",                   "ru": "Отступ штрихов"},
+            "group_intervals":      {"en": "Intervals",             "de": "Intervalle",                     "ru": "Интервалы"},
+            "intervals":            {"en": "Intervals",             "de": "Intervalle",                     "ru": "Отрезки"},
+            "intervals_tooltip":    {"en": "Divide with semicolon, e.g '10;50;70'", "de": "Mit Semikolon trennen, z.B. ''10;50;70'", "ru": "Разделять точкой запятой, например '10;50;70'"},
+            "intervalColors":       {"en": "Interval colors",       "de": "Intervallfarben",                "ru": "Цвета интервалов"},
+            "intervalColors_tooltip": {"en": "Divide with semicolon, e.g 'green;#0000FF;red'", "de": "Mit Semikolon trennen, z.B. 'green;#0000FF;red'", "ru": "Разделять точкой запятой, например 'green;#0000FF;red'"},
+            "intervalInnerRadius":  {"en": "Inner interval raduis", "de": "Intervall-Radius innen",         "ru": "Внутренний радиус интервалов"},
+            "intervalOuterRadius":  {"en": "Outer interval radius", "de": "Intervall-Radius außen",         "ru": "Внешний радиус интервалов"},
+            "diameter":             {"en": "Diameter",              "de": "Durchmesser",                    "ru": "Диаметер"},
+            "padding":              {"en": "Padding",               "de": "Abstand",                        "ru": "Отступ"},
+            "group_shadow":         {"en": "Shadow",                "de": "Schatten",                       "ru": "Тень"},
+            "shadowOffset":         {"en": "shadowOffset",          "de": "Schatten offset",                "ru": "Сдвиг тени"},
+            "shadowAlpha":          {"en": "Shadow transparence",   "de": "Schatten Alpha",                 "ru": "Прозрачость тени"},
+            "shadowDepth":          {"en": "Shadow depth",          "de": "Schattentiefe",                  "ru": "Глубина тени"},
+            "group_ring":           {"en": "Ring",                  "de": "Rand",                           "ru": "Кайма"},
+            "ringColor":            {"en": "Ring color",            "de": "Randfarbe",                      "ru": "Цвет окантовки"},
+            "ringWidth":            {"en": "Ring width",            "de": "Randbreite",                     "ru": "Ширина окантовки"},
+            "group_needle":         {"en": "Needle",                "de": "Zeiger",                         "ru": "Стрелка"},
+            "needleThickness":      {"en": "Needle thickness",      "de": "Zeigerdicke",                    "ru": "Ширина стрелки"},
+            "needlePad":            {"en": "Needle pad",            "de": "Zeigeroffset",                   "ru": "Радиус основания"},
+            "hubRadius":            {"en": "Hub radius",            "de": "Zeigerbasis-Radius",             "ru": "Основание стрелки"}
+        });
+    }
+
+    vis.binds.jqplot = {
+        gauge: function (el, data) {
+            var $this = $(el).find('.jqplot-gauge');
+
+            var id = $(el).attr('id');
+            if (id && id.match(/_removed$/)) {
+                return;
+            }
+
+            if (!$this.length || !$this.is(':visible')) {
+                setTimeout(function () {
+                    vis.binds.jqplot.gauge(el, data);
+                }, 100);
+                return;
+            }
+
+            if (!data) return;
+
+            var options = {
+                title: data.title,
+                seriesDefaults: {
+                    rendererOptions: {
+                        min:            (data.min ? parseFloat(data.min) : undefined),
+                        max:            (data.max ? parseFloat(data.max) : undefined),
+                        ticks:          (data.ticks ? jQuery.map(data.ticks.split(';'), Number) : undefined),
+                        intervals:      (data.intervals ? jQuery.map(data.intervals.split(';'), Number) : undefined),
+                        intervalColors: (data.intervalColors ? data.intervalColors.split(';') : undefined),
+                        label:          data.label,
+                        showTickLabels: ((data.showTickLabels === 'false' || data.showTickLabels === false) ? false : undefined),
+                        intervalInnerRadius: (!data.intervalInnerRadius ? undefined : parseInt(data.intervalInnerRadius, 10)),
+                        intervalOuterRadius: (!data.intervalOuterRadius ? undefined : parseInt(data.intervalOuterRadius, 10)),
+                        diameter:       (!data.diameter ? undefined : parseInt(data.diameter, 10)),
+                        padding:        (!data.padding ? undefined : parseInt(data.padding, 10)),
+                        shadowOffset:   (!data.shadowOffset ? undefined : parseInt(data.shadowOffset, 10)),
+                        shadowAlpha:    (!data.shadowAlpha ? undefined : parseInt(data.shadowAlpha, 10)),
+                        shadowDepth:    (!data.shadowDepth ? undefined : parseInt(data.shadowDepth, 10)),
+                        background:     data.background, ringColor: data.ringColor,
+                        tickColor:      data.tickColor,
+                        ringWidth:      (!data.ringWidth ? undefined : parseInt(data.ringWidth, 10)),
+                        hubRadius:      (!data.hubRadius ? undefined : parseInt(data.hubRadius, 10)),
+                        tickPadding:    (!data.tickPadding ? undefined : parseInt(data.tickPadding, 10)),
+                        needleThickness: (!data.needleThickness ? undefined : parseInt(data.needleThickness, 10)),
+                        needlePad:      (!data.needlePad ? undefined : parseInt(data.needlePad, 10))
+                    }
+                }
+            };
+            if (options.seriesDefaults.rendererOptions.ticks && options.seriesDefaults.rendererOptions.ticks.length === 1) {
+                options.seriesDefaults.rendererOptions.ticks[1] = options.seriesDefaults.rendererOptions.ticks[0];
+            }
+
+            $(el).data('options', data);
+            $this.html('');
+
+            try {
+                var jqplotOptions = $.extend(true, {
+                    title: {show: false},
+                    grid: {
+                        background: 'transparent'
+                    },
+                    seriesDefaults: {
+                        renderer: $.jqplot.MeterGaugeRenderer,
+                        rendererOptions: {
+                            min: 0,
+                            max: 100
+                        }
+                    }
+                }, options);
+
+                var oid = $this.attr('data-oid');
+                var series;
+                if (oid !== 'nothing_selected' && vis.states[oid + '.val'] !== undefined) {
+                    series = [[vis.states[oid + '.val']]];
+                } else {
+                    series = [[1, 0]];
+                }
+
+                function onChange(e, newVal/* , oldVal */) {
+                    plot.series[0].data = [[1, newVal]];
+                    plot.redraw();
+                }
+
+                var bound = [];
+
+                if (oid) {
+                    vis.states.bind(oid + '.val', onChange);
+                    bound.push(oid + '.val');
+                }
+                var plot = $.jqplot($this.attr('id'), series, jqplotOptions);
+
+                if (bound.length) {
+                    // remember all ids, that bound
+                    $(el).data('bound', bound);
+                    // remember bind handler
+                    $(el).data('bindHandler', onChange);
+                }
+            } catch(e) {
+                servConn.logError('Cannot render widget jqplot: ' + e);
+            }
+
+            if (vis.editMode) {
+                $(el).resize(function () {
+                    var timer = $(this).data('timer');
+                    if (timer) {
+                        clearTimeout(timer);
+                    }
+                    var that = this;
+                    $(this).data('timer', setTimeout(function () {
+                        $(that).data('timer', null);
+                        $('#' + $(that).attr('id') + '_gauge').html('');
+                        vis.binds.jqplot.gauge(that, $(that).data('options'));
+                    }, 300));
+                });
+
+                $(el).data('destroy', function (id, $widget) {
+                    $widget.off('resize');
+                });
+            }
+        }
+    };
+</script>
+
+<script type="text/ejs"
+        id="tplJqplotGauge"
+        class="vis-tpl"
+        data-vis-prev='<img src="widgets/jqplot/img/Prev_MeterGauge.png"></img>'
+        data-vis-set="jqplot"
+        data-vis-type="number"
+        data-vis-name="MeterGauge"
+        data-vis-attrs="oid;title;min/number;max/number;label;background/color;padding/slider,0,50,1;group.ticks;ticks;showTickLabels[true]/checkbox;tickPadding/slider,0,50,1;group.intervals;intervals;intervalColors;intervalInnerRadius/slider,0,550,1;intervalOuterRadius/slider,0,550,1;group.shadow;shadowOffset/slider,0,50,1;shadowAlpha/slider,0,1,0.05;shadowDepth/slider,0,50,1;group.ring;ringColor/color;ringWidth/slider,0,150,1;group.needle;needleThickness/slider,0,50,1;needlePad/slider,0,150,1;hubRadius/slider,0,150,1"
+        >
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width:460px; height:280px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqplot.gauge(el, data) %>>
+        <div class="vis-widget-body" style="width: 100%; height: 100%">
+            <div class="jqplot-gauge" id="_<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" style="width: 100%; height: 100%"/>
+        </div>
+    </div>
+</script>
