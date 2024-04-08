@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { NestedMenuItem, IconMenuItem } from 'mui-nested-menu/index';
 
 import { Menu } from '@mui/material';

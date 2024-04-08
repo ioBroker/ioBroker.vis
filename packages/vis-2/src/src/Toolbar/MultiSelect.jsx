@@ -171,7 +171,7 @@ class MultiSelect extends Component {
                     <Button
                         disabled={!value.length}
                         onClick={() => this.props.setSelectedWidgets([])}
-                        startIcon={<Checkbox  style={{ opacity: !value.length ? 0.5 : 1 }} />}
+                        startIcon={<Checkbox style={{ opacity: !value.length ? 0.5 : 1 }} />}
                     >
                         {I18n.t('Unselect')}
                     </Button>

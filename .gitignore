@@ -5,8 +5,7 @@ node_modules
 *.tgz
 /_socket
 /.build
-/lib/js
-/lib/css
+/lib
 /www/_socket
 knx-uf-iconset
 iob_npm.done
@@ -15,6 +14,8 @@ admin/i18n/*/flat.txt
 admin/i18n/flat.txt
 *.vis.code-workspace
 beta
+io-package.json
+main.js
 
 build
 /.vscode

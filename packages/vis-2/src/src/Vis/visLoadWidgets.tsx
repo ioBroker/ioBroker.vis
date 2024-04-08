@@ -31,7 +31,7 @@ declare global {
         [promiseName: PromiseName]: Promise<any>;
         [widgetSetName: WidgetSetName]: {
             __initialized: boolean;
-            get: (module: string) => () => { default: VisRxWidgetWithInfo<any> };
+            get: (module: string) => Promise<() => { default: VisRxWidgetWithInfo<any> }>;
             init?: (shareScope: string) => Promise<void>;
         };
     }
@@ -137,7 +137,7 @@ export const loadComponent = (
 ): () => Promise<{ default: VisRxWidgetWithInfo<any> } | null> => async (): Promise<{ default: VisRxWidgetWithInfo<any> } | null> => {
     await getOrLoadRemote(remote, sharedScope, url);
     if (window[remote]) {
-        const factory: () => { default: VisRxWidgetWithInfo<any> } | null = window[remote].get(module) as () => { default: VisRxWidgetWithInfo<any> } | null;
+        const factory: () => { default: VisRxWidgetWithInfo<any> } | null = (await window[remote].get(module)) as () => { default: VisRxWidgetWithInfo<any> } | null;
         return factory ? factory() : null;
     }
     return null;

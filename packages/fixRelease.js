@@ -1,8 +1,8 @@
 /**
- * Release script adds a version entry to private packages, which introduces conflicts in following releases
+ * Release script adds a version entry to private packages, which introduces conflicts in the following releases
  */
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 
 function removePackEntry() {
     const packPath = path.join(__dirname, 'packages', 'vis-2', 'src', 'package.json');

@@ -2020,7 +2020,7 @@ class Editor extends Runtime {
                                             } else {
                                                 // https://github.com/devbookhq/splitter/issues/15
                                                 console.log('Decline resize, to work around bug in @devbookhq/splitter');
-                                                this.setState({splitSizes: this.state.splitSizes});
+                                                this.setState({ splitSizes: this.state.splitSizes });
                                             }
                                         } else {
                                             this.setState({ splitSizes });

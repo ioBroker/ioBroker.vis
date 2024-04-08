@@ -100,10 +100,8 @@ export default class BasicBar extends VisRxWidget<RxData> {
      * Calculate the length of the bar
      */
     getCalc(): string {
-        // @ts-ignore
-        const min = (this.state.rxData.min || this.state.rxData.min === 0) ? Number(this.state.rxData.min) : 0;
-        // @ts-ignore
-        const max = (this.state.rxData.max || this.state.rxData.max === 0) ? Number(this.state.rxData.max) : 100;
+        const min = this.state.rxData.min || this.state.rxData.min === 0 ? Number(this.state.rxData.min) : 0;
+        const max = this.state.rxData.max || this.state.rxData.max === 0 ? Number(this.state.rxData.max) : 100;
         let val = parseFloat(this.state.values[`${this.state.rxData.oid}.val`]) || 0;
         val = (val - min) / (max - min);
         return (this.state.rxData.border) ? (`calc(${Math.round(val * 100)}% - ${this.extractWidth(this.state.rxData.border as string, 2)})`) : (`${Math.round(val * 100)}%`);

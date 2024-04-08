@@ -7,21 +7,21 @@
  *      CC-NC-BY 4.0 License
  *
  */
-const adapterName    = require('./package.json').name.split('.').pop();
-const utils          = require('@iobroker/adapter-core'); // Get common adapter utils
-const fs             = require('fs');
+const fs = require('node:fs');
+const path = require('node:path');
+const https = require('node:https');
+const utils = require('@iobroker/adapter-core'); // Get common adapter utils
+const jwt = require('jsonwebtoken');
+const adapterName = require('./package.json').name.split('.').pop();
 const syncWidgetSets = require('./lib/install.js');
-const https          = require('https');
-const jwt            = require('jsonwebtoken');
-const path           = require('path');
-const cert           = fs.readFileSync(`${__dirname}/lib/cloudCert.crt`);
+const cert = fs.readFileSync(`${__dirname}/lib/cloudCert.crt`);
 
 let adapter;
 let isLicenseError   = false;
 let lastProgressUpdate;
 let widgetInstances  = {};
 let stoppingPromise = false;
-let synchronyzing = false;
+let synchronizing = false;
 let vendorPrefix = '';
 
 function startAdapter(options) {
@@ -62,7 +62,7 @@ function startAdapter(options) {
         },
         message: obj => processMessage(obj),
         unload: callback => {
-            if (synchronyzing) {
+            if (synchronizing) {
                 new Promise(resolve => stoppingPromise = resolve)
                     .then(() => callback && callback());
             } else {
@@ -834,7 +834,7 @@ async function copyFolder(sourceId, sourcePath, targetId, targetPath) {
 }
 
 async function buildHtmlPages(forceBuild) {
-    synchronyzing = true;
+    synchronizing = true;
     const enabledList = await readAdapterList();
     const configChanged = await generateConfigPage(forceBuild, enabledList);
 
@@ -888,7 +888,7 @@ async function buildHtmlPages(forceBuild) {
                 stoppingPromise();
                 stoppingPromise = null;
             }
-            synchronyzing = false;
+            synchronizing = false;
             return;
         }
 
@@ -899,7 +899,7 @@ async function buildHtmlPages(forceBuild) {
             adapter.setStateAsync('info.uploaded', Date.now(), true);
         }
     }
-    synchronyzing = false;
+    synchronizing = false;
     if (typeof stoppingPromise === 'function') {
         stoppingPromise();
         stoppingPromise = null;

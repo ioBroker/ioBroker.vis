@@ -15,7 +15,6 @@
 
 import React from 'react';
 
-
 import { GetRxDataFromWidget, RxRenderWidgetProps } from '@/types';
 import VisRxWidget from '@/Vis/visRxWidget';
 

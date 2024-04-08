@@ -1,12 +1,12 @@
 'use strict';
 
-const gulp     = require('gulp');
-const fs       = require('fs');
-const path     = require('path');
-const cp       = require('child_process');
-const axios    = require('axios');
+const gulp = require('gulp');
+const fs = require('node:fs');
+const path = require('node:path');
+const cp = require('node:child_process');
+const axios = require('axios');
 const unzipper = require('unzipper');
-const rootDir = path.join(__dirname, '..', '..')
+const rootDir = path.join(__dirname, '..', '..');
 
 function deleteFoldersRecursive(path, exceptions) {
     if (fs.existsSync(path)) {
@@ -206,6 +206,7 @@ gulp.task('runtime-7-patch-dep',  gulp.series('runtime-6-copy-dep', 'runtime-7-p
 gulp.task('0-clean', done => {
     deleteFoldersRecursive(`${__dirname}/src/build`);
     deleteFoldersRecursive(`${__dirname}/www`);
+    deleteFoldersRecursive(`${__dirname}/../../www`);
     done();
 });
 
@@ -477,6 +478,10 @@ gulp.task('7-patch', done => {
     patchFile(`${__dirname}/src/build/index.html`);
     patchFile(`${__dirname}/src/build/edit.html`);
     fs.existsSync(`${__dirname}/www/marketplaceConfig.sample.js`) && fs.unlinkSync(`${__dirname}/www/marketplaceConfig.sample.js`);
+    copyFolder(`${__dirname}/www`, `${__dirname}/../../www`);
+    fs.writeFileSync(`${__dirname}/../../io-package.json`, fs.readFileSync(`${__dirname}/io-package.json`).toString());
+    fs.writeFileSync(`${__dirname}/../../main.js`, fs.readFileSync(`${__dirname}/main.js`).toString());
+    copyFolder(`${__dirname}/lib`, `${__dirname}/../../lib`);
     done();
 });
 

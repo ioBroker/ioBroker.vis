@@ -1,4 +1,4 @@
-![Logo](admin/vis-2.png)
+![Logo](packages/vis-2/admin/vis-2.png)
 # Next generation visualization for ioBroker: vis-2 
 
 ![Number of Installations](http://iobroker.live/badges/vis-2-installed.svg) ![Number of Installations](http://iobroker.live/badges/vis-2-stable.svg) [![NPM version](http://img.shields.io/npm/v/iobroker.vis-2.svg)](https://www.npmjs.com/package/iobroker.vis-2)
