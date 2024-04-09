@@ -475,6 +475,7 @@ function copyFolder(source, target, ignore) {
 
 gulp.task('7-patch', done => {
     patchFile(`${__dirname}/www/edit.html`);
+    patchFile(`${__dirname}/www/index.html`);
     patchFile(`${__dirname}/src/build/index.html`);
     patchFile(`${__dirname}/src/build/edit.html`);
     fs.existsSync(`${__dirname}/www/marketplaceConfig.sample.js`) && fs.unlinkSync(`${__dirname}/www/marketplaceConfig.sample.js`);
@@ -487,6 +488,6 @@ gulp.task('7-patch', done => {
 
 gulp.task('7-patch-dep',  gulp.series('6-copy-dep', '7-patch'));
 
-gulp.task('buildReact', gulp.series('7-patch-dep', 'runtime-7-patch-dep'));
+gulp.task('buildReact', gulp.series('runtime-7-patch-dep', '7-patch-dep'));
 
 gulp.task('default', gulp.series('buildReact'));

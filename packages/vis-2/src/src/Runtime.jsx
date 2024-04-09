@@ -907,7 +907,9 @@ class Runtime extends GenericApp {
         return <Dialog
             open={!0}
             maxWidth="sm"
-            onClose={() => {}} // do nothing
+            onClose={() => {
+                /* do nothing */
+            }}
         >
             <DialogTitle>
                 <img
@@ -924,7 +926,10 @@ class Runtime extends GenericApp {
                     </div> : null}
                     <MenuList>
                         {this.state.projects.map(project =>
-                            <ListItemButton key={project} onClick={() => window.location.href = `?${project}`} disabled={!hasProjectAccess({ editMode: this.state.editMode, project: visProject, user: activeUser })}>
+                            <ListItemButton
+                                key={project}
+                                onClick={() => window.location.href = `?${project}`}
+                            >
                                 <ListItemIcon>
                                     <IconDocument />
                                 </ListItemIcon>
@@ -986,9 +991,19 @@ class Runtime extends GenericApp {
 
         const { visProject, activeUser } = store.getState();
 
-        if (!hasProjectAccess({ editMode: this.state.editMode, project: visProject, user: activeUser }) || !hasViewAccess({
-            editMode: this.state.editMode, project: visProject, user: activeUser, view: this.state.selectedView,
-        })) {
+        if (
+            !hasProjectAccess({
+                editMode: this.state.editMode,
+                project: visProject,
+                user: activeUser,
+            }) ||
+            !hasViewAccess({
+                editMode: this.state.editMode,
+                project: visProject,
+                user: activeUser,
+                view: this.state.selectedView,
+            })
+        ) {
             console.warn(`User "${activeUser}" has no permissions for ${this.state.editMode ? 'edit mode' : 'runtime'} of project "${this.state.projectName}" with view "${this.state.selectedView}"`);
             if (this.state.projects) {
                 return this.showSmallProjectsDialog();

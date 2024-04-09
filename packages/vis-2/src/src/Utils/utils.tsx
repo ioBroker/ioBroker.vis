@@ -221,9 +221,9 @@ export const DEFAULT_PERMISSIONS: Permissions = { read: true, write: true };
 export function hasProjectAccess(options: CheckAccessOptions): boolean {
     const { project, user, editMode } = options;
 
-    const permissions = project.___settings.permissions?.[user] ?? DEFAULT_PERMISSIONS;
+    const permissions = project?.___settings?.permissions?.[user] ?? DEFAULT_PERMISSIONS;
 
-    if (editMode && permissions.write) {
+    if (editMode && permissions?.write) {
         return true;
     }
 
