@@ -1,5 +1,5 @@
 const helper = require('@iobroker/vis-2-widgets-testing');
-const path = require('path')
+const path = require('node:path')
 
 let gPage;
 let gBrowser;
@@ -14,7 +14,7 @@ describe('vis', () => {
             additionalAdapters: ['web'],
             visUploadedId: 'vis-2.0.info.uploaded',
             mainGuiProject: 'vis-2',
-            rootDir: path.join(__dirname, '..') + '/'
+            rootDir: path.normalize(`${path.join(__dirname, '..')}/`).replace(/\\/g, '/'),
         });
         const { browser, page } = await helper.startBrowser(process.env.CI === 'true');
         gBrowser = browser

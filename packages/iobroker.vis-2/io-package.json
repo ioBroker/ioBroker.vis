@@ -171,7 +171,6 @@
       }
     },
     "compact": true,
-    "materialize": true,
     "eraseOnUpload": true,
     "welcomeScreen": [
       {

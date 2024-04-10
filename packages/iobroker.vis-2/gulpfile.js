@@ -79,6 +79,8 @@ function buildRuntime() {
 }
 
 gulp.task('runtime-0-clean', done => {
+    deleteFoldersRecursive(`${__dirname}/www`);
+    deleteFoldersRecursive(`${__dirname}/../../www`);
     deleteFoldersRecursive(`${__dirname}/runtime`, ['node_modules', 'package-lock.json']);
     done();
 });
@@ -198,6 +200,7 @@ gulp.task('runtime-6-copy-dep', gulp.series('runtime-4-build-dep', 'runtime-6-co
 gulp.task('runtime-7-patch', done => {
     patchFile(`${__dirname}/www/index.html`);
     patchFile(`${__dirname}/runtime/build/index.html`);
+    copyFolder(`${__dirname}/www`, `${__dirname}/../../www`);
     done();
 });
 
@@ -205,8 +208,6 @@ gulp.task('runtime-7-patch-dep',  gulp.series('runtime-6-copy-dep', 'runtime-7-p
 
 gulp.task('0-clean', done => {
     deleteFoldersRecursive(`${__dirname}/src/build`);
-    deleteFoldersRecursive(`${__dirname}/www`);
-    deleteFoldersRecursive(`${__dirname}/../../www`);
     done();
 });
 
