@@ -37,7 +37,7 @@
     "@iobroker/vis-2-widgets-testing": "^1.0.0",
     "@tsconfig/node18": "^18.2.4",
     "@types/mocha": "^10.0.6",
-    "chai": "^5.1.0",
+    "chai": "^4.4.1",
     "gulp": "^4.0.2",
     "iobroker.web": "*",
     "mocha": "^10.4.0",
