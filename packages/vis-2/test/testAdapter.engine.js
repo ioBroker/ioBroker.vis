@@ -1,6 +1,7 @@
 /* jshint -W097 */
 /* jshint strict: false */
 /* jslint node: true */
+const path = require('node:path');
 const expect = require('chai').expect;
 const setup = require('@iobroker/legacy-testing');
 
@@ -32,7 +33,11 @@ function checkConnectionOfAdapter(cb, counter) {
 
 describe(`Test ${adapterShortName} adapter`, function () {
     before(`Test ${adapterShortName} adapter: Start js-controller`, function (_done) {
-        this.timeout(600000); // because of first install from npm
+        this.timeout(600000); // because of the first installation from npm
+
+        setup.setOptions({
+            rootDir: path.normalize(`${__dirname}/../`).replace(/\\/g, '/'), // the adapter folder
+        });
 
         setup.setupController(async () => {
             const config = await setup.getAdapterConfig();
