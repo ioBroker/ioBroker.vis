@@ -3,7 +3,7 @@
   "compilerOptions": {
     "paths": {
       "@iobroker/types-vis-2": ["./packages/types-vis-2"],
-      "iobroker.vis-2": ["./packages/vis-2/src/src"]
+      "iobroker.vis-2": ["./packages/iobroker.vis-2/src/src"]
     }
   }
 }
