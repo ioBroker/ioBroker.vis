@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.48",
+    "version": "2.9.49",
     "news": {
+      "2.9.49": {
+        "en": "Corrected the scroll buttons in Tabs widget\nCorrected resizers if the border width is set",
+        "de": "Korrektur der Scroll-Tasten in Tabs Widget\nKorrigierte Resizer, wenn die Grenzbreite eingestellt ist",
+        "ru": "Исправлены кнопки прокрутки в виджете Tabs\nКорректированные ретрансляторы, если установлена ширина границы",
+        "pt": "Corrigido os botões de rolagem no widget Tabs\nRedimensionadores corrigidos se a largura da borda for definida",
+        "nl": "Schuifknoppen in tabs-widget gecorrigeerd\nGecorrigeerde resizers als de randbreedte is ingesteld",
+        "fr": "Correction des boutons de défilement dans le widget Tabs\nResizers corrigés si la largeur de la bordure est définie",
+        "it": "Corretto il pulsante di scorrimento nel widget Tabs\nResponsabili corretti se la larghezza del bordo è impostata",
+        "es": "Corregido los botones de desplazamiento en el widget de pestañas\nResizers corregidos si se fija el ancho de la frontera",
+        "pl": "Poprawiono przyciski przewijania w widżecie Tabs\nPoprawione rezysery, jeżeli szerokość graniczna jest ustawiona",
+        "uk": "Виправлено кнопки прокрутки в віджеті Tabs\nВиправлені резистори, якщо ширина кордону встановлена",
+        "zh-cn": "更正 Tabs 部件中的滚动按钮\n如果设置了边框宽度, 已更正的再分配器"
+      },
       "2.9.48": {
         "en": "Showed selected view in the view dialog\nAdded customization of loading screen\nRespected the sentry disable flag in GUI",
         "de": "Gezeigte ausgewählte Ansicht im Ansichtsdialog\nHinzugefügt Anpassung des Ladebildschirms\nRespected the sentry disable flag in GUI",

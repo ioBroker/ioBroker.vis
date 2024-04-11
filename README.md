@@ -264,7 +264,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.9.49 (2024-04-11)
 * (bluefox) Corrected the scroll buttons in Tabs widget
 * (bluefox) Corrected resizers if the border width is set
 
