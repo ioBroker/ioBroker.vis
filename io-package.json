@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.5.4",
+        "version": "1.5.5",
         "news": {
+            "1.5.5": {
+                "en": "Corrected small warning",
+                "de": "Kleine Warnung korrigiert",
+                "ru": "Исправлено небольшое предупреждение",
+                "pt": "Pequeno aviso corrigido",
+                "nl": "Gecorrigeerde kleine waarschuwing",
+                "fr": "Petit avertissement corrigé",
+                "it": "Piccolo avvertimento corretto",
+                "es": "Advertencia pequeña corregida",
+                "pl": "Poprawione małe ostrzeżenie",
+                "uk": "Виправлено невелике попередження",
+                "zh-cn": "更正小警告"
+            },
             "1.5.4": {
                 "en": "added the new binding operation for getting property of JSON or object\nChecked the initialization of the `local_` variables\nfixed subscribeOidAtRuntime\nAdded dynamic web manifest\nOptimization for basic-view in widget8\nChanged binding regex to accept umlauts\nCorrected first installation of vis",
                 "de": "die neue Bindungsoperation zum Erhalt von Eigentum von JSON oder Objekt hinzugefügt\nDie Initialisierung der lokalen_ Variablen wurde geprüft\nabonnierenOidAtRuntime\nHinzufügen dynamischer web manifest\nOptimierung der Grundansicht in widget8\nÄnderung des verbindlichen Regex zur Annahme von Umlauts\nKorrigierte erste Installation von vis",
@@ -77,18 +90,6 @@
                 "es": "Los atributos del grupo serán reemplazados recursivamente",
                 "pl": "Atrybuty grupowe zostaną zastąpione rekursywnie",
                 "zh-cn": "组属性将被递归替换"
-            },
-            "1.4.12": {
-                "en": "Fixed bug with the export of specific widgets",
-                "de": "Fehler beim Export bestimmter Widgets behoben",
-                "ru": "Исправлена ошибка с экспортом определенных виджетов",
-                "pt": "Corrigido bug com a exportação de widgets específicos",
-                "nl": "Bug opgelost met het exporteren van specifieke widgets",
-                "fr": "Correction d'un bug avec l'export de widgets spécifiques",
-                "it": "Risolto bug con l'esportazione di widget specifici",
-                "es": "Error solucionado con la exportación de widgets específicos.",
-                "pl": "Naprawiono błąd z eksportem określonych widżetów",
-                "zh-cn": "修复了导出特定小部件的错误"
             }
         },
         "title": "Visualisation",
