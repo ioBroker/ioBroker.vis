@@ -208,6 +208,9 @@ Notice that these settings are valid only for reconnection and not for the first
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Corrected small warning
+
 ### 1.5.4 (2023-11-29)
 * (agav99) added the new binding operation for getting property of JSON or object
 * (agav99) Checked the initialization of the `local_` variables

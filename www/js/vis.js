@@ -351,7 +351,7 @@ var vis = {
                 that.showMessage(_('Cannot execute %s for %s, because of insufficient permissions', 'setState', id), _('Insufficient permissions'), 'alert', 600);
             }
 
-            var val = that.states.attr(`${id}.val`);
+            const val = that.states.attr(`${id}.val`);
 
             if (that.states.attr(id) || val !== undefined || val !== null) {
                 that.states.attr(state);
@@ -372,11 +372,10 @@ var vis = {
                 }
 
                 // Inform other widgets, that does not support canJS
-                sub_UpdateWidgetsNotCanJS();
+                that._informWidgetsAboutChanges(id, state);
             }
         });
     },
-    //******************************************************************************* */
     setValue:           function (id, val) {
         if (!id) {
             console.log('ID is null for val=' + val);
@@ -384,19 +383,19 @@ var vis = {
         }
 
         var d = new Date();
-        var t = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2) + " " + ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2) + ':' + ('0' + d.getSeconds()).slice(-2);
+        var t = `${d.getFullYear()}-${('0' + (d.getMonth() + 1)).slice(-2)}-${('0' + d.getDate()).slice(-2)} ${('0' + d.getHours()).slice(-2)}:${('0' + d.getMinutes()).slice(-2)}:${('0' + d.getSeconds()).slice(-2)}`;
         var o = {};
         var created = false;
-        if (this.states.attr(id + '.val') != val) {
-            o[id + '.lc'] = t;
+        if (this.states.attr(`${id}.val`) != val) {
+            o[`${id}.lc`] = t;
         } else {
-            o[id + '.lc'] = this.states.attr(id + '.lc');
+            o[`${id}.lc`] = this.states.attr(`${id}.lc`);
         }
-        o[id + '.val'] = val;
-        o[id + '.ts'] = t;
-        o[id + '.ack'] = false;
+        o[`${id}.val`] = val;
+        o[`${id}.ts`] = t;
+        o[`${id}.ack`] = false;
 
-        var _val = this.states.attr(id + '.val');
+        var _val = this.states.attr(`${id}.val`);
         // Create this value
         if (_val === undefined || _val === null) {
             created = true;
@@ -425,7 +424,7 @@ var vis = {
         }
     },
     loadWidgetSet:      function (name, callback) {
-        var url = './widgets/' + name + '.html?visVersion=' + this.version;
+        var url = `./widgets/${name}.html?visVersion=${this.version}`;
         var that = this;
         $.ajax({
             url: url,
@@ -437,7 +436,7 @@ var vis = {
                     try {
                         $('head').append(data);
                     } catch (e) {
-                        console.error('Cannot load widget set "' + name + '": ' + e);
+                        console.error(`Cannot load widget set "${name}": ${e}`);
                     }
                     that.toLoadSetsCount -= 1;
                     if (that.toLoadSetsCount <= 0) {
@@ -451,7 +450,7 @@ var vis = {
                 }, 0);
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                that.conn.logError('Cannot load widget set ' + name + ' ' + errorThrown);
+                that.conn.logError(`Cannot load widget set ${name} ${errorThrown}`);
             }
         });
     },
@@ -524,14 +523,14 @@ var vis = {
         return getWidgetGroup(this.views, view, widget);
     },
     loadWidgetSets:     function (callback) {
-        this.showWaitScreen(true, '<br>' + _('Loading Widget-Sets...') + ' <span id="widgetset_counter"></span>', null, 20);
+        this.showWaitScreen(true, `<br>${_('Loading Widget-Sets...')} <span id="widgetset_counter"></span>`, null, 20);
         var arrSets = [];
 
         // If widgets are preloaded
         if (this.binds && this.binds.stateful !== undefined && this.binds.stateful !== null) {
             this.toLoadSetsCount = 0;
         } else {
-            // Get list of used widget sets. if Edit mode list is null.
+            // Get a list of used widget sets. If Edit mode list is null.
             var widgetSets = this.editMode ? null : this.getUsedWidgetSets();
 
             // First calculate how many sets to load
@@ -2906,7 +2905,7 @@ var vis = {
             var view = $this.data('view');
             var viewDiv = $this.attr('id').substring('visview_'.length);
             // If this view is used as a container
-            if (containers.indexOf(viewDiv) !== -1 || $this.hasClass('vis-edit-group') || $this.data('persistent')) {
+            if (containers.includes(viewDiv) || $this.hasClass('vis-edit-group') || $this.data('persistent')) {
                 return;
             }
 
