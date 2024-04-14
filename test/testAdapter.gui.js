@@ -56,21 +56,11 @@ describe('vis', () => {
     });
 
     after(async function () {
-        this.timeout(5_000);
+        this.timeout(8_000);
         await helper.stopBrowser();
+        console.log('browser stopped');
 
-        // await helper.stopIoBroker();
-        // it is custom stop function as vis does not running, so we stop only web without vis
-        await setup.stopCustomAdapter('web', 0);
-
-        // wait till adapters are stopped
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        await new Promise(resolve =>
-            setup.stopController(normalTerminated => {
-                console.log(`Adapter normal terminated: ${normalTerminated}`);
-                resolve();
-            }));
+        await helper.stopIoBroker();
         console.log('ioBroker stopped');
     });
 });
