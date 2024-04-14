@@ -56,19 +56,12 @@ describe('vis', () => {
     });
 
     after(async function () {
-        this.timeout(10_000);
+        this.timeout(5_000);
         await helper.stopBrowser();
-        console.log('BROWSER stopped');
-        // await helper.stopIoBroker();
-        console.log('Stopping web stopped');
-        await setup.stopCustomAdapter('web', 0);
-        console.log('Web stopped');
 
-        const pack = require(`${__dirname}/../package.json`);
-        const widgetsSetName = pack.name.split('.').pop();
-        console.log(`Stopping ${widgetsSetName}`);
-        await setup.stopCustomAdapter(widgetsSetName, 0);
-        console.log(`${widgetsSetName} topped stopped`);
+        // await helper.stopIoBroker();
+        // it is custom stop function as vis does not running, so we stop only web without vis
+        await setup.stopCustomAdapter('web', 0);
 
         // wait till adapters are stopped
         await new Promise(resolve => setTimeout(resolve, 1000));
