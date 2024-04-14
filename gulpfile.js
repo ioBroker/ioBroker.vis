@@ -53,8 +53,8 @@ function lang2data(lang, isFlat) {
 function readWordJs(src) {
     try {
         let words;
-        if (fs.existsSync(src + 'js/' + fileName)) {
-            words = fs.readFileSync(src + 'js/' + fileName).toString();
+        if (fs.existsSync(`${src}js/${fileName}`)) {
+            words = fs.readFileSync(`${src}js/${fileName}`).toString();
         } else {
             words = fs.readFileSync(src + fileName).toString();
         }
@@ -81,7 +81,7 @@ function readWordJs(src) {
         lines[lines.length - 1] = lines[lines.length - 1].trim().replace(/}\);$/, '}');
         lines[lines.length - 1] = lines[lines.length - 1].trim().replace(/};$/, '}');
         words = lines.join('\n');
-        const resultFunc = new Function('return ' + words + ';');
+        const resultFunc = new Function(`return ${words};`);
 
         return resultFunc();
     } catch (e) {
@@ -151,7 +151,7 @@ function words2languages(src) {
                 for (const lang in data[word]) {
                     if (data[word].hasOwnProperty(lang)) {
                         if (!langs[lang]) {
-                            console.error('No data for ' + lang + ' and ' + word);
+                            console.error(`No data for ${lang} and ${word}`);
                         }
                         langs[lang][word] = data[word][lang];
                         //  pre-fill all other languages
@@ -164,8 +164,8 @@ function words2languages(src) {
                 }
             }
         }
-        if (!fs.existsSync(src + 'i18n/')) {
-            fs.mkdirSync(src + 'i18n/');
+        if (!fs.existsSync(`${src}i18n/`)) {
+            fs.mkdirSync(`${src}i18n/`);
         }
         for (const l in langs) {
             if (!langs.hasOwnProperty(l)) continue;
@@ -175,14 +175,14 @@ function words2languages(src) {
             for (let k = 0; k < keys.length; k++) {
                 obj[keys[k]] = langs[l][keys[k]];
             }
-            if (!fs.existsSync(src + 'i18n/' + l)) {
-                fs.mkdirSync(src + 'i18n/' + l);
+            if (!fs.existsSync(`${src}i18n/${l}`)) {
+                fs.mkdirSync(`${src}i18n/${l}`);
             }
 
-            fs.writeFileSync(src + 'i18n/' + l + '/translations.json', lang2data(obj));
+            fs.writeFileSync(`${src}i18n/${l}/translations.json`, lang2data(obj));
         }
     } else {
-        console.error('Cannot read or parse ' + fileName);
+        console.error(`Cannot read or parse ${fileName}`);
     }
 }
 function words2languagesFlat(src) {
@@ -194,7 +194,7 @@ function words2languagesFlat(src) {
                 for (const lang in data[word]) {
                     if (data[word].hasOwnProperty(lang)) {
                         if (!langs[lang]) {
-                            console.error('No data for ' + lang + ' and ' + word);
+                            console.error(`No data for ${lang} and ${word}`);
                         }
                         langs[lang][word] = data[word][lang];
                         //  pre-fill all other languages
@@ -226,7 +226,7 @@ function words2languagesFlat(src) {
                 fs.mkdirSync(src + 'i18n/' + ll);
             }
 
-            fs.writeFileSync(src + 'i18n/' + ll + '/flat.txt', lang2data(langs[ll], langs.en));
+            fs.writeFileSync(`${src}i18n/${ll}/flat.txt`, lang2data(langs[ll], langs.en));
         }
         fs.writeFileSync(src + 'i18n/flat.txt', keys.join('\n'));
     } else {
@@ -235,7 +235,7 @@ function words2languagesFlat(src) {
 }
 
 function languagesFlat2words(src) {
-    const dirs = fs.readdirSync(src + 'i18n/');
+    const dirs = fs.readdirSync(`${src}i18n/`);
     const langs = {};
     const bigOne = {};
     const order = Object.keys(languages);
@@ -256,12 +256,12 @@ function languagesFlat2words(src) {
             return 0;
         }
     });
-    const keys = fs.readFileSync(src + 'i18n/flat.txt').toString().split('\n');
+    const keys = fs.readFileSync(`${src}i18n/flat.txt`).toString().split('\n');
 
     for (let l = 0; l < dirs.length; l++) {
         if (dirs[l] === 'flat.txt') continue;
         const lang = dirs[l];
-        const values = fs.readFileSync(src + 'i18n/' + lang + '/flat.txt').toString().split('\n');
+        const values = fs.readFileSync(`${src}i18n/${lang}/flat.txt`).toString().split('\n');
         langs[lang] = {};
         keys.forEach((word, i) => langs[lang][word] = values[i]);
 
@@ -284,13 +284,13 @@ function languagesFlat2words(src) {
         for (const w in aWords) {
             if (aWords.hasOwnProperty(w)) {
                 if (!bigOne[w]) {
-                    console.warn('Take from actual words.js: ' + w);
+                    console.warn(`Take from actual words.js: ${w}`);
                     bigOne[w] = aWords[w]
                 }
                 dirs.forEach(function (lang) {
                     if (temporaryIgnore.indexOf(lang) !== -1) return;
                     if (!bigOne[w][lang]) {
-                        console.warn('Missing "' + lang + '": ' + w);
+                        console.warn(`Missing "${lang}": ${w}`);
                     }
                 });
             }
@@ -302,7 +302,7 @@ function languagesFlat2words(src) {
 }
 
 function languages2words(src) {
-    const dirs = fs.readdirSync(src + 'i18n/');
+    const dirs = fs.readdirSync(`${src}i18n/`);
     const langs = {};
     const bigOne = {};
     const order = Object.keys(languages);
@@ -326,11 +326,11 @@ function languages2words(src) {
     for (let l = 0; l < dirs.length; l++) {
         if (dirs[l] === 'flat.txt') continue;
         const lang = dirs[l];
-        langs[lang] = fs.readFileSync(src + 'i18n/' + lang + '/translations.json').toString();
+        langs[lang] = fs.readFileSync(`${src}i18n/${lang}/translations.json`).toString();
         try {
             langs[lang] = JSON.parse(langs[lang]);
         } catch (e) {
-            console.error('Cannot parse ' + src + 'i18n/' + lang + '/translations.json: ' + e);
+            console.error(`Cannot parse ${src}i18n/${lang}/translations.json: ${e}`);
         }
         const words = langs[lang];
         for (const word in words) {
@@ -351,13 +351,13 @@ function languages2words(src) {
         for (const w in aWords) {
             if (aWords.hasOwnProperty(w)) {
                 if (!bigOne[w]) {
-                    console.warn('Take from actual words.js: ' + w);
+                    console.warn(`Take from actual words.js: ${w}`);
                     bigOne[w] = aWords[w]
                 }
                 dirs.forEach(function (lang) {
                     if (temporaryIgnore.indexOf(lang) !== -1) return;
                     if (!bigOne[w][lang]) {
-                        console.warn('Missing "' + lang + '": ' + w);
+                        console.warn(`Missing "${lang}": ${w}`);
                     }
                 });
             }
@@ -414,21 +414,21 @@ gulp.task('replacePkg', () =>
         srcDir + 'package.json',
         srcDir + 'io-package.json'
     ])
-    .pipe(replace(/"version": *"[.0-9]*",/g, '"version": "' + version + '",'))
+    .pipe(replace(/"version": *"[.0-9]*",/g, `"version": "${version}",`))
     .pipe(gulp.dest(srcDir)));
 
 gulp.task('replaceVis', () =>
     gulp.src([
-        srcDir + 'www/js/vis.js'
+        `${srcDir}www/js/vis.js`
     ])
-        .pipe(replace(/const version = *'[.0-9]*';/g, 'const version = "' + version + '";'))
-        .pipe(replace(/"version": *"[.0-9]*",/g, '"version": "' + version + '",'))
-        .pipe(replace(/version: *"[.0-9]*",/g, 'version: "' + version + '",'))
-        .pipe(replace(/version: *'[.0-9]*',/g, 'version: \'' + version + '\','))
-        .pipe(replace(/<!-- vis Version [.0-9]+ -->/g, '<!-- vis Version ' + version + ' -->'))
-        .pipe(replace(/# vis Version [.0-9]+/g, '# vis Version ' + version))
+        .pipe(replace(/const version = *'[.0-9]*';/g, `const version = "${version}";`))
+        .pipe(replace(/"version": *"[.0-9]*",/g, `"version": "${version}",`))
+        .pipe(replace(/version: *"[.0-9]*",/g, `version: "${version}",`))
+        .pipe(replace(/version: *'[.0-9]*',/g, `version: '${version}',`))
+        .pipe(replace(/<!-- vis Version [.0-9]+ -->/g, `<!-- vis Version ${version} -->`))
+        .pipe(replace(/# vis Version [.0-9]+/g, `# vis Version ${version}`))
         .pipe(replace(/ dev build [.0-9]+/g, '# dev build 0'))
-        .pipe(gulp.dest( srcDir + '/www/js')));
+        .pipe(gulp.dest( `${srcDir}/www/js`)));
 
 gulp.task('replaceHtml', () =>
     gulp.src([
@@ -436,64 +436,15 @@ gulp.task('replaceHtml', () =>
         srcDir + 'www/index.html',
         srcDir + 'www/edit.html'
     ])
-        .pipe(replace(/<!-- vis Version [.0-9]+ -->/g, '<!-- vis Version ' + version + ' -->'))
-        .pipe(replace(/const version = *'[.0-9]*';/g, 'const version = \'' + version + '\';'))
-        .pipe(replace(/"version": *"[.0-9]*",/g, '"version": "' + version + '",'))
-        .pipe(replace(/version: *"[.0-9]*",/g, 'version: "' + version + '",'))
-        .pipe(replace(/version: *'[.0-9]*',/g, 'version: \'' + version + '\','))
-        .pipe(replace(/# vis Version [.0-9]+/g, '# vis Version ' + version))
+        .pipe(replace(/<!-- vis Version [.0-9]+ -->/g, `<!-- vis Version ${version} -->`))
+        .pipe(replace(/const version = *'[.0-9]*';/g, `const version = '${version}';`))
+        .pipe(replace(/"version": *"[.0-9]*",/g, `"version": "${version}",`))
+        .pipe(replace(/version: *"[.0-9]*",/g, `version: "${version}",`))
+        .pipe(replace(/version: *'[.0-9]*',/g, `version: '${version}',`))
+        .pipe(replace(/# vis Version [.0-9]+/g, `# vis Version ${version}`))
         .pipe(replace(/# dev build [.0-9]+/g, '# dev build 0'))
-        .pipe(gulp.dest(srcDir + '/www')));
-
-gulp.task('updatePackages', done => {
-    iopackage.common.version = pkg.version;
-    iopackage.common.news = iopackage.common.news || {};
-    if (!iopackage.common.news[pkg.version]) {
-        const news = iopackage.common.news;
-        const newNews = {};
-
-        newNews[pkg.version] = {
-            'en': 'news',
-            'de': 'neues',
-            'ru': 'новое',
-            'pt': 'notícia',
-            'nl': 'nieuws',
-            'fr': 'nouvelles',
-            'it': 'notizia',
-            'es': 'Noticias',
-            'pl': 'Aktualności',
-            'zh-cn': '消息'
-        };
-        iopackage.common.news = Object.assign(newNews, news);
-    }
-    fs.writeFileSync('io-package.json', JSON.stringify(iopackage, null, 4));
-    done();
-});
-
-gulp.task('updateReadme', done => {
-    const readme = fs.readFileSync('README.md').toString();
-    const pos = readme.indexOf('## Changelog\n');
-    if (pos !== -1) {
-        const readmeStart = readme.substring(0, pos + '## Changelog\n'.length);
-        const readmeEnd   = readme.substring(pos + '## Changelog\n'.length);
-
-        if (readme.indexOf(version) === -1) {
-            const timestamp = new Date();
-            const date = timestamp.getFullYear() + '-' +
-                ('0' + (timestamp.getMonth() + 1).toString(10)).slice(-2) + '-' +
-                ('0' + (timestamp.getDate()).toString(10)).slice(-2);
-
-            let news = '';
-            if (iopackage.common.news && iopackage.common.news[pkg.version]) {
-                news += '* ' + iopackage.common.news[pkg.version].en;
-            }
-
-            fs.writeFileSync('README.md', readmeStart + '### ' + version + ' (' + date + ')\n' + (news ? news + '\n\n' : '\n') + readmeEnd);
-        }
-    }
-    done();
-});
+        .pipe(gulp.dest(`${srcDir}/www`)));
 
 gulp.task('replace', gulp.series('replacePkg', 'replaceVis', 'replaceHtml'));
 
-gulp.task('default', gulp.series('updatePackages', 'updateReadme', 'replace'));
+gulp.task('default', gulp.series('replace'));

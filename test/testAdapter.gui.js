@@ -55,7 +55,7 @@ describe('vis', () => {
     });
 
     after(async function () {
-        this.timeout(5_000);
+        this.timeout(10_000);
         await helper.stopBrowser();
         console.log('BROWSER stopped');
         await helper.stopIoBroker();

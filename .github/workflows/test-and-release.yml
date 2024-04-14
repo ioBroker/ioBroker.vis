@@ -74,6 +74,14 @@ jobs:
 
       - name: Run local tests
         run: npm test
+
+      - name: Archive screenshots
+        if: always()
+        # if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          path: tmp/screenshots/**/*.png
+          retention-days: 3
 #      - name: Run unit tests
 #        run: npm run test:unit
 #      - name: Run integration tests # (linux/osx)
