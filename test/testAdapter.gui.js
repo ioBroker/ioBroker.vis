@@ -64,7 +64,7 @@ describe('vis', () => {
         await setup.stopCustomAdapter('web', 0);
         console.log('Web stopped');
 
-        const pack = require(`${__dirname}package.json`);
+        const pack = require(`${__dirname}/../package.json`);
         const widgetsSetName = pack.name.split('.').pop();
         console.log(`Stopping ${widgetsSetName}`);
         await setup.stopCustomAdapter(widgetsSetName, 0);
