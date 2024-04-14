@@ -1,5 +1,6 @@
 const helper = require('@iobroker/vis-2-widgets-testing');
 const fs = require('node:fs');
+const setup = require("@iobroker/legacy-testing");
 
 let gPage;
 let gBrowser;
@@ -58,7 +59,25 @@ describe('vis', () => {
         this.timeout(10_000);
         await helper.stopBrowser();
         console.log('BROWSER stopped');
-        await helper.stopIoBroker();
+        // await helper.stopIoBroker();
+        console.log('Stopping web stopped');
+        await setup.stopCustomAdapter('web', 0);
+        console.log('Web stopped');
+
+        const pack = require(`${__dirname}package.json`);
+        const widgetsSetName = pack.name.split('.').pop();
+        console.log(`Stopping ${widgetsSetName}`);
+        await setup.stopCustomAdapter(widgetsSetName, 0);
+        console.log(`${widgetsSetName} topped stopped`);
+
+        // wait till adapters are stopped
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        await new Promise(resolve =>
+            setup.stopController(normalTerminated => {
+                console.log(`Adapter normal terminated: ${normalTerminated}`);
+                resolve();
+            }));
         console.log('ioBroker stopped');
     });
 });
