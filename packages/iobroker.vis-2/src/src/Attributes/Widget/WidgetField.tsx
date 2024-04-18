@@ -33,17 +33,18 @@ import { findWidgetUsages } from '@/Vis/visUtils';
 import { store, recalculateFields, selectWidget } from '@/Store';
 import { deepClone } from '@/Utils/utils';
 import {
-    AnyWidgetId, GroupWidget, Project, SingleWidget,
+    AnyWidgetId, Project,
     Widget,
     WidgetData,
     WidgetStyle,
 } from '@/types';
-import TextDialog from './TextDialog';
-import MaterialIconSelector from '../../Components/MaterialIconSelector';
 import {
     ObjectBrowserCustomFilter,
     ObjectBrowserType,
 } from '@iobroker/adapter-react-v5/Components/types';
+
+import TextDialog from './TextDialog';
+import MaterialIconSelector from '../../Components/MaterialIconSelector';
 
 interface ClassesValue {
     name: string;
@@ -55,7 +56,7 @@ interface ClassesValue {
 declare global {
     interface Window {
         collectClassesValue: Record<string, ClassesValue>;
-        _: (word: string) => string;
+        _: (word: string, ...args: any[]) => string;
     }
 }
 
