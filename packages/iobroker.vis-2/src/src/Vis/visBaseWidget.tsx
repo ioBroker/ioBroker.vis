@@ -115,6 +115,7 @@ export interface VisBaseWidgetState {
     gap?: number;
     draggable?: boolean;
     showRelativeMoveMenu?: boolean;
+    usedInWidget: boolean;
 }
 
 export interface VisBaseWidgetMovement {
@@ -223,6 +224,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
                 props.view,
                 props.editMode,
             ),
+            usedInWidget: widget.usedInWidget,
             hideHelper: false,
             gap: style.position === 'relative' ? (isVarFinite(props.context.views[props.view].settings?.rowGap) ? parseFloat(props.context.views[props.view].settings?.rowGap as string) : 0) : 0,
         } as TState & VisBaseWidgetState;
@@ -490,6 +492,11 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
             newState.selectedOne = selectedOne;
         }
 
+        if (!!widget.usedInWidget !== !!state.usedInWidget) {
+            newState = newState || {};
+            newState.usedInWidget = !!widget.usedInWidget;
+        }
+
         return newState;
     }
 
@@ -632,8 +639,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
 
         let parentDiv: HTMLElement;
         if (Object.prototype.hasOwnProperty.call(this.props.refParent, 'current')) {
-            // @ts-expect-error support ref and direct HTMLElement
-            parentDiv = parentDiv.current;
+            parentDiv = this.props.refParent.current;
         } else {
             parentDiv = this.props.refParent as any as HTMLElement;
         }
@@ -905,8 +911,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
                 if (this.props.isRelative) {
                     let parentDiv: HTMLElement;
                     if (Object.prototype.hasOwnProperty.call(this.props.refParent, 'current')) {
-                        // @ts-expect-error support ref and direct HTMLElement
-                        parentDiv = parentDiv.current;
+                        parentDiv = this.props.refParent.current;
                     } else {
                         parentDiv = this.props.refParent as any as HTMLElement;
                     }

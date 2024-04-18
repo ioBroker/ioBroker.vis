@@ -13,8 +13,8 @@ import {
 
 import { I18n, Utils } from '@iobroker/adapter-react-v5';
 
+import { store } from '@/Store';
 import helpers from '../Components/WizardHelpers';
-import { store } from '../Store';
 
 const IMAGE_TYPES = ['.png', '.jpg', '.svg', '.gif', '.apng', '.avif', '.webp'];
 

@@ -6,7 +6,7 @@ export const DndPreview = () => {
     const preview = usePreview();
     const display = preview.display;
     // TODO: How to fix this?
-    const { item, style } = (preview as unknown as {item: { preview: React.JSX.Element }; style: React.CSSProperties });
+    const { item, style } = (preview as unknown as { item: { preview: React.JSX.Element }; style: React.CSSProperties });
     if (!display) {
         return null;
     }

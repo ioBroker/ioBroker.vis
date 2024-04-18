@@ -1,6 +1,7 @@
 {
-  "plugins": ["iobroker", "license"],
+  "plugins": ["iobroker", "license", "lerna"],
+  "ioPackage": "packages/iobroker.vis-2",
   "exec": {
-    "before_commit": "npm run build"
+    "before_commit": "npm run fix-release && npm run build"
   }
 }

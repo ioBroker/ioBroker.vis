@@ -575,7 +575,7 @@ interface SingleWidget  {
     /** This widget was taken from a marketplace */
     marketplace?: any;
     /** Indicator that this widget is used in another widget (e.g., in panel) */
-    usedInWidget?: AnyWidgetId;
+    usedInWidget?: boolean;
 }
 
 interface GroupData extends WidgetData {

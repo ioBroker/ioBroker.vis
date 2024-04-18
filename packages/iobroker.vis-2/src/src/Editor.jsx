@@ -1023,6 +1023,8 @@ class Editor extends Runtime {
         // set timestamp
         project.___settings.ts = `${Date.now()}.${Math.random().toString(36).substring(7)}`;
 
+        Runtime.syncMultipleWidgets(project);
+
         if (!ignoreHistory) {
             // do not save history too often
             this.saveHistory(project);
@@ -1036,7 +1038,7 @@ class Editor extends Runtime {
         this.savingTimer = setTimeout(async () => {
             this.savingTimer = null;
 
-            // remove all special structures
+            // remove all special structures. project will be cloned in unsyncMultipleWidgets
             project = unsyncMultipleWidgets(project);
 
             const projectStr = JSON.stringify(project, null, 2);

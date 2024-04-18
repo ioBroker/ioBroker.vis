@@ -175,7 +175,7 @@ class Runtime extends GenericApp {
     onHashChange = () => {
         const currentPath = VisEngine.getCurrentPath();
         this.changeView(currentPath.view)
-            .then(() => {});
+            .catch(e => console.error(`Cannot change view: ${e}`));
     };
 
     onProjectChange = (id, fileName) => {
@@ -337,7 +337,7 @@ class Runtime extends GenericApp {
         });
     }
 
-    syncMultipleWidgets(project) {
+    static syncMultipleWidgets(project) {
         project = project || store.getState().visProject;
         Object.keys(project).forEach(view => {
             if (view === '___settings') {
@@ -537,13 +537,13 @@ class Runtime extends GenericApp {
         }
 
         // copy multi-views to corresponding views
-        this.syncMultipleWidgets(project);
+        Runtime.syncMultipleWidgets(project);
 
         if (this.state.runtime) {
             if (project.___settings.reloadOnEdit !== false) {
                 this.subscribedProject = projectName;
                 // subscribe on changes
-                this.socket.subscribeFiles(this.adapterId, `${projectName}/*`, this.onProjectChange);
+                await this.socket.subscribeFiles(this.adapterId, `${projectName}/*`, this.onProjectChange);
             }
 
             // set overflow mode in runtime mode
@@ -551,7 +551,7 @@ class Runtime extends GenericApp {
         } else {
             this.subscribedProject = projectName;
             // subscribe on changes
-            this.socket.subscribeFiles(this.adapterId, `${projectName}/*`, this.onProjectChange);
+            await this.socket.subscribeFiles(this.adapterId, `${projectName}/*`, this.onProjectChange);
         }
 
         store.dispatch(updateProject(project));
@@ -902,8 +902,6 @@ class Runtime extends GenericApp {
     }
 
     showSmallProjectsDialog() {
-        const { visProject, activeUser } = store.getState();
-
         return <Dialog
             open={!0}
             maxWidth="sm"

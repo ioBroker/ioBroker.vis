@@ -793,7 +793,7 @@ function findWidgetUsages(
     views: Project,
     view: string,
     widgetId: AnyWidgetId,
-    _result: { view: string; wid: AnyWidgetId; attr: string }[],
+    _result?: { view: string; wid: AnyWidgetId; attr: string }[],
 ): { view: string; wid: AnyWidgetId; attr: string }[] {
     if (view) {
         _result = _result || [];
