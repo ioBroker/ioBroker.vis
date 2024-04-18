@@ -411,7 +411,7 @@ export type RxWidgetInfoAttributesFieldSelectSimple = {
     readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
 }
 
-export type RxWidgetInfoAttributesFieldSelectDefault = {
+export type RxWidgetInfoAttributesFieldDefault = {
     /** Field default value */
     readonly default?: string;
 
@@ -448,7 +448,23 @@ export type RxWidgetInfoAttributesField =
     RxWidgetInfoAttributesFieldSelectViews |
     RxWidgetInfoAttributesFieldSelectCustom |
     RxWidgetInfoAttributesFieldSelectSimple |
-    RxWidgetInfoAttributesFieldSelectDefault;
+    RxWidgetInfoAttributesFieldDefault;
+
+export type RxWidgetInfoAttributesFieldWithType =
+    RxWidgetInfoAttributesFieldText |
+    RxWidgetInfoAttributesFieldDelimiter |
+    RxWidgetInfoAttributesFieldHelp |
+    RxWidgetInfoAttributesFieldHTML |
+    RxWidgetInfoAttributesFieldID |
+    RxWidgetInfoAttributesFieldInstance |
+    RxWidgetInfoAttributesFieldSelect |
+    RxWidgetInfoAttributesFieldCheckbox |
+    RxWidgetInfoAttributesFieldNumber |
+    RxWidgetInfoAttributesFieldSlider |
+    RxWidgetInfoAttributesFieldWidget |
+    RxWidgetInfoAttributesFieldSelectViews |
+    RxWidgetInfoAttributesFieldSelectCustom |
+    RxWidgetInfoAttributesFieldSelectSimple;
 
 export type Timer = ReturnType<typeof setTimeout>;
 
@@ -467,7 +483,7 @@ interface UserPermissions {
 export interface ProjectSettings {
     darkReloadScreen: boolean;
     destroyViewsAfter: number;
-    folders: {id: string; name: string; parentId: string}[];
+    folders: { id: string; name: string; parentId: string }[];
     openedViews: string[];
     reconnectInterval: number;
     reloadOnEdit: boolean;
@@ -576,6 +592,13 @@ interface SingleWidget  {
     marketplace?: any;
     /** Indicator that this widget is used in another widget (e.g., in panel) */
     usedInWidget?: boolean;
+    /** CSS for this widget */
+    css?: string;
+    /** JavaScript for this widget */
+    js?: string;
+    /** internal cached value */
+    usedInView?: string;
+    name?: string;
 }
 
 interface GroupData extends WidgetData {
@@ -683,6 +706,8 @@ export interface View {
     filterList: string[];
     rerender: boolean;
     name?: string;
+    /** parent folder */
+    parentId?: string;
     settings?: ViewSettings;
     /** Widgets on this view */
     widgets: {

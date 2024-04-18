@@ -19,7 +19,10 @@ import { Branded } from '@/types';
 export type WidgetSetName = Branded<string, 'WidgetSetName'>;
 export type PromiseName = `_promise_${WidgetSetName}`;
 
-interface VisRxWidgetWithInfo<TRxData extends Record<string, any>, TState extends Partial<VisRxWidgetState> = VisRxWidgetState> extends VisRxWidget<TRxData, TState> {
+interface VisRxWidgetWithInfo<
+    TRxData extends Record<string, any>,
+    TState extends Partial<VisRxWidgetState> = VisRxWidgetState,
+> extends VisRxWidget<TRxData, TState> {
     adapter: string;
     version: string;
     url: string;
@@ -36,6 +39,7 @@ declare global {
         };
     }
 }
+
 const getOrLoadRemote = (
     remote: string,
     shareScope: string,
@@ -209,7 +213,10 @@ function getText(text: string | ioBroker.StringOrTranslated): string {
 }
 
 /* Do not make this funktion async, because is optimized to simultaneously load the widget sets */
-function getRemoteWidgets(socket: LegacyConnection, onlyWidgetSets?: false | string[]): Promise<void | VisRxWidgetWithInfo<any>[]> {
+function getRemoteWidgets(
+    socket: LegacyConnection,
+    onlyWidgetSets?: false | string[],
+): Promise<void | VisRxWidgetWithInfo<any>[]> {
     return socket.getObjectViewSystem(
         'instance',
         'system.adapter.',

@@ -1,5 +1,4 @@
-import { useRef, useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useRef, useState } from 'react';
 
 import {
     Dialog, DialogTitle, DialogContent, DialogActions, Button,
@@ -9,9 +8,18 @@ import { Close } from '@mui/icons-material';
 
 import { I18n } from '@iobroker/adapter-react-v5';
 
+import { Widget } from '@/types';
 import CustomAceEditor from '../../Components/CustomAceEditor';
 
-const WidgetJS = props => {
+interface WidgetJSProps {
+    themeType: string;
+    editMode: boolean;
+    onClose: () => void;
+    onChange: (value: string) => void;
+    widget: Widget;
+}
+
+const WidgetJS = (props: WidgetJSProps) => {
     const [value, setValue] = useState(props.widget.js || '');
     const timeout = useRef(null);
 
@@ -47,14 +55,6 @@ const WidgetJS = props => {
             </Button>
         </DialogActions>
     </Dialog>;
-};
-
-WidgetJS.propTypes = {
-    themeType: PropTypes.string,
-    editMode: PropTypes.bool,
-    onClose: PropTypes.func,
-    onChange: PropTypes.func,
-    widget: PropTypes.object,
 };
 
 export default WidgetJS;

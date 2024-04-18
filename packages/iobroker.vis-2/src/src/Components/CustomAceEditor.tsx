@@ -1,5 +1,4 @@
-import { useEffect, useRef } from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect, useRef } from 'react';
 import AceEditor from 'react-ace';
 import Ace from 'ace-builds';
 
@@ -48,18 +47,31 @@ Ace.config.setModuleUrl('ace/snippets/html', './lib/js/ace/snippets/html.js');
 Ace.config.setModuleUrl('ace/mode/html_worker', './lib/js/ace/worker-html.js');
 Ace.config.setModuleUrl('ace/mode/html', './lib/js/ace/mode-html.js');
 
-const CustomAceEditor = props => {
+interface CustomAceEditorProps {
+    onChange?: (value: string) => void;
+    themeType?: string;
+    type: string;
+    value: string;
+    readOnly?: boolean;
+    height?: number | string;
+    width?: number | string;
+    refEditor?: (editor: AceEditor) => void;
+    error?: boolean;
+    focus?: boolean;
+}
+
+export const CustomAceEditor = (props: CustomAceEditorProps) => {
     const refEditor = useRef();
 
     useEffect(() => {
-        let content;
-        let timer;
-        const keyDown = e => {
+        let content: HTMLInputElement | null = null;
+        let timer: ReturnType<typeof setTimeout>;
+        const keyDown = (e: KeyboardEvent) => {
             if (e.key === 'f' && e.ctrlKey) {
                 // make translations
                 timer = setInterval(() => {
                     const parent = content.parentNode;
-                    let el = parent.querySelector('.ace_search_field');
+                    let el: HTMLInputElement = parent.querySelector('.ace_search_field') as HTMLInputElement;
                     if (el) {
                         clearInterval(timer);
                         timer = null;
@@ -137,18 +149,6 @@ const CustomAceEditor = props => {
             enableSnippets
         />
     </div>;
-};
-
-CustomAceEditor.propTypes = {
-    onChange: PropTypes.func,
-    themeType: PropTypes.string,
-    type: PropTypes.string,
-    value: PropTypes.string,
-    readOnly: PropTypes.bool,
-    height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    refEditor: PropTypes.func,
-    error: PropTypes.bool,
 };
 
 export default CustomAceEditor;

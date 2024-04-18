@@ -1,7 +1,6 @@
-import {
+import React, {
     useEffect, useRef, useState,
 } from 'react';
-import PropTypes from 'prop-types';
 
 import {
     Autocomplete, Box, Button, Checkbox, Fade, IconButton, Input, ListItemText,
@@ -27,19 +26,43 @@ import {
     TextWithIcon,
     ColorPicker,
     SelectID,
-    SelectFile as SelectFileDialog,
+    SelectFile as SelectFileDialog, Connection,
 } from '@iobroker/adapter-react-v5';
 
+import { findWidgetUsages } from '@/Vis/visUtils';
+import { store, recalculateFields, selectWidget } from '@/Store';
+import { deepClone } from '@/Utils/utils';
+import {
+    AnyWidgetId, GroupWidget, Project, SingleWidget,
+    Widget,
+    WidgetData,
+    WidgetStyle,
+} from '@/types';
 import TextDialog from './TextDialog';
 import MaterialIconSelector from '../../Components/MaterialIconSelector';
-import { findWidgetUsages } from '../../Vis/visUtils';
-import { store, recalculateFields, selectWidget } from '../../Store';
-import { deepClone } from '../../Utils/utils';
+import {
+    ObjectBrowserCustomFilter,
+    ObjectBrowserType,
+} from '@iobroker/adapter-react-v5/Components/types';
+
+interface ClassesValue {
+    name: string;
+    file: string;
+    attrs?: React.CSSProperties;
+    parentClass?: string;
+}
+
+declare global {
+    interface Window {
+        collectClassesValue: Record<string, ClassesValue>;
+        _: (word: string) => string;
+    }
+}
 
 const POSSIBLE_UNITS = ['px', '%', 'em', 'rem', 'vh', 'vw', 'vmin', 'vmax', 'ex', 'ch', 'cm', 'mm', 'in', 'pt', 'pc'];
 
-function collectClasses() {
-    const result = [];
+function collectClasses(): Record<string, ClassesValue> {
+    const result: Record<string, ClassesValue> = {};
     const sSheetList = document.styleSheets;
     for (let sSheet = 0; sSheet < sSheetList.length; sSheet++) {
         if (!document.styleSheets[sSheet]) {
@@ -49,9 +72,11 @@ function collectClasses() {
             const ruleList = document.styleSheets[sSheet].cssRules;
             if (ruleList) {
                 for (let rule = 0; rule < ruleList.length; rule++) {
+                    // @ts-expect-error selectorText does exist
                     if (!ruleList[rule].selectorText) {
                         continue;
                     }
+                    // @ts-expect-error selectorText does exist
                     const _styles = ruleList[rule].selectorText.split(',');
                     for (let s = 0; s < _styles.length; s++) {
                         const subStyles = _styles[s].trim().split(' ');
@@ -82,9 +107,11 @@ function collectClasses() {
                             if (!result[val]) {
                                 if (subStyles.length > 1) {
                                     result[val] = {
+                                        // @ts-expect-error style does exist
                                         name, file: fff, attrs: ruleList[rule].style, parentClass: subStyles[0].replace('.', ''),
                                     };
                                 } else {
+                                    // @ts-expect-error style does exist
                                     result[val] = { name, file: fff, attrs: ruleList[rule].style };
                                 }
                             }
@@ -105,7 +132,13 @@ function collectClasses() {
     return result;
 }
 
-function getStylesOptions(options) {
+function getStylesOptions(options: {
+    filterFile:  string;
+    filterName:  string;
+    filterAttrs: string;
+    removeName:  string;
+    styles?:      Record<string, ClassesValue>;
+}) {
     // Fill the list with styles
     const _internalList = window.collectClassesValue;
 
@@ -113,7 +146,7 @@ function getStylesOptions(options) {
     options.filterAttrs = options.filterAttrs || '';
     options.filterFile  = options.filterFile  || '';
 
-    let styles = {};
+    let styles: Record<string, ClassesValue> = {};
 
     if (options.styles) {
         styles = { ...options.styles };
@@ -123,7 +156,7 @@ function getStylesOptions(options) {
         const attrs   = options.filterAttrs ? options.filterAttrs.split(' ') : null;
         const files   = options.filterFile  ? options.filterFile.split(' ')  : [''];
 
-        Object.keys(_internalList).forEach(style =>
+        Object.keys(_internalList).forEach((style: string) =>
             files.forEach(file => {
                 if (!options.filterFile ||
                         (_internalList[style].file && _internalList[style].file.includes(file))
@@ -135,8 +168,9 @@ function getStylesOptions(options) {
                     if (isFound) {
                         isFound = !attrs;
                         if (!isFound) {
-                            isFound = attrs.find(attr => {
-                                const t = _internalList[style].attrs[attr];
+                            isFound = !!attrs.find((attr: string) => {
+                                // @ts-expect-error fixed later
+                                const t: string | number = _internalList[style].attrs[attr] as string | number;
                                 return t || t === 0;
                             });
                         }
@@ -163,7 +197,18 @@ function getStylesOptions(options) {
     return styles;
 }
 
-const getViewOptions = (project, options = [], parentId = null, level = 0) => {
+const getViewOptions = (
+    project: Project,
+    options: {
+        view?: string;
+        type: 'folder' | 'view';
+        level: number;
+        folder?: { id: string; name: string; parentId: string };
+        label?: string;
+    }[] = [],
+    parentId: string = null,
+    level = 0,
+) => {
     project.___settings.folders
         .filter(folder => (folder.parentId || null) === parentId)
         .forEach(folder => {
@@ -192,9 +237,9 @@ const getViewOptions = (project, options = [], parentId = null, level = 0) => {
 };
 
 // Optimize translation
-const wordsCache = {};
+const wordsCache: Record<string, string> = {};
 
-const t = (word, ...args) => {
+const t = (word: string, ...args: any[]) => {
     const hash = `${word}_${args.join(',')}`;
     if (!wordsCache[hash]) {
         wordsCache[hash] = I18n.t(word, ...args);
@@ -202,19 +247,113 @@ const t = (word, ...args) => {
     return wordsCache[hash];
 };
 
-function modifyWidgetUsages(project, usedInView, usedWidgetId, inNewWidgetId, inAttr) {
+function modifyWidgetUsages(
+    project: Project,
+    usedInView: string,
+    usedWidgetId: AnyWidgetId,
+    inNewWidgetId: AnyWidgetId,
+    inAttr: string,
+): Project {
     // find where it is used
     const newProject = deepClone(project);
     const usedIn = findWidgetUsages(newProject, usedInView, usedWidgetId);
-    usedIn.forEach(usage => {
-        newProject[usage.view].widgets[usage.wid].data[usage.attr] = '';
-    });
+    usedIn.forEach(usage => newProject[usage.view].widgets[usage.wid].data[usage.attr] = '');
     newProject[usedInView].widgets[inNewWidgetId].data[inAttr] = usedWidgetId;
 
     return newProject;
 }
 
-const WidgetField = props => {
+interface PaletteFieldOptions {
+    value: string;
+    label: string;
+    icon?: string;
+    color?: string;
+}
+
+interface PaletteField {
+    name: string;
+    label: string;
+    type: string;
+    noTranslation?: boolean;
+    options?: string[] | PaletteFieldOptions[];
+    default?: any;
+    immediateChange?: boolean;
+    onChangeFunc?: string;
+    onChange: (
+        field: PaletteField,
+        data: WidgetData | WidgetStyle,
+        cb: (newData: WidgetData | WidgetStyle) => void,
+        socket: Connection,
+        index?: number,
+    ) => void;
+    adapter?: string;
+    min?: number;
+    max?: number;
+    step?: number;
+    all?: boolean;
+    tpl: string;
+    filter?: ObjectBrowserCustomFilter | ObjectBrowserType | ((data: WidgetData, index: number) => Record<string, any>);
+    marks?: { value: number; label?: string }[] | boolean;
+    valueLabelDisplay?: 'on' | 'auto' | 'off';
+    withGroups: boolean;
+    withSelf: boolean;
+    hideUsed: boolean;
+    checkUsage: boolean;
+    filterFile?:  string;
+    filterName?:  string;
+    filterAttrs?:  string;
+    removeName?:  string;
+    multiple?: boolean;
+    component?: (
+        field: PaletteField,
+        data: WidgetData,
+        onChange: (newData: WidgetData) => void,
+        options : {
+            context: {
+                socket: Connection;
+                projectName: string;
+                instance: number;
+                adapterName: string;
+                views: Project;
+            };
+            selectedView: string;
+            selectedWidgets: AnyWidgetId[];
+            selectedWidget: AnyWidgetId;
+        },
+    ) => void;
+    isShort?: boolean;
+    noButton?: boolean;
+    multiline?: boolean;
+}
+
+interface WidgetFieldProps {
+    field: PaletteField;
+    widget: Widget;
+    adapterName: string;
+    instance: number;
+    projectName: string;
+    isDifferent: boolean;
+    error: string;
+    disabled: boolean;
+    index: number;
+    widgetId: string;
+    selectedWidgets: AnyWidgetId[];
+    selectedView: string;
+    isStyle: boolean;
+    widgetType?: {
+        set: string;
+    };
+    socket: Connection;
+    changeProject: (project: Project) => void;
+    onPxToPercent: (widgets: string[], attr: string, cb: (newValues: string[]) => void) => void;
+    onPercentToPx: (widgets: string[], attr: string, cb: (newValues: string[]) => void) => void;
+    classes: Record<string, string>;
+    fonts: string[];
+    userGroups: ioBroker.UserGroup[];
+    themeType: 'light' | 'dark';
+}
+
+const WidgetField = (props: WidgetFieldProps) => {
     const [idDialog, setIdDialog] = useState(false);
 
     const [objectCache, setObjectCache] = useState(null);
@@ -287,24 +426,29 @@ const WidgetField = props => {
         }
     }
 
-    const [cachedValue, setCachedValue] = useState('');
-    const [instances, setInstances] = useState([]);
+    const [cachedValue, setCachedValue] = useState<string | number | boolean | null>('');
+    const [instances, setInstances] = useState<{
+        id: string;
+        idShort: string;
+        name: string;
+        icon: string;
+    }[]>([]);
 
-    const cacheTimer = useRef(null);
-    const refCustom = useRef();
+    const cacheTimer = useRef<ReturnType<typeof setTimeout>>(null);
+    const refCustom = useRef<HTMLDivElement>();
 
-    let onChangeTimeout;
+    let onChangeTimeout: ReturnType<typeof setTimeout>;
 
-    const applyValue = newValues => {
+    const applyValue = (newValues: any) => {
         const project = deepClone(store.getState().visProject);
         props.selectedWidgets.forEach((selectedWidget, i) => {
-            const value = Array.isArray(newValues) && field.type !== 'groups' ? newValues[i] : newValues;
+            const value: any = Array.isArray(newValues) && field.type !== 'groups' ? newValues[i] : newValues;
 
-            const data = props.isStyle
+            const data: WidgetData | WidgetStyle = props.isStyle
                 ? project[props.selectedView].widgets[selectedWidget].style
                 : project[props.selectedView].widgets[selectedWidget].data;
 
-            data[field.name] = value;
+            (data as Record<string, any>)[field.name] = value;
 
             if (field.onChangeFunc && props.widgetType) {
                 try {
@@ -314,7 +458,7 @@ const WidgetField = props => {
                         value,
                         field.name,
                         props.isStyle,
-                        props.isStyle ? widget.style[field.name] : widget.data[field.name],
+                        props.isStyle ? (widget.style as Record<string, any>)[field.name] : widget.data[field.name],
                         index,
                     );
                 } catch (e) {
@@ -322,7 +466,7 @@ const WidgetField = props => {
                 }
             }
             if (field.onChange) {
-                field.onChange(field, JSON.parse(JSON.stringify(data)), newData => {
+                field.onChange(field, JSON.parse(JSON.stringify(data)), (newData: WidgetData) => {
                     const _project = JSON.parse(JSON.stringify(store.getState().visProject));
                     _project[props.selectedView].widgets[selectedWidget].data = newData;
                     onChangeTimeout && clearTimeout(onChangeTimeout);
@@ -337,7 +481,7 @@ const WidgetField = props => {
         props.changeProject(project);
     };
 
-    const change = changeValue => {
+    const change = (changeValue: any) => {
         if (Array.isArray(changeValue) || field.immediateChange) {
             // apply immediately
             applyValue(changeValue);
@@ -351,7 +495,7 @@ const WidgetField = props => {
         }
     };
 
-    let propValue = props.isStyle ? widget.style?.[field.name] : widget.data?.[field.name];
+    let propValue = props.isStyle ? (widget.style as Record<string, any>)?.[field.name] : widget.data?.[field.name];
     if (propValue === undefined) {
         propValue = null;
     }
@@ -389,7 +533,7 @@ const WidgetField = props => {
         }
     }, [propValue]);
 
-    let value = cachedValue;
+    let value: string | number | boolean | null = cachedValue;
     if (value === undefined || value === null) {
         if (field.default) {
             value = field.default;
@@ -455,7 +599,6 @@ const WidgetField = props => {
                 <Button
                     color="primary"
                     variant="contained"
-                    default
                     onClick={() => {
                         const cb = askForUsage.cb;
                         setAskForUsage(null);
@@ -466,6 +609,7 @@ const WidgetField = props => {
                     {I18n.t('Move to new place')}
                 </Button>
                 <Button
+                    // @ts-expect-error grey is valid color
                     color="grey"
                     variant="contained"
                     onClick={() => setAskForUsage(null)}
@@ -498,6 +642,7 @@ const WidgetField = props => {
                         if (typeof customLegacyComponent.button.code === 'function') {
                             customLegacyComponent.button.code(customLegacyComponent.button);
                         }
+                        // @ts-expect-error fix later
                         const $button = window.jQuery(e.target);
                         $button.data('wdata', {
                             attr: field.name,
@@ -529,7 +674,7 @@ const WidgetField = props => {
 
     if (field.type === 'id' || field.type === 'hid') {
         if (value && (!objectCache || value !== objectCache._id)) {
-            props.socket.getObject(value)
+            props.socket.getObject(value as string)
                 .then(objectData =>
                     setObjectCache(objectData))
                 .catch(() => setObjectCache(null));
@@ -539,19 +684,25 @@ const WidgetField = props => {
         }
 
         // Find filter
-        let customFilter = null;
+        let customFilter: ObjectBrowserCustomFilter | null = null;
         let filters = null;
         if (idDialog && !disabled) {
             if (field.type === 'hid') {
                 customFilter = { common: { custom: '_dataSources' } };
             } else if (
                 typeof field.filter === 'string' &&
+                // @ts-expect-error fix later
                 field.filter !== 'chart' &&
                 field.filter !== 'channel' &&
+                // @ts-expect-error fix later
                 field.filter !== 'device'
             ) {
                 // detect role
-                if (field.filter.includes('.') || field.filter.startsWith('level') || field.filter.startsWith('value')) {
+                if (
+                    (field.filter as string).includes('.') ||
+                    (field.filter as string).startsWith('level') ||
+                    (field.filter as string).startsWith('value')
+                ) {
                     filters = { role: field.filter };
                 } else {
                     customFilter = { type: field.filter };
@@ -560,7 +711,7 @@ const WidgetField = props => {
                 if (typeof field.filter === 'function') {
                     customFilter = field.filter(widget.data, index);
                 } else {
-                    customFilter = field.filter;
+                    customFilter = field.filter as ObjectBrowserCustomFilter;
                 }
             }
         }
@@ -585,12 +736,14 @@ const WidgetField = props => {
             </div>
             {idDialog && !disabled ? <SelectID
                 imagePrefix="../"
-                selected={value}
+                selected={value as string}
                 onOk={selected => change(selected)}
                 onClose={() => setIdDialog(false)}
                 socket={props.socket}
-                types={field.filter === 'chart' || field.filter === 'channel' || field.filter === 'device' ? [field.filter] : null}
+                // @ts-expect-error fix later
+                types={field.filter === 'chart' || field.filter === 'channel' || field.filter === 'device' ? [field.filter] as ObjectBrowserType[] : null}
                 filters={filters}
+                // @ts-expect-error fix later
                 expertMode={field.filter === 'chart' ? true : undefined}
                 customFilter={customFilter}
             /> : null}
@@ -618,9 +771,9 @@ const WidgetField = props => {
     }
 
     if (field.type === 'image') {
-        let _value;
+        let _value: string;
         if (idDialog) {
-            _value = value;
+            _value = value as string || '';
             if (_value.startsWith('../')) {
                 _value = _value.substring(3);
             } else if (_value.startsWith('_PRJ_NAME/')) {
@@ -661,7 +814,8 @@ const WidgetField = props => {
                 imagePrefix="../"
                 selected={_value}
                 filterByType="images"
-                onOk={selected => {
+                onOk={_selected => {
+                    let selected = Array.isArray(_selected) ? _selected[0] : _selected;
                     const projectPrefix = `${adapterName}.${instance}/${projectName}/`;
                     if (selected.startsWith(projectPrefix)) {
                         selected = `_PRJ_NAME/${selected.substring(projectPrefix.length)}`;
@@ -681,24 +835,24 @@ const WidgetField = props => {
     if (field.type === 'dimension') {
         const m = (value || '').toString().match(/^(-?[,.0-9]+)([a-z%]*)$/);
         let customValue = !m;
-        let _value;
-        let unit;
+        let _value: string;
+        let unit: string;
         if (m) {
             _value = m[1];
             unit = m[2] || 'px';
             // eslint-disable-next-line no-restricted-properties
-            if (!window.isFinite(_value) || (m[2] && !POSSIBLE_UNITS.includes(m[2]))) {
+            if (!window.isFinite(_value as any as number) || (m[2] && !POSSIBLE_UNITS.includes(m[2]))) {
                 customValue = true;
             }
         }
 
         /** @type string[] */
-        const options = [];
+        const options: any[] = [];
 
         if (isDifferent && value === '') {
             for (const wid of props.selectedWidgets) {
                 const selectedWidget = selectWidget(store.getState(), props.selectedView, wid);
-                let val = selectedWidget.style[field.name];
+                let val = (selectedWidget.style as Record<string, any>)[field.name];
                 val = typeof val === 'number' ? val.toString() : val;
 
                 if (val !== undefined && val !== '' && !options.includes(val)) {
@@ -752,10 +906,8 @@ const WidgetField = props => {
 
     if (field.type === 'color') {
         return <ColorPicker
-            error={!!error}
-            helperText={typeof error === 'string' ? I18n.t(error) : null}
             disabled={disabled}
-            value={value || ''}
+            value={value as string || ''}
             className={props.classes.fieldContentColor}
             onChange={color => change(color)}
             openAbove
@@ -834,27 +986,27 @@ const WidgetField = props => {
 
         if (field.type === 'widget') {
             // take widgets from all views
+            let wOptions: { wid: string; view: string; tpl: string; name: string }[] = [];
             if (field.all) {
-                options = [];
                 Object.keys(store.getState().visProject).forEach(view =>
                     store.getState().visProject[view].widgets && Object.keys(store.getState().visProject[view].widgets)
-                        .filter(wid =>
+                        .filter((wid: AnyWidgetId) =>
                             (field.withGroups || !store.getState().visProject[view].widgets[wid].grouped) &&
                             (field.withSelf || wid !== widgetId) &&
                             (!field.hideUsed || !store.getState().visProject[view].widgets[wid].usedInView))
-                        .forEach(wid => options.push({
+                        .forEach((wid: AnyWidgetId) => wOptions.push({
                             wid,
                             view,
                             tpl: store.getState().visProject[view].widgets[wid].tpl,
                             name: store.getState().visProject[view].widgets[wid].name,
                         })));
             } else {
-                options = Object.keys(store.getState().visProject[props.selectedView].widgets)
-                    .filter(wid =>
+                wOptions = Object.keys(store.getState().visProject[props.selectedView].widgets)
+                    .filter((wid: AnyWidgetId) =>
                         (field.withGroups || !store.getState().visProject[props.selectedView].widgets[wid].grouped) &&
                         (field.withSelf || wid !== widgetId) &&
                         (!field.hideUsed || !store.getState().visProject[props.selectedView].widgets[wid].usedInView))
-                    .map(wid => ({
+                    .map((wid: AnyWidgetId) => ({
                         wid,
                         view: props.selectedView,
                         tpl: store.getState().visProject[props.selectedView].widgets[wid].tpl,
@@ -865,25 +1017,25 @@ const WidgetField = props => {
                 if (field.tpl.includes('*')) {
                     if (field.tpl.endsWith('*')) {
                         const word = field.tpl.substring(0, field.tpl.length - 1);
-                        options = options.filter(item => item.tpl.startsWith(word));
+                        wOptions = wOptions.filter(item => item.tpl.startsWith(word));
                     } else if (field.tpl.startsWith('*')) {
                         const word = field.tpl.substring(1);
-                        options = options.filter(item => item.tpl.endsWith(word));
+                        wOptions = wOptions.filter(item => item.tpl.endsWith(word));
                     } else {
                         console.warn('"*" can be only at the beginning or at the end of "tpl" attribute');
                     }
                 } else {
-                    options = options.filter(item => item.tpl === field.tpl);
+                    wOptions = wOptions.filter(item => item.tpl === field.tpl);
                 }
             }
-            options = options.map(item => ({
+            options = wOptions.map(item => ({
                 value: item.wid,
                 label: `${field.all ? `${item.view} / ` : ''}${item.wid} (${item.name || (item.tpl === '_tplGroup' ? t('group') : item.tpl)})`,
             }));
-            options.unshift({ id: '', label: t('attr_none') });
+            options.unshift({ value: '', label: t('attr_none') });
         }
 
-        const withIcons = !!options.find(item => item && item.icon);
+        const withIcons = !!options.find(item => (item as PaletteFieldOptions)?.icon);
 
         return <Select
             variant="standard"
@@ -917,7 +1069,7 @@ const WidgetField = props => {
             }}
             renderValue={_value => {
                 if (typeof options[0] === 'object') {
-                    const item = options.find(o => o.value === _value);
+                    const item: PaletteFieldOptions | null = (options as PaletteFieldOptions[]).find(o => o.value === _value) as PaletteFieldOptions;
                     const text = item ? (field.type === 'select' && !field.noTranslation ? t(item.label) : item.label) : _value;
                     if (withIcons && item.icon) {
                         return <>
@@ -934,10 +1086,10 @@ const WidgetField = props => {
             {options.map((selectItem, i) => <MenuItem
                 value={typeof selectItem === 'object' ? selectItem.value : selectItem}
                 key={`${typeof selectItem === 'object' ? selectItem.value : selectItem}_${i}`}
-                style={{ fontFamily: field.type === 'fontname' ? selectItem : null }}
+                style={{ fontFamily: field.type === 'fontname' ? selectItem as string : null }}
             >
-                {selectItem.icon ? <ListItemIcon>
-                    <Icon src={selectItem.icon} style={{ width: 24, height: 24 }} />
+                {(selectItem as PaletteFieldOptions).icon ? <ListItemIcon>
+                    <Icon src={(selectItem as PaletteFieldOptions).icon} style={{ width: 24, height: 24 }} />
                 </ListItemIcon>
                     :
                     (withIcons ? <ListItemIcon><div style={{ width: 24 }} /></ListItemIcon> : null)}
@@ -947,9 +1099,9 @@ const WidgetField = props => {
                         :
                         (field.type === 'select' && !field.noTranslation ?
                             (typeof selectItem === 'object' ?
-                                <span style={selectItem.color ? { color: selectItem.color } : null}>{field.noTranslation ? selectItem.label : t(selectItem.label)}</span> : t(selectItem)
+                                <span style={(selectItem as PaletteFieldOptions).color ? { color: (selectItem as PaletteFieldOptions).color } : null}>{field.noTranslation ? (selectItem as PaletteFieldOptions).label : t((selectItem as PaletteFieldOptions).label)}</span> : t(selectItem as string)
                             ) : (typeof selectItem === 'object' ?
-                                <span style={selectItem.color ? { color: selectItem.color } : null}>{selectItem.label}</span> : selectItem
+                                <span style={(selectItem as PaletteFieldOptions).color ? { color: (selectItem as PaletteFieldOptions).color } : null}>{(selectItem as PaletteFieldOptions).label}</span> : (selectItem as string)
                             ))}
                 </ListItemText>
             </MenuItem>)}
@@ -957,8 +1109,10 @@ const WidgetField = props => {
     }
 
     if (field.type === 'select-views') {
-        const options = getViewOptions(store.getState().visProject, [], null, 0, true)
+        const options = getViewOptions(store.getState().visProject, [], null, 0)
             .filter(option => option.type === 'folder' || option.view !== props.selectedView);
+
+        const views: string[] = value as any as string[] || [];
 
         return <Select
             variant="standard"
@@ -997,7 +1151,10 @@ const WidgetField = props => {
                     style={{ paddingLeft: option.level * 16, lineHeight: '36px' }}
                 >
                     <FileIcon style={{ verticalAlign: 'middle', marginRight: 4 }} />
-                    <span style={{ verticalAlign: 'middle' }}>{field.multiple !== false ? <Checkbox checked={(value || []).includes(option.view)} /> : null}</span>
+                    <span style={{ verticalAlign: 'middle' }}>
+                        {field.multiple !== false ?
+                            <Checkbox checked={views.includes(option.view)} /> : null}
+                    </span>
                     <ListItemText primary={option.label} style={{ verticalAlign: 'middle' }} />
                 </MenuItem>
                 :
@@ -1009,6 +1166,7 @@ const WidgetField = props => {
     }
 
     if (field.type === 'groups') {
+        const groups: string[] = value as any as string[] || [];
         return <Select
             variant="standard"
             disabled={disabled}
@@ -1017,12 +1175,11 @@ const WidgetField = props => {
             multiple
             renderValue={selected => <div style={{ display: 'flex' }}>
                 {Object.values(props.userGroups)
-                    .filter(group => selected.includes(group._id.split('.')[2]))
+                    .filter(group => (selected as string).includes(group._id.split('.')[2]))
                     .map((group, key) =>
                         <span key={key} style={{ padding: '4px 4px' }}>
                             <TextWithIcon
                                 value={group._id}
-                                t={t}
                                 lang={I18n.getLanguage()}
                                 list={[group]}
                             />
@@ -1041,11 +1198,10 @@ const WidgetField = props => {
             >
                 <Checkbox
                     disabled={disabled}
-                    checked={(value || []).includes(group._id.split('.')[2])}
+                    checked={groups.includes(group._id.split('.')[2])}
                 />
                 <TextWithIcon
                     value={group._id}
-                    t={t}
                     lang={I18n.getLanguage()}
                     list={[group]}
                 />
@@ -1056,7 +1212,7 @@ const WidgetField = props => {
     if (field.type === 'auto' || field.type === 'class' || field.type === 'filters')  {
         let options = field.options;
         if (field.type === 'class') {
-            options = window.collectClassesValue.filter(cssClass => cssClass.match(/^vis-style-/));
+            options = Object.keys(window.collectClassesValue).filter(cssClass => cssClass.match(/^vis-style-/));
         } else if (field.type === 'filters') {
             options = window.vis ? window.vis.updateFilter() : [];
             options.unshift('');
@@ -1067,14 +1223,22 @@ const WidgetField = props => {
             fullWidth
             disabled={disabled}
             placeholder={isDifferent ? t('different') : null}
+            // @ts-expect-error fix later
             options={options || []}
-            inputValue={value || ''}
+            inputValue={value as string || ''}
             value={value || ''}
             onInputChange={(e, inputValue) => change(inputValue)}
             onChange={(e, inputValue) => change(inputValue)}
             classes={{ input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) }}
+            // @ts-expect-error fix later
             renderOption={field.name === 'font-family' || field.type === 'lc-font-family' ?
-                (optionProps, option) => <div style={{ fontFamily: option }} {...optionProps}>{option}</div> : null}
+                // @ts-expect-error fix later
+                (optionProps, option) => <div
+                    style={{ fontFamily: option as string }}
+                    {...optionProps}
+                >
+                    {option}
+                </div> : null}
             renderInput={params => <TextField
                 variant="standard"
                 error={!!error}
@@ -1092,12 +1256,14 @@ const WidgetField = props => {
             freeSolo
             fullWidth
             disabled={disabled}
+            // @ts-expect-error fix later
             placeholder={isDifferent ? t('different') : null}
             options={options || []}
-            inputValue={value || ''}
-            value={value || ''}
+            inputValue={value as string || ''}
+            value={value as string || ''}
             onInputChange={(e, inputValue) => {
-                if (typeof inputValue === 'object' && inputValue !== null) {
+                if (typeof inputValue === 'object' && inputValue) {
+                    // @ts-expect-error fix later
                     inputValue = inputValue.type === 'view' ? inputValue.view : inputValue.folder.name;
                 }
                 change(inputValue);
@@ -1219,7 +1385,7 @@ const WidgetField = props => {
                         },
                         selectedView: props.selectedView,
                         selectedWidgets: props.selectedWidgets,
-                        selectedWidget: props.selectedWidgets.length === 1 ? props.selectedWidgets[0] : props.selectedWidgets,
+                        selectedWidget: props.selectedWidgets.length === 1 ? props.selectedWidgets[0] : props.selectedWidgets as any as AnyWidgetId,
                     },
                 );
             } catch (e) {
@@ -1264,8 +1430,6 @@ const WidgetField = props => {
     if (field.type === 'icon') {
         return <IconPicker
             label="Icon"
-            t={I18n.t}
-            lang={I18n.getLanguage()}
             value={value}
             disabled={disabled}
             onChange={fileBlob => change(fileBlob)}
@@ -1299,16 +1463,17 @@ const WidgetField = props => {
             />
             <Button
                 variant={value ? 'outlined' : undefined}
+                // @ts-expect-error grey is valid color
                 color={value ? 'grey' : undefined}
                 onClick={() => setIdDialog(true)}
             >
-                {value ? <Icon src={value} style={{ width: 36, height: 36 }} /> : '...'}
+                {value ? <Icon src={value as string} style={{ width: 36, height: 36 }} /> : '...'}
             </Button>
             {idDialog &&
                 <MaterialIconSelector
                     themeType={props.themeType}
                     value={value}
-                    onClose={icon => {
+                    onClose={(icon: string | null) => {
                         setIdDialog(false);
                         if (icon !== null) {
                             change(icon);
@@ -1347,7 +1512,7 @@ const WidgetField = props => {
             />
             {idDialog ? <TextDialog
                 open={!0}
-                value={value}
+                value={value as string}
                 onChange={newValue => change(newValue)}
                 onClose={() => setIdDialog(false)}
                 themeType={props.themeType}
@@ -1369,7 +1534,7 @@ const WidgetField = props => {
                 onBlur={() => {
                     setTextDialogFocused(false);
                     if (field.type === 'number' && value) {
-                        let _value = value;
+                        let _value: number = value as number;
                         if (typeof _value === 'string') {
                             _value = parseFloat(_value);
                             if (field.min !== undefined) {
@@ -1417,29 +1582,6 @@ const WidgetField = props => {
     }
 
     return `${field.type}/${value}`;
-};
-
-WidgetField.propTypes = {
-    adapterName: PropTypes.string.isRequired,
-    changeProject: PropTypes.func,
-    classes: PropTypes.object,
-    field: PropTypes.object.isRequired,
-    fonts: PropTypes.array,
-    userGroups: PropTypes.object,
-    instance: PropTypes.number.isRequired,
-    isDifferent: PropTypes.bool,
-    isStyle: PropTypes.bool,
-    onPercentToPx: PropTypes.func,
-    onPxToPercent: PropTypes.func,
-    project: PropTypes.object,
-    projectName: PropTypes.string.isRequired,
-    selectedView: PropTypes.string,
-    selectedWidgets: PropTypes.array,
-    socket: PropTypes.object,
-    widget: PropTypes.object.isRequired,
-    error: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
-    disabled: PropTypes.bool,
-    widgetType: PropTypes.object,
 };
 
 export default WidgetField;

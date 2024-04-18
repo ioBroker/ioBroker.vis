@@ -1,13 +1,35 @@
-import PropTypes from 'prop-types';
+import React from 'react';
 import {
     Button, Dialog, DialogActions, DialogContent, DialogTitle,
 } from '@mui/material';
+import type { Breakpoint } from '@mui/system';
 
 import { Close as CloseIcon } from '@mui/icons-material';
 
 import { I18n } from '@iobroker/adapter-react-v5';
 
-const IODialog = props => (props.open ? <Dialog
+interface IODialogProps {
+    ActionIcon?: any;
+    action?: () => void;
+    actionColor?: 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
+    actionDisabled?: boolean;
+    actionNoClose?: boolean;
+    actionTitle?: string;
+    children: any;
+    closeTitle?: string;
+    closeDisabled?: boolean;
+    dialogActions?: any;
+    keyboardDisabled?: boolean;
+    onClose: () => void;
+    open: boolean;
+    title: string;
+    fullScreen?: boolean;
+    maxWidth?: Breakpoint;
+    minWidth?: number | string;
+    noTranslation?: boolean;
+}
+
+const IODialog = (props: IODialogProps) => (props.open ? <Dialog
     onClose={props.closeDisabled ? null : props.onClose}
     open={!0}
     fullScreen={!!props.fullScreen}
@@ -19,7 +41,7 @@ const IODialog = props => (props.open ? <Dialog
         onKeyUp={e => {
             if (props.action) {
                 if (!props.actionDisabled && !props.keyboardDisabled) {
-                    if (e.keyCode === 13) {
+                    if (e.key === 'Enter') {
                         props.action();
                         if (!props.actionNoClose) {
                             props.onClose();
@@ -42,7 +64,7 @@ const IODialog = props => (props.open ? <Dialog
                         props.onClose();
                     }
                 }}
-                color={props.actionColor ? props.actionColor : 'primary'}
+                color={props.actionColor || 'primary'}
                 disabled={props.actionDisabled}
                 startIcon={props.ActionIcon ? <props.ActionIcon /> : undefined}
             >
@@ -50,6 +72,7 @@ const IODialog = props => (props.open ? <Dialog
             </Button> : null}
         <Button
             variant="contained"
+            // @ts-expect-error grey is valid color
             color="grey"
             onClick={props.onClose}
             disabled={props.closeDisabled}
@@ -59,26 +82,5 @@ const IODialog = props => (props.open ? <Dialog
         </Button>
     </DialogActions>
 </Dialog> : null);
-
-IODialog.propTypes = {
-    ActionIcon: PropTypes.any,
-    action: PropTypes.func,
-    actionColor: PropTypes.string,
-    actionDisabled: PropTypes.bool,
-    actionNoClose: PropTypes.bool,
-    actionTitle: PropTypes.string,
-    children: PropTypes.any,
-    closeTitle: PropTypes.string,
-    closeDisabled: PropTypes.bool,
-    dialogActions: PropTypes.any,
-    keyboardDisabled: PropTypes.bool,
-    onClose: PropTypes.func,
-    open: PropTypes.bool,
-    title: PropTypes.string,
-    fullScreen: PropTypes.bool,
-    maxWidth: PropTypes.string,
-    minWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    noTranslation: PropTypes.bool,
-};
 
 export default IODialog;

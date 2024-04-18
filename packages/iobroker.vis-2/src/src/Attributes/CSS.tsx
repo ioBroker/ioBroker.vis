@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect, useState } from 'react';
 
 import {
     MenuItem, Select, Dialog, DialogTitle, Button,
@@ -10,11 +9,21 @@ import { HelpOutline, Check as CheckIcon } from '@mui/icons-material';
 
 import { I18n } from '@iobroker/adapter-react-v5';
 
-import { readFile } from '../Vis/visUtils';
-import CustomAceEditor from '../Components/CustomAceEditor';
+import { readFile } from '@/Vis/visUtils';
+import { CustomAceEditor } from '@/Components/CustomAceEditor';
 
-const CSS = props => {
-    const [type, setType] = useState('global');
+interface CSSProps {
+    projectName: string;
+    socket: any;
+    saveCssFile: (directory: string, file: string, value: string) => void;
+    adapterId: string;
+    themeType: string;
+    maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+    editMode: boolean;
+}
+
+const CSS = (props: CSSProps) => {
+    const [type, setType] = useState<'global' | 'local'>('global');
 
     const [localCss, setLocalCss] = useState('');
     const [globalCss, setGlobalCss] = useState('');
@@ -45,7 +54,7 @@ const CSS = props => {
     useEffect(() => {
         const load = async () => {
             try {
-                const commonCss = await readFile(props.socket, props.adapterId, 'vis-common-user.css');
+                const commonCss = await readFile(props.socket, props.adapterId, 'vis-common-user.css') as string;
                 setGlobalCss(commonCss);
             } catch (e) {
                 if (e !== 'Not exists') {
@@ -53,7 +62,7 @@ const CSS = props => {
                 }
             }
             try {
-                const userCss = await readFile(props.socket, props.adapterId, `${props.projectName}/vis-user.css`);
+                const userCss = await readFile(props.socket, props.adapterId, `${props.projectName}/vis-user.css`) as string;
                 setLocalCss(userCss);
             } catch (e) {
                 if (e !== 'Not exists') {
@@ -61,7 +70,7 @@ const CSS = props => {
                 }
             }
             if (window.localStorage.getItem('CSS.type')) {
-                setType(window.localStorage.getItem('CSS.type'));
+                setType(window.localStorage.getItem('CSS.type') as 'global' | 'local');
             }
         };
 
@@ -69,7 +78,7 @@ const CSS = props => {
             .catch(e => console.error('Error loading CSS: ', e));
     }, []);
 
-    const save = (value, saveType) => {
+    const save = (value: string, saveType: 'global' | 'local') => {
         timers[saveType].setValue(value);
         clearTimeout(timers[saveType].timer);
         timers[saveType].setTimer(setTimeout(() => {
@@ -79,10 +88,7 @@ const CSS = props => {
         }, 1000));
     };
 
-    let value = type === 'global' ? globalCss : localCss;
-    if (typeof value === 'object') {
-        value = value.data;
-    }
+    const value = type === 'global' ? globalCss : localCss;
 
     return <>
         <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -96,6 +102,7 @@ const CSS = props => {
                 </DialogContent>
                 <DialogActions>
                     <Button
+                        // @ts-expect-error grey is valid color
                         color="grey"
                         variant="contained"
                         onClick={() => setShowHelp(false)}
@@ -109,7 +116,7 @@ const CSS = props => {
                 variant="standard"
                 value={type}
                 onChange={e => {
-                    setType(e.target.value);
+                    setType(e.target.value as 'global' | 'local');
                     window.localStorage.setItem('CSS.type', e.target.value);
                 }}
             >
@@ -130,14 +137,6 @@ const CSS = props => {
             height="calc(100% - 34px)"
         />
     </>;
-};
-
-CSS.propTypes = {
-    projectName: PropTypes.string,
-    socket: PropTypes.object,
-    saveCssFile: PropTypes.func.isRequired,
-    adapterId: PropTypes.string.isRequired,
-    adapterName: PropTypes.string.isRequired,
 };
 
 export default CSS;

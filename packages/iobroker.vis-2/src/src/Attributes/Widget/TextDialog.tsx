@@ -1,10 +1,18 @@
-import { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect, useState } from 'react';
 
 import IODialog from '../../Components/IODialog';
 import CustomAceEditor from '../../Components/CustomAceEditor';
 
-const TextDialog = props => {
+interface TextDialogProps {
+    onChange: (value: string) => void;
+    onClose: () => void;
+    open: boolean;
+    themeType: string;
+    type: string;
+    value: string;
+}
+
+const TextDialog = (props: TextDialogProps) => {
     const [value, changeValue] = useState('');
 
     useEffect(() => {
@@ -30,15 +38,6 @@ const TextDialog = props => {
             onChange={newValue => changeValue(newValue)}
         />
     </IODialog> : null;
-};
-
-TextDialog.propTypes = {
-    onChange: PropTypes.func,
-    onClose: PropTypes.func,
-    open: PropTypes.bool,
-    themeType: PropTypes.string,
-    type: PropTypes.string,
-    value: PropTypes.string,
 };
 
 export default TextDialog;
