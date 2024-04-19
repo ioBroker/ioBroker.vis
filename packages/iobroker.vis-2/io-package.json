@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.49",
+    "version": "2.9.50",
     "news": {
+      "2.9.50": {
+        "en": "Corrected widget in widget behavior",
+        "de": "Korrigiertes Widget im Widget-Verhalten",
+        "ru": "Исправленный виджет в поведении виджетов",
+        "pt": "Widget corrigido no comportamento do widget",
+        "nl": "Gecorrigeerd widget in widgetgedrag",
+        "fr": "Correction du widget dans le comportement du widget",
+        "it": "Pulito widget nel comportamento dei widget",
+        "es": "El widget corregido en el comportamiento del widget",
+        "pl": "Poprawiony widget w zachowania widget",
+        "uk": "Виправлений віджет в поведінка віджету",
+        "zh-cn": "在部件行为中更正的部件"
+      },
       "2.9.49": {
         "en": "Corrected the scroll buttons in Tabs widget\nCorrected resizers if the border width is set",
         "de": "Korrektur der Scroll-Tasten in Tabs Widget\nKorrigierte Resizer, wenn die Grenzbreite eingestellt ist",
@@ -80,32 +93,6 @@
         "pl": "pozwala na użycie 'widget Oid \"w wiązaniach\nnaprawiono różne problemy z widżetem Date Picker\nopcja domyślna Date Picker czytelna dla człowieka i dodana opcja dla pełnej daty parseable\nDodano możliwość dodania przyrostka przez widżety nawigacyjne\nUlepszenie menedżera licencji",
         "uk": "дозволити використовувати `widget Oid` в зв’язках\nвиправлено різні проблеми з віджетом Date Picker\nзроблено опцію за замовчуванням для читання та додано параметр для повної дати\nДодайте можливість додати Suffix навігаційні віджети\nПокращити менеджера ліцензії",
         "zh-cn": "允许使用“widget” Oid ' 装订\n解决了 Date Picker 部件的各种问题\n将 Date Picker 人类可读的默认选项和全解析日期添加选项\n添加通过导航部件添加后缀的可能性\n改进许可证管理"
-      },
-      "2.9.37": {
-        "en": "TimePicker widget now saves the time instead of date by default, if you want old behavior use checkbox `asDate`",
-        "de": "TimePicker Widget speichert jetzt die Zeit anstelle von Datum standardmäßig, wenn Sie alte Verhalten verwenden Checkbox `asDate` wollen",
-        "ru": "Виджет TimePicker теперь сохраняет время вместо даты по умолчанию, если вы хотите, чтобы старое поведение использовало флажок `asDate'",
-        "pt": "O widget do TimePicker agora salva o tempo em vez de data por padrão, se você quiser que o comportamento antigo use a caixa de seleção `asDate`",
-        "nl": "TimePicker widget bespaart nu standaard de tijd in plaats van de datum, als u oud gedrag wilt gebruiken selectievakje ",
-        "fr": "TimePicker widget économise maintenant l'heure au lieu de la date par défaut, si vous voulez vieux comportement utiliser la case `asDate`",
-        "it": "TimePicker widget ora salva l'ora invece di data per impostazione predefinita, se si desidera vecchio comportamento utilizzare checkbox `asDate`",
-        "es": "El widget TimePicker ahora ahorra el tiempo en lugar de la fecha por defecto, si desea la casilla de verificación de comportamiento viejo `asDate`",
-        "pl": "Name",
-        "uk": "TimePicker віджет тепер заощаджує час замість дати за замовчуванням, якщо ви хочете, щоб стара поведінка використовувати прапорець `asDate`",
-        "zh-cn": "TimePicker 部件现在默认保存时间而不是日期, 如果您想要使用“ asDate” 复选框"
-      },
-      "2.9.36": {
-        "en": "fixed project-specific css not being applied",
-        "de": "feste projektspezifische css nicht angewendet",
-        "ru": "не применяется",
-        "pt": "css específicos do projeto fixo não sendo aplicado",
-        "nl": "vaste projectspecifieke css wordt niet toegepast",
-        "fr": "n'est pas appliquée",
-        "it": "non applicato",
-        "es": "css fijos para proyectos específicos que no se aplican",
-        "pl": "nie stosuje się stałego, specyficznego dla danego projektu css",
-        "uk": "виправлено проектні css, які не застосовуються",
-        "zh-cn": "未应用的固定项目 cs"
       }
     },
     "title": "Visualisation Next Generation",

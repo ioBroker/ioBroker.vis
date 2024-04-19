@@ -264,7 +264,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.9.50 (2024-04-19)
 * (bluefox) Corrected widget in widget behavior
 
 ### 2.9.49 (2024-04-11)
