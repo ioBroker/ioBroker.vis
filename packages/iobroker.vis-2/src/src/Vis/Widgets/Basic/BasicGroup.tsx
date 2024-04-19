@@ -37,7 +37,7 @@ import VisView from '@/Vis/visView';
 import VisRxWidget, { VisRxWidgetState } from '../../visRxWidget';
 
 // eslint-disable-next-line no-use-before-define
-type RxData = GetRxDataFromWidget<typeof BasicGroup>
+type RxData = GetRxDataFromWidget<typeof BasicGroup>;
 
 interface BasicGroupState extends VisRxWidgetState {
     mounted: boolean;

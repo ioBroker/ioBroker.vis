@@ -1204,7 +1204,9 @@ class Editor extends Runtime {
         }, 200);
     };
 
-    onFontsUpdate = fonts => this.setState({ fonts });
+    onFontsUpdate(fonts) {
+        this.setState({ fonts });
+    }
 
     cssClone = (attr, cb) => {
         if (this.visEngineHandlers[this.state.selectedView] && this.visEngineHandlers[this.state.selectedView].onStealStyle) {

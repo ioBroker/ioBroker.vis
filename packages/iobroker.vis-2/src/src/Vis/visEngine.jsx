@@ -211,6 +211,9 @@ class VisEngine extends React.Component {
                 this.props.setLoadingText && this.props.setLoadingText(null);
                 this.setState({ ready: true });
             });
+
+        // update one time the fonts
+        this.props.onFontsUpdate && this.props.onFontsUpdate(this.fontNames);
     }
 
     static getCurrentPath() {

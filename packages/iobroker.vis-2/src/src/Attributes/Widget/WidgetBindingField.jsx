@@ -20,8 +20,9 @@ import {
 
 import { I18n, Utils, SelectID } from '@iobroker/adapter-react-v5';
 
+import { store, recalculateFields } from '@/Store';
+
 import VisFormatUtils from '../../Vis/visFormatUtils';
-import { store, recalculateFields } from '../../Store';
 
 const styles = () => ({
     dialog: {
@@ -117,10 +118,8 @@ class WidgetBindingField extends Component {
         if (!oids) {
             return false;
         }
-        if (oids.find(it => it.token?.includes(':'))) {
-            return false;
-        }
-        return true;
+
+        return !oids.find(it => it.token?.includes(':'));
     }
 
     async calculateValue(value) {

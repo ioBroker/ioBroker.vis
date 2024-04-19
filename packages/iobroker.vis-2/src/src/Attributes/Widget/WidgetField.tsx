@@ -57,6 +57,7 @@ declare global {
     interface Window {
         collectClassesValue: Record<string, ClassesValue>;
         _: (word: string, ...args: any[]) => string;
+        jQuery: any;
     }
 }
 
@@ -170,8 +171,7 @@ function getStylesOptions(options: {
                         isFound = !attrs;
                         if (!isFound) {
                             isFound = !!attrs.find((attr: string) => {
-                                // @ts-expect-error fixed later
-                                const t: string | number = _internalList[style].attrs[attr] as string | number;
+                                const t: string | number = (_internalList[style].attrs as Record<string, string | number>)[attr] as string | number;
                                 return t || t === 0;
                             });
                         }
@@ -486,7 +486,7 @@ const WidgetField = (props: WidgetFieldProps) => {
         if (Array.isArray(changeValue) || field.immediateChange) {
             // apply immediately
             applyValue(changeValue);
-        } else {
+        } else if (changeValue !== cachedValue) {
             setCachedValue(changeValue);
             cacheTimer.current && clearTimeout(cacheTimer.current);
             cacheTimer.current = setTimeout(() => {
@@ -643,7 +643,6 @@ const WidgetField = (props: WidgetFieldProps) => {
                         if (typeof customLegacyComponent.button.code === 'function') {
                             customLegacyComponent.button.code(customLegacyComponent.button);
                         }
-                        // @ts-expect-error fix later
                         const $button = window.jQuery(e.target);
                         $button.data('wdata', {
                             attr: field.name,
@@ -692,10 +691,8 @@ const WidgetField = (props: WidgetFieldProps) => {
                 customFilter = { common: { custom: '_dataSources' } };
             } else if (
                 typeof field.filter === 'string' &&
-                // @ts-expect-error fix later
                 field.filter !== 'chart' &&
                 field.filter !== 'channel' &&
-                // @ts-expect-error fix later
                 field.filter !== 'device'
             ) {
                 // detect role
@@ -741,10 +738,8 @@ const WidgetField = (props: WidgetFieldProps) => {
                 onOk={selected => change(selected)}
                 onClose={() => setIdDialog(false)}
                 socket={props.socket}
-                // @ts-expect-error fix later
                 types={field.filter === 'chart' || field.filter === 'channel' || field.filter === 'device' ? [field.filter] as ObjectBrowserType[] : null}
                 filters={filters}
-                // @ts-expect-error fix later
                 expertMode={field.filter === 'chart' ? true : undefined}
                 customFilter={customFilter}
             /> : null}
@@ -1218,28 +1213,27 @@ const WidgetField = (props: WidgetFieldProps) => {
             options = window.vis ? window.vis.updateFilter() : [];
             options.unshift('');
         }
+        if (options[0] && typeof options === 'string') {
+            options = (options as PaletteFieldOptions[]).map(item => item.value);
+        }
 
         return <Autocomplete
             freeSolo
             fullWidth
             disabled={disabled}
-            placeholder={isDifferent ? t('different') : null}
-            // @ts-expect-error fix later
-            options={options || []}
+            options={options as string[] || []}
             inputValue={value as string || ''}
             value={value || ''}
             onInputChange={(e, inputValue) => change(inputValue)}
             onChange={(e, inputValue) => change(inputValue)}
             classes={{ input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) }}
-            // @ts-expect-error fix later
-            renderOption={field.name === 'font-family' || field.type === 'lc-font-family' ?
-                // @ts-expect-error fix later
-                (optionProps, option) => <div
+            renderOption={field.name === 'font-family' || field.name === 'lc-font-family' ?
+                (optionProps, option) => <li
                     style={{ fontFamily: option as string }}
                     {...optionProps}
                 >
                     {option}
-                </div> : null}
+                </li> : null}
             renderInput={params => <TextField
                 variant="standard"
                 error={!!error}
@@ -1257,18 +1251,11 @@ const WidgetField = (props: WidgetFieldProps) => {
             freeSolo
             fullWidth
             disabled={disabled}
-            // @ts-expect-error fix later
-            placeholder={isDifferent ? t('different') : null}
+            // placeholder={isDifferent ? t('different') : null}
             options={options || []}
             inputValue={value as string || ''}
             value={value as string || ''}
-            onInputChange={(e, inputValue) => {
-                if (typeof inputValue === 'object' && inputValue) {
-                    // @ts-expect-error fix later
-                    inputValue = inputValue.type === 'view' ? inputValue.view : inputValue.folder.name;
-                }
-                change(inputValue);
-            }}
+            onInputChange={(e, inputValue) => change(inputValue)}
             onChange={(e, inputValue) => {
                 if (typeof inputValue === 'object' && inputValue !== null) {
                     inputValue = inputValue.type === 'view' ? inputValue.view : inputValue.folder.name;

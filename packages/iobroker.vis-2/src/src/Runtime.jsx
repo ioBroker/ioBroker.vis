@@ -777,7 +777,6 @@ class Runtime extends GenericApp {
         await this.setStateAsync(newState);
     };
 
-    onFontsUpdate = fonts => this.setState({ fonts });
 
     showAlert(message, type) {
         if (type !== 'error' && type !== 'warning' && type !== 'info' && type !== 'success') {
@@ -1035,7 +1034,7 @@ class Runtime extends GenericApp {
             lockDragging={this.state.lockDragging}
             disableInteraction={this.state.disableInteraction}
             widgetHint={this.state.widgetHint}
-            onFontsUpdate={this.state.runtime ? null : this.onFontsUpdate}
+            onFontsUpdate={this.state.runtime ? null : fonts => this.onFontsUpdate(fonts)}
             registerEditorCallback={this.state.runtime ? null : this.registerCallback}
             themeType={this.state.themeType}
             themeName={this.state.themeName}
