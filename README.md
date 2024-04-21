@@ -8,7 +8,7 @@
 
 WEB visualization for ioBroker platform.
 
-***The development of this version is stopped. Please migrate to vis-2.***
+***The development of this version is stopped. Please migrate your projects to vis-2.***
 
 ## License requirements
 The adapter is free for all kinds of usage.
@@ -205,7 +205,7 @@ Notice that these settings are valid only for reconnection and not for the first
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 1.5.6 (2024-04-21)
+### **WORK IN PROGRESS**
 * (bluefox) Removed usage of `storage` and uses localStorage instead.
 
 ### 1.5.5 (2024-04-12)
