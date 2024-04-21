@@ -6,7 +6,7 @@ let gPage;
 let gBrowser;
 
 describe('vis', () => {
-    before(async function (){
+    before(async function () {
         this.timeout(180_000);
 
         // install js-controller, web and vis-2
@@ -55,12 +55,20 @@ describe('vis', () => {
         await runtimePage.close();
     });
 
-    after(async function () {
+    after(function (done) {
         this.timeout(8_000);
-        await helper.stopBrowser();
-        console.log('browser stopped');
-
-        await helper.stopIoBroker();
-        console.log('ioBroker stopped');
+        helper.stopBrowser()
+            .then(() => {
+                console.log('browser stopped');
+                try {
+                    return setup.stopCustomAdapter('web', 0);
+                } catch (e) {
+                    console.error(`Cannot stop ioBroker: ${e}`);
+                }
+            })
+            .then(() => {
+                console.log('ioBroker stopped');
+                done();
+            });
     });
 });
