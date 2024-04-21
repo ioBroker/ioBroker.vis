@@ -6,15 +6,12 @@
 
 [![NPM](https://nodei.co/npm/iobroker.vis.png?downloads=true)](https://nodei.co/npm/iobroker.vis/)
 
-WEB visualisation for ioBroker platform.
+WEB visualization for ioBroker platform.
+
+***The development of this version is stopped. Please migrate to vis-2.***
 
 ## License requirements
-To use this adapter in ioBroker, you need to accept the source code license of the adapter. The source code of this adapter is available under the CC BY-NC license.
-
-Additionally, you need a license to use the adapter. The following license editions are available on https://iobroker.net/www/pricing 
-* **Community-License: Free for private use!**: Get a free license by registering an account on https://iobroker.net . The license if checked online against the ioBroker license server when the vis adapter is started, so an online connection at this timepoint is required!
-* **Private use Offline-License**: For paying a small support fee, you can get rid of the required online license check on adapter startup. **Only for Private use!**
-* **Commercial License**: When using Vis in a commercial environment or selling Vis as part of ioBroker packages to your customers, this license is for you. License check is also not requiring an online connection.
+The adapter is free for all kinds of usage.
 
 ## Installation & Documentation
 
@@ -35,7 +32,7 @@ Patten has the following format:
 {objectID;operation1;operation2;...}
 ```
 
-Following operations are supported:
+The following operations are supported:
 
 - `\*` - multiplying. Argument must be in brackets, like "*(4)". In this sample, we multiply the value with 4.
 - `\+` - add. Argument must be in brackets, like "+(4.5)". In this sample we add to value 4.5.
@@ -130,7 +127,7 @@ Note: to use ":" in calculations (e.g., in string formula) use "::" instead.
 for that.
 
 ## Filters
-To visualise on the one view the whole number of widgets, you can use filters to reduce the number of widgets simultaneously shown on the view.
+To visualize on the one view the whole number of widgets, you can use filters to reduce the number of widgets simultaneously shown on the view.
  
 Every widget has a field `filter`. If you set it to some value, e.g. `light`, so you can use other widget `(bars - filters, filter - dropdown)` to control which filter is actually active.
 
@@ -168,7 +165,7 @@ If the user changes the view or at start, the variables will be filled by the vi
 - `control.data`: project and view name in form `project/view`, e.g. `main/view` (and `ack=true`)
 - `control.command`: `changedView` and `ack=true`
 
-You can write the JSON-string or Object into `control.command` as `{instance: 'AABBCCDD', command: 'cmd', data: 'ddd'}`. In this case, the instance and data will be taken from JSON object.
+You can write the JSON string or Object into `control.command` as `{instance: 'AABBCCDD', command: 'cmd', data: 'ddd'}`. In this case, the instance and data will be taken from JSON object.
 
 Example for javascript adapter:
 
@@ -190,7 +187,7 @@ There is a helper widget "basic - Screen Resolution" that shows actual screen re
 
 ## Settings
 ### Reload if sleep longer than
-There is a rule that after some disconnection period, the whole VIS page will be reloaded to synchronise the project.
+There is a rule that after some disconnection period, the whole VIS page will be reloaded to synchronize the project.
 You can configure it in the menu "Settings...". If you set an interval to "never" so the page will never be reloaded.
 
 ### Reconnect interval
@@ -208,6 +205,9 @@ Notice that these settings are valid only for reconnection and not for the first
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Removed usage of `storage` and uses localStorage instead.
+
 ### 1.5.5 (2024-04-12)
 * (bluefox) Corrected small warning
 

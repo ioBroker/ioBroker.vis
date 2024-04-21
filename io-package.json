@@ -160,6 +160,9 @@
         "adminUI": {
             "config": "none"
         },
+        "licenseInformation": {
+            "type": "free"
+        },
         "compact": true,
         "materialize": true,
         "eraseOnUpload": false,
