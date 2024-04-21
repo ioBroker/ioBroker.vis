@@ -1,247 +1,248 @@
 {
-    "common": {
-        "name": "vis",
-        "version": "1.5.5",
-        "news": {
-            "1.5.5": {
-                "en": "Corrected small warning",
-                "de": "Kleine Warnung korrigiert",
-                "ru": "Исправлено небольшое предупреждение",
-                "pt": "Pequeno aviso corrigido",
-                "nl": "Gecorrigeerde kleine waarschuwing",
-                "fr": "Petit avertissement corrigé",
-                "it": "Piccolo avvertimento corretto",
-                "es": "Advertencia pequeña corregida",
-                "pl": "Poprawione małe ostrzeżenie",
-                "uk": "Виправлено невелике попередження",
-                "zh-cn": "更正小警告"
-            },
-            "1.5.4": {
-                "en": "added the new binding operation for getting property of JSON or object\nChecked the initialization of the `local_` variables\nfixed subscribeOidAtRuntime\nAdded dynamic web manifest\nOptimization for basic-view in widget8\nChanged binding regex to accept umlauts\nCorrected first installation of vis",
-                "de": "die neue Bindungsoperation zum Erhalt von Eigentum von JSON oder Objekt hinzugefügt\nDie Initialisierung der lokalen_ Variablen wurde geprüft\nabonnierenOidAtRuntime\nHinzufügen dynamischer web manifest\nOptimierung der Grundansicht in widget8\nÄnderung des verbindlichen Regex zur Annahme von Umlauts\nKorrigierte erste Installation von vis",
-                "ru": "добавлена новая операция связывания для получения собственности JSON или объекта\nПроверена инициализация локальных_ переменных\nфиксированная подпискаOidAtRuntime\nДобавлен динамический веб-проявление\nОптимизация для базового просмотра в виджете8\nИзмененный обязательный regex, чтобы принять umlauts\nИсправлена первая установка vis",
-                "pt": "adicionou a nova operação de ligação para obter propriedade de JSON ou objeto\nVerificada a inicialização das variáveis local_\nassinada fixaOidAtRuntime\nAdicionado manifesto dinâmico da web\nOtimização para visualização básica no widget8\nMudança de ligação regex para aceitar umlauts\nPrimeira instalação correta de vis",
-                "nl": "voegde de nieuwe binding toe voor het krijgen van eigendom van JSON of object\nControleerde de initialisatie van de plaatselijke variabelen\nvertaling:\nDynamisch web manifest\nOptimisatie voor basis-view in Widget8\nVeranderde bindingsregister om paralauten te accepteren\nVertaling:",
-                "fr": "ajouté la nouvelle opération de reliure pour obtenir la propriété de JSON ou objet\nVérifié l'initialisation des variables locales_\nabonnement fixeOidAtRuntime\nAjout d ' un manifeste dynamique\nOptimisation de la vue de base dans widget8\nChangement de regex contraignant pour accepter umlauts\nCorrection de la première installation de vis",
-                "it": "aggiunto il nuovo funzionamento vincolante per ottenere proprietà di JSON o oggetto\nControllata l'inizializzazione delle variabili locali_\nabbonamento fissoOidAtRuntime\nAggiunto dinamico web manifesto\nOttimizzazione per la visione di base in widget8\nRegex vincolante modificato per accettare umlauts\nCorretto prima installazione di vis",
-                "es": "agregó la nueva operación vinculante para obtener propiedad de JSON o objeto\nComprobó la inicialización de las variables local_\nsuscripción fijaOidAtRuntime\nAñadido dinámico web manifiesto\nOptimización para la visión básica en widget8\nCambio de reno vinculante para aceptar umlauts\nPrimera instalación corregida de vis",
-                "pl": "dodano nową operację wiązania dla uzyskania własności obiektów JSON lub JSON\nZinicjował inicjację lokalnych zmiennych _\nadAtRuntime\nDynamiczny manifest internetowy\nOptymizacja podstawowego przeglądu widget8\nZmienił rejestry wiążące się z umlauts\nPierwsza instalacja wizy",
-                "uk": "додано нову операцію для отримання майна JSON або об'єкта\nПеревірка ініціалізації змінних локальних_\nфіксована підпискаOidAtRuntime\nДодана динамічна веб-проявка\nОптимізація для базового перегляду у віджеті8\nЗмінений обов'язковий regex для прийняття umlauts\nВиправлена перша установка в'язнів",
-                "zh-cn": "增加新的具有约束力的行动,以获得联合执行董事会或目标的财产。\n检查当地的初始化:变量\n固定签名\n增加动态网站\nA. 彻底审查目标8\nB. 修改具有约束力的条例以接受劳教\n更正"
-            },
-            "1.5.1": {
-                "en": "Changed License: it is now MIT, and the license check was removed",
-                "de": "Änderung der Lizenz: es ist jetzt MIT, und die Lizenzprüfung wurde entfernt",
-                "ru": "Изменена лицензия: сейчас MIT, и проверка лицензии была удалена",
-                "pt": "Licença alterada: é agora MIT, e a verificação da licença foi removida",
-                "nl": "Veranderde License, het is nu MIT en de rijbewijs is verwijderd",
-                "fr": "Licence modifiée: il est maintenant MIT, et le contrôle de licence a été supprimé",
-                "it": "Licenza modificata: è ora MIT e il controllo della licenza è stato rimosso",
-                "es": "Licencia modificada: ahora es MIT, y el cheque de licencia fue eliminado",
-                "pl": "Changed License: obecnie MIT, a kontrola licencji została usunięta",
-                "uk": "Змінена ліцензія: тепер MIT, а також зняття ліцензії",
-                "zh-cn": "修改的许可证:现在是投资条约,被取消许可证检查。"
-            },
-            "1.4.16": {
-                "en": "Corrected connection with \"only port\" URLs",
-                "de": "Korrigierte Verbindung mit \"nur Port\" URLs",
-                "ru": "Исправлена связь с URL-адресами \"только порт\"",
-                "pt": "Conexão correta com URLs \"apenas portas\"",
-                "nl": "Quality over Quantity (QoQ) Releases Vertaling:",
-                "fr": "Connexion corrigée avec des URLs \"uniquement port\"",
-                "it": "Collegamento corretto con URL \"solo porta\"",
-                "es": "Conexión corregida con URLs \"sólo puerto\"",
-                "pl": "Poprawne połączenie z „only port” URL",
-                "uk": "Виправлено підключення з URL-адресами \"тільки порт\"",
-                "zh-cn": "与“港口”URLs联系"
-            },
-            "1.4.15": {
-                "en": "Better check of the offline license",
-                "de": "Bessere Überprüfung der Offline-Lizenz",
-                "ru": "Улучшенная проверка офлайн-лицензии",
-                "pt": "Melhor verificação da licença offline",
-                "nl": "Betere controle van de offline licentie",
-                "fr": "Meilleure vérification de la licence hors ligne",
-                "it": "Migliore controllo della licenza offline",
-                "es": "Mejor control de la licencia fuera de línea",
-                "pl": "Lepsze sprawdzenie licencji offline",
-                "zh-cn": "更好地检查离线许可证"
-            },
-            "1.4.14": {
-                "en": "Corrected GUI bug",
-                "de": "GUI-Fehler behoben",
-                "ru": "Исправлена ошибка графического интерфейса",
-                "pt": "Bug de GUI corrigido",
-                "nl": "Fout in GUI gecorrigeerd",
-                "fr": "Bogue d'interface graphique corrigé",
-                "it": "Bug della GUI corretto",
-                "es": "Error de GUI corregido",
-                "pl": "Poprawiony błąd GUI",
-                "zh-cn": "更正了图形用户界面错误"
-            },
-            "1.4.13": {
-                "en": "The group attributes will be replaced recursively",
-                "de": "Die Gruppenattribute werden rekursiv ersetzt",
-                "ru": "Атрибуты группы будут заменены рекурсивно",
-                "pt": "Os atributos do grupo serão substituídos recursivamente",
-                "nl": "De groepsattributen worden recursief vervangen",
-                "fr": "Les attributs de groupe seront remplacés de manière récursive",
-                "it": "Gli attributi del gruppo verranno sostituiti in modo ricorsivo",
-                "es": "Los atributos del grupo serán reemplazados recursivamente",
-                "pl": "Atrybuty grupowe zostaną zastąpione rekursywnie",
-                "zh-cn": "组属性将被递归替换"
-            }
-        },
-        "title": "Visualisation",
-        "titleLang": {
-            "en": "Visualisation",
-            "de": "Visualisierung",
-            "ru": "Визуализация",
-            "pt": "Visualização",
-            "nl": "Visualisatie",
-            "fr": "Visualisation",
-            "it": "Visualizzazione",
-            "es": "Visualización",
-            "pl": "Wizualizacja",
-            "uk": "Візуалізація",
-            "zh-cn": "可视化"
-        },
-        "desc": {
-            "en": "Graphical user interface for iobroker",
-            "de": "Grafische Benutzeroberfläche für iobroker",
-            "ru": "Графический пользовательский интерфейс для iobroker",
-            "pt": "Interface gráfica do usuário para iobroker",
-            "nl": "Grafische gebruikersinterface voor iobroker",
-            "fr": "Interface utilisateur graphique pour iobroker",
-            "it": "Interfaccia utente grafica per iobroker",
-            "es": "Interfaz gráfica de usuario para iobroker",
-            "pl": "Graficzny interfejs użytkownika dla iobroker",
-            "uk": "Графічний інтерфейс користувача для iobroker",
-            "zh-cn": "iobroker的图形化用户界面"
-        },
-        "platform": "Javascript/Node.js",
-        "loglevel": "info",
-        "icon": "vis.png",
-        "enabled": true,
-        "mode": "once",
-        "extIcon": "https://raw.githubusercontent.com/iobroker/iobroker.vis/master/admin/vis.png",
-        "keywords": [
-            "DashUI",
-            "GUI",
-            "graphical",
-            "scada"
-        ],
-        "readme": "https://github.com/iobroker/iobroker.vis/blob/master/README.md",
-        "authors": [
-            "bluefox <dogafox@gmail.com>"
-        ],
-        "localLinks": {
-            "_default": "%web_protocol%://%ip%:%web_port%/vis/edit.html"
-        },
-        "license": "MIT",
-        "dependencies": [
-            {
-                "web": ">=3.0.12"
-            },
-            {
-                "js-controller": ">=2.0.0"
-            }
-        ],
-        "restartAdapters": [
-            "vis"
-        ],
-        "serviceStates": "lib/states.js",
-        "singleton": true,
-        "type": "visualization",
-        "connectionType": "local",
-        "dataSource": "push",
-        "tier": 3,
-        "noConfig": true,
-        "adminUI": {
-            "config": "none"
-        },
-        "licenseInformation": {
-            "type": "free"
-        },
-        "compact": true,
-        "materialize": true,
-        "eraseOnUpload": false,
-        "welcomeScreen": {
-            "link": "vis/index.html",
-            "name": "vis runtime",
-            "img": "vis/img/favicon.png",
-            "color": "#ffe9c8",
-            "order": 0
-        },
-        "welcomeScreenPro": {
-            "link": "vis/edit.html",
-            "name": "vis editor",
-            "img": "vis/img/faviconEdit.png",
-            "color": "#c8ffe1",
-            "order": 1
-        }
+  "common": {
+    "name": "vis",
+    "version": "1.5.6",
+    "news": {
+      "1.5.6": {
+        "en": "Removed usage of `storage` and uses localStorage instead.",
+        "de": "Entfernte Verwendung von `storage` und verwendet localStorage statt.",
+        "ru": "Удалить использование `storage' и вместо этого использовать LocalStorage.",
+        "pt": "Uso removido de `storage` e usa localStorage em vez.",
+        "nl": "Verwijderd gebruik van de lokale opslag.",
+        "fr": "Supprimé l'utilisation de `stockage` et utilise localStorage à la place.",
+        "it": "L'uso rimosso di `storage` e utilizza localStorage invece.",
+        "es": "El uso eliminado de `storage` y utiliza localStorage en su lugar.",
+        "pl": "Usunięto użycie 'pamięci masowej' i zamiast tego używa localStorage.",
+        "uk": "Вилучено використання `storage` та використовує локальне.",
+        "zh-cn": "取消了 \" 储存 \" 的使用,改用当地储存."
+      },
+      "1.5.5": {
+        "en": "Corrected small warning",
+        "de": "Kleine Warnung korrigiert",
+        "ru": "Исправлено небольшое предупреждение",
+        "pt": "Pequeno aviso corrigido",
+        "nl": "Gecorrigeerde kleine waarschuwing",
+        "fr": "Petit avertissement corrigé",
+        "it": "Piccolo avvertimento corretto",
+        "es": "Advertencia pequeña corregida",
+        "pl": "Poprawione małe ostrzeżenie",
+        "uk": "Виправлено невелике попередження",
+        "zh-cn": "更正小警告"
+      },
+      "1.5.4": {
+        "en": "added the new binding operation for getting property of JSON or object\nChecked the initialization of the `local_` variables\nfixed subscribeOidAtRuntime\nAdded dynamic web manifest\nOptimization for basic-view in widget8\nChanged binding regex to accept umlauts\nCorrected first installation of vis",
+        "de": "die neue Bindungsoperation zum Erhalt von Eigentum von JSON oder Objekt hinzugefügt\nDie Initialisierung der lokalen_ Variablen wurde geprüft\nabonnierenOidAtRuntime\nHinzufügen dynamischer web manifest\nOptimierung der Grundansicht in widget8\nÄnderung des verbindlichen Regex zur Annahme von Umlauts\nKorrigierte erste Installation von vis",
+        "ru": "добавлена новая операция связывания для получения собственности JSON или объекта\nПроверена инициализация локальных_ переменных\nфиксированная подпискаOidAtRuntime\nДобавлен динамический веб-проявление\nОптимизация для базового просмотра в виджете8\nИзмененный обязательный regex, чтобы принять umlauts\nИсправлена первая установка vis",
+        "pt": "adicionou a nova operação de ligação para obter propriedade de JSON ou objeto\nVerificada a inicialização das variáveis local_\nassinada fixaOidAtRuntime\nAdicionado manifesto dinâmico da web\nOtimização para visualização básica no widget8\nMudança de ligação regex para aceitar umlauts\nPrimeira instalação correta de vis",
+        "nl": "voegde de nieuwe binding toe voor het krijgen van eigendom van JSON of object\nControleerde de initialisatie van de plaatselijke variabelen\nvertaling:\nDynamisch web manifest\nOptimisatie voor basis-view in Widget8\nVeranderde bindingsregister om paralauten te accepteren\nVertaling:",
+        "fr": "ajouté la nouvelle opération de reliure pour obtenir la propriété de JSON ou objet\nVérifié l'initialisation des variables locales_\nabonnement fixeOidAtRuntime\nAjout d ' un manifeste dynamique\nOptimisation de la vue de base dans widget8\nChangement de regex contraignant pour accepter umlauts\nCorrection de la première installation de vis",
+        "it": "aggiunto il nuovo funzionamento vincolante per ottenere proprietà di JSON o oggetto\nControllata l'inizializzazione delle variabili locali_\nabbonamento fissoOidAtRuntime\nAggiunto dinamico web manifesto\nOttimizzazione per la visione di base in widget8\nRegex vincolante modificato per accettare umlauts\nCorretto prima installazione di vis",
+        "es": "agregó la nueva operación vinculante para obtener propiedad de JSON o objeto\nComprobó la inicialización de las variables local_\nsuscripción fijaOidAtRuntime\nAñadido dinámico web manifiesto\nOptimización para la visión básica en widget8\nCambio de reno vinculante para aceptar umlauts\nPrimera instalación corregida de vis",
+        "pl": "dodano nową operację wiązania dla uzyskania własności obiektów JSON lub JSON\nZinicjował inicjację lokalnych zmiennych _\nadAtRuntime\nDynamiczny manifest internetowy\nOptymizacja podstawowego przeglądu widget8\nZmienił rejestry wiążące się z umlauts\nPierwsza instalacja wizy",
+        "uk": "додано нову операцію для отримання майна JSON або об'єкта\nПеревірка ініціалізації змінних локальних_\nфіксована підпискаOidAtRuntime\nДодана динамічна веб-проявка\nОптимізація для базового перегляду у віджеті8\nЗмінений обов'язковий regex для прийняття umlauts\nВиправлена перша установка в'язнів",
+        "zh-cn": "增加新的具有约束力的行动,以获得联合执行董事会或目标的财产。\n检查当地的初始化:变量\n固定签名\n增加动态网站\nA. 彻底审查目标8\nB. 修改具有约束力的条例以接受劳教\n更正"
+      },
+      "1.5.1": {
+        "en": "Changed License: it is now MIT, and the license check was removed",
+        "de": "Änderung der Lizenz: es ist jetzt MIT, und die Lizenzprüfung wurde entfernt",
+        "ru": "Изменена лицензия: сейчас MIT, и проверка лицензии была удалена",
+        "pt": "Licença alterada: é agora MIT, e a verificação da licença foi removida",
+        "nl": "Veranderde License, het is nu MIT en de rijbewijs is verwijderd",
+        "fr": "Licence modifiée: il est maintenant MIT, et le contrôle de licence a été supprimé",
+        "it": "Licenza modificata: è ora MIT e il controllo della licenza è stato rimosso",
+        "es": "Licencia modificada: ahora es MIT, y el cheque de licencia fue eliminado",
+        "pl": "Changed License: obecnie MIT, a kontrola licencji została usunięta",
+        "uk": "Змінена ліцензія: тепер MIT, а також зняття ліцензії",
+        "zh-cn": "修改的许可证:现在是投资条约,被取消许可证检查。"
+      },
+      "1.4.16": {
+        "en": "Corrected connection with \"only port\" URLs",
+        "de": "Korrigierte Verbindung mit \"nur Port\" URLs",
+        "ru": "Исправлена связь с URL-адресами \"только порт\"",
+        "pt": "Conexão correta com URLs \"apenas portas\"",
+        "nl": "Quality over Quantity (QoQ) Releases Vertaling:",
+        "fr": "Connexion corrigée avec des URLs \"uniquement port\"",
+        "it": "Collegamento corretto con URL \"solo porta\"",
+        "es": "Conexión corregida con URLs \"sólo puerto\"",
+        "pl": "Poprawne połączenie z „only port” URL",
+        "uk": "Виправлено підключення з URL-адресами \"тільки порт\"",
+        "zh-cn": "与“港口”URLs联系"
+      },
+      "1.4.15": {
+        "en": "Better check of the offline license",
+        "de": "Bessere Überprüfung der Offline-Lizenz",
+        "ru": "Улучшенная проверка офлайн-лицензии",
+        "pt": "Melhor verificação da licença offline",
+        "nl": "Betere controle van de offline licentie",
+        "fr": "Meilleure vérification de la licence hors ligne",
+        "it": "Migliore controllo della licenza offline",
+        "es": "Mejor control de la licencia fuera de línea",
+        "pl": "Lepsze sprawdzenie licencji offline",
+        "zh-cn": "更好地检查离线许可证"
+      },
+      "1.4.14": {
+        "en": "Corrected GUI bug",
+        "de": "GUI-Fehler behoben",
+        "ru": "Исправлена ошибка графического интерфейса",
+        "pt": "Bug de GUI corrigido",
+        "nl": "Fout in GUI gecorrigeerd",
+        "fr": "Bogue d'interface graphique corrigé",
+        "it": "Bug della GUI corretto",
+        "es": "Error de GUI corregido",
+        "pl": "Poprawiony błąd GUI",
+        "zh-cn": "更正了图形用户界面错误"
+      }
     },
-    "native": {
-        "defaultFileMode": 1604
+    "title": "Visualisation",
+    "titleLang": {
+      "en": "Visualisation",
+      "de": "Visualisierung",
+      "ru": "Визуализация",
+      "pt": "Visualização",
+      "nl": "Visualisatie",
+      "fr": "Visualisation",
+      "it": "Visualizzazione",
+      "es": "Visualización",
+      "pl": "Wizualizacja",
+      "uk": "Візуалізація",
+      "zh-cn": "可视化"
     },
-    "instanceObjects": [
-        {
-            "_id": "",
-            "type": "meta",
-            "common": {
-                "name": "user files and images for vis",
-                "type": "meta.user"
-            },
-            "native": {}
-        },
-        {
-            "_id": "control",
-            "type": "channel",
-            "common": {
-                "name": "Control vis"
-            },
-            "native": {}
-        },
-        {
-            "_id": "control.instance",
-            "type": "state",
-            "common": {
-                "name": "Control vis",
-                "type": "string",
-                "desc": "Write here browser instance ID to control or 'FFFFFFFF' to control all instances"
-            },
-            "native": {}
-        },
-        {
-            "_id": "control.command",
-            "type": "state",
-            "common": {
-                "name": "Command for vis",
-                "type": "string",
-                "desc": "Writing this variable act as the trigger. Instance and data must be preset before 'command' will be written. 'changedView' will be signalled too",
-                "states": {
-                    "alert": "alert",
-                    "changeView": "changeView",
-                    "refresh": "refresh",
-                    "reload": "reload",
-                    "dialog": "dialog",
-                    "popup": "popup",
-                    "playSound": "playSound",
-                    "changedView": "changedView",
-                    "tts": "tts"
-                }
-            },
-            "native": {}
-        },
-        {
-            "_id": "control.data",
-            "type": "state",
-            "common": {
-                "name": "Data for control vis",
-                "type": "string",
-                "desc": "Used for: alert, changeView, dialog, popup, playSound, changedView"
-            },
-            "native": {}
+    "desc": {
+      "en": "Graphical user interface for iobroker",
+      "de": "Grafische Benutzeroberfläche für iobroker",
+      "ru": "Графический пользовательский интерфейс для iobroker",
+      "pt": "Interface gráfica do usuário para iobroker",
+      "nl": "Grafische gebruikersinterface voor iobroker",
+      "fr": "Interface utilisateur graphique pour iobroker",
+      "it": "Interfaccia utente grafica per iobroker",
+      "es": "Interfaz gráfica de usuario para iobroker",
+      "pl": "Graficzny interfejs użytkownika dla iobroker",
+      "uk": "Графічний інтерфейс користувача для iobroker",
+      "zh-cn": "iobroker的图形化用户界面"
+    },
+    "platform": "Javascript/Node.js",
+    "loglevel": "info",
+    "icon": "vis.png",
+    "enabled": true,
+    "mode": "once",
+    "extIcon": "https://raw.githubusercontent.com/iobroker/iobroker.vis/master/admin/vis.png",
+    "keywords": [
+      "DashUI",
+      "GUI",
+      "graphical",
+      "scada"
+    ],
+    "readme": "https://github.com/iobroker/iobroker.vis/blob/master/README.md",
+    "authors": [
+      "bluefox <dogafox@gmail.com>"
+    ],
+    "localLinks": {
+      "_default": "%web_protocol%://%ip%:%web_port%/vis/edit.html"
+    },
+    "license": "MIT",
+    "dependencies": [
+      {
+        "web": ">=3.0.12"
+      },
+      {
+        "js-controller": ">=2.0.0"
+      }
+    ],
+    "restartAdapters": [
+      "vis"
+    ],
+    "serviceStates": "lib/states.js",
+    "singleton": true,
+    "type": "visualization",
+    "connectionType": "local",
+    "dataSource": "push",
+    "tier": 3,
+    "noConfig": true,
+    "adminUI": {
+      "config": "none"
+    },
+    "licenseInformation": {
+      "type": "free"
+    },
+    "compact": true,
+    "materialize": true,
+    "eraseOnUpload": false,
+    "welcomeScreen": {
+      "link": "vis/index.html",
+      "name": "vis runtime",
+      "img": "vis/img/favicon.png",
+      "color": "#ffe9c8",
+      "order": 0
+    },
+    "welcomeScreenPro": {
+      "link": "vis/edit.html",
+      "name": "vis editor",
+      "img": "vis/img/faviconEdit.png",
+      "color": "#c8ffe1",
+      "order": 1
+    }
+  },
+  "native": {
+    "defaultFileMode": 1604
+  },
+  "instanceObjects": [
+    {
+      "_id": "",
+      "type": "meta",
+      "common": {
+        "name": "user files and images for vis",
+        "type": "meta.user"
+      },
+      "native": {}
+    },
+    {
+      "_id": "control",
+      "type": "channel",
+      "common": {
+        "name": "Control vis"
+      },
+      "native": {}
+    },
+    {
+      "_id": "control.instance",
+      "type": "state",
+      "common": {
+        "name": "Control vis",
+        "type": "string",
+        "desc": "Write here browser instance ID to control or 'FFFFFFFF' to control all instances"
+      },
+      "native": {}
+    },
+    {
+      "_id": "control.command",
+      "type": "state",
+      "common": {
+        "name": "Command for vis",
+        "type": "string",
+        "desc": "Writing this variable act as the trigger. Instance and data must be preset before 'command' will be written. 'changedView' will be signalled too",
+        "states": {
+          "alert": "alert",
+          "changeView": "changeView",
+          "refresh": "refresh",
+          "reload": "reload",
+          "dialog": "dialog",
+          "popup": "popup",
+          "playSound": "playSound",
+          "changedView": "changedView",
+          "tts": "tts"
         }
-    ]
+      },
+      "native": {}
+    },
+    {
+      "_id": "control.data",
+      "type": "state",
+      "common": {
+        "name": "Data for control vis",
+        "type": "string",
+        "desc": "Used for: alert, changeView, dialog, popup, playSound, changedView"
+      },
+      "native": {}
+    }
+  ]
 }

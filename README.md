@@ -205,7 +205,7 @@ Notice that these settings are valid only for reconnection and not for the first
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 1.5.6 (2024-04-21)
 * (bluefox) Removed usage of `storage` and uses localStorage instead.
 
 ### 1.5.5 (2024-04-12)
