@@ -16,6 +16,19 @@
 // the class loads it for addon. Authentication will be done automatically, so addon does not care about it.
 // It will be .js file with localData and servConn
 
+window.getStoredObjects = function (name) {
+    let objects = window.localStorage.getItem(name || 'objects');
+    if (objects) {
+        try {
+            return JSON.parse(objects);
+        } catch (e) {
+            return null;
+        }
+    } else {
+        return null;
+    }
+}
+
 var servConn = {
     _socket:            null,
     _hub:               null,
@@ -438,14 +451,12 @@ var servConn = {
 
             // Try load views from local storage
             if (filename.indexOf('dashui-views') != -1) {
-                if (typeof storage !== 'undefined') {
-                    vis.views = storage.get(filename);
-                    if (vis.views) {
-                        callback(vis.views);
-                        return;
-                    } else {
-                        vis.views = {};
-                    }
+                vis.views = window.getStoredObjects(filename);
+                if (vis.views) {
+                    callback(vis.views);
+                    return;
+                } else {
+                    vis.views = {};
                 }
             }
 
@@ -518,15 +529,13 @@ var servConn = {
             });
         } else if (this._type == 2) {
             if (filename.indexOf('dashui-views') != -1) {
-                if (typeof storage !== 'undefined') {
-                    storage.set(filename, vis.views);
-                    if (!storage.get('localWarnShown')) {
-                        alert(_('All changes are saved locally. To reset changes clear the cache.'));
-                        storage.set('localWarnShown', true);
-                    }
-                    if (callback) {
-                        callback(true);
-                    }
+                window.localStorage.setItem(filename, JSON.stringify(vis.views));
+                if (!window.localStorage.getItem('localWarnShown')) {
+                    alert(_('All changes are saved locally. To reset changes clear the cache.'));
+                    window.localStorage.setItem('localWarnShown', 'true');
+                }
+                if (callback) {
+                    callback(true);
                 }
             }
         }

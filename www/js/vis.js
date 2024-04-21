@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2013-2023 bluefox https://github.com/GermanBluefox,
+ *  Copyright (c) 2013-2024 bluefox https://github.com/GermanBluefox,
  *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
@@ -26,7 +26,6 @@
 /* global systemLang:true */
 /* global _ */
 /* global can */
-/* global storage */
 /* global servConn */
 /* global systemDictionary */
 /* global $ */
@@ -39,6 +38,21 @@
 /* global moment */
 /* jshint -W097 */// jshint strict:false
 'use strict';
+
+if (!window.getStoredObjects) {
+    window.getStoredObjects = function (name) {
+        let objects = window.localStorage.getItem(name || 'objects');
+        if (objects) {
+            try {
+                return JSON.parse(objects);
+            } catch (e) {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+}
 
 if (typeof systemDictionary !== 'undefined') {
     $.extend(systemDictionary, {
@@ -571,9 +585,12 @@ var vis = {
         if (typeof app !== 'undefined' && app.settings) {
             this.instance = app.settings.instance;
         }
-        if (typeof storage !== 'undefined') {
-            this.instance = this.instance || storage.get(this.storageKeyInstance);
+
+        this.instance = this.instance || window.localStorage.getItem(this.storageKeyInstance);
+        if (typeof this.instance !== 'string') {
+            this.instance = '';
         }
+
         if (this.editMode) {
             this.bindInstanceEdit();
         }
@@ -584,11 +601,9 @@ var vis = {
             return;
         }
 
-        if (typeof storage !== 'undefined') {
-            var settings = storage.get(this.storageKeySettings);
-            if (settings) {
-                this.settings = $.extend(this.settings, settings);
-            }
+        let settings = window.getStoredObjects(this.storageKeySettings);
+        if (settings) {
+            this.settings = $.extend(this.settings, settings);
         }
 
         // Late initialization (used only for debug)
@@ -2927,13 +2942,11 @@ var vis = {
         }
     },
     generateInstance:   function () {
-        if (typeof storage !== 'undefined') {
-            this.instance = (Math.random() * 4294967296).toString(16);
-            this.instance = `0000000${this.instance}`;
-            this.instance = this.instance.substring(this.instance.length - 8);
-            $('#vis_instance').val(this.instance);
-            storage.set(this.storageKeyInstance, this.instance);
-        }
+        this.instance = (Math.random() * 4294967296).toString(16);
+        this.instance = `0000000${this.instance}`;
+        this.instance = this.instance.substring(this.instance.length - 8);
+        $('#vis_instance').val(this.instance);
+        window.localStorage.setItem(this.storageKeyInstance, this.instance);
     },
     subscribeStates:    function (view, callback) {
         if (!view || this.editMode) {

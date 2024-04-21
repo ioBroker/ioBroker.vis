@@ -2,7 +2,6 @@
  * Copyright (c) 2014-2015 Steffen Schorling http://github.com/smiling-Jack
  * Lizenz: [CC BY-NC 3.0](http://creativecommons.org/licenses/by-nc/3.0/de/)
  */
-/* global storage */
 
 var fmScriptEls =    document.getElementsByTagName('script');
 var fmThisScriptEl = fmScriptEls[fmScriptEls.length - 1];
@@ -79,22 +78,9 @@ var fmFolder    =    'js/fm/';
         var config      = {};
         if (o.fileFilter && !o.fileFilter.length) o.fileFilter = null;
 
-        if (typeof storage !== 'undefined') {
-            try {
-                config = storage.get('visFM');
-                if (config) {
-                    config = JSON.parse(config);
-                } else {
-                    config = {};
-                }
-                if (config.path === '/') {
-                    config.path = '';
-                }
-
-            } catch (e) {
-                console.log('Cannot load FM config');
-                config = {};
-            }
+        config = window.getStoredObjects('visFM') || {};
+        if (config.path === '/') {
+            config.path = '';
         }
 
         o.view = config.view || o.view;
@@ -746,7 +732,7 @@ var fmFolder    =    'js/fm/';
                 o.filter = $('#fm_bar_filter').val();
                 config.filter = o.filter;
 
-                if (typeof storage != 'undefined') storage.set('visFM', JSON.stringify(config));
+                window.localStorage.setItem('visFM', JSON.stringify(config));
 
                 // Use filter
                 filter(o);
@@ -861,7 +847,7 @@ var fmFolder    =    'js/fm/';
                 }
 
                 config.background = $('#fm_bar_background').hasClass('ui-state-error') ? 'fm-dark-background' : ($('#fm_bar_background').hasClass('ui-state-highlight') ? 'fm-light-background' : '');
-                if (typeof storage != 'undefined') storage.set('visFM', JSON.stringify(config));
+                window.localStorage.setItem('visFM', JSON.stringify(config));
             });
         if (config.background == 'fm-dark-background') {
             $('#fm_bar_background').addClass('ui-state-error');
@@ -1137,7 +1123,7 @@ var fmFolder    =    'js/fm/';
             config.all  = $('#fm_bar_all').hasClass('ui-state-error');
             config.background = $('#fm_bar_background').hasClass('ui-state-error') ? 'fm-dark-background' : ($('#fm_bar_background').hasClass('ui-state-highlight') ? 'fm-light-background' : '');
 
-            if (typeof storage != 'undefined') storage.set('visFM', JSON.stringify(config));
+            window.localStorage.setItem('visFM', JSON.stringify(config));
 
             $('#dialog_fm').remove();
         });
@@ -1149,9 +1135,7 @@ var fmFolder    =    'js/fm/';
             config.view = o.view;
             config.all  = $('#fm_bar_all').hasClass('ui-state-error');
             config.background = $('#fm_bar_background').hasClass('ui-state-error') ? 'fm-dark-background' : ($('#fm_bar_background').hasClass('ui-state-highlight') ? 'fm-light-background' : '');
-            if (typeof storage != 'undefined') {
-                storage.set('visFM', JSON.stringify(config));
-            }
+            window.localStorage.setItem('visFM', JSON.stringify(config));
 
             return callback({
                 path: o.path,
@@ -1167,9 +1151,7 @@ var fmFolder    =    'js/fm/';
             config.all  = $('#fm_bar_all').hasClass('ui-state-error');
             config.background = $('#fm_bar_background').hasClass('ui-state-error') ? 'fm-dark-background' : ($('#fm_bar_background').hasClass('ui-state-highlight') ? 'fm-light-background' : '');
 
-            if (typeof storage != 'undefined') {
-                storage.set('visFM', JSON.stringify(config));
-            }
+            window.localStorage.setItem('visFM', JSON.stringify(config));
 
             return callback({
                 path: o.path,
