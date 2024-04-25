@@ -5,7 +5,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 function removePackEntry() {
-    const packPath = path.join(__dirname, 'packages', 'iobroker.vis-2', 'src', 'package.json');
+    const packPath = path.join(__dirname, 'iobroker.vis-2', 'src', 'package.json');
     const packString = fs.readFileSync(packPath, {
         encoding: 'utf-8',
     });
