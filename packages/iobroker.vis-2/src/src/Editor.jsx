@@ -467,7 +467,7 @@ class Editor extends Runtime {
                     });
                 }
                 delete project[view.name].widgets[widget];
-                this.importMarketplaceWidget(
+                Editor.importMarketplaceWidget(
                     project,
                     view.name,
                     JSON.parse(JSON.stringify(marketplace.widget)),
@@ -1298,7 +1298,7 @@ class Editor extends Runtime {
         await this.changeProject(project);
     };
 
-    importMarketplaceWidget = (project, view, widgets, id, x, y, widgetId, oldData, oldStyle) => {
+    static importMarketplaceWidget(project, view, widgets, id, x, y, widgetId, oldData, oldStyle) {
         const newWidgets = {};
 
         widgets.forEach(_widget => {
@@ -1344,12 +1344,12 @@ class Editor extends Runtime {
 
         project[view].widgets = { ...project[view].widgets, ...newWidgets };
         return project;
-    };
+    }
 
     addMarketplaceWidget = async (id, x, y, widgetId, oldData, oldStyle) => {
         const project = deepClone(store.getState().visProject);
         const widgets = deepClone(store.getState().visProject.___settings.marketplace.find(item => item.id === id).widget);
-        this.importMarketplaceWidget(project, this.state.selectedView, widgets, id, x, y, widgetId, oldData, oldStyle);
+        Editor.importMarketplaceWidget(project, this.state.selectedView, widgets, id, x, y, widgetId, oldData, oldStyle);
         await this.changeProject(project);
     };
 

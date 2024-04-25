@@ -7,7 +7,7 @@ import './index.css';
 import { Utils } from '@iobroker/adapter-react-v5';
 import App from './Editor';
 import * as serviceWorker from './serviceWorker';
-import packageJson from '../package.json';
+import packageJson from './version.json';
 import theme from './theme';
 
 window.adapterName = 'vis-2';

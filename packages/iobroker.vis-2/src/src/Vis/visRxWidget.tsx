@@ -397,11 +397,11 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
         });
     }
 
-    async componentDidMount() {
+    componentDidMount() {
         super.componentDidMount();
-        for (let i = 0; i < this.linkContext.IDs.length; i++) {
-            await this.props.context.socket.subscribeState(this.linkContext.IDs[i], this.onIoBrokerStateChanged);
-        }
+
+        this.linkContext.IDs.length && this.props.context.socket.subscribeStateAsync(this.linkContext.IDs, this.onStateChangedBind)
+            .catch(e => console.error(`Cannot subscribe on ${this.linkContext.IDs}: ${e}`));
     }
 
     // eslint-disable-next-line no-unused-vars,class-methods-use-this
@@ -427,9 +427,7 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
 
     componentWillUnmount() {
         if (this.linkContext.IDs.length) {
-            for (let i = 0; i < this.linkContext.IDs.length; i++) {
-                this.props.context.socket.unsubscribeState(this.linkContext.IDs[i], this.onIoBrokerStateChanged);
-            }
+            this.props.context.socket.unsubscribeState(this.linkContext.IDs, this.onIoBrokerStateChanged);
         }
         super.componentWillUnmount();
     }

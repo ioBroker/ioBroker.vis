@@ -1,7 +1,6 @@
 import React from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 
-
 import {
     Button,
     Dialog, DialogActions,
@@ -17,7 +16,7 @@ import { Project } from '@/types';
 import { getViewsWithDifferentValues } from '@/Attributes/View/ApplyProperties';
 import getEditField from '@/Attributes/View/EditField';
 import type { Field } from '@/Attributes/View/Items';
-import { deepClone } from "@/Utils/utils";
+import { deepClone } from '@/Utils/utils';
 
 interface ShowAllViewsDialogProps {
     project: Project;
@@ -165,7 +164,7 @@ export default function showAllViewsDialog(props: ShowAllViewsDialogProps) {
                 onClick={props.onClose}
                 // @ts-expect-error grey is valid color
                 color="grey"
-                startIcon={<Close/>}
+                startIcon={<Close />}
             >
                 {I18n.t('Close')}
             </Button>

@@ -1160,6 +1160,7 @@ class Widget extends Component {
         }
         if (field.type === 'divider') {
             return <tr key={fieldIndex} className={this.props.classes.fieldRow}>
+                // eslint-disable-next-line jsx-a11y/control-has-associated-label
                 <td colSpan={2} className={this.props.classes.fieldDivider} style={field.style} />
             </tr>;
         }

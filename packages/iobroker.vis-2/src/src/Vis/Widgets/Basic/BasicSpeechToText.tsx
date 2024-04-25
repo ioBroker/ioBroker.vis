@@ -440,6 +440,7 @@ export default class BasicSpeechToText extends VisRxWidget<RxData, BasicSpeechTo
         super.renderWidgetBody(props);
 
         return <div className="vis-widget-body">
+            {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
             <table
                 style={{ height: '100%', width: '100%' }}
                 onClick={() => {
@@ -457,6 +458,7 @@ export default class BasicSpeechToText extends VisRxWidget<RxData, BasicSpeechTo
                                 src={this.state.image}
                             />
                         </td>
+                        {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
                         <td className="mic-text" style={{ width: '100%' }}>
                             <div
                                 style={{ display: this.state.rxData.noText ? 'none' : undefined }}

@@ -41,10 +41,10 @@ function buildRuntime() {
         };
 
         const version = JSON.parse(fs.readFileSync(`${__dirname}/package.json`).toString('utf8')).version;
-        const data = JSON.parse(fs.readFileSync(`${__dirname}/runtime/package.json`).toString('utf8'));
+        const data = JSON.parse(fs.readFileSync(`${__dirname}/runtime/src/version.json`).toString('utf8'));
         if (data.version !== version) {
             data.version = version;
-            fs.writeFileSync(`${__dirname}/runtime/package.json`, JSON.stringify(data, null, 4));
+            fs.writeFileSync(`${__dirname}/runtime/src/version.json`, JSON.stringify(data, null, 4));
         }
 
         console.log(options.cwd);
@@ -165,6 +165,7 @@ export default FiltersEditorDialog;
     fs.writeFileSync(`${__dirname}/runtime/craco.config.js`, fs.readFileSync(`${__dirname}/src/craco.config.js`));
     fs.writeFileSync(`${__dirname}/runtime/modulefederation.config.js`, fs.readFileSync(`${__dirname}/src/modulefederation.config.js`));
     fs.writeFileSync(`${__dirname}/runtime/src/Editor.jsx`, fs.readFileSync(`${__dirname}/src/src/Runtime.jsx`));
+    fs.writeFileSync(`${__dirname}/runtime/src/version.json`, fs.readFileSync(`${__dirname}/src/src/version.json`));
     fs.writeFileSync(`${__dirname}/runtime/tsconfig.json`, fs.readFileSync(`${__dirname}/src/tsconfig.json`));
     fs.writeFileSync(`${__dirname}/runtime/src/Store.tsx`, fs.readFileSync(`${__dirname}/src/src/Store.tsx`));
     fs.writeFileSync(`${__dirname}/runtime/src/Utils/utils.tsx`, fs.readFileSync(`${__dirname}/src/src/Utils/utils.tsx`));
@@ -386,9 +387,9 @@ function build() {
         };
 
         const version = JSON.parse(fs.readFileSync(`${__dirname}/package.json`).toString('utf8')).version;
-        const data = JSON.parse(fs.readFileSync(`${__dirname}/src/package.json`).toString('utf8'));
+        const data = JSON.parse(fs.readFileSync(`${__dirname}/src/src/version.json`).toString('utf8'));
         data.version = version;
-        fs.writeFileSync(`${__dirname}/src/package.json`, JSON.stringify(data, null, 4));
+        fs.writeFileSync(`${__dirname}/src/src/version.json`, JSON.stringify(data, null, 4));
 
         console.log(options.cwd);
 
