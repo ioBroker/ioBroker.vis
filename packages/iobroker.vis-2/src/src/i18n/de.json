@@ -56,8 +56,8 @@
   "Aluminium2": "Aluminium2",
   "App bar": "Anwendungsleiste",
   "Apply": "Anwenden",
-  "Apply ALL navigation properties to all views": "Wenden Sie ALLE Navigationseigenschaften auf alle Ansichten an",
-  "Apply to all views": "Wenden Sie diese Eigenschaft auf alle Ansichten an",
+  "Apply ALL navigation properties to all views": "ALLE Navigationseigenschaften auf alle Ansichten anwenden",
+  "Apply to all views": "Diese Eigenschaft auf alle Ansichten anwenden wo Navigation aktiviert ist",
   "Are you sure": "Bist du dir sicher",
   "Are you sure to delete widgets %s?": "Die Widgets %s wirklich löschen?",
   "Attributes": "Attribute",
@@ -737,5 +737,7 @@
   "All": "Alle",
   "Load project file...": "Projektdatei wird geladen...",
   "Load widgets...": "Widgets werden geladen...",
-  "Loading objects...": "Objekte werden geladen..."
+  "Loading objects...": "Objekte werden geladen...",
+  "Following views will be changed": "Folgende Ansichten werden geändert",
+  "Show this attribute by all views": "Dieses Attribut in allen Ansichten anzeigen"
 }

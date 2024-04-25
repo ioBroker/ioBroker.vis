@@ -777,7 +777,6 @@ class Runtime extends GenericApp {
         await this.setStateAsync(newState);
     };
 
-
     showAlert(message, type) {
         if (type !== 'error' && type !== 'warning' && type !== 'info' && type !== 'success') {
             type = 'info';
@@ -862,7 +861,7 @@ class Runtime extends GenericApp {
                     autoFocus
                     fullWidth
                     onKeyDown={async e => {
-                        if (e.keyCode === 13 && this.state.newProjectName && !this.state.projects.includes(this.state.newProjectName)) {
+                        if (e.key === 'Enter' && this.state.newProjectName && !this.state.projects.includes(this.state.newProjectName)) {
                             await this.addProject(this.state.newProjectName);
                             window.location.href = `edit.html?${this.state.newProjectName}`;
                         }

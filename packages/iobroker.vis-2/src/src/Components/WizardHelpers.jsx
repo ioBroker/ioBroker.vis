@@ -16,6 +16,7 @@ import {
     TipsAndUpdates,
     Tune,
     WaterDrop,
+    QuestionMark,
 } from '@mui/icons-material';
 
 import { TbVacuumCleaner } from 'react-icons/tb';
@@ -48,6 +49,7 @@ const deviceIcons = {
     weatherForecast: <WbSunny />,
     window: <WindowIcon />,
     windowTilt: <WindowIcon />,
+    unknown: <QuestionMark />,
 };
 
 const allObjects = async socket => {

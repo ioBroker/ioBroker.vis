@@ -1,6 +1,9 @@
-import PropTypes from 'prop-types';
+import React, {
+    useEffect,
+    useState,
+    type ReactNode, JSXElementConstructor,
+} from 'react';
 import { withStyles } from '@mui/styles';
-import React, { useEffect, useState } from 'react';
 
 import {
     IconButton,
@@ -21,18 +24,38 @@ import View from './View';
 import Widget from './Widget';
 import usePrevious from '../Utils/usePrevious';
 
-const style = theme => ({
+const style: Record<string, any> = (theme: Record<string, any>) => ({
     blockHeader: theme.classes.blockHeader,
     lightedPanel: theme.classes.lightedPanel,
     viewTabs: theme.classes.viewTabs,
     viewTab: theme.classes.viewTab,
 });
 
-const tabs = {
-    View, Widget, CSS, Scripts,
+const tabs: Record<string, JSXElementConstructor<any> | ((props: Record<string, any>) => ReactNode)> = {
+    View,
+    Widget,
+    CSS,
+    Scripts,
 };
 
-const Attributes = props => {
+interface AttributesProps {
+    classes: Record<string, string>;
+    themeType: string;
+    openedViews: string[];
+    adapterName: string;
+    instance: number;
+    projectName: string;
+    saveCssFile: (fileName: string, data: string) => void;
+    editMode: boolean;
+    onHide: (hide: boolean) => void;
+    adapterId: string;
+    userGroups: Record<string, string[]>;
+    selectedWidgets: string[];
+    widgetsLoaded: boolean;
+    selectedView: string;
+}
+
+const Attributes = (props: AttributesProps)  => {
     const [selected, setSelected] = useState(window.localStorage.getItem('Attributes')
         ? window.localStorage.getItem('Attributes')
         : 'View');
@@ -56,7 +79,7 @@ const Attributes = props => {
         return null;
     }
 
-    const TabContent = tabs[selected];
+    const TabContent: JSXElementConstructor<any> | ((props_: Record<string, any>) => ReactNode) = tabs[selected];
 
     return <>
         <Typography
@@ -81,7 +104,7 @@ const Attributes = props => {
                         <UnfoldMoreIcon />
                     </IconButton>
                 </Tooltip> : <IconButton size="small" disabled><UnfoldMoreIcon /></IconButton>}
-                { !isAllClosed ? <Tooltip size="small" title={I18n.t('Collapse all')}>
+                { !isAllClosed ? <Tooltip title={I18n.t('Collapse all')}>
                     <IconButton onClick={() => setTriggerAllClosed(triggerAllClosed + 1)}>
                         <UnfoldLessIcon />
                     </IconButton>
@@ -118,38 +141,24 @@ const Attributes = props => {
             }
         </Tabs>
         <div style={{ height: 'calc(100% - 89px', overflowY: 'hidden' }}>
-            {
-                selected === 'Widget' && !(props.widgetsLoaded && props.selectedView && props.selectedWidgets?.length) ?
-                    null : <TabContent
-                        adapterId={props.adapterId}
-                        adapterName={props.adapterName}
-                        key={selected}
-                        {...props}
-                        classes={{}}
-                        setIsAllOpened={setIsAllOpened}
-                        setIsAllClosed={setIsAllClosed}
-                        isAllOpened={isAllOpened}
-                        isAllClosed={isAllClosed}
-                        triggerAllOpened={triggerAllOpened}
-                        triggerAllClosed={triggerAllClosed}
-                    />
-            }
+            {selected === 'Widget' &&
+                !(props.widgetsLoaded && props.selectedView && props.selectedWidgets?.length) ?
+                null :
+                <TabContent
+                    adapterId={props.adapterId}
+                    adapterName={props.adapterName}
+                    key={selected}
+                    {...props}
+                    classes={{}}
+                    setIsAllOpened={setIsAllOpened}
+                    setIsAllClosed={setIsAllClosed}
+                    isAllOpened={isAllOpened}
+                    isAllClosed={isAllClosed}
+                    triggerAllOpened={triggerAllOpened}
+                    triggerAllClosed={triggerAllClosed}
+                />}
         </div>
     </>;
-};
-
-Attributes.propTypes = {
-    classes: PropTypes.object,
-    themeType: PropTypes.string,
-    openedViews: PropTypes.array,
-    adapterName: PropTypes.string.isRequired,
-    instance: PropTypes.number.isRequired,
-    projectName: PropTypes.string.isRequired,
-    saveCssFile: PropTypes.func.isRequired,
-    editMode: PropTypes.bool,
-    onHide: PropTypes.func,
-    adapterId: PropTypes.string.isRequired,
-    userGroups: PropTypes.object.isRequired,
 };
 
 export default withStyles(style)(Attributes);

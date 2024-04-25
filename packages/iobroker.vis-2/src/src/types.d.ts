@@ -878,7 +878,12 @@ export interface CanWidgetStore {
     wid: string;
 }
 
-type VisBindingOperationType = 'eval' | '*' | '+' | '-' | '/' | '%' | 'min' | 'max' | 'date' | 'momentDate' | 'value' | 'array' | 'pow' | 'round' | 'random' | 'json' | '';
+type VisBindingOperationType = 'eval' | '*' |
+    '+' | '-' | '/' | '%' | 'min' |
+    'max' | 'date' | 'momentDate' | 'value' | 'array' |
+    'pow' | 'round' | 'random' | 'json' |
+    'sqrt'| 'hex' | 'hex2' | 'HEX' | 'HEX2' | 'floor' | 'ceil' |
+    '';
 
 interface VisBindingOperationArgument {
     name: string;
@@ -890,7 +895,7 @@ interface VisBindingOperationArgument {
 
 interface VisBindingOperation {
     op: VisBindingOperationType;
-    arg?: VisBindingOperationArgument[] | string | number | string[];
+    arg?: VisBindingOperationArgument[] | string | number | string[] | null;
     formula?: string;
 }
 

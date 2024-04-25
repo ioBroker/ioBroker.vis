@@ -16,7 +16,7 @@ import { type Moment } from 'moment';
 import { deepClone } from '@/Utils/utils';
 import {
     VisLegacy, AnyWidgetId, WidgetData,
-    SingleWidget, GroupWidget, VisRxWidgetStateValues,
+    SingleWidget, GroupWidget, VisRxWidgetStateValues, VisBinding, VisBindingOperationArgument,
 } from '@/types';
 
 import { extractBinding } from './visUtils';
@@ -45,7 +45,7 @@ class VisFormatUtils {
     }
 
     // get value of Obj property PropPath. PropPath is string like "Prop1" or "Prop1.Prop2" ...
-    static getObjPropValue(obj: ioBroker.Object, propPath: string) {
+    private static getObjPropValue(obj: ioBroker.Object, propPath: string) {
         if (!obj) {
             return undefined;
         }
@@ -60,7 +60,7 @@ class VisFormatUtils {
         return _obj;
     }
 
-    getSpecialValues(name: string, view: string, wid: AnyWidgetId, widgetData: WidgetData) {
+    private getSpecialValues(name: string, view: string, wid: AnyWidgetId, widgetData: WidgetData) {
         switch (name) {
             case 'username.val':
                 return this.vis.user;
@@ -81,7 +81,7 @@ class VisFormatUtils {
         }
     }
 
-    static formatValue(value: number | string, decimals?: number | string, _format?: string) {
+    static formatValue(value: number | string, decimals?: number | string, _format?: string): string {
         if (typeof decimals !== 'number') {
             decimals = 2;
             _format = decimals as unknown as string;
@@ -98,7 +98,7 @@ class VisFormatUtils {
         return Number.isNaN(value) ? '' : value.toFixed(decimals || 0).replace(format[0], format[1]).replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
     }
 
-    formatMomentDate(dateObj: string | number | Date, _format?: string, useTodayOrYesterday?: boolean, moment?: any) {
+    private formatMomentDate(dateObj: string | number | Date, _format?: string, useTodayOrYesterday?: boolean, moment?: any) {
         useTodayOrYesterday = typeof useTodayOrYesterday !== 'undefined' ? useTodayOrYesterday : false;
 
         if (!dateObj) {
@@ -141,7 +141,7 @@ class VisFormatUtils {
         return result;
     }
 
-    static _put(token: string, dateObj: Date, result: string) {
+    private static _put(token: string, dateObj: Date, result: string) {
         let v: string | number = '';
 
         switch (token) {
@@ -224,7 +224,7 @@ class VisFormatUtils {
         return result;
     }
 
-    formatDate(dateObj: string | Date | number, isDuration?: boolean | string, _format?: string): string {
+    private formatDate(dateObj: string | Date | number, isDuration?: boolean | string, _format?: string): string {
         // copied from js-controller/lib/adapter.js
         if ((typeof isDuration === 'string' && isDuration.toLowerCase() === 'duration') || isDuration === true) {
             isDuration = true;
@@ -281,7 +281,7 @@ class VisFormatUtils {
         return result;
     }
 
-    extractBinding(format: string) {
+    extractBinding(format: string): VisBinding[] | null {
         if (!format) {
             return null;
         }
@@ -332,195 +332,199 @@ class VisFormatUtils {
 
             if (oid.operations) {
                 for (const operation of oid.operations) {
-                    switch (operation.op) {
-                        case 'eval': {
-                            let string = ''; // '(function() {';
-                            for (let a = 0; a < operation.arg.length; a++) {
-                                if (!operation.arg[a].name) {
-                                    continue;
-                                }
-                                value = this.getSpecialValues(operation.arg[a].visOid, view, wid, widgetData);
+                    if (operation.op === 'eval') {
+                        let string = ''; // '(function() {';
+                        const evalArgs: VisBindingOperationArgument[] = operation.arg as VisBindingOperationArgument[];
+                        for (let a = 0; a < evalArgs.length; a++) {
+                            if (!evalArgs[a].name) {
+                                continue;
+                            }
+                            value = this.getSpecialValues(evalArgs[a].visOid, view, wid, widgetData);
 
-                                if (value === undefined || value === null) {
-                                    value = operation.arg[a].visOid.startsWith('widgetOid.') ?
-                                        (_values as Record<string, any>)[operation.arg[a].visOid.replace(/^widgetOid\./g, `${widget.data.oid}.`)] :
-                                        (_values as Record<string, any>)[operation.arg[a].visOid];
-                                }
-                                if (value === null) {
-                                    string += `const ${operation.arg[a].name} = null;`;
-                                } else if (value === undefined) {
-                                    string += `const ${operation.arg[a].name} = undefined;`;
-                                } else {
-                                    const type = typeof value;
-                                    if (type === 'string') {
-                                        try {
-                                            value = JSON.parse(value);
-                                            // if array or object, we format it correctly, else it should be a string
-                                            if (typeof value === 'object') {
-                                                string += `const ${operation.arg[a].name} = JSON.parse("${JSON.stringify(value).replace(/\x22/g, '\\\x22')}");`;
-                                            } else {
-                                                string += `const ${operation.arg[a].name} = "${value}";`;
-                                            }
-                                        } catch (e) {
-                                            string += `const ${operation.arg[a].name} = "${value}";`;
+                            if (value === undefined || value === null) {
+                                value = evalArgs[a].visOid.startsWith('widgetOid.') ?
+                                    (_values as Record<string, any>)[evalArgs[a].visOid.replace(/^widgetOid\./g, `${widget.data.oid}.`)] :
+                                    (_values as Record<string, any>)[evalArgs[a].visOid];
+                            }
+                            if (value === null) {
+                                string += `const ${evalArgs[a].name} = null;`;
+                            } else if (value === undefined) {
+                                string += `const ${evalArgs[a].name} = undefined;`;
+                            } else {
+                                const type = typeof value;
+                                if (type === 'string') {
+                                    try {
+                                        value = JSON.parse(value);
+                                        // if array or object, we format it correctly, else it should be a string
+                                        if (typeof value === 'object') {
+                                            string += `const ${evalArgs[a].name} = JSON.parse("${JSON.stringify(value).replace(/\x22/g, '\\\x22')}");`;
+                                        } else {
+                                            string += `const ${evalArgs[a].name} = "${value}";`;
                                         }
-                                    } else if (type === 'object') {
-                                        string += `const ${operation.arg[a].name} = ${JSON.stringify(value)};`;
+                                    } catch (e) {
+                                        string += `const ${evalArgs[a].name} = "${value}";`;
+                                    }
+                                } else if (type === 'object') {
+                                    string += `const ${evalArgs[a].name} = ${JSON.stringify(value)};`;
+                                } else {
+                                    // boolean, number, ...
+                                    string += `const ${evalArgs[a].name} = ${value.toString()};`;
+                                }
+                            }
+                        }
+
+                        const { formula } = operation;
+                        if (formula && formula.includes('widget.')) {
+                            const w = deepClone(widget);
+                            w.data = widgetData;
+                            string += `const widget = ${JSON.stringify(w)};`;
+                        }
+                        string += `return ${operation.formula};`;
+
+                        if (string.includes('\\"')) {
+                            string = string.replace(/\\"/g, '"');
+                        }
+
+                        // string += '}())';
+                        try {
+                            // eslint-disable-next-line no-new-func
+                            value = new Function(string)();
+
+                            if (value && typeof value === 'object') {
+                                value = JSON.stringify(value);
+                            }
+                        } catch (e) {
+                            console.error(`Error in eval[value]: ${format}`);
+                            console.error(`Error in eval[script]: ${string}`);
+                            console.error(`Error in eval[error]: ${e}`);
+                            value = 0;
+                        }
+                    } else {
+                        const operationArg: string | number | undefined | null | string[] = operation.arg as string | number | undefined | null | string[];
+
+                        switch (operation.op) {
+                            case '*':
+                                if (operationArg !== undefined && operationArg !== null) {
+                                    value = parseFloat(value) * (operationArg as number);
+                                }
+                                break;
+
+                            case '/':
+                                if (operationArg !== undefined && operationArg !== null) {
+                                    value = parseFloat(value) / (operationArg as number);
+                                }
+                                break;
+                            case '+':
+                                if (operationArg !== undefined && operationArg !== null) {
+                                    value = parseFloat(value) + (operationArg as number);
+                                }
+                                break;
+                            case '-':
+                                if (operationArg !== undefined && operationArg !== null) {
+                                    value = parseFloat(value) - (operationArg as number);
+                                }
+                                break;
+                            case '%':
+                                if (operationArg !== undefined && operationArg !== null) {
+                                    value = parseFloat(value) % (operationArg as number);
+                                }
+                                break;
+                            case 'round':
+                                if (operationArg === undefined) {
+                                    value = Math.round(parseFloat(value));
+                                } else {
+                                    value = parseFloat(value).toFixed((operationArg as number));
+                                }
+                                break;
+                            case 'pow':
+                                if (operationArg === undefined) {
+                                    value = parseFloat(value) * parseFloat(value);
+                                } else {
+                                    value = parseFloat(value) ** (operationArg as number);
+                                }
+                                break;
+                            case 'sqrt':
+                                value = Math.sqrt(parseFloat(value));
+                                break;
+                            case 'hex':
+                                value = Math.round(parseFloat(value)).toString(16);
+                                break;
+                            case 'hex2':
+                                value = Math.round(parseFloat(value)).toString(16);
+                                if (value.length < 2) {
+                                    value = `0${value}`;
+                                }
+                                break;
+                            case 'HEX':
+                                value = Math.round(parseFloat(value)).toString(16).toUpperCase();
+                                break;
+                            case 'HEX2':
+                                value = Math.round(parseFloat(value)).toString(16).toUpperCase();
+                                if (value.length < 2) {
+                                    value = `0${value}`;
+                                }
+                                break;
+                            case 'value':
+                                value = VisFormatUtils.formatValue(value, parseInt(operationArg as string, 10));
+                                break;
+                            case 'array':
+                                value = (operationArg as string[])[parseInt(value, 10)];
+                                break;
+                            case 'date':
+                                value = this.formatDate(value, operationArg as string);
+                                break;
+                            case 'momentDate':
+                                if (operationArg !== undefined && operationArg !== null && typeof operationArg === 'string') {
+                                    const params = (operationArg as string).split(',');
+
+                                    if (params.length === 1) {
+                                        value = this.formatMomentDate(value, params[0], false, moment);
+                                    } else if (params.length === 2) {
+                                        value = this.formatMomentDate(value, params[0], !!params[1], moment);
                                     } else {
-                                        // boolean, number, ...
-                                        string += `const ${operation.arg[a].name} = ${value.toString()};`;
+                                        value = 'error';
                                     }
                                 }
-                            }
-
-                            const { formula } = operation;
-                            if (formula && formula.includes('widget.')) {
-                                const w = deepClone(widget);
-                                w.data = widgetData;
-                                string += `const widget = ${JSON.stringify(w)};`;
-                            }
-                            string += `return ${operation.formula};`;
-
-                            if (string.includes('\\"')) {
-                                string = string.replace(/\\"/g, '"');
-                            }
-
-                            // string += '}())';
-                            try {
-                                // eslint-disable-next-line no-new-func
-                                value = new Function(string)();
-
-                                if (value && typeof value === 'object') {
-                                    value = JSON.stringify(value);
-                                }
-                            } catch (e) {
-                                console.error(`Error in eval[value]: ${format}`);
-                                console.error(`Error in eval[script]: ${string}`);
-                                console.error(`Error in eval[error]: ${e}`);
-                                value = 0;
-                            }
-                            break;
-                        }
-                        case '*':
-                            if (operation.arg !== undefined && operation.arg !== null) {
-                                value = parseFloat(value) * operation.arg;
-                            }
-                            break;
-                        case '/':
-                            if (operation.arg !== undefined && operation.arg !== null) {
-                                value = parseFloat(value) / operation.arg;
-                            }
-                            break;
-                        case '+':
-                            if (operation.arg !== undefined && operation.arg !== null) {
-                                value = parseFloat(value) + operation.arg;
-                            }
-                            break;
-                        case '-':
-                            if (operation.arg !== undefined && operation.arg !== null) {
-                                value = parseFloat(value) - operation.arg;
-                            }
-                            break;
-                        case '%':
-                            if (operation.arg !== undefined && operation.arg !== null) {
-                                value = parseFloat(value) % operation.arg;
-                            }
-                            break;
-                        case 'round':
-                            if (operation.arg === undefined) {
-                                value = Math.round(parseFloat(value));
-                            } else {
-                                value = parseFloat(value).toFixed(operation.arg);
-                            }
-                            break;
-                        case 'pow':
-                            if (operation.arg === undefined) {
-                                value = parseFloat(value) * parseFloat(value);
-                            } else {
-                                value = parseFloat(value) ** operation.arg;
-                            }
-                            break;
-                        case 'sqrt':
-                            value = Math.sqrt(parseFloat(value));
-                            break;
-                        case 'hex':
-                            value = Math.round(parseFloat(value)).toString(16);
-                            break;
-                        case 'hex2':
-                            value = Math.round(parseFloat(value)).toString(16);
-                            if (value.length < 2) {
-                                value = `0${value}`;
-                            }
-                            break;
-                        case 'HEX':
-                            value = Math.round(parseFloat(value)).toString(16).toUpperCase();
-                            break;
-                        case 'HEX2':
-                            value = Math.round(parseFloat(value)).toString(16).toUpperCase();
-                            if (value.length < 2) {
-                                value = `0${value}`;
-                            }
-                            break;
-                        case 'value':
-                            value = VisFormatUtils.formatValue(value, parseInt(operation.arg, 10));
-                            break;
-                        case 'array':
-                            value = operation.arg[parseInt(value, 10)];
-                            break;
-                        case 'date':
-                            value = this.formatDate(value, operation.arg);
-                            break;
-                        case 'momentDate':
-                            if (operation.arg !== undefined && operation.arg !== null) {
-                                const params = operation.arg.split(',');
-
-                                if (params.length === 1) {
-                                    value = this.formatMomentDate(value, params[0], false, moment);
-                                } else if (params.length === 2) {
-                                    value = this.formatMomentDate(value, params[0], params[1], moment);
+                                break;
+                            case 'min':
+                                value = parseFloat(value);
+                                value = (value < operationArg) ? operationArg : value;
+                                break;
+                            case 'max':
+                                value = parseFloat(value);
+                                value = (value > operationArg) ? operationArg : value;
+                                break;
+                            case 'random':
+                                if (operationArg === undefined) {
+                                    value = Math.random();
                                 } else {
-                                    value = 'error';
+                                    value = Math.random() * (operationArg as number);
                                 }
-                            }
-                            break;
-                        case 'min':
-                            value = parseFloat(value);
-                            value = (value < operation.arg) ? operation.arg : value;
-                            break;
-                        case 'max':
-                            value = parseFloat(value);
-                            value = (value > operation.arg) ? operation.arg : value;
-                            break;
-                        case 'random':
-                            if (operation.arg === undefined) {
-                                value = Math.random();
-                            } else {
-                                value = Math.random() * operation.arg;
-                            }
-                            break;
-                        case 'floor':
-                            value = Math.floor(parseFloat(value));
-                            break;
-                        case 'ceil':
-                            value = Math.ceil(parseFloat(value));
-                            break;
-                        case 'json':
-                            if (value && typeof value === 'string') {
-                                try {
-                                    value = JSON.parse(value);
-                                } catch (e) {
-                                    console.warn(`Cannot parse JSON string: ${value}`);
+                                break;
+                            case 'floor':
+                                value = Math.floor(parseFloat(value));
+                                break;
+                            case 'ceil':
+                                value = Math.ceil(parseFloat(value));
+                                break;
+                            case 'json':
+                                if (value && typeof value === 'string') {
+                                    try {
+                                        value = JSON.parse(value);
+                                    } catch (e) {
+                                        console.warn(`Cannot parse JSON string: ${value}`);
+                                    }
                                 }
-                            }
-                            if (value && typeof value === 'object') {
-                                value = VisFormatUtils.getObjPropValue(value, operation.arg);
-                            }
-                            break;
-                        default:
-                            // unknown condition
-                            console.warn(`Unknown operator: ${format}`);
-                            break;
-                    } // switch
+                                if (value && typeof value === 'object') {
+                                    value = VisFormatUtils.getObjPropValue(value, operationArg as string);
+                                }
+                                break;
+                            default:
+                                // unknown condition
+                                console.warn(`Unknown operator: ${format}`);
+                                break;
+                        } // switch
+                    }
                 }
             } // if for
             format = format.replace(oid.token, value);

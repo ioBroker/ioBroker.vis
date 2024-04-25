@@ -534,7 +534,7 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
             <DialogTitle>{this.state.editDialog.add ? I18n.t('jqui_Add new value') : I18n.t('Edit')}</DialogTitle>
             <DialogContent>
                 <TextField
-                    onKeyDown={e => e.keyCode === 13 && isUnique && this.state.editDialog?.value && this.onEnter()}
+                    onKeyDown={e => e.key === 'Enter' && isUnique && this.state.editDialog?.value && this.onEnter()}
                     fullWidth
                     autoFocus
                     variant="standard"

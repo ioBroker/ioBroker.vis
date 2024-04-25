@@ -715,7 +715,7 @@ class WidgetBindingField extends Component {
                         inputRef={this.inputRef}
                         autoFocus
                         onKeyUp={e => {
-                            if (e.keyCode === 13) {
+                            if (e.key === 'Enter') {
                                 this.setState({ showEditBindingDialog: false }, () => this.onChange(this.state.editValue));
                             }
                         }}
@@ -893,7 +893,7 @@ class WidgetBindingField extends Component {
                         label={this.state.askForArguments.args[0].label}
                         value={this.state.askForArguments.arg1 === undefined ? '' : this.state.askForArguments.arg1}
                         onKeyDown={e => {
-                            if (e.keyCode === 13) {
+                            if (e.key === 'Enter') {
                                 const options = this.state.askForArguments;
                                 options.args = null;
                                 this.setState({ askForArguments: null }, () =>

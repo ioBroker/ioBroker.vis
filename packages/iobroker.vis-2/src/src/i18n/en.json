@@ -57,7 +57,7 @@
   "App bar": "Application bar",
   "Apply": "Apply",
   "Apply ALL navigation properties to all views": "Apply ALL navigation properties to all views",
-  "Apply to all views": "Apply this property to all views",
+  "Apply to all views": "Apply this property to all views, where the navigation is activated",
   "Are you sure": "Are you sure",
   "Are you sure to delete widgets %s?": "Are you sure to delete widgets %s?",
   "Attributes": "Attributes",
@@ -737,5 +737,7 @@
   "All": "All",
   "Load project file...": "Loading project file...",
   "Load widgets...": "Loading widgets...",
-  "Loading objects...": "Loading objects..."
+  "Loading objects...": "Loading objects...",
+  "Following views will be changed": "Following views will be changed",
+  "Show this attribute by all views": "Show this attribute by all views"
 }

@@ -48,11 +48,11 @@ import './css/backgrounds.css';
 // import $$ from './lib/quo.standalone'; // Gestures library
 import './visWords';
 
+import { store } from '@/Store';
 import VisView from './visView';
 import VisFormatUtils from './visFormatUtils';
 import { getUrlParameter, extractBinding, readFile } from './visUtils';
 import VisWidgetsCatalog from './visWidgetsCatalog';
-import { store } from '../Store';
 
 function _translateWord(text, lang, dictionary) {
     if (!text) {

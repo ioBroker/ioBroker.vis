@@ -737,5 +737,7 @@
   "All": "все",
   "Load project file...": "Завантаження файлу проекту...",
   "Load widgets...": "Завантаження віджетів...",
-  "Loading objects...": "Завантаження об'єктів..."
+  "Loading objects...": "Завантаження об'єктів...",
+  "Following views will be changed": "Наступні перегляди будуть змінені",
+  "Show this attribute by all views": "Показувати цей атрибут усіма видами"
 }

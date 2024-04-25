@@ -23,15 +23,22 @@ import {
 
 import { I18n, Utils, Icon } from '@iobroker/adapter-react-v5';
 
+import { store } from '@/Store';
 import Widget from './Widget';
 import { getWidgetTypes } from '../Vis/visWidgetsCatalog';
 import MarketplacePalette from '../Marketplace/MarketplacePalette';
 import { loadComponent } from '../Vis/visLoadWidgets';
-import { store } from '../Store';
 
 const styles = theme => ({
-    widgets: { textAlign: 'center', overflowY: 'auto', height: 'calc(100% - 84px)' },
-    toggle: { width: 30, height: 30 },
+    widgets: {
+        textAlign: 'center',
+        overflowY: 'auto',
+        height: 'calc(100% - 84px)',
+    },
+    toggle: {
+        width: 30,
+        height: 30,
+    },
     right: {
         float: 'right',
     },
@@ -43,6 +50,19 @@ const styles = theme => ({
     },
     labelShrink: {
         display: 'none',
+    },
+    accordionRoot: {
+        '&&&&': {
+            padding: 0,
+            margin: 0,
+            minHeight: 'initial',
+        },
+        '&:before': {
+            opacity: 0,
+        },
+    },
+    accordionOpenedSummary: {
+        fontWeight: 'bold',
     },
     clearPadding: {
         '&&&&': {
@@ -60,7 +80,7 @@ const styles = theme => ({
     },
     groupSummaryExpanded: {
         '&&&&&&': {
-            marginTop: 20,
+            marginTop: 10,
             borderTopRightRadius: 4,
             borderTopLeftRadius: 4,
             padding: 2,
@@ -68,6 +88,11 @@ const styles = theme => ({
     },
     blockHeader: theme.classes.blockHeader,
     lightedPanel: theme.classes.lightedPanel,
+    accordionDetails: {
+        ...theme.classes.lightedPanel,
+        borderRadius: '0 0 4px 4px',
+        flexDirection: 'column',
+    },
     selectClearContainer: {
         display: 'flex',
     },
@@ -400,6 +425,10 @@ const Palette = props => {
                 }
 
                 return <Accordion
+                    classes={{
+                        root: props.classes.accordionRoot,
+                        expanded: props.classes.clearPadding,
+                    }}
                     key={categoryKey}
                     elevation={0}
                     expanded={accordionOpen[category] || false}
@@ -420,7 +449,7 @@ const Palette = props => {
                                 accordionOpen[category] ? props.classes.groupSummaryExpanded : props.classes.groupSummary,
                                 props.classes.lightedPanel,
                             ),
-                            content: props.classes.clearPadding,
+                            content: Utils.clsx(props.classes.clearPadding, accordionOpen[category] && props.classes.accordionOpenedSummary),
                             expandIcon: props.classes.clearPadding,
                         }}
                     >
@@ -434,7 +463,9 @@ const Palette = props => {
                             :
                             I18n.t(category)}
                     </AccordionSummary>
-                    <AccordionDetails>
+                    <AccordionDetails
+                        classes={{ root: props.classes.accordionDetails }}
+                    >
                         {accordionOpen.__marketplace && marketplaceLoading && category === '__marketplace' &&
                             <LinearProgress />}
                         {accordionOpen.__marketplace && category === '__marketplace' && marketplaceUpdates && <div>

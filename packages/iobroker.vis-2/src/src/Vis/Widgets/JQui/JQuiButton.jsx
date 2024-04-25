@@ -462,7 +462,7 @@ class JQuiButton extends VisRxWidget {
                     variant="standard"
                     value={this.state.password || ''}
                     onChange={e => this.setState({ password: e.target.value })}
-                    onKeyUp={e => e.keyCode === 13 && this.onPasswordEnter()}
+                    onKeyUp={e => e.key === 'Enter' && this.onPasswordEnter()}
                 />
             </DialogContent>
             <DialogActions>

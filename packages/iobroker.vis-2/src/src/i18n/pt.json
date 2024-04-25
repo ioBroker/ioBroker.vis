@@ -737,5 +737,7 @@
   "All": "Todos",
   "Load project file...": "Carregando arquivo do projeto...",
   "Load widgets...": "Carregando widgets...",
-  "Loading objects...": "Carregando objetos..."
+  "Loading objects...": "Carregando objetos...",
+  "Following views will be changed": "As seguintes visualizações serão alteradas",
+  "Show this attribute by all views": "Mostrar este atributo em todas as visualizações"
 }

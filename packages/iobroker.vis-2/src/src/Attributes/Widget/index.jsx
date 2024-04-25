@@ -26,7 +26,7 @@ import {
 import { I18n, Icon, Utils } from '@iobroker/adapter-react-v5';
 import {
     store, recalculateFields, updateWidget, selectWidget,
-} from '../../Store';
+} from '@/Store';
 
 import WidgetField from './WidgetField';
 import IODialog from '../../Components/IODialog';
@@ -51,6 +51,16 @@ const styles = theme => ({
         height: 40,
         display: 'inline-block',
         marginRight: 4,
+    },
+    accordionRoot: {
+        '&&&&': {
+            padding: 0,
+            margin: 0,
+            minHeight: 'initial',
+        },
+        '&:before': {
+            opacity: 0,
+        },
     },
     clearPadding: {
         '&&&&': {
@@ -145,20 +155,30 @@ const styles = theme => ({
     },
     groupSummary: {
         '&&&&&&': {
-            marginTop: 20,
+            marginTop: 10,
             borderRadius: '4px',
             padding: '2px',
         },
     },
     groupSummaryExpanded: {
         '&&&&&&': {
-            marginTop: 20,
+            marginTop: 10,
             borderTopRightRadius: '4px',
             borderTopLeftRadius: '4px',
             padding: '2px',
         },
     },
+    accordionOpenedSummary: {
+        fontWeight: 'bold',
+    },
     lightedPanel: theme.classes.lightedPanel,
+    accordionDetails: {
+        ...theme.classes.lightedPanel,
+        borderRadius: '0 0 4px 4px',
+        flexDirection: 'column',
+        padding: 0,
+        margin: 0,
+    },
     infoIcon: {
         verticalAlign: 'middle',
         marginLeft: 3,
@@ -983,15 +1003,16 @@ class Widget extends Component {
     }
 
     renderGroupHeader(group) {
+        const classes = this.props.classes;
         return <AccordionSummary
             classes={{
-                root: Utils.clsx(this.props.classes.clearPadding, this.state.accordionOpen[group.name]
-                    ? this.props.classes.groupSummaryExpanded : this.props.classes.groupSummary, this.props.classes.lightedPanel),
-                content: this.props.classes.clearPadding,
-                expanded: this.props.classes.clearPadding,
-                expandIcon: this.props.classes.clearPadding,
+                root: Utils.clsx(classes.clearPadding, this.state.accordionOpen[group.name]
+                    ? classes.groupSummaryExpanded : classes.groupSummary, classes.lightedPanel),
+                content:  Utils.clsx(classes.clearPadding, this.state.accordionOpen[group.name] && classes.accordionOpenedSummary),
+                expanded: classes.clearPadding,
+                expandIcon: classes.clearPadding,
             }}
-            expandIcon={group.hasValues ? <ExpandMoreIcon /> : <div className={this.props.classes.emptyMoreIcon} />}
+            expandIcon={group.hasValues ? <ExpandMoreIcon /> : <div className={classes.emptyMoreIcon} />}
         >
             <div
                 style={{
@@ -1009,10 +1030,10 @@ class Widget extends Component {
                         (window.vis._(`group_${group.singleName || group.name}`) + (group.index !== undefined ? ` [${group.index}]` : ''))}
                 </div>
                 {group.iterable ? <>
-                    <div className={this.props.classes.grow} />
+                    <div className={classes.grow} />
                     {group.iterable.indexTo ? <Tooltip title={I18n.t('Delete')}>
                         <IconButton
-                            className={this.props.classes.groupButton}
+                            className={classes.groupButton}
                             size="small"
                             onClick={e => this.onGroupMove(e, group.index, group.iterable, 0)}
                         >
@@ -1020,10 +1041,10 @@ class Widget extends Component {
                         </IconButton>
                     </Tooltip> : null}
                     {group.iterable.isFirst ?
-                        <div className={this.props.classes.groupButton} /> :
+                        <div className={classes.groupButton} /> :
                         <Tooltip title={I18n.t('Move up')}>
                             <IconButton
-                                className={this.props.classes.groupButton}
+                                className={classes.groupButton}
                                 size="small"
                                 onClick={e => this.onGroupMove(e, group.index, group.iterable, -1)}
                             >
@@ -1033,17 +1054,17 @@ class Widget extends Component {
                     {group.iterable.isLast ?
                         (group.iterable.indexTo ? <Tooltip title={I18n.t('Add')}>
                             <IconButton
-                                className={this.props.classes.groupButton}
+                                className={classes.groupButton}
                                 size="small"
                                 onClick={e => this.onGroupMove(e, group.index, group.iterable, true)}
                             >
                                 <Add />
                             </IconButton>
-                        </Tooltip> : <div className={this.props.classes.groupButton} />)
+                        </Tooltip> : <div className={classes.groupButton} />)
                         :
                         <Tooltip title={I18n.t('Move down')}>
                             <IconButton
-                                className={this.props.classes.groupButton}
+                                className={classes.groupButton}
                                 size="small"
                                 onClick={e => this.onGroupMove(e, group.index, group.iterable, 1)}
                             >
@@ -1093,7 +1114,7 @@ class Widget extends Component {
                             store.dispatch(recalculateFields(true));
                         }}
                         size="small"
-                        classes={{ root: Utils.clsx(this.props.classes.fieldContent, this.props.classes.clearPadding, this.props.classes.checkBox) }}
+                        classes={{ root: Utils.clsx(classes.fieldContent, classes.clearPadding, classes.checkBox) }}
                     />
                 </div>
             </div>
@@ -1289,7 +1310,9 @@ class Widget extends Component {
         if (!this.state.accordionOpen[group.name] || !group.hasValues) {
             return null;
         }
-        return <AccordionDetails style={{ flexDirection: 'column', padding: 0, margin: 0 }}>
+        return <AccordionDetails
+            classes={{ root: this.props.classes.accordionDetails }}
+        >
             <table style={{ width: '100%' }}>
                 <tbody>
                     {group.fields.map((field, fieldIndex) => this.renderFieldRow(group, field, fieldIndex))}
@@ -1301,7 +1324,7 @@ class Widget extends Component {
     renderGroup(group) {
         return <Accordion
             classes={{
-                root: this.props.classes.clearPadding,
+                root: this.props.classes.accordionRoot,
                 expanded: this.props.classes.clearPadding,
             }}
             square
