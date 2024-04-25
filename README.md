@@ -264,7 +264,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 2.9.51 (2024-04-25)
+### **WORK IN PROGRESS**
 * (bluefox) Navigation was improved: adjustable menu width and bulk edit were added
 
 ### 2.9.50 (2024-04-19)
