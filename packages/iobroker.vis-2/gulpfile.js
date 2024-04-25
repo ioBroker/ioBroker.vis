@@ -251,11 +251,22 @@ gulp.task('2-npm', () => {
 
 gulp.task('2-npm-dep', gulp.series('0-clean', '2-npm'));
 
+function updateFile(fileName, data) {
+    const oldData = fs.readFileSync(fileName).toString('utf8').replace(/\r\n/g, '\n');
+    data = data.replace(/\r\n/g, '\n');
+    if (oldData !== data) {
+        fs.writeFileSync(fileName, data);
+    }
+}
+
 gulp.task('3-svg-icons', done => {
     const svgPath = path.join(rootDir, '/node_modules/@material-icons/svg/');
     const data = JSON.parse(fs.readFileSync(`${svgPath}data.json`).toString('utf8'));
+
     !fs.existsSync(`${__dirname}/src/public/material-icons`) && fs.mkdirSync(`${__dirname}/src/public/material-icons`);
-    fs.writeFileSync(`${__dirname}/src/public/material-icons/index.json`, JSON.stringify(data.icons));
+
+    updateFile(`${__dirname}/src/public/material-icons/index.json`, JSON.stringify(data.icons));
+
     const folders = fs.readdirSync(`${svgPath}svg`);
     const result = {};
     folders.forEach(folder => {
@@ -275,8 +286,10 @@ gulp.task('3-svg-icons', done => {
             // console.log(pako.inflate(Buffer.from(result[file][folder], 'base64'), {to: 'string'}));
         });
     });
-    Object.keys(result).forEach(file =>
-        fs.writeFileSync(`${__dirname}/src/public/material-icons/${file.replace('.svg', '')}.json`, JSON.stringify(result[file])));
+
+    Object.keys(result).forEach(file => {
+        updateFile(`${__dirname}/src/public/material-icons/${file.replace('.svg', '')}.json`, JSON.stringify(result[file]));
+    });
 
     // prepare https://github.com/OpenAutomationProject/knx-uf-iconset/archive/refs/heads/master.zip
     if (!fs.existsSync(`${__dirname}/knx-uf-iconset/master.zip`)) {
@@ -321,7 +334,7 @@ gulp.task('3-svg-icons', done => {
                     result[files[f].replace('.svg', '')] = Buffer.from(data).toString('base64');
                 }
 
-                fs.writeFileSync(`${__dirname}/src/public/material-icons/knx-uf.json`, JSON.stringify(result));
+                updateFile(`${__dirname}/src/public/material-icons/knx-uf.json`, JSON.stringify(result));
                 done();
             });
     } else {
@@ -329,31 +342,47 @@ gulp.task('3-svg-icons', done => {
     }
 });
 
+function syncFiles(target, dest) {
+    let dataSource = fs.readFileSync(dest).toString('utf8');
+    // remove all CR/LF
+    dataSource = dataSource.replace(/\r\n/g, '\n');
+    if (fs.existsSync(target)) {
+        let dataTarget = fs.readFileSync(target).toString('utf8');
+        dataTarget = dataTarget.replace(/\r\n/g, '\n');
+        if (dataTarget !== dataSource) {
+            fs.writeFileSync(target, dataSource);
+        }
+    } else {
+        fs.writeFileSync(target, dataSource);
+    }
+}
+
+
 function build() {
     // copy ace files into src/public/lib/js/ace
     let ace = `${rootDir}/node_modules/ace-builds/src-min-noconflict/`;
-    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/worker-html.js`, fs.readFileSync(`${ace}worker-html.js`));
-    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/mode-html.js`, fs.readFileSync(`${ace}mode-html.js`));
-    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/snippets/html.js`, fs.readFileSync(`${ace}snippets/html.js`));
+    syncFiles(`${__dirname}/src/public/lib/js/ace/worker-html.js`, `${ace}worker-html.js`);
+    syncFiles(`${__dirname}/src/public/lib/js/ace/mode-html.js`, `${ace}mode-html.js`);
+    syncFiles(`${__dirname}/src/public/lib/js/ace/snippets/html.js`, `${ace}snippets/html.js`);
 
-    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/worker-css.js`, fs.readFileSync(`${ace}worker-css.js`));
-    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/mode-css.js`, fs.readFileSync(`${ace}mode-css.js`));
-    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/snippets/css.js`, fs.readFileSync(`${ace}snippets/css.js`));
+    syncFiles(`${__dirname}/src/public/lib/js/ace/worker-css.js`, `${ace}worker-css.js`);
+    syncFiles(`${__dirname}/src/public/lib/js/ace/mode-css.js`, `${ace}mode-css.js`);
+    syncFiles(`${__dirname}/src/public/lib/js/ace/snippets/css.js`, `${ace}snippets/css.js`);
 
-    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/mode-json.js`, fs.readFileSync(`${ace}mode-json.js`));
-    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/worker-json.js`, fs.readFileSync(`${ace}worker-json.js`));
-    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/snippets/json.js`, fs.readFileSync(`${ace}snippets/json.js`));
+    syncFiles(`${__dirname}/src/public/lib/js/ace/mode-json.js`, `${ace}mode-json.js`);
+    syncFiles(`${__dirname}/src/public/lib/js/ace/worker-json.js`, `${ace}worker-json.js`);
+    syncFiles(`${__dirname}/src/public/lib/js/ace/snippets/json.js`, `${ace}snippets/json.js`);
 
-    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/mode-javascript.js`, fs.readFileSync(`${ace}mode-javascript.js`));
-    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/worker-javascript.js`, fs.readFileSync(`${ace}worker-javascript.js`));
-    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/snippets/javascript.js`, fs.readFileSync(`${ace}snippets/javascript.js`));
+    syncFiles(`${__dirname}/src/public/lib/js/ace/mode-javascript.js`, `${ace}mode-javascript.js`);
+    syncFiles(`${__dirname}/src/public/lib/js/ace/worker-javascript.js`, `${ace}worker-javascript.js`);
+    syncFiles(`${__dirname}/src/public/lib/js/ace/snippets/javascript.js`, `${ace}snippets/javascript.js`);
 
-    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/ext-language_tools.js`, fs.readFileSync(`${ace}ext-language_tools.js`));
-    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/ext-searchbox.js`, fs.readFileSync(`${ace}ext-searchbox.js`));
-    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/theme-clouds_midnight.js`, fs.readFileSync(`${ace}theme-clouds_midnight.js`));
-    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/theme-chrome.js`, fs.readFileSync(`${ace}theme-chrome.js`));
+    syncFiles(`${__dirname}/src/public/lib/js/ace/ext-language_tools.js`, `${ace}ext-language_tools.js`);
+    syncFiles(`${__dirname}/src/public/lib/js/ace/ext-searchbox.js`, `${ace}ext-searchbox.js`);
+    syncFiles(`${__dirname}/src/public/lib/js/ace/theme-clouds_midnight.js`, `${ace}theme-clouds_midnight.js`);
+    syncFiles(`${__dirname}/src/public/lib/js/ace/theme-chrome.js`, `${ace}theme-chrome.js`);
 
-    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/ace.js`, fs.readFileSync(`${ace}ace.js`));
+    syncFiles(`${__dirname}/src/public/lib/js/ace/ace.js`, `${ace}ace.js`);
 
     // synchronise i18n: copy all new words from runtime into src
     const langsRuntime = {
