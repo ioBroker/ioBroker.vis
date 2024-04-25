@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.50",
+    "version": "2.9.51",
     "news": {
+      "2.9.51": {
+        "en": "Navigation was improved: adjustable menu width and bulk edit were added",
+        "de": "Navigation wurde verbessert: einstellbare Menübreite und Massenbearbeitung wurden hinzugefügt",
+        "ru": "Навигация была улучшена: была добавлена регулируемая ширина меню и опция",
+        "pt": "A navegação foi melhorada: largura do menu ajustável e edição em massa foram adicionados",
+        "nl": "Navigatie was verbeterd: instelbare menubreedte en bulkbewerking werden toegevoegd",
+        "fr": "La navigation a été améliorée : largeur réglable du menu et modification en vrac ont été ajoutées",
+        "it": "La navigazione è stata migliorata: è stata aggiunta la larghezza del menu regolabile e la modifica della massa",
+        "es": "Se mejoró la navegación: ancho de menú ajustable y edición a granel se agregaron",
+        "pl": "Nawigacja została ulepszona: dodano regulowaną szerokość menu i masową edycję",
+        "uk": "Навігація була покращена: регульована ширина меню та сипучі редагування були додані",
+        "zh-cn": "导航改进:增加了可调整菜单宽度和批量编辑"
+      },
       "2.9.50": {
         "en": "Corrected widget in widget behavior",
         "de": "Korrigiertes Widget im Widget-Verhalten",
@@ -80,19 +93,6 @@
         "pl": "Migrował widżet filtra do reakcji\nMigrował podstawowy widget link do reakcji",
         "uk": "Віджет фільтра для реагації\nМіграція базового посилання віджету для реагації",
         "zh-cn": "移动过滤部件以反应\n移动基本链接部件以反应"
-      },
-      "2.9.39": {
-        "en": "allow to use `widgetOid` in bindings\nfixed various problems with Date Picker widget\nmade default option of Date Picker human readable and added option for full parseable date\nAdded the possibility to add suffix by navigation widgets\nImproved the license manager",
-        "de": "`widget verwenden Oid` in Bindungen\nverschiedene Probleme mit Date Picker Widget behoben\nstandardoption von Date Picker human lesbar und hinzugefügt Option für volles parseable Datum\nHinzufügen der Möglichkeit, Suffix durch Navigation Widgets\nVerbessert den Lizenzmanager",
-        "ru": "разрешить использование `widget Oid' in bindings\nфиксированные различные проблемы свиданий пикера виджет\nсделал по умолчанию опцию Date Picker человека читаемой и добавленной опцией для полной номинальной даты\nДобавлена возможность добавления суффикса на навигационные виджеты\nУлучшен лицензионный менеджер",
-        "pt": "permitir usar `widget Oid` em ligações\ncorrigiu vários problemas com o widget Data Picker\nopção padrão feita de Data Picker humana legível e opção adicionada para data parseable completa\nAdicionado a possibilidade de adicionar sufixo por widgets de navegação\nMelhorou o gerenciador de licenças",
-        "nl": "toestaan om te gebruiken Widget Bindmiddelen\nverschillende problemen opgelost met Date Picker widget\nmade default optie van Date Picker menselijk leesbaar en toegevoegd optie voor volledige ontleedbare datum\nDe mogelijkheid toegevoegd om achtervoegsel toe te voegen door navigatie-widgets\nVerbeterde licentiebeheerder",
-        "fr": "permettre d'utiliser `widget Oid` dans les fixations\ncorrection de différents problèmes avec le widget Date Picker\noption par défaut de Date Picker lisable humaine et option ajoutée pour la date d'analyse complète\nAjout de la possibilité d'ajouter suffixe par widgets de navigation\nAmélioration du gestionnaire de licence",
-        "it": "consentire di utilizzare `widget Oid` in leganti\nrisolto vari problemi con il widget Data Picker\nfatto l'opzione predefinita di Data Picker umano leggibile e aggiunta opzione per la data completa parseable\nAggiunto la possibilità di aggiungere suffisso da widget di navigazione\nMigliorato il gestore della licenza",
-        "es": "permite utilizar `widget Oid` in bindings\nvarios problemas fijos con el widget Date Picker\nhecho opción predeterminada de Date Picker humano legible y opción agregada para la fecha total parseable\nAñadido la posibilidad de añadir sufijo por widgets de navegación\nMejora del administrador de licencias",
-        "pl": "pozwala na użycie 'widget Oid \"w wiązaniach\nnaprawiono różne problemy z widżetem Date Picker\nopcja domyślna Date Picker czytelna dla człowieka i dodana opcja dla pełnej daty parseable\nDodano możliwość dodania przyrostka przez widżety nawigacyjne\nUlepszenie menedżera licencji",
-        "uk": "дозволити використовувати `widget Oid` в зв’язках\nвиправлено різні проблеми з віджетом Date Picker\nзроблено опцію за замовчуванням для читання та додано параметр для повної дати\nДодайте можливість додати Suffix навігаційні віджети\nПокращити менеджера ліцензії",
-        "zh-cn": "允许使用“widget” Oid ' 装订\n解决了 Date Picker 部件的各种问题\n将 Date Picker 人类可读的默认选项和全解析日期添加选项\n添加通过导航部件添加后缀的可能性\n改进许可证管理"
       }
     },
     "title": "Visualisation Next Generation",
