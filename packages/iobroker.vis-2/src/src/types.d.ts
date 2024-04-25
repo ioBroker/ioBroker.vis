@@ -680,6 +680,7 @@ export interface ViewSettings {
     navigationSelectedColor?: string;
     navigationHeaderTextColor?: string;
     navigationColor?: string;
+    navigationWidth?: number;
 
     navigationChevronColor?: string;
     navigationHideMenu?: boolean;

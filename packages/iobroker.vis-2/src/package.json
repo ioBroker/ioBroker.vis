@@ -1,6 +1,6 @@
 {
     "name": "vis-2-gui",
-    "version": "2.9.49",
+    "version": "2.9.50",
     "private": true,
     "dependencies": {
         "@iobroker/json-config": "file:../../types-vis-2"

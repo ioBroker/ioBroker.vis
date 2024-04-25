@@ -134,13 +134,13 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
 
     static themeCache: Record<string, string> = {};
 
-    private promiseToCollect: Promise<Record<string, VisRxWidget<any>>>;
+    private readonly promiseToCollect: Promise<Record<string, VisRxWidget<any>>>;
 
-    private refView: React.RefObject<HTMLDivElement>;
+    private readonly refView: React.RefObject<HTMLDivElement>;
 
-    private refRelativeView: React.RefObject<HTMLDivElement>;
+    private readonly refRelativeView: React.RefObject<HTMLDivElement>;
 
-    private refRelativeColumnsView: React.RefObject<HTMLDivElement>[];
+    private readonly refRelativeColumnsView: React.RefObject<HTMLDivElement>[];
 
     private widgetsRefs: Record<AnyWidgetId, WidgetReference>;
 
@@ -148,7 +148,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
 
     private movement: VisViewMovement | null;
 
-    private theme: Record<string, any>;
+    private readonly theme: Record<string, any>;
 
     private ignoreMouseEvents: boolean;
 

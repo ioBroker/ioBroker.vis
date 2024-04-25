@@ -1,13 +1,31 @@
 import type React from 'react';
+import type moment from 'moment';
 import type { Theme } from '@mui/material';
 import type { Connection, LegacyConnection } from '@iobroker/adapter-react-v5';
-import type VisView from '@/Vis/visView';
-import { type ViewCommand, type ViewCommandOptions } from '@/Vis/visView';
-import type { VisMarketplaceProps } from '@/Vis/visContextMenu';
-import type moment from 'moment';
-import type { PromiseName, WidgetSetName } from '@/Vis/visLoadWidgets';
+
+interface VisView {
+    getOneWidget(index: number, widget: SingleWidget | GroupWidget, options: CreateWidgetOptions): React.JSX.Element | null;
+}
+
+export type ViewCommand = 'updateContainers' | 'changeFilter' | 'closeDialog' | 'openDialog' | 'collectFilters';
+export type ViewCommandOptions = {
+    filter?: string[];
+} | null;
 
 export type RxWidgetAttributeType = 'text' | 'delimiter' | 'help' | 'html' | 'json' | 'id' | 'instance' | 'select' | 'nselect' | 'auto' | 'checkbox' | 'number' | 'select-views' | 'custom' | 'image' | 'color' | 'password' | 'history' | 'hid' | 'icon' | 'dimension' | 'fontname' | 'groups' | 'class' | 'filters' | 'views' | 'style' | 'icon64';
+
+export interface VisMarketplaceProps {
+    language: ioBroker.Languages;
+    addPage?: boolean;
+    widget: { name: string; date: string; widget_id: string; image_id: string };
+    installWidget: (widget: { name: string; date: string; widget_id: string; image_id: string }) => Promise<void>;
+    installedWidgets?: { id: string }[];
+    themeName: string;
+    onAdded?: () => void;
+}
+
+export type PromiseName = `_promise_${WidgetSetName}`;
+export type WidgetSetName = Branded<string, 'WidgetSetName'>;
 
 export interface RxWidgetInfoCustomComponentContext {
     readonly socket: Connection;

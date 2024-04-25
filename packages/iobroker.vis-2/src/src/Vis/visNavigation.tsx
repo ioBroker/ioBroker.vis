@@ -92,7 +92,6 @@ const styles: Record<string, any> = (theme: Theme) => ({
         transition: 'all 0.3s ease-in-out',
     },
     openMenuButtonFull: {
-        left: MENU_WIDTH_FULL - TOOLBAR_SIZE,
     },
     openMenuButtonNarrow: {
         left: 8,
@@ -110,7 +109,6 @@ const styles: Record<string, any> = (theme: Theme) => ({
         transition: 'width 0.4s ease-in-out, opacity 0.3s ease-in-out',
     },
     menuFull: {
-        width: MENU_WIDTH_FULL,
         height: '100%',
         display: 'inline-block',
         overflow: 'hidden',
@@ -133,7 +131,6 @@ const styles: Record<string, any> = (theme: Theme) => ({
         transition: 'width 0.4s ease-in-out',
     },
     afterMenuFull: {
-        width: `calc(100% - ${MENU_WIDTH_FULL}px)`,
         height: '100%',
         display: 'inline-block',
     },
@@ -230,7 +227,7 @@ interface MenuItem {
 }
 
 class VisNavigation extends React.Component<VisNavigationProps, VisNavigationState> {
-    renderMenu(settings: ViewSettings) {
+    renderMenu(settings: ViewSettings, menuFullWidth: number) {
         const items: MenuItem[] = [];
 
         Object.keys(this.props.context.views).forEach(view => {
@@ -287,6 +284,7 @@ class VisNavigation extends React.Component<VisNavigationProps, VisNavigationSta
             style={{
                 opacity: this.props.editMode ? 0.4 : 1,
                 backgroundColor: (settings.navigationBackground as string) || undefined,
+                width: this.props.menuWidth === 'full' ? menuFullWidth : undefined,
             }}
             className={Utils.clsx(
                 this.props.classes.menu,
@@ -427,6 +425,7 @@ class VisNavigation extends React.Component<VisNavigationProps, VisNavigationSta
         }
 
         const settings: ViewSettings = this.props.context.views[this.props.view].settings;
+        const menuFullWidth = parseInt(settings.navigationWidth as any as string, 10) || MENU_WIDTH_FULL;
 
         if (settings.navigation &&
             !this.props.visInWidget &&
@@ -434,7 +433,7 @@ class VisNavigation extends React.Component<VisNavigationProps, VisNavigationSta
             this.props.view === this.props.activeView
         ) {
             return <div className={this.props.classes.rootHorizontal}>
-                {this.renderMenu(settings)}
+                {this.renderMenu(settings, menuFullWidth)}
                 <div
                     className={this.props.classes.viewContentWithToolbar}
                     style={{
@@ -463,7 +462,10 @@ class VisNavigation extends React.Component<VisNavigationProps, VisNavigationSta
                     this.props.menuWidth === 'narrow' && this.props.classes.openMenuButtonNarrow,
                     this.props.menuWidth === 'hidden' && this.props.classes.openMenuButtonHidden,
                 )}
-                style={settings.navigationBar && this.props.menuWidth === 'hidden' ? { opacity: 1 } : undefined}
+                style={{
+                    left: this.props.menuWidth === 'full' ? menuFullWidth - TOOLBAR_SIZE : undefined,
+                    opacity: settings.navigationBar && this.props.menuWidth === 'hidden' ? 1 : undefined,
+                }}
             >
                 <IconButton
                     onClick={() => {
@@ -493,7 +495,7 @@ class VisNavigation extends React.Component<VisNavigationProps, VisNavigationSta
                     />
                 </IconButton>
             </div> : null}
-            {!settings.navigationHideMenu ? this.renderMenu(settings) : null}
+            {!settings.navigationHideMenu ? this.renderMenu(settings, menuFullWidth) : null}
             <div
                 className={Utils.clsx(
                     this.props.classes.afterMenu,
@@ -501,6 +503,9 @@ class VisNavigation extends React.Component<VisNavigationProps, VisNavigationSta
                     !settings.navigationHideMenu && this.props.menuWidth === 'narrow' && this.props.classes.afterMenuNarrow,
                     (settings.navigationHideMenu || this.props.menuWidth === 'hidden') && this.props.classes.afterMenuHidden,
                 )}
+                style={{
+                    width: !settings.navigationHideMenu && this.props.menuWidth === 'full' ? `calc(100% - ${menuFullWidth}px)` : undefined,
+                }}
             >
                 {this.renderToolbar(settings)}
                 <div className={settings.navigationBar ? this.props.classes.viewContentWithToolbar : this.props.classes.viewContentWithoutToolbar}>
