@@ -85,7 +85,7 @@
     "npm": "npm run install-monorepo",
     "update-packages": "ncu --upgrade && cd package/iobroker.vis-2 && ncu --upgrade && cd package/iobroker.vis-2/src && ncu --upgrade",
     "start": "npm run start -w packages/iobroker.vis-2",
-    "fix-release": "node fixRelease.js",
+    "fix-release": "node packages/fixRelease.js",
     "release": "release-script",
     "release-patch": "release-script patch --yes --no-update-lockfile --publishAll",
     "release-minor": "release-script minor --yes --no-update-lockfile --publishAll",
