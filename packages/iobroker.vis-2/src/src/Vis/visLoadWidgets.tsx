@@ -14,7 +14,7 @@
  */
 import { I18n, type LegacyConnection } from '@iobroker/adapter-react-v5';
 import VisRxWidget, { VisRxWidgetState } from '@/Vis/visRxWidget';
-import { Branded } from '@/types';
+import { Branded } from '@iobroker/types-vis-2';
 
 export type WidgetSetName = Branded<string, 'WidgetSetName'>;
 export type PromiseName = `_promise_${WidgetSetName}`;

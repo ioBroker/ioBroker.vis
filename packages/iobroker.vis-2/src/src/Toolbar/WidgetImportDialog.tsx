@@ -16,7 +16,7 @@ import { store } from '@/Store';
 import {
     AnyWidgetId,
     GroupWidget, GroupWidgetId, Project, Widget,
-} from '@/types';
+} from '@iobroker/types-vis-2';
 import CustomAceEditor from '../Components/CustomAceEditor';
 
 interface WidgetImportDialogProps {

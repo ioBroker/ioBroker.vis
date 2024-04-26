@@ -9,5 +9,8 @@
   "types": "index.d.ts",
   "publishConfig": {
     "access": "public"
+  },
+  "scripts": {
+    "check-ts": "tsc --noEmit --checkJS false"
   }
 }

@@ -8,7 +8,7 @@ import { Close } from '@mui/icons-material';
 
 import { I18n } from '@iobroker/adapter-react-v5';
 
-import { Widget } from '@/types';
+import { Widget } from '@iobroker/types-vis-2';
 import CustomAceEditor from '../../Components/CustomAceEditor';
 
 interface WidgetCSSProps {

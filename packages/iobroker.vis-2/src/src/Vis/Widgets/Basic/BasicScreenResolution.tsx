@@ -4,7 +4,7 @@ import { I18n } from '@iobroker/adapter-react-v5';
 
 import {
     RxRenderWidgetProps, VisLegacy, RxWidgetProps, GetRxDataFromWidget,
-} from '@/types';
+} from '@iobroker/types-vis-2';
 import VisRxWidget, { VisRxWidgetState } from '@/Vis/visRxWidget';
 
 declare global {

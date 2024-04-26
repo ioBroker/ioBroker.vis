@@ -212,6 +212,7 @@ const Widget = props => {
             project: store.getState().visProject,
             changeProject: props.changeProject,
             selectedView: props.selectedView,
+            changeView: props.changeView,
             themeType: props.themeType,
             helpers,
         });
@@ -238,6 +239,7 @@ Widget.propTypes = {
     socket: PropTypes.object,
     themeType: PropTypes.string,
     changeProject: PropTypes.func,
+    changeView: PropTypes.func,
     editMode: PropTypes.bool,
 };
 

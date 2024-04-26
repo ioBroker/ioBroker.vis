@@ -22,7 +22,7 @@ import {
     StateID, VisBindingOperation, VisBindingOperationArgument,
     GroupData, WidgetData, VisBinding, VisBindingOperationType,
     RxWidgetInfoAttributesFieldID,
-} from '@/types';
+} from '@iobroker/types-vis-2';
 import { deepClone } from '@/Utils/utils';
 import { store, updateView, updateWidget } from '@/Store';
 

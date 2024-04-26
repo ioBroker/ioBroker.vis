@@ -29,7 +29,7 @@ import {
     RxWidgetInfoAttributesFieldHelp,
     RxWidgetInfoGroup,
     RxWidgetInfoAttributesFieldSelect, RxWidgetInfoAttributesFieldText,
-} from '@/types';
+} from '@iobroker/types-vis-2';
 
 import VisView from '@/Vis/visView';
 

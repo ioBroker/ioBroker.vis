@@ -1,7 +1,7 @@
 import React from 'react';
 // eslint-disable-next-line import/no-cycle
 import VisRxWidget from '@/Vis/visRxWidget';
-import { GetRxDataFromWidget, RxRenderWidgetProps } from '@/types';
+import { GetRxDataFromWidget, RxRenderWidgetProps } from '@iobroker/types-vis-2';
 import { NOTHING_SELECTED } from '@/Utils/utils';
 
 // eslint-disable-next-line no-use-before-define

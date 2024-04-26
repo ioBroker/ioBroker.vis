@@ -26,7 +26,7 @@ import {
 import { ThemeType } from '@iobroker/adapter-react-v5/types';
 
 import { store } from '@/Store';
-import { Project, View } from '@/types';
+import { Project, View } from '@iobroker/types-vis-2';
 
 import { resolution, getFields, type Field } from './View/Items';
 import getEditField from './View/EditField';

@@ -30,7 +30,7 @@ import 'dayjs/locale/pl';
 import 'dayjs/locale/pt';
 import 'dayjs/locale/nl';
 
-import type { GetRxDataFromWidget, RxRenderWidgetProps } from '@/types';
+import type { GetRxDataFromWidget, RxRenderWidgetProps } from '@iobroker/types-vis-2';
 import type { TextFieldVariants } from '@mui/material';
 import dayjs from 'dayjs';
 import VisRxWidget from '../../visRxWidget';

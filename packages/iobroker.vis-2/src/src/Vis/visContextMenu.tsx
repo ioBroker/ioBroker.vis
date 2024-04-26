@@ -27,7 +27,7 @@ import {
     SingleWidgetId,
     View, SingleWidget,
     GroupWidget,
-} from '@/types';
+} from '@iobroker/types-vis-2';
 
 import IOContextMenu from '../Components/IOContextMenu';
 import WidgetExportDialog from '../Toolbar/WidgetExportDialog';
@@ -63,17 +63,6 @@ export interface VisMarketplaceProps {
     installedWidgets?: {id: string}[];
     themeName: string;
     onAdded?: () => void;
-}
-
-declare global {
-    interface Window {
-        VisMarketplace?: {
-            api: {
-                apiGetWidgetRevision(widgetId: string, id: string): Promise<any>;
-            };
-            default: React.Component<VisMarketplaceProps>;
-        };
-    }
 }
 
 const VisContextMenu = (props: VisContextMenuProps) => {

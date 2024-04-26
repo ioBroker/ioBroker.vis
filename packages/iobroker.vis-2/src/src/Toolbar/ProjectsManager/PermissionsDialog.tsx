@@ -17,7 +17,7 @@ import Collapse from '@mui/material/Collapse';
 import { type LegacyConnection, I18n } from '@iobroker/adapter-react-v5';
 import {
     AnyWidgetId, Permissions, Project, Widget,
-} from '@/types';
+} from '@iobroker/types-vis-2';
 import { store } from '@/Store';
 import { deepClone, DEFAULT_PERMISSIONS } from '@/Utils/utils';
 import IODialog from '../../Components/IODialog';

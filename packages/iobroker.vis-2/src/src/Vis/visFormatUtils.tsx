@@ -17,7 +17,7 @@ import { deepClone } from '@/Utils/utils';
 import {
     VisLegacy, AnyWidgetId, WidgetData,
     SingleWidget, GroupWidget, VisRxWidgetStateValues, VisBinding, VisBindingOperationArgument,
-} from '@/types';
+} from '@iobroker/types-vis-2';
 
 import { extractBinding } from './visUtils';
 

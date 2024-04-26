@@ -29,7 +29,7 @@ import { calculateOverflow, deepClone, isVarFinite } from '@/Utils/utils';
 import {
     AnyWidgetId, ResizeHandler,
     VisContext, GroupData, WidgetData, WidgetStyle, GroupWidgetId, GroupWidget, SingleWidget,
-} from '@/types';
+} from '@iobroker/types-vis-2';
 import {
     addClass,
     removeClass,

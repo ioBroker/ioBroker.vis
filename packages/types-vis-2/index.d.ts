@@ -510,6 +510,7 @@ export interface ProjectSettings {
     scripts: unknown;
     /** Which user has read or write access for the project */
     permissions?: UserPermissions;
+    marketplace?: MarketplaceWidgetRevision[];
 }
 
 export type SingleWidgetId = `w${string}`
@@ -698,6 +699,7 @@ export interface ViewSettings {
     navigationSelectedColor?: string;
     navigationHeaderTextColor?: string;
     navigationColor?: string;
+    navigationWidth?: number;
 
     navigationChevronColor?: string;
     navigationHideMenu?: boolean;
@@ -839,26 +841,70 @@ export interface VisLegacy {
     detectBounce: (el: any, isUp?: boolean) => boolean;
 }
 
-export interface Window {
-    vis: VisLegacy;
-    systemDictionary?: Record<string, Record<ioBroker.Languages, string>>;
-    systemLang?: ioBroker.Languages;
-    _: (text: string, arg1?: boolean | number | string, arg2?: boolean | number | string, arg3?: boolean | number | string) => string;
-    addWords: (words: Record<string, Record<ioBroker.Languages, string>>) => void;
-    VisMarketplace?: {
-        api: {
-            apiGetWidgetRevision(widgetId: string, id: string): Promise<any>;
+export interface MarketplaceWidgetRevision {
+    id: string;
+    widget: (GroupWidget | SingleWidget)[],
+    date: string;
+    widget_id: string;
+    description: string;
+    whatsnew: string;
+    widgetsets: string[];
+    version: number;
+    rating: any;
+    install_count: number;
+    name: string;
+    is_last: 0 | 1;
+    widgets: string[];
+    image_id: string;
+    delete_status: 0 | 1;
+    verified: null;
+    revision_id: string;
+    categories: string[];
+}
+
+export interface Marketplace {
+    api: {
+        apiGetWidget(widgetId: string): Promise<MarketplaceWidgetRevision>;
+        apiGetWidgetRevision(widgetId: string, id: string): Promise<MarketplaceWidgetRevision>;
+    };
+    default: React.Component<VisMarketplaceProps>;
+}
+
+export interface ClassesValue {
+    name: string;
+    file: string;
+    attrs?: React.CSSProperties;
+    parentClass?: string;
+}
+
+declare global {
+    interface Window {
+        vis: VisLegacy;
+        systemDictionary?: Record<string, Record<ioBroker.Languages, string>>;
+        systemLang?: ioBroker.Languages;
+        addWords: (words: Record<string, Record<ioBroker.Languages, string>>) => void;
+        VisMarketplace?: Marketplace;
+
+        [promiseName: PromiseName]: Promise<any>;
+
+        [widgetSetName: WidgetSetName]: {
+            __initialized: boolean;
+            get: (module: string) => () => void;
+            init?: (shareScope: any) => Promise<void>;
         };
-        default: React.Component<VisMarketplaceProps>;
-    };
-    [promiseName: PromiseName]: Promise<any>;
-    [widgetSetName: WidgetSetName]: {
-        __initialized: boolean;
-        get: (module: string) => () => void;
-        init?: (shareScope: any) => Promise<void>;
-    };
-    __widgetsLoadIndicator: (process: number, max: number) => void;
-    _lastAppliedStyle: string;
+
+        __widgetsLoadIndicator: (process: number, max: number) => void;
+        _lastAppliedStyle: string;
+        /** Marketplace API server */
+        apiUrl: string;
+        /** Prefix for the marketplace client */
+        webPrefix: string;
+        /** Marketplace GUI location to load as a component */
+        marketplaceClient: string;
+        collectClassesValue: Record<string, ClassesValue>;
+        _: (word: string, ...args: (string | number | boolean)[]) => string;
+        jQuery: any;
+    }
 }
 
 export type ResizeHandler = 'n' | 'e' | 's' | 'w' | 'nw' | 'ne' | 'sw' | 'se';
@@ -896,7 +942,11 @@ export interface CanWidgetStore {
     wid: string;
 }
 
-export type VisBindingOperationType = 'eval' | '*' | '+' | '-' | '/' | '%' | 'min' | 'max' | 'date' | 'momentDate' | 'value' | 'array' | 'pow' | 'round' | 'random' | 'json' | '';
+export type VisBindingOperationType = 'eval' | '*' | '+' | '-' | '/' | '%' | 'min' |
+    'max' | 'date' | 'momentDate' | 'value' | 'array' |
+    'pow' | 'round' | 'random' | 'json' |
+    'sqrt' | 'hex' | 'HEX' | 'HEX2' | 'hex2' | 'floor' | 'ceil' |
+    '';
 
 export interface VisBindingOperationArgument {
     name: string;

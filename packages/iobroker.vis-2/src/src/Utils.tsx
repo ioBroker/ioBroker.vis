@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { usePreview } from 'react-dnd-preview';
-import { Timer } from '@/types';
+import { Timer } from '@iobroker/types-vis-2';
 
 export const DndPreview = () => {
     const preview = usePreview();

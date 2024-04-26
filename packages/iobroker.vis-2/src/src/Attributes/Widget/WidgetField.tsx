@@ -37,7 +37,8 @@ import {
     Widget,
     WidgetData,
     WidgetStyle,
-} from '@/types';
+    ClassesValue,
+} from '@iobroker/types-vis-2';
 import {
     ObjectBrowserCustomFilter,
     ObjectBrowserType,
@@ -45,21 +46,6 @@ import {
 
 import TextDialog from './TextDialog';
 import MaterialIconSelector from '../../Components/MaterialIconSelector';
-
-interface ClassesValue {
-    name: string;
-    file: string;
-    attrs?: React.CSSProperties;
-    parentClass?: string;
-}
-
-declare global {
-    interface Window {
-        collectClassesValue: Record<string, ClassesValue>;
-        _: (word: string, ...args: any[]) => string;
-        jQuery: any;
-    }
-}
 
 const POSSIBLE_UNITS = ['px', '%', 'em', 'rem', 'vh', 'vw', 'vmin', 'vmax', 'ex', 'ch', 'cm', 'mm', 'in', 'pt', 'pc'];
 

@@ -5,7 +5,7 @@ import type { CSSProperties } from '@mui/styles';
 import { store } from '@/Store';
 import {
     GroupWidget, Widget, Project, SingleWidget, SingleWidgetId, GroupWidgetId, AnyWidgetId, Permissions,
-} from '@/types';
+} from '@iobroker/types-vis-2';
 
 /** Default OID if no selected */
 export const NOTHING_SELECTED = 'nothing_selected';

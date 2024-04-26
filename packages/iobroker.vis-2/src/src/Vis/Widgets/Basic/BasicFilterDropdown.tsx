@@ -28,7 +28,7 @@ import { I18n, Icon } from '@iobroker/adapter-react-v5';
 import {
     GetRxDataFromWidget, RxRenderWidgetProps, RxWidgetInfo, WidgetData,
     RxWidgetInfoAttributesField, RxWidgetInfoCustomComponentProperties, RxWidgetInfoCustomComponentContext,
-} from '@/types';
+} from '@iobroker/types-vis-2';
 import VisRxWidget from '@/Vis/visRxWidget';
 import { VisWidgetCommand } from '@/Vis/visBaseWidget';
 import FiltersEditorDialog from './FiltersEditorDialog';

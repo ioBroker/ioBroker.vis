@@ -8,7 +8,7 @@ import { I18n, Icon } from '@iobroker/adapter-react-v5';
 import VisRxWidget from '@/Vis/visRxWidget';
 import type {
     GetRxDataFromWidget, RxRenderWidgetProps,
-} from '@/types';
+} from '@iobroker/types-vis-2';
 import type { VisBaseWidgetState } from '@/Vis/visBaseWidget';
 
 // eslint-disable-next-line no-use-before-define

@@ -4,7 +4,7 @@ import { type SelectChangeEvent, TextField } from '@mui/material';
 import { Close as CloseIcon } from '@mui/icons-material';
 import { I18n, Utils } from '@iobroker/adapter-react-v5';
 import { store } from '@/Store';
-import { Project, View } from '@/types';
+import { Project, View } from '@iobroker/types-vis-2';
 
 export interface Field {
     label: string;

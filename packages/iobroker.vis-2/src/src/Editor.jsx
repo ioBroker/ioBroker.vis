@@ -1554,6 +1554,7 @@ class Editor extends Runtime {
                 setMarketplaceDialog={this.setMarketplaceDialog}
                 updateWidgets={this.updateWidgets}
                 selectedView={this.state.selectedView}
+                changeView={this.changeView}
                 project={store.getState().visProject}
                 changeProject={this.changeProject}
                 socket={this.socket}
@@ -1637,7 +1638,6 @@ class Editor extends Runtime {
                 selectedWidgets={this.state.editMode ? this.state.selectedWidgets : []}
                 widgetsLoaded={this.state.widgetsLoaded === Runtime.WIDGETS_LOADING_STEP_ALL_LOADED}
                 socket={this.socket}
-                themeName={this.state.themeName}
                 fonts={this.state.fonts}
                 adapterName={this.adapterName}
                 instance={this.instance}
@@ -2031,8 +2031,8 @@ class Editor extends Runtime {
                                             window.localStorage.setItem('Vis.splitSizes', JSON.stringify(splitSizes));
                                         }
                                     }}
-                                    theme={this.state.themeName === 'dark' ? GutterTheme.Dark : GutterTheme.Light}
-                                    gutterClassName={this.state.themeName === 'dark' ? 'Dark visGutter' : 'Light visGutter'}
+                                    theme={this.state.themeType === 'dark' ? GutterTheme.Dark : GutterTheme.Light}
+                                    gutterClassName={this.state.themeType === 'dark' ? 'Dark visGutter' : 'Light visGutter'}
                                 >
                                     {!this.state.hidePalette ? this.renderPalette() : null}
                                     {this.renderWorkspace()}

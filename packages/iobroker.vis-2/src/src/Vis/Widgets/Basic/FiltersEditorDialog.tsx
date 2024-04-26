@@ -33,7 +33,7 @@ import {
     SelectFile as SelectFileDialog,
 } from '@iobroker/adapter-react-v5';
 
-import { VisContext } from '@/types';
+import { VisContext } from '@iobroker/types-vis-2';
 
 import MaterialIconSelector from '../../../Components/MaterialIconSelector';
 

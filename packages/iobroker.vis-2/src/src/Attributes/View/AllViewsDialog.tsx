@@ -12,7 +12,7 @@ import { Close, DragHandle, FormatPaint } from '@mui/icons-material';
 import { I18n, LegacyConnection } from '@iobroker/adapter-react-v5';
 import { ThemeType } from '@iobroker/adapter-react-v5/types';
 
-import { Project } from '@/types';
+import { Project } from '@iobroker/types-vis-2';
 import { getViewsWithDifferentValues } from '@/Attributes/View/ApplyProperties';
 import getEditField from '@/Attributes/View/EditField';
 import type { Field } from '@/Attributes/View/Items';

@@ -739,5 +739,6 @@
   "Load widgets...": "Cargando widgets...",
   "Loading objects...": "Cargando objetos...",
   "Following views will be changed": "Se cambiarán las siguientes vistas",
-  "Show this attribute by all views": "Mostrar este atributo en todas las vistas."
+  "Show this attribute by all views": "Mostrar este atributo en todas las vistas.",
+  "Menu width": "Ancho del menú"
 }

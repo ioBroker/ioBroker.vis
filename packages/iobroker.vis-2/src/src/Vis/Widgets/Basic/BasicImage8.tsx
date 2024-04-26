@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Icon } from '@iobroker/adapter-react-v5';
-import type { GetRxDataFromWidget, RxRenderWidgetProps } from '@/types';
+import type { GetRxDataFromWidget, RxRenderWidgetProps } from '@iobroker/types-vis-2';
 import { store, recalculateFields } from '@/Store';
 import VisRxWidget from '@/Vis/visRxWidget';
 

@@ -739,5 +739,6 @@
   "Load widgets...": "Загрузка виджетов...",
   "Loading objects...": "Загрузка объектов...",
   "Following views will be changed": "Следующие представления будут изменены",
-  "Show this attribute by all views": "Показать этот атрибут во всех представлениях"
+  "Show this attribute by all views": "Показать этот атрибут во всех представлениях",
+  "Menu width": "Ширина меню"
 }

@@ -100,6 +100,7 @@ jobs:
           npm whoami
           git config --global user.email "dogafox@gmail.com"
           git config --global user.name "Github Action"
+          git add .
           git commit -m "v${VERSION}" && npx lerna version ${VERSION} --no-push --exact --ignore-scripts --no-commit-hooks --yes --amend --force-publish || npx lerna version ${VERSION} --exact --no-push --ignore-scripts --no-commit-hooks --yes --force-publish
           npx lerna publish from-package --yes
 

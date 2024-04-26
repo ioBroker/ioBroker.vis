@@ -24,7 +24,7 @@ import {
     AnyWidgetId, GroupWidget, GroupWidgetId,
     SingleWidget, ViewSettings, VisContext,
     WidgetStyle,
-} from '@/types';
+} from '@iobroker/types-vis-2';
 import { hasWidgetAccess, isVarFinite } from '@/Utils/utils';
 import { recalculateFields, selectView, store } from '@/Store';
 import { Property } from 'csstype';

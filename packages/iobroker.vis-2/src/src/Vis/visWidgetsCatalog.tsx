@@ -10,7 +10,7 @@ import {
     RxWidgetInfoAttributesField,
     WidgetData,
     RxWidgetInfoCustomComponentProperties,
-} from '@/types';
+} from '@iobroker/types-vis-2';
 import VisRxWidget from '@/Vis/visRxWidget';
 import type { RxWidgetAttributeType } from '@iobroker/types-vis-2';
 

@@ -21,7 +21,7 @@ import { Clear as ClearIcon } from '@mui/icons-material';
 import { deepClone } from '@/Utils/utils';
 import { Field } from '@/Attributes/View/Items';
 import { ThemeType } from '@iobroker/adapter-react-v5/types';
-import { Project } from '@/types';
+import { Project } from '@iobroker/types-vis-2';
 import EditFieldImage from './EditFieldImage';
 import EditFieldIcon64 from './EditFieldIcon64';
 

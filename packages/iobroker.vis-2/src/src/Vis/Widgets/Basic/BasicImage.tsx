@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Icon } from '@iobroker/adapter-react-v5';
-import { GetRxDataFromWidget, RxRenderWidgetProps } from '@/types';
+import { GetRxDataFromWidget, RxRenderWidgetProps } from '@iobroker/types-vis-2';
 import VisRxWidget from '@/Vis/visRxWidget';
 
 // eslint-disable-next-line no-use-before-define

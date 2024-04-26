@@ -25,7 +25,7 @@ import {
     Project, AnyWidgetId, RxWidgetInfo,
     WidgetData, VisRxWidgetStateValues, RxWidgetInfoGroup,
     StateID, RxWidgetInfoAttributesFieldSelectSimple,
-} from '@/types';
+} from '@iobroker/types-vis-2';
 import { deepClone, calculateOverflow } from '@/Utils/utils';
 // eslint-disable-next-line import/no-cycle
 import VisBaseWidget, {
@@ -656,7 +656,7 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
 
     getWidgetView(view: any, props: any) {
         const context = this.props.context;
-        const VisViewComponent = context.VisView as VisView;
+        const VisViewComponent = context.VisView as any as VisView;
         props = props || {};
 
         // @ts-expect-error I don't know how to solve it
