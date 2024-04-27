@@ -5,6 +5,7 @@ import {
     Button,
     Dialog, DialogActions,
     DialogContent, DialogTitle, IconButton,
+    Tooltip,
 } from '@mui/material';
 
 import { Close, DragHandle, FormatPaint } from '@mui/icons-material';
@@ -138,19 +139,23 @@ export default function showAllViewsDialog(props: ShowAllViewsDialogProps) {
                                 <div style={{ display: 'inline-block', minWidth: 100, flexGrow: 1 }}>
                                     {item.control}
                                 </div>
-                                {applyToAllButtonVisible ? <IconButton
-                                    size="small"
-                                    onClick={() => {
-                                        const newProject: Project = deepClone(props.project) as Project;
-                                        const _viewsToChange = getViewsWithDifferentValues(props.project, props.field, item.view, null, props.checkFunction) || [];
-                                        _viewsToChange?.forEach(_view => {
-                                            (newProject[_view].settings as Record<string, any>)[props.field.attr] = (newProject[item.view].settings as Record<string, any>)[props.field.attr];
-                                        });
-                                        props.changeProject(newProject);
-                                    }}
+                                {applyToAllButtonVisible ? <Tooltip
+                                    title={I18n.t('Apply to all views')}
+                                    classes={{ tooltip: 'vis-tooltip' }}
                                 >
-                                    <FormatPaint />
-                                </IconButton> : null}
+                                    <IconButton
+                                        size="small"
+                                        onClick={() => {
+                                            const newProject: Project = deepClone(props.project) as Project;
+                                            const _viewsToChange = getViewsWithDifferentValues(props.project, props.field, item.view, null, props.checkFunction) || [];
+                                            _viewsToChange?.forEach(_view => {
+                                                (newProject[_view].settings as Record<string, any>)[props.field.attr] = (newProject[item.view].settings as Record<string, any>)[props.field.attr];
+                                            });
+                                            props.changeProject(newProject);
+                                        }}
+                                    >
+                                        <FormatPaint />
+                                    </IconButton></Tooltip> : null}
                             </div>}
                         </Draggable>)}
                         {dropProvided.placeholder}

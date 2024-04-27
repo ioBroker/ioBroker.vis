@@ -79,3 +79,6 @@ body {
 .ui-menu-item:hover {
   background-color: #CCC;
 }
+.vis-tooltip {
+  pointer-events: none;
+}

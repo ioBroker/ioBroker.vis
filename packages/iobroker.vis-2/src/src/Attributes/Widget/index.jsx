@@ -1008,7 +1008,7 @@ class Widget extends Component {
             classes={{
                 root: Utils.clsx(classes.clearPadding, this.state.accordionOpen[group.name]
                     ? classes.groupSummaryExpanded : classes.groupSummary, classes.lightedPanel),
-                content:  Utils.clsx(classes.clearPadding, this.state.accordionOpen[group.name] && classes.accordionOpenedSummary),
+                content:  Utils.clsx(classes.clearPadding, this.state.accordionOpen[group.name] && group.hasValues && classes.accordionOpenedSummary),
                 expanded: classes.clearPadding,
                 expandIcon: classes.clearPadding,
             }}

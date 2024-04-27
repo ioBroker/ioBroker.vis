@@ -24,7 +24,7 @@ import { type LegacyConnection, I18n, Icon } from '@iobroker/adapter-react-v5';
 import {
     Project, AnyWidgetId, RxWidgetInfo,
     WidgetData, VisRxWidgetStateValues, RxWidgetInfoGroup,
-    StateID, RxWidgetInfoAttributesFieldSelectSimple,
+    StateID, RxWidgetInfoAttributesFieldSelectSimple, RxWidgetInfoAttributesField, RxWidgetInfoAttributesFieldCheckbox,
 } from '@iobroker/types-vis-2';
 import { deepClone, calculateOverflow } from '@/Utils/utils';
 // eslint-disable-next-line import/no-cycle
@@ -38,31 +38,31 @@ import VisView from './visView';
 import { addClass, getUsedObjectIDsInWidget } from './visUtils';
 
 const POSSIBLE_MUI_STYLES = [
-    'background-color',
-    'border',
     'background',
+    'background-clip',
+    'background-color',
     'background-image',
+    'background-origin',
     'background-position',
     'background-repeat',
     'background-size',
-    'background-clip',
-    'background-origin',
-    'color',
-    'box-sizing',
-    'border-width',
-    'border-style',
+    'border',
     'border-color',
     'border-radius',
+    'border-style',
+    'border-width',
     'box-shadow',
-    'text-align',
-    'text-shadow',
+    'box-sizing',
+    'color',
     'font-family',
     'font-size',
-    'font-weight',
-    'line-height',
     'font-style',
     'font-variant',
+    'font-weight',
     'letter-spacing',
+    'line-height',
+    'text-align',
+    'text-shadow',
     'word-spacing',
 ];
 
@@ -188,7 +188,7 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
 
         // find in fields visResizable name
         // if resizable exists, take the resizable from data
-        const visResizable = VisRxWidget.findField(options, 'visResizable');
+        const visResizable: RxWidgetInfoAttributesFieldCheckbox = VisRxWidget.findField(options, 'visResizable') as RxWidgetInfoAttributesFieldCheckbox;
         if (visResizable) {
             this.visDynamicResizable = {
                 default: visResizable.default !== undefined ? visResizable.default : true,
@@ -212,7 +212,7 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
         };
     }
 
-    static findField(widgetInfo: Record<string, any>, name: string) {
+    static findField(widgetInfo: RxWidgetInfo, name: string): RxWidgetInfoAttributesField | null {
         if (!widgetInfo.visAttrs) {
             return null;
         }

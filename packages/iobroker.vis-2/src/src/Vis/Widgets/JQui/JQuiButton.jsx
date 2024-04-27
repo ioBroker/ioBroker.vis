@@ -36,6 +36,7 @@ import {
 import { isVarFinite } from '../../../Utils/utils';
 // eslint-disable-next-line import/no-cycle
 import VisRxWidget from '../../visRxWidget';
+import VisBaseWidget from "@/Vis/visBaseWidget";
 
 class JQuiButton extends VisRxWidget {
     constructor(props) {
@@ -762,6 +763,12 @@ class JQuiButton extends VisRxWidget {
                 buttonStyle[attr] = value;
             }
         });
+        if (buttonStyle.borderWidth) {
+            buttonStyle.borderWidth = VisBaseWidget.correctStylePxValue(buttonStyle.borderWidth);
+        }
+        if (buttonStyle.fontSize) {
+            buttonStyle.fontSize = VisBaseWidget.correctStylePxValue(buttonStyle.fontSize);
+        }
 
         // the following widgets are resizable by default
         let visResizable = this.state.data.visResizable;
@@ -787,6 +794,7 @@ class JQuiButton extends VisRxWidget {
         } else {
             buttonStyle.padding = this.state.rxData.padding;
         }
+        buttonStyle.minWidth = 'unset';
 
         let buttonText;
         if (this.state.rxData.html) {

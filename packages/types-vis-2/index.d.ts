@@ -55,13 +55,13 @@ export type RxWidgetInfoAttributesFieldText = {
     /** Field label (i18n) */
     readonly label?: string;
     /** JS Function for conditional visibility */
-    readonly hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly hidden?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** Tooltip (i18n) */
     readonly tooltip?: string;
     /** JS Function for conditional disability */
-    readonly disabled?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly disabled?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** JS Function for error */
-    readonly error?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly error?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
@@ -74,7 +74,7 @@ export type RxWidgetInfoAttributesFieldDelimiter = {
     /** It is not required here */
     readonly name: string;
     /** JS Function for conditional visibility */
-    readonly hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly hidden?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
 }
 export type RxWidgetInfoAttributesFieldHelp = {
     /** Field type */
@@ -91,7 +91,7 @@ export type RxWidgetInfoAttributesFieldHelp = {
     /** Field label (i18n) */
     readonly label?: string;
     /** JS Function for conditional visibility */
-    readonly hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly hidden?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
 }
 
 export type RxWidgetInfoAttributesFieldHTML = {
@@ -107,13 +107,13 @@ export type RxWidgetInfoAttributesFieldHTML = {
     /** Field label (i18n) */
     readonly label?: string;
     /** JS Function for conditional visibility */
-    readonly hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly hidden?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** Tooltip (i18n) */
     readonly tooltip?: string;
     /** JS Function for conditional disability */
-    readonly disabled?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly disabled?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** JS Function for error */
-    readonly error?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly error?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
@@ -155,13 +155,13 @@ export type RxWidgetInfoAttributesFieldID = {
     /** Field label (i18n) */
     readonly label?: string;
     /** JS Function for conditional visibility */
-    readonly hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly hidden?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** Tooltip (i18n) */
     readonly tooltip?: string;
     /** JS Function for conditional disability */
-    readonly disabled?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly disabled?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** JS Function for error */
-    readonly error?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly error?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
@@ -183,13 +183,13 @@ export type RxWidgetInfoAttributesFieldInstance = {
     /** Field label (i18n) */
     readonly label?: string;
     /** JS Function for conditional visibility */
-    readonly hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly hidden?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** Tooltip (i18n) */
     readonly tooltip?: string;
     /** JS Function for conditional disability */
-    readonly disabled?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly disabled?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** JS Function for error */
-    readonly error?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly error?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
@@ -211,13 +211,13 @@ export type RxWidgetInfoAttributesFieldSelect = {
     /** Field label (i18n) */
     readonly label?: string;
     /** JS Function for conditional visibility */
-    readonly hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly hidden?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** Tooltip (i18n) */
     readonly tooltip?: string;
     /** JS Function for conditional disability */
-    readonly disabled?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly disabled?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** JS Function for error */
-    readonly error?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly error?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
@@ -229,19 +229,21 @@ export type RxWidgetInfoAttributesFieldCheckbox = {
     readonly type: 'checkbox';
     /** Field default value */
     readonly default?: boolean;
+    /** If sizes should be deleted or set to specific value. `false` - delete sizes, or {width: 100, height: 100} */
+    readonly desiredSize?: { width: number; height: number } | boolean;
 
     /** Name of the widget field */
     readonly name: string;
     /** Field label (i18n) */
     readonly label?: string;
     /** JS Function for conditional visibility */
-    readonly hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly hidden?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** Tooltip (i18n) */
     readonly tooltip?: string;
     /** JS Function for conditional disability */
-    readonly disabled?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly disabled?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** JS Function for error */
-    readonly error?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly error?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
@@ -265,13 +267,13 @@ export type RxWidgetInfoAttributesFieldNumber = {
     /** Field label (i18n) */
     readonly label?: string;
     /** JS Function for conditional visibility */
-    readonly hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly hidden?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** Tooltip (i18n) */
     readonly tooltip?: string;
     /** JS Function for conditional disability */
-    readonly disabled?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly disabled?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** JS Function for error */
-    readonly error?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly error?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
@@ -299,13 +301,13 @@ export type RxWidgetInfoAttributesFieldSlider = {
     /** Field label (i18n) */
     readonly label?: string;
     /** JS Function for conditional visibility */
-    readonly hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly hidden?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** Tooltip (i18n) */
     readonly tooltip?: string;
     /** JS Function for conditional disability */
-    readonly disabled?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly disabled?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** JS Function for error */
-    readonly error?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly error?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
@@ -335,13 +337,13 @@ export type RxWidgetInfoAttributesFieldWidget = {
     /** Field label (i18n) */
     readonly label?: string;
     /** JS Function for conditional visibility */
-    readonly hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly hidden?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** Tooltip (i18n) */
     readonly tooltip?: string;
     /** JS Function for conditional disability */
-    readonly disabled?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly disabled?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** JS Function for error */
-    readonly error?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly error?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
@@ -361,13 +363,13 @@ export type RxWidgetInfoAttributesFieldSelectViews = {
     /** Field label (i18n) */
     readonly label?: string;
     /** JS Function for conditional visibility */
-    readonly hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly hidden?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** Tooltip (i18n) */
     readonly tooltip?: string;
     /** JS Function for conditional disability */
-    readonly disabled?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly disabled?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** JS Function for error */
-    readonly error?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly error?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
@@ -392,13 +394,13 @@ export type RxWidgetInfoAttributesFieldSelectCustom = {
     /** Field label (i18n) */
     readonly label?: string;
     /** JS Function for conditional visibility */
-    readonly hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly hidden?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** Tooltip (i18n) */
     readonly tooltip?: string;
     /** JS Function for conditional disability */
-    readonly disabled?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly disabled?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** JS Function for error */
-    readonly error?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly error?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
@@ -416,13 +418,13 @@ export type RxWidgetInfoAttributesFieldSelectSimple = {
     /** Field label (i18n) */
     readonly label?: string;
     /** JS Function for conditional visibility */
-    readonly hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly hidden?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** Tooltip (i18n) */
     readonly tooltip?: string;
     /** JS Function for conditional disability */
-    readonly disabled?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly disabled?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** JS Function for error */
-    readonly error?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly error?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
@@ -438,13 +440,13 @@ export type RxWidgetInfoAttributesFieldDefault = {
     /** Field label (i18n) */
     readonly label?: string;
     /** JS Function for conditional visibility */
-    readonly hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly hidden?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** Tooltip (i18n) */
     readonly tooltip?: string;
     /** JS Function for conditional disability */
-    readonly disabled?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly disabled?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** JS Function for error */
-    readonly error?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly error?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
@@ -1122,7 +1124,7 @@ interface RxWidgetInfoGroup {
     readonly label?: string;
     readonly indexFrom?: number;
     readonly indexTo?: string;
-    readonly hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    readonly hidden?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
 }
 
 interface RxWidgetInfo {

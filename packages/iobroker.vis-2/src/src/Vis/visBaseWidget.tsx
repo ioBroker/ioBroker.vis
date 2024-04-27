@@ -1891,7 +1891,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
         }
 
         // convert string to number+'px'
-        ['top', 'left', 'width', 'height', 'right', 'bottom',
+        ['top', 'left', 'width', 'height', 'right', 'bottom', 'fontSize',
             'borderRadius', 'paddingLeft', 'paddingTop',
             'paddingRight', 'paddingBottom', 'marginTop',
             'marginBottom', 'marginLeft', 'marginRight',

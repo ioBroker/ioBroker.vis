@@ -29,6 +29,7 @@ import {
 
 // eslint-disable-next-line import/no-cycle
 import VisRxWidget from '../../visRxWidget';
+import VisBaseWidget from "@/Vis/visBaseWidget";
 
 class JQuiBinaryState extends VisRxWidget {
     constructor(props) {
@@ -778,10 +779,17 @@ class JQuiBinaryState extends VisRxWidget {
         if (!type && this.props.tpl === 'tplJquiRadio') {
             type = 'radio';
         }
+        if (buttonStyle.borderWidth) {
+            buttonStyle.borderWidth = VisBaseWidget.correctStylePxValue(buttonStyle.borderWidth);
+        }
+        if (buttonStyle.fontSize) {
+            buttonStyle.fontSize = VisBaseWidget.correctStylePxValue(buttonStyle.fontSize);
+        }
 
         // extra no rxData here, as it is not possible to set it with bindings
         buttonStyle.width = '100%';
         buttonStyle.height = '100%';
+        buttonStyle.minWidth = 'unset';
         let content;
         const bodyStyle = { textAlign: 'center' };
         if (type === 'radio') {

@@ -38,6 +38,7 @@ import {
 import VisRxWidget from '../../visRxWidget';
 import BulkEditor from './BulkEditor';
 import { deepClone } from '../../../Utils/utils';
+import VisBaseWidget from "@/Vis/visBaseWidget";
 
 class JQuiState extends VisRxWidget {
     static getWidgetInfo() {
@@ -539,6 +540,13 @@ class JQuiState extends VisRxWidget {
                 buttonStyle[attr] = value;
             }
         });
+        buttonStyle.minWidth = 'unset';
+        if (buttonStyle.borderWidth) {
+            buttonStyle.borderWidth = VisBaseWidget.correctStylePxValue(buttonStyle.borderWidth);
+        }
+        if (buttonStyle.fontSize) {
+            buttonStyle.fontSize = VisBaseWidget.correctStylePxValue(buttonStyle.fontSize);
+        }
 
         let content;
         if (

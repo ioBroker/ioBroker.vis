@@ -27,6 +27,7 @@ import {
 
 // eslint-disable-next-line import/no-cycle
 import VisRxWidget from '../../visRxWidget';
+import VisBaseWidget from "@/Vis/visBaseWidget";
 
 class JQuiButtonDialogClose extends VisRxWidget {
     constructor(props) {
@@ -284,6 +285,13 @@ class JQuiButtonDialogClose extends VisRxWidget {
                 buttonStyle[attr] = value;
             }
         });
+        buttonStyle.minWidth = 'unset';
+        if (buttonStyle.borderWidth) {
+            buttonStyle.borderWidth = VisBaseWidget.correctStylePxValue(buttonStyle.borderWidth);
+        }
+        if (buttonStyle.fontSize) {
+            buttonStyle.fontSize = VisBaseWidget.correctStylePxValue(buttonStyle.fontSize);
+        }
 
         // extra no rxData here, as it is not possible to set it with bindings
         if (this.state.data.visResizable) {
