@@ -1,3 +1,4 @@
+import React from 'react';
 import {
     Blinds,
     DirectionsRun,
@@ -20,7 +21,8 @@ import {
 } from '@mui/icons-material';
 
 import { TbVacuumCleaner } from 'react-icons/tb';
-import ChannelDetector from '@iobroker/type-detector';
+import ChannelDetector, { DetectOptions, Types } from '@iobroker/type-detector';
+import { LegacyConnection } from '@iobroker/adapter-react-v5';
 import { getNewWidgetIdNumber, getNewWidgetId } from '@/Utils/utils';
 
 const deviceIcons = {
@@ -52,12 +54,12 @@ const deviceIcons = {
     unknown: <QuestionMark />,
 };
 
-const allObjects = async socket => {
-    const states = await socket.getObjectView('', '\u9999', 'state');
-    const channels = await socket.getObjectView('', '\u9999', 'channel');
-    const devices = await socket.getObjectView('', '\u9999', 'device');
-    const folders = await socket.getObjectView('', '\u9999', 'folder');
-    const enums = await socket.getObjectView('', '\u9999', 'enum');
+const allObjects = async (socket: LegacyConnection) => {
+    const states = await socket.getObjectViewSystem('state', '', '\u9999');
+    const channels = await socket.getObjectViewSystem('channel', '', '\u9999');
+    const devices = await socket.getObjectViewSystem('device', '', '\u9999');
+    const folders = await socket.getObjectViewSystem('folder', '', '\u9999');
+    const enums = await socket.getObjectViewSystem('enum', '', '\u9999');
 
     return Object.values(states)
         .concat(Object.values(channels))
@@ -65,10 +67,10 @@ const allObjects = async socket => {
         .concat(Object.values(folders))
         .concat(Object.values(enums))
         // eslint-disable-next-line
-        .reduce((obj, item) => (obj[item._id] = item, obj), {});
+        .reduce((obj: Record<string, ioBroker.Object>, item: ioBroker.Object) => (obj[item._id] = item, obj), {});
 };
 
-function getObjectIcon(obj, id, imagePrefix) {
+function getObjectIcon(obj: ioBroker.Object, id: string, imagePrefix?: string): string {
     imagePrefix = imagePrefix || '.'; // http://localhost:8081';
     let src = '';
     const common = obj?.common;
@@ -110,22 +112,45 @@ function getObjectIcon(obj, id, imagePrefix) {
     return src || null;
 }
 
-const detectDevices = async socket => {
-    const devicesObject = await allObjects(socket);
+interface ObjectForDetector {
+    _id: string;
+    common: ioBroker.StateCommon | ioBroker.EnumCommon;
+    name?: ioBroker.StringOrTranslated;
+    type: ioBroker.ObjectType;
+}
+
+interface DetectorDevice {
+    _id: string;
+    common: ioBroker.StateCommon;
+    type: ioBroker.ObjectType;
+    deviceType: Types;
+    states: ObjectForDetector[];
+    name?: ioBroker.StringOrTranslated;
+    roomName?: ioBroker.StringOrTranslated;
+}
+
+interface DetectorResult {
+    _id: string;
+    common: ioBroker.StateCommon;
+    devices: ObjectForDetector[];
+}
+
+const detectDevices = async (socket: LegacyConnection) => {
+    const devicesObject: Record<string, ObjectForDetector> = await allObjects(socket) as Record<string, ObjectForDetector>;
     const keys = Object.keys(devicesObject).sort();
     const detector = new ChannelDetector();
 
-    const usedIds = [];
+    const usedIds: string[] = [];
     const ignoreIndicators = ['UNREACH_STICKY'];    // Ignore indicators by name
-    const excludedTypes = ['info'];
-    const enums = [];
-    const rooms = [];
-    const list = [];
+    const excludedTypes: Types[] = [Types.info];
+    const enums: string[] = [];
+    const rooms: string[] = [];
+    const list: string[] = [];
 
     keys.forEach(id => {
         if (devicesObject[id]?.type === 'enum') {
             enums.push(id);
-        } else if (devicesObject[id]?.common?.smartName) {
+        } else if ((devicesObject[id]?.common as ioBroker.StateCommon)?.smartName) {
             list.push(id);
         }
     });
@@ -134,10 +159,10 @@ const detectDevices = async socket => {
         if (id.startsWith('enum.rooms.')) {
             rooms.push(id);
         }
-        const members = devicesObject[id].common.members;
+        const members = (devicesObject[id].common as ioBroker.EnumCommon).members;
 
         if (members && members.length) {
-            members.forEach(member => {
+            members.forEach((member: string) => {
                 // if an object really exists
                 if (devicesObject[member]) {
                     if (!list.includes(member)) {
@@ -148,15 +173,16 @@ const detectDevices = async socket => {
         }
     });
 
-    const options = {
-        objects: devicesObject,
+    const options: DetectOptions = {
+        id: '',
+        objects: devicesObject as Record<string, ioBroker.Object>,
         _keysOptional: keys,
         _usedIdsOptional: usedIds,
         ignoreIndicators,
         excludedTypes,
     };
 
-    const result = [];
+    const result: DetectorResult[] = [];
 
     list.forEach(id => {
         options.id = id;
@@ -170,9 +196,9 @@ const detectDevices = async socket => {
                 if (result.find(item => item.devices.find(st => st._id === stateId))) {
                     return;
                 }
-                const deviceObject = {
+                const deviceObject: DetectorDevice = {
                     _id: stateId,
-                    common: devicesObject[stateId].common,
+                    common: devicesObject[stateId].common as ioBroker.StateCommon,
                     type: devicesObject[stateId].type,
                     deviceType: control.type,
                     states: control.states
@@ -185,8 +211,8 @@ const detectDevices = async socket => {
                 };
 
                 const parts = stateId.split('.');
-                let channelId;
-                let deviceId;
+                let channelId: string;
+                let deviceId: string;
                 if (devicesObject[stateId].type === 'channel' || devicesObject[stateId].type === 'state') {
                     parts.pop();
                     channelId = parts.join('.');
@@ -202,21 +228,21 @@ const detectDevices = async socket => {
                 }
                 // try to detect room
                 const room = rooms.find(roomId => {
-                    if (devicesObject[roomId].common.members.includes(stateId)) {
+                    if ((devicesObject[roomId].common as ioBroker.EnumCommon).members.includes(stateId)) {
                         return true;
                     }
-                    if (channelId && devicesObject[roomId].common.members.includes(channelId)) {
+                    if (channelId && (devicesObject[roomId].common as ioBroker.EnumCommon).members.includes(channelId)) {
                         return true;
                     }
-                    return deviceId && devicesObject[roomId].common.members.includes(deviceId);
+                    return deviceId && (devicesObject[roomId].common as ioBroker.EnumCommon).members.includes(deviceId);
                 });
-                let roomObj;
+                let roomObj: DetectorResult;
                 if (room) {
                     roomObj = result.find(obj => obj._id === room);
                     if (!roomObj) {
                         roomObj = {
                             _id: room,
-                            common: devicesObject[room].common,
+                            common: devicesObject[room].common as ioBroker.StateCommon,
                             devices: [],
                         };
                         result.push(roomObj);
@@ -229,7 +255,7 @@ const detectDevices = async socket => {
                             common: {
                                 name: 'unknown',
                                 icon: '?',
-                            },
+                            } as ioBroker.StateCommon,
                             devices: [],
                         };
                         result.push(roomObj);
@@ -254,23 +280,23 @@ const detectDevices = async socket => {
                 if (parentObject && (parentObject.type === 'channel' || parentObject.type === 'device' || parentObject.type === 'folder')) {
                     deviceObj.common.name = parentObject.common?.name || deviceObj.common.name;
                     if (parentObject.common.icon) {
-                        deviceObj.common.icon = getObjectIcon(parentObject, parentObject._id, '../..');
+                        deviceObj.common.icon = getObjectIcon(parentObject as ioBroker.Object, parentObject._id, '../..');
                     }
                     idArray.pop();
                     // read device
                     const grandParentObject = devicesObject[idArray.join('.')];
                     if (grandParentObject?.type === 'device' && grandParentObject.common?.icon) {
                         deviceObj.common.name = grandParentObject.common.name || deviceObj.common.name;
-                        deviceObj.common.icon = getObjectIcon(grandParentObject, grandParentObject._id, '../..');
+                        deviceObj.common.icon = getObjectIcon(grandParentObject as ioBroker.Object, grandParentObject._id, '../..');
                     }
                 } else {
                     deviceObj.common.name = parentObject?.common?.name || deviceObj.common.name;
                     if (parentObject?.common?.icon) {
-                        deviceObj.common.icon = getObjectIcon(parentObject, parentObject._id, '../..');
+                        deviceObj.common.icon = getObjectIcon(parentObject as ioBroker.Object, parentObject._id, '../..');
                     }
                 }
             } else {
-                deviceObj.common.icon = getObjectIcon(deviceObj, deviceObj._id, '../..');
+                deviceObj.common.icon = getObjectIcon(deviceObj as ioBroker.Object, deviceObj._id, '../..');
             }
         }
     }

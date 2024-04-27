@@ -1,5 +1,4 @@
-import { useEffect, useRef } from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect, useRef } from 'react';
 import { withStyles } from '@mui/styles';
 import { useDrag } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
@@ -11,14 +10,17 @@ import {
     Block as DeletedIcon,
 } from '@mui/icons-material';
 
-import { I18n, Utils } from '@iobroker/adapter-react-v5';
+import { I18n, LegacyConnection, Utils } from '@iobroker/adapter-react-v5';
+import { ThemeType } from '@iobroker/adapter-react-v5/types';
+import { MarketplaceWidgetRevision, Project } from '@iobroker/types-vis-2';
 
 import { store } from '@/Store';
+import { WidgetType } from '@/Vis/visWidgetsCatalog';
 import helpers from '../Components/WizardHelpers';
 
 const IMAGE_TYPES = ['.png', '.jpg', '.svg', '.gif', '.apng', '.avif', '.webp'];
 
-const styles = () => ({
+const styles: Record<string, any> = {
     widget: {
         borderStyle: 'solid',
         borderColor: 'gray',
@@ -74,12 +76,35 @@ const styles = () => ({
         marginTop: 9,
         color: '#F00',
     },
-});
+};
 
 const WIDGET_ICON_HEIGHT = 34;
-const Widget = props => {
-    const imageRef = useRef();
-    const style = {};
+
+interface WidgetProps {
+    classes: Record<string, string>;
+    widgetSetProps?: Record<string, any>;
+    widgetSet: string;
+    widgetType: WidgetType;
+    widgetTypeName: string;
+    socket?: LegacyConnection;
+    themeType: ThemeType;
+    changeProject?: (project: Project, ignoreHistory?: boolean) => Promise<void>;
+    changeView?: (view: string) => void;
+    editMode: boolean;
+    widgetMarketplaceId?: string;
+    selectedView: string;
+
+    /** Used for a marketplace */
+    updateWidgets?: (widget: MarketplaceWidgetRevision) => void;
+    uninstallWidget?: (widgetId: string) => void;
+    marketplace?: MarketplaceWidgetRevision;
+    marketplaceUpdates?: MarketplaceWidgetRevision[];
+    marketplaceDeleted?: string[];
+}
+
+const Widget = (props: WidgetProps) => {
+    const imageRef = useRef<HTMLSpanElement>();
+    const style: React.CSSProperties = {};
 
     useEffect(() => {
         if (imageRef.current?.children[0]) {
@@ -98,7 +123,7 @@ const Widget = props => {
         style.backgroundColor = window.visSets[props.widgetSet].color;
     }
 
-    const titleStyle = {};
+    const titleStyle: React.CSSProperties = {};
     if (style.backgroundColor) {
         if (Utils.isUseBright(style.backgroundColor)) {
             titleStyle.color = 'white';
@@ -111,7 +136,7 @@ const Widget = props => {
     if (props.widgetType.preview?.startsWith('<img')) {
         const m = props.widgetType.preview.match(/src="([^"]+)"/) || props.widgetType.preview.match(/src='([^']+)'/);
         if (m) {
-            img = <img src={m[1]} className={props.classes.widgetImageWithSrc} alt={props.widgetType.id} />;
+            img = <img src={m[1]} className={props.classes.widgetImageWithSrc} alt={props.widgetType.name} />;
         }
     } else if (props.widgetType.preview &&
         (
@@ -119,7 +144,7 @@ const Widget = props => {
             props.widgetSet === '__marketplace'
         )
     ) {
-        img = <img src={props.widgetType.preview} className={props.classes.widgetImageWithSrc} alt={props.widgetType.id} />;
+        img = <img src={props.widgetType.preview} className={props.classes.widgetImageWithSrc} alt={props.widgetType.name} />;
     }
 
     if (!img) {
@@ -137,11 +162,11 @@ const Widget = props => {
     label = label.split('<span')[0];
     label = label.split('<div')[0];
 
-    let marketplaceUpdate;
+    let marketplaceUpdate: MarketplaceWidgetRevision | null = null;
     let marketplaceDeleted;
     if (props.widgetSet === '__marketplace') {
-        marketplaceUpdate = props.marketplaceUpdates?.find(u => u.widget_id === props.widgetType.widget_id);
-        marketplaceDeleted = props.marketplaceDeleted?.includes(props.widgetType.widget_id);
+        marketplaceUpdate = props.marketplaceUpdates?.find(u => u.widget_id === props.widgetMarketplaceId);
+        marketplaceDeleted = props.marketplaceDeleted?.includes(props.widgetMarketplaceId);
     }
 
     const result = <Tooltip
@@ -161,7 +186,7 @@ const Widget = props => {
             </div>
             {props.widgetSet === '__marketplace' && <>
                 <Tooltip title={I18n.t('Uninstall')}>
-                    <IconButton onClick={() => props.uninstallWidget(props.widgetType.id)}>
+                    <IconButton onClick={() => props.uninstallWidget(props.widgetType.name)}>
                         <DeleteIcon />
                     </IconButton>
                 </Tooltip>
@@ -183,13 +208,13 @@ const Widget = props => {
         </div>
     </Tooltip>;
 
-    const widthRef = useRef();
+    const widthRef = useRef<HTMLSpanElement>();
     const [, dragRef, preview] = useDrag({
         type: 'widget',
         item: () => ({
             widgetType: props.widgetType,
             widgetSet: props.widgetSet,
-            preview: <div style={{ width: widthRef.current.offsetWidth }}>
+            preview: <div style={{ width: widthRef.current?.offsetWidth || 100 }}>
                 {result}
             </div>,
         }),
@@ -223,24 +248,6 @@ const Widget = props => {
             {result}
         </span>
     </span>;
-};
-
-Widget.propTypes = {
-    classes: PropTypes.object,
-    widgetSetProps: PropTypes.object,
-    widgetSet: PropTypes.string,
-    widgetType: PropTypes.object,
-    widgetTypeName: PropTypes.string,
-    updateWidgets: PropTypes.func,
-    marketplace: PropTypes.object,
-    marketplaceUpdates: PropTypes.array,
-    marketplaceDeleted: PropTypes.array,
-    uninstallWidget: PropTypes.func,
-    socket: PropTypes.object,
-    themeType: PropTypes.string,
-    changeProject: PropTypes.func,
-    changeView: PropTypes.func,
-    editMode: PropTypes.bool,
 };
 
 export default withStyles(styles)(Widget);

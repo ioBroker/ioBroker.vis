@@ -14,29 +14,28 @@
  */
 
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import {
     Button, ButtonTypeMap,
 } from '@mui/material';
 
 import {
-    type Connection,
     I18n,
     Icon,
+    type LegacyConnection,
 } from '@iobroker/adapter-react-v5';
 
 import {
     GetRxDataFromWidget,
     RxRenderWidgetProps,
     RxWidgetInfo,
-    RxWidgetInfoAttributesField
+    RxWidgetInfoAttributesField,
 } from '@iobroker/types-vis-2';
 
+import VisBaseWidget from '@/Vis/visBaseWidget';
+
 // eslint-disable-next-line import/no-cycle
-import VisRxWidget, {VisRxWidgetState} from '../../visRxWidget';
-import {CSSProperties} from "@mui/styles";
-import VisBaseWidget from "@/Vis/visBaseWidget";
+import VisRxWidget, { VisRxWidgetState } from '../../visRxWidget';
 
 // eslint-disable-next-line no-use-before-define
 type RxData = GetRxDataFromWidget<typeof JQuiWriteState>
@@ -48,6 +47,7 @@ interface JQuiWriteStateState extends VisRxWidgetState {
 
 class JQuiWriteState extends VisRxWidget<RxData, JQuiWriteStateState> {
     private iterateInterval: ReturnType<typeof setInterval> | null = null;
+
     private iterateTimeout: ReturnType<typeof setTimeout> | null = null;
 
     constructor(props: RxRenderWidgetProps) {
@@ -78,7 +78,7 @@ class JQuiWriteState extends VisRxWidget<RxData, JQuiWriteStateState> {
                                 field: RxWidgetInfoAttributesField,
                                 data: Record<string, any>,
                                 changeData: (newData: Record<string, any>) => void,
-                                socket: Connection,
+                                socket: LegacyConnection,
                             ): Promise<void> => {
                                 if (data[field.name] && data[field.name] !== 'nothing_selected') {
                                     const obj = await socket.getObject(data[field.name]) as ioBroker.StateObject;
@@ -377,7 +377,7 @@ class JQuiWriteState extends VisRxWidget<RxData, JQuiWriteStateState> {
         return null;
     }
 
-    renderText(isActive: boolean) {
+    renderText() {
         let text = this.state.rxData.text;
         const color = this.state.rxStyle.color;
 
@@ -460,7 +460,7 @@ class JQuiWriteState extends VisRxWidget<RxData, JQuiWriteStateState> {
             buttonStyle.fontSize = VisBaseWidget.correctStylePxValue(buttonStyle.fontSize);
         }
 
-        const text = this.renderText(isActive);
+        const text = this.renderText();
 
         buttonStyle.width = '100%';
         buttonStyle.height = '100%';

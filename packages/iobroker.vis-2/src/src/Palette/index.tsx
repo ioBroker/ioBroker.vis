@@ -26,13 +26,14 @@ import {
     Icon, LegacyConnection,
 } from '@iobroker/adapter-react-v5';
 
-import { Marketplace, Project } from '@iobroker/types-vis-2';
+import {Marketplace, MarketplaceWidgetRevision, Project} from '@iobroker/types-vis-2';
 import { store } from '@/Store';
 
 import { getWidgetTypes, WidgetType } from '@/Vis/visWidgetsCatalog';
 import { loadComponent } from '@/Vis/visLoadWidgets';
 import Widget from './Widget';
 import MarketplacePalette from '../Marketplace/MarketplacePalette';
+import {ThemeType} from "@iobroker/adapter-react-v5/types";
 
 // declare global {
 //     interface Window {
@@ -156,20 +157,21 @@ interface PaletteProps {
     classes: Record<string, string>;
     onHide: (hide: boolean) => void;
     changeView: (view: string) => void;
-    changeProject: (project: Project) => void;
+    changeProject: (project: Project, ignoreHistory?: boolean) => Promise<void>;
     uninstallWidget: (widgetId: string) => void;
     setMarketplaceDialog: (open: boolean) => void;
     updateWidgets: () => void;
     widgetsLoaded: boolean;
     socket: LegacyConnection;
-    themeType: string;
+    themeType: ThemeType;
     editMode: boolean;
     selectedView: string;
 }
+
 interface PaletteState {
     filter: string;
-    marketplaceUpdates: any;
-    marketplaceDeleted: any;
+    marketplaceUpdates: MarketplaceWidgetRevision[] | null;
+    marketplaceDeleted: string[] | null;
     marketplaceLoading: boolean;
     accordionOpen: Record<string, boolean>;
     widgetsList: Record<string, WidgetType[]>;
@@ -229,7 +231,7 @@ class Palette extends Component<PaletteProps, PaletteState> {
 
                 Promise.all([tPromise, mPromise])
                     .then(async () => {
-                        const updates = [];
+                        const updates: MarketplaceWidgetRevision[] = [];
                         const deleted = [];
                         if (store.getState().visProject?.___settings?.marketplace && window.VisMarketplace?.api) {
                             for (const i in store.getState().visProject.___settings.marketplace) {
@@ -408,6 +410,8 @@ class Palette extends Component<PaletteProps, PaletteState> {
                         <Widget
                             editMode={this.props.editMode}
                             key={item.id}
+                            themeType={this.props.themeType}
+                            selectedView={this.props.selectedView}
                             marketplace={item}
                             marketplaceDeleted={this.state.marketplaceDeleted}
                             marketplaceUpdates={this.state.marketplaceUpdates}
@@ -415,11 +419,12 @@ class Palette extends Component<PaletteProps, PaletteState> {
                             updateWidgets={this.props.updateWidgets}
                             widgetSet="__marketplace"
                             widgetType={{
-                                id: item.id,
-                                widget_id: item.widget_id,
+                                name: item.id,
                                 label: item.name,
                                 preview: `${window.apiUrl + window.webPrefix}/images/${item.image_id}`,
+                                params: 'simulated',
                             }}
+                            widgetMarketplaceId={item.widget_id}
                             widgetTypeName={item.name}
                         />
                     </div>)}
@@ -635,7 +640,6 @@ class Palette extends Component<PaletteProps, PaletteState> {
                                         changeView={this.props.changeView}
                                         editMode={this.props.editMode}
                                         key={widgetItem.name}
-                                        project={store.getState().visProject}
                                         selectedView={this.props.selectedView}
                                         socket={this.props.socket}
                                         themeType={this.props.themeType}

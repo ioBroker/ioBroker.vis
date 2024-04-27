@@ -1,7 +1,7 @@
 import type React from 'react';
 import type moment from 'moment';
 import type { Theme } from '@mui/material';
-import type { Connection, LegacyConnection } from '@iobroker/adapter-react-v5';
+import type { LegacyConnection } from '@iobroker/adapter-react-v5';
 
 interface VisView {
     getOneWidget(index: number, widget: SingleWidget | GroupWidget, options: CreateWidgetOptions): React.JSX.Element | null;
@@ -28,7 +28,7 @@ export type PromiseName = `_promise_${WidgetSetName}`;
 export type WidgetSetName = Branded<string, 'WidgetSetName'>;
 
 export interface RxWidgetInfoCustomComponentContext {
-    readonly socket: Connection;
+    readonly socket: LegacyConnection;
     readonly projectName: string;
     readonly instance: number;
     readonly adapterName: string;
@@ -65,7 +65,7 @@ export type RxWidgetInfoAttributesFieldText = {
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
-    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: LegacyConnection, index?: number) => Promise<void>;
 }
 
 export type RxWidgetInfoAttributesFieldDelimiter = {
@@ -117,7 +117,7 @@ export type RxWidgetInfoAttributesFieldHTML = {
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
-    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: LegacyConnection, index?: number) => Promise<void>;
 }
 
 export type RxWidgetInfoAttributesFieldID = {
@@ -165,7 +165,7 @@ export type RxWidgetInfoAttributesFieldID = {
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
-    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: LegacyConnection, index?: number) => Promise<void>;
 }
 
 export type RxWidgetInfoAttributesFieldInstance = {
@@ -193,7 +193,7 @@ export type RxWidgetInfoAttributesFieldInstance = {
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
-    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: LegacyConnection, index?: number) => Promise<void>;
 }
 
 export type RxWidgetInfoAttributesFieldSelect = {
@@ -221,7 +221,7 @@ export type RxWidgetInfoAttributesFieldSelect = {
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
-    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: LegacyConnection, index?: number) => Promise<void>;
 }
 
 export type RxWidgetInfoAttributesFieldCheckbox = {
@@ -247,7 +247,7 @@ export type RxWidgetInfoAttributesFieldCheckbox = {
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
-    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: LegacyConnection, index?: number) => Promise<void>;
 }
 
 export type RxWidgetInfoAttributesFieldNumber = {
@@ -277,7 +277,7 @@ export type RxWidgetInfoAttributesFieldNumber = {
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
-    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: LegacyConnection, index?: number) => Promise<void>;
 }
 
 export type RxWidgetInfoAttributesFieldSlider = {
@@ -311,7 +311,7 @@ export type RxWidgetInfoAttributesFieldSlider = {
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
-    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: LegacyConnection, index?: number) => Promise<void>;
 }
 
 export type RxWidgetInfoAttributesFieldWidget = {
@@ -347,7 +347,7 @@ export type RxWidgetInfoAttributesFieldWidget = {
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
-    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: LegacyConnection, index?: number) => Promise<void>;
 }
 
 export type RxWidgetInfoAttributesFieldSelectViews = {
@@ -373,7 +373,7 @@ export type RxWidgetInfoAttributesFieldSelectViews = {
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
-    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: LegacyConnection, index?: number) => Promise<void>;
 }
 
 export type RxWidgetInfoAttributesFieldSelectCustom = {
@@ -404,7 +404,7 @@ export type RxWidgetInfoAttributesFieldSelectCustom = {
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
-    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: LegacyConnection, index?: number) => Promise<void>;
 }
 
 export type RxWidgetInfoAttributesFieldSelectSimple = {
@@ -428,7 +428,7 @@ export type RxWidgetInfoAttributesFieldSelectSimple = {
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
-    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: LegacyConnection, index?: number) => Promise<void>;
 }
 
 export type RxWidgetInfoAttributesFieldDefault = {
@@ -450,7 +450,7 @@ export type RxWidgetInfoAttributesFieldDefault = {
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
-    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: Connection, index?: number) => Promise<void>;
+    readonly onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: LegacyConnection, index?: number) => Promise<void>;
 }
 
 export type RxWidgetInfoAttributesField =
@@ -895,6 +895,12 @@ declare global {
             init?: (shareScope: any) => Promise<void>;
         };
 
+        visSets: Record<string, {
+            color?: string;
+        }>;
+
+        visWidgetTypes: WidgetType[];
+
         __widgetsLoadIndicator: (process: number, max: number) => void;
         _lastAppliedStyle: string;
         /** Marketplace API server */
@@ -1099,16 +1105,17 @@ export interface RxWidgetProps extends RxRenderWidgetProps {
 }
 
 export interface CustomPaletteProperties {
-    socket: Connection;
+    socket: LegacyConnection;
     project: Project;
     changeProject: (project: Project, ignoreHistory?: boolean) => Promise<void>;
     selectedView: string;
+    changeView: (newView: string) => void;
     themeType: 'dark' | 'light';
     helpers: {
         deviceIcons: Record<string, React.JSX.Element>;
-        detectDevices: (socket: Connection) => Promise<any[]>;
-        getObjectIcon: (obj: ioBroker.Object, id?: string, imagePrefix?: string) => React.JSX.Element;
-        allObjects: (socket: Connection) => Promise<Record<string, ioBroker.Object>>;
+        detectDevices: (socket: LegacyConnection) => Promise<any[]>;
+        getObjectIcon: (obj: ioBroker.Object, id?: string, imagePrefix?: string) => string;
+        allObjects: (socket: LegacyConnection) => Promise<Record<string, ioBroker.Object>>;
         getNewWidgetId: (project: Project, offset?: number) => SingleWidgetId;
         /** @deprecated use "getNewWidgetId" instead, it will give you the full wid like "w000001" */
         getNewWidgetIdNumber: (isWidgetGroup: boolean, project: Project, offset?:number) => number;

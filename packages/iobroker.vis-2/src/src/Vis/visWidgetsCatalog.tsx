@@ -38,6 +38,8 @@ type RxWidgetInfoAttributesFieldAll = {
     type?: RxWidgetAttributeType;
     /** Field default value */
     default?: string | number | boolean;
+    /** If sizes should be deleted or set to specific value. `false` - delete sizes, or {width: 100, height: 100} */
+    desiredSize?: { width: number; height: number } | boolean;
     /** if true, no edit button will be shown. Default is true. */
     readonly noButton?: boolean;
     /** if true, the text will not be translated  */
@@ -113,13 +115,13 @@ type RxWidgetInfoAttributesFieldAll = {
     /** Field label (i18n) */
     label?: string;
     /** JS Function for conditional visibility */
-    hidden?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    hidden?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** Tooltip (i18n) */
     tooltip?: string;
     /** JS Function for conditional disability */
-    disabled?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    disabled?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** JS Function for error */
-    error?: string | ((data: any) => boolean) | ((data: any, index: number) => boolean);
+    error?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
@@ -242,7 +244,7 @@ class VisWidgetsCatalog {
     static setUsedWidgetSets(project: Project) {
         // provide for all widgets the widget set and set
         let views;
-        const widgetTypes = (window as any).visWidgetTypes as WidgetType[]; // getWidgetTypes();
+        const widgetTypes = window.visWidgetTypes; // getWidgetTypes();
         const viewKeys = Object.keys(project);
 
         for (let v = 0; v < viewKeys.length; v++) {
@@ -349,8 +351,8 @@ class VisWidgetsCatalog {
 }
 
 export const getWidgetTypes: (_usedWidgetSets?: string[]) => WidgetType[] = (usedWidgetSets?: string[]) => {
-    if (!(window as any).visWidgetTypes) {
-        (window as any).visSets = {};
+    if (!window.visWidgetTypes) {
+        window.visSets = {};
         VisWidgetsCatalog.allWidgetsList = [];
 
         if (!VisWidgetsCatalog.rxWidgets) {
@@ -358,7 +360,7 @@ export const getWidgetTypes: (_usedWidgetSets?: string[]) => WidgetType[] = (use
         }
 
         // Old CanJS widgets
-        (window as any).visWidgetTypes = Array.from(document.querySelectorAll('script[type="text/ejs"]'))
+        window.visWidgetTypes = Array.from(document.querySelectorAll('script[type="text/ejs"]'))
             .map(script => {
                 const name: string | null = script.getAttribute('id');
                 if (!name || !VisWidgetsCatalog.rxWidgets) {
@@ -380,11 +382,11 @@ export const getWidgetTypes: (_usedWidgetSets?: string[]) => WidgetType[] = (use
                 }
 
                 const color = script.getAttribute('data-vis-color');
-                (window as any).visSets[widgetSet] = (window as any).visSets[widgetSet] || {};
+                window.visSets[widgetSet] = window.visSets[widgetSet] || {};
                 if (color) {
-                    (window as any).visSets[widgetSet].color = color;
-                } else if (!(window as any).visSets[widgetSet].color && DEFAULT_SET_COLORS[widgetSet]) {
-                    (window as any).visSets[widgetSet].color = DEFAULT_SET_COLORS[widgetSet];
+                    window.visSets[widgetSet].color = color;
+                } else if (!window.visSets[widgetSet].color && DEFAULT_SET_COLORS[widgetSet]) {
+                    window.visSets[widgetSet].color = DEFAULT_SET_COLORS[widgetSet];
                 }
                 const widgetObj: WidgetType = {
                     name,
