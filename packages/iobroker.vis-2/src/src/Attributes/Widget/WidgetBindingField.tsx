@@ -1,6 +1,17 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
+import moment from 'moment';
+import 'moment/locale/de';
+import 'moment/locale/ru';
+import 'moment/locale/en-gb';
+import 'moment/locale/fr';
+import 'moment/locale/it';
+import 'moment/locale/es';
+import 'moment/locale/pl';
+import 'moment/locale/nl';
+import 'moment/locale/pt';
+import 'moment/locale/uk';
+import 'moment/locale/zh-cn';
 
 import {
     Button, Checkbox,
@@ -18,13 +29,19 @@ import {
     Clear, Link as LinkIcon,
 } from '@mui/icons-material';
 
-import { I18n, Utils, SelectID } from '@iobroker/adapter-react-v5';
+import {
+    I18n, Utils,
+    SelectID,
+    LegacyConnection, Connection,
+} from '@iobroker/adapter-react-v5';
+
+import { AnyWidgetId, Project, VisBindingOperationArgument } from '@iobroker/types-vis-2';
 
 import { store, recalculateFields } from '@/Store';
 
 import VisFormatUtils from '../../Vis/visFormatUtils';
 
-const styles = () => ({
+const styles: Record<string, any> = {
     dialog: {
         height: 'calc(100% - 64px)',
     },
@@ -72,10 +89,62 @@ const styles = () => ({
     valueContent: {
         fontFamily: 'monospace',
     },
-});
+};
 
-class WidgetBindingField extends Component {
-    constructor(props) {
+interface WidgetBindingFieldProps {
+    field: any;
+    widget: any;
+    isStyle: boolean;
+    classes: Record<string, string>;
+    changeProject: (project: Project) => void;
+    socket: LegacyConnection;
+    selectedView: string;
+    selectedWidgets: AnyWidgetId[];
+    isDifferent?: boolean;
+    label?: string;
+    disabled?: boolean;
+}
+
+interface ModifyOptions {
+    modify?: boolean;
+    selectionStart?: number;
+    selectionEnd?: number;
+    oldStyle?: boolean;
+    arg1?: any;
+    arg2?: any;
+    desc?: string;
+    args?: {
+        type: 'string' | 'number' | 'boolean';
+        label: string;
+    }[];
+    link?: string;
+    text?: string;
+}
+
+interface WidgetBindingFieldState {
+    value: string;
+    editValue: string;
+    showSelectIdDialog: boolean;
+    showEditBindingDialog: boolean;
+    newStyle: boolean;
+    error: string;
+    values: Record<string, any>;
+    selectionValue?: string;
+    selectionStart?: number;
+    selectionEnd?: number;
+    calculatedEditValue?: string;
+    askToModify?: ModifyOptions | null;
+    askForArguments?: ModifyOptions | null;
+}
+
+class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindingFieldState> {
+    private readonly inputRef: React.RefObject<HTMLInputElement>;
+
+    private visFormatUtils: VisFormatUtils | undefined;
+
+    private calculateTimeout: ReturnType<typeof setTimeout> | null = null;
+
+    constructor(props: WidgetBindingFieldProps) {
         super(props);
         let value = this.props.widget[this.props.isStyle ? 'style' : 'data'][this.props.field.name] || '';
         if (value === undefined || value === null) {
@@ -97,7 +166,7 @@ class WidgetBindingField extends Component {
         this.inputRef = React.createRef();
     }
 
-    static getDerivedStateFromProps(props, state) {
+    static getDerivedStateFromProps(props: WidgetBindingFieldProps, state: WidgetBindingFieldState): Partial<WidgetBindingFieldState> | null {
         let value = props.widget[props.isStyle ? 'style' : 'data']?.[props.field.name] || '';
         if (value === undefined || value === null) {
             value = '';
@@ -112,9 +181,9 @@ class WidgetBindingField extends Component {
         return null;
     }
 
-    detectOldBindingStyle(value) {
+    detectOldBindingStyle(value: any) {
         this.visFormatUtils = this.visFormatUtils || new VisFormatUtils({ vis: window.vis });
-        const oids = this.visFormatUtils.extractBinding(value);
+        const oids = this.visFormatUtils.extractBinding(value as string);
         if (!oids) {
             return false;
         }
@@ -122,31 +191,35 @@ class WidgetBindingField extends Component {
         return !oids.find(it => it.token?.includes(':'));
     }
 
-    async calculateValue(value) {
+    async calculateValue(value: any) {
         this.visFormatUtils = this.visFormatUtils || new VisFormatUtils({ vis: window.vis });
         if (value === undefined || value === null) {
             return '';
         }
         value = value.toString();
 
-        const oids = this.visFormatUtils.extractBinding(value);
+        const oids = this.visFormatUtils.extractBinding(value as string);
         if (!oids) {
             return value;
         }
 
         // read all states
-        const stateOids = [];
+        const stateOids: string[] = [];
         oids.forEach(oid => {
             if (oid.systemOid === 'widgetOid') {
-                const newOid = this.props.widget.data.oid;
+                const newOid: string = this.props.widget.data.oid;
                 oid.visOid = oid.visOid.replace(/^widgetOid\./g, `${newOid}.`);
                 oid.systemOid = newOid;
                 oid.token = oid.token.replace(/:widgetOid;/g, `:${newOid};`);
                 oid.format = oid.format.replace(/:widgetOid;/g, `:${newOid};`);
                 for (const operation of oid.operations) {
-                    for (const arg of operation.arg) {
-                        arg.visOid = arg.visOid.replace(/^widgetOid\./g, `${newOid}.`);
-                        arg.systemOid = newOid;
+                    if (Array.isArray(operation.arg)) {
+                        for (const arg of operation.arg) {
+                            if (typeof operation.arg === 'object') {
+                                (arg as VisBindingOperationArgument).visOid = (arg as VisBindingOperationArgument).visOid.replace(/^widgetOid\./g, `${newOid}.`);
+                                (arg as VisBindingOperationArgument).systemOid = newOid;
+                            }
+                        }
                     }
                 }
             }
@@ -162,10 +235,13 @@ class WidgetBindingField extends Component {
             if (oid.operations) {
                 for (let op = 0; op < oid.operations.length; op++) {
                     const args = oid.operations[op].arg;
-                    if (args && args.length) {
+                    if (Array.isArray(args) && args?.length) {
                         for (let a = 0; a < args.length; a++) {
-                            if (!stateOids.includes(args[a].systemOid)) {
-                                stateOids.push(args[a].systemOid);
+                            if (typeof args[a] === 'object') {
+                                const sOid = (args[a] as VisBindingOperationArgument).systemOid;
+                                if (sOid && !stateOids.includes(sOid)) {
+                                    stateOids.push(sOid);
+                                }
                             }
                         }
                     }
@@ -173,14 +249,14 @@ class WidgetBindingField extends Component {
             }
         });
 
-        const values = {};
+        const values: Record<string, any> = {};
         for (let i = 0; i < stateOids.length; i++) {
             if (stateOids[i].includes('.')) {
                 const state = await this.props.socket.getState(stateOids[i]);
                 state && Object.keys(state).forEach(attr => {
                     const name = `${stateOids[i]}.${attr}`;
-                    if (oids.find(it => it.visOid === name || it.operations?.find(op => op?.arg?.find(arg => arg.visOid === name)))) {
-                        values[name] = state[attr];
+                    if (oids.find(it => it.visOid === name || it.operations?.find(op => Array.isArray(op?.arg) && op?.arg.find((arg: VisBindingOperationArgument) => arg.visOid === name)))) {
+                        values[name] = (state as Record<string, any>)[attr];
                     }
                 });
             }
@@ -194,12 +270,13 @@ class WidgetBindingField extends Component {
                 widget: store.getState().visProject[this.props.selectedView].widgets[this.props.selectedWidgets[0]],
                 widgetData: store.getState().visProject[this.props.selectedView].widgets[this.props.selectedWidgets[0]].data,
                 values,
+                moment,
             }),
             values,
         };
     }
 
-    onChange(value) {
+    onChange(value: string) {
         const project = JSON.parse(JSON.stringify(store.getState().visProject));
         const field = this.props.field;
 
@@ -527,7 +604,6 @@ class WidgetBindingField extends Component {
                         onClick={() => this.insertInText('sqrt', {
                             oldStyle: true,
                             desc: 'square root',
-                            args: [{ type: 'number', label: 'M' }],
                         })}
                     >
                         sqrt
@@ -586,14 +662,23 @@ class WidgetBindingField extends Component {
                 <li>
                     <b
                         className={classes.clickable}
-                        onClick={() => this.insertInText('ceil', {
+                        onClick={() => this.insertInText('random', {
                             oldStyle: true,
-                            desc: 'Math.ceil',
+                            desc: 'Math.random',
                         })}
                     >
-                        ceil
+                        random
                     </b>
-                    <b className={classes.clickable} onClick={() => this.insertInText('*', true, true)}>random(R)</b>
+                    <b
+                        className={classes.clickable}
+                        onClick={() => this.insertInText('random', {
+                            oldStyle: true,
+                            desc: 'Math.random',
+                            args: [{ type: 'number', label: 'R' }],
+                        })}
+                    >
+                        random(R)
+                    </b>
                     - Math.random() * R, or just Math.random() if no argument
                 </li>
                 <li>
@@ -805,6 +890,7 @@ class WidgetBindingField extends Component {
                 </Button>
                 <Button
                     variant="contained"
+                    // @ts-expect-error grey is valid color
                     color="grey"
                     startIcon={<Cancel />}
                     onClick={() => this.setState({ showEditBindingDialog: false })}
@@ -815,7 +901,7 @@ class WidgetBindingField extends Component {
         </Dialog>;
     }
 
-    static isInBrackets(text, pos) {
+    static isInBrackets(text: string, pos: number): boolean {
         let counter = 0;
         for (let i = 0; i < pos; i++) {
             if (text[i] === '{') {
@@ -845,6 +931,7 @@ class WidgetBindingField extends Component {
             <DialogActions>
                 <Button
                     variant="contained"
+                    // @ts-expect-error grey is valid color
                     color="grey"
                     onClick={() => {
                         const options = this.state.askToModify;
@@ -857,6 +944,7 @@ class WidgetBindingField extends Component {
                 </Button>
                 <Button
                     variant="contained"
+                    // @ts-expect-error grey is valid color
                     color="grey"
                     onClick={() => {
                         const options = this.state.askToModify;
@@ -921,7 +1009,6 @@ class WidgetBindingField extends Component {
                 </div> : null}
                 {this.state.askForArguments.args[1] ? <div>
                     <FormControlLabel
-                        variant="standard"
                         label={this.state.askForArguments.args[1].label}
                         control={<Checkbox
                             checked={!!this.state.askForArguments.arg2}
@@ -933,6 +1020,7 @@ class WidgetBindingField extends Component {
             <DialogActions>
                 <Button
                     variant="contained"
+                    // @ts-expect-error grey is valid color
                     color="grey"
                     onClick={() => {
                         const options = this.state.askForArguments;
@@ -945,6 +1033,7 @@ class WidgetBindingField extends Component {
                 </Button>
                 <Button
                     variant="contained"
+                    // @ts-expect-error grey is valid color
                     color="grey"
                     onClick={() => this.setState({ askForArguments: null })}
                 >
@@ -954,7 +1043,10 @@ class WidgetBindingField extends Component {
         </Dialog>;
     }
 
-    async insertInText(text, options) {
+    async insertInText(
+        text: string,
+        options?: ModifyOptions,
+    ): Promise<void> {
         options = options || {};
         const selectionStart = options.selectionStart === undefined ? this.inputRef.current.selectionStart : options.selectionStart;
         const selectionEnd = options.selectionEnd === undefined ? this.inputRef.current.selectionEnd : options.selectionEnd;
@@ -1010,7 +1102,9 @@ class WidgetBindingField extends Component {
             this.inputRef.current.focus();
             if (this.inputRef.current.setSelectionRange) {
                 this.inputRef.current.setSelectionRange(selectionStart, selectionStart);
-            } else if (this.inputRef.current.createTextRange) {
+                // @ts-expect-error deprecated, but here because of IE
+            } else if (this.inputRef.current?.createTextRange) {
+                // @ts-expect-error deprecated, but here because of IE
                 const t = this.inputRef.current.createTextRange();
                 t.collapse(true);
                 t.moveEnd('character', selectionStart);
@@ -1028,12 +1122,18 @@ class WidgetBindingField extends Component {
             key="selectDialog"
             imagePrefix="../"
             selected={this.state.selectionValue}
-            onOk={async selected => {
+            onOk={async _selected => {
+                let selected;
+                if (Array.isArray(_selected)) {
+                    selected = _selected[0];
+                } else {
+                    selected = _selected;
+                }
                 // insert on cursor and replace selected text
-                await this.insertInText(selected, { selectionStart: this.state.selectionStart, selectionEnd: this.state.selectionEnd });
+                selected && await this.insertInText(selected, { selectionStart: this.state.selectionStart, selectionEnd: this.state.selectionEnd });
             }}
             onClose={() => this.setState({ showSelectIdDialog: false })}
-            socket={this.props.socket}
+            socket={this.props.socket as any as Connection}
         />;
     }
 
@@ -1079,20 +1179,5 @@ class WidgetBindingField extends Component {
         ];
     }
 }
-
-WidgetBindingField.propTypes = {
-    label: PropTypes.string,
-    field: PropTypes.object,
-    selectedView: PropTypes.string,
-    isStyle: PropTypes.bool,
-    selectedWidgets: PropTypes.array,
-    changeProject: PropTypes.func,
-    disabled: PropTypes.bool,
-    socket: PropTypes.object,
-    // adapterName: PropTypes.string,
-    // instance: PropTypes.number,
-    // projectName: PropTypes.string,
-    isDifferent: PropTypes.bool,
-};
 
 export default withStyles(styles)(WidgetBindingField);
