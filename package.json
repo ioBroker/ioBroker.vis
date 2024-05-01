@@ -41,7 +41,7 @@
     "gulp-replace": "^1.1.4",
     "iobroker.web": "*",
     "mocha": "^10.4.0",
-    "puppeteer": "^22.6.5"
+    "puppeteer": "^22.7.1"
   },
   "bugs": {
     "url": "https://github.com/iobroker/iobroker.vis/issues"
