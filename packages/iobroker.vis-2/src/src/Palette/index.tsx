@@ -26,14 +26,14 @@ import {
     Icon, LegacyConnection,
 } from '@iobroker/adapter-react-v5';
 
-import {Marketplace, MarketplaceWidgetRevision, Project} from '@iobroker/types-vis-2';
+import { Marketplace, MarketplaceWidgetRevision, Project } from '@iobroker/types-vis-2';
 import { store } from '@/Store';
 
 import { getWidgetTypes, WidgetType } from '@/Vis/visWidgetsCatalog';
+import { ThemeType } from '@iobroker/adapter-react-v5/types';
 import { loadComponent } from '@/Vis/visLoadWidgets';
 import Widget from './Widget';
 import MarketplacePalette from '../Marketplace/MarketplacePalette';
-import {ThemeType} from "@iobroker/adapter-react-v5/types";
 
 // declare global {
 //     interface Window {

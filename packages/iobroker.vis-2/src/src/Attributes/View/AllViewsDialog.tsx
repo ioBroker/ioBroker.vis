@@ -155,7 +155,8 @@ export default function showAllViewsDialog(props: ShowAllViewsDialogProps) {
                                         }}
                                     >
                                         <FormatPaint />
-                                    </IconButton></Tooltip> : null}
+                                    </IconButton>
+                                </Tooltip> : null}
                             </div>}
                         </Draggable>)}
                         {dropProvided.placeholder}

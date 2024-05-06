@@ -250,13 +250,11 @@ const ViewAttributes = (props: ViewProps) => {
 
     const view: View = project[props.selectedView];
 
-    let resolutionSelect = 'none';
+    let resolutionSelect = `${view.settings.sizex}x${view.settings.sizey}`;
     if (!view.settings || (view.settings.sizex === undefined && view.settings.sizey === undefined)) {
         resolutionSelect = 'none';
     } else if (!resolution.find(item => item.value === resolutionSelect)) {
         resolutionSelect = 'user';
-    } else {
-        resolutionSelect = `${view.settings.sizex}x${view.settings.sizey}`;
     }
 
     const fields = useMemo(

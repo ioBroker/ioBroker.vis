@@ -34,11 +34,12 @@ import {
     Icon,
 } from '@iobroker/adapter-react-v5';
 
+import VisBaseWidget from '@/Vis/visBaseWidget';
+
 // eslint-disable-next-line import/no-cycle
 import VisRxWidget from '../../visRxWidget';
 import BulkEditor from './BulkEditor';
 import { deepClone } from '../../../Utils/utils';
-import VisBaseWidget from "@/Vis/visBaseWidget";
 
 class JQuiState extends VisRxWidget {
     static getWidgetInfo() {
