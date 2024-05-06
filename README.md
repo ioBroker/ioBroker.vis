@@ -264,7 +264,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.9.53 (2024-05-06)
 * (bluefox) Allowed applying styles to jqui buttons
 
 ### 2.9.52 (2024-04-25)

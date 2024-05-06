@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.52",
+    "version": "2.9.53",
     "news": {
+      "2.9.53": {
+        "en": "Allowed applying styles to jqui buttons",
+        "de": "Erlaubte Anwendung von Stilen auf jqui Tasten",
+        "ru": "Позволяет применять стили к кнопкам jqui",
+        "pt": "Permite aplicar estilos para botões jqui",
+        "nl": "Toegestaan het toepassen van stijlen op jqui-knoppen",
+        "fr": "Permet d'appliquer des styles aux boutons de jqui",
+        "it": "Consente di applicare stili ai pulsanti jqui",
+        "es": "Permitido aplicar estilos a botones jqui",
+        "pl": "Dozwolone stosowanie stylów do przycisków jqui",
+        "uk": "Допускається нанесення стилів на кнопки джипа",
+        "zh-cn": "允许对 Jqui 按钮应用样式"
+      },
       "2.9.52": {
         "en": "Navigation was improved: adjustable menu width and bulk edit were added",
         "de": "Navigation wurde verbessert: einstellbare Menübreite und Massenbearbeitung wurden hinzugefügt",
@@ -80,19 +93,6 @@
         "pl": "Dozwolone ograniczenie rozmiaru widoku tylko na pulpicie\nZmień słowo \"Filtr\" na \"Szukaj\"",
         "uk": "Допускається обмеження розміру переглядів тільки на робочому столі\nЗміна слова \"Фільтр\" в \"Пошук\"",
         "zh-cn": "只允许限制桌面上的视图大小\n将\"Filter\"改为\"Search\""
-      },
-      "2.9.40": {
-        "en": "Migrated the filter widget to react\nMigrated the basic link widget to react",
-        "de": "Das Filter-Widget migriert\nDas grundlegende Link-Widget migriert",
-        "ru": "Мигрировал виджет фильтра, чтобы реагировать\nМигрировал основной виджет ссылки, чтобы реагировать",
-        "pt": "Migrado o widget do filtro para reagir\nMigrado o widget de link básico para reagir",
-        "nl": "Het filterwidget migreren om te reageren\nDe basisverbindingswidget migreren om te reageren",
-        "fr": "Migré le widget filtre pour réagir\nMigré le widget de lien de base pour réagir",
-        "it": "Migrato il widget del filtro per reagire\nMigrato il widget di collegamento di base per reagire",
-        "es": "Migramos el widget del filtro para reaccionar\nMigramos el widget de enlace básico para reaccionar",
-        "pl": "Migrował widżet filtra do reakcji\nMigrował podstawowy widget link do reakcji",
-        "uk": "Віджет фільтра для реагації\nМіграція базового посилання віджету для реагації",
-        "zh-cn": "移动过滤部件以反应\n移动基本链接部件以反应"
       }
     },
     "title": "Visualisation Next Generation",
