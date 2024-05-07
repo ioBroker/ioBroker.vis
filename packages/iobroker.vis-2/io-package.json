@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.57",
+    "version": "2.9.58",
     "news": {
+      "2.9.58": {
+        "en": "test automatic release",
+        "de": "test automatische freigabe",
+        "ru": "автоматический выпуск",
+        "pt": "teste de liberação automática",
+        "nl": "automatische vrijgave van de test",
+        "fr": "essai de libération automatique",
+        "it": "prova rilascio automatico",
+        "es": "prueba de liberación automática",
+        "pl": "automatyczne zwolnienie badania",
+        "uk": "тест автоматичний реліз",
+        "zh-cn": "测试自动释放"
+      },
       "2.9.57": {
         "en": "test automatic release",
         "de": "test automatische freigabe",
@@ -80,19 +93,6 @@
         "pl": "Nawigacja została ulepszona: dodano regulowaną szerokość menu i masową edycję",
         "uk": "Навігація була покращена: регульована ширина меню та сипучі редагування були додані",
         "zh-cn": "导航改进:增加了可调整菜单宽度和批量编辑"
-      },
-      "2.9.50": {
-        "en": "Corrected widget in widget behavior",
-        "de": "Korrigiertes Widget im Widget-Verhalten",
-        "ru": "Исправленный виджет в поведении виджетов",
-        "pt": "Widget corrigido no comportamento do widget",
-        "nl": "Gecorrigeerd widget in widgetgedrag",
-        "fr": "Correction du widget dans le comportement du widget",
-        "it": "Pulito widget nel comportamento dei widget",
-        "es": "El widget corregido en el comportamiento del widget",
-        "pl": "Poprawiony widget w zachowania widget",
-        "uk": "Виправлений віджет в поведінка віджету",
-        "zh-cn": "在部件行为中更正的部件"
       }
     },
     "title": "Visualisation Next Generation",

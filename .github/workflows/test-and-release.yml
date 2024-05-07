@@ -63,7 +63,7 @@ jobs:
       contains(github.event.head_commit.message, '[skip ci]') == false &&
       github.event_name == 'push' &&
       startsWith(github.ref, 'refs/tags/')
-    runs-on: ubuntu-latest #macos-latest # ubuntu-latest has too few RAM
+    runs-on: macos-latest # ubuntu-latest has too few RAM
 
     steps:
       - name: Checkout code
@@ -95,14 +95,20 @@ jobs:
         run: npm run build
 
       - name: Publish package to npm
+        env:
+          VERSION: ${{ steps.extract_release.outputs.VERSION }}
         run: |
           npm config set //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
           npm whoami
           
+          git remote set-head origin --auto
+          
           git add .
           git config --global user.email "dogafox@gmail.com"
           git config --global user.name "Github Action"
-          git commit -m "v${{ steps.extract_release.outputs.VERSION }}" && npx lerna version ${{ steps.extract_release.outputs.VERSION }} --no-push --exact --no-commit-hooks --yes --amend --force-publish || npx lerna version ${{ steps.extract_release.outputs.VERSION }} --exact --no-push --no-commit-hooks --yes --force-publish
+          git commit -m "v${VERSION}" && npx lerna version ${VERSION} --no-push --exact --no-commit-hooks --yes --amend --force-publish || npx lerna version ${VERSION} --exact --no-push --no-commit-hooks --yes --force-publish
+          
+          git status
           
           npx lerna publish from-package --yes
 
