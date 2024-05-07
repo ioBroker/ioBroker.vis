@@ -98,6 +98,10 @@ jobs:
         run: |
           npm config set //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
           npm whoami
+          
+          git add .
+          git commit -m "v${VERSION}" && npx lerna version ${VERSION} --no-push --exact --no-commit-hooks --yes --amend --force-publish || npx lerna version ${VERSION} --exact --no-push --no-commit-hooks --yes --force-publish
+          
           npx lerna publish from-package --yes
 
       - name: Create Github Release
