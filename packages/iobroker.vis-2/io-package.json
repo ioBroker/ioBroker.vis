@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.53",
+    "version": "2.9.54",
     "news": {
+      "2.9.54": {
+        "en": "test automatic release",
+        "de": "test automatische freigabe",
+        "ru": "автоматический выпуск",
+        "pt": "teste de liberação automática",
+        "nl": "automatische vrijgave van de test",
+        "fr": "essai de libération automatique",
+        "it": "prova rilascio automatico",
+        "es": "prueba de liberación automática",
+        "pl": "automatyczne zwolnienie badania",
+        "uk": "тест автоматичний реліз",
+        "zh-cn": "测试自动释放"
+      },
       "2.9.53": {
         "en": "Allowed applying styles to jqui buttons",
         "de": "Erlaubte Anwendung von Stilen auf jqui Tasten",
@@ -80,19 +93,6 @@
         "pl": "Pokazał zaznaczony widok w oknie widoku\nDodano dostosowanie ekranu ładowania\nUszanowana flaga Sentry wyłącza w GUI",
         "uk": "Показати вибраний вигляд у діалоговому вікні перегляду\nДодано налаштування екрану завантаження\nУвімкніть прапор відправника в GUI",
         "zh-cn": "在视图对话框中显示选中视图\n添加加载屏幕的定制\n遵守了图形界面中的监视禁用旗"
-      },
-      "2.9.42": {
-        "en": "Allowed limiting the view size only on desktop\nChange word \"Filter\" to \"Search\"",
-        "de": "Erlaubt, die Ansichtsgröße nur auf dem Desktop zu begrenzen\nWort \"Filter\" zu \"Search\" ändern",
-        "ru": "Разрешено ограничивать размер обзора только на настольном\nСменить слово \"Фильтер\" на \"Сеарх\"",
-        "pt": "Permite limitar o tamanho da vista apenas na área de trabalho\nAlterar palavra \"Filter\" para \"Search\"",
-        "nl": "Toegestaan om de weergavegrootte alleen op bureaublad te beperken\nWijzig woord \"Filter\" in \"Zoeken\"",
-        "fr": "Limiter la taille de la vue uniquement sur le bureau\nChanger le mot \"Filter\" en \"Rechercher\"",
-        "it": "Limitare la dimensione della vista solo sul desktop\nCambia la parola \"Filter\" a \"Search\"",
-        "es": "Permitido limitar el tamaño de la vista sólo en el escritorio\nCambiar la palabra \"Filter\" a \"Search\"",
-        "pl": "Dozwolone ograniczenie rozmiaru widoku tylko na pulpicie\nZmień słowo \"Filtr\" na \"Szukaj\"",
-        "uk": "Допускається обмеження розміру переглядів тільки на робочому столі\nЗміна слова \"Фільтр\" в \"Пошук\"",
-        "zh-cn": "只允许限制桌面上的视图大小\n将\"Filter\"改为\"Search\""
       }
     },
     "title": "Visualisation Next Generation",

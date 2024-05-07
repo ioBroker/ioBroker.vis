@@ -63,7 +63,7 @@ jobs:
       contains(github.event.head_commit.message, '[skip ci]') == false &&
       github.event_name == 'push' &&
       startsWith(github.ref, 'refs/tags/')
-    runs-on: macos-latest # ubuntu-latest has too few RAM
+    runs-on: ubuntu-latest #macos-latest # ubuntu-latest has too few RAM
 
     steps:
       - name: Checkout code
@@ -98,10 +98,6 @@ jobs:
         run: |
           npm config set //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
           npm whoami
-          git config --global user.email "dogafox@gmail.com"
-          git config --global user.name "Github Action"
-          git add .
-          git commit -m "v${VERSION}" && npx lerna version ${VERSION} --no-push --exact --ignore-scripts --no-commit-hooks --yes --amend --force-publish || npx lerna version ${VERSION} --exact --no-push --ignore-scripts --no-commit-hooks --yes --force-publish
           npx lerna publish from-package --yes
 
       - name: Create Github Release
