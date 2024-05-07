@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.55",
+    "version": "2.9.56",
     "news": {
+      "2.9.56": {
+        "en": "test automatic release",
+        "de": "test automatische freigabe",
+        "ru": "автоматический выпуск",
+        "pt": "teste de liberação automática",
+        "nl": "automatische vrijgave van de test",
+        "fr": "essai de libération automatique",
+        "it": "prova rilascio automatico",
+        "es": "prueba de liberación automática",
+        "pl": "automatyczne zwolnienie badania",
+        "uk": "тест автоматичний реліз",
+        "zh-cn": "测试自动释放"
+      },
       "2.9.55": {
         "en": "test automatic release",
         "de": "test automatische freigabe",
@@ -80,19 +93,6 @@
         "pl": "Poprawiono przyciski przewijania w widżecie Tabs\nPoprawione rezysery, jeżeli szerokość graniczna jest ustawiona",
         "uk": "Виправлено кнопки прокрутки в віджеті Tabs\nВиправлені резистори, якщо ширина кордону встановлена",
         "zh-cn": "更正 Tabs 部件中的滚动按钮\n如果设置了边框宽度, 已更正的再分配器"
-      },
-      "2.9.48": {
-        "en": "Showed selected view in the view dialog\nAdded customization of loading screen\nRespected the sentry disable flag in GUI",
-        "de": "Gezeigte ausgewählte Ansicht im Ansichtsdialog\nHinzugefügt Anpassung des Ladebildschirms\nRespected the sentry disable flag in GUI",
-        "ru": "Показать выбранный вид в диалоге просмотра\nДобавлена настройка экрана загрузки\nУважение отсылочного флага в GUI",
-        "pt": "Visualização selecionada na caixa de diálogo visualização\nAdicionado personalização da tela de carregamento\nRespeitado a bandeira de desativação de sentinela em GUI",
-        "nl": "Geselecteerde weergave tonen in het weergavevenster\nAanpassen van het laadscherm toegevoegd\nRespecteerde de wachtersvlag in GUI",
-        "fr": "Affichage de la vue sélectionnée dans la boîte de dialogue vue\nAjout de la personnalisation de l'écran de chargement\nRespecté le drapeau de désactivation de sentinelle dans GUI",
-        "it": "Mostrata la vista selezionata nella finestra di dialogo vista\nAggiunta personalizzazione dello schermo di caricamento\nRispettato la bandiera disattiva della sentinella GUI",
-        "es": "Visualización de la vista seleccionada en el diálogo de vista\nAñadido la personalización de la pantalla de carga\nRespetó la bandera desactiva del centinela en GUI",
-        "pl": "Pokazał zaznaczony widok w oknie widoku\nDodano dostosowanie ekranu ładowania\nUszanowana flaga Sentry wyłącza w GUI",
-        "uk": "Показати вибраний вигляд у діалоговому вікні перегляду\nДодано налаштування екрану завантаження\nУвімкніть прапор відправника в GUI",
-        "zh-cn": "在视图对话框中显示选中视图\n添加加载屏幕的定制\n遵守了图形界面中的监视禁用旗"
       }
     },
     "title": "Visualisation Next Generation",
