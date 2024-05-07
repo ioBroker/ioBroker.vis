@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.58",
+    "version": "2.9.59",
     "news": {
+      "2.9.59": {
+        "en": "test automatic release",
+        "de": "test automatische freigabe",
+        "ru": "автоматический выпуск",
+        "pt": "teste de liberação automática",
+        "nl": "automatische vrijgave van de test",
+        "fr": "essai de libération automatique",
+        "it": "prova rilascio automatico",
+        "es": "prueba de liberación automática",
+        "pl": "automatyczne zwolnienie badania",
+        "uk": "тест автоматичний реліз",
+        "zh-cn": "测试自动释放"
+      },
       "2.9.58": {
         "en": "test automatic release",
         "de": "test automatische freigabe",
@@ -80,19 +93,6 @@
         "pl": "Dozwolone stosowanie stylów do przycisków jqui",
         "uk": "Допускається нанесення стилів на кнопки джипа",
         "zh-cn": "允许对 Jqui 按钮应用样式"
-      },
-      "2.9.52": {
-        "en": "Navigation was improved: adjustable menu width and bulk edit were added",
-        "de": "Navigation wurde verbessert: einstellbare Menübreite und Massenbearbeitung wurden hinzugefügt",
-        "ru": "Навигация была улучшена: была добавлена регулируемая ширина меню и опция",
-        "pt": "A navegação foi melhorada: largura do menu ajustável e edição em massa foram adicionados",
-        "nl": "Navigatie was verbeterd: instelbare menubreedte en bulkbewerking werden toegevoegd",
-        "fr": "La navigation a été améliorée : largeur réglable du menu et modification en vrac ont été ajoutées",
-        "it": "La navigazione è stata migliorata: è stata aggiunta la larghezza del menu regolabile e la modifica della massa",
-        "es": "Se mejoró la navegación: ancho de menú ajustable y edición a granel se agregaron",
-        "pl": "Nawigacja została ulepszona: dodano regulowaną szerokość menu i masową edycję",
-        "uk": "Навігація була покращена: регульована ширина меню та сипучі редагування були додані",
-        "zh-cn": "导航改进:增加了可调整菜单宽度和批量编辑"
       }
     },
     "title": "Visualisation Next Generation",

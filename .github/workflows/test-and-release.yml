@@ -68,6 +68,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          ref: 'master'
 
       - name: Use Node.js 18.x
         uses: actions/setup-node@v3
@@ -100,9 +102,7 @@ jobs:
         run: |
           npm config set //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
           npm whoami
-          
-          git remote set-head origin --auto
-          
+                    
           git add .
           git config --global user.email "dogafox@gmail.com"
           git config --global user.name "Github Action"
