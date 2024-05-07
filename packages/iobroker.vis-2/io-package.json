@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.59",
+    "version": "2.9.60",
     "news": {
+      "2.9.60": {
+        "en": "test automatic release",
+        "de": "test automatische freigabe",
+        "ru": "автоматический выпуск",
+        "pt": "teste de liberação automática",
+        "nl": "automatische vrijgave van de test",
+        "fr": "essai de libération automatique",
+        "it": "prova rilascio automatico",
+        "es": "prueba de liberación automática",
+        "pl": "automatyczne zwolnienie badania",
+        "uk": "тест автоматичний реліз",
+        "zh-cn": "测试自动释放"
+      },
       "2.9.59": {
         "en": "test automatic release",
         "de": "test automatische freigabe",
@@ -80,19 +93,6 @@
         "pl": "automatyczne zwolnienie badania",
         "uk": "тест автоматичний реліз",
         "zh-cn": "测试自动释放"
-      },
-      "2.9.53": {
-        "en": "Allowed applying styles to jqui buttons",
-        "de": "Erlaubte Anwendung von Stilen auf jqui Tasten",
-        "ru": "Позволяет применять стили к кнопкам jqui",
-        "pt": "Permite aplicar estilos para botões jqui",
-        "nl": "Toegestaan het toepassen van stijlen op jqui-knoppen",
-        "fr": "Permet d'appliquer des styles aux boutons de jqui",
-        "it": "Consente di applicare stili ai pulsanti jqui",
-        "es": "Permitido aplicar estilos a botones jqui",
-        "pl": "Dozwolone stosowanie stylów do przycisków jqui",
-        "uk": "Допускається нанесення стилів на кнопки джипа",
-        "zh-cn": "允许对 Jqui 按钮应用样式"
       }
     },
     "title": "Visualisation Next Generation",
