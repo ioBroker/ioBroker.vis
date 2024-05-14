@@ -264,11 +264,14 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Migrated some files to typescript
+
 ### 2.9.60 (2024-05-07)
 * (foxriver76) test automatic release
 
 ### 2.9.53 (2024-05-06)
-* (bluefox) Allowed applying styles to jqui buttons
+* (bluefox) Allowed applying styles to jQui buttons
 
 ### 2.9.52 (2024-04-25)
 * (bluefox) Navigation was improved: adjustable menu width and bulk edit were added

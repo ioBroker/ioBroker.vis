@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
 
 import {
@@ -14,6 +13,7 @@ import {
     Grid,
     Radio,
     RadioGroup, TextField, LinearProgress, Pagination,
+    type Theme,
 } from '@mui/material';
 
 import {
@@ -24,12 +24,13 @@ import {
 } from '@mui/icons-material';
 
 import { I18n, Utils, Icon } from '@iobroker/adapter-react-v5';
+import { MaterialIconSelectorProps } from '@iobroker/types-vis-2';
 
 import UploadFile from './UploadFile';
 
 const MAX_ICONS = 250;
 
-const styles = theme => ({
+const styles: Record<string, any> = (theme: Theme) => ({
     dialog: {
         height: '100%',
     },
@@ -67,11 +68,33 @@ const styles = theme => ({
 
 const ICON_TYPES = ['baseline', 'outline', 'round', 'sharp', 'twotone', 'knx-uf', 'upload'];
 
-class MaterialIconSelector extends Component {
-    constructor(props) {
+interface MaterialIconSelectorState {
+    listLoaded: boolean;
+    selectedIcon: string;
+    filter: string;
+    iconType: string;
+    iconTypeLoaded: Record<string, boolean>;
+    filtered: string[];
+    loading: boolean;
+    page: number;
+    maxPages: number;
+}
+
+class MaterialIconSelector extends Component<MaterialIconSelectorProps, MaterialIconSelectorState> {
+    private list: Record<string, any> = {};
+
+    private index: {
+        name: string;
+        version: number;
+        categories: string[];
+        tags: string[];
+        unsupported_families?: string[];
+    }[] | null = null;
+
+    private filterTimer: ReturnType<typeof setTimeout> | null = null;
+
+    constructor(props: MaterialIconSelectorProps) {
         super(props);
-        this.list = {};
-        this.index = null;
         const iconType = this.props.iconType || window.localStorage.getItem('vis.icon.type') || ICON_TYPES[0];
         this.state = {
             listLoaded: false,
@@ -86,13 +109,13 @@ class MaterialIconSelector extends Component {
         };
     }
 
-    setStateAsync(state) {
+    setStateAsync(state: Partial<MaterialIconSelectorState>): Promise<void> {
         return new Promise(resolve => {
-            this.setState(state, resolve);
+            this.setState(state as MaterialIconSelectorState, () => resolve());
         });
     }
 
-    async loadIconSet(type) {
+    async loadIconSet(type: string) {
         if (!this.list[type]) {
             await this.setStateAsync({ loading: true });
             this.list[type] = true;
@@ -139,7 +162,7 @@ class MaterialIconSelector extends Component {
         this.filterTimer && clearTimeout(this.filterTimer);
     }
 
-    applyFilter(filter) {
+    applyFilter(filter?: string | boolean) {
         let timeout = 200;
         if (filter === true) {
             timeout = 0;
@@ -151,16 +174,16 @@ class MaterialIconSelector extends Component {
             let filtered;
             filter = filter === undefined ? this.state.filter : filter;
             if (filter) {
-                filter = filter.toLowerCase();
+                filter = (filter as string).toLowerCase();
                 if (this.state.iconType === 'knx-uf') {
-                    filtered = Object.keys(this.list['knx-uf']).filter(icon => icon.includes(filter));
+                    filtered = Object.keys(this.list['knx-uf']).filter(icon => icon.includes(filter as string));
                 } else if (this.state.iconType === 'customIcons') {
-                    filtered = Object.keys(this.list.customIcons).filter(icon => icon.includes(filter));
+                    filtered = Object.keys(this.list.customIcons).filter(icon => icon.includes(filter as string));
                 } else {
                     filtered = this.index
                         .filter(icon =>
                             !icon.unsupported_families?.includes(this.state.iconType) &&
-                            (icon.name.includes(filter) || icon.tags?.find(tag => tag.includes(filter))))
+                            (icon.name.includes(filter as string) || icon.tags?.find(tag => tag.includes(filter as string))))
                         .map(icon => icon.name);
                 }
             } else if (this.state.iconType === 'knx-uf') {
@@ -266,7 +289,7 @@ class MaterialIconSelector extends Component {
                             {ICON_TYPES.map(type => <FormControlLabel
                                 onClick={async () => {
                                     window.localStorage.setItem('vis.icon.type', type);
-                                    const newState = { iconType: type };
+                                    const newState: Partial<MaterialIconSelectorState> = { iconType: type };
                                     if (type !== 'upload') {
                                         await this.loadIconSet(type);
                                         if (this.state.selectedIcon && !this.list[type][this.state.selectedIcon]) {
@@ -277,7 +300,7 @@ class MaterialIconSelector extends Component {
                                         newState.maxPages = 0;
                                     }
 
-                                    this.setState(newState, () => this.applyFilter(true));
+                                    this.setState(newState as MaterialIconSelectorState, () => this.applyFilter(true));
                                 }}
                                 key={type}
                                 value={type}
@@ -289,11 +312,11 @@ class MaterialIconSelector extends Component {
                                 onClick={async () => {
                                     window.localStorage.setItem('vis.icon.type', 'customIcons');
                                     await this.loadIconSet('customIcons');
-                                    const newState = { iconType: 'customIcons' };
+                                    const newState: Partial<MaterialIconSelectorState> = { iconType: 'customIcons' };
                                     if (this.state.selectedIcon && !this.list.customIcons[this.state.selectedIcon]) {
                                         newState.selectedIcon = '';
                                     }
-                                    this.setState(newState);
+                                    this.setState(newState as MaterialIconSelectorState);
                                 }}
                                 key="customIcons"
                                 value="customIcons"
@@ -357,7 +380,7 @@ class MaterialIconSelector extends Component {
                         </div>
                         <UploadFile
                             themeType={this.props.themeType}
-                            onUpload={(name, data) => this.setState({ selectedIcon: data })}
+                            onUpload={(name, data) => this.setState({ selectedIcon: data.toString() })}
                             maxSize={15_000}
                             accept={{
                                 'image/png': ['.png'],
@@ -384,6 +407,7 @@ class MaterialIconSelector extends Component {
                 {this.state.maxPages > 1 ? <div style={{ flexGrow: 1 }} /> : null}
                 {this.props.value ? <Button
                     variant="outlined"
+                    // @ts-expect-error grey is valid color
                     color="grey"
                     onClick={() => this.props.onClose('')}
                     startIcon={<EraseIcon />}
@@ -401,6 +425,7 @@ class MaterialIconSelector extends Component {
                 </Button>
                 <Button
                     variant="contained"
+                    // @ts-expect-error grey is valid color
                     color="grey"
                     onClick={() => this.props.onClose(null)}
                     startIcon={<ClearIcon />}
@@ -411,16 +436,6 @@ class MaterialIconSelector extends Component {
         </Dialog>;
     }
 }
-
-MaterialIconSelector.propTypes = {
-    value: PropTypes.string, // current icon
-    filter: PropTypes.string, // filter for icon list
-    iconType: PropTypes.string, // icon type (baseline, outlined, round, sharp, twotone)
-    onClose: PropTypes.func.isRequired, // close dialog
-    customIcons: PropTypes.string, // path to additional icons file
-    customColor: PropTypes.string, // additional icons color
-    themeType: PropTypes.string,
-};
 
 const _MaterialIconSelector = withStyles(styles)(MaterialIconSelector);
 window.VisMaterialIconSelector = _MaterialIconSelector;

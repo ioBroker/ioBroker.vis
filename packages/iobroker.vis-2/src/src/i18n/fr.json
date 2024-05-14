@@ -740,5 +740,6 @@
   "Loading objects...": "Chargement d'objets...",
   "Following views will be changed": "Les vues suivantes seront modifiées",
   "Show this attribute by all views": "Afficher cet attribut dans toutes les vues",
-  "Menu width": "Largeur du menu"
+  "Menu width": "Largeur du menu",
+  "Do not ask again": "Ne demande plus"
 }

@@ -15,7 +15,7 @@ interface IODialogProps {
     actionDisabled?: boolean;
     actionNoClose?: boolean;
     actionTitle?: string;
-    children: any;
+    children?: any;
     closeTitle?: string;
     closeDisabled?: boolean;
     dialogActions?: any;

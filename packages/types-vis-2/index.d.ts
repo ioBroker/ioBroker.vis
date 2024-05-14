@@ -2,6 +2,7 @@ import type React from 'react';
 import type moment from 'moment';
 import type { Theme } from '@mui/material';
 import type { LegacyConnection } from '@iobroker/adapter-react-v5';
+import {ThemeType} from "@iobroker/adapter-react-v5/types";
 
 interface VisView {
     getOneWidget(index: number, widget: SingleWidget | GroupWidget, options: CreateWidgetOptions): React.JSX.Element | null;
@@ -843,6 +844,17 @@ export interface VisLegacy {
     detectBounce: (el: any, isUp?: boolean) => boolean;
 }
 
+export interface MaterialIconSelectorProps {
+    onClose: (icon: string | null) => void; // close dialog
+    value?: string; // current icon
+    filter?: string; // filter for icon list
+    iconType?: string; // icon type (baseline, outlined
+    customIcons?: string; // path to additional icons file
+    customColor?: string; // additional icons color
+    themeType: ThemeType;
+    classes: Record<string, string>;
+}
+
 export interface MarketplaceWidgetRevision {
     id: string;
     widget: (GroupWidget | SingleWidget)[],
@@ -912,6 +924,8 @@ declare global {
         collectClassesValue: Record<string, ClassesValue>;
         _: (word: string, ...args: (string | number | boolean)[]) => string;
         jQuery: any;
+
+        VisMaterialIconSelector: React.ComponentType<MaterialIconSelectorState>;
     }
 }
 

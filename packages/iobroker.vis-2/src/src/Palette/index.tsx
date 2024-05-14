@@ -32,6 +32,7 @@ import { store } from '@/Store';
 import { getWidgetTypes, WidgetType } from '@/Vis/visWidgetsCatalog';
 import { ThemeType } from '@iobroker/adapter-react-v5/types';
 import { loadComponent } from '@/Vis/visLoadWidgets';
+import type { MarketplaceDialogProps } from '@/Marketplace/MarketplaceDialog';
 import Widget from './Widget';
 import MarketplacePalette from '../Marketplace/MarketplacePalette';
 
@@ -159,7 +160,7 @@ interface PaletteProps {
     changeView: (view: string) => void;
     changeProject: (project: Project, ignoreHistory?: boolean) => Promise<void>;
     uninstallWidget: (widgetId: string) => void;
-    setMarketplaceDialog: (open: boolean) => void;
+    setMarketplaceDialog: (props: Partial<MarketplaceDialogProps>) => void;
     updateWidgets: () => void;
     widgetsLoaded: boolean;
     socket: LegacyConnection;

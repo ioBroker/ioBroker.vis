@@ -16,6 +16,7 @@ packages/iobroker.vis-2/admin/i18n/flat.txt
 beta
 /io-package.json
 /main.js
+package-lock.json
 
 build
 /.vscode

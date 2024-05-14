@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 
 import {
     Dialog, Button, DialogActions, DialogContent, DialogTitle,
@@ -14,7 +13,15 @@ import { I18n, Utils } from '@iobroker/adapter-react-v5';
 
 import CustomAceEditor from './CustomAceEditor';
 
-class CodeDialog extends Component {
+interface CodeDialogProps {
+    onClose: () => void;
+    title?: string;
+    themeType?: string;
+    code: string;
+    mode?: string;
+}
+
+class CodeDialog extends Component<CodeDialogProps> {
     render() {
         return <Dialog
             open={!0}
@@ -45,6 +52,7 @@ class CodeDialog extends Component {
                 </Button>
                 <Button
                     variant="contained"
+                    // @ts-expect-error grey is valid color
                     color="grey"
                     startIcon={<CloseIcon />}
                     onClick={() => this.props.onClose()}
@@ -55,13 +63,5 @@ class CodeDialog extends Component {
         </Dialog>;
     }
 }
-
-CodeDialog.propTypes = {
-    onClose: PropTypes.func.isRequired,
-    title: PropTypes.string,
-    themeType: PropTypes.string,
-    code: PropTypes.string.isRequired,
-    mode: PropTypes.string,
-};
 
 export default CodeDialog;

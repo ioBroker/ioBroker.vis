@@ -1,6 +1,5 @@
-import PropTypes from 'prop-types';
-import { useState, useCallback } from 'react';
-import { useDropzone } from 'react-dropzone';
+import React, { useState, useCallback } from 'react';
+import { FileError, useDropzone } from 'react-dropzone';
 
 import { CircularProgress } from '@mui/material';
 
@@ -10,20 +9,32 @@ import { I18n, Utils } from '@iobroker/adapter-react-v5';
 
 const IMAGE_TYPES = ['.png', '.jpg', '.svg', '.gif', '.apng', '.avif', '.webp'];
 
-const UploadFile = props => {
+interface UploadFileProps {
+    onUpload: (fileName: string, fileData: string | ArrayBuffer) => void;
+    disabled?: boolean;
+    themeType: string;
+    accept?: Record<string, string[]>; // {'application/zip': ['.zip'], 'application/json': ['.json']},
+    instruction?: string;
+    maxSize?: number;
+}
+
+const UploadFile = (props: UploadFileProps) => {
     const [fileName, setFileName] = useState('');
     const [fileData, setFileData] = useState(null);
     const [working, setWorking] = useState(false);
     const [error, setError] = useState('');
 
-    const onDrop = useCallback((acceptedFiles, fileRejections) => {
+    const onDrop = useCallback((acceptedFiles: File[], fileRejections: {
+        file: File;
+        errors: FileError[];
+    }[]) => {
         if (acceptedFiles?.length) {
             setWorking(true);
             error && setError('');
             const reader = new FileReader();
             setFileName(acceptedFiles[0].name);
 
-            reader.onload = async evt => {
+            reader.onload = async (evt: ProgressEvent<FileReader>) => {
                 setWorking(false);
                 setFileData(evt.target.result);
                 props.onUpload(acceptedFiles[0].name, evt.target.result);
@@ -96,15 +107,6 @@ const UploadFile = props => {
                 </> : (props.instruction || `${I18n.t('Drop the files here ...')} ${props.maxSize ? I18n.t('(Maximal file size is %s)', Utils.formatBytes(props.maxSize)) : ''}`)}
             </p>}
     </div>;
-};
-
-UploadFile.propTypes = {
-    onUpload: PropTypes.func,
-    disabled: PropTypes.bool,
-    themeType: PropTypes.string,
-    accept: PropTypes.object, // {'application/zip': ['.zip'], 'application/json': ['.json']},
-    instruction: PropTypes.string,
-    maxSize: PropTypes.number,
 };
 
 export default UploadFile;

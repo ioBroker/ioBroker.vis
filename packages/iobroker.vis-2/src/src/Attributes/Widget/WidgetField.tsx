@@ -1446,7 +1446,7 @@ const WidgetField = (props: WidgetFieldProps) => {
             {idDialog &&
                 <MaterialIconSelector
                     themeType={props.themeType}
-                    value={value}
+                    value={value as string}
                     onClose={(icon: string | null) => {
                         setIdDialog(false);
                         if (icon !== null) {

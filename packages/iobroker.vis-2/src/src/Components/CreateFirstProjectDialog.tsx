@@ -1,6 +1,13 @@
+import React from 'react';
 import IODialog from './IODialog';
 
-const CreateFirstProjectDialog = props => {
+interface CreateFirstProjectDialogProps {
+    open: boolean;
+    onClose: () => void;
+    addProject: (name: string) => void;
+}
+
+const CreateFirstProjectDialog = (props: CreateFirstProjectDialogProps) => {
     if (props.open) {
         return null;
     }

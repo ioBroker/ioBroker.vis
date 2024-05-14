@@ -4,7 +4,13 @@ import {
 } from '@mui/material';
 import { I18n } from '@iobroker/adapter-react-v5';
 
-const MarketplacePalette = props => <div>
+import { type MarketplaceDialogProps } from './MarketplaceDialog';
+
+interface MarketplacePaletteProps {
+    setMarketplaceDialog: (props: Partial<MarketplaceDialogProps>) => void;
+}
+
+const MarketplacePalette = (props: MarketplacePaletteProps) => <div>
     <Button variant="contained" color="primary" onClick={() => props.setMarketplaceDialog({})}>
         {I18n.t('Open widgeteria')}
     </Button>

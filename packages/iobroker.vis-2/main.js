@@ -549,6 +549,7 @@ const POSSIBLE_WIDGET_SETS_LOCATIONS = [
     path.normalize(`${__dirname}/../`),
     path.normalize(`${__dirname}/node_modules/`),
     path.normalize(`${__dirname}/../../`),
+    path.normalize(`${__dirname}/../../../`),
 ];
 
 async function readAdapterList() {

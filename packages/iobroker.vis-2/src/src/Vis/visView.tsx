@@ -58,6 +58,7 @@ export type WidgetReference = {
     onTempSelect?: (selected?: boolean) => void;
     onCommand?: (command: VisWidgetCommand, options?: any) => any;
     canHaveWidgets?: boolean;
+    doNotWantIncludeWidgets?: boolean;
 }
 
 declare global {
@@ -719,6 +720,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
                 if (this.props.selectedWidgets.includes(widgetId) ||
                     !widgetsRefs[widgetId] ||
                     !widgetsRefs[widgetId].canHaveWidgets ||
+                    widgetsRefs[widgetId].doNotWantIncludeWidgets ||
                     !widgetsRefs[widgetId].onCommand ||
                     !widgetsRefs[widgetId].refService?.current
                 ) {
@@ -851,6 +853,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
                 if (this.props.selectedWidgets.includes(widgetId) ||
                     !widgetsRefs[widgetId] ||
                     !widgetsRefs[widgetId].canHaveWidgets ||
+                    widgetsRefs[widgetId].doNotWantIncludeWidgets ||
                     !widgetsRefs[widgetId].onCommand ||
                     !widgetsRefs[widgetId].refService?.current
                 ) {

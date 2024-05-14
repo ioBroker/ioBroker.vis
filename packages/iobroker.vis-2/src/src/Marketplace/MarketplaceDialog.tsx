@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import {
     Button, Dialog, DialogActions, DialogContent, DialogTitle,
@@ -7,12 +6,30 @@ import {
 import { Close } from '@mui/icons-material';
 
 import { I18n } from '@iobroker/adapter-react-v5';
+import { ThemeName } from '@iobroker/adapter-react-v5/types';
+import {
+    GroupWidget,
+    GroupWidgetId,
+    MarketplaceWidgetRevision,
+    SingleWidget,
+    SingleWidgetId,
+} from '@iobroker/types-vis-2';
 import { store } from '../Store';
 
-const MarketplaceDialog = props => {
+export interface MarketplaceDialogProps {
+    onClose: () => void;
+    addPage?: boolean;
+    widget?: { name: string; date: string; widget_id: string; image_id: string };
+    installedWidgets: MarketplaceWidgetRevision[];
+    updateWidgets: (widget: MarketplaceWidgetRevision) => void;
+    installWidget: (widgetId: string, id: string) => void;
+    themeName: ThemeName;
+}
+
+const MarketplaceDialog = (props: MarketplaceDialogProps) => {
     const VisMarketplace = window.VisMarketplace?.default;
 
-    let installWidget;
+    let installWidget: (marketplace: MarketplaceWidgetRevision) => void;
 
     if (props.installWidget) {
         installWidget = async marketplace => {
@@ -21,14 +38,16 @@ const MarketplaceDialog = props => {
 
             Object.keys(project).forEach(view => {
                 if (view !== '___settings') {
-                    const viewWidgets = {
+                    const viewWidgets: { name: string; widgets: (GroupWidgetId | SingleWidgetId)[] } = {
                         name: view,
                         widgets: [],
                     };
-                    Object.keys(project[view].widgets).forEach(widget => {
-                        if (project[view].widgets[widget].marketplace?.widget_id === marketplace.widget_id &&
-                        project[view].widgets[widget].marketplace?.version !== marketplace.version) {
-                            viewWidgets.widgets.push(widget);
+                    Object.keys(project[view].widgets).forEach((wid: GroupWidgetId | SingleWidgetId) => {
+                        const widget: GroupWidget | SingleWidget = project[view].widgets[wid];
+                        if (widget.marketplace?.widget_id === marketplace.widget_id &&
+                            widget.marketplace?.version !== marketplace.version
+                        ) {
+                            viewWidgets.widgets.push(wid);
                         }
                     });
                     if (viewWidgets.widgets.length) {
@@ -54,6 +73,7 @@ const MarketplaceDialog = props => {
         <DialogTitle>{props.addPage ? I18n.t('Add new or update existing widget') : I18n.t('Browse the widgeteria')}</DialogTitle>
         <DialogContent>
             {VisMarketplace &&
+                // @ts-expect-error how to fix it?
                 <VisMarketplace
                     language={I18n.getLanguage()}
                     addPage={props.addPage}
@@ -75,16 +95,6 @@ const MarketplaceDialog = props => {
             </Button>
         </DialogActions>
     </Dialog>;
-};
-
-MarketplaceDialog.propTypes = {
-    addPage: PropTypes.func,
-    onClose: PropTypes.func,
-    widget: PropTypes.object,
-    installedWidgets: PropTypes.array,
-    updateWidgets: PropTypes.func,
-    installWidget: PropTypes.func,
-    themeName: PropTypes.string,
 };
 
 export default MarketplaceDialog;

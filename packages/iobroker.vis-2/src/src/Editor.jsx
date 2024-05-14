@@ -1377,6 +1377,17 @@ class Editor extends Runtime {
                 </DialogContent>
                 <DialogActions>
                     <Button
+                        variant="outlined"
+                        onClick={() => {
+                            const project = deepClone(store.getState().visProject);
+                            project[this.state.selectedView].widgets[this.state.askAboutInclude.toWid].data.doNotWantIncludeWidgets = true;
+                            this.changeProject(project, true)
+                                .then(() => this.setState({ askAboutInclude: null }));
+                        }}
+                    >
+                        {I18n.t('Do not ask again')}
+                    </Button>
+                    <Button
                         variant="contained"
                         onClick={() => {
                             const askAboutInclude = this.state.askAboutInclude;
@@ -2053,7 +2064,6 @@ class Editor extends Runtime {
                     {this.renderLegacyFileSelectorDialog()}
                     {this.renderAskAboutIncludeDialog()}
                     {this.state.marketplaceDialog ? <MarketplaceDialog
-                        fullScreen
                         onClose={() => this.setState({ marketplaceDialog: false })}
                         installWidget={this.installWidget}
                         updateWidgets={this.updateWidgets}
