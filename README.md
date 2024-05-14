@@ -264,7 +264,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.9.61 (2024-05-14)
 * (bluefox) Migrated some files to typescript
 
 ### 2.9.60 (2024-05-07)
