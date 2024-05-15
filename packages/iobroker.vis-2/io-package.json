@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.62",
+    "version": "2.9.63",
     "news": {
+      "2.9.63": {
+        "en": "Migrated some files to typescript",
+        "de": "Einige Dateien zu beschreiben",
+        "ru": "Перечислили некоторые файлы для печатания",
+        "pt": "Migrado alguns arquivos para digitar",
+        "nl": "Sommige bestanden naar typescript migreren",
+        "fr": "Migré certains fichiers pour dactylographier",
+        "it": "Migrato alcuni file per typescript",
+        "es": "Migrated algunos archivos para escribirscript",
+        "pl": "Migrowała pliki na maszynie",
+        "uk": "Переміщено деякі файли для відображення",
+        "zh-cn": "将一些文件移动到打字符"
+      },
       "2.9.62": {
         "en": "Migrated some files to typescript",
         "de": "Einige Dateien zu beschreiben",
