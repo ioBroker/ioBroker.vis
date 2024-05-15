@@ -483,14 +483,23 @@ class Palette extends Component<PaletteProps, PaletteState> {
         reload && setTimeout(() => window.location.reload(), 1000);
     }
 
+    buildListTrigger(immediate?: boolean) {
+        if (this.buildWidgetListTimeout) {
+            clearTimeout(this.buildWidgetListTimeout);
+            this.buildWidgetListTimeout = null;
+        }
+        this.buildWidgetListTimeout = this.buildWidgetListTimeout || setTimeout(() => {
+            this.buildWidgetListTimeout = null;
+            this.buildWidgetList();
+        }, immediate ? 0 : 100);
+    }
+
     render() {
         if (!this.props.widgetsLoaded) {
             return null;
         }
         if (!this.state.widgetsList) {
-            this.buildWidgetListTimeout = this.buildWidgetListTimeout || setTimeout(() => {
-                this.buildWidgetList();
-            });
+            this.buildListTrigger(true);
             return null;
         }
 
@@ -550,12 +559,12 @@ class Palette extends Component<PaletteProps, PaletteState> {
                     variant="standard"
                     fullWidth
                     value={this.state.filter}
-                    onChange={e => this.setState({ filter: e.target.value })}
+                    onChange={e => this.setState({ filter: e.target.value }, () => this.buildListTrigger())}
                     label={this.state.filter ? ' ' : I18n.t('Search')}
                     className={classes.searchLabel}
                     InputProps={{
                         className: classes.clearPadding,
-                        endAdornment: this.state.filter ? <IconButton size="small" onClick={() => this.setState({ filter: '' })}>
+                        endAdornment: this.state.filter ? <IconButton size="small" onClick={() => this.setState({ filter: '' }, () => this.buildListTrigger())}>
                             <ClearIcon />
                         </IconButton> : null,
                         startAdornment: <InputAdornment position="start">

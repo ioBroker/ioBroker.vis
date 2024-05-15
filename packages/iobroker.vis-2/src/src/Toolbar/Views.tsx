@@ -1,5 +1,4 @@
-import PropTypes from 'prop-types';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { withStyles } from '@mui/styles';
 
 import {
@@ -19,9 +18,8 @@ import ViewsManager from './ViewsManager';
 import ToolbarItems from './ToolbarItems';
 
 import ViewDialog from './ViewsManager/ViewDialog';
-import { store } from '../Store';
 
-const styles = () => ({
+const styles: Record<string, any> = {
     label: {
         maxWidth: 180,
         textOverflow: 'ellipsis',
@@ -33,19 +31,37 @@ const styles = () => ({
         cursor: 'pointer',
         fontWeight: 'bold',
     },
-});
+};
 
-const Views = props => {
+interface ViewsProps {
+    projectName: string;
+    selectedView: string;
+    setViewsManager: (open: boolean) => void;
+    viewsManager: boolean;
+    selectedGroup: string;
+    editMode: boolean;
+    setProjectsDialog: (open: boolean) => void;
+    classes: Record<string, string>;
+    changeProject: (project: Record<string, any>) => Promise<void>;
+    changeView: (viewName: string) => Promise<void>;
+}
+
+const Views = (props: ViewsProps) => {
     const [dialog, setDialog] = useState(null);
     const [dialogCallback, setDialogCallback] = useState(null);
     const [dialogName, setDialogName] = useState('');
     const [dialogView, setDialogView] = useState(null);
     const [dialogParentId, setDialogParentId] = useState(null);
 
-    const showDialog = (type, view, parentId, cb) => {
+    const showDialog = (
+        type: 'add' | 'rename' | 'delete' | 'copy',
+        view?: string,
+        parentId?: string,
+        cb?: () => void,
+    ) => {
         view = view || props.selectedView;
 
-        const dialogDefaultName = {
+        const dialogDefaultName: Record<string, string> = {
             add: I18n.t('New view'),
             rename: view,
             copy: `${view} ${I18n.t('Copy noun')}`,
@@ -105,20 +121,11 @@ const Views = props => {
             setDialogView={setDialogView}
             setDialogName={setDialogName}
             setDialogParentId={setDialogParentId}
-            classes={{}}
-            project={store.getState().visProject}
-            {...props}
+            changeProject={props.changeProject}
+            changeView={props.changeView}
+            selectedView={props.selectedView}
         />
     </>;
-};
-
-Views.propTypes = {
-    projectName: PropTypes.string,
-    selectedView: PropTypes.string,
-    setViewsManager: PropTypes.func,
-    viewsManager: PropTypes.bool,
-    selectedGroup: PropTypes.string,
-    editMode: PropTypes.bool,
 };
 
 export default withStyles(styles)(Views);

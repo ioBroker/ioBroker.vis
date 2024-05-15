@@ -5,6 +5,7 @@ import {
     Menu, List,
     ListItemButton, ListItemText,
     ListItemIcon, InputLabel, Button,
+    type Theme,
 } from '@mui/material';
 
 import {
@@ -13,8 +14,9 @@ import {
 } from '@mui/icons-material';
 
 import { Utils, I18n } from '@iobroker/adapter-react-v5';
+import { ThemeType } from '@iobroker/adapter-react-v5/types';
 
-const styles = theme => ({
+const styles: Record<string, any> = (theme: Theme) => ({
     navMain: {
         borderBottom: '1px solid transparent',
         '&:hover': {
@@ -74,8 +76,23 @@ const styles = theme => ({
     },
 });
 
-class MultiSelect extends Component {
-    constructor(props) {
+interface MultiSelectProps {
+    value: string[];
+    options: { value: string; name: string; subName?: string; color?: string; icon?: string }[];
+    label: string;
+    width: number;
+    onChange: (value: string[]) => void;
+    setSelectedWidgets: (widgets: string[]) => void;
+    themeType: ThemeType;
+    classes: Record<string, string>;
+}
+
+interface MultiSelectState {
+    elAnchor: HTMLDivElement | null;
+}
+
+class MultiSelect extends Component<MultiSelectProps, MultiSelectState> {
+    constructor(props: MultiSelectProps) {
         super(props);
         this.state = {
             elAnchor: null,
@@ -88,7 +105,7 @@ class MultiSelect extends Component {
 
         let text;
         let subText = null;
-        let color;
+        let color: string;
         let icon;
         if (value.length === 1) {
             const item = props.options.find(foundItem => foundItem.value === value[0]);

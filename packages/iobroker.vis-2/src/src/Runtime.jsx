@@ -524,7 +524,7 @@ class Runtime extends GenericApp {
         if (!project[selectedView]) {
             selectedView = project.___settings.openedViews[0] || '';
             window.localStorage.setItem('selectedView', selectedView);
-        } else if (project.___settings.openedViews && !project.___settings.openedViews.includes(selectedView)) {
+        } else if (project.___settings.openedViews && !project.___settings.openedViews.includes(selectedView) && !this.state.runtime) {
             selectedView = project.___settings.openedViews[0];
             window.localStorage.setItem('selectedView', selectedView);
         }

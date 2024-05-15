@@ -1098,8 +1098,14 @@ class VisEngine extends React.Component {
             },
             getLoggedUser: cb => this.props.socket.getCurrentUser()
                 .then(user => cb(this.props.socket.isSecure, user)),
-            subscribe: IDs => this.subscribe(IDs),
-            unsubscribe: IDs => this.unsubscribe(IDs),
+            subscribe: (IDs, cb) => {
+                this.subscribe(IDs);
+                cb && cb();
+            },
+            unsubscribe: (IDs, cb) => {
+                this.unsubscribe(IDs);
+                cb && cb();
+            },
             authenticate: (user, password, salt) => {
                 this._authRunning = true;
 

@@ -1,5 +1,4 @@
-import PropTypes from 'prop-types';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { withStyles } from '@mui/styles';
 
 import {
@@ -13,7 +12,7 @@ import {
     SelectID,
     I18n,
     SelectFile as SelectFileDialog,
-    Utils,
+    Utils, type LegacyConnection, Connection,
 } from '@iobroker/adapter-react-v5';
 
 import ToolbarItems from './ToolbarItems';
@@ -28,7 +27,16 @@ const styles = () => ({
     },
 });
 
-const Tools = props => {
+interface ToolsProps {
+    socket: LegacyConnection;
+    projectsDialog: boolean;
+    setProjectsDialog: (open: boolean) => void;
+    adapterName: string;
+    instance: number;
+    projectName: string;
+}
+
+const Tools = (props: ToolsProps) => {
     const [settingsDialog, setSettingsDialog] = useState(false);
     const [objectsDialog, setObjectsDialog] = useState(false);
     const [filesDialog, setFilesDialog] = useState(false);
@@ -70,14 +78,13 @@ const Tools = props => {
         {
             objectsDialog ? <SelectID
                 imagePrefix="../"
-                ready
                 onClose={() => setObjectsDialog(false)}
-                socket={props.socket}
+                socket={props.socket as any as Connection}
                 title={I18n.t('Browse objects')}
                 columns={['role', 'func', 'val', 'name']}
                 notEditable={false}
-                statesOnly
-                onOk={selected => {
+                onOk={_selected => {
+                    const selected: string = Array.isArray(_selected) ? _selected[0] : _selected as string;
                     Utils.copyToClipboard(selected);
                     setObjectsDialog(false);
                     window.alert(I18n.t('Copied'));
@@ -92,7 +99,6 @@ const Tools = props => {
                 onClose={() => setFilesDialog(false)}
                 restrictToFolder={`${props.adapterName}.${props.instance}/${props.projectName}`}
                 allowNonRestricted
-                ready
                 allowUpload
                 allowDownload
                 allowCreateFolder
@@ -102,7 +108,9 @@ const Tools = props => {
                 imagePrefix="../"
                 selected=""
                 showTypeSelector
-                onOk={selected => {
+                onOk={_selected => {
+                    let selected: string = Array.isArray(_selected) ? _selected[0] : _selected as string;
+
                     const projectPrefix = `${props.adapterName}.${props.instance}/${props.projectName}/`;
                     if (selected.startsWith(projectPrefix)) {
                         selected = `_PRJ_NAME/${selected.substring(projectPrefix.length)}`;
@@ -115,21 +123,12 @@ const Tools = props => {
                     setFilesDialog(false);
                     window.alert(I18n.t('ra_Copied %s', selected));
                 }}
-                socket={props.socket}
+                socket={props.socket as any as Connection}
                 ok={I18n.t('Copy to clipboard')}
                 cancel={I18n.t('ra_Close')}
             /> : null
         }
     </>;
-};
-
-Tools.propTypes = {
-    socket: PropTypes.object,
-    projectsDialog: PropTypes.bool,
-    setProjectsDialog: PropTypes.func,
-    adapterName: PropTypes.string,
-    instance: PropTypes.number,
-    projectName: PropTypes.string,
 };
 
 export default withStyles(styles)(Tools);
