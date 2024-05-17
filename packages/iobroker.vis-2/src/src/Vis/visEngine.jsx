@@ -1144,7 +1144,8 @@ class VisEngine extends React.Component {
             getUser: () => this.userName,
             sendCommand: (instance, command, data, ack) => this.props.socket.setState(this.ID_CONTROL_INSTANCE, { val: instance || 'notdefined', ack: true })
                 .then(() => this.props.socket.setState(this.ID_CONTROL_DATA, { val: data, ack: true }))
-                .then(() => this.props.socket.setState(this.ID_CONTROL_COMMAND, { val: command, ack: ack === undefined ? true : ack })),
+                .then(() => this.props.socket.setState(this.ID_CONTROL_COMMAND, { val: command, ack: ack === undefined ? true : ack }))
+                .catch(e => console.error(`Cannot set state: ${e}`)),
             readFile: (filename, cb) => {
                 let adapter = this.conn.namespace;
                 if (filename[0] === '/') {
