@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.63",
+    "version": "2.9.64",
     "news": {
+      "2.9.64": {
+        "en": "Added possibility to clear a text field by button",
+        "de": "Möglichkeit hinzugefügt, ein Textfeld per Knopf zu löschen",
+        "ru": "Добавлена возможность очистить текстовое поле на кнопка",
+        "pt": "Adicionado possibilidade de limpar um campo de texto por botão",
+        "nl": "Toegevoegde mogelijkheid om een tekstveld per knop te wissen",
+        "fr": "Ajout de possibilité d'effacer un champ texte par bouton",
+        "it": "Aggiunto possibilità di cancellare un campo di testo da pulsante",
+        "es": "Añadido posibilidad de aclarar un campo de texto por botón",
+        "pl": "Dodano możliwość wyczyszczenia pola tekstowego za pomocą przycisku",
+        "uk": "Додано можливість очистити текстове поле за допомогою кнопки",
+        "zh-cn": "添加按键清除文本字段的可能性"
+      },
       "2.9.63": {
         "en": "Migrated some files to typescript",
         "de": "Einige Dateien zu beschreiben",
