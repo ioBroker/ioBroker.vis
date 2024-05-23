@@ -16,6 +16,7 @@ export interface Field {
     renderValue?: (value: string | number) => React.JSX.Element;
     hidden?: boolean | string | ((settings: Record<string, any>) => boolean);
     notStyle?: boolean;
+    clearButton?: boolean;
     applyToAll?: boolean;
     groupApply?: boolean;
     noTranslation?: boolean;

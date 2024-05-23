@@ -198,6 +198,7 @@ onChange: async (field, data, changeData, socket) => {
   - `custom` - Custom field editor. See [below](#custom-field-editor)
   - `text` - Input field with Edit dialog.
     - `noButton` - [optional] if true, no edit button will be shown. Default is true. 
+    - `clearButton` - [optional] if true, the clear button will be shown. 
   - `html` - Input field with Edit dialog and parsing of HTML code
     - `multiline` - show multi-line editor
   - `json` - Input field with Edit dialog and parsing of JSON code

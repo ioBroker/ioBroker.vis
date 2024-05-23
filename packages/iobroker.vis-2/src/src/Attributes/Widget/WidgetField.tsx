@@ -291,6 +291,7 @@ interface PaletteField {
     filterAttrs?:  string;
     removeName?:  string;
     multiple?: boolean;
+    clearButton?: boolean;
     component?: (
         field: PaletteField,
         data: WidgetData,
@@ -1539,6 +1540,9 @@ const WidgetField = (props: WidgetFieldProps) => {
                 }}
                 placeholder={isDifferent ? t('different') : null}
                 InputProps={{
+                    endAdornment: field.clearButton && cachedValue !== null && cachedValue !== undefined ? <IconButton size="small" onClick={() => change(null)}>
+                        <ClearIcon />
+                    </IconButton> : null,
                     classes: { input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) },
                 }}
                 value={value}

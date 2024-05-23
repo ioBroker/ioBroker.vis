@@ -22,6 +22,7 @@ import { deepClone } from '@/Utils/utils';
 import { Field } from '@/Attributes/View/Items';
 import { ThemeType } from '@iobroker/adapter-react-v5/types';
 import { Project } from '@iobroker/types-vis-2';
+
 import EditFieldImage from './EditFieldImage';
 import EditFieldIcon64 from './EditFieldIcon64';
 
@@ -67,7 +68,8 @@ export default function getEditField(gProps: EditFieldProps): React.JSX.Element 
     }
     const error = checkFunction(field.error, viewSettings || {});
 
-    let value: any = field.notStyle ? (viewSettings as Record<string, any>)?.[field.attr] : (viewSettings as Record<string, any>)?.style[field.attr];
+    const rawValue: any = field.notStyle ? (viewSettings as Record<string, any>)?.[field.attr] : (viewSettings as Record<string, any>)?.style[field.attr];
+    let value: any = rawValue;
     if (value === null || value === undefined) {
         value = '';
     }
@@ -113,7 +115,7 @@ export default function getEditField(gProps: EditFieldProps): React.JSX.Element 
         />;
     }
     if (field.type === 'checkbox') {
-        return  <Checkbox
+        return <Checkbox
             disabled={!editMode || disabled}
             checked={!!value}
             classes={{
@@ -124,7 +126,7 @@ export default function getEditField(gProps: EditFieldProps): React.JSX.Element 
         />;
     }
     if (field.type === 'select') {
-        return  <Select
+        return <Select
             disabled={!editMode || disabled}
             variant="standard"
             value={field.value ? field.value : value}
@@ -145,7 +147,7 @@ export default function getEditField(gProps: EditFieldProps): React.JSX.Element 
         </Select>;
     }
     if (field.type === 'multi-select') {
-        return  <Select
+        return <Select
             disabled={!editMode || disabled}
             variant="standard"
             renderValue={selected => selected.join(', ')}
@@ -168,7 +170,7 @@ export default function getEditField(gProps: EditFieldProps): React.JSX.Element 
         </Select>;
     }
     if (field.type === 'groups') {
-        return  <Select
+        return <Select
             variant="standard"
             disabled={!editMode || disabled}
             value={value || []}
@@ -209,10 +211,10 @@ export default function getEditField(gProps: EditFieldProps): React.JSX.Element 
         </Select>;
     }
     if (field.type === 'raw') {
-        return  field.Component;
+        return field.Component;
     }
     if (field.type === 'color') {
-        return  <ColorPicker
+        return <ColorPicker
             value={value}
             className={classes.fieldContentColor}
             disabled={!editMode || disabled}
@@ -221,7 +223,7 @@ export default function getEditField(gProps: EditFieldProps): React.JSX.Element 
         />;
     }
     if (field.type === 'icon') {
-        return  <IconPicker
+        return <IconPicker
             value={value}
             onChange={fileBlob => change(fileBlob)}
             previewClassName={classes.iconPreview}
@@ -294,6 +296,9 @@ export default function getEditField(gProps: EditFieldProps): React.JSX.Element 
         variant="standard"
         fullWidth
         InputProps={{
+            endAdornment: field.clearButton && rawValue !== null && rawValue !== undefined ? <IconButton size="small" onClick={() => change(null)}>
+                <ClearIcon />
+            </IconButton> : null,
             classes: {
                 input: Utils.clsx(classes.clearPadding, classes.fieldContent),
             },
