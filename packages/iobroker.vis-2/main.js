@@ -13,7 +13,7 @@ const https = require('node:https');
 const utils = require('@iobroker/adapter-core'); // Get common adapter utils
 const jwt = require('jsonwebtoken');
 const adapterName = require('./package.json').name.split('.').pop();
-const syncWidgetSets = require('./lib/install.js');
+const syncWidgetSets = require('./lib/install');
 const cert = fs.readFileSync(`${__dirname}/lib/cloudCert.crt`);
 
 let adapter;

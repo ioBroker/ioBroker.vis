@@ -1,9 +1,8 @@
-'use strict';
-
-const fs   = require('fs');
-const path = require('path');
-const mime = require('mime');
-const crypto = require('crypto');
+const fs   = require('node:fs');
+const path = require('node:path');
+let mime;
+import('mime').then(m => mime = m.default);
+const crypto = require('node:crypto');
 
 const TEXT_TYPES = [
     'application/json',
