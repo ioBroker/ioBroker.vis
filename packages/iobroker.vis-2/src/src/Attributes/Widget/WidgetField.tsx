@@ -6,7 +6,7 @@ import {
     Autocomplete, Box, Button, Checkbox, Fade, IconButton, Input, ListItemText,
     ListSubheader, MenuItem, Paper, Popper, Select, Slider, TextField, FormControl,
     FormHelperText, ListItemIcon, DialogActions,
-    Dialog, DialogTitle, DialogContent, DialogContentText,
+    Dialog, DialogTitle, DialogContent, DialogContentText, SelectChangeEvent,
 } from '@mui/material';
 
 import {
@@ -26,7 +26,7 @@ import {
     TextWithIcon,
     ColorPicker,
     SelectID,
-    SelectFile as SelectFileDialog, Connection,
+    SelectFile as SelectFileDialog, Connection, LegacyConnection,
 } from '@iobroker/adapter-react-v5';
 
 import { findWidgetUsages } from '@/Vis/visUtils';
@@ -37,13 +37,14 @@ import {
     Widget,
     WidgetData,
     WidgetStyle,
-    ClassesValue,
+    ClassesValue, type RxWidgetInfoAttributesField,
 } from '@iobroker/types-vis-2';
 import {
     ObjectBrowserCustomFilter,
     ObjectBrowserType,
 } from '@iobroker/adapter-react-v5/Components/types';
 
+import { RxFieldOption, WidgetAttributeInfoStored, WidgetType } from '@/Vis/visWidgetsCatalog';
 import TextDialog from './TextDialog';
 import MaterialIconSelector from '../../Components/MaterialIconSelector';
 
@@ -250,88 +251,22 @@ function modifyWidgetUsages(
     return newProject;
 }
 
-interface PaletteFieldOptions {
-    value: string;
-    label: string;
-    icon?: string;
-    color?: string;
-}
-
-interface PaletteField {
-    name: string;
-    label: string;
-    type: string;
-    noTranslation?: boolean;
-    options?: string[] | PaletteFieldOptions[];
-    default?: any;
-    immediateChange?: boolean;
-    onChangeFunc?: string;
-    onChange: (
-        field: PaletteField,
-        data: WidgetData | WidgetStyle,
-        cb: (newData: WidgetData | WidgetStyle) => void,
-        socket: Connection,
-        index?: number,
-    ) => void;
-    adapter?: string;
-    min?: number;
-    max?: number;
-    step?: number;
-    all?: boolean;
-    tpl: string;
-    filter?: ObjectBrowserCustomFilter | ObjectBrowserType | ((data: WidgetData, index: number) => Record<string, any>);
-    marks?: { value: number; label?: string }[] | boolean;
-    valueLabelDisplay?: 'on' | 'auto' | 'off';
-    withGroups: boolean;
-    withSelf: boolean;
-    hideUsed: boolean;
-    checkUsage: boolean;
-    filterFile?:  string;
-    filterName?:  string;
-    filterAttrs?:  string;
-    removeName?:  string;
-    multiple?: boolean;
-    clearButton?: boolean;
-    component?: (
-        field: PaletteField,
-        data: WidgetData,
-        onChange: (newData: WidgetData) => void,
-        options : {
-            context: {
-                socket: Connection;
-                projectName: string;
-                instance: number;
-                adapterName: string;
-                views: Project;
-            };
-            selectedView: string;
-            selectedWidgets: AnyWidgetId[];
-            selectedWidget: AnyWidgetId;
-        },
-    ) => void;
-    isShort?: boolean;
-    noButton?: boolean;
-    multiline?: boolean;
-}
-
 interface WidgetFieldProps {
-    field: PaletteField;
+    field: WidgetAttributeInfoStored;
     widget: Widget;
     adapterName: string;
     instance: number;
     projectName: string;
     isDifferent: boolean;
-    error: string;
+    error: string | boolean;
     disabled: boolean;
     index: number;
     widgetId: string;
     selectedWidgets: AnyWidgetId[];
     selectedView: string;
     isStyle: boolean;
-    widgetType?: {
-        set: string;
-    };
-    socket: Connection;
+    widgetType?: WidgetType;
+    socket: LegacyConnection;
     changeProject: (project: Project) => void;
     onPxToPercent: (widgets: string[], attr: string, cb: (newValues: string[]) => void) => void;
     onPercentToPx: (widgets: string[], attr: string, cb: (newValues: string[]) => void) => void;
@@ -454,7 +389,7 @@ const WidgetField = (props: WidgetFieldProps) => {
                 }
             }
             if (field.onChange) {
-                field.onChange(field, JSON.parse(JSON.stringify(data)), (newData: WidgetData) => {
+                field.onChange(field as RxWidgetInfoAttributesField, JSON.parse(JSON.stringify(data)), (newData: WidgetData) => {
                     const _project = JSON.parse(JSON.stringify(store.getState().visProject));
                     _project[props.selectedView].widgets[selectedWidget].data = newData;
                     onChangeTimeout && clearTimeout(onChangeTimeout);
@@ -724,7 +659,7 @@ const WidgetField = (props: WidgetFieldProps) => {
                 selected={value as string}
                 onOk={selected => change(selected)}
                 onClose={() => setIdDialog(false)}
-                socket={props.socket}
+                socket={props.socket as any as Connection}
                 types={field.filter === 'chart' || field.filter === 'channel' || field.filter === 'device' ? [field.filter] as ObjectBrowserType[] : null}
                 filters={filters}
                 expertMode={field.filter === 'chart' ? true : undefined}
@@ -810,7 +745,7 @@ const WidgetField = (props: WidgetFieldProps) => {
                     change(selected);
                     setIdDialog(false);
                 }}
-                socket={props.socket}
+                socket={props.socket as any as Connection}
             /> : null}
         </>;
     }
@@ -897,6 +832,7 @@ const WidgetField = (props: WidgetFieldProps) => {
         />;
     }
 
+    // @ts-expect-error legacy parameter
     if (field.type === 'eff_opt') {
         return <>
             {field.type}
@@ -939,13 +875,20 @@ const WidgetField = (props: WidgetFieldProps) => {
         </div>;
     }
 
-    if (field.type === 'select' || field.type === 'nselect' || field.type === 'fontname' || field.type === 'effect' || field.type === 'widget') {
+    if (field.type === 'select' ||
+        field.type === 'nselect' ||
+        field.type === 'fontname' ||
+        // @ts-expect-error legacy parameter
+        field.type === 'effect' ||
+        field.type === 'widget'
+    ) {
         let { options } = field;
 
         if (field.type === 'fontname') {
             options = props.fonts;
         }
 
+        // @ts-expect-error legacy parameter
         if (field.type === 'effect') {
             options = [
                 '',
@@ -1018,7 +961,7 @@ const WidgetField = (props: WidgetFieldProps) => {
             options.unshift({ value: '', label: t('attr_none') });
         }
 
-        const withIcons = !!options.find(item => (item as PaletteFieldOptions)?.icon);
+        const withIcons = !!options.find(item => (item as RxFieldOption)?.icon);
 
         return <Select
             variant="standard"
@@ -1030,17 +973,17 @@ const WidgetField = (props: WidgetFieldProps) => {
                 root: props.classes.clearPadding,
                 select: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding),
             }}
-            onChange={e => {
+            onChange={(e: SelectChangeEvent<string>) => {
                 if (field.type === 'widget' &&
                     field.checkUsage &&
                     e.target.value &&
-                    store.getState().visProject[props.selectedView].widgets[e.target.value]?.usedInWidget
+                    store.getState().visProject[props.selectedView].widgets[e.target.value as AnyWidgetId]?.usedInWidget
                 ) {
                     // Show dialog
                     setAskForUsage({
                         wid: e.target.value,
                         cb: () => {
-                            const project = modifyWidgetUsages(store.getState().visProject, props.selectedView, e.target.value, props.selectedWidgets[0], field.name);
+                            const project = modifyWidgetUsages(store.getState().visProject, props.selectedView, e.target.value as AnyWidgetId, props.selectedWidgets[0], field.name);
                             props.changeProject(project);
                             store.dispatch(recalculateFields(true));
                         },
@@ -1050,9 +993,9 @@ const WidgetField = (props: WidgetFieldProps) => {
                     store.dispatch(recalculateFields(true));
                 }
             }}
-            renderValue={_value => {
+            renderValue={(_value: string) => {
                 if (typeof options[0] === 'object') {
-                    const item: PaletteFieldOptions | null = (options as PaletteFieldOptions[]).find(o => o.value === _value) as PaletteFieldOptions;
+                    const item: RxFieldOption | null = (options as RxFieldOption[]).find(o => o.value === _value) as RxFieldOption;
                     const text = item ? (field.type === 'select' && !field.noTranslation ? t(item.label) : item.label) : _value;
                     if (withIcons && item.icon) {
                         return <>
@@ -1071,8 +1014,8 @@ const WidgetField = (props: WidgetFieldProps) => {
                 key={`${typeof selectItem === 'object' ? selectItem.value : selectItem}_${i}`}
                 style={{ fontFamily: field.type === 'fontname' ? selectItem as string : null }}
             >
-                {(selectItem as PaletteFieldOptions).icon ? <ListItemIcon>
-                    <Icon src={(selectItem as PaletteFieldOptions).icon} style={{ width: 24, height: 24 }} />
+                {(selectItem as RxFieldOption).icon ? <ListItemIcon>
+                    <Icon src={(selectItem as RxFieldOption).icon} style={{ width: 24, height: 24 }} />
                 </ListItemIcon>
                     :
                     (withIcons ? <ListItemIcon><div style={{ width: 24 }} /></ListItemIcon> : null)}
@@ -1082,9 +1025,9 @@ const WidgetField = (props: WidgetFieldProps) => {
                         :
                         (field.type === 'select' && !field.noTranslation ?
                             (typeof selectItem === 'object' ?
-                                <span style={(selectItem as PaletteFieldOptions).color ? { color: (selectItem as PaletteFieldOptions).color } : null}>{field.noTranslation ? (selectItem as PaletteFieldOptions).label : t((selectItem as PaletteFieldOptions).label)}</span> : t(selectItem as string)
+                                <span style={(selectItem as RxFieldOption).color ? { color: (selectItem as RxFieldOption).color } : null}>{field.noTranslation ? (selectItem as RxFieldOption).label : t((selectItem as RxFieldOption).label)}</span> : t(selectItem as string)
                             ) : (typeof selectItem === 'object' ?
-                                <span style={(selectItem as PaletteFieldOptions).color ? { color: (selectItem as PaletteFieldOptions).color } : null}>{(selectItem as PaletteFieldOptions).label}</span> : (selectItem as string)
+                                <span style={(selectItem as RxFieldOption).color ? { color: (selectItem as RxFieldOption).color } : null}>{(selectItem as RxFieldOption).label}</span> : (selectItem as string)
                             ))}
                 </ListItemText>
             </MenuItem>)}
@@ -1201,7 +1144,7 @@ const WidgetField = (props: WidgetFieldProps) => {
             options.unshift('');
         }
         if (options[0] && typeof options === 'string') {
-            options = (options as PaletteFieldOptions[]).map(item => item.value);
+            options = (options as RxFieldOption[]).map(item => item.value);
         }
 
         return <Autocomplete
@@ -1309,7 +1252,7 @@ const WidgetField = (props: WidgetFieldProps) => {
                 select: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding),
             }}
             onChange={e => change(e.target.value)}
-            renderValue={selectValue => <div className={props.classes.backgroundClass}>
+            renderValue={(selectValue: string) => <div className={props.classes.backgroundClass}>
                 <span className={stylesOptions[selectValue]?.parentClass}>
                     <span className={`${props.classes.backgroundClassSquare} ${selectValue}`} />
                 </span>
@@ -1333,7 +1276,7 @@ const WidgetField = (props: WidgetFieldProps) => {
         if (field.component) {
             try {
                 return field.component(
-                    field,
+                    field as RxWidgetInfoAttributesField,
                     widget.data,
                     newData => {
                         const _project = deepClone(store.getState().visProject);

@@ -2,7 +2,7 @@
   "name": "vis-2-gui",
   "private": true,
   "dependencies": {
-    "@iobroker/json-config": "file:../../types-vis-2"
+    "@iobroker/types-vis-2": "file:../../types-vis-2"
   },
   "scripts": {
     "start": "craco start",

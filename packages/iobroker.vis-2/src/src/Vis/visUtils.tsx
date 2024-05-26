@@ -291,7 +291,12 @@ function extractBinding(format: string): VisBinding[] | null {
 //    visibility: {} //
 //    signals: {}    //
 // }
-function getUsedObjectIDsInWidget(views: Project, view: string, wid: AnyWidgetId, linkContext: VisStateUsage) {
+function getUsedObjectIDsInWidget(
+    views: Project,
+    view: string,
+    wid: AnyWidgetId,
+    linkContext: VisStateUsage,
+) {
     // Check all attributes
     const widget = deepClone(views[view].widgets[wid]);
 

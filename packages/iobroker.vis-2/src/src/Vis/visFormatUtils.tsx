@@ -16,7 +16,7 @@ import { type Moment } from 'moment';
 import { deepClone } from '@/Utils/utils';
 import {
     VisLegacy, AnyWidgetId, WidgetData,
-    SingleWidget, GroupWidget, VisRxWidgetStateValues, VisBinding, VisBindingOperationArgument,
+    Widget, VisRxWidgetStateValues, VisBinding, VisBindingOperationArgument,
 } from '@iobroker/types-vis-2';
 
 import { extractBinding } from './visUtils';
@@ -306,7 +306,7 @@ class VisFormatUtils {
         format: string;
         view: string;
         wid: AnyWidgetId;
-        widget: SingleWidget | GroupWidget;
+        widget: Widget;
         widgetData: WidgetData;
         values?: VisRxWidgetStateValues;
         moment: any;

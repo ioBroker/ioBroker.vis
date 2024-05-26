@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { type LegacyConnection } from '@iobroker/adapter-react-v5';
-import {
+import type {
     GroupWidgetId,
     Project,
     RxWidgetInfoGroup,
@@ -10,9 +10,11 @@ import {
     RxWidgetInfoAttributesField,
     WidgetData,
     RxWidgetInfoCustomComponentProperties,
+    RxWidgetAttributeType, Widget,
 } from '@iobroker/types-vis-2';
 import VisRxWidget from '@/Vis/visRxWidget';
-import type { RxWidgetAttributeType } from '@iobroker/types-vis-2';
+import { ThemeType } from '@iobroker/adapter-react-v5/types';
+import { ObjectBrowserCustomFilter, ObjectBrowserType } from '@iobroker/adapter-react-v5/Components/types';
 
 import { getRemoteWidgets } from './visLoadWidgets';
 // eslint-disable-next-line import/no-cycle
@@ -33,7 +35,14 @@ const DEFAULT_SET_COLORS: Record<string, string> = {
     'spotify-premium': '#00ae03',
 };
 
-type RxWidgetInfoAttributesFieldAll = {
+export interface RxFieldOption {
+    readonly value: string;
+    readonly label: string;
+    readonly icon?: string;
+    readonly color?: string;
+}
+
+export type RxWidgetInfoAttributesFieldAll = {
     /** Field type */
     type?: RxWidgetAttributeType;
     /** Field default value */
@@ -42,6 +51,8 @@ type RxWidgetInfoAttributesFieldAll = {
     desiredSize?: { width: number; height: number } | boolean;
     /** if true, no edit button will be shown. Default is true. */
     readonly noButton?: boolean;
+    /** do not wait 300 ms after the value was changed to redraw the widget */
+    readonly immediateChange?: boolean;
     /** if true, the text will not be translated  */
     readonly noTranslation?: boolean;
     /** this style will be applied to the text */
@@ -61,23 +72,16 @@ type RxWidgetInfoAttributesFieldAll = {
      - `{type: ['channel', 'device']}` - show only channels and devices
      - `{common: {type: 'number'}` - show only states of type 'number
      - `{common: {type: ['number', 'string']}` - show only states of type 'number and string
-     - `{common: {role: 'switch']}` - show only states with roles starting from switch
-     - `{common: {role: ['switch', 'button]}` - show only states with roles starting from `switch` and `button`
+     - `{common: {role: 'switch'}` - show only states with roles starting from switch
+     - `{common: {role: ['switch', 'button']}` - show only states with roles starting from `switch` and `button`
      */
-    filter?: {
-        readonly common?: {
-            readonly custom?: true | string | '_dataSources';
-            readonly type?: ioBroker.CommonType | ioBroker.CommonType[];
-            readonly role?: string | string[];
-        };
-        readonly type?: ioBroker.ObjectType | ioBroker.ObjectType[];
-    } | string;
+    filter?: ObjectBrowserCustomFilter | ObjectBrowserType | ((data: WidgetData, index: number) => Record<string, any>) | string;
     /** Additionally, you can provide `adapter` to filter the instances of specific adapter. With special adapter name `_dataSources` you can get all adapters with flag `common.getHistory`. */
     readonly adapter?: string;
     /** In this case, only instance number (like `0`) is shown and not `history.0`. It can be set to true only with non-empty `adapter` setting. */
     readonly iShort?: boolean;
     /** Options for a select type */
-    options?: { readonly value: string; label: string }[] | string[];
+    options?: RxFieldOption[] | string[];
     /** Number min value */
     min?: number;
     /** Number max value */
@@ -85,7 +89,7 @@ type RxWidgetInfoAttributesFieldAll = {
     /** Number step */
     step?: number;
     /** Slider marks?: array of possible marks. Like `[{value: 1, label: 'one'}, {value: 10}, {value: 100}] */
-    readonly marks?: { readonly value: number; label: string }[];
+    readonly marks?: { readonly value: number; readonly label: string }[] | boolean;
     /** Controls when the value label is displayed: `auto` the value label will display when the thumb is hovered or focused. `on` will display persistently. `off` will never display. */
     readonly valueLabelDisplay?: 'on' | 'off' | 'auto';
     /** type of the widget, like `tplMaterial2Switches` */
@@ -102,6 +106,10 @@ type RxWidgetInfoAttributesFieldAll = {
     readonly hideUsed?: boolean;
     /** if false, only one view can be selected. Default is true. */
     readonly multiple?: boolean;
+    /** show clear button near the field */
+    readonly clearButton?: boolean;
+    /** show short instance name  */
+    readonly isShort?: boolean;
     /** if false, only one view can be selected. Default is true. */
     component?: (
         field: RxWidgetInfoAttributesField,
@@ -110,25 +118,33 @@ type RxWidgetInfoAttributesFieldAll = {
         props: RxWidgetInfoCustomComponentProperties,
     ) => React.JSX.Element | React.JSX.Element[];
 
+    /** i18n help text - This text will be shown without a label */
+    readonly text?: string;
     /** Name of the widget field */
     name: string;
     /** Field label (i18n) */
     label?: string;
     /** JS Function for conditional visibility */
-    hidden?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
+    hidden?: string | ((data: Record<string, any>, index?: number, style?: React.CSSProperties) => boolean) | boolean;
     /** Tooltip (i18n) */
     tooltip?: string;
     /** JS Function for conditional disability */
-    disabled?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
+    disabled?: string | ((data: Record<string, any>, index?: number, style?: React.CSSProperties) => boolean) | boolean;
     /** JS Function for error */
-    error?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
+    error?: string | ((data: Record<string, any>, index?: number, style?: React.CSSProperties) => boolean);
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
-    onChange?: (field: RxWidgetInfoAttributesField, data: Record<string, any>, changeData: (newData: Record<string, any>) => void, socket: LegacyConnection, index?: number) => Promise<void> | string;
+    onChange?: (
+        field: RxWidgetInfoAttributesField,
+        data: Record<string, any>,
+        changeData: (newData: Record<string, any>) => void,
+        socket: LegacyConnection,
+        index?: number,
+    ) => Promise<void> | string;
 }
 
-interface WidgetAttributeInfoStored extends RxWidgetInfoAttributesFieldAll {
+export interface WidgetAttributeInfoStored extends RxWidgetInfoAttributesFieldAll {
     onChangeFunc?: string;
     filterFile?: string;
     filterName?: string;
@@ -147,22 +163,24 @@ interface WidgetAttributeInfoStored extends RxWidgetInfoAttributesFieldAll {
         indexFrom: number | string | undefined;
     };
 }
+export interface WidgetAttributeIterable {
+    group: string;
+    isFirst: boolean;
+    isLast: boolean;
+    indexTo: number | string | undefined;
+    indexFrom: number | string | undefined;
+}
 
-interface WidgetAttributesGroupInfoStored {
+export interface WidgetAttributesGroupInfoStored {
     name?: string;
     label?: string;
     singleName?: string;
     index?: number;
+    hidden?: string | ((data: Record<string, any>, index: number, style: React.CSSProperties) => boolean) | boolean;
     fields?: RxWidgetInfoAttributesFieldAll[];
     indexFrom?: number | string;
     indexTo?: number | string;
-    iterable?: {
-        group: string;
-        isFirst: boolean;
-        isLast: boolean;
-        indexTo: number | string | undefined;
-        indexFrom: number | string | undefined;
-    };
+    iterable?: WidgetAttributeIterable;
 }
 
 export interface WidgetType {
@@ -178,7 +196,17 @@ export interface WidgetType {
     resizable?: boolean;
     resizeLocked?: boolean;
     draggable?: boolean;
-    params: string | readonly RxWidgetInfoGroup[];
+    params: string | readonly RxWidgetInfoGroup[] | ((data: WidgetData, ignore: null, context: {
+        views: Project;
+        view: string;
+        socket: LegacyConnection;
+        themeType: ThemeType;
+        projectName: string;
+        adapterName: string;
+        instance: number;
+        id: string;
+        widget: Widget;
+    }) => RxWidgetInfoGroup[]);
 
     setLabel?: string;
     setColor?: string;
@@ -223,7 +251,7 @@ class VisWidgetsCatalog {
             const keys: (GroupWidgetId | SingleWidgetId)[] = Object.keys(widgets) as (GroupWidgetId | SingleWidgetId)[];
             for (let w = 0; w < keys.length; w++) {
                 const widgetSet = widgets[keys[w]].widgetSet;
-                if (!widgetSet || widgets[keys[w]].set || widgets[keys[w]].wSet) {
+                if (!widgetSet || widgets[keys[w]].wSet || widgets[keys[w]].set) {
                     anyWithoutSet = true;
                     break;
                 }
@@ -303,19 +331,19 @@ class VisWidgetsCatalog {
                         .then((widgetSets: void | VisRxWidget<any>[]) => {
                             const collectedWidgets: VisRxWidget<any>[] = [...WIDGETS, ...(widgetSets || [])] as VisRxWidget<any>[];
 
-                            collectedWidgets.forEach((Widget: VisRxWidget<any>) => {
-                                if (!Widget?.getWidgetInfo) {
-                                    console.error(`Invalid widget without getWidgetInfo: ${Widget.constructor.name}`);
+                            collectedWidgets.forEach((WidgetEl: VisRxWidget<any>) => {
+                                if (!WidgetEl?.getWidgetInfo) {
+                                    console.error(`Invalid widget without getWidgetInfo: ${WidgetEl.constructor.name}`);
                                 } else {
-                                    const info = Widget.getWidgetInfo();
+                                    const info = WidgetEl.getWidgetInfo();
                                     if (!info.visSet) {
-                                        console.error(`No visSet in info for "${Widget.constructor.name}"`);
+                                        console.error(`No visSet in info for "${WidgetEl.constructor.name}"`);
                                     }
 
                                     if (!info.id) {
-                                        console.error(`No id in info for "${Widget.constructor.name}"`);
+                                        console.error(`No id in info for "${WidgetEl.constructor.name}"`);
                                     } else if (VisWidgetsCatalog.rxWidgets) {
-                                        VisWidgetsCatalog.rxWidgets[info.id] = Widget;
+                                        VisWidgetsCatalog.rxWidgets[info.id] = WidgetEl;
                                     }
                                 }
                             });
@@ -472,6 +500,7 @@ export const getWidgetTypes: (_usedWidgetSets?: string[]) => WidgetType[] = (use
                                 _field.options.forEach(option => {
                                     if (typeof option === 'object') {
                                         if (option.label && !option.label.startsWith(i18nPrefix)) {
+                                            // @ts-expect-error we must add prefix to the label
                                             option.label = i18nPrefix + option.label;
                                         }
                                     }
@@ -525,7 +554,7 @@ const deepClone = (obj: any[] | Record<string, any>) => {
     return newObj;
 };
 
-interface CommonGroups {
+export interface CommonGroups {
     common: number;
     [key: string]: number;
 }
@@ -534,10 +563,10 @@ export const parseAttributes = (
     widgetParams: string | RxWidgetInfoGroup[],
     widgetIndex?: number,
     commonGroups?: CommonGroups,
-    commonFields?: Record<string, any>,
+    commonFields?: Record<string, number>,
     widgetSet?: string,
     widgetData?: Record<string, any>,
-) => {
+): null | WidgetAttributesGroupInfoStored[] => {
     if (typeof widgetParams === 'string') {
         let groupName = 'common';
         let indexedGroups: { [key: number]: WidgetAttributesGroupInfoStored } = {};

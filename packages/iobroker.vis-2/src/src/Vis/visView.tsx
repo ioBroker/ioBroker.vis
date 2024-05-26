@@ -20,10 +20,10 @@ import { StylesProvider, createGenerateClassName, CSSProperties } from '@mui/sty
 import { Utils, Theme } from '@iobroker/adapter-react-v5';
 
 import type VisRxWidget from '@/Vis/visRxWidget';
-import {
-    AnyWidgetId, GroupWidget, GroupWidgetId,
-    SingleWidget, ViewSettings, VisContext,
-    WidgetStyle,
+import type {
+    AnyWidgetId, GroupWidgetId,
+    Widget, ViewSettings, VisContext,
+    WidgetStyle, VisTheme,
 } from '@iobroker/types-vis-2';
 import { hasWidgetAccess, isVarFinite } from '@/Utils/utils';
 import { recalculateFields, selectView, store } from '@/Store';
@@ -1091,17 +1091,17 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         />;
     }
 
-    static getOneWidget(index: number, widget: SingleWidget | GroupWidget, options: CreateWidgetOptions): React.JSX.Element | null {
+    static getOneWidget(index: number, widget: Widget, options: CreateWidgetOptions): React.JSX.Element | null {
         if (!VisWidgetsCatalog.rxWidgets) {
             return null;
         }
         // context, id, isRelative, refParent, askView, mouseDownOnView, view,
         // relativeWidgetOrder, moveAllowed, editMode, multiView, ignoreMouseEvents, selectedGroup
         // viewsActiveFilter, customSettings, onIgnoreMouseEvents
-        const Widget = (VisWidgetsCatalog.rxWidgets[widget.tpl] || (VisWidgetsCatalog.allWidgetsList?.includes(widget.tpl) ? VisCanWidget : VisBaseWidget));
+        const WidgetEl = (VisWidgetsCatalog.rxWidgets[widget.tpl] || (VisWidgetsCatalog.allWidgetsList?.includes(widget.tpl) ? VisCanWidget : VisBaseWidget));
 
         // @ts-expect-error fix later
-        return <Widget
+        return <WidgetEl
             key={`${index}_${options.id}`}
             tpl={widget.tpl}
             {...options}
@@ -1857,7 +1857,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
 
         if (this.props.customSettings?.viewStyle?.overrides) {
             // override the theme with custom settings
-            theme = createTheme(theme, this.props.customSettings.viewStyle.overrides);
+            theme = createTheme(theme, this.props.customSettings.viewStyle.overrides) as VisTheme;
         }
 
         // if the current view is not active, so hide it and show only if it is active

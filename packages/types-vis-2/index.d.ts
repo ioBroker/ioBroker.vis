@@ -1,8 +1,7 @@
 import type React from 'react';
 import type moment from 'moment';
-import type { Theme } from '@mui/material';
 import type { LegacyConnection } from '@iobroker/adapter-react-v5';
-import {ThemeType} from "@iobroker/adapter-react-v5/types";
+import type { ThemeType, Theme } from '@iobroker/adapter-react-v5/types';
 
 interface VisView {
     getOneWidget(index: number, widget: SingleWidget | GroupWidget, options: CreateWidgetOptions): React.JSX.Element | null;
@@ -13,7 +12,18 @@ export type ViewCommandOptions = {
     filter?: string[];
 } | null;
 
-export type RxWidgetAttributeType = 'text' | 'delimiter' | 'help' | 'html' | 'json' | 'id' | 'instance' | 'select' | 'nselect' | 'auto' | 'checkbox' | 'number' | 'select-views' | 'custom' | 'image' | 'color' | 'password' | 'history' | 'hid' | 'icon' | 'dimension' | 'fontname' | 'groups' | 'class' | 'filters' | 'views' | 'style' | 'icon64';
+export type RxWidgetAttributeType =
+    'text' |
+    'delimiter' |
+    'help' |
+    'html' |
+    'json' |
+    'id' |
+    'instance' |
+    'select' | 'nselect' | 'auto' | 'checkbox' | 'number' | 'select-views' |
+    'custom' | 'image' | 'color' | 'password' | 'history' | 'hid' | 'icon' | 'dimension' |
+    'fontname' | 'groups' | 'class' | 'filters' | 'views' |
+    'style' | 'icon64' | 'slider' | 'widget' | 'url';
 
 export interface VisMarketplaceProps {
     language: ioBroker.Languages;
@@ -77,6 +87,7 @@ export type RxWidgetInfoAttributesFieldDelimiter = {
     /** JS Function for conditional visibility */
     readonly hidden?: string | ((data: Record<string, any>) => boolean) | ((data: Record<string, any>, index: number) => boolean);
 }
+
 export type RxWidgetInfoAttributesFieldHelp = {
     /** Field type */
     readonly type: 'help';
@@ -410,7 +421,7 @@ export type RxWidgetInfoAttributesFieldSelectCustom = {
 
 export type RxWidgetInfoAttributesFieldSelectSimple = {
     /** Field type */
-    readonly type: 'image' | 'color' | 'password' | 'history' | 'hid' | 'icon' | 'dimension' | 'fontname' | 'groups' | 'class' | 'filters' | 'views' | 'style' | 'icon64';
+    readonly type: 'image' | 'color' | 'password' | 'history' | 'hid' | 'icon' | 'dimension' | 'fontname' | 'groups' | 'class' | 'filters' | 'views' | 'style' | 'icon64' | 'url';
     /** Field default value */
     readonly default?: string;
 
@@ -527,10 +538,12 @@ export interface WidgetData {
     name?: string;
     filterkey?: string;
     members?: AnyWidgetId[];
+    bindings?: string[];
     [other: string]: any;
 }
 
 export interface WidgetStyle {
+    bindings?: string[];
     position?: '' | 'absolute' | 'relative' | 'sticky' | 'static' | null;
     display?: '' | 'inline-block' | null;
     top?: string | number | null;
@@ -627,6 +640,7 @@ export interface GroupData extends WidgetData {
     /** Widget IDs of the members */
     members: AnyWidgetId[];
 }
+
 export interface GroupWidget extends SingleWidget {
     tpl: '_tplGroup';
     data: GroupData;
@@ -753,7 +767,7 @@ export interface RxRenderWidgetProps {
     style: React.CSSProperties;
     id: string;
     refService: React.Ref<HTMLDivElement>;
-    widget: object;
+    widget: Widget;
 }
 
 export interface ArgumentChanged {
@@ -1048,6 +1062,18 @@ export interface VisFormatUtils {
     }): string;
 }
 
+export interface VisTheme extends Theme {
+    classes: {
+        blockHeader: React.CSSProperties,
+        viewTabs: React.CSSProperties,
+        viewTab: React.CSSProperties,
+        lightedPanel: React.CSSProperties,
+        toolbar: React.CSSProperties,
+        viewManageBlock: React.CSSProperties,
+        viewManageButtonActions: React.CSSProperties,
+    }
+}
+
 export interface VisContext {
     // $$: any;
     VisView: VisView;
@@ -1093,7 +1119,7 @@ export interface VisContext {
     showWidgetNames: boolean;
     socket: LegacyConnection;
     systemConfig: ioBroker.Object;
-    theme: Theme;
+    theme: VisTheme;
     themeName: string;
     themeType: 'dark' | 'light';
     timeInterval: string;

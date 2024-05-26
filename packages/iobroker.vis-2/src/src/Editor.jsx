@@ -1147,7 +1147,7 @@ class Editor extends Runtime {
 
     onWidgetsChanged = (changedData, view, viewSettings) => {
         this.tempProject = this.tempProject || deepClone(store.getState().visProject);
-        changedData && changedData.forEach(item => {
+        changedData?.forEach(item => {
             if (item.style) {
                 const currentStyle = this.tempProject[item.view].widgets[item.wid].style;
                 if (item.style.noPxToPercent) {

@@ -25,8 +25,7 @@ import {
     Project,
     GroupWidgetId,
     SingleWidgetId,
-    View, SingleWidget,
-    GroupWidget,
+    View, Widget,
 } from '@iobroker/types-vis-2';
 
 import IOContextMenu from '../Components/IOContextMenu';
@@ -52,7 +51,7 @@ interface VisContextMenuProps {
     ungroupWidgets: () => void;
     widgetsClipboard: Record<string, any>;
     themeType: 'dark' | 'light';
-    setMarketplaceDialog: (data: { addPage: boolean; widget: { widget: (SingleWidget | GroupWidget)[]; image: string } }) => void;
+    setMarketplaceDialog: (data: { addPage: boolean; widget: { widget: (Widget)[]; image: string } }) => void;
 }
 
 export interface VisMarketplaceProps {
@@ -118,7 +117,7 @@ const VisContextMenu = (props: VisContextMenuProps) => {
             }
         }
 
-        const selectedWidget: SingleWidget | GroupWidget = visProject[props.selectedView].widgets[props.selectedWidgets[0]];
+        const selectedWidget: Widget = visProject[props.selectedView].widgets[props.selectedWidgets[0]];
 
         return [
             {

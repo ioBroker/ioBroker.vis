@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
 
 import {
@@ -23,25 +22,39 @@ import {
     Link as LinkIcon,
 } from '@mui/icons-material';
 
-import { I18n, Icon, Utils } from '@iobroker/adapter-react-v5';
+import {
+    I18n, Icon,
+    LegacyConnection, Utils,
+} from '@iobroker/adapter-react-v5';
 import {
     store, recalculateFields, updateWidget, selectWidget,
 } from '@/Store';
 
+import {
+    getWidgetTypes, parseAttributes, WidgetAttributeInfoStored, WidgetAttributeIterable,
+    WidgetAttributesGroupInfoStored, WidgetType,
+} from '@/Vis/visWidgetsCatalog';
+import { deepClone } from '@/Utils/utils';
+import {
+    AnyWidgetId,
+    Project, type RxWidgetInfoGroup,
+    Widget as SingleGroupWidget,
+    VisTheme, WidgetData, WidgetStyle, GroupData,
+} from '@iobroker/types-vis-2';
+import { ThemeType } from '@iobroker/adapter-react-v5/types';
+
 import WidgetField from './WidgetField';
 import IODialog from '../../Components/IODialog';
-import { getWidgetTypes, parseAttributes } from '../../Vis/visWidgetsCatalog';
 import WidgetCSS from './WidgetCSS';
 import WidgetJS from './WidgetJS';
 import WidgetBindingField from './WidgetBindingField';
-import { deepClone } from '../../Utils/utils';
 
-const ICONS = {
+const ICONS: Record<string, React.JSX.Element> = {
     'group.fixed': <FilterAltIcon fontSize="small" />,
     locked: <LockIcon fontSize="small" />,
 };
 
-const styles = theme => ({
+const styles: Record<string, any> = (theme: VisTheme) => ({
     backgroundClass: {
         display: 'flex',
         alignItems: 'center',
@@ -261,8 +274,67 @@ const styles = theme => ({
 const WIDGET_ICON_HEIGHT = 34;
 const IMAGE_TYPES = ['.png', '.jpg', '.svg', '.gif', '.apng', '.avif', '.webp'];
 
-class Widget extends Component {
-    constructor(props) {
+interface PaletteGroup extends WidgetAttributesGroupInfoStored {
+    isStyle?: boolean;
+    hasValues?: boolean;
+}
+
+interface WidgetProps {
+    selectedView: string;
+    selectedWidgets: AnyWidgetId[];
+    socket: LegacyConnection;
+    themeType: ThemeType;
+    projectName: string;
+    adapterName: string;
+    instance: number;
+    widgetsLoaded: boolean;
+    classes: Record<string, string>;
+    changeProject: (newProject: Project) => void;
+    editMode: boolean;
+    isAllClosed: boolean;
+    setIsAllClosed: (isAllClosed: boolean) => void;
+    isAllOpened: boolean;
+    setIsAllOpened: (isAllOpened: boolean) => void;
+    triggerAllOpened: number;
+    triggerAllClosed: number;
+    fonts: string[];
+    cssClone: (attr: string, cb: (value: string | number | boolean | null) => void) => void;
+    onPxToPercent: (widgets: string[], attr: string, cb: (newValues: string[]) => void) => void;
+    onPercentToPx: (widgets: string[], attr: string, cb: (newValues: string[]) => void) => void;
+    userGroups: ioBroker.UserGroup[];
+}
+
+interface WidgetState {
+    cssDialogOpened: boolean;
+    jsDialogOpened: boolean;
+    clearGroup: PaletteGroup | null;
+    showWidgetCode: boolean;
+    triggerAllOpened: number;
+    triggerAllClosed: number;
+    accordionOpen: Record<string, boolean>;
+    widgetsLoaded: boolean;
+    widgetTypes: WidgetType[] | null;
+    fields: PaletteGroup[] | null;
+    transitionTime: number;
+    bindFields: string[];
+    customFields: WidgetAttributesGroupInfoStored[];
+    isDifferent: { [fieldName: string]: boolean };
+    commonValues: { data?: WidgetData; style?: WidgetStyle };
+    widgetType: WidgetType | undefined;
+}
+
+class Widget extends Component<WidgetProps, WidgetState> {
+    private readonly fieldsBefore: PaletteGroup[];
+
+    private readonly fieldsSignals: PaletteGroup[];
+
+    private readonly imageRef: React.RefObject<HTMLImageElement>;
+
+    private recalculateTimer: ReturnType<typeof setTimeout> | null = null;
+
+    private triggerTimer: ReturnType<typeof setTimeout> | null = null;
+
+    constructor(props: WidgetProps) {
         super(props);
 
         this.state = {
@@ -279,18 +351,23 @@ class Widget extends Component {
             widgetTypes: null,
             fields: null,
             transitionTime: 0,
+            bindFields: null,
+            customFields: null,
+            isDifferent: null,
+            commonValues: null,
+            widgetType: null,
         };
 
         this.fieldsBefore = Widget.getFieldsBefore();
         this.fieldsSignals = [];
         for (let i = 0; i <= 3; i++) {
-            this.fieldsSignals.push(Widget.getSignals(i, props.adapterName));
+            this.fieldsSignals.push(Widget.getSignals(i));
         }
 
         this.imageRef = React.createRef();
     }
 
-    static getFieldsBefore() {
+    static getFieldsBefore(): PaletteGroup[] {
         return [
             {
                 name: 'fixed',
@@ -318,8 +395,8 @@ class Widget extends Component {
         ];
     }
 
-    static getSignals(count /* , adapterName */) {
-        const result = {
+    static getSignals(count: number): PaletteGroup {
+        const result: PaletteGroup = {
             name: 'signals',
             fields: [
                 {
@@ -335,8 +412,8 @@ class Widget extends Component {
         };
 
         for (let i = 0; i < count; i++) {
-            result.fields = result.fields.concat([
-                { type: 'delimiter' },
+            const moreFields: WidgetAttributeInfoStored[] = [
+                { type: 'delimiter', name: 'ignored' },
                 { name: `signals-oid-${i}`, type: 'id' },
                 {
                     name: `signals-cond-${i}`,
@@ -370,25 +447,24 @@ class Widget extends Component {
                     name: `signals-vert-${i}`, type: 'slider', min: -20, max: 120, step: 1, default: 0,
                 },
                 { name: `signals-hide-edit-${i}`, type: 'checkbox', default: false },
-            ]);
+            ];
+
+            result.fields = result.fields.concat(moreFields);
         }
 
         return result;
     }
 
-    static getFieldsAfter(widget, widgets, fonts) {
-        return [
+    static getFieldsAfter(widget: { data?: WidgetData; style?: WidgetStyle }, fonts: string[]): PaletteGroup[] {
+        const groups: PaletteGroup[] = [
             {
                 name: 'css_common',
                 isStyle: true,
                 fields: [
                     { name: 'position', type: 'nselect', options: ['', 'relative', 'sticky'] },
                     { name: 'display', type: 'nselect', options: ['', 'inline-block'] },
-                    ...(['relative', 'sticky'].includes(widget.style.position) ? [] :
-                        [
-                            { name: 'left', type: 'dimension' },
-                            { name: 'top', type: 'dimension' },
-                        ]),
+                    { name: 'left', type: 'dimension' },
+                    { name: 'top', type: 'dimension' },
                     { name: 'width', type: 'dimension' },
                     { name: 'height', type: 'dimension' },
                     {
@@ -396,7 +472,7 @@ class Widget extends Component {
                     },
                     { name: 'overflow-x', type: 'nselect', options: ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'] },
                     { name: 'overflow-y', type: 'nselect', options: ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'] },
-                    { name: 'opacity' },
+                    { name: 'opacity', type: 'text' },
                     { name: 'cursor', type: 'auto', options: ['alias', 'all-scroll', 'auto', 'cell', 'col-resize', 'context-menu', 'copy', 'crosshair', 'default', 'e-resize', 'ew-resize', 'grab', 'grabbing', 'help', 'move', 'n-resize', 'ne-resize', 'nesw-resize', 'ns-resize', 'nw-resize', 'nwse-resize', 'no-drop', 'none', 'not-allowed', 'pointer', 'progress', 'row-resize', 's-resize', 'se-resize', 'sw-resize', 'text', 'vertical-text', 'w-resize', 'wait', 'zoom-in', 'zoom-out', 'initial', 'inherit'] },
                     { name: 'transform' },
                 ],
@@ -509,9 +585,20 @@ class Widget extends Component {
                 ],
             },
         ];
+        if (widget.style.position === 'relative' || widget.style.position === 'sticky') {
+            groups[0].fields = groups[0].fields.filter(f => f.name !== 'left' && f.name !== 'top');
+        }
+
+        return groups;
     }
 
-    static checkFunction(funcText, project, selectedView, selectedWidgets, index) {
+    static checkFunction(
+        funcText: string | ((data: Record<string, any>, index: number, style: React.CSSProperties) => boolean),
+        project: Project,
+        selectedView: string,
+        selectedWidgets: (AnyWidgetId)[],
+        index: number,
+    ): boolean {
         try {
             let _func;
             if (typeof funcText === 'function') {
@@ -522,7 +609,7 @@ class Widget extends Component {
             }
             const isHidden = [];
             for (let i = 0; i < selectedWidgets.length; i++) {
-                const widget = project[selectedView].widgets[selectedWidgets[i]];
+                const widget: SingleGroupWidget = project[selectedView].widgets[selectedWidgets[i]];
                 const data = widget?.data;
                 const style = widget?.style;
                 if (!widget) {
@@ -552,8 +639,8 @@ class Widget extends Component {
         this.setAccordionState();
     }
 
-    static getDerivedStateFromProps(props, state) {
-        let newState = null;
+    static getDerivedStateFromProps(props: WidgetProps, state: WidgetState) {
+        let newState: Partial<WidgetState> | null = null;
         if (props.widgetsLoaded && !state.widgetsLoaded) {
             newState = {};
             newState.widgetsLoaded = true;
@@ -571,11 +658,11 @@ class Widget extends Component {
         console.log('Recalculate fields');
         const widgets = store.getState().visProject[this.props.selectedView]?.widgets;
 
-        let widget;
-        let widgetType;
-        const commonFields = {};
-        const commonGroups = { common: this.props.selectedWidgets.length };
-        const selectedWidgetsFields = [];
+        let widget: SingleGroupWidget;
+        let widgetType: WidgetType | undefined;
+        const commonFields: Record<string, number> = {};
+        const commonGroups: { common: number; [groupName: string]: number } = { common: this.props.selectedWidgets.length };
+        const selectedWidgetsFields: WidgetAttributesGroupInfoStored[][] = [];
 
         widgets && this.props.selectedWidgets.forEach((wid, widgetIndex) => {
             widget = widgets[wid];
@@ -588,7 +675,7 @@ class Widget extends Component {
                 return;
             }
 
-            let params = widgetType.params;
+            let params: string | RxWidgetInfoGroup[];
             if (typeof widgetType.params === 'function') {
                 params = widgetType.params(widget.data, null, {
                     views: store.getState().visProject,
@@ -601,18 +688,20 @@ class Widget extends Component {
                     id: wid,
                     widget,
                 });
+            } else {
+                params = widgetType.params as string | RxWidgetInfoGroup[];
             }
 
-            const fields = parseAttributes(params, widgetIndex, commonGroups, commonFields, widgetType.set, widget.data);
+            const fields: null | WidgetAttributesGroupInfoStored[] = parseAttributes(params, widgetIndex, commonGroups, commonFields, widgetType.set, widget.data);
 
-            selectedWidgetsFields.push(fields);
+            fields && selectedWidgetsFields.push(fields);
         });
 
-        let fields;
-        const bindFields = [];
-        const commonValues = {};
-        const isDifferent = {};
-        const newState = {};
+        let fields: WidgetAttributesGroupInfoStored[];
+        const bindFields: string[] = [];
+        const commonValues: { data?: WidgetData; style?: WidgetStyle } = {};
+        const isDifferent: { [fieldName: string]: boolean } = {};
+        const newState: Partial<WidgetState> = {};
 
         if (this.props.selectedWidgets.length > 1) {
             fields = selectedWidgetsFields[0]?.filter(group => {
@@ -639,9 +728,10 @@ class Widget extends Component {
                             isDifferent[field] = true;
                         }
                     });
-                    Object.keys(commonValues.style).forEach(field => {
-                        if (commonValues.style[field] !== currentWidget.style[field]) {
-                            commonValues.style[field] = null;
+                    const anyStyle: Record<string, number | string | boolean | null | undefined> = commonValues.style as Record<string, number | string | boolean | null | undefined>;
+                    Object.keys(anyStyle).forEach(field => {
+                        if (anyStyle[field] !== (currentWidget.style as Record<string, number | string | boolean | null | undefined>)[field]) {
+                            anyStyle[field] = null;
                             isDifferent[field] = true;
                         }
                     });
@@ -661,7 +751,6 @@ class Widget extends Component {
         newState.customFields = fields;
         newState.isDifferent = isDifferent;
         newState.commonValues = commonValues;
-        newState.widget = widget;
         newState.widgetType = widgetType;
 
         let signalsCount = 3;
@@ -684,29 +773,31 @@ class Widget extends Component {
             }
         }
 
-        newState.signalsCount = signalsCount;
-
         const fieldsAfter = Widget.getFieldsAfter(
             this.props.selectedWidgets.length === 1 ? widget : commonValues,
-            store.getState().visProject[this.props.selectedView].widgets,
             this.props.fonts,
         );
         const fieldsSignals = this.fieldsSignals[signalsCount] || this.fieldsSignals[3];
         if (fields) {
-            fields = [...this.fieldsBefore, ...fields, ...fieldsAfter, ...[fieldsSignals]];
-        }
-        newState.fields = fields;
+            const customGroups: PaletteGroup[] = fields.map(group => ({
+                fields: group.fields,
+                name: group.name,
+            }));
 
-        widgets && fields?.forEach(group => {
+            newState.fields = [
+                ...this.fieldsBefore,
+                ...customGroups,
+                ...fieldsAfter,
+                ...[fieldsSignals],
+            ];
+        }
+
+        widgets && newState.fields?.forEach((group: PaletteGroup) => {
             const type = group.isStyle ? 'style' : 'data';
             const found = this.props.selectedWidgets.find(selectedWidget => {
                 const fieldFound = group.fields.find(field => {
-                    const fieldValue = widgets[selectedWidget][type][field.name];
-                    if (fieldValue === undefined) {
-                        return false;
-                    }
-
-                    return true;
+                    const fieldValue: string | number | boolean | null | undefined = (widgets[selectedWidget][type] as Record<string, string | number | boolean | null>)[field.name];
+                    return fieldValue !== undefined;
                 });
                 return fieldFound !== undefined;
             });
@@ -715,7 +806,7 @@ class Widget extends Component {
 
         newState.transitionTime = 0;
 
-        this.setState(newState, () => this.setAccordionState());
+        this.setState(newState as WidgetState, () => this.setAccordionState());
         store.dispatch(recalculateFields(false));
     }
 
@@ -727,7 +818,7 @@ class Widget extends Component {
         this.triggerTimer = null;
     }
 
-    renderHeader(widgets) {
+    renderHeader(widgets: Record<string, SingleGroupWidget>) {
         let list;
         // If selected only one widget, show its icon
         if (this.props.selectedWidgets.length === 1) {
@@ -826,6 +917,7 @@ class Widget extends Component {
                             project[this.props.selectedView].widgets[this.props.selectedWidgets[0]].css = value;
                             this.props.changeProject(project);
                         }}
+                        themeType={this.props.themeType}
                         editMode={this.props.editMode}
                     /> : null}
                     {this.state.jsDialogOpened ? <WidgetJS
@@ -836,6 +928,7 @@ class Widget extends Component {
                             project[this.props.selectedView].widgets[this.props.selectedWidgets[0]].js = value;
                             this.props.changeProject(project);
                         }}
+                        themeType={this.props.themeType}
                         editMode={this.props.editMode}
                     /> : null}
                 </>}
@@ -848,7 +941,7 @@ class Widget extends Component {
         </div>;
     }
 
-    setAccordionState(accordionOpen, cb) {
+    setAccordionState(accordionOpen?: { [groupName: string]: boolean }, cb?: () => void) {
         if (!this.state.fields) {
             return;
         }
@@ -883,7 +976,12 @@ class Widget extends Component {
         }
     }
 
-    onGroupMove(e, index, iterable, direction) {
+    onGroupMove(
+        e: React.MouseEvent,
+        index: number,
+        iterable: WidgetAttributeIterable,
+        direction: 0 | -1 | 1 | true,
+    ) {
         e.stopPropagation();
         const project = deepClone(store.getState().visProject);
         const oldGroup = this.state.fields.find(f => f.name === `${iterable.group}-${index}`);
@@ -947,7 +1045,7 @@ class Widget extends Component {
                 const widgetData = _widgets[wid].data;
 
                 lastGroup.fields.forEach((attr, i) => {
-                    const name = lastGroup.fields[i].name.replace(/\d?\d+$/, newIndex);
+                    const name = lastGroup.fields[i].name.replace(/\d?\d+$/, newIndex.toString());
                     widgetData[name] = null;
                 });
 
@@ -970,7 +1068,7 @@ class Widget extends Component {
             this.props.selectedWidgets.forEach(wid => {
                 // order all attributes for better readability
                 const oldWidgetData = _widgets[wid].data;
-                const widgetData = {};
+                const widgetData: GroupData | WidgetData = {};
                 Object.keys(oldWidgetData).sort().forEach(key => widgetData[key] = oldWidgetData[key]);
                 _widgets[wid].data = widgetData;
 
@@ -1002,7 +1100,7 @@ class Widget extends Component {
         }
     }
 
-    renderGroupHeader(group) {
+    renderGroupHeader(group: PaletteGroup) {
         const classes = this.props.classes;
         return <AccordionSummary
             classes={{
@@ -1010,7 +1108,7 @@ class Widget extends Component {
                     ? classes.groupSummaryExpanded : classes.groupSummary, classes.lightedPanel),
                 content:  Utils.clsx(classes.clearPadding, this.state.accordionOpen[group.name] && group.hasValues && classes.accordionOpenedSummary),
                 expanded: classes.clearPadding,
-                expandIcon: classes.clearPadding,
+                // expandIcon: classes.clearPadding,
             }}
             expandIcon={group.hasValues ? <ExpandMoreIcon /> : <div className={classes.emptyMoreIcon} />}
         >
@@ -1082,7 +1180,7 @@ class Widget extends Component {
                                 let found = false;
                                 for (const selectedWidget of this.props.selectedWidgets) {
                                     for (const groupField of group.fields) {
-                                        const value = store.getState().visProject[this.props.selectedView].widgets[selectedWidget][type][groupField.name];
+                                        const value: number | string | boolean | null | undefined = (store.getState().visProject[this.props.selectedView].widgets[selectedWidget][type] as Record<string, number | string | boolean | null>)[groupField.name];
                                         if (value !== null && value !== undefined) {
                                             found = true;
                                             break;
@@ -1100,8 +1198,9 @@ class Widget extends Component {
                                 const type = group.isStyle ? 'style' : 'data';
                                 this.props.selectedWidgets.forEach(wid => {
                                     group.fields.forEach(field => {
-                                        if (project[this.props.selectedView].widgets[wid][type][field.name] === undefined) {
-                                            project[this.props.selectedView].widgets[wid][type][field.name] = field.default || null;
+                                        const styleOrData: Record<string, number | string | boolean | null | undefined> = project[this.props.selectedView].widgets[wid][type] as Record<string, number | string | boolean | null | undefined>;
+                                        if (styleOrData[field.name] === undefined) {
+                                            styleOrData[field.name] = field.default || null;
                                         }
                                     });
                                     project[this.props.selectedView].widgets[wid].data[`g_${group.name}`] = true;
@@ -1121,7 +1220,7 @@ class Widget extends Component {
         </AccordionSummary>;
     }
 
-    changeBinding(isStyle, attr) {
+    changeBinding(isStyle: boolean, attr: string) {
         const project = deepClone(store.getState().visProject);
         const type = isStyle ? 'style' : 'data';
         for (const wid of this.props.selectedWidgets) {
@@ -1137,7 +1236,7 @@ class Widget extends Component {
         store.dispatch(recalculateFields(true));
     }
 
-    renderFieldRow(group, field, fieldIndex) {
+    renderFieldRow(group: PaletteGroup, field: WidgetAttributeInfoStored, fieldIndex: number) {
         if (!field) {
             return null;
         }
@@ -1147,6 +1246,9 @@ class Widget extends Component {
         let error;
         let disabled;
         if (field.hidden) {
+            if (field.hidden === true) {
+                return null;
+            }
             if (Widget.checkFunction(field.hidden, store.getState().visProject, this.props.selectedView, this.props.selectedWidgets, field.index)) {
                 return null;
             }
@@ -1158,7 +1260,7 @@ class Widget extends Component {
                 </td>
             </tr>;
         }
-        if (field.type === 'divider') {
+        if (field.type === 'delimiter') {
             return <tr key={fieldIndex} className={this.props.classes.fieldRow}>
                 {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
                 <td colSpan={2} className={this.props.classes.fieldDivider} style={field.style} />
@@ -1178,7 +1280,9 @@ class Widget extends Component {
         let label;
         if (field.label === '') {
             label = '';
+        // @ts-expect-error deprecated
         } else if (field.title) {
+            // @ts-expect-error deprecated
             label = field.title;
         } else if (field.label) {
             label = I18n.t(field.label);
@@ -1186,7 +1290,7 @@ class Widget extends Component {
             label = window.vis._(field.singleName || field.name) + (field.index !== undefined ? ` [${field.index}]` : '');
         }
 
-        const labelStyle = {};
+        const labelStyle: React.CSSProperties = {};
 
         if (label.trim().startsWith('<b')) {
             label = label.match(/<b>(.*?)<\/b>/)[1];
@@ -1200,114 +1304,125 @@ class Widget extends Component {
 
         const isBoundField = this.state.bindFields.includes(group.isStyle ? `style_${field.name}` : `data_${field.name}`);
 
-        return <tr key={fieldIndex} className={this.props.classes.fieldRow}>
-            {field.type === 'delimiter' ?
-                // eslint-disable-next-line jsx-a11y/control-has-associated-label
-                <td colSpan="2">
+        // @ts-expect-error fix later
+        if (field.type === 'delimiter') {
+            return <tr key={fieldIndex} className={this.props.classes.fieldRow}>
+                {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
+                <td colSpan={2}>
                     <Divider style={{ borderBottomWidth: 'thick' }} />
                 </td>
-                : <>
-                    <td
-                        className={Utils.clsx(this.props.classes.fieldTitle, disabled && this.props.classes.fieldTitleDisabled, error && this.props.classes.fieldTitleError)}
-                        title={field.tooltip ? I18n.t(field.tooltip) : null}
-                        style={labelStyle}
+            </tr>;
+        }
+
+        return <tr key={fieldIndex} className={this.props.classes.fieldRow}>
+            <td
+                className={Utils.clsx(this.props.classes.fieldTitle, disabled && this.props.classes.fieldTitleDisabled, error && this.props.classes.fieldTitleError)}
+                title={field.tooltip ? I18n.t(field.tooltip) : null}
+                style={labelStyle}
+            >
+                {ICONS[field.singleName || field.name] ? ICONS[field.singleName || field.name] : null}
+                {label}
+                {field.type === 'image' && !this.state.isDifferent[field.name] && selectedWidget?.data[field.name] ?
+                    <div className={this.props.classes.smallImageDiv}>
+                        <Icon
+                            src={selectedWidget.data[field.name].startsWith('_PRJ_NAME/') ?
+                                selectedWidget.data[field.name].replace('_PRJ_NAME/', `../${this.props.adapterName}.${this.props.instance}/${this.props.projectName}/`)
+                                :
+                                selectedWidget.data[field.name]}
+                            className={this.props.classes.smallImage}
+                            onError={e => {
+                                (e.target as HTMLImageElement).onerror = null;
+                                (e.target as HTMLImageElement).style.display = 'none';
+                            }}
+                            alt={field.name}
+                        />
+                    </div> : null}
+                {(field.type !== 'custom' || field.label) && !field.noBinding ? (isBoundField ?
+                    <span
+                        className={this.props.classes.bindIconSpan}
+                        title={I18n.t('Deactivate binding and use field as standard input')}
                     >
-                        {ICONS[field.singleName || field.name] ? ICONS[field.singleName || field.name] : null}
-                        {label}
-                        {field.type === 'image' && !this.state.isDifferent[field.name] && selectedWidget?.data[field.name] ?
-                            <div className={this.props.classes.smallImageDiv}>
-                                <Icon
-                                    src={selectedWidget.data[field.name].startsWith('_PRJ_NAME/') ?
-                                        selectedWidget.data[field.name].replace('_PRJ_NAME/', `../${this.props.adapterName}.${this.props.instance}/${this.props.projectName}/`)
-                                        :
-                                        selectedWidget.data[field.name]}
-                                    className={this.props.classes.smallImage}
-                                    onError={e => {
-                                        e.target.onerror = null;
-                                        e.target.style.display = 'none';
-                                    }}
-                                    alt={field.name}
-                                />
-                            </div> : null}
-                        {(field.type !== 'custom' || field.label) && !field.noBinding ? (isBoundField ?
-                            <span
-                                className={this.props.classes.bindIconSpan}
-                                title={I18n.t('Deactivate binding and use field as standard input')}
-                            >
-                                <LinkOff
-                                    onClick={() => this.props.editMode && this.changeBinding(group.isStyle, field.name)}
-                                    className={this.props.classes.bindIcon}
-                                    style={disabled ? { cursor: 'default' } : null}
-                                />
-                            </span> :
-                            <span
-                                className={this.props.classes.bindIconSpan}
-                                title={I18n.t('Use field as binding')}
-                            >
-                                <LinkIcon
-                                    className={this.props.classes.bindIcon}
-                                    style={disabled ? { cursor: 'default' } : null}
-                                    onClick={() => this.props.editMode && this.changeBinding(group.isStyle, field.name)}
-                                />
-                            </span>) : null}
-                        {group.isStyle ?
-                            <ColorizeIcon
-                                fontSize="small"
-                                className={this.props.classes.colorize}
-                                onClick={() => this.props.cssClone(field.name, newValue => {
-                                    if (newValue !== null && newValue !== undefined) {
-                                        const project = deepClone(store.getState().visProject);
-                                        this.props.selectedWidgets.forEach(wid => {
-                                            if (project[this.props.selectedView].widgets[wid]) {
-                                                project[this.props.selectedView].widgets[wid].style = project[this.props.selectedView].widgets[wid].style || {};
-                                                project[this.props.selectedView].widgets[wid].style[field.name] = newValue;
-                                            }
-                                        });
-                                        this.props.changeProject(project);
+                        <LinkOff
+                            onClick={() => this.props.editMode && this.changeBinding(group.isStyle, field.name)}
+                            className={this.props.classes.bindIcon}
+                            style={disabled ? { cursor: 'default' } : null}
+                        />
+                    </span> :
+                    <span
+                        className={this.props.classes.bindIconSpan}
+                        title={I18n.t('Use field as binding')}
+                    >
+                        <LinkIcon
+                            className={this.props.classes.bindIcon}
+                            style={disabled ? { cursor: 'default' } : null}
+                            onClick={() => this.props.editMode && this.changeBinding(group.isStyle, field.name)}
+                        />
+                    </span>) : null}
+                {group.isStyle ?
+                    <ColorizeIcon
+                        fontSize="small"
+                        className={this.props.classes.colorize}
+                        onClick={() => this.props.cssClone(field.name, newValue => {
+                            if (newValue !== null && newValue !== undefined) {
+                                const project = deepClone(store.getState().visProject);
+                                this.props.selectedWidgets.forEach(wid => {
+                                    if (project[this.props.selectedView].widgets[wid]) {
+                                        project[this.props.selectedView].widgets[wid].style = project[this.props.selectedView].widgets[wid].style || {};
+                                        (project[this.props.selectedView].widgets[wid].style as Record<string, string | number | boolean | null>)[field.name] = newValue;
                                     }
-                                })}
-                            />
-                            : null}
-                        {field.tooltip ? <InfoIcon className={this.props.classes.infoIcon} /> : null}
-                    </td>
-                    <td className={this.props.classes.fieldContent}>
-                        <div className={this.props.classes.fieldInput}>
-                            {isBoundField ?
-                                <WidgetBindingField
-                                    error={error}
-                                    disabled={disabled}
-                                    field={field}
-                                    label={label}
-                                    widget={this.props.selectedWidgets.length > 1 ? this.state.commonValues : selectedWidget}
-                                    widgetId={this.props.selectedWidgets.length > 1 ? null : this.props.selectedWidgets[0]}
-                                    isStyle={group.isStyle}
-                                    selectedView={this.props.selectedView}
-                                    selectedWidgets={this.props.selectedWidgets}
-                                    isDifferent={this.state.isDifferent[field.name]}
-                                    project={store.getState().visProject}
-                                    socket={this.props.socket}
-                                    changeProject={this.props.changeProject}
-                                />
-                                : <WidgetField
-                                    widgetType={this.state.widgetType}
-                                    themeType={this.props.themeType}
-                                    error={error}
-                                    disabled={disabled}
-                                    field={field}
-                                    widget={this.props.selectedWidgets.length > 1 ? this.state.commonValues : selectedWidget}
-                                    widgetId={this.props.selectedWidgets.length > 1 ? null : this.props.selectedWidgets[0]}
-                                    isStyle={group.isStyle}
-                                    index={group.index}
-                                    isDifferent={this.state.isDifferent[field.name]}
-                                    {...this.props}
-                                />}
-                        </div>
-                    </td>
-                </>}
+                                });
+                                this.props.changeProject(project);
+                            }
+                        })}
+                    />
+                    : null}
+                {field.tooltip ? <InfoIcon className={this.props.classes.infoIcon} /> : null}
+            </td>
+            <td className={this.props.classes.fieldContent}>
+                <div className={this.props.classes.fieldInput}>
+                    {isBoundField ?
+                        <WidgetBindingField
+                            disabled={disabled}
+                            field={field}
+                            label={label}
+                            widget={this.props.selectedWidgets.length > 1 ? this.state.commonValues : selectedWidget}
+                            isStyle={group.isStyle}
+                            selectedView={this.props.selectedView}
+                            selectedWidgets={this.props.selectedWidgets}
+                            isDifferent={this.state.isDifferent[field.name]}
+                            socket={this.props.socket}
+                            changeProject={this.props.changeProject}
+                        />
+                        : <WidgetField
+                            widgetType={this.state.widgetType}
+                            themeType={this.props.themeType}
+                            disabled={disabled}
+                            field={field}
+                            widget={this.props.selectedWidgets.length > 1 ? this.state.commonValues as SingleGroupWidget : selectedWidget}
+                            widgetId={this.props.selectedWidgets.length > 1 ? null : this.props.selectedWidgets[0]}
+                            isStyle={group.isStyle}
+                            index={group.index}
+                            isDifferent={this.state.isDifferent[field.name]}
+                            selectedView={this.props.selectedView}
+                            socket={this.props.socket}
+                            changeProject={this.props.changeProject}
+                            fonts={this.props.fonts}
+                            adapterName={this.props.adapterName}
+                            instance={this.props.instance}
+                            projectName={this.props.projectName}
+                            onPxToPercent={this.props.onPxToPercent}
+                            onPercentToPx={this.props.onPercentToPx}
+                            userGroups={this.props.userGroups}
+                            error={error}
+                            selectedWidgets={this.props.selectedWidgets}
+                            classes={this.props.classes}
+                        />}
+                </div>
+            </td>
         </tr>;
     }
 
-    renderGroupBody(group) {
+    renderGroupBody(group: PaletteGroup) {
         if (!this.state.accordionOpen[group.name] || !group.hasValues) {
             return null;
         }
@@ -1322,7 +1437,7 @@ class Widget extends Component {
         </AccordionDetails>;
     }
 
-    renderGroup(group) {
+    renderGroup(group: PaletteGroup) {
         return <Accordion
             classes={{
                 root: this.props.classes.accordionRoot,
@@ -1344,12 +1459,12 @@ class Widget extends Component {
         </Accordion>;
     }
 
-    onGroupDelete(group) {
+    onGroupDelete(group: PaletteGroup) {
         const project = deepClone(store.getState().visProject);
         const type = group.isStyle ? 'style' : 'data';
         this.props.selectedWidgets.forEach(wid => {
             group.fields.forEach(field => {
-                delete project[this.props.selectedView].widgets[wid][type][field.name];
+                delete (project[this.props.selectedView].widgets[wid][type] as Record<string, any>)[field.name];
             });
             delete project[this.props.selectedView].widgets[wid].data[`g_${group.name}`];
         });
@@ -1386,7 +1501,7 @@ class Widget extends Component {
         if (this.props.triggerAllOpened !== this.state.triggerAllOpened) {
             this.triggerTimer = this.triggerTimer || setTimeout(() => {
                 this.triggerTimer = null;
-                const accordionOpen = {};
+                const accordionOpen: { [groupName: string]: boolean }  = {};
                 this.state.fields?.forEach(group => accordionOpen[group.name] = true);
                 this.setState({ triggerAllOpened: this.props.triggerAllOpened }, () => this.setAccordionState(accordionOpen));
             }, 50);
@@ -1395,7 +1510,7 @@ class Widget extends Component {
         if (this.props.triggerAllClosed !== this.state.triggerAllClosed) {
             this.triggerTimer = this.triggerTimer || setTimeout(() => {
                 this.triggerTimer = null;
-                const accordionOpen = {};
+                const accordionOpen: { [groupName: string]: boolean }  = {};
                 this.state.fields?.forEach(group => accordionOpen[group.name] = false);
                 this.setState({ triggerAllClosed: this.props.triggerAllClosed }, () => this.setAccordionState(accordionOpen));
             }, 50);
@@ -1415,7 +1530,10 @@ class Widget extends Component {
             this.state.fields ? <div key="groups" style={{ height: 'calc(100% - 34px)', overflowY: 'auto' }}>
                 {this.state.fields.map(group => {
                     if (group.hidden) {
-                        if (Widget.checkFunction(group.hidden, store.getState().visProject, this.props.selectedView, this.props.selectedWidgets)) {
+                        if (group.hidden === true) {
+                            return null;
+                        }
+                        if (Widget.checkFunction(group.hidden, store.getState().visProject, this.props.selectedView, this.props.selectedWidgets, group.index)) {
                             return null;
                         }
                     }
@@ -1452,27 +1570,5 @@ class Widget extends Component {
         ];
     }
 }
-
-Widget.propTypes = {
-    adapterName: PropTypes.string.isRequired,
-    themeType: PropTypes.string.isRequired,
-    changeProject: PropTypes.func,
-    classes: PropTypes.object,
-    cssClone: PropTypes.func,
-    fonts: PropTypes.array,
-    instance: PropTypes.number.isRequired,
-    project: PropTypes.object,
-    projectName: PropTypes.string.isRequired,
-    selectedView: PropTypes.string,
-    selectedWidgets: PropTypes.array,
-    widgetsLoaded: PropTypes.bool,
-
-    setIsAllOpened: PropTypes.func,
-    setIsAllClosed: PropTypes.func,
-    isAllOpened: PropTypes.bool,
-    isAllClosed: PropTypes.bool,
-    triggerAllOpened: PropTypes.number,
-    triggerAllClosed: PropTypes.number,
-};
 
 export default withStyles(styles)(Widget);

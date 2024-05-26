@@ -23,12 +23,15 @@ import {
     KeyboardReturn,
 } from '@mui/icons-material';
 
-import { type LegacyConnection, I18n, Utils } from '@iobroker/adapter-react-v5';
+import { I18n, LegacyConnection, Utils } from '@iobroker/adapter-react-v5';
 
 import { calculateOverflow, deepClone, isVarFinite } from '@/Utils/utils';
 import {
     AnyWidgetId, ResizeHandler,
-    VisContext, GroupData, WidgetData, WidgetStyle, GroupWidgetId, GroupWidget, SingleWidget,
+    VisContext, GroupData, WidgetData,
+    WidgetStyle,
+    GroupWidgetId,
+    Widget, RxRenderWidgetProps,
 } from '@iobroker/types-vis-2';
 import {
     addClass,
@@ -990,7 +993,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
         this.props.mouseDownOnView(e, this.props.id, this.props.isRelative, true);
     }
 
-    getResizeHandlers(selected: boolean, widget: GroupWidget | SingleWidget, borderWidth: string) {
+    getResizeHandlers(selected: boolean, widget: Widget, borderWidth: string) {
         if (!this.state.editMode || !selected || this.props.selectedWidgets?.length !== 1) {
             return null;
         }
@@ -1282,7 +1285,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
      * @param _props
      */
     // eslint-disable-next-line class-methods-use-this,no-unused-vars
-    renderWidgetBody(_props: VisBaseWidgetProps): React.JSX.Element | null {
+    renderWidgetBody(_props: RxRenderWidgetProps): React.JSX.Element | null {
         // Default render method. Normally it should be overwritten
         return <div
             style={{
@@ -1699,12 +1702,14 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
 
         const widget = this.props.context.views[this.props.view].widgets[this.props.id];
 
+        const width = this.props.isRelative ? widget.style.absoluteWidth || '100px' : '100%';
+
         this.props.context.onWidgetsChanged([{
             wid: this.props.id,
             view: this.props.view,
             style: {
                 position: this.props.isRelative ? 'absolute' : 'relative',
-                width: this.props.isRelative ? widget.style.absoluteWidth || '100px' : '100%',
+                width,
                 absoluteWidth: !this.props.isRelative ? widget.style.width : null,
                 noPxToPercent: true, // special command
             },

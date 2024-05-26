@@ -8,13 +8,12 @@ import { Close } from '@mui/icons-material';
 import { I18n } from '@iobroker/adapter-react-v5';
 import { ThemeName } from '@iobroker/adapter-react-v5/types';
 import {
-    GroupWidget,
     GroupWidgetId,
     MarketplaceWidgetRevision,
-    SingleWidget,
+    Widget,
     SingleWidgetId,
 } from '@iobroker/types-vis-2';
-import { store } from '../Store';
+import { store } from '@/Store';
 
 export interface MarketplaceDialogProps {
     onClose: () => void;
@@ -43,7 +42,7 @@ const MarketplaceDialog = (props: MarketplaceDialogProps) => {
                         widgets: [],
                     };
                     Object.keys(project[view].widgets).forEach((wid: GroupWidgetId | SingleWidgetId) => {
-                        const widget: GroupWidget | SingleWidget = project[view].widgets[wid];
+                        const widget: Widget = project[view].widgets[wid];
                         if (widget.marketplace?.widget_id === marketplace.widget_id &&
                             widget.marketplace?.version !== marketplace.version
                         ) {
