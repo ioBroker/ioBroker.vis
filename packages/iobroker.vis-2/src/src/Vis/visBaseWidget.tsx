@@ -31,7 +31,7 @@ import {
     VisContext, GroupData, WidgetData,
     WidgetStyle,
     GroupWidgetId,
-    Widget, RxRenderWidgetProps,
+    Widget, RxRenderWidgetProps, VisRxWidgetStateValues,
 } from '@iobroker/types-vis-2';
 import {
     addClass,
@@ -66,14 +66,14 @@ export interface VisBaseWidgetProps {
     /** TPL type */
     tpl: string;
     /** Some filter */
-    viewsActiveFilter: { [view: string]: string[] };
+    viewsActiveFilter: { [view: string]: string[] } | null;
     /** Function to register the widget */
     askView: (command: AskViewCommand, props?: WidgetReference) => any;
     onIgnoreMouseEvents: (bool: boolean) => void;
     onWidgetsChanged: (...props: any[]) => void;
     mouseDownOnView: (...props: any[]) => void;
     refParent: React.RefObject<HTMLElement>;
-    customSettings: any;
+    customSettings: Record<string, any>;
     classes: Record<string, string>;
     socket: LegacyConnection;
 }
@@ -126,7 +126,7 @@ export interface VisBaseWidgetMovement {
     left: number;
     width: number;
     height: number;
-    order?: any;
+    order?: AnyWidgetId[];
 }
 
 interface Handler {
@@ -180,7 +180,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
 
     private pressTimeout?: ReturnType<typeof setTimeout>;
 
-    private shadowDiv: any;
+    private shadowDiv: HTMLDivElement | null;
 
     private stealCursor?: string;
 
@@ -675,7 +675,12 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
         return this.state.resizable;
     }
 
-    onMove = (x: number | undefined, y: number | undefined, save?: boolean, calculateRelativeWidgetPosition?: null | ((...props: any[]) => void)) => {
+    onMove = (
+        x: number | undefined,
+        y: number | undefined,
+        save?: boolean,
+        calculateRelativeWidgetPosition?: null | ((id: AnyWidgetId, left: string, top: string, shadowDiv: HTMLDivElement, order: AnyWidgetId[]) => void),
+    ) => {
         if (this.state.multiViewWidget || !this.state.editMode) {
             return;
         }
@@ -707,7 +712,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
                     item._storedOpacity = item.style.opacity;
                     item.style.opacity = '0.3';
                 });
-            } else if (movement && y !== undefined && x !== undefined) {
+            } else if (movement && y !== undefined /* && x !== undefined */) {
                 if (this.resize === 'top') {
                     this.refService.current.style.top = `${movement.top + y}px`;
                     this.refService.current.style.height = `${movement.height - y}px`;
@@ -1156,7 +1161,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
         });
     }
 
-    static isWidgetFilteredOutStatic(viewsActiveFilter: any, widgetData: any, view: string, editMode: boolean): boolean {
+    static isWidgetFilteredOutStatic(viewsActiveFilter: { [view: string]: string[] } | null, widgetData: WidgetData | GroupData, view: string, editMode: boolean): boolean {
         if (!viewsActiveFilter) {
             console.warn(`viewsActiveFilter is not defined in ${view}, data: ${JSON.stringify(widgetData)}`);
             return false;
@@ -1168,10 +1173,13 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
                 return true;
             }
 
-            let filterKeys = widgetData.filterkey;
+            let filterKeys: string[];
 
-            if (typeof filterKeys === 'string') {
-                filterKeys = filterKeys.split(',').map(f => f.trim()).filter(f => f);
+            if (typeof widgetData.filterkey === 'string') {
+                // deprecated, but for back compatibility
+                filterKeys = (widgetData.filterkey as any as string).split(',').map(f => f.trim()).filter(f => f);
+            } else {
+                filterKeys = widgetData.filterkey;
             }
 
             // we cannot use here find as filterkey could be observable (can) and is not normal array
@@ -1187,7 +1195,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
     }
 
     // eslint-disable-next-line react/no-unused-class-component-methods
-    isWidgetFilteredOut(widgetData: any) {
+    isWidgetFilteredOut(widgetData: WidgetData | GroupData) {
         return VisBaseWidget.isWidgetFilteredOutStatic(
             this.props.viewsActiveFilter,
             widgetData,
@@ -1197,7 +1205,11 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
     }
 
     // eslint-disable-next-line react/no-unused-class-component-methods
-    static isWidgetHidden(widgetData: any, states: any, id: string) {
+    static isWidgetHidden(
+        widgetData: WidgetData | GroupData,
+        states: VisRxWidgetStateValues,
+        id: string,
+    ) {
         const oid = widgetData['visibility-oid'];
         const condition = widgetData['visibility-cond'];
 
@@ -1330,10 +1342,14 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
         this.props.context.onWidgetsChanged(null, this.props.view, { order });
     }
 
-    static formatValue(value: any, decimals: any, _format: any) {
+    static formatValue(
+        value: string | number,
+        decimals: number | string,
+        _format?: string,
+    ) {
         if (typeof decimals !== 'number') {
             decimals = 2;
-            _format = decimals;
+            _format = decimals as any as string;
         }
         const format = _format === undefined ? '.,' : _format;
         if (typeof value !== 'number') {
@@ -1342,7 +1358,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
         return Number.isNaN(value) ? '' : value.toFixed(decimals || 0).replace(format[0], format[1]).replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
     }
 
-    formatIntervalHelper(value: any, type: any) {
+    formatIntervalHelper(value: number, type: 'seconds' | 'minutes' | 'hours' | 'days') {
         let singular;
         let plural;
         let special24;
@@ -1550,7 +1566,13 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
     }
 
     // eslint-disable-next-line react/no-unused-class-component-methods
-    formatDate(dateObj: any, format: any, interval: any, isMomentJs: boolean, forRx: any) {
+    formatDate(
+        value: string | Date | number,
+        format?: boolean | string,
+        interval?: boolean,
+        isMomentJs?: boolean,
+        forRx?: boolean,
+    ): string | React.JSX.Element {
         if (typeof format === 'boolean') {
             interval = format;
             format = 'auto';
@@ -1562,24 +1584,25 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
 
         format = format || this.props.context.dateFormat || 'DD.MM.YYYY';
 
-        if (!dateObj) {
+        if (!value) {
             return '';
         }
-        const text = typeof dateObj;
+        let dateObj: Date;
+        const text = typeof value;
         if (text === 'string') {
-            dateObj = new Date(dateObj);
+            dateObj = new Date(value);
         }
         if (text !== 'object') {
-            if (isVarFinite(dateObj)) {
-                const i = parseInt(dateObj, 10);
+            if (isVarFinite(value as string)) {
+                const i = parseInt(value as string, 10);
                 // if greater than 2000.01.01 00:00:00
                 if (i > 946681200000) {
-                    dateObj = new Date(dateObj);
+                    dateObj = new Date(value);
                 } else {
-                    dateObj = new Date(dateObj * 1000);
+                    dateObj = new Date(value as number * 1000);
                 }
             } else {
-                dateObj = new Date(dateObj);
+                dateObj = new Date(value);
             }
         }
         if (interval) {
@@ -1597,100 +1620,80 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
 
         // Year
         if (format.includes('YYYY') || format.includes('JJJJ') || format.includes('ГГГГ')) {
-            v = dateObj.getFullYear();
-            format = format.replace('YYYY', v);
-            format = format.replace('JJJJ', v);
-            format = format.replace('ГГГГ', v);
+            const yearStr = dateObj.getFullYear().toString();
+            format = format.replace('YYYY', yearStr);
+            format = format.replace('JJJJ', yearStr);
+            format = format.replace('ГГГГ', yearStr);
         } else if (format.includes('YY') || format.includes('JJ') || format.includes('ГГ')) {
-            v = dateObj.getFullYear() % 100;
-            format = format.replace('YY', v);
-            format = format.replace('JJ', v);
-            format = format.replace('ГГ', v);
+            const yearStr = (dateObj.getFullYear() % 100).toString();
+            format = format.replace('YY', yearStr);
+            format = format.replace('JJ', yearStr);
+            format = format.replace('ГГ', yearStr);
         }
         // Month
         if (format.includes('MM') || format.includes('ММ')) {
-            v = dateObj.getMonth() + 1;
-            if (v < 10) {
-                v = `0${v}`;
-            }
-            format = format.replace('MM', v);
-            format = format.replace('ММ', v);
+            const monthStr = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+            format = format.replace('MM', monthStr);
+            format = format.replace('ММ', monthStr);
         } else if (format.includes('M') || format.includes('М')) {
-            v = dateObj.getMonth() + 1;
-            format = format.replace('M', v);
-            format = format.replace('М', v);
+            const monthStr = (dateObj.getMonth() + 1).toString();
+            format = format.replace('M', monthStr);
+            format = format.replace('М', monthStr);
         }
 
         // Day
         if (format.includes('DD') || format.includes('TT') || format.includes('ДД')) {
-            v = dateObj.getDate();
-            if (v < 10) {
-                v = `0${v}`;
-            }
-            format = format.replace('DD', v);
-            format = format.replace('TT', v);
-            format = format.replace('ДД', v);
+            const dateStr = dateObj.getDate().toString().padStart(2, '0');
+            format = format.replace('DD', dateStr);
+            format = format.replace('TT', dateStr);
+            format = format.replace('ДД', dateStr);
         } else if (format.includes('D') || format.includes('TT') || format.includes('Д')) {
-            v = dateObj.getDate();
-            format = format.replace('D', v);
-            format = format.replace('T', v);
-            format = format.replace('Д', v);
+            const dateStr = dateObj.getDate().toString();
+            format = format.replace('D', dateStr);
+            format = format.replace('T', dateStr);
+            format = format.replace('Д', dateStr);
         }
 
         // hours
         if (format.includes('hh') || format.includes('SS') || format.includes('чч')) {
-            v = dateObj.getHours();
-            if (v < 10) {
-                v = `0${v}`;
-            }
-            format = format.replace('hh', v);
-            format = format.replace('SS', v);
-            format = format.replace('чч', v);
+            const hoursStr = dateObj.getHours().toString().padStart(2, '0');
+            format = format.replace('hh', hoursStr);
+            format = format.replace('SS', hoursStr);
+            format = format.replace('чч', hoursStr);
         } else if (format.includes('h') || format.includes('S') || format.includes('ч')) {
-            v = dateObj.getHours();
-            format = format.replace('h', v);
-            format = format.replace('S', v);
-            format = format.replace('ч', v);
+            const hoursStr = dateObj.getHours().toString();
+            format = format.replace('h', hoursStr);
+            format = format.replace('S', hoursStr);
+            format = format.replace('ч', hoursStr);
         }
 
         // minutes
         if (format.includes('mm') || format.includes('мм')) {
-            v = dateObj.getMinutes();
-            if (v < 10) {
-                v = `0${v}`;
-            }
-            format = format.replace('mm', v);
-            format = format.replace('мм', v);
+            const minutesStr = dateObj.getMinutes().toString().padStart(2, '0');
+            format = format.replace('mm', minutesStr);
+            format = format.replace('мм', minutesStr);
         } else if (format.includes('m') ||  format.includes('м')) {
-            v = dateObj.getMinutes();
-            format = format.replace('m', v);
-            format = format.replace('v', v);
+            const minutesStr = dateObj.getMinutes().toString();
+            format = format.replace('m', minutesStr);
+            format = format.replace('v', minutesStr);
         }
 
         // milliseconds
         if (format.includes('sss') || format.includes('ссс')) {
-            v = dateObj.getMilliseconds();
-            if (v < 10) {
-                v = `00${v}`;
-            } else if (v < 100) {
-                v = `0${v}`;
-            }
-            format = format.replace('sss', v);
-            format = format.replace('ссс', v);
+            const msStr = dateObj.getMilliseconds().toString().padStart(3, '0');
+            format = format.replace('sss', msStr);
+            format = format.replace('ссс', msStr);
         }
 
         // seconds
         if (format.includes('ss') || format.includes('сс')) {
-            v =  dateObj.getSeconds();
-            if (v < 10) {
-                v = `0${v}`;
-            }
-            format = format.replace('ss', v);
-            format = format.replace('cc', v);
+            const secondsStr =  dateObj.getSeconds().toString().padStart(2, '0');
+            format = format.replace('ss', secondsStr);
+            format = format.replace('cc', secondsStr);
         } else if (format.includes('s') || format.includes('с')) {
-            v = dateObj.getHours();
-            format = format.replace('s', v);
-            format = format.replace('с', v);
+            const secondsStr =  dateObj.getSeconds().toString();
+            format = format.replace('s', secondsStr);
+            format = format.replace('с', secondsStr);
         }
 
         return format;
@@ -1745,7 +1748,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
         }]);
     }
 
-    static correctStylePxValue(value: any) {
+    static correctStylePxValue(value: string | number) {
         if (typeof value === 'string') {
             // eslint-disable-next-line no-restricted-properties
             if (isVarFinite(value)) {
@@ -1768,7 +1771,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
             view={this.props.view}
             views={this.props.context.views}
             themeType={this.props.context.themeType}
-            onClose={(order: any) => {
+            onClose={(order: AnyWidgetId[]) => {
                 this.props.onIgnoreMouseEvents(false);
                 this.setState({ showRelativeMoveMenu: false });
                 order && this.props.context.onWidgetsChanged(null, this.props.view, { order });
@@ -1783,7 +1786,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
             return null;
         }
 
-        const style: Record<string, any> = {
+        const style: React.CSSProperties = {
             boxSizing: 'border-box',
         };
         const selected = !this.state.multiViewWidget && this.state.editMode && this.props.selectedWidgets?.includes(this.props.id);
@@ -1902,16 +1905,17 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
             'marginBottom', 'marginLeft', 'marginRight',
             'borderWidth',
         ].forEach(attr => {
-            if (style[attr] !== undefined && typeof style[attr] === 'string') {
+            const anyStyle = style as Record<string, number | string | undefined>;
+            if (anyStyle[attr] !== undefined && typeof anyStyle[attr] === 'string') {
                 // eslint-disable-next-line no-restricted-properties
-                if (isVarFinite(style[attr])) {
-                    style[attr] = parseFloat(style[attr]) || 0;
-                } else if (style[attr].includes('{')) {
+                if (isVarFinite(anyStyle[attr])) {
+                    anyStyle[attr] = parseFloat(anyStyle[attr] as any as string) || 0;
+                } else if ((anyStyle[attr] as string).includes('{')) {
                     // try to steal style by rxWidget
                     const value = (this.state.rxStyle as Record<string, string | undefined>)?.[attr];
                     if (this.state.rxStyle && value !== undefined) {
                         if (value && typeof value === 'string' && !value.includes('{')) {
-                            style[attr] = VisBaseWidget.correctStylePxValue(value);
+                            anyStyle[attr] = VisBaseWidget.correctStylePxValue(value);
                         }
                     } else if (this.props.context.allWidgets[this.props.id] &&
                         this.props.context.allWidgets[this.props.id].style &&
@@ -1919,7 +1923,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
                     ) {
                         // try to steal style by canWidget
                         if (!(this.props.context.allWidgets[this.props.id].style[attr] as string).includes('{')) {
-                            style[attr] = VisBaseWidget.correctStylePxValue(this.props.context.allWidgets[this.props.id].style[attr]);
+                            anyStyle[attr] = VisBaseWidget.correctStylePxValue(this.props.context.allWidgets[this.props.id].style[attr]);
                         }
                     }
                 }
@@ -2045,7 +2049,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
 
         // if multi-view widget and it is not "canJS", dim it in edit mode
         if (!this.isCanWidget && this.state.multiViewWidget && this.state.editMode) {
-            if (style.opacity === undefined || style.opacity === null || style.opacity > 0.5) {
+            if (style.opacity === undefined || style.opacity === null || style.opacity as number > 0.5) {
                 style.opacity = 0.5;
             }
         }

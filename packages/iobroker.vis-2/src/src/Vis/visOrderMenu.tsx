@@ -8,6 +8,7 @@ import { Menu, MenuItem } from '@mui/material';
 import { I18n, Utils } from '@iobroker/adapter-react-v5';
 
 import { getWidgetTypes, type WidgetType } from './visWidgetsCatalog';
+import {AnyWidgetId} from "@iobroker/types-vis-2";
 
 const styles: Styles<string, any> = () => ({
     widgetIcon: {
@@ -148,18 +149,18 @@ const Widget = ({
 };
 
 interface VisOrderMenuProps {
-    wid: string;
+    wid: AnyWidgetId;
     view: string;
     anchorEl: any;
-    order: string[];
+    order: AnyWidgetId[];
     views: Record<string, any>;
     themeType: 'dark' | 'light';
-    onClose: (order?: string[]) => void;
+    onClose: (order?: AnyWidgetId[]) => void;
     classes: Record<string, string>;
 }
 
 interface VisOrderMenuState {
-    order: string[];
+    order: AnyWidgetId[];
 }
 
 class VisOrderMenu extends React.Component<VisOrderMenuProps, VisOrderMenuState> {

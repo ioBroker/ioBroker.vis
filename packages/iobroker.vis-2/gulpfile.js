@@ -169,7 +169,6 @@ export default FiltersEditorDialog;
     fs.writeFileSync(`${__dirname}/runtime/tsconfig.json`, fs.readFileSync(`${__dirname}/src/tsconfig.json`));
     fs.writeFileSync(`${__dirname}/runtime/src/Store.tsx`, fs.readFileSync(`${__dirname}/src/src/Store.tsx`));
     fs.writeFileSync(`${__dirname}/runtime/src/Utils/utils.tsx`, fs.readFileSync(`${__dirname}/src/src/Utils/utils.tsx`));
-    fs.writeFileSync(`${__dirname}/runtime/src/types.d.ts`, fs.readFileSync(`${__dirname}/src/src/types.d.ts`));
     fs.writeFileSync(`${__dirname}/runtime/src/serviceWorker.jsx`, fs.readFileSync(`${__dirname}/src/src/serviceWorker.jsx`));
     fs.writeFileSync(`${__dirname}/runtime/src/index.jsx`, fs.readFileSync(`${__dirname}/src/src/index.jsx`));
     fs.writeFileSync(`${__dirname}/runtime/src/theme.jsx`, fs.readFileSync(`${__dirname}/src/src/theme.jsx`));

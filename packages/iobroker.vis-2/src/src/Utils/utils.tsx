@@ -1,10 +1,12 @@
 /**
  * This file contains shared utils between edit and runtime
  */
-import type { CSSProperties } from '@mui/styles';
+import React from 'react';
 import { store } from '@/Store';
 import {
-    GroupWidget, Widget, Project, SingleWidget, SingleWidgetId, GroupWidgetId, AnyWidgetId, Permissions,
+    GroupWidget, Widget, Project, SingleWidget,
+    SingleWidgetId, GroupWidgetId, AnyWidgetId,
+    Permissions,
 } from '@iobroker/types-vis-2';
 
 /** Default OID if no selected */
@@ -16,7 +18,7 @@ export const NOTHING_SELECTED = 'nothing_selected';
  *
  * @param style the style to modify
  */
-export function calculateOverflow(style: CSSProperties): void {
+export function calculateOverflow(style: React.CSSProperties): void {
     if (!style.overflowX && !style.overflowY) {
         style.overflow = 'visible';
     } else if (style.overflow) {
@@ -31,7 +33,7 @@ export function calculateOverflow(style: CSSProperties): void {
  */
 export function isVarFinite(numberOrString: number | string | undefined): boolean {
     // the difference between Number.isFinite and window.isFinite is that window.isFinite tries to convert the parameter to a number
-    // and Number.isFinite does not and just check against non NaN and non Infinity
+    // and Number.isFinite does not and just check against non NaN and non-Infinity
 
     // eslint-disable-next-line no-restricted-properties
     return window.isFinite(numberOrString as number);
