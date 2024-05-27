@@ -764,61 +764,93 @@ const WidgetField = (props: WidgetFieldProps) => {
             }
         }
 
-        /** @type string[] */
-        const options: any[] = [];
+        if (props.selectedWidgets.length > 1) {
+            const options: string[] = [];
+            if (isDifferent && value === '') {
+                for (const wid of props.selectedWidgets) {
+                    const selectedWidget = selectWidget(store.getState(), props.selectedView, wid);
+                    let val = (selectedWidget.style as Record<string, any>)[field.name];
+                    val = typeof val === 'number' ? val.toString() : val;
 
-        if (isDifferent && value === '') {
-            for (const wid of props.selectedWidgets) {
-                const selectedWidget = selectWidget(store.getState(), props.selectedView, wid);
-                let val = (selectedWidget.style as Record<string, any>)[field.name];
-                val = typeof val === 'number' ? val.toString() : val;
-
-                if (val !== undefined && val !== '' && !options.includes(val)) {
-                    options.push(val);
+                    if (val !== undefined && val !== '' && !options.includes(val)) {
+                        options.push(val);
+                    }
                 }
             }
-        }
 
-        const strValue = typeof value === 'number' ? value.toString() : value;
+            const strValue: string = typeof value === 'number' ? value.toString() : value as string;
 
-        if (options.length && value !== '' && !options.includes(strValue)) {
-            options.push(strValue);
-        }
+            if (options.length && value !== '' && !options.includes(strValue)) {
+                options.push(strValue);
+            }
 
-        return <Autocomplete
-            options={options}
-            freeSolo
-            value={strValue}
-            onChange={((e, aVal) => change(aVal))}
-            renderInput={params => <TextField
-                {...params}
-                variant="standard"
-                fullWidth
-                placeholder={isDifferent ? t('different') : null}
-                error={!!error}
-                helperText={typeof error === 'string' ? I18n.t(error) : null}
-                disabled={disabled}
-                InputProps={{
-                    ...params.InputProps,
-                    classes: { input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) },
-                    endAdornment: !isDifferent && !customValue ? <Button
-                        size="small"
-                        disabled={disabled}
-                        title={t('Convert %s to %s', unit, unit === '%' ? 'px' : '%')}
-                        onClick={() => {
-                            if (unit !== '%') {
-                                props.onPxToPercent(props.selectedWidgets, field.name, newValues => change(newValues[0]));
-                            } else {
-                                props.onPercentToPx(props.selectedWidgets, field.name, newValues => change(newValues[0]));
-                            }
-                        }}
-                    >
-                        {unit}
-                    </Button> : null,
+            return <Autocomplete
+                options={options}
+                freeSolo
+                classes={{
+                    inputRoot: props.classes.clearPadding,
                 }}
-                value={value}
-                onChange={e => change(e.target.value)}
-            />}
+                value={strValue}
+                onChange={((e, aVal) => change(aVal))}
+                renderInput={params => <TextField
+                    {...params}
+                    variant="standard"
+                    fullWidth
+                    placeholder={isDifferent ? t('different') : null}
+                    error={!!error}
+                    helperText={typeof error === 'string' ? I18n.t(error) : null}
+                    disabled={disabled}
+                    InputProps={{
+                        ...params.InputProps,
+                        classes: { input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) },
+                        endAdornment: !isDifferent && !customValue ? <Button
+                            style={{ minWidth: 30 }}
+                            size="small"
+                            disabled={disabled}
+                            title={t('Convert %s to %s', unit, unit === '%' ? 'px' : '%')}
+                            onClick={() => {
+                                if (unit !== '%') {
+                                    props.onPxToPercent(props.selectedWidgets, field.name, newValues => change(newValues[0]));
+                                } else {
+                                    props.onPercentToPx(props.selectedWidgets, field.name, newValues => change(newValues[0]));
+                                }
+                            }}
+                        >
+                            {unit}
+                        </Button> : null,
+                    }}
+                    value={value}
+                    onChange={e => change(e.target.value)}
+                />}
+            />;
+        }
+        return <TextField
+            variant="standard"
+            fullWidth
+            placeholder={isDifferent ? t('different') : null}
+            error={!!error}
+            helperText={typeof error === 'string' ? I18n.t(error) : null}
+            disabled={disabled}
+            InputProps={{
+                classes: { input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) },
+                endAdornment: !customValue ? <Button
+                    size="small"
+                    style={{ minWidth: 30 }}
+                    disabled={disabled}
+                    title={t('Convert %s to %s', unit, unit === '%' ? 'px' : '%')}
+                    onClick={() => {
+                        if (unit !== '%') {
+                            props.onPxToPercent(props.selectedWidgets, field.name, newValues => change(newValues[0]));
+                        } else {
+                            props.onPercentToPx(props.selectedWidgets, field.name, newValues => change(newValues[0]));
+                        }
+                    }}
+                >
+                    {unit}
+                </Button> : null,
+            }}
+            value={value}
+            onChange={e => change(e.target.value)}
         />;
     }
 

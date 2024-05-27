@@ -1031,6 +1031,7 @@ class Editor extends Runtime {
         }
 
         store.dispatch(updateProject(project));
+        store.dispatch(recalculateFields(true));
         await this.setStateAsync({ needSave: true });
 
         // save changes after 1 second
