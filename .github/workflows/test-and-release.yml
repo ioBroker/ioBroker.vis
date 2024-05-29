@@ -51,7 +51,7 @@ jobs:
         # if: failure()
         uses: actions/upload-artifact@v3
         with:
-          path: tmp/screenshots/**/*.png
+          path: packages/iobroker.vis-2/tmp/screenshots/**/*.png
           retention-days: 3
 
   # Deploys the final package to NPM
