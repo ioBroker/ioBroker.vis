@@ -1,4 +1,4 @@
-![Logo](packages/vis-2/admin/vis-2.png)
+![Logo](packages/iobroker.vis-2/admin/vis-2.png)
 # Next generation visualization for ioBroker: vis-2 
 
 ![Number of Installations](http://iobroker.live/badges/vis-2-installed.svg) ![Number of Installations](http://iobroker.live/badges/vis-2-stable.svg) [![NPM version](http://img.shields.io/npm/v/iobroker.vis-2.svg)](https://www.npmjs.com/package/iobroker.vis-2)
@@ -30,8 +30,8 @@ Additionally, you need a license to use the adapter. The following license editi
 
 ## Installation & Documentation
 
-![Demo interface](packages/vis-2/img/user0.png)
-![Demo interface](packages/vis-2/img/user7.png)
+![Demo interface](packages/iobroker.vis-2/img/user0.png)
+![Demo interface](packages/iobroker.vis-2/img/user7.png)
 
 [Online Demos](https://iobroker.click/)
 
@@ -241,7 +241,7 @@ Sometimes (in the night) it is required to have the dark loading screen. With th
 
 Notice that these settings are valid only for reconnection and not for the first connecting.
 
-![Dark](packages/vis-2/img/dark_screen.png)
+![Dark](packages/iobroker.vis-2/img/dark_screen.png)
 
 ## SVG and currentColor
 The currentColor keyword in CSS allows elements to inherit the current text color from their parent element.

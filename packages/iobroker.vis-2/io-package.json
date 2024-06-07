@@ -89,7 +89,7 @@
     "enabled": true,
     "mode": "daemon",
     "nogit": true,
-    "extIcon": "https://raw.githubusercontent.com/iobroker/iobroker.vis-2/master/admin/vis-2.png",
+    "extIcon": "https://raw.githubusercontent.com/iobroker/iobroker.vis-2/master/packages/iobroker.vis-2/admin/vis-2.png",
     "keywords": [
       "DashUI",
       "GUI",
