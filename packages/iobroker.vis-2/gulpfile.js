@@ -513,6 +513,11 @@ gulp.task('7-patch', done => {
     fs.writeFileSync(`${__dirname}/../../io-package.json`, fs.readFileSync(`${__dirname}/io-package.json`).toString());
     fs.writeFileSync(`${__dirname}/../../main.js`, fs.readFileSync(`${__dirname}/main.js`).toString());
     copyFolder(`${__dirname}/lib`, `${__dirname}/../../lib`);
+
+    let readme = fs.readFileSync(`${__dirname}/../../README.md`).toString('utf8');
+    readme = readme.replaceAll('packages/iobroker.vis-2/', '');
+    fs.writeFileSync(`${__dirname}/README.md`, readme);
+
     done();
 });
 
