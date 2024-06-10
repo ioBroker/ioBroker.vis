@@ -102,7 +102,6 @@ const CSS = (props: CSSProps) => {
                 </DialogContent>
                 <DialogActions>
                     <Button
-                        // @ts-expect-error grey is valid color
                         color="grey"
                         variant="contained"
                         onClick={() => setShowHelp(false)}

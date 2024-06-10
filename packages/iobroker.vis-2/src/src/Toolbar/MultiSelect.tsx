@@ -13,8 +13,7 @@ import {
     ArrowDropUp as IconArrowUp,
 } from '@mui/icons-material';
 
-import { Utils, I18n } from '@iobroker/adapter-react-v5';
-import { ThemeType } from '@iobroker/adapter-react-v5/types';
+import { Utils, I18n, type ThemeType } from '@iobroker/adapter-react-v5';
 
 const styles: Record<string, any> = (theme: Theme) => ({
     navMain: {

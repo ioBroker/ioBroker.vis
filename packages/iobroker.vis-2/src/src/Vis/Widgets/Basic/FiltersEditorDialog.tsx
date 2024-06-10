@@ -325,7 +325,6 @@ class FiltersEditorDialog extends Component<FiltersEditorDialogProps, FiltersEdi
                         />
                         <Button
                             variant={item.icon ? 'outlined' : undefined}
-                            // @ts-expect-error grey is correct
                             color={item.icon ? 'grey' : undefined}
                             onClick={() => this.setState({ selectIcon: index })}
                         >
@@ -359,7 +358,6 @@ class FiltersEditorDialog extends Component<FiltersEditorDialogProps, FiltersEdi
                         />
                         <Button
                             variant={image ? 'outlined' : undefined}
-                            // @ts-expect-error grey is correct
                             color={image ? 'grey' : undefined}
                             onClick={() => this.setState({ selectImage: index })}
                         >
@@ -488,7 +486,6 @@ class FiltersEditorDialog extends Component<FiltersEditorDialogProps, FiltersEdi
                 </Button>
                 <Button
                     variant="contained"
-                    // @ts-expect-error grey is correct
                     color="grey"
                     onClick={() => this.props.onClose()}
                     startIcon={<Close />}

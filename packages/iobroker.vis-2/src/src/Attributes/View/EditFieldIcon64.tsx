@@ -8,9 +8,8 @@ import { Clear as ClearIcon } from '@mui/icons-material';
 import {
     Icon,
     Utils,
+    type ThemeType,
 } from '@iobroker/adapter-react-v5';
-
-import { ThemeType } from '@iobroker/adapter-react-v5/types';
 
 import MaterialIconSelector from '@/Components/MaterialIconSelector';
 
@@ -52,7 +51,6 @@ export default function EditFieldIcon64(props: EditFieldIcon64Props) {
         <Button
             disabled={!props.editMode || props.disabled}
             variant={props.value ? 'outlined' : undefined}
-            // @ts-expect-error grey is a valid color
             color={props.value ? 'grey' : undefined}
             onClick={() => setShowDialog(true)}
         >

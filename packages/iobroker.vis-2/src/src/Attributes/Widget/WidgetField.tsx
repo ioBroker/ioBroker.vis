@@ -532,7 +532,6 @@ const WidgetField = (props: WidgetFieldProps) => {
                     {I18n.t('Move to new place')}
                 </Button>
                 <Button
-                    // @ts-expect-error grey is valid color
                     color="grey"
                     variant="contained"
                     onClick={() => setAskForUsage(null)}
@@ -860,7 +859,6 @@ const WidgetField = (props: WidgetFieldProps) => {
             value={value as string || ''}
             className={props.classes.fieldContentColor}
             onChange={color => change(color)}
-            openAbove
         />;
     }
 
@@ -1413,7 +1411,6 @@ const WidgetField = (props: WidgetFieldProps) => {
             />
             <Button
                 variant={value ? 'outlined' : undefined}
-                // @ts-expect-error grey is valid color
                 color={value ? 'grey' : undefined}
                 onClick={() => setIdDialog(true)}
             >

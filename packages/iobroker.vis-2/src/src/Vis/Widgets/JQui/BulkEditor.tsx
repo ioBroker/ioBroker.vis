@@ -392,7 +392,6 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
                 </Button>
                 <Button
                     variant="contained"
-                    // @ts-expect-error this is fine
                     color="grey"
                     startIcon={<Close />}
                     onClick={() => this.setState({ dialogDelete: null })}
@@ -565,7 +564,6 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
                 </Button>
                 <Button
                     variant="contained"
-                    // @ts-expect-error this is fine
                     color="grey"
                     startIcon={<Close />}
                     onClick={() => this.setState({ editDialog: null })}
@@ -681,7 +679,6 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
         } else {
             button = <Button
                 style={{ color: this.state.activeLine === i ? (this.state.activeColors[i] || this.state.colors[i]) : this.state.colors[i] || undefined }}
-                // @ts-expect-error this is fine
                 color={this.state.activeLine === i ? 'primary' : 'grey'}
                 variant={this.props.data.variant === undefined ? 'contained' : this.props.data.variant}
                 onClick={() => this.setState({ activeLine: i })}
@@ -744,7 +741,6 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
                     />
                     <Button
                         variant={this.state.icons[i] ? 'outlined' : undefined}
-                        // @ts-expect-error this is fine
                         color={this.state.icons[i] ? 'grey' : undefined}
                         onClick={() => this.setState({ iconDialog: i })}
                     >
@@ -950,7 +946,6 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
                 </Button>
                 <Button
                     variant="contained"
-                    // @ts-expect-error this is fine
                     color="grey"
                     startIcon={<Close />}
                     onClick={() => this.setState({ minMaxDialog: false })}
@@ -1084,7 +1079,6 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
                 </Button>
                 <Button
                     variant="contained"
-                    // @ts-expect-error this works
                     color="grey"
                     startIcon={<Close />}
                     onClick={() => this.setState({ dialog: false })}

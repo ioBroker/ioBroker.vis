@@ -72,7 +72,6 @@ const IODialog = (props: IODialogProps) => (props.open ? <Dialog
             </Button> : null}
         <Button
             variant="contained"
-            // @ts-expect-error grey is valid color
             color="grey"
             onClick={props.onClose}
             disabled={props.closeDisabled}

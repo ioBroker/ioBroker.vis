@@ -24,13 +24,13 @@ import {
 import {
     I18n, Utils,
     Icon, LegacyConnection,
+    type ThemeType,
 } from '@iobroker/adapter-react-v5';
 
 import { Marketplace, MarketplaceWidgetRevision, Project } from '@iobroker/types-vis-2';
 import { store } from '@/Store';
 
 import { getWidgetTypes, WidgetType } from '@/Vis/visWidgetsCatalog';
-import { ThemeType } from '@iobroker/adapter-react-v5/types';
 import { loadComponent } from '@/Vis/visLoadWidgets';
 import type { MarketplaceDialogProps } from '@/Marketplace/MarketplaceDialog';
 import Widget from './Widget';

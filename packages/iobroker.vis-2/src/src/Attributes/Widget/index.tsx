@@ -25,6 +25,7 @@ import {
 import {
     I18n, Icon,
     LegacyConnection, Utils,
+    type ThemeType,
 } from '@iobroker/adapter-react-v5';
 import {
     store, recalculateFields, updateWidget, selectWidget,
@@ -41,7 +42,6 @@ import {
     Widget as SingleGroupWidget,
     VisTheme, WidgetData, WidgetStyle, GroupData,
 } from '@iobroker/types-vis-2';
-import { ThemeType } from '@iobroker/adapter-react-v5/types';
 
 import WidgetField from './WidgetField';
 import IODialog from '../../Components/IODialog';
@@ -999,7 +999,7 @@ class Widget extends Component<WidgetProps, WidgetState> {
                     this.props.selectedWidgets.forEach(wid => {
                         const widgetData = _widgets[wid].data;
                         // move all fields of the group to -1
-                        idxGroup.fields.forEach((attr, i) =>
+                        idxGroup.fields.forEach((_attr, i) =>
                             widgetData[idxGroup.fields[i].name] = widgetData[idxGroupPlus.fields[i].name]);
 
                         // move the group-used flag
@@ -1044,7 +1044,7 @@ class Widget extends Component<WidgetProps, WidgetState> {
                 // order all attributes for better readability
                 const widgetData = _widgets[wid].data;
 
-                lastGroup.fields.forEach((attr, i) => {
+                lastGroup.fields.forEach((_attr, i) => {
                     const name = lastGroup.fields[i].name.replace(/\d?\d+$/, newIndex.toString());
                     widgetData[name] = null;
                 });
@@ -1447,7 +1447,7 @@ class Widget extends Component<WidgetProps, WidgetState> {
             key={group.name}
             elevation={0}
             expanded={!!(this.state.accordionOpen[group.name] && group.hasValues)}
-            onChange={(e, expanded) => {
+            onChange={(_e, expanded) => {
                 const accordionOpen = { ...this.state.accordionOpen };
                 accordionOpen[group.name] = expanded;
                 this.setAccordionState(accordionOpen);

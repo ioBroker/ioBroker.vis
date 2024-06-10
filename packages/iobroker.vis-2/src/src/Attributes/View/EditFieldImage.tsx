@@ -12,10 +12,10 @@ import {
     LegacyConnection,
     SelectFile as SelectFileDialog,
     Utils,
+    type ThemeType,
 } from '@iobroker/adapter-react-v5';
 
 import { Field } from '@/Attributes/View/Items';
-import { ThemeType } from '@iobroker/adapter-react-v5/types';
 
 interface EditFieldImageProps {
     value: string;

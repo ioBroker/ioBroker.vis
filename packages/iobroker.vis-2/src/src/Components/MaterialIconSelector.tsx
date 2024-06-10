@@ -407,7 +407,6 @@ class MaterialIconSelector extends Component<MaterialIconSelectorProps, Material
                 {this.state.maxPages > 1 ? <div style={{ flexGrow: 1 }} /> : null}
                 {this.props.value ? <Button
                     variant="outlined"
-                    // @ts-expect-error grey is valid color
                     color="grey"
                     onClick={() => this.props.onClose('')}
                     startIcon={<EraseIcon />}
@@ -425,7 +424,6 @@ class MaterialIconSelector extends Component<MaterialIconSelectorProps, Material
                 </Button>
                 <Button
                     variant="contained"
-                    // @ts-expect-error grey is valid color
                     color="grey"
                     onClick={() => this.props.onClose(null)}
                     startIcon={<ClearIcon />}

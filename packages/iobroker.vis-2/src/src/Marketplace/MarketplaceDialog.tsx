@@ -5,8 +5,7 @@ import {
 } from '@mui/material';
 import { Close } from '@mui/icons-material';
 
-import { I18n } from '@iobroker/adapter-react-v5';
-import { ThemeName } from '@iobroker/adapter-react-v5/types';
+import { I18n, type ThemeName } from '@iobroker/adapter-react-v5';
 import {
     GroupWidgetId,
     MarketplaceWidgetRevision,

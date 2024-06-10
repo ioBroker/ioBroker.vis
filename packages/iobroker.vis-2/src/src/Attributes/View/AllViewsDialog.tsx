@@ -10,8 +10,7 @@ import {
 
 import { Close, DragHandle, FormatPaint } from '@mui/icons-material';
 
-import { I18n, LegacyConnection } from '@iobroker/adapter-react-v5';
-import { ThemeType } from '@iobroker/adapter-react-v5/types';
+import { I18n, LegacyConnection, type ThemeType } from '@iobroker/adapter-react-v5';
 
 import { Project } from '@iobroker/types-vis-2';
 import { getViewsWithDifferentValues } from '@/Attributes/View/ApplyProperties';
@@ -168,7 +167,6 @@ export default function showAllViewsDialog(props: ShowAllViewsDialogProps) {
             <Button
                 variant="contained"
                 onClick={props.onClose}
-                // @ts-expect-error grey is valid color
                 color="grey"
                 startIcon={<Close />}
             >

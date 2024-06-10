@@ -52,7 +52,6 @@ class CodeDialog extends Component<CodeDialogProps> {
                 </Button>
                 <Button
                     variant="contained"
-                    // @ts-expect-error grey is valid color
                     color="grey"
                     startIcon={<CloseIcon />}
                     onClick={() => this.props.onClose()}

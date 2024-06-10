@@ -890,7 +890,6 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
                 </Button>
                 <Button
                     variant="contained"
-                    // @ts-expect-error grey is valid color
                     color="grey"
                     startIcon={<Cancel />}
                     onClick={() => this.setState({ showEditBindingDialog: false })}
@@ -931,7 +930,6 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
             <DialogActions>
                 <Button
                     variant="contained"
-                    // @ts-expect-error grey is valid color
                     color="grey"
                     onClick={() => {
                         const options = this.state.askToModify;
@@ -944,7 +942,6 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
                 </Button>
                 <Button
                     variant="contained"
-                    // @ts-expect-error grey is valid color
                     color="grey"
                     onClick={() => {
                         const options = this.state.askToModify;
@@ -1020,7 +1017,6 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
             <DialogActions>
                 <Button
                     variant="contained"
-                    // @ts-expect-error grey is valid color
                     color="grey"
                     onClick={() => {
                         const options = this.state.askForArguments;
@@ -1033,7 +1029,6 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
                 </Button>
                 <Button
                     variant="contained"
-                    // @ts-expect-error grey is valid color
                     color="grey"
                     onClick={() => this.setState({ askForArguments: null })}
                 >

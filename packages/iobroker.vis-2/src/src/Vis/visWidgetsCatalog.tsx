@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { type LegacyConnection } from '@iobroker/adapter-react-v5';
+import { type LegacyConnection, type ThemeType } from '@iobroker/adapter-react-v5';
 import type {
     GroupWidgetId,
     Project,
@@ -13,7 +13,6 @@ import type {
     RxWidgetAttributeType, Widget,
 } from '@iobroker/types-vis-2';
 import VisRxWidget from '@/Vis/visRxWidget';
-import { ThemeType } from '@iobroker/adapter-react-v5/types';
 import { ObjectBrowserCustomFilter, ObjectBrowserType } from '@iobroker/adapter-react-v5/Components/types';
 
 import { getRemoteWidgets } from './visLoadWidgets';

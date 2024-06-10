@@ -10,8 +10,11 @@ import {
     Block as DeletedIcon,
 } from '@mui/icons-material';
 
-import { I18n, LegacyConnection, Utils } from '@iobroker/adapter-react-v5';
-import { ThemeType } from '@iobroker/adapter-react-v5/types';
+import {
+    I18n, LegacyConnection,
+    Utils,
+    type ThemeType,
+} from '@iobroker/adapter-react-v5';
 import { MarketplaceWidgetRevision, Project } from '@iobroker/types-vis-2';
 
 import { store } from '@/Store';

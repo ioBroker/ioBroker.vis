@@ -22,8 +22,8 @@ import {
     Utils,
     I18n,
     type LegacyConnection,
+    type ThemeType,
 } from '@iobroker/adapter-react-v5';
-import { ThemeType } from '@iobroker/adapter-react-v5/types';
 
 import { store } from '@/Store';
 import { Project, View } from '@iobroker/types-vis-2';

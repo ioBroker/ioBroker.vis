@@ -127,7 +127,6 @@ const WidgetImportDialog = (props: WidgetImportDialogProps) => {
             </Button>
             <Button
                 variant="contained"
-                // @ts-expect-error works like that
                 color="grey"
                 onClick={props.onClose}
                 startIcon={<CloseIcon />}

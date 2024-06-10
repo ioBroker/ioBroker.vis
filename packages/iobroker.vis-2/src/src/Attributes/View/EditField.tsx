@@ -14,13 +14,13 @@ import {
     IconPicker, LegacyConnection,
     TextWithIcon,
     Utils,
+    type ThemeType,
 } from '@iobroker/adapter-react-v5';
 
 import { Clear as ClearIcon } from '@mui/icons-material';
 
 import { deepClone } from '@/Utils/utils';
 import { Field } from '@/Attributes/View/Items';
-import { ThemeType } from '@iobroker/adapter-react-v5/types';
 import { Project } from '@iobroker/types-vis-2';
 
 import EditFieldImage from './EditFieldImage';
@@ -219,7 +219,6 @@ export default function getEditField(gProps: EditFieldProps): React.JSX.Element 
             className={classes.fieldContentColor}
             disabled={!editMode || disabled}
             onChange={color => change(color)}
-            openAbove
         />;
     }
     if (field.type === 'icon') {

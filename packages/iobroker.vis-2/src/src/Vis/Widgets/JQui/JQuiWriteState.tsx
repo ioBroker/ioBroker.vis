@@ -16,7 +16,7 @@
 import React from 'react';
 
 import {
-    Button, ButtonTypeMap,
+    Button,
 } from '@mui/material';
 
 import {
@@ -466,12 +466,10 @@ class JQuiWriteState extends VisRxWidget<RxData, JQuiWriteStateState> {
         buttonStyle.height = '100%';
         buttonStyle.minWidth = 'unset';
 
-        // @ts-expect-error grey is valid color
-        const buttonColor: ButtonTypeMap = isActive ? 'primary' : 'grey';
+        const buttonColor: 'primary' | 'grey' = isActive ? 'primary' : 'grey';
 
         const content = <Button
             style={buttonStyle}
-            // @ts-expect-error grey is valid color
             color={buttonColor}
             startIcon={text ? this.renderIcon(isActive) : null}
             onClick={() => this.onClick()}

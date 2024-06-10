@@ -1,7 +1,6 @@
 import type React from 'react';
 import type moment from 'moment';
-import type { LegacyConnection } from '@iobroker/adapter-react-v5';
-import type { ThemeType, Theme } from '@iobroker/adapter-react-v5/types';
+import type { LegacyConnection, ThemeType, IobTheme } from '@iobroker/adapter-react-v5';
 
 interface VisView {
     getOneWidget(index: number, widget: SingleWidget | GroupWidget, options: CreateWidgetOptions): React.JSX.Element | null;
@@ -1062,16 +1061,16 @@ export interface VisFormatUtils {
     }): string;
 }
 
-export interface VisTheme extends Theme {
+export interface VisTheme extends IobTheme {
     classes: {
-        blockHeader: React.CSSProperties,
-        viewTabs: React.CSSProperties,
-        viewTab: React.CSSProperties,
-        lightedPanel: React.CSSProperties,
-        toolbar: React.CSSProperties,
-        viewManageBlock: React.CSSProperties,
-        viewManageButtonActions: React.CSSProperties,
-    }
+        blockHeader: React.CSSProperties;
+        viewTabs: React.CSSProperties;
+        viewTab: React.CSSProperties;
+        lightedPanel: React.CSSProperties;
+        toolbar: React.CSSProperties;
+        viewManageBlock: React.CSSProperties;
+        viewManageButtonActions: React.CSSProperties;
+    };
 }
 
 export interface VisContext {
@@ -1225,12 +1224,12 @@ type AttributeTypeToDataType<TType extends RxWidgetAttributeType> = TType extend
 /** Infer the RxData from VisAttrs */
 type GetRxDataFromVisAttrs<T extends Record<string, any>> = {
     [K in T['visAttrs'][number]['fields'][number] as K['name']]: AttributeTypeToDataType<K['type']>
-}
+};
 
 /** Infers the RxData from a given Widget */
-type GetRxDataFromWidget<T extends { getWidgetInfo: () => Record<string, any> }> = GetRxDataFromVisAttrs<ReturnType<(T['getWidgetInfo'])>>
+type GetRxDataFromWidget<T extends { getWidgetInfo: () => Record<string, any> }> = GetRxDataFromVisAttrs<ReturnType<(T['getWidgetInfo'])>>;
 
 /** Branded type functionality */
 declare const __brand: unique symbol;
-type Brand<B> = { [__brand]: B }
-export type Branded<T, B> = T & Brand<B>
+type Brand<B> = { [__brand]: B };
+export type Branded<T, B> = T & Brand<B>;

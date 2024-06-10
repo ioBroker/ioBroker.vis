@@ -73,8 +73,11 @@ export interface VisBaseWidgetProps {
     onWidgetsChanged: (...props: any[]) => void;
     mouseDownOnView: (...props: any[]) => void;
     refParent: React.RefObject<HTMLElement>;
+    // eslint-disable-next-line react/no-unused-prop-types
     customSettings: Record<string, any>;
+    // eslint-disable-next-line react/no-unused-prop-types
     classes: Record<string, string>;
+    // eslint-disable-next-line react/no-unused-prop-types
     socket: LegacyConnection;
 }
 
@@ -290,6 +293,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
     }
 
     // this method may be not in form onCommand = command => {}, as it can be overloaded
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onCommand(command: VisWidgetCommand, _option?: any): any {
         if (command === 'includePossible') {
             const overlay = this.refService.current?.querySelector('.vis-editmode-overlay') as HTMLDivElement;
