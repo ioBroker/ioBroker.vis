@@ -1616,8 +1616,6 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
             return `<span class="time-interval" data-time="${dateObj.getTime()}" data-moment="${isMomentJs || false}">${this.formatInterval(dateObj.getTime(), isMomentJs)}</span>`;
         }
 
-        let v;
-
         // Year
         if (format.includes('YYYY') || format.includes('JJJJ') || format.includes('ГГГГ')) {
             const yearStr = dateObj.getFullYear().toString();

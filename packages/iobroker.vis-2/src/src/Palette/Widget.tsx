@@ -144,7 +144,18 @@ const Widget = (props: WidgetProps) => {
             props.widgetSet === '__marketplace'
         )
     ) {
-        img = <img src={props.widgetType.preview} className={props.classes.widgetImageWithSrc} alt={props.widgetType.name} />;
+        img = <img
+            src={props.widgetType.preview}
+            className={props.classes.widgetImageWithSrc}
+            alt={props.widgetType.name}
+            onError={e => {
+                if (e.target) {
+                    (e.target as HTMLImageElement).onerror = null;
+                    (e.target as HTMLImageElement).src = './img/no-image.svg';
+                    (e.target as HTMLImageElement).style.height = '24px';
+                }
+            }}
+        />;
     }
 
     if (!img) {
