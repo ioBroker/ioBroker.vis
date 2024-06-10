@@ -6,9 +6,9 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Menu, MenuItem } from '@mui/material';
 
 import { I18n, Utils } from '@iobroker/adapter-react-v5';
+import { AnyWidgetId } from '@iobroker/types-vis-2';
 
 import { getWidgetTypes, type WidgetType } from './visWidgetsCatalog';
-import {AnyWidgetId} from "@iobroker/types-vis-2";
 
 const styles: Styles<string, any> = () => ({
     widgetIcon: {
