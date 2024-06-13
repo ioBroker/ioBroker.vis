@@ -257,6 +257,31 @@ Here's a simple example with a circle in an SVG:
 In this case, if the SVG takes the color of parent element.
 E.g., if it was used in a menu and the menu is red, the circle would be red.
 
+## Developement and Debugging
+
+In order to make adjustments to the vis-2 editor itself, to search for errors and to debug, the following steps must be carried out.
+
+1. fork the iobroker/iobroker.vis-2 repository into your own account via user interface of github
+
+2. clone the repository into a directory. copy the url from your github repository. the command looks like
+
+```
+git clone https://github.com/<your profile name>/ioBroker.vis-2.git
+```
+
+3. open the downloaded repository with your IDE
+
+4. to install and download all necessary libraries, run the following command in a terminal in the root directory of the repository
+
+```
+npm run install-monorepo
+```
+
+5. to start the editor in the browser please execute the following command
+
+- Debugging is available in the browser e.g. chrome F12
+- if you change a file, automatic reload of the editor is supported
+
 
 ## Todo
 <!--
