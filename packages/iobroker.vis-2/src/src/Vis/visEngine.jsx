@@ -474,6 +474,8 @@ class VisEngine extends React.Component {
                 return false;
             },
             setValue: this.setValue,
+            subscribe: this.subscribe,
+            unsubscribe: this.unsubscribe,
             changeView: (viewDiv, view, hideOptions, showOptions, sync, cb) => {
                 if (typeof view === 'object') {
                     cb = sync;
