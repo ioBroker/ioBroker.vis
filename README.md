@@ -279,6 +279,10 @@ npm run install-monorepo
 
 5. to start the editor in the browser please execute the following command
 
+```
+npm run start
+```
+
 - Debugging is available in the browser e.g. chrome F12
 - if you change a file, automatic reload of the editor is supported
 
