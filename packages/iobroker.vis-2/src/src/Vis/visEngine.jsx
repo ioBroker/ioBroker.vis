@@ -1135,6 +1135,11 @@ class VisEngine extends React.Component {
                     .then(() => cb && cb())
                     .catch(error => cb && cb(error));
             },
+            sendTo: (instance, command, data, cb) => {
+                this.props.socket.sendTo(instance, command, data)
+                    .then(result => cb && cb(result))
+                    .catch(error => cb && cb(error));
+            },
             setReloadTimeout: () => {
 
             },
