@@ -277,7 +277,8 @@ git clone https://github.com/<your profile name>/ioBroker.vis-2.git
 npm run install-monorepo
 ```
 
-5. to start the editor in the browser please execute the following command
+5. to start the editor in the browser please execute the following command. 
+An already separately running iobroker server instance must be available on port 8082.
 
 ```
 npm run start
