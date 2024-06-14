@@ -32,6 +32,7 @@ import IOContextMenu from '../Components/IOContextMenu';
 import WidgetExportDialog from '../Toolbar/WidgetExportDialog';
 import WidgetImportDialog from '../Toolbar/WidgetImportDialog';
 import { getWidgetTypes, WidgetType } from './visWidgetsCatalog';
+import { EditorClass } from '@/Editor';
 
 interface VisContextMenuProps {
     changeProject: (project: Project) => void;
@@ -51,7 +52,7 @@ interface VisContextMenuProps {
     ungroupWidgets: () => void;
     widgetsClipboard: Record<string, any>;
     themeType: 'dark' | 'light';
-    setMarketplaceDialog: (data: { addPage: boolean; widget: { widget: (Widget)[]; image: string } }) => void;
+    setMarketplaceDialog: EditorClass['setMarketplaceDialog'];
 }
 
 export interface VisMarketplaceProps {

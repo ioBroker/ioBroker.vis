@@ -1,7 +1,9 @@
-import React, { useRef } from 'react';
+import React, { CSSProperties, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
-import { withStyles, StylesProvider, createGenerateClassName } from '@mui/styles';
+import {
+    withStyles, StylesProvider, createGenerateClassName, Styles,
+} from '@mui/styles';
 import { DndProvider, useDrop } from 'react-dnd';
 import { TouchBackend } from 'react-dnd-touch-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -30,8 +32,11 @@ import {
     Utils,
     Confirm as ConfirmDialog,
     Message as MessageDialog,
-    SelectFile as SelectFileDialog, Icon,
+    SelectFile as SelectFileDialog, Icon, IobTheme, LegacyConnection,
 } from '@iobroker/adapter-react-v5';
+import {
+    AnyWidgetId, GroupData, GroupWidget, GroupWidgetId, MarketplaceWidgetRevision, Project, RxWidgetInfoGroup, SingleWidget, SingleWidgetId, View, ViewSettings, Widget, WidgetData, WidgetSetName, WidgetStyle,
+} from '@iobroker/types-vis-2';
 import { recalculateFields, store, updateProject } from './Store';
 import {
     isGroup, getNewWidgetId, getNewGroupId, pasteGroup, unsyncMultipleWidgets, deepClone, pasteSingleWidget,
@@ -43,18 +48,22 @@ import Toolbar from './Toolbar';
 import CodeDialog from './Components/CodeDialog';
 import CreateFirstProjectDialog from './Components/CreateFirstProjectDialog';
 import { DndPreview, isTouchDevice } from './Utils';
-import { getWidgetTypes, parseAttributes } from './Vis/visWidgetsCatalog';
+import {
+    WidgetAttributesGroupInfoStored, WidgetType, getWidgetTypes, parseAttributes,
+} from './Vis/visWidgetsCatalog';
 import VisContextMenu from './Vis/visContextMenu';
-import Runtime from './Runtime';
+import Runtime, { RuntimeProps, RuntimeState } from './Runtime';
 import ImportProjectDialog from './Toolbar/ProjectsManager/ImportProjectDialog';
 import { findWidgetUsages } from './Vis/visUtils';
-import MarketplaceDialog from './Marketplace/MarketplaceDialog';
+import MarketplaceDialog, { MarketplaceDialogProps } from './Marketplace/MarketplaceDialog';
+import { VisEngineHandlers } from './Vis/visView';
+import VisEngine from './Vis/visEngine';
 
 const generateClassName = createGenerateClassName({
     productionPrefix: 'vis-e',
 });
 
-const styles = theme => ({
+const styles: Styles<IobTheme & {classes: Record<string, CSSProperties>}, any> = theme => ({
     block: {
         overflow: 'auto',
         height: 'calc(100vh - 102px)',
@@ -166,24 +175,39 @@ const styles = theme => ({
     },
 });
 
-const ViewDrop = props => {
-    const targetRef = useRef();
+interface ViewDropProps {
+    addMarketplaceWidget: EditorClass['addMarketplaceWidget'];
+    addWidget: EditorClass['addWidget'];
+    editMode: boolean;
+    children: React.JSX.Element;
+}
 
-    const [{ CanDrop, isOver }, drop] = useDrop(() => ({
+const ViewDrop:React.FC<ViewDropProps> = props => {
+    const targetRef = useRef<HTMLDivElement>();
+
+    const [{ CanDrop, isOver }, drop] = useDrop<{
+        widgetSet: WidgetSetName;
+        widgetType: WidgetType | MarketplaceWidgetRevision;
+    }, unknown, {
+        isOver: boolean;
+        CanDrop: boolean;
+    }>(() => ({
         accept: ['widget'],
         drop(item, monitor) {
-            if (item.widgetSet === '__marketplace') {
-                props.addMarketplaceWidget(
-                    item.widgetType.id,
-                    monitor.getClientOffset().x - targetRef.current.getBoundingClientRect().x,
-                    monitor.getClientOffset().y - targetRef.current.getBoundingClientRect().y,
-                );
-            } else {
-                props.addWidget(
-                    item.widgetType.name,
-                    monitor.getClientOffset().x - targetRef.current.getBoundingClientRect().x,
-                    monitor.getClientOffset().y - targetRef.current.getBoundingClientRect().y,
-                );
+            if (targetRef.current) {
+                if (item.widgetSet === '__marketplace') {
+                    props.addMarketplaceWidget(
+                        (item.widgetType as MarketplaceWidgetRevision).id,
+                        monitor.getClientOffset().x - targetRef.current.getBoundingClientRect().x,
+                        monitor.getClientOffset().y - targetRef.current.getBoundingClientRect().y,
+                    );
+                } else {
+                    props.addWidget(
+                        item.widgetType.name,
+                        monitor.getClientOffset().x - targetRef.current.getBoundingClientRect().x,
+                        monitor.getClientOffset().y - targetRef.current.getBoundingClientRect().y,
+                    );
+                }
             }
         },
         canDrop: () => props.editMode,
@@ -205,15 +229,76 @@ const ViewDrop = props => {
     </div>;
 };
 
-class Editor extends Runtime {
-    onIgnoreMouseEvents = ignore => {
+export interface EditorProps extends RuntimeProps {
+    version: string;
+}
+
+export interface EditorState extends RuntimeState{
+    needSave: boolean;
+    widgetsClipboard: {
+        type: 'cut' | 'copy' | '';
+        view?: string;
+        widgets: Record<string, Widget>;
+        groupMembers?: Record<string, Widget>;
+    };
+    loadingProgress: {
+        step: number;
+        total: number;
+    };
+    deleteWidgetsDialog: boolean;
+    viewsManager: boolean;
+    updateWidgetsDialog: MarketplaceWidgetRevision | false;
+    align: {
+        alignType: 'width' | 'height';
+        alignIndex: number;
+        alignValues: number[];
+    };
+    showCode: boolean;
+    marketplaceDialog: Partial<MarketplaceDialogProps> | false;
+    askAboutInclude: {
+        wid: AnyWidgetId;
+        toWid: AnyWidgetId;
+        cb: (wid: AnyWidgetId, toWid: AnyWidgetId) => void;
+    };
+    hidePalette: boolean;
+    hideAttributes: boolean;
+    toolbarHeight: 'narrow' | 'veryNarrow';
+    loadingText: string;
+    legacyFileSelector: {
+        callback: (data: { path: string; file: string }, userArg: any) => void;
+        options: {
+            path?: string;
+            userArg?: any;
+        };
+    } | false;
+
+}
+
+declare global {
+    interface Window {
+        visAddWidget: (widgetType: string, x: number, y: number, data: Partial<WidgetData>, style: Partial<WidgetStyle>) => Promise<AnyWidgetId>;
+    }
+}
+
+class Editor extends Runtime<EditorProps, EditorState> {
+    mainRef: React.RefObject<HTMLDivElement>;
+
+    tempProject: Project;
+
+    visEngineHandlers: Record<string, Partial<VisEngineHandlers>>;
+
+    savingTimer: ReturnType<typeof setTimeout>;
+
+    historyTimer: ReturnType<typeof setTimeout>;
+
+    onIgnoreMouseEvents = (ignore: boolean) => {
         if (this.state.ignoreMouseEvents !== ignore) {
             setTimeout(() => this.setState({ ignoreMouseEvents: ignore }), 100);
         }
     };
 
     // eslint-disable-next-line class-methods-use-this
-    initState(newState) {
+    initState = (newState: Partial<EditorState>) => {
         this.visEngineHandlers = {};
         window.visAddWidget = this.addWidget; // Used for tests
 
@@ -272,7 +357,7 @@ class Editor extends Runtime {
             legacyFileSelector: null,
             askAboutInclude: null,
         });
-    }
+    };
 
     async componentDidMount() {
         super.componentDidMount();
@@ -288,7 +373,7 @@ class Editor extends Runtime {
         window.removeEventListener('beforeunload', this.onBeforeUnload, false);
     }
 
-    onBeforeUnload = e => {
+    onBeforeUnload = (e: BeforeUnloadEvent) => {
         if (this.state.needSave) {
             this.needRestart = true;
             e.returnValue = I18n.t('Project doesn\'t saved. Are you sure?');
@@ -298,11 +383,11 @@ class Editor extends Runtime {
         return null;
     };
 
-    onKeyDown = async e => {
+    onKeyDown = async (e: KeyboardEvent) => {
         if (!this.state.editMode) {
             return;
         }
-        const controlKey = e.ctrlKey || e.cmdKey;
+        const controlKey = e.ctrlKey || (e as any).cmdKey;
         if (document.activeElement.tagName === 'BODY') {
             if (controlKey && e.key === 'z' && this.state.historyCursor !== 0) {
                 e.preventDefault();
@@ -329,10 +414,10 @@ class Editor extends Runtime {
             if (controlKey && e.key === 'a') {
                 e.preventDefault();
                 if (this.state.selectedGroup) {
-                    this.setSelectedWidgets(Object.keys(store.getState().visProject[this.state.selectedView].widgets)
+                    this.setSelectedWidgets((Object.keys(store.getState().visProject[this.state.selectedView].widgets) as AnyWidgetId[])
                         .filter(widget => !store.getState().visProject[this.state.selectedView].widgets[widget].data.locked && store.getState().visProject[this.state.selectedView].widgets[widget].groupid === this.state.selectedGroup));
                 } else {
-                    this.setSelectedWidgets(Object.keys(store.getState().visProject[this.state.selectedView].widgets)
+                    this.setSelectedWidgets((Object.keys(store.getState().visProject[this.state.selectedView].widgets) as AnyWidgetId[])
                         .filter(widget => !store.getState().visProject[this.state.selectedView].widgets[widget].data.locked && !store.getState().visProject[this.state.selectedView].widgets[widget].grouped));
                 }
             }
@@ -347,28 +432,28 @@ class Editor extends Runtime {
         }
     };
 
-    setWidgetsLoadingProgress = (step, total) => {
+    setWidgetsLoadingProgress = (step: number, total: number) => {
         this.setState({ loadingProgress: { step, total } });
     };
 
-    onWidgetSetsChanged = (id, state) => {
+    onWidgetSetsChanged = (id: string, state: ioBroker.State) => {
         if (state && this.lastUploadedState && state.val !== this.lastUploadedState) {
             this.lastUploadedState = state.val;
             this.onVisChanged();
         }
     };
 
-    setViewsManager = isOpen => {
+    setViewsManager = (isOpen: boolean) => {
         if ((!!isOpen) !== this.state.viewsManager) {
             this.setState({ viewsManager: !!isOpen });
         }
     };
 
-    setProjectsDialog = isOpen => this.setState({ projectsDialog: isOpen });
+    setProjectsDialog = (isOpen: boolean) => this.setState({ projectsDialog: isOpen });
 
-    loadSelectedWidgets(selectedView) {
+    loadSelectedWidgets(selectedView: string) {
         selectedView = selectedView || this.state.selectedView;
-        const selectedWidgets = JSON.parse(window.localStorage.getItem(
+        const selectedWidgets: AnyWidgetId[] = JSON.parse(window.localStorage.getItem(
             `${this.state.projectName}.${selectedView}.widgets`,
         ) || '[]') || [];
 
@@ -382,8 +467,8 @@ class Editor extends Runtime {
         return selectedWidgets;
     }
 
-    addWidget = async (widgetType, x, y, data, style) => {
-        const project = JSON.parse(JSON.stringify(store.getState().visProject));
+    addWidget = async (widgetType: string, x: number, y: number, data?: Partial<WidgetData>, style?: Partial<WidgetStyle>): Promise<AnyWidgetId> => {
+        const project = deepClone(store.getState().visProject);
         const widgets = project[this.state.selectedView].widgets;
         const newKey = getNewWidgetId(store.getState().visProject);
         widgets[newKey] = {
@@ -396,7 +481,7 @@ class Editor extends Runtime {
                 left: `${x}px`,
                 top: `${y}px`,
             },
-        };
+        } as Widget;
 
         if (this.state.selectedGroup) {
             widgets[newKey].grouped = true;
@@ -409,7 +494,7 @@ class Editor extends Runtime {
         const tplWidget = widgetTypes.find(item => item.name === widgetType);
 
         // extract groups
-        const fields = parseAttributes(tplWidget.params);
+        const fields: WidgetAttributesGroupInfoStored[] = parseAttributes((tplWidget.params as string | RxWidgetInfoGroup[]));
 
         fields.forEach(group => {
             if (group.fields) {
@@ -453,11 +538,14 @@ class Editor extends Runtime {
 
     deleteWidgets = async () => this.setState({ deleteWidgetsDialog: true });
 
-    updateWidgets = async marketplaceWidget => this.setState({ updateWidgetsDialog: marketplaceWidget });
+    updateWidgets = async (marketplaceWidget: MarketplaceWidgetRevision) => this.setState({ updateWidgetsDialog: marketplaceWidget });
 
-    updateWidgetsAction = async (marketplace, widgets) => {
+    updateWidgetsAction = async (marketplace: MarketplaceWidgetRevision, widgets: {
+        name: string;
+        widgets: AnyWidgetId[];
+    }[]) => {
         await this.installWidget(marketplace.widget_id, marketplace.id);
-        const project = JSON.parse(JSON.stringify(store.getState().visProject));
+        const project = deepClone(store.getState().visProject);
         widgets.forEach(view => {
             view.widgets.forEach(widget => {
                 const widgetData = project[view.name].widgets[widget];
@@ -511,8 +599,8 @@ class Editor extends Runtime {
         await this.changeProject(project);
     };
 
-    lockWidgets = async type => {
-        const project = JSON.parse(JSON.stringify(store.getState().visProject));
+    lockWidgets = async (type: 'lock' | 'unlock') => {
+        const project = deepClone(store.getState().visProject);
         const widgets = project[this.state.selectedView].widgets;
         this.state.selectedWidgets.forEach(selectedWidget =>
             widgets[selectedWidget].data.locked = type === 'lock');
@@ -520,7 +608,7 @@ class Editor extends Runtime {
     };
 
     toggleWidgetHint = () => {
-        let widgetHint;
+        let widgetHint: 'light' | 'dark' | 'hide';
         if (this.state.widgetHint === 'light') {
             widgetHint = 'dark';
         } else if (this.state.widgetHint === 'dark') {
@@ -540,9 +628,9 @@ class Editor extends Runtime {
         await this.cutCopyWidgets('copy');
     };
 
-    cutCopyWidgets = async type => {
-        const widgets = {};
-        const groupMembers = {};
+    cutCopyWidgets = async (type: 'cut' | 'copy') => {
+        const widgets: Record<string, Widget> = {};
+        const groupMembers: Record<string, Widget> = {};
         const project = deepClone(store.getState().visProject);
         const { visProject } = deepClone(store.getState());
 
@@ -585,20 +673,20 @@ class Editor extends Runtime {
         const project = deepClone(store.getState().visProject);
         const widgets = project[this.state.selectedView].widgets;
 
-        const newKeys = [];
+        const newKeys:AnyWidgetId[] = [];
         let widgetOffset = 0;
         let groupOffset = 0;
 
         for (const clipboardWidgetId of Object.keys(this.state.widgetsClipboard.widgets)) {
-            const newWidget = deepClone(this.state.widgetsClipboard.widgets[clipboardWidgetId]);
+            const newWidget = deepClone(this.state.widgetsClipboard.widgets[clipboardWidgetId as AnyWidgetId]);
             if (this.state.widgetsClipboard.type === 'copy' && this.state.selectedView === this.state.widgetsClipboard.view) {
-                const boundingRect = Editor.getWidgetRelativeRect(clipboardWidgetId);
+                const boundingRect = Editor.getWidgetRelativeRect(clipboardWidgetId as AnyWidgetId);
                 newWidget.style = this.pxToPercent(newWidget.style, {
                     left: `${(boundingRect?.left ?? 0) + 10}px`,
                     top: `${(boundingRect?.top ?? 0) + 10}px`,
                 });
             }
-            let newKey;
+            let newKey: AnyWidgetId;
 
             if (isGroup(newWidget)) {
                 newKey = pasteGroup({
@@ -625,7 +713,7 @@ class Editor extends Runtime {
         const project = deepClone(store.getState().visProject);
         const widgets = project[this.state.selectedView].widgets;
 
-        const newKeys = [];
+        const newKeys:SingleWidgetId[] = [];
         this.state.selectedWidgets.forEach(selectedWidget => {
             const newWidget = deepClone(widgets[selectedWidget]);
             const boundingRect = Editor.getWidgetRelativeRect(selectedWidget);
@@ -651,13 +739,17 @@ class Editor extends Runtime {
         this.setSelectedWidgets(newKeys);
     };
 
-    alignWidgets = type => {
+    alignWidgets = (type: 'left' | 'right' | 'top' | 'bottom' | 'horizontal-center' | 'vertical-center' | 'horizontal-equal' | 'vertical-equal' | 'width' | 'height') => {
         const project = deepClone(store.getState().visProject);
         const widgets = project[this.state.selectedView].widgets;
         const newCoordinates = {
             left: 0, top: 0, width: 0, height: 0, right: 0, bottom: 0,
         };
-        const selectedWidgets = [];
+        const selectedWidgets:{
+            id: AnyWidgetId;
+            widget: Widget;
+            coordinate: DOMRect;
+        }[] = [];
         this.state.selectedWidgets.forEach(selectedWidget => {
             const boundingRect = Editor.getWidgetRelativeRect(selectedWidget);
             selectedWidgets.push({ id: selectedWidget, widget: widgets[selectedWidget], coordinate: boundingRect });
@@ -812,13 +904,13 @@ class Editor extends Runtime {
         this.changeProject(project);
     };
 
-    orderWidgets = type => {
+    orderWidgets = (type: 'front' | 'back') => {
         const project = deepClone(store.getState().visProject);
         const widgets = project[this.state.selectedView].widgets;
         let minZ = 0;
         let maxZ = 0;
-        Object.keys(widgets).forEach(widget => {
-            const currentZ = parseInt(widgets[widget].style['z-index'] || 0);
+        Object.keys(widgets).forEach((widget: AnyWidgetId) => {
+            const currentZ = parseInt(widgets[widget].style['z-index'].toString()) || 0;
             if (minZ > currentZ || minZ === 0) {
                 minZ = currentZ;
             }
@@ -828,7 +920,7 @@ class Editor extends Runtime {
         });
 
         this.state.selectedWidgets.forEach(selectedWidget => {
-            const currentZ = parseInt(widgets[selectedWidget].style['z-index']) || 0;
+            const currentZ = parseInt(widgets[selectedWidget].style['z-index'].toString()) || 0;
             if (type === 'front' && currentZ <= maxZ) {
                 widgets[selectedWidget].style['z-index'] = maxZ + 1;
                 if (widgets[selectedWidget].style['z-index'] > 1599) {
@@ -846,7 +938,7 @@ class Editor extends Runtime {
         return this.changeProject(project);
     };
 
-    static getWidgetRelativeRect(widget) {
+    static getWidgetRelativeRect(widget: AnyWidgetId): DOMRect {
         const el = window.document.getElementById(widget);
         if (el) {
             const widgetBoundingRect = el.getBoundingClientRect();
@@ -858,7 +950,7 @@ class Editor extends Runtime {
                 bottom: widgetBoundingRect.bottom - viewBoundingRect.top,
                 width: widgetBoundingRect.width,
                 height: widgetBoundingRect.height,
-            };
+            } as DOMRect;
         }
 
         return null;
@@ -867,7 +959,7 @@ class Editor extends Runtime {
     groupWidgets = async () => {
         const project = deepClone(store.getState().visProject);
         const widgets = project[this.state.selectedView].widgets;
-        const group = {
+        const group:GroupWidget = {
             tpl: '_tplGroup',
             widgetSet: 'basic',
             data: {
@@ -969,7 +1061,7 @@ class Editor extends Runtime {
         return this.changeProject(project);
     };
 
-    setSelectedGroup = groupId => {
+    setSelectedGroup = (groupId: GroupWidgetId) => {
         if (store.getState().visProject[this.state.selectedView].widgets[groupId].marketplace) {
             return;
         }
@@ -999,7 +1091,7 @@ class Editor extends Runtime {
         this.setState({ disableInteraction: !this.state.disableInteraction });
     };
 
-    saveHistory(project) {
+    saveHistory(project: Project) {
         this.historyTimer && clearTimeout(this.historyTimer);
 
         this.historyTimer = setTimeout(() => {
@@ -1019,7 +1111,7 @@ class Editor extends Runtime {
         }, 1000);
     }
 
-    changeProject = async (project, ignoreHistory = false) => {
+    changeProject = async (project: Project, ignoreHistory = false) => {
         // set timestamp
         project.___settings.ts = `${Date.now()}.${Math.random().toString(36).substring(7)}`;
 
@@ -1047,7 +1139,7 @@ class Editor extends Runtime {
             if ('TextEncoder' in window) {
                 const encoder = new TextEncoder();
                 const data = encoder.encode(projectStr);
-                await this.socket.writeFile64(this.adapterId, `${this.state.projectName}/vis-views.json`, data);
+                await this.socket.writeFile64(this.adapterId, `${this.state.projectName}/vis-views.json`, data as unknown as string);
             } else {
                 await this.socket.writeFile64(this.adapterId, `${this.state.projectName}/vis-views.json`, projectStr);
             }
@@ -1059,7 +1151,7 @@ class Editor extends Runtime {
         }, 1_000);
     };
 
-    renameProject = async (fromProjectName, toProjectName) => {
+    renameProject = async (fromProjectName: string, toProjectName: string) => {
         try {
             await this.socket.rename(this.adapterId, fromProjectName, toProjectName);
             if (this.state.projectName === fromProjectName) {
@@ -1074,7 +1166,7 @@ class Editor extends Runtime {
         }
     };
 
-    deleteProject = async projectName => {
+    deleteProject = async (projectName: string) => {
         try {
             await this.socket.deleteFolder(this.adapterId, projectName);
             await this.refreshProjects();
@@ -1086,7 +1178,7 @@ class Editor extends Runtime {
         }
     };
 
-    toggleView = async (view, isShow, isActivate = false) => {
+    toggleView = async (view: string, isShow: boolean, isActivate = false) => {
         let changed = false;
         const project = deepClone(store.getState().visProject);
         const pos = project.___settings.openedViews.indexOf(view);
@@ -1110,7 +1202,7 @@ class Editor extends Runtime {
         }
     };
 
-    setSelectedWidgets = async (selectedWidgets, selectedView, cb) => {
+    setSelectedWidgets = async (selectedWidgets: AnyWidgetId[], selectedView?: string | (() => void), cb?: () => void) => {
         if (typeof selectedView === 'function') {
             cb = selectedView;
             selectedView = null;
@@ -1127,7 +1219,7 @@ class Editor extends Runtime {
         if (selectedView) {
             window.localStorage.setItem(`${this.state.projectName}.${selectedView}.widgets`, JSON.stringify(selectedWidgets));
             // changeView reads selected widgets from localStorage
-            await this.changeView(selectedView, true, true, true);
+            await this.changeView(selectedView as string/* , true, true, true */);
         } else {
             window.localStorage.setItem(`${this.state.projectName}.${this.state.selectedView}.widgets`, JSON.stringify(selectedWidgets));
 
@@ -1146,7 +1238,12 @@ class Editor extends Runtime {
         window.localStorage.setItem('showCode', JSON.stringify(!oldShowCode));
     };
 
-    onWidgetsChanged = (changedData, view, viewSettings) => {
+    onWidgetsChanged = (changedData: {
+        wid: AnyWidgetId;
+        view: string;
+        style: WidgetStyle;
+        data: WidgetData;
+    }[], view: string, viewSettings: ViewSettings) => {
         this.tempProject = this.tempProject || deepClone(store.getState().visProject);
         changedData?.forEach(item => {
             if (item.style) {
@@ -1158,7 +1255,7 @@ class Editor extends Runtime {
                     const percentStyle = this.pxToPercent(currentStyle, item.style);
                     Object.assign(currentStyle, percentStyle);
                 }
-                Object.keys(currentStyle).forEach(key => {
+                Object.keys(currentStyle).forEach((key: keyof WidgetStyle) => {
                     if (currentStyle[key] === undefined || currentStyle[key] === null) {
                         delete currentStyle[key];
                     }
@@ -1182,15 +1279,15 @@ class Editor extends Runtime {
                 const order = viewSettings.order;
                 delete viewSettings.order;
                 const widget = this.tempProject[this.state.selectedView].widgets[this.state.selectedGroup];
-                widget.data = widget.data || {};
+                widget.data = widget.data || ({} as GroupData);
                 widget.data.members = order;
             }
 
-            Object.keys(viewSettings).forEach(attr => {
+            Object.keys(viewSettings).forEach((attr: keyof ViewSettings) => {
                 if (viewSettings[attr] === null) {
                     delete this.tempProject[view].settings[attr];
                 } else {
-                    this.tempProject[view].settings[attr] = viewSettings[attr];
+                    (this.tempProject[view].settings[attr] as any) = viewSettings[attr];
                 }
             });
         }
@@ -1205,22 +1302,22 @@ class Editor extends Runtime {
         }, 200);
     };
 
-    onFontsUpdate(fonts) {
+    onFontsUpdate(fonts: string[]) {
         this.setState({ fonts });
     }
 
-    cssClone = (attr, cb) => {
+    cssClone = (attr: string, cb: (value: string | number | boolean) => void) => {
         if (this.visEngineHandlers[this.state.selectedView] && this.visEngineHandlers[this.state.selectedView].onStealStyle) {
             this.visEngineHandlers[this.state.selectedView].onStealStyle(attr, cb);
         } else {
-            cb && cb(attr, null); // cancel selection
+            cb && cb(attr); // cancel selection
         }
     };
 
-    registerCallback = (name, view, cb) => {
+    registerCallback = (name: keyof VisEngineHandlers, view: string, cb: VisEngineHandlers[keyof VisEngineHandlers]) => {
         if (cb) {
+            (this.visEngineHandlers[view][name] as VisEngineHandlers[keyof VisEngineHandlers]) = cb;
             this.visEngineHandlers[view] = this.visEngineHandlers[view] || {};
-            this.visEngineHandlers[view][name] = cb;
         } else if (this.visEngineHandlers[view]) {
             delete this.visEngineHandlers[view][name];
             if (!Object.keys(this.visEngineHandlers[view]).length) {
@@ -1229,7 +1326,7 @@ class Editor extends Runtime {
         }
     };
 
-    onPxToPercent = (wids, attr, cb) => {
+    onPxToPercent = (wids:AnyWidgetId[], attr: string, cb: (results: string[]) => void) => {
         if (this.visEngineHandlers[this.state.selectedView] && this.visEngineHandlers[this.state.selectedView].onPxToPercent) {
             return this.visEngineHandlers[this.state.selectedView].onPxToPercent(wids, attr, cb);
         }
@@ -1237,7 +1334,7 @@ class Editor extends Runtime {
         return null;
     };
 
-    pxToPercent = (oldStyle, newStyle) => {
+    pxToPercent = (oldStyle: WidgetStyle, newStyle: WidgetStyle) => {
         if (this.visEngineHandlers[this.state.selectedView] && this.visEngineHandlers[this.state.selectedView].pxToPercent) {
             return this.visEngineHandlers[this.state.selectedView].pxToPercent(oldStyle, newStyle);
         }
@@ -1245,7 +1342,7 @@ class Editor extends Runtime {
         return null;
     };
 
-    onPercentToPx = (wids, attr, cb) => {
+    onPercentToPx = (wids: AnyWidgetId[], attr: string, cb: (results: string[]) => void) => {
         if (this.visEngineHandlers[this.state.selectedView] && this.visEngineHandlers[this.state.selectedView].onPercentToPx) {
             return this.visEngineHandlers[this.state.selectedView].onPercentToPx(wids, attr, cb);
         }
@@ -1253,7 +1350,7 @@ class Editor extends Runtime {
         // cb && cb(wids, attr, null); // cancel selection
     };
 
-    saveCssFile = (directory, fileName, data) => {
+    saveCssFile = (directory: string, fileName: string, data: string) => {
         if (fileName.endsWith('vis-common-user.css')) {
             this.setState({ visCommonCss: data });
         } else if (fileName.endsWith('vis-user.css')) {
@@ -1263,17 +1360,27 @@ class Editor extends Runtime {
         this.socket.writeFile64(directory, fileName, data);
     };
 
-    showConfirmDialog(confirmDialog) {
+    showConfirmDialog(confirmDialog: {
+        message: string;
+        title: string;
+        icon: string;
+        width: number;
+        callback: (isYes: boolean) => void;
+    }) {
         this.setState({ confirmDialog });
     }
 
-    showCodeDialog(codeDialog) {
+    showCodeDialog(codeDialog: {
+        code: string;
+        title: string;
+        mode: string;
+     }) {
         this.setState({ showCodeDialog: codeDialog });
     }
 
-    setMarketplaceDialog = marketplaceDialog => this.setState({ marketplaceDialog });
+    setMarketplaceDialog = (marketplaceDialog: Partial<MarketplaceDialogProps>) => this.setState({ marketplaceDialog });
 
-    installWidget = async (widgetId, id) => {
+    installWidget = async (widgetId: string, id: string) => {
         if (window.VisMarketplace?.api) {
             const project = deepClone(store.getState().visProject);
             const marketplaceWidget = await window.VisMarketplace.api.apiGetWidgetRevision(widgetId, id);
@@ -1290,7 +1397,7 @@ class Editor extends Runtime {
         }
     };
 
-    uninstallWidget = async widget => {
+    uninstallWidget = async (widget: string) => {
         const project = deepClone(store.getState().visProject);
         const widgetIndex = project.___settings.marketplace.findIndex(item => item.id === widget);
         if (widgetIndex !== -1) {
@@ -1299,20 +1406,20 @@ class Editor extends Runtime {
         await this.changeProject(project);
     };
 
-    static importMarketplaceWidget(project, view, widgets, id, x, y, widgetId, oldData, oldStyle) {
-        const newWidgets = {};
+    static importMarketplaceWidget(project: Project, view: string, widgets: (GroupWidget | SingleWidget)[], id: string, x: number, y: number, widgetId: AnyWidgetId, oldData: WidgetData, oldStyle: WidgetStyle) {
+        const newWidgets:Record<AnyWidgetId, Widget> = {};
 
         widgets.forEach(_widget => {
             if (_widget.isRoot) {
                 _widget.marketplace = deepClone(store.getState().visProject.___settings.marketplace.find(item => item.id === id));
             }
             if (isGroup(_widget)) {
-                let newKey = getNewGroupId(store.getState().visProject);
+                let newKey:AnyWidgetId = getNewGroupId(store.getState().visProject);
                 if (_widget.isRoot) {
                     if (widgetId) {
                         newKey = widgetId;
                         oldData.members = _widget.data.members;
-                        _widget.data = oldData;
+                        _widget.data = oldData as GroupData;
                         _widget.style = oldStyle;
                     } else {
                         _widget.style.top = y;
@@ -1325,15 +1432,15 @@ class Editor extends Runtime {
                 do {
                     w = widgets.find(item => item.groupid === _widget._id);
                     if (w) {
-                        w.groupid = newKey;
+                        w.groupid = newKey as GroupWidgetId;
                     }
                 } while (w);
             } else {
                 const newKey = getNewWidgetId(store.getState().visProject);
-                newWidgets[newKey] = _widget;
+                newWidgets[newKey as GroupWidgetId] = _widget;
                 if (_widget.grouped && newWidgets[_widget.groupid] && newWidgets[_widget.groupid].data && newWidgets[_widget.groupid].data.members) {
                     // find group
-                    const pos = newWidgets[_widget.groupid].data.members.indexOf(_widget._id);
+                    const pos = newWidgets[_widget.groupid].data.members.indexOf(_widget._id as AnyWidgetId);
                     if (pos !== -1) {
                         newWidgets[_widget.groupid].data.members[pos] = newKey;
                     }
@@ -1341,20 +1448,20 @@ class Editor extends Runtime {
             }
         });
 
-        Object.keys(newWidgets).forEach(wid => delete newWidgets[wid]._id);
+        Object.keys(newWidgets).forEach((wid: AnyWidgetId) => delete newWidgets[wid]._id);
 
-        project[view].widgets = { ...project[view].widgets, ...newWidgets };
+        (project[view].widgets as Record<AnyWidgetId, Widget>) = { ...project[view].widgets, ...newWidgets };
         return project;
     }
 
-    addMarketplaceWidget = async (id, x, y, widgetId, oldData, oldStyle) => {
+    addMarketplaceWidget = async (id: string, x: number, y: number, widgetId?: AnyWidgetId, oldData?: WidgetData, oldStyle?:WidgetStyle) => {
         const project = deepClone(store.getState().visProject);
         const widgets = deepClone(store.getState().visProject.___settings.marketplace.find(item => item.id === id).widget);
         Editor.importMarketplaceWidget(project, this.state.selectedView, widgets, id, x, y, widgetId, oldData, oldStyle);
         await this.changeProject(project);
     };
 
-    updateWidget = async id => {
+    updateWidget = async (id: AnyWidgetId) => {
         const project = deepClone(store.getState().visProject);
         const widget = project[this.state.selectedView].widgets[id];
         if (widget && widget.marketplace) {
@@ -1416,7 +1523,8 @@ class Editor extends Runtime {
         return null;
     }
 
-    askAboutInclude = (wid, toWid, cb) => this.setState({ askAboutInclude: { wid, toWid, cb } });
+    askAboutInclude = (wid: AnyWidgetId, toWid: AnyWidgetId, cb: (wid: AnyWidgetId, toWid: AnyWidgetId) => void) =>
+        this.setState({ askAboutInclude: { wid, toWid, cb } });
 
     renderTabs() {
         const { visProject } = store.getState();
@@ -1567,9 +1675,9 @@ class Editor extends Runtime {
                 updateWidgets={this.updateWidgets}
                 selectedView={this.state.selectedView}
                 changeView={this.changeView}
-                project={store.getState().visProject}
+                // project={store.getState().visProject}
                 changeProject={this.changeProject}
-                socket={this.socket}
+                socket={this.socket as unknown as LegacyConnection}
                 editMode={this.state.editMode}
                 themeType={this.state.themeType}
             />
@@ -1613,7 +1721,7 @@ class Editor extends Runtime {
                             pasteWidgets={this.pasteWidgets}
                             orderWidgets={this.orderWidgets}
                             widgetsClipboard={this.state.widgetsClipboard}
-                            project={store.getState().visProject}
+                            // project={store.getState().visProject}
                             selectedView={this.state.selectedView}
                             changeProject={this.changeProject}
                             lockWidgets={this.lockWidgets}
@@ -1643,19 +1751,19 @@ class Editor extends Runtime {
                 classes={{}}
                 selectedView={this.state.selectedView}
                 userGroups={this.state.userGroups}
-                changeProject={this.changeProject}
+                // changeProject={this.changeProject}
                 openedViews={store.getState().visProject.___settings.openedViews}
                 projectName={this.state.projectName}
                 themeType={this.state.themeType}
                 selectedWidgets={this.state.editMode ? this.state.selectedWidgets : []}
                 widgetsLoaded={this.state.widgetsLoaded === Runtime.WIDGETS_LOADING_STEP_ALL_LOADED}
-                socket={this.socket}
-                fonts={this.state.fonts}
+                // socket={this.socket}
+                // fonts={this.state.fonts}
                 adapterName={this.adapterName}
                 instance={this.instance}
-                cssClone={this.cssClone}
-                onPxToPercent={this.onPxToPercent}
-                onPercentToPx={this.onPercentToPx}
+                // cssClone={this.cssClone}
+                // onPxToPercent={this.onPxToPercent}
+                // onPercentToPx={this.onPercentToPx}
                 saveCssFile={this.saveCssFile}
                 editMode={this.state.editMode}
                 onHide={() => {
@@ -1728,15 +1836,22 @@ class Editor extends Runtime {
         if (!this.state.updateWidgetsDialog) {
             return null;
         }
-        const widgets = [];
+        const widgets:{
+            name: string;
+            widgets: AnyWidgetId[];
+        }[] = [];
         Object.keys(store.getState().visProject).forEach(view => {
             if (view !== '___settings') {
-                const viewWidgets = {
+                const viewWidgets: {
+                    name: string;
+                    widgets: AnyWidgetId[];
+                } = {
                     name: view,
                     widgets: [],
                 };
-                Object.keys(store.getState().visProject[view].widgets).forEach(widget => {
-                    if (store.getState().visProject[view].widgets[widget].marketplace?.widget_id === this.state.updateWidgetsDialog.widget_id &&
+                Object.keys(store.getState().visProject[view].widgets).forEach((widget: AnyWidgetId) => {
+                    if (this.state.updateWidgetsDialog &&
+                        store.getState().visProject[view].widgets[widget].marketplace?.widget_id === this.state.updateWidgetsDialog.widget_id &&
                         store.getState().visProject[view].widgets[widget].marketplace?.version !== this.state.updateWidgetsDialog.version) {
                         viewWidgets.widgets.push(widget);
                     }
@@ -1768,14 +1883,16 @@ class Editor extends Runtime {
             suppressQuestionMinutes={5}
             onClose={isYes => {
                 if (isYes) {
-                    this.updateWidgetsAction(this.state.updateWidgetsDialog, widgets);
+                    if (this.state.updateWidgetsDialog) {
+                        this.updateWidgetsAction(this.state.updateWidgetsDialog, widgets);
+                    }
                 }
                 this.setState({ updateWidgetsDialog: false });
             }}
         />;
     }
 
-    setLoadingText = text => {
+    setLoadingText = (text: string) => {
         this.setState({ loadingText: I18n.t(text) });
     };
 
@@ -1815,7 +1932,7 @@ class Editor extends Runtime {
             return null;
         }
         return <ImportProjectDialog
-            projects={this.state.projects}
+            // projects={this.state.projects}
             themeType={this.state.themeType}
             onClose={(created, newProjectName) => {
                 this.setState({ showImportDialog: false });
@@ -1831,7 +1948,14 @@ class Editor extends Runtime {
         />;
     }
 
-    showLegacyFileSelector = (callback, options) => this.setState({ legacyFileSelector: { callback, options } });
+    showLegacyFileSelector = (
+        callback: (data: { path: string; file: string }, userArg: any) => void,
+        options: {
+            path?: string;
+            userArg?: any;
+        },
+    ) =>
+        this.setState({ legacyFileSelector: { callback, options } });
 
     renderLegacyFileSelectorDialog() {
         return this.state.legacyFileSelector ? <SelectFileDialog
@@ -1848,7 +1972,7 @@ class Editor extends Runtime {
             imagePrefix="../"
             selected={this.state.legacyFileSelector.options?.path || ''}
             filterByType="images"
-            onOk={selected => {
+            onOk={(selected: string) => {
                 const projectPrefix = `${this.adapterName}.${this.instance}/${this.state.projectName}/`;
                 if (selected.startsWith(projectPrefix)) {
                     selected = `_PRJ_NAME/${selected.substring(projectPrefix.length)}`;
@@ -1860,7 +1984,7 @@ class Editor extends Runtime {
                 const parts = selected.split('/');
                 const file = parts.pop();
                 const path = `${parts.join('/')}/`;
-                this.state.legacyFileSelector.callback({ path, file }, this.state.legacyFileSelector.options?.userArg);
+                this.state.legacyFileSelector && this.state.legacyFileSelector.callback({ path, file }, this.state.legacyFileSelector.options?.userArg);
                 this.setState({ legacyFileSelector: null });
             }}
             socket={this.socket}
@@ -1994,7 +2118,7 @@ class Editor extends Runtime {
                             instance={this.instance}
                             editMode={this.state.editMode}
                             toolbarHeight={this.state.toolbarHeight}
-                            setToolbarHeight={value => {
+                            setToolbarHeight={(value: 'narrow' | 'veryNarrow') => {
                                 window.localStorage.setItem('Vis.toolbarForm', value);
                                 this.setState({ toolbarHeight: value });
                             }}
@@ -2010,8 +2134,8 @@ class Editor extends Runtime {
                                         !this.state.hidePalette && this.state.hideAttributes ? [this.state.splitSizes[0], this.state.splitSizes[1] + this.state.splitSizes[2]] : this.state.splitSizes)}
                                     minWidths={this.state.hidePalette && !this.state.hideAttributes ? [0, 240] : (
                                         !this.state.hidePalette && this.state.hideAttributes ? [240, 0] : [240, 0, 240])}
-                                    onResizeFinished={(gutterIdx, newSizes) => {
-                                        let splitSizes = [];
+                                    onResizeFinished={(gutterIdx, newSizes: [number, number, number]) => {
+                                        let splitSizes: [number, number, number] = [0, 0, 0];
                                         if (this.state.hidePalette && !this.state.hideAttributes) {
                                             splitSizes[0] = this.state.splitSizes[0];
                                             splitSizes[1] = newSizes[0] - this.state.splitSizes[0];
@@ -2043,7 +2167,7 @@ class Editor extends Runtime {
                                             window.localStorage.setItem('Vis.splitSizes', JSON.stringify(splitSizes));
                                         }
                                     }}
-                                    theme={this.state.themeType === 'dark' ? GutterTheme.Dark : GutterTheme.Light}
+                                    // theme={this.state.themeType === 'dark' ? GutterTheme.Dark : GutterTheme.Light}
                                     gutterClassName={this.state.themeType === 'dark' ? 'Dark visGutter' : 'Light visGutter'}
                                 >
                                     {!this.state.hidePalette ? this.renderPalette() : null}
@@ -2078,9 +2202,6 @@ class Editor extends Runtime {
     }
 }
 
-Editor.propTypes = {
-    onThemeChange: PropTypes.func,
-    version: PropTypes.string,
-};
+export type EditorClass = Editor;
 
 export default withStyles(styles)(Editor);

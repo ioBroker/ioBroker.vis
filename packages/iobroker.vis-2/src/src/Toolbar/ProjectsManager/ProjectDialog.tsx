@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+import React from 'react';
 
 import {
     TextField,
@@ -15,7 +15,20 @@ import { I18n } from '@iobroker/adapter-react-v5';
 import IODialog from '../../Components/IODialog';
 import { useFocus } from '../../Utils';
 
-const ProjectDialog = props => {
+interface ProjectDialogProps {
+    dialog: 'delete' | 'rename' | 'add';
+    dialogProject: string;
+    dialogName: string;
+    projects: string[];
+    setDialog: (dialog: null | 'delete' | 'rename' | 'add') => void;
+    setDialogProject: (project: null | string) => void;
+    setDialogName: (name: string) => void;
+    addProject: (name: string) => void;
+    deleteProject: (project: string) => void;
+    renameProject: (project: string, name: string) => void;
+}
+
+const ProjectDialog:React.FC<ProjectDialogProps> = props => {
     const inputField = useFocus(props.dialog && props.dialog !== 'delete', props.dialog === 'add');
 
     if (!props.dialog) {
@@ -88,15 +101,6 @@ const ProjectDialog = props => {
                 onChange={e => props.setDialogName(e.target.value)}
             /> }
     </IODialog>;
-};
-
-ProjectDialog.propTypes = {
-    dialog: PropTypes.string,
-    dialogProject: PropTypes.string,
-    dialogName: PropTypes.string,
-    setDialog: PropTypes.func,
-    setDialogProject: PropTypes.func,
-    setDialogName: PropTypes.func,
 };
 
 export default ProjectDialog;

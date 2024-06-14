@@ -135,7 +135,7 @@ interface CopyGroupOptions extends CopyWidgetOptions {
  *
  * @param options selected group, widgets and offset information
  */
-export function pasteSingleWidget(options: CopySingleWidgetOptions): string {
+export function pasteSingleWidget(options: CopySingleWidgetOptions): SingleWidgetId {
     const  {
         widgets, offset, project, widget, selectedGroup,
     } = options;
@@ -159,7 +159,7 @@ export function pasteSingleWidget(options: CopySingleWidgetOptions): string {
  *
  * @param options group, widgets and offset information
  */
-export function pasteGroup(options: CopyGroupOptions): string {
+export function pasteGroup(options: CopyGroupOptions): GroupWidgetId {
     const  {
         widgets, group, groupMembers, offset, project,
     } = options;

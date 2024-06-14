@@ -160,6 +160,7 @@ ImportProjectDialog.propTypes = {
     adapterName: PropTypes.string,
     instance: PropTypes.number,
     openNewProjectOnCreate: PropTypes.bool,
+    projects: PropTypes.array,
 };
 
 export default ImportProjectDialog;

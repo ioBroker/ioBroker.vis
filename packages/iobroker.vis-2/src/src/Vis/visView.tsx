@@ -2031,4 +2031,11 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
     }
 }
 
+export interface VisEngineHandlers {
+    onStealStyle: VisView['onStealStyle'];
+    onPxToPercent: VisView['onPxToPercent'];
+    pxToPercent: VisView['pxToPercent'];
+    onPercentToPx: VisView['onPercentToPx'];
+}
+
 export default VisView;

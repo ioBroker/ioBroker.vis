@@ -33,6 +33,7 @@ import { store } from '@/Store';
 import { getWidgetTypes, WidgetType } from '@/Vis/visWidgetsCatalog';
 import { loadComponent } from '@/Vis/visLoadWidgets';
 import type { MarketplaceDialogProps } from '@/Marketplace/MarketplaceDialog';
+import { EditorClass } from '../Editor';
 import Widget from './Widget';
 import MarketplacePalette from '../Marketplace/MarketplacePalette';
 
@@ -157,11 +158,11 @@ interface WidgetSetProps {
 interface PaletteProps {
     classes: Record<string, string>;
     onHide: (hide: boolean) => void;
-    changeView: (view: string) => void;
-    changeProject: (project: Project, ignoreHistory?: boolean) => Promise<void>;
-    uninstallWidget: (widgetId: string) => void;
-    setMarketplaceDialog: (props: Partial<MarketplaceDialogProps>) => void;
-    updateWidgets: () => void;
+    changeView: EditorClass['changeView'];
+    changeProject: EditorClass['changeProject'];
+    uninstallWidget: EditorClass['uninstallWidget'];
+    setMarketplaceDialog: EditorClass['setMarketplaceDialog'];
+    updateWidgets: EditorClass['updateWidgets'];
     widgetsLoaded: boolean;
     socket: LegacyConnection;
     themeType: ThemeType;

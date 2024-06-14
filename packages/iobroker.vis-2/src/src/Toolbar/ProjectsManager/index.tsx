@@ -1,9 +1,8 @@
-import PropTypes from 'prop-types';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
-    AppBar, Button, IconButton, Tooltip, Menu, MenuItem, CircularProgress,
+    AppBar, Button, IconButton, Tooltip, Menu, MenuItem, CircularProgress, PopoverProps,
 } from '@mui/material';
-import { withStyles } from '@mui/styles';
+import { Styles, withStyles } from '@mui/styles';
 
 import {
     Add as AddIcon,
@@ -14,14 +13,23 @@ import {
 } from '@mui/icons-material';
 import { BiImport, BiExport } from 'react-icons/bi';
 
-import { I18n, Utils } from '@iobroker/adapter-react-v5';
+import {
+    I18n, IobTheme, LegacyConnection, Utils,
+} from '@iobroker/adapter-react-v5';
 
+import { EditorClass } from '@/Editor';
 import IODialog from '../../Components/IODialog';
 import ImportProjectDialog, { getLiveHost } from './ImportProjectDialog';
 import ProjectDialog from './ProjectDialog';
 import PermissionsDialog from './PermissionsDialog';
 
-const styles = theme => ({
+declare global {
+    interface Window {
+        $: any;
+    }
+}
+
+const styles:Styles<IobTheme, any> = theme => ({
     projectBlock: {
         display: 'flex',
         alignItems: 'center',
@@ -62,14 +70,33 @@ const styles = theme => ({
     },
 });
 
-const ProjectsManage = props => {
-    const [dialog, setDialog] = useState(null);
-    const [dialogName, setDialogName] = useState('');
-    const [dialogProject, setDialogProject] = useState(null);
-    const [showExportDialog, setShowExportDialog] = useState(null);
+interface ProjectsManageProps {
+    addProject: (name: string) => void;
+    loadProject: (name: string) => void;
+    onClose: () => void;
+    open: boolean;
+    projects: string[];
+    projectName: string;
+    refreshProjects: () => void;
+    socket: LegacyConnection;
+    themeType: string;
+    classes: Record<string, string>;
+    adapterName: string;
+    instance: number;
+    selectedView: string;
+    changeProject: EditorClass['changeProject'];
+    deleteProject: EditorClass['deleteProject'];
+    renameProject: EditorClass['renameProject'];
+}
+
+const ProjectsManage:React.FC<ProjectsManageProps> = props => {
+    const [dialog, setDialog] = useState<'add' | 'rename' | 'delete' | null>(null);
+    const [dialogName, setDialogName] = useState<string>('');
+    const [dialogProject, setDialogProject] = useState<string | null>(null);
+    const [showExportDialog, setShowExportDialog] = useState<string | false | null>(null);
     const [showPermissionsDialog, setShowPermissionsDialog] = useState(false);
-    const [anchorEl, setAnchorEl] = useState(null);
-    const [working, setWorking] = useState(false);
+    const [anchorEl, setAnchorEl] = useState<PopoverProps['anchorEl']>(null);
+    const [working, setWorking] = useState<string | boolean>(false);
 
     const [importDialog, setImportDialog] = useState(false);
 
@@ -77,12 +104,13 @@ const ProjectsManage = props => {
         return null;
     }
 
-    const showDialog = (type, project) => {
+    const showDialog = (type: 'add' | 'rename' | 'delete', project?: string) => {
         project = project || props.selectedView;
 
         const dialogDefaultName = {
             add: 'New project',
             rename: project,
+            delete: '',
         };
 
         setDialog(type);
@@ -90,7 +118,7 @@ const ProjectsManage = props => {
         setDialogName(dialogDefaultName[type]);
     };
 
-    const exportProject = async (projectName, isAnonymize) => {
+    const exportProject = async (projectName: string | false, isAnonymize?: boolean) => {
         setWorking(projectName);
         const host = await getLiveHost(props.socket);
 
@@ -107,23 +135,27 @@ const ProjectsManage = props => {
             options: {
                 settings: isAnonymize,
             },
-        }, data => {
+        }, (data: {
+            error?: string;
+            data?: string;
+        }) => {
             if (data.error) {
                 setWorking(false);
                 window.alert(data.error);
             } else {
                 const d = new Date();
-                let date = d.getFullYear();
+                let date = d.getFullYear().toString();
                 let m = d.getMonth() + 1;
+                let mString = m.toString();
                 if (m < 10) {
-                    m = `0${m}`;
+                    mString = `0${m}`;
                 }
-                date += `-${m}`;
+                date += `-${mString}`;
                 m = d.getDate();
                 if (m < 10) {
-                    m = `0${m}`;
+                    mString = `0${m}`;
                 }
-                date += `-${m}-`;
+                date += `-${mString}-`;
                 setWorking(false);
                 window.$('body').append(`<a id="zip_download" href="data: application/zip;base64,${data.data}" download="${date}${projectName}.zip"></a>`);
                 document.getElementById('zip_download').click();
@@ -162,11 +194,15 @@ const ProjectsManage = props => {
         onClose={props.onClose}
         title="Manage projects"
         closeTitle="Close"
-        closeDisabled={!props.projects.length || working}
+        closeDisabled={!props.projects.length || !!working}
     >
         <div className={props.classes.dialog}>
             <AppBar position="static" className={props.classes.topBar}>
-                <Tooltip title={I18n.t('Add')} size="small" classes={{ popper: props.classes.tooltip }}>
+                <Tooltip
+                    title={I18n.t('Add')}
+                    // size="small"
+                    classes={{ popper: props.classes.tooltip }}
+                >
                     <IconButton onClick={() => showDialog('add')} size="small" className={Utils.clsx(props.classes.button, !props.projects.length && props.classes.blink)}>
                         <AddIcon />
                     </IconButton>
@@ -197,11 +233,11 @@ const ProjectsManage = props => {
                                     if (props.projectName !== projectName) {
                                         props.loadProject(projectName);
                                     }
-                                    setShowPermissionsDialog(projectName);
+                                    setShowPermissionsDialog(!!projectName);
                                 }}
                                 size="small"
                             >
-                                <PermissionsIcon fontSize="20" />
+                                <PermissionsIcon style={{ fontSize: 20 }} />
                             </IconButton>}
                     </Tooltip>
                     <Tooltip title={I18n.t('Export')} classes={{ popper: props.classes.tooltip }}>
@@ -221,7 +257,7 @@ const ProjectsManage = props => {
                             <IconButton
                                 size="small"
                                 onClick={() => showDialog('rename', projectName)}
-                                disabled={working}
+                                disabled={!!working}
                             >
                                 <EditIcon />
                             </IconButton>
@@ -229,7 +265,7 @@ const ProjectsManage = props => {
                     </Tooltip>
                     <Tooltip title={I18n.t('Delete')} onClick={() => showDialog('delete', projectName)} classes={{ popper: props.classes.tooltip }}>
                         <span>
-                            <IconButton size="small" disabled={working}>
+                            <IconButton size="small" disabled={!!working}>
                                 <DeleteIcon />
                             </IconButton>
                         </span>
@@ -245,14 +281,16 @@ const ProjectsManage = props => {
             setDialog={setDialog}
             setDialogProject={setDialogProject}
             setDialogName={setDialogName}
-            {...props}
-            classes={{}}
+            addProject={props.addProject}
+            deleteProject={props.deleteProject}
+            projects={props.projects}
+            renameProject={props.renameProject}
         /> : null}
         {showPermissionsDialog ? <PermissionsDialog
             socket={props.socket}
             changeProject={props.changeProject}
             onClose={() => setShowPermissionsDialog(false)}
-            loadProject={props.loadProject}
+            // loadProject={props.loadProject}
         /> : null}
         {importDialog ? <ImportProjectDialog
             projects={props.projects}
@@ -260,7 +298,7 @@ const ProjectsManage = props => {
             onClose={(created, newProjectName) => {
                 setImportDialog(false);
                 if (created && props.projectName !== newProjectName) {
-                    window.location = `?${newProjectName}`;
+                    window.location.href = `?${newProjectName}`;
                 } else if (created) {
                     props.onClose();
                 }
@@ -273,18 +311,6 @@ const ProjectsManage = props => {
             instance={props.instance}
         /> : null}
     </IODialog> : null;
-};
-
-ProjectsManage.propTypes = {
-    addProject: PropTypes.func,
-    loadProject: PropTypes.func,
-    onClose: PropTypes.func,
-    open: PropTypes.bool,
-    projects: PropTypes.array,
-    projectName: PropTypes.string,
-    refreshProjects: PropTypes.func,
-    socket: PropTypes.object,
-    themeType: PropTypes.string,
 };
 
 export default withStyles(styles)(ProjectsManage);

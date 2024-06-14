@@ -524,6 +524,8 @@ export interface ProjectSettings {
     /** Which user has read or write access for the project */
     permissions?: UserPermissions;
     marketplace?: MarketplaceWidgetRevision[];
+    ts?: string;
+    bodyOverflow?: string;
 }
 
 export type SingleWidgetId = `w${string}`
@@ -599,6 +601,8 @@ export interface WidgetStyle {
 
     /** relative property, if the widget must be shown on the new line */
     newLine?: boolean;
+    'box-sizing'?: 'content-box' | 'border-box' | 'initial' | 'inherit' | null;
+    noPxToPercent?: boolean;
 }
 
 export interface SingleWidget  {
@@ -633,6 +637,7 @@ export interface SingleWidget  {
     /** internal cached value */
     usedInView?: string;
     name?: string;
+    isRoot?: boolean;
 }
 
 export interface GroupData extends WidgetData {

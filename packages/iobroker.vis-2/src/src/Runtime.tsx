@@ -29,6 +29,10 @@ import {
     LoaderMV, LoaderPT, LoaderVendor,
 } from '@iobroker/adapter-react-v5';
 
+import { GenericAppProps, GenericAppState, ThemeName } from '@iobroker/adapter-react-v5/types';
+import {
+    AnyWidgetId, GroupWidget, GroupWidgetId, Project, SingleWidget, SingleWidgetId, View, ViewSettings, Widget, WidgetData, WidgetStyle,
+} from '@iobroker/types-vis-2';
 import VisEngine from './Vis/visEngine';
 import {
     extractBinding,
@@ -45,14 +49,154 @@ const generateClassName = createGenerateClassName({
     productionPrefix: 'vis-r',
 });
 
-class Runtime extends GenericApp {
+export interface RuntimeProps extends GenericAppProps {
+    themeName: string;
+    runtime: boolean;
+}
+
+export interface RuntimeState extends GenericAppState {
+    alert: boolean;
+    alertType: 'info' | 'warning' | 'error' | 'success';
+    alertMessage: string;
+    runtime: boolean;
+    projectName: string;
+    selectedWidgets: AnyWidgetId[];
+    editMode: boolean;
+    widgetsLoaded: number;
+    fonts: string[];
+    visCommonCss: string | null;
+    visUserCss: string | null;
+    showProjectsDialog: boolean;
+    showNewProjectDialog: boolean;
+    showImportDialogDialog: boolean;
+    newProjectName: string;
+    projects: string[] | null;
+    projectDoesNotExist: boolean;
+    showProjectUpdateDialog: boolean;
+    history: Project[];
+    historyCursor: number;
+    selectedView: string;
+    createFirstProjectDialog: boolean;
+    messageDialog: {
+        text: string | React.JSX.Element;
+        title: string;
+        ok: string;
+        callback: () => void;
+        noClose?: boolean;
+    } | null;
+    currentUser: ioBroker.UserObject;
+    userGroups: Record<ioBroker.ObjectIDs.Group, ioBroker.GroupObject>;
+    splitSizes: [number, number, number];
+    alignType: 'width' | 'height';
+    alignIndex: number;
+    alignValues: number[];
+    selectedGroup: GroupWidgetId;
+    projectsDialog: boolean;
+    showImportDialog: boolean;
+    lockDragging: boolean;
+    disableInteraction: boolean;
+    widgetHint: 'light' | 'dark' | 'hide';
+    ignoreMouseEvents: boolean;
+    confirmDialog: {
+        message: string;
+        title: string;
+        callback: (isYes: boolean) => void;
+    };
+    showCodeDialog: {
+        code: string;
+        title: string;
+        mode: string;
+    };
+}
+
+declare global {
+    interface Window {
+        sentryDSN: string;
+        disableDataReporting: boolean;
+    }
+}
+
+class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = RuntimeState> extends GenericApp<P, S> {
     static WIDGETS_LOADING_STEP_NOT_STARTED = 0;
 
     static WIDGETS_LOADING_STEP_HTML_LOADED = 1;
 
     static WIDGETS_LOADING_STEP_ALL_LOADED = 2;
 
-    constructor(props) {
+    alert: typeof window.alert;
+
+    adapterId: string;
+
+    checkTimeout: ReturnType<typeof setTimeout> | null;
+
+    resolutionTimer: ReturnType<typeof setTimeout> | null;
+
+    lastProjectJSONfile: string;
+
+    subscribedProject: string;
+
+    changeTimer: ReturnType<typeof setTimeout> | null;
+
+    needRestart: boolean;
+
+    lastUploadedState: ioBroker.StateValue;
+
+    checkForUpdates: () => Promise<void>;
+
+    getNewWidgetId: (project: Project) => SingleWidgetId;
+
+    getNewGroupId: (project: Project) => GroupWidgetId;
+
+    changeProject: (project: Project, ignoreHistory?: boolean) => Promise<void>;
+
+    renderImportProjectDialog?(): React.JSX.Element;
+
+    setSelectedWidgets: (selectedWidgets: string[], selectedView: string | (() => void), cb: () => void) => void;
+
+    setSelectedGroup: (selectedGroup: GroupWidgetId) => void;
+
+    onWidgetsChanged: (changedData: {
+        wid: AnyWidgetId;
+        view: string;
+        style: WidgetStyle;
+        data: WidgetData;
+    }[], view: string, viewSettings: ViewSettings) => void;
+
+    onFontsUpdate?(fonts: string[]): void;
+
+    registerCallback: (name: string, view: string, cb: () => void) => void;
+
+    onIgnoreMouseEvents: (ignore: boolean) => void;
+
+    askAboutInclude: (wid: AnyWidgetId, toWid: AnyWidgetId, cb: (wid: AnyWidgetId, toWid: AnyWidgetId) => void) => void;
+
+    showConfirmDialog?(dialog: {
+        message: string;
+        title: string;
+        icon: string;
+        width: number;
+        callback: (isYes: boolean) => void;
+     }): void;
+
+    showCodeDialog?(dialog: {
+        code: string;
+        title: string;
+        mode: string;
+     }): void;
+
+    showLegacyFileSelector: (
+        callback: (data: { path: string; file: string}, userArg: any) => void,
+        options: {
+            path?: string;
+            userArg?: any;
+        }
+     ) => void;
+
+    initState: (newState: Partial<S | RuntimeState>) => void;
+
+    setLoadingText: (text: string) => void;
+
+    constructor(props: P) {
         const extendedProps = { ...props };
         extendedProps.translations = {
             en: require('./i18n/en'),
@@ -68,7 +212,7 @@ class Runtime extends GenericApp {
             'zh-cn': require('./i18n/zh-cn'),
         };
 
-        extendedProps.Connection = LegacyConnection;
+        extendedProps.Connection = LegacyConnection as unknown as LegacyConnection;
         if (!window.disableDataReporting) {
             extendedProps.sentryDSN = window.sentryDSN;
         }
@@ -109,9 +253,11 @@ class Runtime extends GenericApp {
         registerWidgetsLoadIndicator(this.setWidgetsLoadingProgress);
     }
 
-    setStateAsync(newState) {
+    setWidgetsLoadingProgress: (step: number, total: number) => void;
+
+    setStateAsync(newState: Partial<RuntimeState | S>): Promise<void> {
         return new Promise(resolve => {
-            this.setState(newState, () =>
+            this.setState(newState as RuntimeState, () =>
                 resolve());
         });
     }
@@ -119,7 +265,7 @@ class Runtime extends GenericApp {
     componentDidMount() {
         super.componentDidMount();
 
-        const newState = {
+        const newState:Partial<RuntimeState> = {
             alert: false,
             alertType: 'info',
             alertMessage: '',
@@ -144,7 +290,7 @@ class Runtime extends GenericApp {
             this.initState(newState);
         }
 
-        this.setState(newState);
+        this.setState(newState as S);
 
         window.addEventListener('hashchange', this.onHashChange, false);
 
@@ -178,7 +324,7 @@ class Runtime extends GenericApp {
             .catch(e => console.error(`Cannot change view: ${e}`));
     };
 
-    onProjectChange = (id, fileName) => {
+    onProjectChange = (id: string, fileName: string) => {
         if (fileName.endsWith('.json')) {
             this.checkTimeout && clearTimeout(this.checkTimeout);
             // if runtime => just update project
@@ -192,15 +338,15 @@ class Runtime extends GenericApp {
                 this.checkTimeout = setTimeout(() => {
                     this.checkTimeout = null;
                     // compare last executed file with new one
-                    readFile(this.socket, this.adapterId, fileName)
+                    readFile(this.socket as unknown as LegacyConnection, this.adapterId, fileName)
                         .then(file => {
                             try {
-                                const ts = JSON.parse(file.file || file).___settings.ts;
+                                const ts = (JSON.parse((file as any).file || file) as Project).___settings.ts;
                                 if (ts === store.getState().visProject.___settings.ts) {
                                     return;
                                 }
-                                const tsInt = parseInt(ts.split('.'), 10);
-                                if (tsInt < parseInt(store.getState().visProject.___settings.ts.split('.'), 10)) {
+                                const tsInt = parseInt(ts.split('.')[0], 10);
+                                if (tsInt < parseInt(store.getState().visProject.___settings.ts.split('.')[0], 10)) {
                                     // ignore older files
                                     return;
                                 }
@@ -215,8 +361,8 @@ class Runtime extends GenericApp {
         }
     };
 
-    fixProject(project) {
-        project.___settings = project.___settings || {};
+    fixProject(project: Project) {
+        project.___settings = project.___settings || ({} as Project['___settings']);
         project.___settings.folders = project.___settings.folders || [];
         project.___settings.openedViews = project.___settings.openedViews || [];
 
@@ -243,7 +389,7 @@ class Runtime extends GenericApp {
             project[view].settings.style = project[view].settings.style || {};
             project[view].widgets = project[view].widgets || {};
             if (project[view].widgets) {
-                Object.keys(project[view].widgets).forEach(wid => {
+                Object.keys(project[view].widgets).forEach((wid: AnyWidgetId) => {
                     const widget = project[view].widgets[wid];
                     if (!widget) {
                         delete project[view].widgets[wid];
@@ -280,7 +426,7 @@ class Runtime extends GenericApp {
                     }
                     if (!widget.style.bindings && !Array.isArray(widget.style.bindings)) {
                         widget.style.bindings = [];
-                        Object.keys(widget.style).forEach(attr => {
+                        Object.keys(widget.style).forEach((attr: keyof typeof widget.style) => {
                             if (attr === 'bindings' ||
                                 !widget.style[attr] ||
                                 attr.startsWith('g_') ||
@@ -290,7 +436,7 @@ class Runtime extends GenericApp {
                             }
 
                             // Process bindings in data attributes
-                            const OIDs = extractBinding(widget.style[attr]);
+                            const OIDs = extractBinding(widget.style[attr].toString());
                             if (OIDs) {
                                 widget.style.bindings.push(attr);
                             }
@@ -299,11 +445,11 @@ class Runtime extends GenericApp {
 
                     if (widget.data.members) {
                         widget.data.members.forEach((_wid, i) =>
-                            widget.data.members[i] = _wid.replace(/\s/g, '_'));
+                            widget.data.members[i] = (_wid.replace(/\s/g, '_')) as AnyWidgetId);
                     }
 
                     if (wid.includes(' ')) {
-                        const newWid = wid.replace(/\s/g, '_');
+                        const newWid:SingleWidgetId = (wid.replace(/\s/g, '_') as SingleWidgetId);
                         delete project[view].widgets[wid];
                         project[view].widgets[newWid] = widget;
                     }
@@ -311,10 +457,10 @@ class Runtime extends GenericApp {
                     if (!this.state.runtime && this.getNewWidgetId) {
                         // If the widget is not unique, change its name (only in editor mode)
                         if (Object.keys(project).find(v => v !== view && project[v].widgets && project[v].widgets[wid])) {
-                            const _newWid = wid[0] === 'g' ? this.getNewGroupId(project) : this.getNewWidgetId(project);
+                            const _newWid:AnyWidgetId = wid[0] === 'g' ? this.getNewGroupId(project) : this.getNewWidgetId(project);
                             console.log(`Rename widget ${wid} to ${_newWid}`);
                             delete project[view].widgets[wid];
-                            project[view].widgets[_newWid] = widget;
+                            project[view].widgets[_newWid as SingleWidgetId] = widget;
                         }
                     }
 
@@ -337,7 +483,7 @@ class Runtime extends GenericApp {
         });
     }
 
-    static syncMultipleWidgets(project) {
+    static syncMultipleWidgets(project: Project) {
         project = project || store.getState().visProject;
         Object.keys(project).forEach(view => {
             if (view === '___settings') {
@@ -345,28 +491,28 @@ class Runtime extends GenericApp {
             }
 
             const oView = project[view];
-            const widgetIDs = Object.keys(oView.widgets);
+            const widgetIDs: AnyWidgetId[] = Object.keys(oView.widgets) as AnyWidgetId[];
             widgetIDs.forEach(widgetId => {
                 const oWidget = oView.widgets[widgetId];
                 // if widget must be shown in more than one view
                 if (oWidget.data && oWidget.data['multi-views']) {
-                    const views = oWidget.data['multi-views'].split(',');
+                    const views: string[] = oWidget.data['multi-views'].split(',');
                     views.forEach(viewId => {
                         if (viewId !== view && project[viewId]) {
                             // copy all widgets, that must be shown in this view too
-                            project[viewId].widgets[`${view}_${widgetId}`] = JSON.parse(JSON.stringify(oWidget));
-                            delete project[viewId].widgets[`${view}_${widgetId}`].data['multi-views'];
+                            project[viewId].widgets[`${view}_${widgetId}` as AnyWidgetId] = JSON.parse(JSON.stringify(oWidget));
+                            delete project[viewId].widgets[`${view}_${widgetId}` as AnyWidgetId].data['multi-views'];
                             if (oWidget.tpl === '_tplGroup' && oWidget.data.members?.length) {
                                 // copy all group widgets too
-                                const newWidget = project[viewId].widgets[`${view}_${widgetId}`];
+                                const newWidget = project[viewId].widgets[`${view}_${widgetId}` as AnyWidgetId];
                                 newWidget.data.members.forEach((memberId, i) => {
-                                    const newId = `${view}_${memberId}`;
+                                    const newId: AnyWidgetId = `${view}_${memberId}` as AnyWidgetId;
                                     project[viewId].widgets[newId] = JSON.parse(JSON.stringify(oView.widgets[memberId]));
                                     delete project[viewId].widgets[newId].data['multi-views']; // do not allow multi-multi-views
                                     newWidget.data.members[i] = newId;
                                     // do not copy members of multi-group
-                                    if (project[viewId].widgets[newId].members) {
-                                        project[viewId].widgets[newId].members = [];
+                                    if (project[viewId].widgets[newId].data.members) {
+                                        project[viewId].widgets[newId].data.members = [];
                                     }
                                 });
                             }
@@ -384,12 +530,12 @@ class Runtime extends GenericApp {
         });
     }
 
-    static findViewWithNearestResolution(project, resultRequired) {
+    static findViewWithNearestResolution(project: Project, resultRequired?: boolean) {
         const w = window.innerWidth;
         const h = window.innerHeight;
 
         let result = null;
-        const views = [];
+        const views:string[] = [];
         let difference = 10000;
 
         // First, find all with the best fitting width
@@ -408,7 +554,7 @@ class Runtime extends GenericApp {
         for (let i = 0; i < views.length; i++) {
             if (Math.abs(project[views[i]].settings.sizey - h) < difference) {
                 result = views[i];
-                difference = Math.abs(parseInt(project[views[i]].settings.sizey, 10) - h);
+                difference = Math.abs(parseInt(project[views[i]].settings.sizey.toString(), 10) - h);
             }
         }
 
@@ -423,11 +569,11 @@ class Runtime extends GenericApp {
                 }
                 if (project[view].settings?.useAsDefault &&
                     // If difference less than 20%
-                    parseInt(project[view].settings.sizey, 10) &&
-                    Math.abs(ratio - (parseInt(project[view].settings.sizex, 10) / parseInt(project[view].settings.sizey, 10)) < difference)
+                    parseInt(project[view].settings.sizey.toString(), 10) &&
+                    Math.abs(ratio - (parseInt(project[view].settings.sizex.toString(), 10) / parseInt(project[view].settings.sizey.toString(), 10))) < difference
                 ) {
                     result = view;
-                    difference = Math.abs(ratio - (parseInt(project[view].settings.sizex, 10) / parseInt(project[view].settings.sizey, 10)));
+                    difference = Math.abs(ratio - (parseInt(project[view].settings.sizex.toString(), 10) / parseInt(project[view].settings.sizey.toString(), 10)));
                 }
             });
         }
@@ -441,11 +587,11 @@ class Runtime extends GenericApp {
         return result;
     }
 
-    loadProject = async (projectName, file) => {
+    loadProject = async (projectName: string, file?: string | { file: string; mimeType: string }) => {
         if (!file) {
             this.setLoadingText && this.setLoadingText('Load project file...');
             try {
-                file = await readFile(this.socket, this.adapterId, `${projectName}/vis-views.json`);
+                file = await readFile(this.socket as unknown as LegacyConnection, this.adapterId, `${projectName}/vis-views.json`);
             } catch (err) {
                 console.warn(`Cannot read project file "${projectName}/vis-views.json": ${err}`);
                 file = '{}';
@@ -473,16 +619,16 @@ class Runtime extends GenericApp {
             this.lastProjectJSONfile = file;
         }
 
-        let project;
+        let project: Project;
         try {
             project = JSON.parse(file);
         } catch (e) {
             window.alert('Cannot parse project file!');
-            project = {
+            project = ({
                 'Cannot parse project file!': {
                     widgets: {},
                 },
-            };
+            } as unknown as Project);
         }
 
         this.fixProject(project);
@@ -585,8 +731,8 @@ class Runtime extends GenericApp {
     };
 
     // this function is required here if the project not defined
-    refreshProjects = async reloadCurrentProject => {
-        let projects;
+    refreshProjects = async (reloadCurrentProject?: boolean) => {
+        let projects: ioBroker.ReadDirResult[];
 
         try {
             projects = await this.socket.readDir(this.adapterId, '');
@@ -627,7 +773,7 @@ class Runtime extends GenericApp {
         }
     }
 
-    onWidgetSetsChanged = (id, state) => {
+    onWidgetSetsChanged = (id: string, state: ioBroker.State) => {
         if (state && this.lastUploadedState && state.val !== this.lastUploadedState) {
             this.lastUploadedState = state.val;
             this.onVisChanged();
@@ -637,7 +783,7 @@ class Runtime extends GenericApp {
     async onConnectionReady() {
         // preload all widgets first
         if (this.state.widgetsLoaded === Runtime.WIDGETS_LOADING_STEP_HTML_LOADED) {
-            await VisWidgetsCatalog.collectRxInformation(this.socket, store.getState().visProject, this.changeProject);
+            await VisWidgetsCatalog.collectRxInformation(this.socket as unknown as LegacyConnection, store.getState().visProject, this.changeProject);
             await this.setStateAsync({ widgetsLoaded: Runtime.WIDGETS_LOADING_STEP_ALL_LOADED });
         }
 
@@ -648,7 +794,7 @@ class Runtime extends GenericApp {
         store.dispatch(updateActiveUser(currentUser.common.name));
 
         const groups = await this.socket.getGroups();
-        const userGroups = {};
+        const userGroups:Record<ioBroker.ObjectIDs.Group, ioBroker.GroupObject> = {};
         groups.forEach(group => userGroups[group._id] = group);
 
         await this.setStateAsync({
@@ -683,7 +829,8 @@ class Runtime extends GenericApp {
 
         let projects = this.state.projects;
         if (!this.state.runtime) {
-            projects = await this.refreshProjects();
+            await this.refreshProjects();
+            projects = null;
         }
 
         if (!projects || projects.includes(projectName)) {
@@ -701,7 +848,7 @@ class Runtime extends GenericApp {
         }
     }
 
-    changeView = async selectedView => {
+    changeView = async (selectedView: string) => {
         if (selectedView === this.state.selectedView) {
             // inform about inView navigation
             if (this.state.runtime || !this.state.editMode) {
@@ -714,17 +861,17 @@ class Runtime extends GenericApp {
             }
             return;
         }
-        const newState = {
+        const newState:Partial<RuntimeState> = {
             selectedView,
         };
 
-        let selectedWidgets = JSON.parse(window.localStorage.getItem(
+        let selectedWidgets:AnyWidgetId[] = JSON.parse(window.localStorage.getItem(
             `${this.state.projectName}.${selectedView}.widgets`,
         ) || '[]') || [];
 
         // Check that all selectedWidgets exist
         for (let i = selectedWidgets.length - 1; i >= 0; i--) {
-            if (!store.getState().visProject[selectedView] || !store.getState().visProject[selectedView].widgets || !store.getState().visProject[selectedView].widgets[selectedWidgets[i]]) {
+            if (!store.getState().visProject[selectedView] || !store.getState().visProject[selectedView].widgets || !store.getState().visProject[selectedView].widgets[selectedWidgets[i] as AnyWidgetId]) {
                 selectedWidgets = selectedWidgets.splice(i, 1);
             }
         }
@@ -777,7 +924,7 @@ class Runtime extends GenericApp {
         await this.setStateAsync(newState);
     };
 
-    showAlert(message, type) {
+    showAlert(message: string, type: 'error' | 'warning' | 'info' | 'success') {
         if (type !== 'error' && type !== 'warning' && type !== 'info' && type !== 'success') {
             type = 'info';
         }
@@ -798,7 +945,7 @@ class Runtime extends GenericApp {
         open={this.state.alert}
         autoHideDuration={6000}
         onClick={() => this.setState({ alert: false })}
-        onClose={reason => {
+        onClose={(e, reason) => {
             if (reason === 'clickaway') {
                 return;
             }
@@ -810,15 +957,15 @@ class Runtime extends GenericApp {
     async onWidgetsLoaded() {
         let widgetsLoaded = Runtime.WIDGETS_LOADING_STEP_HTML_LOADED;
         if (this.socket.isConnected()) {
-            await VisWidgetsCatalog.collectRxInformation(this.socket, store.getState().visProject, this.changeProject);
+            await VisWidgetsCatalog.collectRxInformation(this.socket as unknown as LegacyConnection, store.getState().visProject, this.changeProject);
             widgetsLoaded = Runtime.WIDGETS_LOADING_STEP_ALL_LOADED;
         }
         this.setState({ widgetsLoaded });
     }
 
-    addProject = async (projectName, doNotLoad) => {
+    addProject = async (projectName: string, doNotLoad?: boolean) => {
         try {
-            const project = {
+            const project:Project = ({
                 ___settings: {
                     folders: [],
                     openedViews: [],
@@ -831,7 +978,7 @@ class Runtime extends GenericApp {
                     widgets: {},
                     activeWidgets: {},
                 },
-            };
+            } as unknown as Project);
             await this.socket.writeFile64(this.adapterId, `${projectName}/vis-views.json`, JSON.stringify(project));
             await this.socket.writeFile64(this.adapterId, `${projectName}/vis-user.css`, '');
             if (!doNotLoad) {
@@ -875,7 +1022,7 @@ class Runtime extends GenericApp {
                 <Button
                     id="create_new_project_ok_buton"
                     variant="contained"
-                    default
+                    // default
                     color="primary"
                     disabled={!this.state.newProjectName || this.state.projects.includes(this.state.newProjectName)}
                     onClick={async () => {
@@ -888,7 +1035,7 @@ class Runtime extends GenericApp {
                 </Button>
                 <Button
                     variant="contained"
-                    default
+                    // default
                     color="grey"
                     onClick={() => this.setState({ showNewProjectDialog: false })}
                     startIcon={<IconClose />}
@@ -1033,7 +1180,7 @@ class Runtime extends GenericApp {
             lockDragging={this.state.lockDragging}
             disableInteraction={this.state.disableInteraction}
             widgetHint={this.state.widgetHint}
-            onFontsUpdate={this.state.runtime ? null : fonts => this.onFontsUpdate(fonts)}
+            onFontsUpdate={this.state.runtime ? null : (fonts: string[]) => this.onFontsUpdate(fonts)}
             registerEditorCallback={this.state.runtime ? null : this.registerCallback}
             themeType={this.state.themeType}
             themeName={this.state.themeName}
@@ -1042,26 +1189,26 @@ class Runtime extends GenericApp {
             editModeComponentClass={this.props.classes?.editModeComponentClass}
             onIgnoreMouseEvents={this.onIgnoreMouseEvents}
             setLoadingText={this.setLoadingText}
-            onConfirmDialog={(message, title, icon, width, callback) => this.showConfirmDialog && this.showConfirmDialog({
+            onConfirmDialog={(message: string, title: string, icon: string, width: number, callback: (isYes: boolean) => void) => this.showConfirmDialog && this.showConfirmDialog({
                 message,
                 title,
                 icon,
                 width,
                 callback,
             })}
-            onShowCode={(code, title, mode) => this.showCodeDialog && this.showCodeDialog({ code, title, mode })}
+            onShowCode={(code: string, title: string, mode: string) => this.showCodeDialog && this.showCodeDialog({ code, title, mode })}
             currentUser={this.state.currentUser}
             userGroups={this.state.userGroups}
             renderAlertDialog={this.renderAlertDialog}
             showLegacyFileSelector={this.showLegacyFileSelector}
-            toggleTheme={newThemeName => this.toggleTheme(newThemeName)}
+            toggleTheme={(newThemeName: ThemeName) => this.toggleTheme(newThemeName)}
             askAboutInclude={this.askAboutInclude}
             changeProject={this.changeProject}
         />;
     }
 
     renderLoader() {
-        if (window.loadingHideLogo === true) {
+        if (window.loadingHideLogo === 'true') {
             return null;
         }
         if (window.vendorPrefix === 'MV') {

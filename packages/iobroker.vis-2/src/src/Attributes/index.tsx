@@ -23,6 +23,7 @@ import Scripts from './Scripts';
 import View from './View';
 import Widget from './Widget';
 import usePrevious from '../Utils/usePrevious';
+import { EditorClass } from '@/Editor';
 
 const style: Record<string, any> = (theme: Record<string, any>) => ({
     blockHeader: theme.classes.blockHeader,
@@ -45,11 +46,11 @@ interface AttributesProps {
     adapterName: string;
     instance: number;
     projectName: string;
-    saveCssFile: (fileName: string, data: string) => void;
+    saveCssFile: EditorClass['saveCssFile'];
     editMode: boolean;
     onHide: (hide: boolean) => void;
     adapterId: string;
-    userGroups: Record<string, string[]>;
+    userGroups: EditorClass['state']['userGroups'];
     selectedWidgets: string[];
     widgetsLoaded: boolean;
     selectedView: string;

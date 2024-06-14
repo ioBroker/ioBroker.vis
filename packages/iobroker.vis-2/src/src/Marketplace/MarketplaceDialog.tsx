@@ -11,13 +11,21 @@ import {
     MarketplaceWidgetRevision,
     Widget,
     SingleWidgetId,
+    SingleWidget,
 } from '@iobroker/types-vis-2';
 import { store } from '@/Store';
 
 export interface MarketplaceDialogProps {
     onClose: () => void;
     addPage?: boolean;
-    widget?: { name: string; date: string; widget_id: string; image_id: string };
+    widget?: {
+        name?: string;
+        date?: string;
+        widget_id?: string;
+        image_id?: string;
+        widget?: SingleWidget[];
+        image?: string;
+    };
     installedWidgets: MarketplaceWidgetRevision[];
     updateWidgets: (widget: MarketplaceWidgetRevision) => void;
     installWidget: (widgetId: string, id: string) => void;
