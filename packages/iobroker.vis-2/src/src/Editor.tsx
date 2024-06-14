@@ -1316,8 +1316,8 @@ class Editor extends Runtime<EditorProps, EditorState> {
 
     registerCallback = (name: keyof VisEngineHandlers, view: string, cb: VisEngineHandlers[keyof VisEngineHandlers]) => {
         if (cb) {
-            (this.visEngineHandlers[view][name] as VisEngineHandlers[keyof VisEngineHandlers]) = cb;
             this.visEngineHandlers[view] = this.visEngineHandlers[view] || {};
+            (this.visEngineHandlers[view][name] as VisEngineHandlers[keyof VisEngineHandlers]) = cb;
         } else if (this.visEngineHandlers[view]) {
             delete this.visEngineHandlers[view][name];
             if (!Object.keys(this.visEngineHandlers[view]).length) {
