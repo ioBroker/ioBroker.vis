@@ -168,6 +168,7 @@ interface PaletteProps {
     themeType: ThemeType;
     editMode: boolean;
     selectedView: string;
+    project: Project;
 }
 
 interface PaletteState {

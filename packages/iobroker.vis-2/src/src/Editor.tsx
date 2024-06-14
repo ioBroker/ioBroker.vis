@@ -1675,7 +1675,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
                 updateWidgets={this.updateWidgets}
                 selectedView={this.state.selectedView}
                 changeView={this.changeView}
-                // project={store.getState().visProject}
+                project={store.getState().visProject}
                 changeProject={this.changeProject}
                 socket={this.socket as unknown as LegacyConnection}
                 editMode={this.state.editMode}
@@ -1721,7 +1721,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
                             pasteWidgets={this.pasteWidgets}
                             orderWidgets={this.orderWidgets}
                             widgetsClipboard={this.state.widgetsClipboard}
-                            // project={store.getState().visProject}
+                            project={store.getState().visProject}
                             selectedView={this.state.selectedView}
                             changeProject={this.changeProject}
                             lockWidgets={this.lockWidgets}
@@ -1751,19 +1751,19 @@ class Editor extends Runtime<EditorProps, EditorState> {
                 classes={{}}
                 selectedView={this.state.selectedView}
                 userGroups={this.state.userGroups}
-                // changeProject={this.changeProject}
+                changeProject={this.changeProject}
                 openedViews={store.getState().visProject.___settings.openedViews}
                 projectName={this.state.projectName}
                 themeType={this.state.themeType}
                 selectedWidgets={this.state.editMode ? this.state.selectedWidgets : []}
                 widgetsLoaded={this.state.widgetsLoaded === Runtime.WIDGETS_LOADING_STEP_ALL_LOADED}
-                // socket={this.socket}
-                // fonts={this.state.fonts}
+                socket={this.socket as unknown as LegacyConnection}
+                fonts={this.state.fonts}
                 adapterName={this.adapterName}
                 instance={this.instance}
-                // cssClone={this.cssClone}
-                // onPxToPercent={this.onPxToPercent}
-                // onPercentToPx={this.onPercentToPx}
+                cssClone={this.cssClone}
+                onPxToPercent={this.onPxToPercent}
+                onPercentToPx={this.onPercentToPx}
                 saveCssFile={this.saveCssFile}
                 editMode={this.state.editMode}
                 onHide={() => {
@@ -1932,7 +1932,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
             return null;
         }
         return <ImportProjectDialog
-            // projects={this.state.projects}
+            projects={this.state.projects}
             themeType={this.state.themeType}
             onClose={(created, newProjectName) => {
                 this.setState({ showImportDialog: false });

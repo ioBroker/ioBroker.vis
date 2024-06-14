@@ -16,7 +16,7 @@ import {
     UnfoldLess as UnfoldLessIcon, ListAlt as IconAttributes,
 } from '@mui/icons-material';
 
-import { I18n, Utils } from '@iobroker/adapter-react-v5';
+import { I18n, LegacyConnection, Utils } from '@iobroker/adapter-react-v5';
 
 import CSS from './CSS';
 import Scripts from './Scripts';
@@ -54,6 +54,12 @@ interface AttributesProps {
     selectedWidgets: string[];
     widgetsLoaded: boolean;
     selectedView: string;
+    changeProject: EditorClass['changeProject'];
+    socket: LegacyConnection;
+    fonts: string[];
+    cssClone: EditorClass['cssClone'];
+    onPxToPercent: EditorClass['onPxToPercent'];
+    onPercentToPx: EditorClass['onPercentToPx'];
 }
 
 const Attributes = (props: AttributesProps)  => {

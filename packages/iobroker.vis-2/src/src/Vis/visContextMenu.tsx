@@ -53,6 +53,7 @@ interface VisContextMenuProps {
     widgetsClipboard: Record<string, any>;
     themeType: 'dark' | 'light';
     setMarketplaceDialog: EditorClass['setMarketplaceDialog'];
+    project: Project;
 }
 
 export interface VisMarketplaceProps {
