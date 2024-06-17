@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { withStyles } from '@mui/styles';
+import { Styles, withStyles } from '@mui/styles';
 
 import {
     Button,
@@ -12,17 +12,21 @@ import {
     InputLabel,
     MenuItem,
     Select,
+    SelectChangeEvent,
     TextField,
     Tooltip,
 } from '@mui/material';
 
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n, IobTheme, ThemeType } from '@iobroker/adapter-react-v5';
 
+import { deepClone } from '@/Utils/utils';
+import { ViewSettings } from '@iobroker/types-vis-2';
+import React from 'react';
+import { EditorClass } from '@/Editor';
+import { store } from '../Store';
 import MultiSelect from './MultiSelect';
 
-import { store } from '../Store';
-
-const styles = theme => ({
+const styles:Styles<IobTheme, any> = theme => ({
     toolbarBlock: {
         display: 'flex',
         flexDirection: 'column',
@@ -53,7 +57,74 @@ const styles = theme => ({
     },
 });
 
-const getItem = (item, key, props, full) => {
+export interface BaseToolbarItem {
+    name?: string;
+    field?: keyof ViewSettings;
+    hide?: boolean;
+    doNotTranslateName?: boolean;
+}
+
+export interface SelectToolbarItem extends BaseToolbarItem {
+    type: 'select';
+    items: { name: string; value: string }[];
+    width: number;
+    value?: string;
+    onChange?: (value: SelectChangeEvent) => void;
+}
+
+export interface MultiselectToolbarItem extends BaseToolbarItem {
+    type: 'multiselect';
+    items: { name: string | React.JSX.Element;
+        subName?: string;
+        value: string;
+        color?: string;
+        icon?: string;
+     }[];
+    width: number;
+    value?: string[];
+    onChange: (value: string[]) => void;
+}
+
+export interface CheckboxToolbarItem extends BaseToolbarItem {
+    type: 'checkbox';
+    value?: boolean;
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+export interface IconButtonToolbarItem extends BaseToolbarItem {
+    type: 'icon-button';
+    Icon: React.ComponentType;
+    onClick: () => void;
+    disabled?: boolean;
+    selected?: boolean;
+    size?: 'small' | 'inherit' | 'default' | 'large' | 'normal';
+    color?: string;
+    subName?: string;
+}
+
+export interface TextToolbarItem extends BaseToolbarItem {
+    type: 'text';
+    text: string;
+}
+
+export interface ButtonToolbarItem extends BaseToolbarItem {
+    type: 'button';
+    onClick: () => void;
+}
+
+export interface DividerToolbarItem extends BaseToolbarItem {
+    type: 'divider';
+}
+
+export interface TextFieldToolbarItem extends BaseToolbarItem {
+    type?: 'password' | 'number';
+    value: string;
+    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+}
+
+export type ToolbarItem = SelectToolbarItem | MultiselectToolbarItem | CheckboxToolbarItem | IconButtonToolbarItem | TextToolbarItem | ButtonToolbarItem | DividerToolbarItem | TextFieldToolbarItem;
+
+const getItem = (item: ToolbarItem, key: number, props:ToolbarItemsProps, full?: boolean) => {
     const { visProject } = store.getState();
     const view = visProject[props.selectedView];
 
@@ -67,12 +138,12 @@ const getItem = (item, key, props, full) => {
         value = '';
     }
 
-    const change = changeValue => {
+    const change = (changeValue: any) => {
         if (!item.field) {
             return;
         }
-        const project = JSON.parse(JSON.stringify(visProject));
-        project[props.selectedView].settings[item.field] = changeValue;
+        const project = deepClone(visProject);
+        (project[props.selectedView].settings[item.field] as any) = changeValue;
 
         props.changeProject(project);
     };
@@ -102,10 +173,10 @@ const getItem = (item, key, props, full) => {
             // style={{ margin: '0px 10px' }}
             label={props.toolbarHeight !== 'veryNarrow' ? (item.doNotTranslateName ? item.name : I18n.t(item.name)) : null}
             width={item.width}
-            value={item.value ? item.value : value}
+            value={item.value ? item.value : value as string[]}
             onChange={_value => item.onChange(_value)}
             setSelectedWidgets={props.setSelectedWidgets}
-            options={item.items}
+            options={item.items.map(option => ({ name: option.name as string, subname: option.subName, value: option.value, color: option.color, icon: option.icon }))}
             themeType={props.themeType}
         />;
         /*
@@ -148,7 +219,7 @@ const getItem = (item, key, props, full) => {
         return <FormControlLabel
             key={key}
             control={<Checkbox
-                checked={value}
+                checked={value as boolean}
                 onChange={item.onChange ? item.onChange : e => change(e.target.checked)}
                 size="small"
             />}
@@ -172,7 +243,7 @@ const getItem = (item, key, props, full) => {
                         color: item.color || undefined,
                     }}
                 >
-                    <div><item.Icon fontSize={item.size && props.toolbarHeight !== 'veryNarrow' ? item.size : 'small'} /></div>
+                    <div><item.Icon fontSize={item.size ? item.size : 'small'} /></div>
                     <div>{I18n.t(item.name)}</div>
                     {item.subName ? <div style={{ fontSize: 10, opacity: 0.6 }}>{item.subName}</div> : null}
                 </ButtonBase>
@@ -226,14 +297,25 @@ const getItem = (item, key, props, full) => {
     />;
 };
 
-const ToolbarItems = props => {
+interface ToolbarItemsProps {
+    classes: Record<string, string>;
+    themeType: ThemeType;
+    group: { name: string | React.JSX.Element; doNotTranslateName?: boolean; items: (ToolbarItem[][] | ToolbarItem[] | ToolbarItem)[] };
+    last?: boolean;
+    toolbarHeight: 'full' | 'narrow' | 'veryNarrow';
+    changeProject: EditorClass['changeProject'];
+    selectedView: string;
+    setSelectedWidgets: EditorClass['setSelectedWidgets'];
+}
+
+const ToolbarItems:React.FC<ToolbarItemsProps> = props => {
     let items = props.group.items;
     const name = props.group.name;
     const doNotTranslateName = props.group.doNotTranslateName;
 
     // flatten buttons
     if (props.toolbarHeight === 'veryNarrow') {
-        const _items = [];
+        const _items:ToolbarItem[] = [];
         items.forEach(item => {
             if (Array.isArray(item)) {
                 item.forEach(_item => {
@@ -259,7 +341,7 @@ const ToolbarItems = props => {
                 items.map((item, key) => {
                     if (Array.isArray(item)) {
                         return <div key={key} className={props.classes.toolbarCol}>
-                            {item.map((subItem, subKey) => <div key={subKey} className={props.classes.toolbarRow}>
+                            {(item as ToolbarItem[][]).map((subItem, subKey) => <div key={subKey} className={props.classes.toolbarRow}>
                                 {subItem.map((subItem2, subKey2) => getItem(subItem2, subKey2, props))}
                             </div>)}
                         </div>;
@@ -274,13 +356,4 @@ const ToolbarItems = props => {
     </div>;
 };
 
-ToolbarItems.propTypes = {
-    classes: PropTypes.object,
-    // eslint-disable-next-line react/no-unused-prop-types
-    themeType: PropTypes.string,
-    group: PropTypes.object,
-    last: PropTypes.bool,
-    toolbarHeight: PropTypes.string,
-};
-
-export default withStyles(styles)(ToolbarItems);
+export default withStyles(styles)(ToolbarItems) as React.FC<ToolbarItemsProps>;

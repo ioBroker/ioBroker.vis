@@ -35,7 +35,7 @@ import {
 } from '@iobroker/adapter-react-v5';
 
 import { EditorClass } from '@/Editor';
-import { GroupWidgetId } from '@iobroker/types-vis-2';
+import { AnyWidgetId, GroupWidgetId } from '@iobroker/types-vis-2';
 import Views from './Views';
 import Widgets from './Widgets';
 import Projects from './Projects';
@@ -107,20 +107,50 @@ interface ToolbarProps {
     needSave: boolean;
     socket: LegacyConnection;
     toggleTheme: EditorClass['toggleTheme'];
-    themeName: string;
+    themeName: ThemeName;
     themeType: ThemeType;
     editMode: boolean;
     selectedGroup: GroupWidgetId;
-    setToolbarHeight: (value: 'narrow' | 'veryNarrow') => void;
+    setToolbarHeight: (value: 'narrow' | 'veryNarrow' | 'full') => void;
     projectsDialog: boolean;
     setProjectsDialog: EditorClass['setProjectsDialog'];
-    toolbarHeight: string;
+    toolbarHeight: 'full' | 'narrow' | 'veryNarrow';
     adapterName: string;
     instance: number;
     projectName: string;
     version: string;
     setSelectedWidgets: EditorClass['setSelectedWidgets'];
     selectedView: string;
+    changeProject: EditorClass['changeProject'];
+    changeView: EditorClass['changeView'];
+    viewsManager: boolean;
+    setViewsManager: EditorClass['setViewsManager'];
+    toggleView: EditorClass['toggleView'];
+    alignWidgets: EditorClass['alignWidgets'];
+    cloneWidgets: EditorClass['cloneWidgets'];
+    copyWidgets: EditorClass['copyWidgets'];
+    cutWidgets: EditorClass['cutWidgets'];
+    deleteWidgets: EditorClass['deleteWidgets'];
+    history: EditorClass['state']['history'];
+    historyCursor: EditorClass['state']['historyCursor'];
+    lockDragging: boolean;
+    openedViews: string[];
+    orderWidgets: EditorClass['orderWidgets'];
+    pasteWidgets: EditorClass['pasteWidgets'];
+    redo: EditorClass['redo'];
+    selectedWidgets: AnyWidgetId[];
+    toggleLockDragging: EditorClass['toggleLockDragging'];
+    toggleWidgetHint: EditorClass['toggleWidgetHint'];
+    undo: EditorClass['undo'];
+    widgetHint: string;
+    widgetsClipboard: EditorClass['state']['widgetsClipboard'];
+    widgetsLoaded: boolean;
+    addProject: EditorClass['addProject'];
+    deleteProject: EditorClass['deleteProject'];
+    loadProject: EditorClass['loadProject'];
+    projects: string[];
+    refreshProjects: EditorClass['refreshProjects'];
+    renameProject: EditorClass['renameProject'];
 }
 
 const Toolbar:React.FC<ToolbarProps> = props => {
@@ -284,32 +314,72 @@ const Toolbar:React.FC<ToolbarProps> = props => {
             </span> : null}
         </span>
         <div className={Utils.clsx(classes.toolbar, props.toolbarHeight !== 'full' && classes.narrowToolbar)} style={{ alignItems: 'initial' }}>
-            <Views {...props} classes={{}} toolbarHeight={props.toolbarHeight} />
-            <Widgets {...props} classes={{}} toolbarHeight={props.toolbarHeight} />
-            <Projects {...props} classes={{}} toolbarHeight={props.toolbarHeight} />
+            <Views
+                classes={{}}
+                toolbarHeight={props.toolbarHeight}
+                changeProject={props.changeProject}
+                changeView={props.changeView}
+                editMode={props.editMode}
+                projectName={props.projectName}
+                selectedGroup={props.selectedGroup}
+                selectedView={props.selectedView}
+                setProjectsDialog={props.setProjectsDialog}
+                setSelectedWidgets={props.setSelectedWidgets}
+                setViewsManager={props.setViewsManager}
+                themeName={props.themeName}
+                themeType={props.themeType}
+                toggleView={props.toggleView}
+                viewsManager={props.viewsManager}
+            />
+            <Widgets
+                toolbarHeight={props.toolbarHeight}
+                alignWidgets={props.alignWidgets}
+                changeProject={props.changeProject}
+                cloneWidgets={props.cloneWidgets}
+                copyWidgets={props.copyWidgets}
+                cutWidgets={props.cutWidgets}
+                deleteWidgets={props.deleteWidgets}
+                editMode={props.editMode}
+                history={props.history}
+                historyCursor={props.historyCursor}
+                lockDragging={props.lockDragging}
+                openedViews={props.openedViews}
+                orderWidgets={props.orderWidgets}
+                pasteWidgets={props.pasteWidgets}
+                redo={props.redo}
+                selectedGroup={props.selectedGroup}
+                selectedView={props.selectedView}
+                selectedWidgets={props.selectedWidgets}
+                setSelectedWidgets={props.setSelectedWidgets}
+                themeType={props.themeType}
+                toggleLockDragging={props.toggleLockDragging}
+                toggleWidgetHint={props.toggleWidgetHint}
+                undo={props.undo}
+                widgetHint={props.widgetHint}
+                widgetsClipboard={props.widgetsClipboard}
+                widgetsLoaded={props.widgetsLoaded}
+            />
+            <Projects
+                toolbarHeight={props.toolbarHeight}
+                adapterName={props.adapterName}
+                changeProject={props.changeProject}
+                instance={props.instance}
+                projectName={props.projectName}
+                projectsDialog={props.projectsDialog}
+                selectedView={props.selectedView}
+                setProjectsDialog={props.setProjectsDialog}
+                setSelectedWidgets={props.setSelectedWidgets}
+                socket={props.socket}
+                themeType={props.themeType}
+                addProject={props.addProject}
+                deleteProject={props.deleteProject}
+                loadProject={props.loadProject}
+                projects={props.projects}
+                refreshProjects={props.refreshProjects}
+                renameProject={props.renameProject}
+            />
         </div>
     </div>;
 };
 
-Toolbar.propTypes = {
-    classes: PropTypes.object,
-    currentUser: PropTypes.object,
-    needSave: PropTypes.bool,
-    socket: PropTypes.object,
-    toggleTheme: PropTypes.func,
-    themeName: PropTypes.string,
-    themeType: PropTypes.string,
-    editMode: PropTypes.bool,
-    selectedGroup: PropTypes.string,
-    setToolbarHeight: PropTypes.func,
-    projectsDialog: PropTypes.bool,
-    setProjectsDialog: PropTypes.func,
-    toolbarHeight: PropTypes.string,
-    adapterName: PropTypes.string,
-    instance: PropTypes.number,
-    projectName: PropTypes.string,
-    version: PropTypes.string,
-    setSelectedWidgets: PropTypes.func.isRequired,
-};
-
-export default withStyles(styles)(Toolbar);
+export default withStyles(styles)(Toolbar) as React.FC<ToolbarProps>;

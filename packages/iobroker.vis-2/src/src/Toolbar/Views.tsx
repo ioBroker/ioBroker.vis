@@ -12,10 +12,11 @@ import {
     Menu as MenuIcon,
 } from '@mui/icons-material';
 
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n, ThemeName, ThemeType } from '@iobroker/adapter-react-v5';
 
+import { EditorClass } from '@/Editor';
 import ViewsManager from './ViewsManager';
-import ToolbarItems from './ToolbarItems';
+import ToolbarItems, { ToolbarItem } from './ToolbarItems';
 
 import ViewDialog from './ViewsManager/ViewDialog';
 
@@ -36,14 +37,19 @@ const styles: Record<string, any> = {
 interface ViewsProps {
     projectName: string;
     selectedView: string;
-    setViewsManager: (open: boolean) => void;
+    setViewsManager: EditorClass['setViewsManager'];
     viewsManager: boolean;
     selectedGroup: string;
     editMode: boolean;
-    setProjectsDialog: (open: boolean) => void;
+    setProjectsDialog: EditorClass['setProjectsDialog'];
     classes: Record<string, string>;
-    changeProject: (project: Record<string, any>) => Promise<void>;
-    changeView: (viewName: string) => Promise<void>;
+    changeProject: EditorClass['changeProject'];
+    changeView: EditorClass['changeView'];
+    setSelectedWidgets: EditorClass['setSelectedWidgets'];
+    themeType: ThemeType;
+    toolbarHeight: 'full' | 'narrow' | 'veryNarrow';
+    themeName: ThemeName;
+    toggleView: EditorClass['toggleView'];
 }
 
 const Views = (props: ViewsProps) => {
@@ -57,7 +63,7 @@ const Views = (props: ViewsProps) => {
         type: 'add' | 'rename' | 'delete' | 'copy',
         view?: string,
         parentId?: string,
-        cb?: () => void,
+        cb?: (dialogName: string) => void,
     ) => {
         view = view || props.selectedView;
 
@@ -74,7 +80,10 @@ const Views = (props: ViewsProps) => {
         setDialogCallback(cb ? { cb } : null);
     };
 
-    const toolbar = {
+    const toolbar:{
+        name: React.JSX.Element;
+        items: (ToolbarItem | ToolbarItem[] | ToolbarItem[][])[];
+    } = {
         name: <span className={props.classes.label}>
             <Tooltip title={I18n.t('Current project')}>
                 <span
@@ -108,8 +117,27 @@ const Views = (props: ViewsProps) => {
     };
 
     return <>
-        <ToolbarItems group={toolbar} {...props} classes={{}} />
-        <ViewsManager open={props.viewsManager} onClose={() => props.setViewsManager(false)} showDialog={showDialog} {...props} classes={{}} />
+        <ToolbarItems
+            group={toolbar}
+            classes={{}}
+            changeProject={props.changeProject}
+            selectedView={props.selectedView}
+            setSelectedWidgets={props.setSelectedWidgets}
+            themeType={props.themeType}
+            toolbarHeight={props.toolbarHeight}
+        />
+        <ViewsManager
+            open={props.viewsManager}
+            onClose={() => props.setViewsManager(false)}
+            showDialog={showDialog}
+            classes={{}}
+            changeProject={props.changeProject}
+            editMode={props.editMode}
+            selectedView={props.selectedView}
+            themeName={props.themeName}
+            themeType={props.themeType}
+            toggleView={props.toggleView}
+        />
         <ViewDialog
             dialog={dialog}
             dialogView={dialogView}
@@ -128,4 +156,4 @@ const Views = (props: ViewsProps) => {
     </>;
 };
 
-export default withStyles(styles)(Views);
+export default withStyles(styles)(Views) as React.FC<ViewsProps>;

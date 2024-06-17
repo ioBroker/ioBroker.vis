@@ -2076,7 +2076,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
                             changeProject={this.changeProject}
                             openedViews={store.getState().visProject.___settings.openedViews}
                             toggleView={this.toggleView}
-                            socket={this.socket}
+                            socket={this.socket as unknown as LegacyConnection}
                             projects={this.state.projects}
                             loadProject={this.loadProject}
                             projectName={this.state.projectName}

@@ -74,7 +74,7 @@ const styles:Styles<IobTheme & {classes: Record<string, CSSProperties>}, any> = 
 interface ViewsManagerProps {
     changeProject: EditorClass['changeProject'];
     classes: Record<string, string>;
-    name: string;
+    name?: string;
     onClose: () => void;
     open: boolean;
     showDialog: (
@@ -313,4 +313,4 @@ const ViewsManager:React.FC<ViewsManagerProps> = props => {
     </IODialog>;
 };
 
-export default withStyles(styles)(ViewsManager);
+export default withStyles(styles)(ViewsManager) as React.FC<ViewsManagerProps>;

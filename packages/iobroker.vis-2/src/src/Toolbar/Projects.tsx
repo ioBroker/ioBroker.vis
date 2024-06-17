@@ -12,10 +12,11 @@ import {
     SelectID,
     I18n,
     SelectFile as SelectFileDialog,
-    Utils, type LegacyConnection, Connection,
+    Utils, type LegacyConnection, Connection, ThemeType,
 } from '@iobroker/adapter-react-v5';
 
-import ToolbarItems from './ToolbarItems';
+import { EditorClass } from '@/Editor';
+import ToolbarItems, { ToolbarItem } from './ToolbarItems';
 import Settings from './Settings';
 import ProjectsManager from './ProjectsManager';
 
@@ -30,10 +31,21 @@ const styles = () => ({
 interface ToolsProps {
     socket: LegacyConnection;
     projectsDialog: boolean;
-    setProjectsDialog: (open: boolean) => void;
+    setProjectsDialog: EditorClass['setProjectsDialog'];
     adapterName: string;
     instance: number;
     projectName: string;
+    changeProject: EditorClass['changeProject'];
+    selectedView: string;
+    setSelectedWidgets: EditorClass['setSelectedWidgets'];
+    themeType: ThemeType;
+    toolbarHeight: 'full' | 'narrow' | 'veryNarrow';
+    addProject: EditorClass['addProject'];
+    deleteProject: EditorClass['deleteProject'];
+    loadProject: EditorClass['loadProject'];
+    projects: string[];
+    refreshProjects: EditorClass['refreshProjects'];
+    renameProject: EditorClass['renameProject'];
 }
 
 const Tools = (props: ToolsProps) => {
@@ -41,7 +53,10 @@ const Tools = (props: ToolsProps) => {
     const [objectsDialog, setObjectsDialog] = useState(false);
     const [filesDialog, setFilesDialog] = useState(false);
 
-    const toolbar = {
+    const toolbar:{
+        name: string;
+        items: (ToolbarItem | ToolbarItem[] | ToolbarItem[][])[];
+    } = {
         name: 'Projects',
         items: [
             {
@@ -60,7 +75,16 @@ const Tools = (props: ToolsProps) => {
     };
 
     return <>
-        <ToolbarItems group={toolbar} last {...props} classes={{}} />
+        <ToolbarItems
+            group={toolbar}
+            last
+            classes={{}}
+            changeProject={props.changeProject}
+            selectedView={props.selectedView}
+            setSelectedWidgets={props.setSelectedWidgets}
+            themeType={props.themeType}
+            toolbarHeight={props.toolbarHeight}
+        />
         {settingsDialog ? <Settings
             onClose={() => setSettingsDialog(false)}
             {...props}
@@ -72,8 +96,20 @@ const Tools = (props: ToolsProps) => {
         {props.projectsDialog ? <ProjectsManager
             open={!0}
             onClose={() => props.setProjectsDialog(false)}
-            {...props}
             classes={{}}
+            adapterName={props.adapterName}
+            instance={props.instance}
+            addProject={props.addProject}
+            changeProject={props.changeProject}
+            deleteProject={props.deleteProject}
+            loadProject={props.loadProject}
+            projectName={props.projectName}
+            projects={props.projects}
+            refreshProjects={props.refreshProjects}
+            renameProject={props.renameProject}
+            selectedView={props.selectedView}
+            socket={props.socket}
+            themeType={props.themeType}
         /> : null}
         {
             objectsDialog ? <SelectID
@@ -131,4 +167,4 @@ const Tools = (props: ToolsProps) => {
     </>;
 };
 
-export default withStyles(styles)(Tools);
+export default withStyles(styles)(Tools) as React.FC<ToolsProps>;

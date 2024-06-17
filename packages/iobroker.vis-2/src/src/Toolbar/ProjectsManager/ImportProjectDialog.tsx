@@ -37,7 +37,7 @@ interface ImportProjectDialogProps {
     loadProject: EditorClass['loadProject'];
     adapterName: string;
     instance: number;
-    openNewProjectOnCreate: boolean;
+    openNewProjectOnCreate?: boolean;
     projects: string[];
 }
 

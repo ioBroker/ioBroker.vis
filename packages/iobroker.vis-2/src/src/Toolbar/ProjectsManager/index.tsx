@@ -71,13 +71,13 @@ const styles:Styles<IobTheme, any> = theme => ({
 });
 
 interface ProjectsManageProps {
-    addProject: (name: string) => void;
-    loadProject: (name: string) => void;
+    addProject: EditorClass['addProject'];
+    loadProject: EditorClass['loadProject'];
     onClose: () => void;
     open: boolean;
     projects: string[];
     projectName: string;
-    refreshProjects: () => void;
+    refreshProjects: EditorClass['refreshProjects'];
     socket: LegacyConnection;
     themeType: string;
     classes: Record<string, string>;
@@ -309,8 +309,9 @@ const ProjectsManage:React.FC<ProjectsManageProps> = props => {
             loadProject={props.loadProject}
             adapterName={props.adapterName}
             instance={props.instance}
+            openNewProjectOnCreate
         /> : null}
     </IODialog> : null;
 };
 
-export default withStyles(styles)(ProjectsManage);
+export default withStyles(styles)(ProjectsManage) as React.FC<ProjectsManageProps>;
