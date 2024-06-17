@@ -48,7 +48,7 @@ interface ViewsProps {
 
 const Views = (props: ViewsProps) => {
     const [dialog, setDialog] = useState(null);
-    const [dialogCallback, setDialogCallback] = useState(null);
+    const [dialogCallback, setDialogCallback] = useState<{ cb:(dialogName: string) => void }>(null);
     const [dialogName, setDialogName] = useState('');
     const [dialogView, setDialogView] = useState(null);
     const [dialogParentId, setDialogParentId] = useState(null);

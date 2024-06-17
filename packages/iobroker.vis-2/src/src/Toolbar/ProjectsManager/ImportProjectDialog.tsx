@@ -1,23 +1,24 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
     TextField,
 } from '@mui/material';
 
 import { BiImport } from 'react-icons/bi';
 
-import { I18n, Confirm as ConfirmDialog } from '@iobroker/adapter-react-v5';
+import { I18n, Confirm as ConfirmDialog, LegacyConnection } from '@iobroker/adapter-react-v5';
 
+import { EditorClass } from '@/Editor';
 import UploadFile from '../../Components/UploadFile';
 import IODialog from '../../Components/IODialog';
 
-export const getLiveHost = async socket => {
+export const getLiveHost = async (socket: LegacyConnection) => {
     const res = await socket.getObjectViewSystem('host', 'system.host.', 'system.host.\u9999');
     const hosts = Object.keys(res).map(id => `${id}.alive`);
     if (!hosts.length) {
         return null;
     }
-    const states = await socket.getForeignStates(hosts);
+    const states = await socket.getForeignStates(hosts as unknown as string);
     for (const h in states) {
         if (states[h]?.val) {
             return h.substring(0, h.length - '.alive'.length);
@@ -27,9 +28,22 @@ export const getLiveHost = async socket => {
     return null;
 };
 
-const ImportProjectDialog = props => {
+interface ImportProjectDialogProps {
+    onClose: (isYes?: boolean, projectName?: string) => void;
+    projectName: string;
+    refreshProjects: EditorClass['refreshProjects'];
+    socket: LegacyConnection;
+    themeType: string;
+    loadProject: EditorClass['loadProject'];
+    adapterName: string;
+    instance: number;
+    openNewProjectOnCreate: boolean;
+    projects: string[];
+}
+
+const ImportProjectDialog:React.FC<ImportProjectDialogProps> = props => {
     const [projectName, setProjectName] = useState('');
-    const [projectData, setProjectData] = useState(null);
+    const [projectData, setProjectData] = useState<string>(null);
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [askOpenProject, setAskOpenProject] = useState(false);
     const [working, setWorking] = useState(false);
@@ -60,7 +74,7 @@ const ImportProjectDialog = props => {
                     id: `${props.adapterName}.${props.instance}`,
                     name: projectName || 'main',
                     data: projectData.split(',')[1],
-                }, async result => {
+                }, async (result: {error?: string}) => {
                     setWorking(false);
                     timeout && clearTimeout(timeout);
                     timeout = null;
@@ -127,7 +141,7 @@ const ImportProjectDialog = props => {
                 } else {
                     setProjectName(name.replace(/\.zip$/i, ''));
                 }
-                setProjectData(data);
+                setProjectData(data as string);
             }}
             accept={{
                 'application/zip': ['.zip'],
@@ -148,19 +162,6 @@ const ImportProjectDialog = props => {
         {confirmDialog}
         {askOpenDialog}
     </IODialog>;
-};
-
-ImportProjectDialog.propTypes = {
-    onClose: PropTypes.func,
-    projectName: PropTypes.string,
-    refreshProjects: PropTypes.func,
-    socket: PropTypes.object,
-    themeType: PropTypes.string,
-    loadProject: PropTypes.func,
-    adapterName: PropTypes.string,
-    instance: PropTypes.number,
-    openNewProjectOnCreate: PropTypes.bool,
-    projects: PropTypes.array,
 };
 
 export default ImportProjectDialog;

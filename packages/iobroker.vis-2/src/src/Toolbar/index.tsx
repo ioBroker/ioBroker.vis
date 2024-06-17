@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import {
@@ -8,7 +8,7 @@ import {
     MenuItem as DropMenuItem,
 } from '@mui/material';
 
-import { withStyles } from '@mui/styles';
+import { CSSProperties, Styles, withStyles } from '@mui/styles';
 
 import {
     Close as CloseIcon,
@@ -28,13 +28,19 @@ import {
     Utils,
     I18n,
     ToggleThemeMenu,
+    IobTheme,
+    LegacyConnection,
+    ThemeName,
+    ThemeType,
 } from '@iobroker/adapter-react-v5';
 
+import { EditorClass } from '@/Editor';
+import { GroupWidgetId } from '@iobroker/types-vis-2';
 import Views from './Views';
 import Widgets from './Widgets';
 import Projects from './Projects';
 
-const styles = theme => ({
+const styles:Styles<IobTheme & {classes: Record<string, CSSProperties>} | any, any> = theme => ({
     text: {
         paddingRight: 4,
     },
@@ -95,7 +101,29 @@ const styles = theme => ({
     },
 });
 
-const Toolbar = props => {
+interface ToolbarProps {
+    classes: Record<string, string>;
+    currentUser: Record<string, any>;
+    needSave: boolean;
+    socket: LegacyConnection;
+    toggleTheme: EditorClass['toggleTheme'];
+    themeName: string;
+    themeType: ThemeType;
+    editMode: boolean;
+    selectedGroup: GroupWidgetId;
+    setToolbarHeight: (value: 'narrow' | 'veryNarrow') => void;
+    projectsDialog: boolean;
+    setProjectsDialog: EditorClass['setProjectsDialog'];
+    toolbarHeight: string;
+    adapterName: string;
+    instance: number;
+    projectName: string;
+    version: string;
+    setSelectedWidgets: EditorClass['setSelectedWidgets'];
+    selectedView: string;
+}
+
+const Toolbar:React.FC<ToolbarProps> = props => {
     const { classes } = props;
     const [right, setRight] = useState(false);
     const [lastCommand, setLastCommand] = useState(window.localStorage.getItem('Vis.lastCommand') || 'close');
@@ -125,7 +153,7 @@ const Toolbar = props => {
             vertical: 'bottom',
             horizontal: 'left',
         }}
-        getContentAnchorEl={null}
+        // getContentAnchorEl={null}
     >
         <DropMenuItem onClick={() => {
             window.localStorage.setItem('Vis.lastCommand', 'close');

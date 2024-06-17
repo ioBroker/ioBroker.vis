@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
-import { withStyles } from '@mui/styles';
+import React, { useEffect } from 'react';
+import { CSSProperties, Styles, withStyles } from '@mui/styles';
 import { useDrag, useDrop } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 
@@ -16,10 +16,10 @@ import {
 } from '@mui/icons-material';
 import { FaFolder as FolderClosedIcon, FaFolderOpen as FolderOpenedIcon } from 'react-icons/fa';
 
-import { Utils, I18n } from '@iobroker/adapter-react-v5';
+import { Utils, I18n, IobTheme } from '@iobroker/adapter-react-v5';
 import { store } from '../../Store';
 
-const styles = theme => ({
+const styles:Styles<IobTheme & {classes?: Record<string, CSSProperties>}, any> = theme => ({
     viewManageBlock: theme.classes.viewManageBlock,
     viewManageButtonActions: theme.classes.viewManageButtonActions,
     folderName: {
@@ -51,7 +51,29 @@ const styles = theme => ({
     },
 });
 
-const Folder = props => {
+export interface FolderType {
+        id: string;
+        name: string;
+        parentId: string;
+}
+
+interface FolderProps {
+    classes: Record<string, string>;
+    folder: FolderType;
+    moveFolder: (id: string, parentId: string) => void;
+    setFolderDialog: (dialog: 'add' | 'rename' | 'delete') => void;
+    setFolderDialogId: (id: string) => void;
+    setFolderDialogName: (name: string) => void;
+    setFolderDialogParentId: (parentId: string) => void;
+    setIsDragging: (isDragging: string) => void;
+    isDragging: string;
+    editMode: boolean;
+    foldersCollapsed: string[];
+    setFoldersCollapsed: (foldersCollapsed: string[]) => void;
+    showDialog: (dialog: string, view: string, parentId: string) => void;
+}
+
+const Folder:React.FC<FolderProps> = props => {
     const folderBlock = <div className={props.classes.viewManageBlock}>
         {props.foldersCollapsed.includes(props.folder.id)
             ? <FolderClosedIcon fontSize={20} />
@@ -59,7 +81,10 @@ const Folder = props => {
         <span className={props.classes.folderName}>{props.folder.name}</span>
     </div>;
 
-    const [{ canDrop }, drop] = useDrop(() => ({
+    const [{ canDrop }, drop] = useDrop<{
+        name: string;
+        folder: FolderType;
+    }, unknown, { isOver: boolean; canDrop: boolean }>(() => ({
         accept: ['view', 'folder'],
         drop: () => ({ folder: props.folder }),
         canDrop: (item, monitor) => {
@@ -96,7 +121,7 @@ const Folder = props => {
             preview: <div>{folderBlock}</div>,
         }),
         end: (item, monitor) => {
-            const dropResult = monitor.getDropResult();
+            const dropResult = monitor.getDropResult<{folder: FolderType}>();
             if (item && dropResult) {
                 props.moveFolder(item.folder.id, dropResult.folder.id);
             }
@@ -195,19 +220,6 @@ const Folder = props => {
             </Tooltip> : null}
         </span>
     </div>;
-};
-
-Folder.propTypes = {
-    classes: PropTypes.object,
-    folder: PropTypes.object,
-    moveFolder: PropTypes.func,
-    setFolderDialog: PropTypes.func,
-    setFolderDialogId: PropTypes.func,
-    setFolderDialogName: PropTypes.func,
-    setFolderDialogParentId: PropTypes.func,
-    setIsDragging: PropTypes.func,
-    isDragging: PropTypes.string,
-    editMode: PropTypes.bool,
 };
 
 export default withStyles(styles)(Folder);

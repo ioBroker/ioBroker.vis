@@ -1,8 +1,8 @@
-import React, { CSSProperties, useRef } from 'react';
+import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 import {
-    withStyles, StylesProvider, createGenerateClassName, Styles,
+    withStyles, StylesProvider, createGenerateClassName, Styles, CSSProperties,
 } from '@mui/styles';
 import { DndProvider, useDrop } from 'react-dnd';
 import { TouchBackend } from 'react-dnd-touch-backend';
@@ -1942,9 +1942,11 @@ class Editor extends Runtime<EditorProps, EditorState> {
             }}
             openNewProjectOnCreate
             projectName={this.state.projectName}
-            socket={this.socket}
+            socket={this.socket as unknown as LegacyConnection}
             adapterName={this.adapterName}
             instance={this.instance}
+            loadProject={this.loadProject}
+            refreshProjects={this.refreshProjects}
         />;
     }
 

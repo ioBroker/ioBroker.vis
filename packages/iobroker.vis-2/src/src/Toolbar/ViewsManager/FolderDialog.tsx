@@ -11,11 +11,25 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import { I18n } from '@iobroker/adapter-react-v5';
 
+import { EditorClass } from '@/Editor';
+import React from 'react';
 import IODialog from '../../Components/IODialog';
 import { useFocus } from '../../Utils';
 import { store } from '../../Store';
+import { deepClone } from '@/Utils/utils';
 
-const FolderDialog = props => {
+interface FolderDialogProps {
+    changeProject: EditorClass['changeProject'];
+    dialog: 'add' | 'rename' | 'delete';
+    dialogFolder: string;
+    dialogName: string;
+    dialogParentId: string;
+    setDialog: (dialog: 'add' | 'rename' | 'delete' | null) => void;
+    setDialogFolder: (folder: string | null) => void;
+    setDialogName: (name: string) => void;
+}
+
+const FolderDialog:React.FC<FolderDialogProps> = props => {
     const inputField = useFocus(props.dialog && props.dialog !== 'delete', props.dialog === 'add');
 
     if (!props.dialog) {
@@ -37,7 +51,7 @@ const FolderDialog = props => {
     };
 
     const addFolder = () => {
-        const project = JSON.parse(JSON.stringify(store.getState().visProject));
+        const project = deepClone(store.getState().visProject);
         project.___settings.folders.push({
             id: uuidv4(),
             name: props.dialogName,
@@ -47,13 +61,13 @@ const FolderDialog = props => {
     };
 
     const deleteFolder = () => {
-        const project = JSON.parse(JSON.stringify(store.getState().visProject));
+        const project = deepClone(store.getState().visProject);
         project.___settings.folders.splice(project.___settings.folders.findIndex(folder => folder.id === props.dialogFolder), 1);
         props.changeProject(project);
     };
 
     const renameFolder = () => {
-        const project = JSON.parse(JSON.stringify(store.getState().visProject));
+        const project = deepClone(store.getState().visProject);
         project.___settings.folders.find(folder => folder.id === props.dialogFolder).name = props.dialogName;
         props.changeProject(project);
     };
@@ -106,17 +120,6 @@ const FolderDialog = props => {
                 onChange={e => props.setDialogName(e.target.value)}
             /> }
     </IODialog>;
-};
-
-FolderDialog.propTypes = {
-    changeProject: PropTypes.func,
-    dialog: PropTypes.string,
-    dialogFolder: PropTypes.string,
-    dialogName: PropTypes.string,
-    dialogParentId: PropTypes.string,
-    setDialog: PropTypes.func,
-    setDialogFolder: PropTypes.func,
-    setDialogName: PropTypes.func,
 };
 
 export default FolderDialog;

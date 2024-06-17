@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
-import { withStyles } from '@mui/styles';
+import { CSSProperties, Styles, withStyles } from '@mui/styles';
 
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -17,8 +17,13 @@ import {
 } from '@mui/icons-material';
 import { BiImport } from 'react-icons/bi';
 
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n, IobTheme, ThemeName, ThemeType } from '@iobroker/adapter-react-v5';
 
+import { EditorClass } from '@/Editor';
+import {
+    View as ViewType,
+    AnyWidgetId,
+} from '@iobroker/types-vis-2';
 import IODialog from '../../Components/IODialog';
 import Folder from './Folder';
 import Root from './Root';
@@ -32,7 +37,7 @@ import {
     deepClone, getNewWidgetId, hasViewAccess, isGroup, pasteGroup,
 } from '../../Utils/utils';
 
-const styles = theme => ({
+const styles:Styles<IobTheme & {classes: Record<string, CSSProperties>}, any> = theme => ({
     viewManageButtonActions: theme.classes.viewManageButtonActions,
     dialog: {
         minWidth: 400,
@@ -66,18 +71,38 @@ const styles = theme => ({
     },
 });
 
-const ViewsManager = props => {
-    const [exportDialog, setExportDialog] = useState(false);
-    const [importDialog, setImportDialog] = useState(false);
+interface ViewsManagerProps {
+    changeProject: EditorClass['changeProject'];
+    classes: Record<string, string>;
+    name: string;
+    onClose: () => void;
+    open: boolean;
+    showDialog: (
+        type: 'add' | 'rename' | 'delete' | 'copy',
+        view?: string,
+        parentId?: string,
+        cb?: (dialogName: string) => void,
+    ) => void;
+    themeName: ThemeName;
+    themeType: ThemeType;
+    toggleView: EditorClass['toggleView'];
+    editMode: boolean;
+    selectedView: string;
 
-    const [folderDialog, setFolderDialog] = useState(null);
+}
+
+const ViewsManager:React.FC<ViewsManagerProps> = props => {
+    const [exportDialog, setExportDialog] = useState<string | false>(false);
+    const [importDialog, setImportDialog] = useState<string | false>(false);
+
+    const [folderDialog, setFolderDialog] = useState<'add' | 'rename' | 'delete'>(null);
     const [folderDialogName, setFolderDialogName] = useState('');
     const [folderDialogId, setFolderDialogId] = useState(null);
     const [folderDialogParentId, setFolderDialogParentId] = useState(null);
     const [isDragging, setIsDragging] = useState('');
     const [isOverRoot, setIsOverRoot] = useState(false);
 
-    const [foldersCollapsed, setFoldersCollapsed] = useState([]);
+    const [foldersCollapsed, setFoldersCollapsed] = useState<string[]>([]);
     useEffect(() => {
         if (window.localStorage.getItem('ViewsManager.foldersCollapsed')) {
             setFoldersCollapsed(JSON.parse(window.localStorage.getItem('ViewsManager.foldersCollapsed')));
@@ -86,21 +111,21 @@ const ViewsManager = props => {
 
     const { visProject, activeUser } = store.getState();
 
-    const moveFolder = (id, parentId) => {
+    const moveFolder = (id: string, parentId: string) => {
         const project = deepClone(visProject);
         project.___settings.folders.find(folder => folder.id === id).parentId = parentId;
         props.changeProject(project);
     };
 
-    const moveView = (name, parentId) => {
+    const moveView = (name: string, parentId: string) => {
         const project = deepClone(visProject);
         project[name].parentId = parentId;
         props.changeProject(project);
     };
 
-    const importViewAction = (view, data) => {
+    const importViewAction = (view: string, data: string) => {
         const project = deepClone(visProject);
-        const viewObject = JSON.parse(data);
+        const viewObject:ViewType = JSON.parse(data);
 
         if (viewObject.parentId !== undefined) {
             delete viewObject.parentId;
@@ -122,7 +147,7 @@ const ViewsManager = props => {
                 });
             } else if (!widget.groupid) {
                 const newWid = getNewWidgetId(project);
-                project[view].widgets[newWid] = originalWidgets[wid];
+                project[view].widgets[newWid] = originalWidgets[wid as AnyWidgetId];
             }
         }
 
@@ -130,7 +155,7 @@ const ViewsManager = props => {
         props.changeProject(project);
     };
 
-    const renderViews = parentId => Object.keys(visProject)
+    const renderViews = (parentId?: string) => Object.keys(visProject)
         .filter(name => !name.startsWith('___'))
         .filter(name => (parentId ? visProject[name].parentId === parentId : !visProject[name].parentId))
         .sort((name1, name2) => (name1.toLowerCase().localeCompare(name2.toLowerCase())))
@@ -151,7 +176,7 @@ const ViewsManager = props => {
             />
         </div>);
 
-    const renderFolders = parentId => {
+    const renderFolders = (parentId?: string) => {
         const folders = visProject.___settings.folders
             .filter(folder => (parentId ? folder.parentId === parentId : !folder.parentId))
             .sort((folder1, folder2) => folder1.name.toLowerCase().localeCompare(folder2.name.toLowerCase()));
@@ -169,7 +194,6 @@ const ViewsManager = props => {
                     moveFolder={moveFolder}
                     foldersCollapsed={foldersCollapsed}
                     setFoldersCollapsed={setFoldersCollapsed}
-                    {...props}
                     classes={{}}
                 />
             </div>
@@ -188,7 +212,7 @@ const ViewsManager = props => {
                     {props.editMode ? <Tooltip title={I18n.t('Add view')} classes={{ popper: props.classes.tooltip }}>
                         <IconButton
                             size="small"
-                            onClick={() => props.showDialog('add', props.name, null, newView => {
+                            onClick={() => props.showDialog('add', props.name, null, (newView: string) => {
                                 newView && props.onClose();
                             })}
                         >
@@ -259,8 +283,6 @@ const ViewsManager = props => {
                     <Root
                         isDragging={isDragging}
                         setIsOverRoot={setIsOverRoot}
-                        {...props}
-                        classes={{}}
                     />
                 </div>
             </DndProvider>
@@ -273,38 +295,22 @@ const ViewsManager = props => {
             setDialog={setFolderDialog}
             setDialogFolder={setFolderDialogId}
             setDialogName={setFolderDialogName}
-            {...props}
-            classes={{}}
+            changeProject={props.changeProject}
         />
         {importDialog !== false ? <ImportDialog
             open
             onClose={() => setImportDialog(false)}
             view={importDialog || ''}
             importViewAction={importViewAction}
-            project={visProject}
-            themeName={props.themeName}
+            themeType={props.themeType}
         /> : null}
         {exportDialog !== false ? <ExportDialog
             open
             onClose={() => setExportDialog(false)}
             view={exportDialog || ''}
-            project={visProject}
-            themeName={props.themeName}
+            themeType={props.themeType}
         /> : null}
     </IODialog>;
-};
-
-ViewsManager.propTypes = {
-    changeProject: PropTypes.func,
-    classes: PropTypes.object,
-    name: PropTypes.string,
-    onClose: PropTypes.func,
-    open: PropTypes.bool,
-    showDialog: PropTypes.func,
-    themeName: PropTypes.string,
-    toggleView: PropTypes.func,
-    editMode: PropTypes.bool,
-    selectedView: PropTypes.string,
 };
 
 export default withStyles(styles)(ViewsManager);

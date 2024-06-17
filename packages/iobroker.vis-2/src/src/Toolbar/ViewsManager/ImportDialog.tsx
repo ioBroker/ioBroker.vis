@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { TextField } from '@mui/material';
 
@@ -11,7 +11,15 @@ import CustomAceEditor from '../../Components/CustomAceEditor';
 import { useFocus } from '../../Utils';
 import { store } from '../../Store';
 
-const ImportDialog = props => {
+interface ImportDialogProps {
+    importViewAction: (view: string, data: string) => void;
+    onClose: () => void;
+    open: boolean;
+    view: string;
+    themeType: string;
+}
+
+const ImportDialog:React.FC<ImportDialogProps> = props => {
     const [data, setData] = useState('');
     const [view, setView] = useState('');
     const [errors, setErrors] = useState([]);
@@ -57,7 +65,7 @@ const ImportDialog = props => {
     >
         <CustomAceEditor
             type="json"
-            theme={props.themeType}
+            themeType={props.themeType}
             refEditor={node => {
                 editor.current = node;
                 inputField.current = node;
@@ -72,10 +80,4 @@ const ImportDialog = props => {
     </IODialog>;
 };
 
-ImportDialog.propTypes = {
-    importViewAction: PropTypes.func,
-    onClose: PropTypes.func,
-    open: PropTypes.bool,
-    view: PropTypes.string,
-};
 export default ImportDialog;
