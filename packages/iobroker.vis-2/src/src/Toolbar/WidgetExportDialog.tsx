@@ -2,20 +2,29 @@ import PropTypes from 'prop-types';
 
 import { FileCopy as FileCopyIcon } from '@mui/icons-material';
 
-import { Utils, I18n } from '@iobroker/adapter-react-v5';
+import { Utils, I18n, ThemeType } from '@iobroker/adapter-react-v5';
 
+import { AnyWidgetId, GroupWidgetId, Widget } from '@iobroker/types-vis-2';
+import React from 'react';
 import IODialog from '../Components/IODialog';
 import CustomAceEditor from '../Components/CustomAceEditor';
 import { deepClone } from '../Utils/utils';
 
-const WidgetExportDialog = props => {
+interface WidgetExportDialogProps {
+    onClose: () => void;
+    themeType: ThemeType;
+    widgets: Record<string, Widget>;
+    selectedWidgets: string[];
+}
+
+const WidgetExportDialog:React.FC<WidgetExportDialogProps> = props => {
     const widgets = props.selectedWidgets.map(wid => {
         const w = deepClone(props.widgets[wid]);
         w._id = wid;
         return w;
     });
 
-    const groupWidgets = [];
+    const groupWidgets:AnyWidgetId[] = [];
 
     let gIdx = 1;
     let wIdx = 1;
@@ -27,7 +36,7 @@ const WidgetExportDialog = props => {
             gIdx++;
 
             if (widget.data?.members) {
-                const members = [];
+                const members:string[] = [];
                 widget.data.members.forEach(member => {
                     if (groupWidgets.includes(member)) {
                         return;
@@ -36,13 +45,13 @@ const WidgetExportDialog = props => {
                     memberWidget._id = `i${wIdx.toString().padStart(6, '0')}`;
                     wIdx++;
                     members.push(memberWidget._id);
-                    memberWidget.groupid = newId;
+                    memberWidget.groupid = newId as GroupWidgetId;
                     memberWidget.grouped = true;
                     widgets.push(memberWidget);
                     groupWidgets.push(member);
                 });
 
-                widget.data.members = members;
+                widget.data.members = members as AnyWidgetId[];
             }
             widget._id = newId;
         } else if (widget._id.startsWith('w')) {
@@ -78,13 +87,6 @@ const WidgetExportDialog = props => {
             height={200}
         />
     </IODialog>;
-};
-
-WidgetExportDialog.propTypes = {
-    onClose: PropTypes.func,
-    themeType: PropTypes.string,
-    widgets: PropTypes.object,
-    selectedWidgets: PropTypes.array,
 };
 
 export default WidgetExportDialog;
