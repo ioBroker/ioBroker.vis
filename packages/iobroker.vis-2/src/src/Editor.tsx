@@ -1,5 +1,4 @@
 import React, { useRef } from 'react';
-import PropTypes from 'prop-types';
 import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 import type { Styles, CSSProperties } from '@mui/styles';
 import {
@@ -2113,12 +2112,12 @@ class Editor extends Runtime<EditorProps, EditorState> {
                             cloneWidgets={this.cloneWidgets}
                             orderWidgets={this.orderWidgets}
                             lockDragging={this.state.lockDragging}
-                            disableInteraction={this.state.disableInteraction}
+                            // disableInteraction={this.state.disableInteraction}
                             toggleLockDragging={this.toggleLockDragging}
-                            toggleDisableInteraction={this.toggleDisableInteraction}
+                            // toggleDisableInteraction={this.toggleDisableInteraction}
                             adapterName={this.adapterName}
                             selectedGroup={this.state.selectedGroup}
-                            setSelectedGroup={this.setSelectedGroup}
+                            // setSelectedGroup={this.setSelectedGroup}
                             widgetHint={this.state.widgetHint}
                             toggleWidgetHint={this.toggleWidgetHint}
                             instance={this.instance}

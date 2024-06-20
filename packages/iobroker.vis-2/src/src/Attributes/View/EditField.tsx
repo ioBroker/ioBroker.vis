@@ -17,7 +17,7 @@ import {
 } from '@iobroker/adapter-react-v5';
 import type {
     LegacyConnection,
-    type ThemeType,
+    ThemeType,
 } from '@iobroker/adapter-react-v5';
 
 import { Clear as ClearIcon } from '@mui/icons-material';

@@ -1,5 +1,3 @@
-import PropTypes from 'prop-types';
-
 import React, { useEffect, useRef, useState } from 'react';
 
 import { TextField } from '@mui/material';

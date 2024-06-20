@@ -11,7 +11,7 @@ import {
 import { Close, DragHandle, FormatPaint } from '@mui/icons-material';
 
 import { I18n } from '@iobroker/adapter-react-v5';
-import type { LegacyConnection, type ThemeType } from '@iobroker/adapter-react-v5';
+import type { LegacyConnection, ThemeType } from '@iobroker/adapter-react-v5';
 
 import type { Project } from '@iobroker/types-vis-2';
 import { getViewsWithDifferentValues } from '@/Attributes/View/ApplyProperties';

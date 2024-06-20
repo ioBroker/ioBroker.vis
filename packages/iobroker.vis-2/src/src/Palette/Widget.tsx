@@ -16,7 +16,7 @@ import {
 } from '@iobroker/adapter-react-v5';
 import type {
     LegacyConnection,
-    type ThemeType,
+    ThemeType,
 } from '@iobroker/adapter-react-v5';
 
 import type { MarketplaceWidgetRevision, Project } from '@iobroker/types-vis-2';

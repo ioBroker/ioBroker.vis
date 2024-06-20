@@ -40,7 +40,7 @@ import type {
     WidgetData,
     WidgetStyle,
     ClassesValue,
-    type RxWidgetInfoAttributesField,
+    RxWidgetInfoAttributesField,
 } from '@iobroker/types-vis-2';
 
 import type {

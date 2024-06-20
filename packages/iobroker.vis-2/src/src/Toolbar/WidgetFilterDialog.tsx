@@ -1,6 +1,4 @@
-import PropTypes from 'prop-types';
-
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
     Button, Checkbox,
@@ -22,16 +20,24 @@ import {
 } from '@mui/icons-material';
 
 import { I18n } from '@iobroker/adapter-react-v5';
+import type { EditorClass } from '@/Editor';
+import type { AnyWidgetId } from '@iobroker/types-vis-2';
 import { store } from '../Store';
 
-const WidgetFilterDialog = props => {
-    const [filters, setFilters] = useState([]);
+interface WidgetFilterDialogProps {
+    changeProject: EditorClass['changeProject'];
+    onClose: () => void;
+    selectedView: string;
+}
+
+const WidgetFilterDialog: React.FC<WidgetFilterDialogProps> = props => {
+    const [filters, setFilters] = useState<{key: AnyWidgetId; count: number}[]>([]);
     const [filterWidgets, setFilterWidgets] = useState(store.getState().visProject[props.selectedView].filterWidgets || []);
     const [filterInvert, setFilterInvert] = useState(store.getState().visProject[props.selectedView].filterInvert || false);
 
     useEffect(() => {
         // Collect all filters of all widgets
-        const _filters = [];
+        const _filters: {key: AnyWidgetId; count: number}[] = [];
         const widgets = store.getState().visProject[props.selectedView].widgets;
         Object.values(widgets).forEach(widget => {
             if (widget.data && widget.data.filterkey) {
@@ -39,7 +45,7 @@ const WidgetFilterDialog = props => {
                     filter = filter.trim();
                     const pos = _filters.findIndex(a => a.key === filter);
                     if (pos === -1) {
-                        _filters.push({ key: filter, count: 1 });
+                        _filters.push({ key: filter as AnyWidgetId, count: 1 });
                     } else {
                         _filters[pos].count++;
                     }
@@ -171,9 +177,4 @@ const WidgetFilterDialog = props => {
     </Dialog>;
 };
 
-WidgetFilterDialog.propTypes = {
-    changeProject: PropTypes.func,
-    onClose: PropTypes.func,
-    selectedView: PropTypes.string,
-};
 export default WidgetFilterDialog;

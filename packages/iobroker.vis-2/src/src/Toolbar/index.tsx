@@ -1,5 +1,4 @@
 import React, { useRef, useState } from 'react';
-import PropTypes from 'prop-types';
 
 import {
     IconButton,
@@ -296,12 +295,12 @@ const Toolbar: React.FC<ToolbarProps> = props => {
     return <div className={classes.lightedPanel}>
         <span className={classes.right}>
             <div className={classes.rightBlock}>
-                {props.needSave ? <SaveIcon size={20} className={classes.saveIcon} /> : null}
+                {props.needSave ? <SaveIcon fontSize={20 as any} className={classes.saveIcon} /> : null}
                 {props.toolbarHeight === 'veryNarrow' ? currentUser : null}
                 {heightButton}
                 <ToggleThemeMenu
                     toggleTheme={props.toggleTheme}
-                    themeName={props.themeName}
+                    themeName={props.themeName as any}
                     t={I18n.t}
                 />
                 {lastCommandButton}

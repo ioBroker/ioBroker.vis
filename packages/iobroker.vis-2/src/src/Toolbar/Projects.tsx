@@ -14,7 +14,7 @@ import {
     SelectFile as SelectFileDialog,
     Utils,
 } from '@iobroker/adapter-react-v5';
-import type { Connection, ThemeType, type LegacyConnection } from '@iobroker/adapter-react-v5';
+import type { Connection, ThemeType, LegacyConnection } from '@iobroker/adapter-react-v5';
 
 import type { EditorClass } from '@/Editor';
 import type { ToolbarItem } from './ToolbarItems';
@@ -89,11 +89,12 @@ const Tools = (props: ToolsProps) => {
         />
         {settingsDialog ? <Settings
             onClose={() => setSettingsDialog(false)}
-            {...props}
             classes={{}}
             adapterName={props.adapterName}
             instance={props.instance}
             projectName={props.projectName}
+            changeProject={props.changeProject}
+            socket={props.socket}
         /> : null}
         {props.projectsDialog ? <ProjectsManager
             open={!0}

@@ -1,5 +1,3 @@
-import PropTypes from 'prop-types';
-
 import { FileCopy as FileCopyIcon } from '@mui/icons-material';
 
 import type { ThemeType } from '@iobroker/adapter-react-v5';

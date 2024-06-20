@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import type { Styles } from '@mui/styles';
 import { withStyles } from '@mui/styles';
 
@@ -95,7 +94,7 @@ export interface CheckboxToolbarItem extends BaseToolbarItem {
 
 export interface IconButtonToolbarItem extends BaseToolbarItem {
     type: 'icon-button';
-    Icon: React.ComponentType;
+    Icon: React.FC<any>;
     onClick: () => void;
     disabled?: boolean;
     selected?: boolean;
@@ -263,7 +262,7 @@ const getItem = (item: ToolbarItem, key: number, props: ToolbarItemsProps, full?
                         onClick={item.onClick}
                         style={{ height: full ? '100%' : null, color: item.color }}
                     >
-                        <item.Icon fontSize={item.size ? item.size : 'small'} />
+                        <item.Icon fontSize={(item.size ? item.size : 'small') as any} />
                     </IconButton>
                 </div>
             </Tooltip>;

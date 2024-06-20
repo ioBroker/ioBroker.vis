@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { useDrop  } from 'react-dnd';
 import React, { useEffect } from 'react';
 
@@ -42,10 +41,6 @@ const Root: React.FC<RootProps> = props => {
     >
         <div style={{ height: 34, width: 'calc(100% - 7px)', opacity: 0.7 }}>{I18n.t('Drop here to add to root')}</div>
     </div> : null;
-};
-
-Root.propTypes = {
-    setIsOverRoot: PropTypes.func,
 };
 
 export default Root;

@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import React, { useEffect } from 'react';
 import type { CSSProperties, Styles } from '@mui/styles';
 import { withStyles } from '@mui/styles';

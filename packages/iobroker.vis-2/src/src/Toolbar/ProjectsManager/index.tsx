@@ -240,7 +240,7 @@ const ProjectsManage: React.FC<ProjectsManageProps> = props => {
                                 }}
                                 size="small"
                             >
-                                <PermissionsIcon fontSize={20} />
+                                <PermissionsIcon fontSize={20 as any} />
                             </IconButton>}
                     </Tooltip>
                     <Tooltip title={I18n.t('Export')} classes={{ popper: props.classes.tooltip }}>

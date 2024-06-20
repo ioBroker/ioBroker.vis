@@ -1,7 +1,7 @@
-import React, type { JSXElementConstructor,
+import type { JSXElementConstructor, ReactNode } from 'react';
+import React, {
     useEffect,
     useState,
-    type ReactNode
 } from 'react';
 
 import { withStyles } from '@mui/styles';

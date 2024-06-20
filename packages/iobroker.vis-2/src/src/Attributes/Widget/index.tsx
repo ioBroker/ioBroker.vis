@@ -25,7 +25,7 @@ import {
 import { I18n, Icon, Utils } from '@iobroker/adapter-react-v5';
 import type {
     LegacyConnection,
-    type ThemeType,
+    ThemeType,
 } from '@iobroker/adapter-react-v5';
 
 import {
@@ -45,7 +45,7 @@ import type {
     Project,
     Widget as SingleGroupWidget,
     VisTheme, WidgetData, WidgetStyle, GroupData,
-    type RxWidgetInfoGroup,
+    RxWidgetInfoGroup,
 } from '@iobroker/types-vis-2';
 
 import WidgetField from './WidgetField';

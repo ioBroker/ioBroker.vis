@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect, useState } from 'react';
+import type { Styles } from '@mui/styles';
 import { withStyles } from '@mui/styles';
 
 import {
@@ -17,12 +17,16 @@ import {
 
 import { Save as SaveIcon } from '@mui/icons-material';
 
+import type { IobTheme, LegacyConnection } from '@iobroker/adapter-react-v5';
 import { I18n } from '@iobroker/adapter-react-v5';
 
+import type { EditorClass } from '@/Editor';
+import { deepClone } from '@/Utils/utils';
+import type { ProjectSettings } from '@iobroker/types-vis-2';
 import IODialog from '../Components/IODialog';
 import { store } from '../Store';
 
-const styles = () => ({
+const styles: Styles<IobTheme, any> = () => ({
     dialog: {
         width: 400,
     },
@@ -33,10 +37,51 @@ const styles = () => ({
     },
 });
 
-const Settings = props => {
+interface SettingsFieldBase {
+    name?: string;
+    field?: string;
+    help?: string;
+    noTranslate?: boolean;
+}
+
+interface SettingsFieldSelect extends SettingsFieldBase {
+    type: 'select';
+    items: { value: string | number | boolean; name: string }[];
+}
+
+interface SettingsFieldRaw extends SettingsFieldBase {
+    type: 'raw';
+    Node: React.JSX.Element;
+}
+
+interface SettingsFieldCheckbox extends SettingsFieldBase {
+    type: 'checkbox';
+}
+
+interface SettingsFieldSwitchMode extends SettingsFieldBase {
+    type: 'switchMode';
+}
+
+interface SettingsFieldNumber extends SettingsFieldBase {
+    type: 'number';
+}
+
+type SettingsField = SettingsFieldSelect | SettingsFieldRaw | SettingsFieldCheckbox | SettingsFieldSwitchMode | SettingsFieldNumber;
+
+interface SettingsProps {
+    changeProject: EditorClass['changeProject'];
+    onClose: () => void;
+    socket: LegacyConnection;
+    adapterName: string;
+    instance: number;
+    projectName: string;
+    classes: Record<string, string>;
+}
+
+const Settings: React.FC<SettingsProps> = props => {
     const [projectMode, setProjectMode] = useState(0);
 
-    const [settings, setSettings] = useState({});
+    const [settings, setSettings] = useState<ProjectSettings>({} as ProjectSettings);
     const [instance, setInstance] = useState(window.localStorage.getItem('visInstance'));
     /* eslint no-underscore-dangle: 0 */
     useEffect(() => {
@@ -49,15 +94,15 @@ const Settings = props => {
         props.socket.readDir(`${props.adapterName}.${props.instance}`, props.projectName)
             .then(files => {
                 const file = files.find(f => f.file === 'vis-views.json');
-                if (file?.mode || file?.acl?.permissions) {
-                    setProjectMode(file.mode || file.acl.permissions);
+                if ((file as any)?.mode || file?.acl?.permissions) {
+                    setProjectMode((file as any).mode || file.acl.permissions);
                 }
             });
 
         setSettings(_settings);
     }, []);
 
-    const fields = [
+    const fields: SettingsField[] = [
         {
             type: 'select',
             name: 'Reload all browsers if project changed',
@@ -162,7 +207,7 @@ const Settings = props => {
     ];
 
     const save = () => {
-        const project = JSON.parse(JSON.stringify(store.getState().visProject));
+        const project = deepClone(store.getState().visProject);
         project.___settings = settings;
         props.changeProject(project);
         props.onClose();
@@ -179,11 +224,11 @@ const Settings = props => {
     >
         <div className={props.classes.dialog}>
             {fields.map((field, key) => {
-                const value = settings[field.field];
+                const value = settings[field.field as keyof ProjectSettings];
 
-                const change = changeValue => {
-                    const newSettings = JSON.parse(JSON.stringify(settings));
-                    newSettings[field.field] = changeValue;
+                const change = (changeValue: any) => {
+                    const newSettings = deepClone(settings);
+                    (newSettings[field.field as keyof ProjectSettings] as any) = changeValue;
                     setSettings(newSettings);
                 };
 
@@ -202,8 +247,8 @@ const Settings = props => {
                         <InputLabel>{I18n.t(field.name)}</InputLabel>
                         <Select variant="standard" value={value || ''} onChange={e => change(e.target.value)}>
                             {field.items.map(selectItem => <MenuItem
-                                value={selectItem.value}
-                                key={selectItem.value}
+                                value={selectItem.value as any}
+                                key={selectItem as any}
                             >
                                 {field.noTranslate ? selectItem.name : I18n.t(selectItem.name)}
                             </MenuItem>)}
@@ -225,7 +270,11 @@ const Settings = props => {
                                     `${props.adapterName}.${props.instance}`,
                                     `${props.projectName}/*`,
                                     { mode: e.target.checked ? 0x644 : 0x600 },
-                                    (err, files) => {
+                                    (err: string, files: {
+                                        file: string;
+                                        mode: number;
+                                        acl: { owner: string; ownerGroup: string; permissions: number };
+                                    }[]) => {
                                         if (err) {
                                             window.alert(err);
                                         } else {
@@ -257,14 +306,4 @@ const Settings = props => {
     </IODialog>;
 };
 
-Settings.propTypes = {
-    changeProject: PropTypes.func,
-    classes: PropTypes.object,
-    onClose: PropTypes.func,
-    socket: PropTypes.object,
-    adapterName: PropTypes.string,
-    instance: PropTypes.number,
-    projectName: PropTypes.string,
-};
-
-export default withStyles(styles)(Settings);
+export default withStyles(styles)(Settings) as React.FC<SettingsProps>;

@@ -347,6 +347,7 @@ const VisContextMenu = (props: VisContextMenuProps) => {
             onClose={() => setExportDialog(false)}
             widgets={visProject[props.selectedView].widgets}
             selectedWidgets={props.selectedWidgets}
+            themeType={props.themeType}
         /> : null}
     </>;
 };

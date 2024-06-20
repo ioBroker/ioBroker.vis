@@ -14,8 +14,8 @@ import {
 } from '@iobroker/adapter-react-v5';
 import type {
     LegacyConnection,
-    type Connection,
-    type ThemeType,
+    Connection,
+    ThemeType,
 } from '@iobroker/adapter-react-v5';
 
 import type { Field } from '@/Attributes/View/Items';
