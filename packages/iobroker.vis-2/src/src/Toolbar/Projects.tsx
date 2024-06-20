@@ -12,11 +12,13 @@ import {
     SelectID,
     I18n,
     SelectFile as SelectFileDialog,
-    Utils, type LegacyConnection, Connection, ThemeType,
+    Utils,
 } from '@iobroker/adapter-react-v5';
+import type { Connection, ThemeType, type LegacyConnection } from '@iobroker/adapter-react-v5';
 
-import { EditorClass } from '@/Editor';
-import ToolbarItems, { ToolbarItem } from './ToolbarItems';
+import type { EditorClass } from '@/Editor';
+import type { ToolbarItem } from './ToolbarItems';
+import ToolbarItems from './ToolbarItems';
 import Settings from './Settings';
 import ProjectsManager from './ProjectsManager';
 
@@ -53,7 +55,7 @@ const Tools = (props: ToolsProps) => {
     const [objectsDialog, setObjectsDialog] = useState(false);
     const [filesDialog, setFilesDialog] = useState(false);
 
-    const toolbar:{
+    const toolbar: {
         name: string;
         items: (ToolbarItem | ToolbarItem[] | ToolbarItem[][])[];
     } = {

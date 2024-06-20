@@ -25,12 +25,12 @@ import { Edit } from '@mui/icons-material';
 
 import { I18n, Icon } from '@iobroker/adapter-react-v5';
 
-import {
+import type {
     GetRxDataFromWidget, RxRenderWidgetProps, RxWidgetInfo, WidgetData,
     RxWidgetInfoAttributesField, RxWidgetInfoCustomComponentProperties, RxWidgetInfoCustomComponentContext,
 } from '@iobroker/types-vis-2';
 import VisRxWidget from '@/Vis/visRxWidget';
-import { VisWidgetCommand } from '@/Vis/visBaseWidget';
+import type { VisWidgetCommand } from '@/Vis/visBaseWidget';
 import FiltersEditorDialog from './FiltersEditorDialog';
 
 // eslint-disable-next-line no-use-before-define

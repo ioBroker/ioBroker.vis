@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import type { PopoverProps } from '@mui/material';
 import {
-    AppBar, Button, IconButton, Tooltip, Menu, MenuItem, CircularProgress, PopoverProps,
+    AppBar, Button, IconButton, Tooltip, Menu, MenuItem, CircularProgress,
 } from '@mui/material';
-import { Styles, withStyles } from '@mui/styles';
+import type { Styles } from '@mui/styles';
+import { withStyles } from '@mui/styles';
 
 import {
     Add as AddIcon,
@@ -13,11 +15,12 @@ import {
 } from '@mui/icons-material';
 import { BiImport, BiExport } from 'react-icons/bi';
 
+import type { IobTheme, LegacyConnection } from '@iobroker/adapter-react-v5';
 import {
-    I18n, IobTheme, LegacyConnection, Utils,
+    I18n, Utils,
 } from '@iobroker/adapter-react-v5';
 
-import { EditorClass } from '@/Editor';
+import type { EditorClass } from '@/Editor';
 import IODialog from '../../Components/IODialog';
 import ImportProjectDialog, { getLiveHost } from './ImportProjectDialog';
 import ProjectDialog from './ProjectDialog';
@@ -29,7 +32,7 @@ declare global {
     }
 }
 
-const styles:Styles<IobTheme, any> = theme => ({
+const styles: Styles<IobTheme, any> = theme => ({
     projectBlock: {
         display: 'flex',
         alignItems: 'center',
@@ -89,7 +92,7 @@ interface ProjectsManageProps {
     renameProject: EditorClass['renameProject'];
 }
 
-const ProjectsManage:React.FC<ProjectsManageProps> = props => {
+const ProjectsManage: React.FC<ProjectsManageProps> = props => {
     const [dialog, setDialog] = useState<'add' | 'rename' | 'delete' | null>(null);
     const [dialogName, setDialogName] = useState<string>('');
     const [dialogProject, setDialogProject] = useState<string | null>(null);
@@ -237,7 +240,7 @@ const ProjectsManage:React.FC<ProjectsManageProps> = props => {
                                 }}
                                 size="small"
                             >
-                                <PermissionsIcon style={{ fontSize: 20 }} />
+                                <PermissionsIcon fontSize={20} />
                             </IconButton>}
                     </Tooltip>
                     <Tooltip title={I18n.t('Export')} classes={{ popper: props.classes.tooltip }}>

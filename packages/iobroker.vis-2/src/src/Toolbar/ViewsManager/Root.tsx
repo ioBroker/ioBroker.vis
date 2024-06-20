@@ -4,14 +4,14 @@ import React, { useEffect } from 'react';
 
 import { I18n } from '@iobroker/adapter-react-v5';
 import { store } from '../../Store';
-import { FolderType } from './Folder';
+import type { FolderType } from './Folder';
 
 interface RootProps {
     setIsOverRoot: (isOver: boolean) => void;
     isDragging: string;
 }
 
-const Root:React.FC<RootProps> = props => {
+const Root: React.FC<RootProps> = props => {
     const [{ canDrop, isOver }, drop] = useDrop<{
         name: string;
         folder: FolderType;

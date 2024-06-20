@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { GetRxDataFromWidget, RxRenderWidgetProps } from '@iobroker/types-vis-2';
+import type { GetRxDataFromWidget, RxRenderWidgetProps } from '@iobroker/types-vis-2';
 import VisRxWidget from '@/Vis/visRxWidget';
 
 // eslint-disable-next-line no-use-before-define

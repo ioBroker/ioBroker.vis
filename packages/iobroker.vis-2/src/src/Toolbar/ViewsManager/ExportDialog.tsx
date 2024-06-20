@@ -2,7 +2,8 @@ import PropTypes from 'prop-types';
 
 import { FileCopy as FileCopyIcon } from '@mui/icons-material';
 
-import { Utils, I18n, ThemeType } from '@iobroker/adapter-react-v5';
+import type { ThemeType } from '@iobroker/adapter-react-v5';
+import { Utils, I18n } from '@iobroker/adapter-react-v5';
 
 import React from 'react';
 import IODialog from '../../Components/IODialog';
@@ -16,7 +17,7 @@ interface ExportDialogProps {
     view: string;
 }
 
-const ExportDialog:React.FC<ExportDialogProps> = props => <IODialog
+const ExportDialog: React.FC<ExportDialogProps> = props => <IODialog
     open={props.open}
     onClose={props.onClose}
     title={I18n.t('Export "%s"', props.view)}

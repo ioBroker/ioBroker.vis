@@ -11,17 +11,20 @@ import {
 import {
     ColorPicker,
     I18n,
-    IconPicker, LegacyConnection,
+    IconPicker,
     TextWithIcon,
     Utils,
+} from '@iobroker/adapter-react-v5';
+import type {
+    LegacyConnection,
     type ThemeType,
 } from '@iobroker/adapter-react-v5';
 
 import { Clear as ClearIcon } from '@mui/icons-material';
 
 import { deepClone } from '@/Utils/utils';
-import { Field } from '@/Attributes/View/Items';
-import { Project } from '@iobroker/types-vis-2';
+import type { Field } from '@/Attributes/View/Items';
+import type { Project } from '@iobroker/types-vis-2';
 
 import EditFieldImage from './EditFieldImage';
 import EditFieldIcon64 from './EditFieldIcon64';

@@ -8,7 +8,8 @@ import {
     MenuItem as DropMenuItem,
 } from '@mui/material';
 
-import { CSSProperties, Styles, withStyles } from '@mui/styles';
+import type { CSSProperties, Styles } from '@mui/styles';
+import { withStyles } from '@mui/styles';
 
 import {
     Close as CloseIcon,
@@ -23,24 +24,26 @@ import {
     Save as SaveIcon,
 } from '@mui/icons-material';
 
-import {
-    Icon,
-    Utils,
-    I18n,
-    ToggleThemeMenu,
+import type {
     IobTheme,
     LegacyConnection,
     ThemeName,
     ThemeType,
 } from '@iobroker/adapter-react-v5';
+import {
+    Icon,
+    Utils,
+    I18n,
+    ToggleThemeMenu,
+} from '@iobroker/adapter-react-v5';
 
-import { EditorClass } from '@/Editor';
-import { AnyWidgetId, GroupWidgetId } from '@iobroker/types-vis-2';
+import type { EditorClass } from '@/Editor';
+import type { AnyWidgetId, GroupWidgetId } from '@iobroker/types-vis-2';
 import Views from './Views';
 import Widgets from './Widgets';
 import Projects from './Projects';
 
-const styles:Styles<IobTheme & {classes: Record<string, CSSProperties>} | any, any> = theme => ({
+const styles: Styles<IobTheme & {classes: Record<string, CSSProperties>} | any, any> = theme => ({
     text: {
         paddingRight: 4,
     },
@@ -153,7 +156,7 @@ interface ToolbarProps {
     renameProject: EditorClass['renameProject'];
 }
 
-const Toolbar:React.FC<ToolbarProps> = props => {
+const Toolbar: React.FC<ToolbarProps> = props => {
     const { classes } = props;
     const [right, setRight] = useState(false);
     const [lastCommand, setLastCommand] = useState(window.localStorage.getItem('Vis.lastCommand') || 'close');

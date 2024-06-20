@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useEffect } from 'react';
-import { CSSProperties, Styles, withStyles } from '@mui/styles';
+import type { CSSProperties, Styles } from '@mui/styles';
+import { withStyles } from '@mui/styles';
 import { useDrag, useDrop } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 
@@ -16,10 +17,11 @@ import {
 } from '@mui/icons-material';
 import { FaFolder as FolderClosedIcon, FaFolderOpen as FolderOpenedIcon } from 'react-icons/fa';
 
-import { Utils, I18n, IobTheme } from '@iobroker/adapter-react-v5';
+import type { IobTheme } from '@iobroker/adapter-react-v5';
+import { Utils, I18n } from '@iobroker/adapter-react-v5';
 import { store } from '../../Store';
 
-const styles:Styles<IobTheme & {classes?: Record<string, CSSProperties>}, any> = theme => ({
+const styles: Styles<IobTheme & {classes?: Record<string, CSSProperties>}, any> = theme => ({
     viewManageBlock: theme.classes.viewManageBlock,
     viewManageButtonActions: theme.classes.viewManageButtonActions,
     folderName: {
@@ -73,7 +75,7 @@ interface FolderProps {
     showDialog: (dialog: string, view: string, parentId: string) => void;
 }
 
-const Folder:React.FC<FolderProps> = props => {
+const Folder: React.FC<FolderProps> = props => {
     const folderBlock = <div className={props.classes.viewManageBlock}>
         {props.foldersCollapsed.includes(props.folder.id)
             ? <FolderClosedIcon fontSize={20} />

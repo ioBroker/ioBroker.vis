@@ -2,9 +2,10 @@ import PropTypes from 'prop-types';
 
 import { FileCopy as FileCopyIcon } from '@mui/icons-material';
 
-import { Utils, I18n, ThemeType } from '@iobroker/adapter-react-v5';
+import type { ThemeType } from '@iobroker/adapter-react-v5';
+import { Utils, I18n } from '@iobroker/adapter-react-v5';
 
-import { AnyWidgetId, GroupWidgetId, Widget } from '@iobroker/types-vis-2';
+import type { AnyWidgetId, GroupWidgetId, Widget } from '@iobroker/types-vis-2';
 import React from 'react';
 import IODialog from '../Components/IODialog';
 import CustomAceEditor from '../Components/CustomAceEditor';
@@ -17,14 +18,14 @@ interface WidgetExportDialogProps {
     selectedWidgets: string[];
 }
 
-const WidgetExportDialog:React.FC<WidgetExportDialogProps> = props => {
+const WidgetExportDialog: React.FC<WidgetExportDialogProps> = props => {
     const widgets = props.selectedWidgets.map(wid => {
         const w = deepClone(props.widgets[wid]);
         w._id = wid;
         return w;
     });
 
-    const groupWidgets:AnyWidgetId[] = [];
+    const groupWidgets: AnyWidgetId[] = [];
 
     let gIdx = 1;
     let wIdx = 1;
@@ -36,7 +37,7 @@ const WidgetExportDialog:React.FC<WidgetExportDialogProps> = props => {
             gIdx++;
 
             if (widget.data?.members) {
-                const members:string[] = [];
+                const members: string[] = [];
                 widget.data.members.forEach(member => {
                     if (groupWidgets.includes(member)) {
                         return;

@@ -1,9 +1,9 @@
 /**
  * This file contains shared utils between edit and runtime
  */
-import React from 'react';
+import type React from 'react';
 import { store } from '@/Store';
-import {
+import type {
     GroupWidget, Widget, Project, SingleWidget,
     SingleWidgetId, GroupWidgetId, AnyWidgetId,
     Permissions,

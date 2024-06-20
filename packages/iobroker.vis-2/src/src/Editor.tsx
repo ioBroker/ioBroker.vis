@@ -1,8 +1,9 @@
 import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
+import type { Styles, CSSProperties } from '@mui/styles';
 import {
-    withStyles, StylesProvider, createGenerateClassName, Styles, CSSProperties,
+    withStyles, StylesProvider, createGenerateClassName,
 } from '@mui/styles';
 import { DndProvider, useDrop } from 'react-dnd';
 import { TouchBackend } from 'react-dnd-touch-backend';
@@ -27,16 +28,18 @@ import {
     Layers,
 } from '@mui/icons-material';
 
+import type { IobTheme, LegacyConnection } from '@iobroker/adapter-react-v5';
 import {
     I18n,
     Utils,
     Confirm as ConfirmDialog,
     Message as MessageDialog,
-    SelectFile as SelectFileDialog, Icon, IobTheme, LegacyConnection,
+    SelectFile as SelectFileDialog, Icon,
 } from '@iobroker/adapter-react-v5';
-import {
-    AnyWidgetId, GroupData, GroupWidget, GroupWidgetId, MarketplaceWidgetRevision, Project, RxWidgetInfoGroup, SingleWidget, SingleWidgetId, View, ViewSettings, Widget, WidgetData, WidgetSetName, WidgetStyle,
+import type {
+    AnyWidgetId, GroupData, GroupWidget, GroupWidgetId, MarketplaceWidgetRevision, Project, RxWidgetInfoGroup, SingleWidget, SingleWidgetId, ViewSettings, Widget, WidgetData, WidgetSetName, WidgetStyle,
 } from '@iobroker/types-vis-2';
+import { View } from '@iobroker/types-vis-2';
 import { recalculateFields, store, updateProject } from './Store';
 import {
     isGroup, getNewWidgetId, getNewGroupId, pasteGroup, unsyncMultipleWidgets, deepClone, pasteSingleWidget,
@@ -48,15 +51,16 @@ import Toolbar from './Toolbar';
 import CodeDialog from './Components/CodeDialog';
 import CreateFirstProjectDialog from './Components/CreateFirstProjectDialog';
 import { DndPreview, isTouchDevice } from './Utils';
-import {
-    WidgetAttributesGroupInfoStored, WidgetType, getWidgetTypes, parseAttributes,
-} from './Vis/visWidgetsCatalog';
+import type { WidgetAttributesGroupInfoStored, WidgetType } from './Vis/visWidgetsCatalog';
+import { getWidgetTypes, parseAttributes } from './Vis/visWidgetsCatalog';
 import VisContextMenu from './Vis/visContextMenu';
-import Runtime, { RuntimeProps, RuntimeState } from './Runtime';
+import type { RuntimeProps, RuntimeState } from './Runtime';
+import Runtime from './Runtime';
 import ImportProjectDialog from './Toolbar/ProjectsManager/ImportProjectDialog';
 import { findWidgetUsages } from './Vis/visUtils';
-import MarketplaceDialog, { MarketplaceDialogProps } from './Marketplace/MarketplaceDialog';
-import { VisEngineHandlers } from './Vis/visView';
+import type { MarketplaceDialogProps } from './Marketplace/MarketplaceDialog';
+import MarketplaceDialog from './Marketplace/MarketplaceDialog';
+import type { VisEngineHandlers } from './Vis/visView';
 import VisEngine from './Vis/visEngine';
 
 const generateClassName = createGenerateClassName({
@@ -182,7 +186,7 @@ interface ViewDropProps {
     children: React.JSX.Element;
 }
 
-const ViewDrop:React.FC<ViewDropProps> = props => {
+const ViewDrop: React.FC<ViewDropProps> = props => {
     const targetRef = useRef<HTMLDivElement>();
 
     const [{ CanDrop, isOver }, drop] = useDrop<{
@@ -673,7 +677,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         const project = deepClone(store.getState().visProject);
         const widgets = project[this.state.selectedView].widgets;
 
-        const newKeys:AnyWidgetId[] = [];
+        const newKeys: AnyWidgetId[] = [];
         let widgetOffset = 0;
         let groupOffset = 0;
 
@@ -713,7 +717,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         const project = deepClone(store.getState().visProject);
         const widgets = project[this.state.selectedView].widgets;
 
-        const newKeys:SingleWidgetId[] = [];
+        const newKeys: SingleWidgetId[] = [];
         this.state.selectedWidgets.forEach(selectedWidget => {
             const newWidget = deepClone(widgets[selectedWidget]);
             const boundingRect = Editor.getWidgetRelativeRect(selectedWidget);
@@ -745,7 +749,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         const newCoordinates = {
             left: 0, top: 0, width: 0, height: 0, right: 0, bottom: 0,
         };
-        const selectedWidgets:{
+        const selectedWidgets: {
             id: AnyWidgetId;
             widget: Widget;
             coordinate: DOMRect;
@@ -959,7 +963,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
     groupWidgets = async () => {
         const project = deepClone(store.getState().visProject);
         const widgets = project[this.state.selectedView].widgets;
-        const group:GroupWidget = {
+        const group: GroupWidget = {
             tpl: '_tplGroup',
             widgetSet: 'basic',
             data: {
@@ -1326,7 +1330,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         }
     };
 
-    onPxToPercent = (wids:AnyWidgetId[], attr: string, cb: (results: string[]) => void) => {
+    onPxToPercent = (wids: AnyWidgetId[], attr: string, cb: (results: string[]) => void) => {
         if (this.visEngineHandlers[this.state.selectedView] && this.visEngineHandlers[this.state.selectedView].onPxToPercent) {
             return this.visEngineHandlers[this.state.selectedView].onPxToPercent(wids, attr, cb);
         }
@@ -1407,14 +1411,14 @@ class Editor extends Runtime<EditorProps, EditorState> {
     };
 
     static importMarketplaceWidget(project: Project, view: string, widgets: (GroupWidget | SingleWidget)[], id: string, x: number, y: number, widgetId: AnyWidgetId, oldData: WidgetData, oldStyle: WidgetStyle) {
-        const newWidgets:Record<AnyWidgetId, Widget> = {};
+        const newWidgets: Record<AnyWidgetId, Widget> = {};
 
         widgets.forEach(_widget => {
             if (_widget.isRoot) {
                 _widget.marketplace = deepClone(store.getState().visProject.___settings.marketplace.find(item => item.id === id));
             }
             if (isGroup(_widget)) {
-                let newKey:AnyWidgetId = getNewGroupId(store.getState().visProject);
+                let newKey: AnyWidgetId = getNewGroupId(store.getState().visProject);
                 if (_widget.isRoot) {
                     if (widgetId) {
                         newKey = widgetId;
@@ -1454,7 +1458,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         return project;
     }
 
-    addMarketplaceWidget = async (id: string, x: number, y: number, widgetId?: AnyWidgetId, oldData?: WidgetData, oldStyle?:WidgetStyle) => {
+    addMarketplaceWidget = async (id: string, x: number, y: number, widgetId?: AnyWidgetId, oldData?: WidgetData, oldStyle?: WidgetStyle) => {
         const project = deepClone(store.getState().visProject);
         const widgets = deepClone(store.getState().visProject.___settings.marketplace.find(item => item.id === id).widget);
         Editor.importMarketplaceWidget(project, this.state.selectedView, widgets, id, x, y, widgetId, oldData, oldStyle);
@@ -1836,7 +1840,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         if (!this.state.updateWidgetsDialog) {
             return null;
         }
-        const widgets:{
+        const widgets: {
             name: string;
             widgets: AnyWidgetId[];
         }[] = [];

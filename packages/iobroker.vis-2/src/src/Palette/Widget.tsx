@@ -11,14 +11,18 @@ import {
 } from '@mui/icons-material';
 
 import {
-    I18n, LegacyConnection,
+    I18n,
     Utils,
+} from '@iobroker/adapter-react-v5';
+import type {
+    LegacyConnection,
     type ThemeType,
 } from '@iobroker/adapter-react-v5';
-import { MarketplaceWidgetRevision, Project } from '@iobroker/types-vis-2';
+
+import type { MarketplaceWidgetRevision, Project } from '@iobroker/types-vis-2';
 
 import { store } from '@/Store';
-import { WidgetType } from '@/Vis/visWidgetsCatalog';
+import type { WidgetType } from '@/Vis/visWidgetsCatalog';
 import helpers from '../Components/WizardHelpers';
 
 const IMAGE_TYPES = ['.png', '.jpg', '.svg', '.gif', '.apng', '.avif', '.webp'];

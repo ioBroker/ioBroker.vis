@@ -14,7 +14,7 @@
  */
 import { type Moment } from 'moment';
 import { deepClone } from '@/Utils/utils';
-import {
+import type {
     VisLegacy, AnyWidgetId, WidgetData,
     Widget, VisRxWidgetStateValues, VisBinding, VisBindingOperationArgument,
 } from '@iobroker/types-vis-2';

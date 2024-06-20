@@ -19,7 +19,7 @@ interface ImportDialogProps {
     themeType: string;
 }
 
-const ImportDialog:React.FC<ImportDialogProps> = props => {
+const ImportDialog: React.FC<ImportDialogProps> = props => {
     const [data, setData] = useState('');
     const [view, setView] = useState('');
     const [errors, setErrors] = useState([]);

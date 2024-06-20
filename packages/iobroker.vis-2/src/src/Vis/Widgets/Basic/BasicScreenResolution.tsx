@@ -2,10 +2,11 @@ import React from 'react';
 
 import { I18n } from '@iobroker/adapter-react-v5';
 
-import {
+import type {
     RxRenderWidgetProps, VisLegacy, RxWidgetProps, GetRxDataFromWidget,
 } from '@iobroker/types-vis-2';
-import VisRxWidget, { VisRxWidgetState } from '@/Vis/visRxWidget';
+import type { VisRxWidgetState } from '@/Vis/visRxWidget';
+import VisRxWidget from '@/Vis/visRxWidget';
 
 declare global {
     interface Window {

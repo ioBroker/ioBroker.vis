@@ -1,7 +1,7 @@
 import React from 'react';
 // eslint-disable-next-line import/no-cycle
 import VisRxWidget from '@/Vis/visRxWidget';
-import { GetRxDataFromWidget, RxRenderWidgetProps } from '@iobroker/types-vis-2';
+import type { GetRxDataFromWidget, RxRenderWidgetProps } from '@iobroker/types-vis-2';
 import { NOTHING_SELECTED } from '@/Utils/utils';
 
 // eslint-disable-next-line no-use-before-define
@@ -159,29 +159,29 @@ export default class BasicBulb extends VisRxWidget<RxData> {
                         (finalMin !== '' && finalMin === val)) {
             typeof oid === 'string' && this.props.context.setValue(oid, finalMax !== '' ? finalMax : true);
         } else
-            if ((finalMax === '' && (val === true || val === 'true')) ||
+        if ((finalMax === '' && (val === true || val === 'true')) ||
                         (finalMax !== '' && val === finalMax)) {
-                typeof oid === 'string' && this.props.context.setValue(oid,  finalMin !== '' ? finalMin : false);
-            } else if (typeof oid === 'string') {
-                val = parseFloat(val);
-                if (finalMin !== '' &&
+            typeof oid === 'string' && this.props.context.setValue(oid,  finalMin !== '' ? finalMin : false);
+        } else if (typeof oid === 'string') {
+            val = parseFloat(val);
+            if (finalMin !== '' &&
                     finalMax !== '' &&
                     (typeof finalMax === 'number' || typeof finalMax === 'string') &&
                     (typeof finalMin === 'number' || typeof finalMin === 'string')
-                ) {
-                    if (val >= (parseFloat(finalMax) - parseFloat(finalMin)) / 2) {
-                        val = finalMin;
-                    } else {
-                        val = finalMax;
-                    }
-                } else if (val >= 0.5) {
-                    val = 0;
+            ) {
+                if (val >= (parseFloat(finalMax) - parseFloat(finalMin)) / 2) {
+                    val = finalMin;
                 } else {
-                    val = 1;
+                    val = finalMax;
                 }
-
-                this.props.context.setValue(oid,  val);
+            } else if (val >= 0.5) {
+                val = 0;
+            } else {
+                val = 1;
             }
+
+            this.props.context.setValue(oid,  val);
+        }
     }
 
     /**

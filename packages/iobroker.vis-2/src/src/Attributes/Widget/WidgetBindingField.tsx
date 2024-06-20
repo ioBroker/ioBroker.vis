@@ -29,13 +29,13 @@ import {
     Clear, Link as LinkIcon,
 } from '@mui/icons-material';
 
+import type { LegacyConnection, Connection } from '@iobroker/adapter-react-v5';
 import {
     I18n, Utils,
     SelectID,
-    LegacyConnection, Connection,
 } from '@iobroker/adapter-react-v5';
 
-import { AnyWidgetId, Project, VisBindingOperationArgument } from '@iobroker/types-vis-2';
+import type { AnyWidgetId, Project, VisBindingOperationArgument } from '@iobroker/types-vis-2';
 
 import { store, recalculateFields } from '@/Store';
 

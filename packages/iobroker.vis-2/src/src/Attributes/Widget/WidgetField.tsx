@@ -2,11 +2,12 @@ import React, {
     useEffect, useRef, useState,
 } from 'react';
 
+import type { SelectChangeEvent } from '@mui/material';
 import {
     Autocomplete, Box, Button, Checkbox, Fade, IconButton, Input, ListItemText,
     ListSubheader, MenuItem, Paper, Popper, Select, Slider, TextField, FormControl,
     FormHelperText, ListItemIcon, DialogActions,
-    Dialog, DialogTitle, DialogContent, DialogContentText, SelectChangeEvent,
+    Dialog, DialogTitle, DialogContent, DialogContentText,
 } from '@mui/material';
 
 import {
@@ -18,6 +19,7 @@ import {
 } from '@mui/icons-material';
 import { FaFolderOpen as FolderOpenedIcon } from 'react-icons/fa';
 
+import type { Connection, LegacyConnection } from '@iobroker/adapter-react-v5';
 import {
     I18n,
     IconPicker,
@@ -26,25 +28,27 @@ import {
     TextWithIcon,
     ColorPicker,
     SelectID,
-    SelectFile as SelectFileDialog, Connection, LegacyConnection,
+    SelectFile as SelectFileDialog,
 } from '@iobroker/adapter-react-v5';
 
 import { findWidgetUsages } from '@/Vis/visUtils';
 import { store, recalculateFields, selectWidget } from '@/Store';
 import { deepClone } from '@/Utils/utils';
-import {
+import type {
     AnyWidgetId, Project,
     Widget,
     WidgetData,
     WidgetStyle,
-    ClassesValue, type RxWidgetInfoAttributesField,
+    ClassesValue,
+    type RxWidgetInfoAttributesField,
 } from '@iobroker/types-vis-2';
-import {
+
+import type {
     ObjectBrowserCustomFilter,
     ObjectBrowserType,
 } from '@iobroker/adapter-react-v5/Components/types';
 
-import { RxFieldOption, WidgetAttributeInfoStored, WidgetType } from '@/Vis/visWidgetsCatalog';
+import type { RxFieldOption, WidgetAttributeInfoStored, WidgetType } from '@/Vis/visWidgetsCatalog';
 import TextDialog from './TextDialog';
 import MaterialIconSelector from '../../Components/MaterialIconSelector';
 

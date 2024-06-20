@@ -10,9 +10,10 @@ import {
 
 import { Close, DragHandle, FormatPaint } from '@mui/icons-material';
 
-import { I18n, LegacyConnection, type ThemeType } from '@iobroker/adapter-react-v5';
+import { I18n } from '@iobroker/adapter-react-v5';
+import type { LegacyConnection, type ThemeType } from '@iobroker/adapter-react-v5';
 
-import { Project } from '@iobroker/types-vis-2';
+import type { Project } from '@iobroker/types-vis-2';
 import { getViewsWithDifferentValues } from '@/Attributes/View/ApplyProperties';
 import getEditField from '@/Attributes/View/EditField';
 import type { Field } from '@/Attributes/View/Items';

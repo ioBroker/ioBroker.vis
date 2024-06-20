@@ -13,7 +13,8 @@
  * (Free for non-commercial use).
  */
 
-import React, { Component } from 'react';
+import type { Component } from 'react';
+import React from 'react';
 import {
     Card,
     CardContent,
@@ -21,7 +22,7 @@ import {
 
 import { type LegacyConnection, I18n, Icon } from '@iobroker/adapter-react-v5';
 
-import {
+import type {
     Project,
     AnyWidgetId,
     RxWidgetInfo,
@@ -36,12 +37,13 @@ import {
 } from '@iobroker/types-vis-2';
 import { deepClone, calculateOverflow } from '@/Utils/utils';
 // eslint-disable-next-line import/no-cycle
-import VisBaseWidget, {
+import type {
     VisBaseWidgetProps,
     VisBaseWidgetState,
     WidgetStyleState,
     VisWidgetCommand,
 } from './visBaseWidget';
+import VisBaseWidget from './visBaseWidget';
 import VisView from './visView';
 import { addClass, getUsedObjectIDsInWidget } from './visUtils';
 

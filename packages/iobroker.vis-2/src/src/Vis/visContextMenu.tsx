@@ -20,7 +20,7 @@ import {
 import { I18n } from '@iobroker/adapter-react-v5';
 
 import { store } from '@/Store';
-import {
+import type {
     AnyWidgetId,
     Project,
     GroupWidgetId,
@@ -28,11 +28,12 @@ import {
     View, Widget,
 } from '@iobroker/types-vis-2';
 
+import type { EditorClass } from '@/Editor';
 import IOContextMenu from '../Components/IOContextMenu';
 import WidgetExportDialog from '../Toolbar/WidgetExportDialog';
 import WidgetImportDialog from '../Toolbar/WidgetImportDialog';
-import { getWidgetTypes, WidgetType } from './visWidgetsCatalog';
-import { EditorClass } from '@/Editor';
+import type { WidgetType } from './visWidgetsCatalog';
+import { getWidgetTypes } from './visWidgetsCatalog';
 
 interface VisContextMenuProps {
     changeProject: (project: Project) => void;

@@ -23,17 +23,21 @@ import {
 
 import {
     I18n, Utils,
-    Icon, LegacyConnection,
+    Icon,
+} from '@iobroker/adapter-react-v5';
+import type {
+    LegacyConnection,
     type ThemeType,
 } from '@iobroker/adapter-react-v5';
 
-import { Marketplace, MarketplaceWidgetRevision, Project } from '@iobroker/types-vis-2';
+import type { Marketplace, MarketplaceWidgetRevision, Project } from '@iobroker/types-vis-2';
 import { store } from '@/Store';
 
-import { getWidgetTypes, WidgetType } from '@/Vis/visWidgetsCatalog';
+import type { WidgetType } from '@/Vis/visWidgetsCatalog';
+import { getWidgetTypes } from '@/Vis/visWidgetsCatalog';
 import { loadComponent } from '@/Vis/visLoadWidgets';
 import type { MarketplaceDialogProps } from '@/Marketplace/MarketplaceDialog';
-import { EditorClass } from '../Editor';
+import type { EditorClass } from '../Editor';
 import Widget from './Widget';
 import MarketplacePalette from '../Marketplace/MarketplacePalette';
 

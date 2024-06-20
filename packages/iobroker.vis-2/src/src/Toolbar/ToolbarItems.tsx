@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
-import { Styles, withStyles } from '@mui/styles';
+import type { Styles } from '@mui/styles';
+import { withStyles } from '@mui/styles';
 
+import type { SelectChangeEvent } from '@mui/material';
 import {
     Button,
     ButtonBase,
@@ -12,21 +14,21 @@ import {
     InputLabel,
     MenuItem,
     Select,
-    SelectChangeEvent,
     TextField,
     Tooltip,
 } from '@mui/material';
 
-import { I18n, IobTheme, ThemeType } from '@iobroker/adapter-react-v5';
+import type { IobTheme, ThemeType } from '@iobroker/adapter-react-v5';
+import { I18n } from '@iobroker/adapter-react-v5';
 
 import { deepClone } from '@/Utils/utils';
-import { ViewSettings } from '@iobroker/types-vis-2';
+import type { ViewSettings } from '@iobroker/types-vis-2';
 import React from 'react';
-import { EditorClass } from '@/Editor';
+import type { EditorClass } from '@/Editor';
 import { store } from '../Store';
 import MultiSelect from './MultiSelect';
 
-const styles:Styles<IobTheme, any> = theme => ({
+const styles: Styles<IobTheme, any> = theme => ({
     toolbarBlock: {
         display: 'flex',
         flexDirection: 'column',
@@ -124,7 +126,7 @@ export interface TextFieldToolbarItem extends BaseToolbarItem {
 
 export type ToolbarItem = SelectToolbarItem | MultiselectToolbarItem | CheckboxToolbarItem | IconButtonToolbarItem | TextToolbarItem | ButtonToolbarItem | DividerToolbarItem | TextFieldToolbarItem;
 
-const getItem = (item: ToolbarItem, key: number, props:ToolbarItemsProps, full?: boolean) => {
+const getItem = (item: ToolbarItem, key: number, props: ToolbarItemsProps, full?: boolean) => {
     const { visProject } = store.getState();
     const view = visProject[props.selectedView];
 
@@ -176,7 +178,9 @@ const getItem = (item: ToolbarItem, key: number, props:ToolbarItemsProps, full?:
             value={item.value ? item.value : value as string[]}
             onChange={_value => item.onChange(_value)}
             setSelectedWidgets={props.setSelectedWidgets}
-            options={item.items.map(option => ({ name: option.name as string, subname: option.subName, value: option.value, color: option.color, icon: option.icon }))}
+            options={item.items.map(option => ({
+                name: option.name as string, subname: option.subName, value: option.value, color: option.color, icon: option.icon,
+            }))}
             themeType={props.themeType}
         />;
         /*
@@ -308,14 +312,14 @@ interface ToolbarItemsProps {
     setSelectedWidgets: EditorClass['setSelectedWidgets'];
 }
 
-const ToolbarItems:React.FC<ToolbarItemsProps> = props => {
+const ToolbarItems: React.FC<ToolbarItemsProps> = props => {
     let items = props.group.items;
     const name = props.group.name;
     const doNotTranslateName = props.group.doNotTranslateName;
 
     // flatten buttons
     if (props.toolbarHeight === 'veryNarrow') {
-        const _items:ToolbarItem[] = [];
+        const _items: ToolbarItem[] = [];
         items.forEach(item => {
             if (Array.isArray(item)) {
                 item.forEach(_item => {

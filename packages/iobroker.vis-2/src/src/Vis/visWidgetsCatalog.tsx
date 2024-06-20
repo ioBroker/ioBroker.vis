@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 
 import { type LegacyConnection, type ThemeType } from '@iobroker/adapter-react-v5';
 import type {
@@ -12,8 +12,8 @@ import type {
     RxWidgetInfoCustomComponentProperties,
     RxWidgetAttributeType, Widget,
 } from '@iobroker/types-vis-2';
-import VisRxWidget from '@/Vis/visRxWidget';
-import { ObjectBrowserCustomFilter, ObjectBrowserType } from '@iobroker/adapter-react-v5/Components/types';
+import type VisRxWidget from '@/Vis/visRxWidget';
+import type { ObjectBrowserCustomFilter, ObjectBrowserType } from '@iobroker/adapter-react-v5/Components/types';
 
 import { getRemoteWidgets } from './visLoadWidgets';
 // eslint-disable-next-line import/no-cycle

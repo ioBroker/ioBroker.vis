@@ -12,11 +12,13 @@ import {
     Menu as MenuIcon,
 } from '@mui/icons-material';
 
-import { I18n, ThemeName, ThemeType } from '@iobroker/adapter-react-v5';
+import type { ThemeName, ThemeType } from '@iobroker/adapter-react-v5';
+import { I18n } from '@iobroker/adapter-react-v5';
 
-import { EditorClass } from '@/Editor';
+import type { EditorClass } from '@/Editor';
 import ViewsManager from './ViewsManager';
-import ToolbarItems, { ToolbarItem } from './ToolbarItems';
+import type { ToolbarItem } from './ToolbarItems';
+import ToolbarItems from './ToolbarItems';
 
 import ViewDialog from './ViewsManager/ViewDialog';
 
@@ -80,7 +82,7 @@ const Views = (props: ViewsProps) => {
         setDialogCallback(cb ? { cb } : null);
     };
 
-    const toolbar:{
+    const toolbar: {
         name: React.JSX.Element;
         items: (ToolbarItem | ToolbarItem[] | ToolbarItem[][])[];
     } = {

@@ -32,7 +32,7 @@ import 'dayjs/locale/pt';
 import 'dayjs/locale/nl';
 
 // eslint-disable-next-line import/no-cycle
-import { GetRxDataFromWidget, RxRenderWidgetProps } from '@iobroker/types-vis-2';
+import type { GetRxDataFromWidget, RxRenderWidgetProps } from '@iobroker/types-vis-2';
 import type { TextFieldVariants } from '@mui/material';
 import VisRxWidget from '../../visRxWidget';
 

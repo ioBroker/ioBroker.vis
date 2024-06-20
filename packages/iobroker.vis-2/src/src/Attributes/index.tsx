@@ -1,8 +1,9 @@
-import React, {
+import React, type { JSXElementConstructor,
     useEffect,
     useState,
-    type ReactNode, JSXElementConstructor,
+    type ReactNode
 } from 'react';
+
 import { withStyles } from '@mui/styles';
 
 import {
@@ -16,14 +17,15 @@ import {
     UnfoldLess as UnfoldLessIcon, ListAlt as IconAttributes,
 } from '@mui/icons-material';
 
-import { I18n, LegacyConnection, Utils } from '@iobroker/adapter-react-v5';
+import type { LegacyConnection } from '@iobroker/adapter-react-v5';
+import { I18n, Utils } from '@iobroker/adapter-react-v5';
 
+import type { EditorClass } from '@/Editor';
 import CSS from './CSS';
 import Scripts from './Scripts';
 import View from './View';
 import Widget from './Widget';
 import usePrevious from '../Utils/usePrevious';
-import { EditorClass } from '@/Editor';
 
 const style: Record<string, any> = (theme: Record<string, any>) => ({
     blockHeader: theme.classes.blockHeader,

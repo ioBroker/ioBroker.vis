@@ -22,25 +22,30 @@ import {
     Link as LinkIcon,
 } from '@mui/icons-material';
 
-import {
-    I18n, Icon,
-    LegacyConnection, Utils,
+import { I18n, Icon, Utils } from '@iobroker/adapter-react-v5';
+import type {
+    LegacyConnection,
     type ThemeType,
 } from '@iobroker/adapter-react-v5';
+
 import {
     store, recalculateFields, updateWidget, selectWidget,
 } from '@/Store';
 
-import {
-    getWidgetTypes, parseAttributes, WidgetAttributeInfoStored, WidgetAttributeIterable,
+import type {
+    WidgetAttributeInfoStored, WidgetAttributeIterable,
     WidgetAttributesGroupInfoStored, WidgetType,
 } from '@/Vis/visWidgetsCatalog';
-import { deepClone } from '@/Utils/utils';
 import {
+    getWidgetTypes, parseAttributes,
+} from '@/Vis/visWidgetsCatalog';
+import { deepClone } from '@/Utils/utils';
+import type {
     AnyWidgetId,
-    Project, type RxWidgetInfoGroup,
+    Project,
     Widget as SingleGroupWidget,
     VisTheme, WidgetData, WidgetStyle, GroupData,
+    type RxWidgetInfoGroup,
 } from '@iobroker/types-vis-2';
 
 import WidgetField from './WidgetField';

@@ -23,10 +23,11 @@ import {
     KeyboardReturn,
 } from '@mui/icons-material';
 
-import { I18n, LegacyConnection, Utils } from '@iobroker/adapter-react-v5';
+import type { LegacyConnection } from '@iobroker/adapter-react-v5';
+import { I18n, Utils } from '@iobroker/adapter-react-v5';
 
 import { calculateOverflow, deepClone, isVarFinite } from '@/Utils/utils';
-import {
+import type {
     AnyWidgetId, ResizeHandler,
     VisContext, GroupData, WidgetData,
     WidgetStyle,

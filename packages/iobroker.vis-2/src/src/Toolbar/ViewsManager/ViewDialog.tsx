@@ -18,7 +18,7 @@ import {
 } from '@/Utils/utils';
 import { useFocus } from '@/Utils';
 import IODialog from '@/Components/IODialog';
-import { Project, SingleWidgetId } from '@iobroker/types-vis-2';
+import type { Project, SingleWidgetId } from '@iobroker/types-vis-2';
 
 interface ViewDialogProps {
     changeProject: (project: Project) => Promise<void>;

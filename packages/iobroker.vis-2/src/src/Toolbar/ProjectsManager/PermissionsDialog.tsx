@@ -15,7 +15,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import Collapse from '@mui/material/Collapse';
 import { type LegacyConnection, I18n } from '@iobroker/adapter-react-v5';
-import {
+import type {
     AnyWidgetId, Permissions, Project, Widget,
 } from '@iobroker/types-vis-2';
 import { store } from '@/Store';

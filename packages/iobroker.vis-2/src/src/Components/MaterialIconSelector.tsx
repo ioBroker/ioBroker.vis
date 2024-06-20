@@ -24,7 +24,7 @@ import {
 } from '@mui/icons-material';
 
 import { I18n, Utils, Icon } from '@iobroker/adapter-react-v5';
-import { MaterialIconSelectorProps } from '@iobroker/types-vis-2';
+import type { MaterialIconSelectorProps } from '@iobroker/types-vis-2';
 
 import UploadFile from './UploadFile';
 

@@ -11,12 +11,12 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import { I18n } from '@iobroker/adapter-react-v5';
 
-import { EditorClass } from '@/Editor';
+import type { EditorClass } from '@/Editor';
 import React from 'react';
+import { deepClone } from '@/Utils/utils';
 import IODialog from '../../Components/IODialog';
 import { useFocus } from '../../Utils';
 import { store } from '../../Store';
-import { deepClone } from '@/Utils/utils';
 
 interface FolderDialogProps {
     changeProject: EditorClass['changeProject'];
@@ -29,7 +29,7 @@ interface FolderDialogProps {
     setDialogName: (name: string) => void;
 }
 
-const FolderDialog:React.FC<FolderDialogProps> = props => {
+const FolderDialog: React.FC<FolderDialogProps> = props => {
     const inputField = useFocus(props.dialog && props.dialog !== 'delete', props.dialog === 'add');
 
     if (!props.dialog) {

@@ -13,7 +13,7 @@ import {
 
 import { useFocus } from '@/Utils';
 import { store } from '@/Store';
-import {
+import type {
     AnyWidgetId,
     GroupWidget, GroupWidgetId, Project, Widget,
 } from '@iobroker/types-vis-2';
@@ -21,7 +21,7 @@ import CustomAceEditor from '../Components/CustomAceEditor';
 
 interface WidgetImportDialogProps {
     changeProject: (project: Project) => void;
-    onClose:() => void;
+    onClose: () => void;
     themeType: 'dark' | 'light';
     selectedView: string;
     selectedGroup?: GroupWidgetId;

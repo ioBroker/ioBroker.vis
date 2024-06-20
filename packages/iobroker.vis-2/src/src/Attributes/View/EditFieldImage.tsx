@@ -1,4 +1,5 @@
-import React, { RefObject, useRef, useState } from 'react';
+import type { RefObject } from 'react';
+import React, { useRef, useState } from 'react';
 import {
     Button, Fade, IconButton,
     Paper, Popper, TextField,
@@ -7,15 +8,17 @@ import {
 import { Clear as ClearIcon } from '@mui/icons-material';
 
 import {
-    type Connection,
     I18n,
-    LegacyConnection,
     SelectFile as SelectFileDialog,
     Utils,
+} from '@iobroker/adapter-react-v5';
+import type {
+    LegacyConnection,
+    type Connection,
     type ThemeType,
 } from '@iobroker/adapter-react-v5';
 
-import { Field } from '@/Attributes/View/Items';
+import type { Field } from '@/Attributes/View/Items';
 
 interface EditFieldImageProps {
     value: string;

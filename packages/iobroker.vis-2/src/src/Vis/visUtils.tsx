@@ -13,7 +13,7 @@
  * (Free for non-commercial use).
  */
 import { type LegacyConnection } from '@iobroker/adapter-react-v5';
-import {
+import type {
     Project,
     AnyWidgetId,
     GroupWidgetId,

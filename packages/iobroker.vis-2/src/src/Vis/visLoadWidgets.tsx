@@ -13,8 +13,9 @@
  * (Free for non-commercial use).
  */
 import { I18n, type LegacyConnection } from '@iobroker/adapter-react-v5';
-import VisRxWidget, { VisRxWidgetState } from '@/Vis/visRxWidget';
-import { Branded } from '@iobroker/types-vis-2';
+import type { VisRxWidgetState } from '@/Vis/visRxWidget';
+import type VisRxWidget from '@/Vis/visRxWidget';
+import type { Branded } from '@iobroker/types-vis-2';
 
 export type WidgetSetName = Branded<string, 'WidgetSetName'>;
 export type PromiseName = `_promise_${WidgetSetName}`;

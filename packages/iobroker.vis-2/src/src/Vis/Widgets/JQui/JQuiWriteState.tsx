@@ -25,7 +25,7 @@ import {
     type LegacyConnection,
 } from '@iobroker/adapter-react-v5';
 
-import {
+import type {
     GetRxDataFromWidget,
     RxRenderWidgetProps,
     RxWidgetInfo,
@@ -35,7 +35,8 @@ import {
 import VisBaseWidget from '@/Vis/visBaseWidget';
 
 // eslint-disable-next-line import/no-cycle
-import VisRxWidget, { VisRxWidgetState } from '../../visRxWidget';
+import type { VisRxWidgetState } from '../../visRxWidget';
+import VisRxWidget from '../../visRxWidget';
 
 // eslint-disable-next-line no-use-before-define
 type RxData = GetRxDataFromWidget<typeof JQuiWriteState>

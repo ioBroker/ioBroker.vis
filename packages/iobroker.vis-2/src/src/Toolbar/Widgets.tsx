@@ -24,23 +24,25 @@ import {
     VisibilityOff as VisibilityOffIcon,
 } from '@mui/icons-material';
 
-import { I18n, ThemeType } from '@iobroker/adapter-react-v5';
+import type { ThemeType } from '@iobroker/adapter-react-v5';
+import { I18n } from '@iobroker/adapter-react-v5';
+import type { AnyWidgetId, GroupWidgetId } from '@iobroker/types-vis-2';
+import type { EditorClass } from '@/Editor';
 import { store } from '../Store';
 
-import ToolbarItems, { ToolbarItem } from './ToolbarItems';
+import type { ToolbarItem } from './ToolbarItems';
+import ToolbarItems from './ToolbarItems';
 import { getWidgetTypes } from '../Vis/visWidgetsCatalog';
 import WidgetImportDialog from './WidgetImportDialog';
 import WidgetExportDialog from './WidgetExportDialog';
 import WidgetFilterDialog from './WidgetFilterDialog';
-import { AnyWidgetId, GroupWidgetId } from '@iobroker/types-vis-2';
-import { EditorClass } from '@/Editor';
 
 interface WidgetsProps {
     openedViews: string[];
     themeType: ThemeType;
     selectedView: string;
     selectedWidgets: AnyWidgetId[];
-    setSelectedWidgets: EditorClass['setSelectedWidgets']
+    setSelectedWidgets: EditorClass['setSelectedWidgets'];
     selectedGroup: GroupWidgetId;
     editMode: boolean;
     lockDragging: boolean;
@@ -409,12 +411,14 @@ const Widgets: React.FC<WidgetsProps> = props => {
     }
 
     return <>
-        <ToolbarItems group={toolbar} classes={{}} 
-        changeProject={props.changeProject}
-        selectedView={props.selectedView}
-        setSelectedWidgets={props.setSelectedWidgets}
-        themeType={props.themeType}
-        toolbarHeight={props.toolbarHeight}
+        <ToolbarItems
+            group={toolbar}
+            classes={{}}
+            changeProject={props.changeProject}
+            selectedView={props.selectedView}
+            setSelectedWidgets={props.setSelectedWidgets}
+            themeType={props.themeType}
+            toolbarHeight={props.toolbarHeight}
         />
         {importDialog ? <WidgetImportDialog
             onClose={() => setImportDialog(false)}

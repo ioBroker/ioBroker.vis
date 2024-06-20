@@ -6,9 +6,10 @@ import {
 
 import { BiImport } from 'react-icons/bi';
 
-import { I18n, Confirm as ConfirmDialog, LegacyConnection } from '@iobroker/adapter-react-v5';
+import type { LegacyConnection } from '@iobroker/adapter-react-v5';
+import { I18n, Confirm as ConfirmDialog } from '@iobroker/adapter-react-v5';
 
-import { EditorClass } from '@/Editor';
+import type { EditorClass } from '@/Editor';
 import UploadFile from '../../Components/UploadFile';
 import IODialog from '../../Components/IODialog';
 
@@ -41,7 +42,7 @@ interface ImportProjectDialogProps {
     projects: string[];
 }
 
-const ImportProjectDialog:React.FC<ImportProjectDialogProps> = props => {
+const ImportProjectDialog: React.FC<ImportProjectDialogProps> = props => {
     const [projectName, setProjectName] = useState('');
     const [projectData, setProjectData] = useState<string>(null);
     const [showConfirmation, setShowConfirmation] = useState(false);

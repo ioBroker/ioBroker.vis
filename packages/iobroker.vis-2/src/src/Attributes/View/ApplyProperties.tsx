@@ -1,7 +1,7 @@
 import React from 'react';
 import { Confirm as ConfirmDialog, I18n } from '@iobroker/adapter-react-v5';
-import { Field, FieldGroup } from '@/Attributes/View/Items';
-import { Project } from '@iobroker/types-vis-2';
+import type { Field, FieldGroup } from '@/Attributes/View/Items';
+import type { Project } from '@iobroker/types-vis-2';
 
 export function getViewsWithDifferentValues(
     project: Project,

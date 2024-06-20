@@ -21,8 +21,9 @@ import {
 } from '@mui/icons-material';
 
 import { TbVacuumCleaner } from 'react-icons/tb';
-import ChannelDetector, { DetectOptions, Types } from '@iobroker/type-detector';
-import { LegacyConnection } from '@iobroker/adapter-react-v5';
+import type { DetectOptions } from '@iobroker/type-detector';
+import ChannelDetector, { Types } from '@iobroker/type-detector';
+import type { LegacyConnection } from '@iobroker/adapter-react-v5';
 import { getNewWidgetIdNumber, getNewWidgetId } from '@/Utils/utils';
 
 const deviceIcons = {

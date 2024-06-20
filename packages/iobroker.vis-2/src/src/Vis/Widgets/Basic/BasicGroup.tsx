@@ -13,11 +13,11 @@
  * (Free for non-commercial use).
  */
 
-import React from 'react';
+import type React from 'react';
 
 import { I18n } from '@iobroker/adapter-react-v5';
 
-import {
+import type {
     GetRxDataFromWidget,
     RxRenderWidgetProps,
     RxWidgetInfo,
@@ -34,7 +34,8 @@ import {
 import VisView from '@/Vis/visView';
 
 // eslint-disable-next-line import/no-cycle
-import VisRxWidget, { VisRxWidgetState } from '../../visRxWidget';
+import type { VisRxWidgetState } from '../../visRxWidget';
+import VisRxWidget from '../../visRxWidget';
 
 // eslint-disable-next-line no-use-before-define
 type RxData = GetRxDataFromWidget<typeof BasicGroup>;

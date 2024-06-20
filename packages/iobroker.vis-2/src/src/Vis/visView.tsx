@@ -15,7 +15,8 @@
 
 import React from 'react';
 import { ThemeProvider, StyledEngineProvider, createTheme } from '@mui/material/styles';
-import { StylesProvider, createGenerateClassName, CSSProperties } from '@mui/styles';
+import type { CSSProperties } from '@mui/styles';
+import { StylesProvider, createGenerateClassName } from '@mui/styles';
 
 import { Utils, Theme } from '@iobroker/adapter-react-v5';
 
@@ -27,7 +28,7 @@ import type {
 } from '@iobroker/types-vis-2';
 import { hasWidgetAccess, isVarFinite } from '@/Utils/utils';
 import { recalculateFields, selectView, store } from '@/Store';
-import { Property } from 'csstype';
+import type { Property } from 'csstype';
 
 import VisBaseWidget from './visBaseWidget';
 import { type VisWidgetCommand } from './visBaseWidget';

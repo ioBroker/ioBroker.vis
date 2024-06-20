@@ -29,9 +29,12 @@ import {
     LoaderMV, LoaderPT, LoaderVendor,
 } from '@iobroker/adapter-react-v5';
 
-import { GenericAppProps, GenericAppState, ThemeName } from '@iobroker/adapter-react-v5/types';
+import type { GenericAppProps, GenericAppState, ThemeName } from '@iobroker/adapter-react-v5/types';
+import type {
+    AnyWidgetId, GroupWidgetId, Project, SingleWidgetId, ViewSettings, WidgetData, WidgetStyle,
+} from '@iobroker/types-vis-2';
 import {
-    AnyWidgetId, GroupWidget, GroupWidgetId, Project, SingleWidget, SingleWidgetId, View, ViewSettings, Widget, WidgetData, WidgetStyle,
+    GroupWidget, SingleWidget, View, Widget,
 } from '@iobroker/types-vis-2';
 import VisEngine from './Vis/visEngine';
 import {
@@ -265,7 +268,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
     componentDidMount() {
         super.componentDidMount();
 
-        const newState:Partial<RuntimeState> = {
+        const newState: Partial<RuntimeState> = {
             alert: false,
             alertType: 'info',
             alertMessage: '',
@@ -449,7 +452,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
                     }
 
                     if (wid.includes(' ')) {
-                        const newWid:SingleWidgetId = (wid.replace(/\s/g, '_') as SingleWidgetId);
+                        const newWid: SingleWidgetId = (wid.replace(/\s/g, '_') as SingleWidgetId);
                         delete project[view].widgets[wid];
                         project[view].widgets[newWid] = widget;
                     }
@@ -457,7 +460,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
                     if (!this.state.runtime && this.getNewWidgetId) {
                         // If the widget is not unique, change its name (only in editor mode)
                         if (Object.keys(project).find(v => v !== view && project[v].widgets && project[v].widgets[wid])) {
-                            const _newWid:AnyWidgetId = wid[0] === 'g' ? this.getNewGroupId(project) : this.getNewWidgetId(project);
+                            const _newWid: AnyWidgetId = wid[0] === 'g' ? this.getNewGroupId(project) : this.getNewWidgetId(project);
                             console.log(`Rename widget ${wid} to ${_newWid}`);
                             delete project[view].widgets[wid];
                             project[view].widgets[_newWid as SingleWidgetId] = widget;
@@ -535,7 +538,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         const h = window.innerHeight;
 
         let result = null;
-        const views:string[] = [];
+        const views: string[] = [];
         let difference = 10000;
 
         // First, find all with the best fitting width
@@ -794,7 +797,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         store.dispatch(updateActiveUser(currentUser.common.name));
 
         const groups = await this.socket.getGroups();
-        const userGroups:Record<ioBroker.ObjectIDs.Group, ioBroker.GroupObject> = {};
+        const userGroups: Record<ioBroker.ObjectIDs.Group, ioBroker.GroupObject> = {};
         groups.forEach(group => userGroups[group._id] = group);
 
         await this.setStateAsync({
@@ -861,11 +864,11 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
             }
             return;
         }
-        const newState:Partial<RuntimeState> = {
+        const newState: Partial<RuntimeState> = {
             selectedView,
         };
 
-        let selectedWidgets:AnyWidgetId[] = JSON.parse(window.localStorage.getItem(
+        let selectedWidgets: AnyWidgetId[] = JSON.parse(window.localStorage.getItem(
             `${this.state.projectName}.${selectedView}.widgets`,
         ) || '[]') || [];
 
@@ -965,7 +968,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
 
     addProject = async (projectName: string, doNotLoad?: boolean) => {
         try {
-            const project:Project = ({
+            const project: Project = ({
                 ___settings: {
                     folders: [],
                     openedViews: [],

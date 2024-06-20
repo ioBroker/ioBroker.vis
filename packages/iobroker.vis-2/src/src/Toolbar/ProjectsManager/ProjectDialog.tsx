@@ -28,7 +28,7 @@ interface ProjectDialogProps {
     renameProject: (project: string, name: string) => void;
 }
 
-const ProjectDialog:React.FC<ProjectDialogProps> = props => {
+const ProjectDialog: React.FC<ProjectDialogProps> = props => {
     const inputField = useFocus(props.dialog && props.dialog !== 'delete', props.dialog === 'add');
 
     if (!props.dialog) {

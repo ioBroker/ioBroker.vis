@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import { FileError, useDropzone } from 'react-dropzone';
+import type { FileError } from 'react-dropzone';
+import { useDropzone } from 'react-dropzone';
 
 import { CircularProgress } from '@mui/material';
 

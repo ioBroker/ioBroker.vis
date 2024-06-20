@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
-import { CSSProperties, Styles, withStyles } from '@mui/styles';
+import type { CSSProperties, Styles } from '@mui/styles';
+import { withStyles } from '@mui/styles';
 
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -17,10 +18,11 @@ import {
 } from '@mui/icons-material';
 import { BiImport } from 'react-icons/bi';
 
-import { I18n, IobTheme, ThemeName, ThemeType } from '@iobroker/adapter-react-v5';
+import type { IobTheme, ThemeName, ThemeType } from '@iobroker/adapter-react-v5';
+import { I18n } from '@iobroker/adapter-react-v5';
 
-import { EditorClass } from '@/Editor';
-import {
+import type { EditorClass } from '@/Editor';
+import type {
     View as ViewType,
     AnyWidgetId,
 } from '@iobroker/types-vis-2';
@@ -37,7 +39,7 @@ import {
     deepClone, getNewWidgetId, hasViewAccess, isGroup, pasteGroup,
 } from '../../Utils/utils';
 
-const styles:Styles<IobTheme & {classes: Record<string, CSSProperties>}, any> = theme => ({
+const styles: Styles<IobTheme & {classes: Record<string, CSSProperties>}, any> = theme => ({
     viewManageButtonActions: theme.classes.viewManageButtonActions,
     dialog: {
         minWidth: 400,
@@ -91,7 +93,7 @@ interface ViewsManagerProps {
 
 }
 
-const ViewsManager:React.FC<ViewsManagerProps> = props => {
+const ViewsManager: React.FC<ViewsManagerProps> = props => {
     const [exportDialog, setExportDialog] = useState<string | false>(false);
     const [importDialog, setImportDialog] = useState<string | false>(false);
 
@@ -125,7 +127,7 @@ const ViewsManager:React.FC<ViewsManagerProps> = props => {
 
     const importViewAction = (view: string, data: string) => {
         const project = deepClone(visProject);
-        const viewObject:ViewType = JSON.parse(data);
+        const viewObject: ViewType = JSON.parse(data);
 
         if (viewObject.parentId !== undefined) {
             delete viewObject.parentId;
