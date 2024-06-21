@@ -14,7 +14,7 @@
  */
 
 import React from 'react';
-import PropTypes from 'prop-types';
+import PropTypes, { any } from 'prop-types';
 import moment from 'moment';
 import 'moment/locale/de';
 import 'moment/locale/ru';
@@ -37,6 +37,9 @@ import {
     LinearProgress,
 } from '@mui/material';
 
+import type {
+    IobTheme, LegacyConnection, ThemeName, ThemeType,
+} from '@iobroker/adapter-react-v5';
 import { I18n } from '@iobroker/adapter-react-v5';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
@@ -49,12 +52,19 @@ import './css/backgrounds.css';
 import './visWords';
 
 import { store } from '@/Store';
+import type {
+    AnyWidgetId, ArgumentChanged, CanWidgetStore, GroupWidgetId, ViewCommand, ViewCommandOptions, VisChangeHandlerCallback, VisContext, VisLegacy, VisLinkContext, VisLinkContextBinding, VisLinkContextItem, VisRxWidgetStateValues, VisTheme, Widget,
+    VisFormatUtils as VisFormatUtilsType,
+} from '@iobroker/types-vis-2';
+import type { EditorClass } from '@/Editor';
+import { deepClone } from '@/Utils/utils';
+import type JQuery from 'jquery';
 import VisView from './visView';
 import VisFormatUtils from './visFormatUtils';
 import { getUrlParameter, extractBinding, readFile } from './visUtils';
 import VisWidgetsCatalog from './visWidgetsCatalog';
 
-function _translateWord(text, lang, dictionary) {
+function _translateWord(text: string, lang?: string, dictionary?: Record<string, Record<string, string>>): string {
     if (!text) {
         return '';
     }
@@ -81,33 +91,199 @@ function _translateWord(text, lang, dictionary) {
     return text;
 }
 
-function translate(text, arg1, arg2, arg3) {
+function translate(text: string, arg1?: any, arg2?: any, arg3?: any): string {
     text = _translateWord(text);
 
     let pos = text.includes('%s');
-    if (pos !== -1) {
+    if (pos) {
         text = text.replace('%s', arg1);
     } else {
         return text;
     }
 
     pos = text.includes('%s');
-    if (pos !== -1) {
+    if (pos) {
         text = text.replace('%s', arg2);
     } else {
         return text;
     }
 
     pos = text.includes('%s');
-    if (pos !== -1) {
+    if (pos) {
         text = text.replace('%s', arg3);
     }
 
     return text;
 }
 
-class VisEngine extends React.Component {
-    constructor(props) {
+interface VisEngineProps {
+    adapterName: string;
+    instance: number;
+    socket: LegacyConnection;
+    currentUser: ioBroker.UserObject;
+    lang: ioBroker.Languages;
+    projectName: string;
+    selectedView?: string;
+    editMode: boolean;
+    runtime: boolean;
+    activeView: string;
+    editModeComponentClass: string;
+    selectedWidgets: AnyWidgetId[];
+    showWidgetNames?: boolean;
+    visCommonCss: string;
+    visUserCss: string;
+    selectedGroup: GroupWidgetId;
+    widgetHint: 'light' | 'dark' | 'hide';
+    themeType: ThemeType;
+    themeName: ThemeName;
+    theme: VisTheme;
+    adapterId: string;
+    userGroups: EditorClass['state']['userGroups'];
+    widgetsLoaded: number;
+    lockDragging: boolean;
+    disableInteraction: boolean;
+    registerEditorCallback: EditorClass['registerCallback'];
+    setSelectedWidgets: EditorClass['setSelectedWidgets'];
+    onWidgetsChanged: EditorClass['onWidgetsChanged'];
+    showLegacyFileSelector: EditorClass['showLegacyFileSelector'];
+    setLoadingText: EditorClass['setLoadingText'];
+    onFontsUpdate: EditorClass['onFontsUpdate'];
+    setSelectedGroup: EditorClass['setSelectedGroup'];
+    onConfirmDialog: (message: string, title: string, icon: string, width: number, callback: (isYes: boolean) => void) => void;
+    onShowCode: (code: string, title: string, mode: string) => void;
+    renderAlertDialog: EditorClass['renderAlertDialog'];
+    toggleTheme: EditorClass['toggleTheme'];
+    askAboutInclude: EditorClass['askAboutInclude'];
+    changeProject: EditorClass['changeProject'];
+    onLoaded: () => void;
+    onIgnoreMouseEvents: EditorClass['onIgnoreMouseEvents'];
+}
+
+interface VisEngineState {
+    ready: boolean;
+    legacyRequestedViews: string[];
+    timeInterval: string;
+    timeStart: string;
+    showMessage?: {
+        message: string;
+        title: string;
+        icon: string;
+        width: number;
+        callback: (isYes: boolean) => void;
+    };
+}
+
+declare global {
+    interface Window {
+        jQuery: JQuery;
+        $: JQuery;
+        _setTimeout: (func: (
+            arg1?: any, arg2?: any, arg3?: any, arg4?: any, arg5?: any, arg6?: any
+        ) => void, timeout: number, arg1?: any, arg2?: any, arg3?: any, arg4?: any, arg5?: any, arg6?: any) => void;
+
+        _setInterval: (func: (
+            arg1?: any, arg2?: any, arg3?: any, arg4?: any, arg5?: any, arg6?: any
+        ) => void, interval: number, arg1?: any, arg2?: any, arg3?: any, arg4?: any, arg5?: any, arg6?: any) => void;
+        can: any;
+        app: any;
+        $$: any;
+    }
+}
+
+class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
+    isTouch: boolean;
+
+    debounceInterval: number;
+
+    fontNames: string[];
+
+    ID_CONTROL_INSTANCE: string;
+
+    ID_CONTROL_DATA: string;
+
+    ID_CONTROL_COMMAND: string;
+
+    formatUtils: VisFormatUtils;
+
+    userName: string;
+
+    visCommonCssLoaded: string | boolean;
+
+    oldTime: number;
+
+    systemConfig: ioBroker.Object;
+
+    _cmdData: ioBroker.StateValue;
+
+    _cmdInstance: ioBroker.StateValue;
+
+    wakeUpDetectorInterval: ReturnType<typeof setInterval>;
+
+    lastChangedView: string;
+
+    allWidgets: Record<string, CanWidgetStore>;
+
+    subscribes: Record<string, number>;
+
+    scripts: string;
+
+    visUserCssLoaded: string | boolean;
+
+    linkContext: VisLinkContext;
+
+    statesDebounce: Record<string, {
+        state: any;
+        timeout: number;
+    }>;
+
+    statesDebounceTime: number;
+
+    vis: VisLegacy;
+
+    instance: string;
+
+    refSound: React.RefObject<HTMLAudioElement>;
+
+    lastChange: number;
+
+    _authInfo: {
+        user: string;
+        hash: string;
+        salt: string;
+    };
+
+    _authRunning: boolean;
+
+    conn: ReturnType<VisEngine['createConnection']>;
+
+    visContext: VisContext;
+
+    widgetChangeHandlers: Record<AnyWidgetId, VisChangeHandlerCallback>;
+
+    canStates: JQuery;
+
+    viewsActiveFilter: Record<string, string[]>;
+
+    defaultMode: any;
+
+    can: any;
+
+    refViews: Record<string, {
+        onCommand: (command: ViewCommand, data?: ViewCommandOptions) => any;
+        ref: React.RefObject<HTMLDivElement>;
+    }>;
+
+    onChangeCallbacks: ArgumentChanged[];
+
+    wakeUpCallbacks: { cb: (wid: AnyWidgetId) => void; wid: AnyWidgetId }[];
+
+    fontTimer: ReturnType<typeof setTimeout>;
+
+    preloadImagesCacheImgs: HTMLImageElement[];
+
+    preloadImagesCacheSrcs: string[];
+
+    constructor(props: VisEngineProps) {
         super(props);
         window.jQuery = window.$;
         window.$ = window.jQuery; // jQuery library
@@ -134,7 +310,7 @@ class VisEngine extends React.Component {
         this.allWidgets = {};
         this.wakeUpCallbacks = [];
         this.widgetChangeHandlers = {};
-        this.refViews = []; // List of views (refs)
+        this.refViews = {}; // List of views (refs)
         this.fontNames = [
             'Verdana, Geneva, sans-serif',
             'Georgia, "Times New Roman", Times, serif',
@@ -158,6 +334,7 @@ class VisEngine extends React.Component {
         this.ID_CONTROL_COMMAND = `${this.props.adapterName}.${this.props.instance}.control.command`;
 
         this.linkContext = {
+            IDs: [],
             visibility: {},
             signals: {},
             lastChanges: {},
@@ -175,7 +352,7 @@ class VisEngine extends React.Component {
 
         this.conn = this.createConnection();
         this.canStates = this.initCanObjects();
-        this.vis = this.createLegacyVisObject();
+        this.vis = this.createLegacyVisObject() as unknown as VisLegacy;
 
         window._   = this.vis._;               // legacy translation function
         window.vis = this.vis;
@@ -190,18 +367,18 @@ class VisEngine extends React.Component {
             .then(() => {
                 this.userName = this.props.currentUser._id.replace('system.user.', '');
                 this.vis.user = this.userName;
-                this.vis.loginRequired = this.props.socket.isSecure;
+                this.vis.loginRequired = this.props.socket.isSecure as false;
                 return this.props.socket.getSystemConfig();
             })
-            .then(systemConfig => {
+            .then((systemConfig: ioBroker.Object) => {
                 this.vis.dateFormat = systemConfig.common.dateFormat;
                 this.vis.isFloatComma = systemConfig.common.isFloatComma;
                 this.vis.language = systemConfig.common.language || 'en';
                 this.systemConfig = systemConfig;
 
-                this.props.socket.subscribeState(this.ID_CONTROL_INSTANCE, this.onStateChange);
-                this.props.socket.subscribeState(this.ID_CONTROL_DATA, this.onStateChange);
-                this.props.socket.subscribeState(this.ID_CONTROL_COMMAND, this.onStateChange);
+                this.props.socket.subscribeState(this.ID_CONTROL_INSTANCE, this.onStateChange as ioBroker.StateChangeHandler);
+                this.props.socket.subscribeState(this.ID_CONTROL_DATA, this.onStateChange as ioBroker.StateChangeHandler);
+                this.props.socket.subscribeState(this.ID_CONTROL_COMMAND, this.onStateChange as ioBroker.StateChangeHandler);
 
                 this.props.setLoadingText && this.props.setLoadingText('Load widgets...');
 
@@ -224,7 +401,7 @@ class VisEngine extends React.Component {
         };
     }
 
-    static buildPath(view, path) {
+    static buildPath(view: string, path: string | string[]) {
         if (path && typeof path === 'string') {
             if (path.includes('/')) {
                 path = path.split('/');
@@ -233,19 +410,19 @@ class VisEngine extends React.Component {
             }
         }
 
-        if (path && path.length) {
+        if (path && typeof path === 'object' && path.length) {
             return `#${encodeURIComponent(view)}/${path.map(p => encodeURIComponent(p)).join('/')}`;
         }
 
         return `#${encodeURIComponent(view)}`;
     }
 
-    setTimeInterval = timeInterval => {
+    setTimeInterval = (timeInterval: string) => {
         this.setState({ timeInterval });
         window.localStorage.setItem('timeInterval', JSON.stringify(timeInterval));
     };
 
-    setTimeStart = timeStart => {
+    setTimeStart = (timeStart: string) => {
         this.setState({ timeStart });
         window.localStorage.setItem('timeStart', JSON.stringify(timeStart));
     };
@@ -274,7 +451,7 @@ class VisEngine extends React.Component {
     componentDidMount() {
         // modify jquery dialog to add it to view (originally dialog was added to body) (because of styles)
         // eslint-disable-next-line func-names
-        window.$.ui.dialog.prototype._appendTo = function () {
+        (window.$ as any).ui.dialog.prototype._appendTo = function () {
             const wid = this.options.wid;
             const views = store.getState().visProject;
             const view = Object.keys(views).find(v => views[v].widgets && views[v].widgets[wid]);
@@ -296,11 +473,11 @@ class VisEngine extends React.Component {
 
         // unsubscribe all
         Object.keys(this.subscribes).forEach(id =>
-            this.props.socket.unsubscribeState(id, this.onStateChange));
+            this.props.socket.unsubscribeState(id, this.onStateChange as ioBroker.StateChangeHandler));
 
-        this.props.socket.unsubscribeState(this.ID_CONTROL_INSTANCE, this.onStateChange);
-        this.props.socket.unsubscribeState(this.ID_CONTROL_DATA, this.onStateChange);
-        this.props.socket.unsubscribeState(this.ID_CONTROL_COMMAND, this.onStateChange);
+        this.props.socket.unsubscribeState(this.ID_CONTROL_INSTANCE, this.onStateChange as ioBroker.StateChangeHandler);
+        this.props.socket.unsubscribeState(this.ID_CONTROL_DATA, this.onStateChange as ioBroker.StateChangeHandler);
+        this.props.socket.unsubscribeState(this.ID_CONTROL_COMMAND, this.onStateChange as ioBroker.StateChangeHandler);
 
         let userScript = window.document.getElementById('#vis_user_scripts');
         if (userScript) {
@@ -336,7 +513,7 @@ class VisEngine extends React.Component {
     buildLegacyStructures = () => {
         this.buildLegacySubscribing();
         if (this.vis.binds.materialdesign?.helper?.subscribeStatesAtRuntime && !this.vis.binds.materialdesign.helper.subscribeStatesAtRuntime.__inited) {
-            this.vis.binds.materialdesign.helper.subscribeStatesAtRuntime = (wid, widgetName, callback, debug) => {
+            this.vis.binds.materialdesign.helper.subscribeStatesAtRuntime = (wid: AnyWidgetId, widgetName: string, callback: () => void, debug: boolean) => {
                 debug && console.log(`[subscribeStatesAtRuntime] ${widgetName} (${wid}) subscribe states at runtime`);
                 callback && callback();
             };
@@ -361,10 +538,16 @@ class VisEngine extends React.Component {
         });
     }
 
-    createLegacyVisObject() {
+    createLegacyVisObject(): VisLegacy {
         // simulate legacy file manager
         if (this.props.showLegacyFileSelector) {
-            window.jQuery.fm = (options, onChange) => {
+            (window.jQuery as any).fm = (options: {
+                path?: string;
+                userArg?: any;
+            }, onChange: (data: {
+                path: string;
+                file: string;
+            }, userArg: any) => void) => {
                 // possible options
                 // {
                 //     lang,
@@ -415,9 +598,9 @@ class VisEngine extends React.Component {
                 const refViews = this.refViews;
                 Object.keys(refViews).forEach(view => refViews[view].onCommand('updateContainers'));
             },
-            renderView: (viewDiv, view, hidden, cb) => {
+            renderView: (viewDiv, view: string | boolean, hidden: boolean | ((viewDiv: string, view: string) => void), cb) => {
                 if (typeof view === 'boolean') {
-                    cb = hidden;
+                    cb = hidden as () => void;
                     hidden   = undefined;
                     view     = viewDiv;
                 }
@@ -432,7 +615,7 @@ class VisEngine extends React.Component {
                     cb && cb(viewDiv, view);
                 }
             },
-            updateFilter: view => {
+            updateFilter: (view?: string): string[] => {
                 view = view || this.props.activeView;
                 if (this.refViews[view]) {
                     // collect all possible filters of widgets
@@ -474,9 +657,9 @@ class VisEngine extends React.Component {
                 return false;
             },
             setValue: this.setValue,
-            changeView: (viewDiv, view, hideOptions, showOptions, sync, cb) => {
+            changeView: (viewDiv, view, hideOptions, showOptions, sync: boolean | ((viewDiv: string, view: string) => void), cb) => {
                 if (typeof view === 'object') {
-                    cb = sync;
+                    cb = sync as (viewDiv: string, view: string) => void;
                     sync = showOptions;
                     hideOptions = showOptions;
                     view = viewDiv;
@@ -507,7 +690,7 @@ class VisEngine extends React.Component {
                     window.location.hash = newHash;
                 }
             },
-            onWakeUp: (cb, wid) => {
+            onWakeUp: (cb, wid: AnyWidgetId) => {
                 if (typeof cb === 'string' && wid === undefined) {
                     wid = cb;
                     cb = null;
@@ -545,14 +728,14 @@ class VisEngine extends React.Component {
                     }
                 }
             },
-            registerOnChange: (callback, arg, wid) => {
+            registerOnChange: (callback: any, arg: string, wid: AnyWidgetId) => {
                 !wid && console.warn('No widget ID for registerOnChange callback! Please fix');
 
                 if (!this.onChangeCallbacks.find(item => item.callback === callback && item.arg === arg && (!wid || item.wid === wid))) {
                     this.onChangeCallbacks.push({ callback, arg, wid });
                 }
             },
-            unregisterOnChange: (callback, arg, wid) => {
+            unregisterOnChange: (callback: any, arg: string, wid: AnyWidgetId) => {
                 !wid && console.warn('No widget ID for unregisterOnChange callback! Please fix');
 
                 const index = this.onChangeCallbacks.findIndex(item => item.callback === callback &&
@@ -575,9 +758,9 @@ class VisEngine extends React.Component {
                 if (typeof roles !== 'object') {
                     roles = [roles];
                 } else {
-                    roles = JSON.parse(JSON.stringify(roles));
+                    roles = deepClone(roles);
                 }
-                const result = {};
+                const result: Record<string, string> = {};
                 // try to detect other values
 
                 // Go through all channels of this device
@@ -773,9 +956,9 @@ class VisEngine extends React.Component {
                     });
             },
             getHttp: (url, callback) =>
-                this.props.socket.getRawSocket().emit('httpGet', url, data =>
+                this.props.socket.getRawSocket().emit('httpGet', url, (data: any) =>
                     callback && callback(data)),
-            formatDate: (dateObj, isDuration, _format) => this.formatUtils.formatDate(dateObj, isDuration, _format),
+            formatDate: (dateObj: string | Date | number, isDuration?: boolean | string, _format?: string) => this.formatUtils.formatDate(dateObj, isDuration, _format),
             widgets: this.allWidgets,
             editSelect:         this.props.runtime ? null : (widAttr, values, notTranslate, init, onchange) => {
                 console.log('DEPRECATED!!!!! please remove vis.editSelect');
@@ -786,7 +969,11 @@ class VisEngine extends React.Component {
                 }
 
                 // Select
-                const line = {
+                const line: {
+                    input: string;
+                    init?: () => void;
+                    onchange?: () => void;
+                } = {
                     input: `<select type="text" id="inspect_${widAttr}">`,
                 };
                 if (onchange) {
@@ -888,7 +1075,7 @@ class VisEngine extends React.Component {
         };
     }
 
-    changeFilter(view, filter, showEffect, showDuration, hideEffect, hideDuration) {
+    changeFilter(view: string, filter: string, showEffect?: string, showDuration?: number, hideEffect?: string, hideDuration?: number): void {
         view = view || this.props.activeView;
         if (this.refViews[view]?.onCommand) {
             this.refViews[view].onCommand('changeFilter', {
@@ -898,15 +1085,15 @@ class VisEngine extends React.Component {
     }
 
     // allows sending command to view
-    onCommand = (view, command, data) => {
+    onCommand = (view: string, command: ViewCommand, data: ViewCommandOptions) => {
         if (this.refViews[view]?.onCommand) {
             this.refViews[view].onCommand(command, data);
         }
     };
 
-    showMessage(message, title, icon, width, callback) {
+    showMessage(message: string, title: string, icon: string | number, width?: number | ((isYes: boolean) => void), callback?: (isYes: boolean) => void): void {
         if (typeof icon === 'number') {
-            callback = width;
+            callback = width as (isYes: boolean) => void;
             width = icon;
             icon = null;
         }
@@ -923,7 +1110,7 @@ class VisEngine extends React.Component {
 
         this.setState({
             showMessage: {
-                message, title, icon, width, callback,
+                message, title, icon: icon as string, width: width as number, callback,
             },
         });
     }
@@ -987,19 +1174,19 @@ class VisEngine extends React.Component {
         // props.socket
         return {
             namespace: this.props.adapterId,
-            logError: errorText => {
+            logError: (errorText: string) => {
                 console.error(`Error: ${errorText}`);
                 this.props.socket.log(errorText, 'error');
             },
             getIsConnected: () => this.props.socket.isConnected(),
-            getGroups: (groupName, useCache, cb) => {
+            getGroups: (groupName: string | ((result: any) => void) | boolean, useCache: boolean | ((result: any) => void), cb: (result: any) => void) => {
                 if (typeof groupName === 'function') {
                     cb = groupName;
                     groupName = null;
                     useCache = false;
                 }
                 if (typeof groupName === 'boolean') {
-                    cb = useCache;
+                    cb = useCache as (result: any) => void;
                     useCache = groupName;
                     groupName = null;
                 }
@@ -1009,11 +1196,11 @@ class VisEngine extends React.Component {
                 }
                 groupName = groupName || '';
 
-                return this.readGroups(groupName, !useCache)
+                return this.readGroups(groupName as string, !useCache)
                     .then(groups => cb(groups))
                     .catch(error => cb(error));
             },
-            getConfig: (useCache, cb) => {
+            getConfig: (useCache: boolean, cb: (arg1: any, arg2?: any) => void) => {
                 if (typeof useCache === 'function') {
                     cb = useCache;
                     useCache = false;
@@ -1023,15 +1210,15 @@ class VisEngine extends React.Component {
                     .then(systemConfig => cb(null, systemConfig.common))
                     .catch(error => cb(error));
             },
-            getObjects: (useCache, cb) => {
+            getObjects: (useCache?: boolean, cb?: (arg1: any, arg2?: any) => void) => {
                 if (typeof useCache === 'function') {
                     cb = useCache;
                     useCache = false;
                 }
-                let objects = {};
+                let objects: Record<string, ioBroker.Object> = {};
 
                 return new Promise((resolve, reject) => {
-                    this.props.socket.getRawSocket().emit('getObjects', (err, res) => {
+                    this.props.socket.getRawSocket().emit('getObjects', (err: any, res: any) => {
                         if (err) {
                             reject(err);
                             return;
@@ -1047,7 +1234,7 @@ class VisEngine extends React.Component {
                         }
                     });
                 })
-                    .then(() => this.props.socket.getEnums(!useCache))
+                    .then(() => this.props.socket.getEnums(!useCache as unknown as string))
                     .then(enums => {
                         Object.assign(objects, enums);
                         return this.props.socket.getObjectViewSystem(
@@ -1056,7 +1243,7 @@ class VisEngine extends React.Component {
                             'system.adapter.\u9999',
                         )
                             .then(rows => {
-                                for (let i = 0; i < rows.length; i++) {
+                                for (let i = 0; i < (rows as any).length; i++) {
                                     objects[rows[i]._id] = rows[i];
                                 }
 
@@ -1096,17 +1283,17 @@ class VisEngine extends React.Component {
                         return Promise.reject(error);
                     });
             },
-            getLoggedUser: cb => this.props.socket.getCurrentUser()
+            getLoggedUser: (cb: (isSecure: boolean, user: string) => void) => this.props.socket.getCurrentUser()
                 .then(user => cb(this.props.socket.isSecure, user)),
-            subscribe: (IDs, cb) => {
+            subscribe: (IDs: string[], cb: () => void) => {
                 this.subscribe(IDs);
                 cb && cb();
             },
-            unsubscribe: (IDs, cb) => {
+            unsubscribe: (IDs: string[], cb: () => void) => {
                 this.unsubscribe(IDs);
                 cb && cb();
             },
-            authenticate: (user, password, salt) => {
+            authenticate: (user: string, password: string, salt: string) => {
                 this._authRunning = true;
 
                 if (user !== undefined) {
@@ -1117,7 +1304,7 @@ class VisEngine extends React.Component {
                     };
                 }
             },
-            getStates: (IDs, cb) => {
+            getStates: (IDs: string, cb: (arg1: any, arg2?: any) => void) => {
                 if (!IDs || !IDs.length) {
                     cb && cb(null, {});
                     return;
@@ -1126,7 +1313,7 @@ class VisEngine extends React.Component {
                     .then(data => cb(null, data))
                     .catch(error => cb(error || 'Authentication required'));
             },
-            setState: (id, val, cb) => {
+            setState: (id: string, val: any, cb: (arg1?: any) => void) => {
                 if (!id) {
                     cb && cb('No id');
                     return;
@@ -1136,17 +1323,17 @@ class VisEngine extends React.Component {
                     .catch(error => cb && cb(error));
             },
             setReloadTimeout: () => {
-
+                //
             },
             setReconnectInterval: () => {
-
+                //
             },
             getUser: () => this.userName,
-            sendCommand: (instance, command, data, ack) => this.props.socket.setState(this.ID_CONTROL_INSTANCE, { val: instance || 'notdefined', ack: true })
+            sendCommand: (instance: string, command: string, data: any, ack: boolean) => this.props.socket.setState(this.ID_CONTROL_INSTANCE, { val: instance || 'notdefined', ack: true })
                 .then(() => this.props.socket.setState(this.ID_CONTROL_DATA, { val: data, ack: true }))
                 .then(() => this.props.socket.setState(this.ID_CONTROL_COMMAND, { val: command, ack: ack === undefined ? true : ack }))
                 .catch(e => console.error(`Cannot set state: ${e}`)),
-            readFile: (filename, cb) => {
+            readFile: (filename: string, cb: (arg1: any, arg2?: any, arg3?: any, arg4?: any) => void) => {
                 let adapter = this.conn.namespace;
                 if (filename[0] === '/') {
                     const p = filename.split('/');
@@ -1156,11 +1343,14 @@ class VisEngine extends React.Component {
                 }
 
                 return readFile(this.props.socket, adapter, filename, true)
-                    .then(data => setTimeout(() => cb(null, data.file, filename, data.mimeType), 0))
+                    .then((data: {
+                        file: string;
+                        mimeType: string;
+                    }) => setTimeout(() => cb(null, data.file, filename, data.mimeType), 0))
                     .catch(error => cb(error));
             },
-            getHistory: (id, options, cb) => {
-                options = options || {};
+            getHistory: (id: string, options: ioBroker.GetHistoryOptions & {timeout: number}, cb: (arg1: any, arg2?: any) => void) => {
+                options = options || ({} as ioBroker.GetHistoryOptions & {timeout: number});
                 options.timeout = options.timeout || 2000;
 
                 let timeout = setTimeout(() => {
@@ -1184,9 +1374,10 @@ class VisEngine extends React.Component {
                         cb(error);
                     });
             },
-            getHttp: (url, callback) => this.props.socket.getRawSocket().emit('httpGet', url, data => callback && callback(data)),
+            getHttp: (url: string, callback: (data: any) => void) =>
+                this.props.socket.getRawSocket().emit('httpGet', url, (data: any) => callback && callback(data)),
             _socket: {
-                emit: (cmd, data, cb) => {
+                emit: (cmd: string, data: any, cb: (arg1: any, arg2?: any) => void) => {
                     let promise;
                     if (cmd === 'getObject') {
                         promise = this.props.socket.getObject(data);
@@ -1206,7 +1397,7 @@ class VisEngine extends React.Component {
         };
     }
 
-    registerViewRef = (view, ref, onCommand) => {
+    registerViewRef = (view: string, ref: React.RefObject<HTMLDivElement>, onCommand: (command: ViewCommand, data?: ViewCommandOptions) => any) => {
         if (this.refViews[view] && this.refViews[view].ref === ref) {
             console.error(`Someone tries to register same ref for view ${view}`);
         } else {
@@ -1215,7 +1406,7 @@ class VisEngine extends React.Component {
         }
     };
 
-    unregisterViewRef = (view, ref) => {
+    unregisterViewRef = (view: string, ref: React.RefObject<HTMLDivElement>) => {
         if (this.refViews[view] && this.refViews[view].ref === ref) {
             delete this.refViews[view];
         } else if (this.refViews[view]) {
@@ -1224,14 +1415,14 @@ class VisEngine extends React.Component {
         }
     };
 
-    getViewRef = view => this.refViews[view]?.ref;
+    getViewRef = (view: string): React.RefObject<HTMLDivElement> | null => this.refViews[view]?.ref;
 
-    static findNearestResolution(resultRequiredOrX, height) {
-        let w;
-        let h;
+    static findNearestResolution(resultRequiredOrX: number | false, height: number) {
+        let w: number;
+        let h: number;
 
         if (height !== undefined && height !== null) {
-            w = resultRequiredOrX;
+            w = resultRequiredOrX as number;
             h = height;
             resultRequiredOrX = false;
         } else {
@@ -1239,8 +1430,8 @@ class VisEngine extends React.Component {
             h = window.document.body.clientHeight;
         }
 
-        let result = null;
-        const views = [];
+        let result: string = null;
+        const views: string[] = [];
         let difference = 10_000;
 
         const { visProject } = store.getState();
@@ -1250,7 +1441,7 @@ class VisEngine extends React.Component {
                 visProject[view].settings &&
                 visProject[view].settings.useAsDefault
             ) {
-                const ww = parseInt(visProject[view].settings.sizex, 10);
+                const ww = parseInt(visProject[view].settings.sizex as unknown as string, 10);
                 // If difference less than 20%
                 if (Math.abs(ww - w) / ww < 0.2) {
                     views.push(view);
@@ -1260,7 +1451,7 @@ class VisEngine extends React.Component {
 
         views.forEach(view => {
             if (view !== '___settings' && visProject[view].settings) {
-                const hh = parseInt(visProject[view].settings.sizey, 10);
+                const hh = parseInt(visProject[view].settings.sizey as unknown as string, 10);
                 if (Math.abs(hh - h) < difference) {
                     result = view;
                     difference = Math.abs(hh - h);
@@ -1275,8 +1466,8 @@ class VisEngine extends React.Component {
 
             Object.keys(visProject).forEach(view => {
                 if (view !== '___settings' && visProject[view].settings?.useAsDefault) {
-                    const ww = parseInt(visProject[view].settings.sizex, 10);
-                    const hh = parseInt(visProject[view].settings.sizey, 10);
+                    const ww = parseInt(visProject[view].settings.sizex as unknown as string, 10);
+                    const hh = parseInt(visProject[view].settings.sizey as unknown as string, 10);
 
                     // If difference less than 20%
                     if (hh && Math.abs(ratio - (ww / hh)) < difference) {
@@ -1295,10 +1486,10 @@ class VisEngine extends React.Component {
         return result;
     }
 
-    readGroups(groupName, useCache) {
+    readGroups(groupName: string, useCache: boolean) {
         return this.props.socket.getGroups(!useCache)
             .then(groups => {
-                const result = {};
+                const result: Record<string, ioBroker.GroupObject> = {};
                 if (groupName) {
                     const gg = `system.group.${groupName}`;
                     groups = groups.filter(group => group._id.startsWith(`${gg}.`) || group._id === gg);
@@ -1365,7 +1556,7 @@ class VisEngine extends React.Component {
         */
     }
 
-    _setValue(id, val) {
+    _setValue(id: string, val: any) {
         const oldVal = this.canStates.attr(`${id}.val`);
 
         // Send ack=false with new value to all widgets
@@ -1394,7 +1585,7 @@ class VisEngine extends React.Component {
             });
     }
 
-    setValue = (id, val) => {
+    setValue = (id: string, val: any) => {
         if (!id) {
             console.log(`ID is null for val=${val}`);
             return;
@@ -1424,7 +1615,10 @@ class VisEngine extends React.Component {
         }
     };
 
-    static async loadScriptsOfOneWidgetSet(widgetSet) {
+    static async loadScriptsOfOneWidgetSet(widgetSet: {
+        oldScript: HTMLScriptElement;
+        newScript: HTMLScriptElement;
+    }[]) {
         for (const { oldScript, newScript } of widgetSet) {
             try {
                 newScript.appendChild(document.createTextNode(oldScript.innerHTML));
@@ -1440,15 +1634,18 @@ class VisEngine extends React.Component {
         }
     }
 
-    static loadedSources = [];
+    static loadedSources: string[] = [];
 
-    static async setInnerHTML(elm, html, usedWidgetSets) {
+    static async setInnerHTML(elm: HTMLElement, html: string, usedWidgetSets: string[]) {
         elm.innerHTML = html;
         // we must load script one after another, to keep the order
-        const scripts = Array.from(elm.querySelectorAll('script'));
+        const scripts: HTMLScriptElement[] = Array.from(elm.querySelectorAll('script'));
 
         // load all scripts of one widget set sequentially and all groups of scripts in parallel
-        const groups = {};
+        const groups: Record<string, {
+            newScript: HTMLScriptElement;
+            oldScript: HTMLScriptElement;
+        }[]> = {};
 
         for (let s = 0; s < scripts.length; s++) {
             const oldScript = scripts[s];
@@ -1484,7 +1681,7 @@ class VisEngine extends React.Component {
                     // inline script
                     let loadTimer = setTimeout(tpl => {
                         console.error(`Cannot load ${tpl}`);
-                    }, 500, oldScript.attributes.id?.value || oldScript.attributes['data-widgetset']?.value);
+                    }, 500, (oldScript.attributes as any).id?.value || (oldScript.attributes as any)['data-widgetset']?.value);
                     try {
                         newScript.appendChild(document.createTextNode(oldScript.innerHTML));
                         oldScript.parentNode.replaceChild(newScript, oldScript);
@@ -1524,7 +1721,7 @@ class VisEngine extends React.Component {
             const div = document.createElement('div');
             document.body.appendChild(div);
 
-            await VisEngine.setInnerHTML(div, text, this.props.runtime && VisWidgetsCatalog.getUsedWidgetSets(store.getState().visProject));
+            await VisEngine.setInnerHTML(div, text, this.props.runtime && VisWidgetsCatalog.getUsedWidgetSets(store.getState().visProject) as string[]);
 
             this.props.onLoaded && this.props.onLoaded();
         } catch (error) {
@@ -1533,26 +1730,33 @@ class VisEngine extends React.Component {
         }
     }
 
-    updateWidget(view, wid, type, item, stateId, state) {
+    updateWidget(
+        view: string,
+        wid: AnyWidgetId,
+        type: 'style' | 'signal' | 'visibility' | 'lastChange' | 'binding',
+        item: VisLinkContextBinding | VisLinkContextItem,
+        stateId?: string,
+        state?: ioBroker.State,
+    ) {
         if (this.widgetChangeHandlers[wid]) {
             this.widgetChangeHandlers[wid](type, item, stateId, state);
         }
     }
 
-    registerChangeHandler = (wid, cb) => {
+    registerChangeHandler = (wid: AnyWidgetId, cb: VisChangeHandlerCallback) => {
         if (this.props.editMode && this.widgetChangeHandlers[wid]) {
             console.error('Someone installs handler without to remove it!');
         }
         this.widgetChangeHandlers[wid] = cb;
     };
 
-    unregisterChangeHandler = (wid, cb) => {
+    unregisterChangeHandler = (wid: AnyWidgetId, cb: VisChangeHandlerCallback) => {
         if (this.widgetChangeHandlers[wid] === cb) {
             delete this.widgetChangeHandlers[wid];
         }
     };
 
-    onUserCommand(instance, command, data) {
+    onUserCommand(instance: string, command: string, data: any) {
         const currentInstance = window.localStorage.getItem('visInstance');
         if (!instance || (instance !== currentInstance && instance !== 'FFFFFFFF' && !instance.includes('*'))) {
             return false;
@@ -1617,11 +1821,11 @@ class VisEngine extends React.Component {
                     this.refViews[viewName].onCommand('openDialog', data);
                 }
 
-                if (el?._showDialog) {
-                    el._showDialog(true);
+                if ((el as any)?._showDialog) {
+                    (el as any)._showDialog(true);
                 } else {
                     // noinspection JSJQueryEfficiency
-                    window.jQuery(`#${data}_dialog`).dialog('open');
+                    (window.jQuery as any)(`#${data}_dialog`).dialog('open');
                 }
                 break;
             }
@@ -1634,11 +1838,11 @@ class VisEngine extends React.Component {
                     this.refViews[viewName].onCommand('closeDialog', data);
                 }
 
-                if (el?._showDialog) {
-                    el._showDialog(false);
+                if ((el as any)?._showDialog) {
+                    (el as any)._showDialog(false);
                 } else {
                     // noinspection JSJQueryEfficiency
-                    window.jQuery(`#${data}_dialog`).dialog('close');
+                    (window.jQuery as any)(`#${data}_dialog`).dialog('close');
                 }
                 break;
             }
@@ -1658,14 +1862,14 @@ class VisEngine extends React.Component {
                     href += `?${Date.now()}`;
                     if (this.refSound?.current) {
                         this.refSound.current.setAttribute('src', href);
-                        this.refSound.current.setAttribute('muted', false);
+                        this.refSound.current.setAttribute('muted', false as unknown as string);
                         this.refSound.current.play();
                     } else if (typeof Audio !== 'undefined') {
                         const snd = new Audio(href); // buffers automatically when created
                         snd.play()
                             .catch(e => console.error(`Cannot play sound: ${e}`));
                     } else {
-                        let sound = window.document.getElementById('external_sound');
+                        let sound: HTMLAudioElement = window.document.getElementById('external_sound') as HTMLAudioElement;
                         if (!sound) {
                             sound = document.createElement('audio');
                             sound.setAttribute('id', 'external_sound');
@@ -1688,7 +1892,13 @@ class VisEngine extends React.Component {
         return false;
     }
 
-    onStateChange = (id, state) => {
+    onStateChange = (id: string, state: Partial<ioBroker.State & {
+        val: {
+            instance: string;
+            command: string;
+            data: any;
+        };
+    }>) => {
         if (!id || state === null || typeof state !== 'object') {
             return;
         }
@@ -1724,7 +1934,7 @@ class VisEngine extends React.Component {
                     this.props.socket.setState(id, { val: '', ack: true })
                         .catch(error => console.error(`Cannot reset ${id}: ${error}`));
                 }
-            } else if (this.onUserCommand(this._cmdInstance, state.val, this._cmdData)) {
+            } else if (this.onUserCommand(this._cmdInstance as string, state.val as string, this._cmdData)) {
                 // clear state
                 this.props.socket.setState(id, { val: '', ack: true })
                     .catch(error => console.error(`Cannot reset ${id}: ${error}`));
@@ -1761,7 +1971,7 @@ class VisEngine extends React.Component {
 
         // Do not update locals
         // not needed for local variables
-        const o = {};
+        const o: Record<string, any> = {};
         // Check new model
         o[`${id}.val`] = state.val;
 
@@ -1812,7 +2022,7 @@ class VisEngine extends React.Component {
         });
     };
 
-    subscribe = IDs => {
+    subscribe = (IDs: string[]) => {
         if (!Array.isArray(IDs)) {
             IDs = [IDs];
         }
@@ -1824,18 +2034,18 @@ class VisEngine extends React.Component {
                 console.log(`[${new Date().toISOString()}] +SUBSCRIBE: ${id}`);
                 this.createCanState(id);
                 if (!id.startsWith('local_')) {
-                    this.props.socket.subscribeState(id, this.onStateChange);
+                    this.props.socket.subscribeState(id, this.onStateChange as ioBroker.StateChangeHandler);
                 }
             }
         });
     };
 
-    createCanState(id) {
+    createCanState(id: string) {
         const _val = `${id}.val`;
 
-        if (this.canStates[_val] === undefined || this.canStates[_val] === null) {
+        if (this.canStates[_val as any] === undefined || this.canStates[_val as any] === null) {
             const now = Date.now();
-            const o = {};
+            const o: Record<string, any> = {};
             // set all together
             if (id.startsWith('local_')) {
                 o[_val] = getUrlParameter(id);
@@ -1855,7 +2065,7 @@ class VisEngine extends React.Component {
         }
     }
 
-    unsubscribe = IDs => {
+    unsubscribe = (IDs: string | string[]) => {
         if (!Array.isArray(IDs)) {
             IDs = [IDs];
         }
@@ -1867,7 +2077,7 @@ class VisEngine extends React.Component {
                     console.log(`[${new Date().toISOString()}] -UNSUBSCRIBE: ${id}`);
 
                     if (!id.startsWith('local_')) {
-                        this.props.socket.unsubscribeState(id, this.onStateChange);
+                        this.props.socket.unsubscribeState(id, this.onStateChange as ioBroker.StateChangeHandler);
                     }
                     delete this.subscribes[id];
                 }
@@ -1882,7 +2092,7 @@ class VisEngine extends React.Component {
             if (!this.props.editMode) {
                 if (visProject.___settings) {
                     if (this.scripts !== (visProject.___settings.scripts || '')) {
-                        this.scripts = visProject.___settings.scripts || '';
+                        this.scripts = visProject.___settings.scripts as string || '';
                         let userScript = window.document.getElementById('#vis_user_scripts');
                         if (!userScript) {
                             userScript = window.document.createElement('script');
@@ -1920,7 +2130,7 @@ ${this.scripts}
      * @param {string} id id of the html style element to insert
      * @param {string} styles the actual styles to insert
      */
-    static applyUserStyles(id, styles) {
+    static applyUserStyles(id: string, styles: string) {
         let styleEl = window.document.getElementById(id);
         if (styleEl) {
             styleEl.innerHTML = styles;
@@ -1948,12 +2158,12 @@ ${this.scripts}
         if (!this.visCommonCssLoaded || (this.props.visCommonCss && this.visCommonCssLoaded !== this.props.visCommonCss)) {
             this.visCommonCssLoaded = this.props.visCommonCss || true;
             if (this.props.visCommonCss) {
-                VisEngine.applyUserStyles('vis_common_user', this.visCommonCssLoaded || '');
+                VisEngine.applyUserStyles('vis_common_user', this.visCommonCssLoaded as string || '');
             } else {
                 readFile(this.props.socket, this.props.adapterId, 'vis-common-user.css')
                     .then(file => {
-                        this.visCommonCssLoaded = file || true;
-                        VisEngine.applyUserStyles('vis_common_user', file || '');
+                        this.visCommonCssLoaded = file as string || true;
+                        VisEngine.applyUserStyles('vis_common_user', file as string || '');
                     })
                     .catch(e => console.warn(`Common user CSS not found: ${e}`));
             }
@@ -1964,19 +2174,19 @@ ${this.scripts}
         if (!this.visUserCssLoaded || (this.props.visUserCss && this.visUserCssLoaded !== this.props.visUserCss)) {
             this.visUserCssLoaded = this.props.visUserCss || true;
             if (this.props.visUserCss) {
-                VisEngine.applyUserStyles('vis_user', this.visUserCssLoaded || '');
+                VisEngine.applyUserStyles('vis_user', this.visUserCssLoaded as string || '');
             } else {
                 readFile(this.props.socket, `${this.props.adapterName}.${this.props.instance}`, `${this.props.projectName}/vis-user.css`)
                     .then(file => {
-                        this.visUserCssLoaded = file || true;
-                        VisEngine.applyUserStyles('vis_user', file || '');
+                        this.visUserCssLoaded = file as string || true;
+                        VisEngine.applyUserStyles('vis_user', file as string || '');
                     })
                     .catch(e => console.warn(`User CSS "${this.props.projectName}/vis-user.css" not found: ${e}`));
             }
         }
     }
 
-    changeView = (view, subView) => {
+    changeView = (view: string, subView?: string) => {
         if (this.props.editMode) {
             window.alert(I18n.t('Ignored in edit mode'));
         } else {
@@ -2015,10 +2225,10 @@ ${this.scripts}
             );
 
             // inform the legacy widgets
-            window.jQuery && window.jQuery(window).trigger('viewChanged', this.props.activeView);
+            window.jQuery && (window.jQuery as any)(window).trigger('viewChanged', this.props.activeView);
         }
 
-        this.context = {
+        this.visContext = {
             $$: window.$$,
             VisView,
             activeView: this.props.activeView,
@@ -2033,7 +2243,7 @@ ${this.scripts}
             dateFormat: this.vis.dateFormat,
             disableInteraction: this.props.disableInteraction,
             editModeComponentClass: this.props.editModeComponentClass,
-            formatUtils: this.formatUtils,
+            formatUtils: this.formatUtils as unknown as VisFormatUtilsType,
             instance: this.props.instance,
             jQuery: window.jQuery,
             lang: this.props.lang,
@@ -2074,7 +2284,7 @@ ${this.scripts}
                     (!this.props.editMode && this.state.legacyRequestedViews.includes(view))
             )) {
                 return <VisView
-                    context={this.context}
+                    context={this.visContext}
                     activeView={this.props.activeView}
                     editMode={this.props.editMode}
                     viewsActiveFilter={this.viewsActiveFilter}
@@ -2101,43 +2311,5 @@ ${this.scripts}
         return views;
     }
 }
-
-VisEngine.propTypes = {
-    socket: PropTypes.object.isRequired,
-    activeView: PropTypes.string,
-    lang: PropTypes.string.isRequired,
-    editMode: PropTypes.bool,
-    editModeComponentClass: PropTypes.string,
-    onLoaded: PropTypes.func,
-    selectedWidgets: PropTypes.array,
-    setSelectedWidgets: PropTypes.func,
-    runtime: PropTypes.bool,
-    onWidgetsChanged: PropTypes.func,
-    onFontsUpdate: PropTypes.func,
-    showWidgetNames: PropTypes.bool,
-    registerEditorCallback: PropTypes.func,
-    visCommonCss: PropTypes.string,
-    visUserCss: PropTypes.string,
-    setSelectedGroup: PropTypes.func,
-    selectedGroup: PropTypes.string,
-    widgetHint: PropTypes.string,
-    themeType: PropTypes.string,
-    themeName: PropTypes.string,
-    theme: PropTypes.object,
-    onConfirmDialog: PropTypes.func,
-    onShowCode: PropTypes.func,
-
-    adapterName: PropTypes.string.isRequired,
-    instance: PropTypes.number.isRequired,
-    projectName: PropTypes.string.isRequired,
-    adapterId: PropTypes.string.isRequired, // vis.0
-    currentUser: PropTypes.object,
-    userGroups: PropTypes.object,
-    renderAlertDialog: PropTypes.func,
-    showLegacyFileSelector: PropTypes.func,
-    toggleTheme: PropTypes.func,
-    askAboutInclude: PropTypes.func,
-    setLoadingText: PropTypes.func,
-};
 
 export default VisEngine;

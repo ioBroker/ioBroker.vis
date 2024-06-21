@@ -568,7 +568,7 @@ const WidgetField = (props: WidgetFieldProps) => {
                         if (typeof customLegacyComponent.button.code === 'function') {
                             customLegacyComponent.button.code(customLegacyComponent.button);
                         }
-                        const $button = window.jQuery(e.target);
+                        const $button = (window.jQuery as any)(e.target);
                         $button.data('wdata', {
                             attr: field.name,
                             widgets: props.selectedWidgets,

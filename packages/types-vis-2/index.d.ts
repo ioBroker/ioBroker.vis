@@ -1,6 +1,7 @@
 import type React from 'react';
 import type moment from 'moment';
 import type { LegacyConnection, ThemeType, IobTheme } from '@iobroker/adapter-react-v5';
+import { string } from 'yargs';
 
 interface VisView {
     getOneWidget(index: number, widget: SingleWidget | GroupWidget, options: CreateWidgetOptions): React.JSX.Element | null;
@@ -8,7 +9,8 @@ interface VisView {
 
 export type ViewCommand = 'updateContainers' | 'changeFilter' | 'closeDialog' | 'openDialog' | 'collectFilters';
 export type ViewCommandOptions = {
-    filter?: string[];
+    filter?: string[] | string;
+    [key: string]: any;
 } | null;
 
 export type RxWidgetAttributeType =
@@ -802,7 +804,7 @@ export interface VisLegacy {
     navChangeCallbacks: (() => void)[];
     findNearestResolution: (width?: number, height?: number) => string;
     version: number;
-    states: VisRxWidgetStateValues;
+    states: JQuery;
     objects: Record<string, any>;
     isTouch: boolean;
     activeWidgets: string[];
@@ -822,44 +824,49 @@ export interface VisLegacy {
     conn: any;
     lastChangedView: string | null; // used in vis-2 to save last sent view name over vis-2.0.command
     updateContainers: () => void;
-    renderView: (viewDiv: string, view: string, hidden: boolean, cb: () => void) => void;
+    renderView: (viewDiv: string, view: string, hidden: boolean, cb: (viewDiv: string, view: string) => void) => void;
     updateFilter: (view?: string) => string[];
     destroyUnusedViews: () => void;
-    changeFilter: (view: string, filter: string, showEffect?: string, showDuration?: number, hideEffect?: string, hideDuration?: number) => boolean;
-    // setValue: this.setValue;
-    changeView: (viewDiv: string, view: string, hideOptions: any, showOptions: any, sync: boolean, cb: () => void) => void;
-    getCurrentPath: () => string;
+    changeFilter: (view: string, filter: string, showEffect?: string, showDuration?: number, hideEffect?: string, hideDuration?: number) => void;
+    setValue: (id: string, val: any) => void;
+    changeView: (viewDiv: string, view: string, hideOptions: any, showOptions: any, sync: boolean, cb: (viewDiv: string, view: string) => void) => void;
+    getCurrentPath: () => string | {view: string, path: string[]};
     navigateInView: (path: string) => void;
     onWakeUp: (callback: null | (() => void | string), wid?: string) => void;
-    // inspectWidgets: (viewDiv: string, view: string, addWidget, delWidget, onlyUpdate: boolean) => void,
-    // showMessage: (message: string, title: string, icon, width, callback) => void,
+    inspectWidgets: (viewDiv: string, view: string, addWidget, delWidget, onlyUpdate: boolean) => void,
+    showMessage: (message: string, title: string, icon: string, width: number, callback: (isYes: boolean) => void) => void,
     showWidgetHelper: (viewDiv: string, view: string, wid: string, isShow: boolean) => void;
     addFont: (fontName: string) => void;
-    // registerOnChange: (callback, arg, wid: string) => void;
-    // unregisterOnChange: (callback, arg, wid: string) => void;
+    registerOnChange: (callback: any, arg: string, wid: AnyWidgetId) => void;
+    unregisterOnChange: (callback: any, arg: string, wid: AnyWidgetId) => void;
     generateInstance: () => string;
-    // findByRoles: (stateId: string, roles) => any,
-    // findByName: (stateId: string, objName) => any,
+    findByRoles: (stateId: string, roles: string[]) => any,
+    findByName: (stateId: string, objName: string) => any,
     hideShowAttr: (widAttr: string) => void;
-    // bindingsCache: {},
+    bindingsCache: Record<string, any>;
     extractBinding: (format: string, doNotIgnoreEditMode?: boolean) => any;
-    // formatBinding: (format: string, view: string, wid: string, widget, widgetData, values) => string,
-    getViewOfWidget: (wid: string) => string | null;
+    formatBinding: (format: string, view: string, wid: AnyWidgetId, widget: Widget, widgetData: WidgetData, values: VisRxWidgetStateValues) => string,
+    getViewOfWidget: (wid: AnyWidgetId) => string | null;
     confirmMessage: (message: string, title: string, icon: string, width: number, callback: () => boolean) => void;
-    // config: {}, // storage of dialog positions and size (Deprecated)
+    config: {}, // storage of dialog positions and size (Deprecated)
     showCode: (code: string, title: string, mode?: 'html' | 'json' | 'css') => void;
-    // findCommonAttributes: (/* view, widgets */) => void;
+    findCommonAttributes: (/* view, widgets */) => void;
     bindWidgetClick: () => void;
     preloadImages: (sources: string[]) => void;
-    // updateStates: data => void,
-    getHistory: (id: string, options: any, callback: () => void) => void;
-    getHttp: (url: string, callback: () => string) => void;
+    updateStates: (data: Record<string, ioBroker.State>) => void,
+    getHistory: (id: string, options: any, callback: (arg1: any, arg2?: any) => void) => void;
+    getHttp: (url: string, callback: (data?: any) => string) => void;
     formatDate: (dateObj: Date | string | number, isDuration?: boolean, _format?: string) => string;
     widgets: any;
-    editSelect: (widAttr: string, values: any, notTranslate: boolean, init: () => void, onchange: () => void) => string | null;
-    isWidgetHidden: (view: string, widget: string, visibilityOidValue: null | number | string | undefined | boolean, widgetData: any) => boolean;
-    getUserGroups: () => Record<string, string[]>;
+    editSelect: (widAttr: string, values: any, notTranslate: boolean, init: () => void, onchange: () => void) => string | {
+        input: string;
+        init?: () => void, 
+        onchange?: () => void
+    } | null;
+    isWidgetHidden: (view: string, widget: AnyWidgetId, visibilityOidValue: null | number | string | undefined | boolean, widgetData: any) => boolean;
+    getUserGroups: () => Record<string, ioBroker.GroupObject>;
     detectBounce: (el: any, isUp?: boolean) => boolean;
+    isFloatComma?: boolean;
 }
 
 export interface MaterialIconSelectorProps {
@@ -941,7 +948,7 @@ declare global {
         marketplaceClient: string;
         collectClassesValue: Record<string, ClassesValue>;
         _: (word: string, ...args: (string | number | boolean)[]) => string;
-        jQuery: any;
+        jQuery: JQuery;
 
         VisMaterialIconSelector: React.ComponentType<MaterialIconSelectorState>;
     }
@@ -1042,9 +1049,15 @@ export interface VisStateUsage {
     widgetAttrInfo?: Record<string, RxWidgetInfoAttributesField>;
 }
 
+export type VisChangeHandlerCallback = (
+    type: 'style' | 'signal' | 'visibility' | 'lastChange' | 'binding',
+    item: VisLinkContextBinding | VisLinkContextItem,
+    stateId: string,
+    state: ioBroker.State) => void;
+
 export interface VisLinkContext extends VisStateUsage {
-    unregisterChangeHandler: (wid: AnyWidgetId, cb: (type: 'style' | 'signal' | 'visibility' | 'lastChange' | 'binding', item: VisLinkContextBinding | VisLinkContextItem, stateId: string, state: ioBroker.State) => void) => void;
-    registerChangeHandler: (wid: AnyWidgetId, cb: (type: 'style' | 'signal' | 'visibility' | 'lastChange' | 'binding', item: VisLinkContextBinding | VisLinkContextItem, stateId: string, state: ioBroker.State) => void) => void;
+    unregisterChangeHandler: (wid: AnyWidgetId, cb: VisChangeHandlerCallback) => void;
+    registerChangeHandler: (wid: AnyWidgetId, cb: VisChangeHandlerCallback) => void;
     subscribe: (stateId: string | string[]) => void;
     unsubscribe: (stateId: string | string[]) => void;
     getViewRef: (view: string) => React.RefObject<HTMLDivElement> | null;
@@ -1079,15 +1092,15 @@ export interface VisTheme extends IobTheme {
 }
 
 export interface VisContext {
-    // $$: any;
+    $$: any;
     VisView: VisView;
     activeView: string;
     adapterName: string;
     allWidgets: Record<string, CanWidgetStore>;
     askAboutInclude: (wid: AnyWidgetId, toWid: AnyWidgetId, cb: (_wid: AnyWidgetId, _toWid: AnyWidgetId) => void) => void;
     buildLegacyStructures: () => void;
-    // can: any;
-    // canStates: any;
+    can: any;
+    canStates: JQuery;
     changeProject: (project: Project, ignoreHistory?: boolean) => Promise<void>;
     changeView: (view: string, subView?: string) => void;
     dateFormat: string;
@@ -1095,12 +1108,12 @@ export interface VisContext {
     editModeComponentClass: string;
     formatUtils: VisFormatUtils;
     instance: number; // vis instance number (not browser instance)
-    // jQuery: any;
+    jQuery: JQuery;
     lang: ioBroker.Languages;
     linkContext: VisLinkContext;
     lockDragging: boolean;
     moment: typeof moment;
-    // onCommand: (view: string, command: string, data?: any) => void
+    onCommand: (view: string, command: ViewCommand, options?: ViewCommandOptions) => any;
     onWidgetsChanged: (
         changedData: {
             wid: AnyWidgetId;

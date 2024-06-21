@@ -6,6 +6,8 @@ import {
 import type { Styles } from '@mui/styles';
 import { withStyles } from '@mui/styles';
 
+import type JQuery from 'jquery';
+
 import {
     Add as AddIcon,
     Edit as EditIcon,
@@ -28,7 +30,7 @@ import PermissionsDialog from './PermissionsDialog';
 
 declare global {
     interface Window {
-        $: any;
+        $: JQuery;
     }
 }
 
@@ -160,7 +162,7 @@ const ProjectsManage: React.FC<ProjectsManageProps> = props => {
                 }
                 date += `-${mString}-`;
                 setWorking(false);
-                window.$('body').append(`<a id="zip_download" href="data: application/zip;base64,${data.data}" download="${date}${projectName}.zip"></a>`);
+                (window.$ as any)('body').append(`<a id="zip_download" href="data: application/zip;base64,${data.data}" download="${date}${projectName}.zip"></a>`);
                 document.getElementById('zip_download').click();
                 document.getElementById('zip_download').remove();
             }

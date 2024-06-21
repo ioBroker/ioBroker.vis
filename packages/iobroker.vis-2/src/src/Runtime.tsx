@@ -31,7 +31,7 @@ import {
 
 import type { GenericAppProps, GenericAppState, ThemeName } from '@iobroker/adapter-react-v5/types';
 import type {
-    AnyWidgetId, GroupWidgetId, Project, SingleWidgetId, ViewSettings, WidgetData, WidgetStyle,
+    AnyWidgetId, GroupWidgetId, Project, SingleWidgetId, ViewSettings, VisTheme, WidgetData, WidgetStyle,
 } from '@iobroker/types-vis-2';
 import {
     GroupWidget, SingleWidget, View, Widget,
@@ -154,7 +154,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
 
     renderImportProjectDialog?(): React.JSX.Element;
 
-    setSelectedWidgets: (selectedWidgets: string[], selectedView: string | (() => void), cb: () => void) => void;
+    setSelectedWidgets: (selectedWidgets: AnyWidgetId[], selectedView?: string | (() => void), cb?: () => void) => Promise<void>;
 
     setSelectedGroup: (selectedGroup: GroupWidgetId) => void;
 
@@ -907,7 +907,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
             window.vis.conn.sendCommand(window.vis.instance, 'changedView', window.vis.lastChangedView);
 
             // inform the legacy widgets
-            window.jQuery && window.jQuery(window).trigger('viewChanged', selectedView);
+            window.jQuery && (window.jQuery as any)(window).trigger('viewChanged', selectedView);
         }
 
         // disable group edit if view changed
@@ -1095,7 +1095,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
                             onClick={() => this.setState({ showImportDialog: true })}
                             style={{ backgroundColor: '#112233', color: '#4b9ed3' }}
                         >
-                            <ListItemIcon><BiImport fontSize={20} /></ListItemIcon>
+                            <ListItemIcon><BiImport fontSize="20" /></ListItemIcon>
                             <ListItemText>{I18n.t('Import project')}</ListItemText>
                         </ListItemButton> : null}
                     </MenuList>
@@ -1167,7 +1167,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
             activeView={this.state.selectedView || ''}
             editMode={!this.state.runtime && this.state.editMode}
             runtime={this.state.runtime}
-            socket={this.socket}
+            socket={this.socket as unknown as LegacyConnection}
             visCommonCss={this.state.visCommonCss}
             visUserCss={this.state.visUserCss}
             lang={this.socket.systemLang}
@@ -1187,7 +1187,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
             registerEditorCallback={this.state.runtime ? null : this.registerCallback}
             themeType={this.state.themeType}
             themeName={this.state.themeName}
-            theme={this.state.theme}
+            theme={this.state.theme as VisTheme}
             adapterId={this.adapterId}
             editModeComponentClass={this.props.classes?.editModeComponentClass}
             onIgnoreMouseEvents={this.onIgnoreMouseEvents}

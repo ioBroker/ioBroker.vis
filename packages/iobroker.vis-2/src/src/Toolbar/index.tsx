@@ -295,7 +295,7 @@ const Toolbar: React.FC<ToolbarProps> = props => {
     return <div className={classes.lightedPanel}>
         <span className={classes.right}>
             <div className={classes.rightBlock}>
-                {props.needSave ? <SaveIcon fontSize={20 as any} className={classes.saveIcon} /> : null}
+                {props.needSave ? <SaveIcon fontSize={'20' as any} className={classes.saveIcon} /> : null}
                 {props.toolbarHeight === 'veryNarrow' ? currentUser : null}
                 {heightButton}
                 <ToggleThemeMenu

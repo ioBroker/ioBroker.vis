@@ -224,7 +224,7 @@ class VisFormatUtils {
         return result;
     }
 
-    private formatDate(dateObj: string | Date | number, isDuration?: boolean | string, _format?: string): string {
+    formatDate(dateObj: string | Date | number, isDuration?: boolean | string, _format?: string): string {
         // copied from js-controller/lib/adapter.js
         if ((typeof isDuration === 'string' && isDuration.toLowerCase() === 'duration') || isDuration === true) {
             isDuration = true;
