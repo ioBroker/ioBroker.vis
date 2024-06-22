@@ -20,7 +20,7 @@ import PropTypes from 'prop-types';
 import { I18n } from '@iobroker/adapter-react-v5';
 
 // eslint-disable-next-line import/no-cycle
-import type { GetRxDataFromWidget, RxRenderWidgetProps } from '@iobroker/types-vis-2';
+import type { GetRxDataFromWidget, RxRenderWidgetProps, RxWidgetInfoGroup } from '@iobroker/types-vis-2';
 import VisRxWidget from '../../visRxWidget';
 
 interface RxData {
@@ -35,7 +35,7 @@ class BasicViewInWidget8 extends VisRxWidget<RxData> {
             id: 'tplStatefulContainerView8',
             visSet: 'basic',
             visName: 'View in widget 8',
-            visAttrs: 'oid;count[1]/number;group.views;contains_view_(0-count)/views',
+            visAttrs: 'oid;count[1]/number;group.views;contains_view_(0-count)/views' as unknown as RxWidgetInfoGroup[],
             visPrev: 'widgets/basic/img/Prev_StatefulContainerView8.png',
         } as const;
     }

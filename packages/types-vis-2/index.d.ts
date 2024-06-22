@@ -213,7 +213,7 @@ export type RxWidgetInfoAttributesFieldSelect = {
     /** Field type */
     readonly type: 'select' | 'nselect' | 'auto';
     /** Options for a select type */
-    readonly options: { value: string; label: string }[] | string[];
+    readonly options: { value: string | boolean | number; label: string }[] | string[];
     /** Field default value */
     readonly default?: string;
     /** Do not translate options */
@@ -1214,7 +1214,7 @@ interface RxWidgetInfo {
     readonly visWidgetColor?: string;
 
     /** Groups of attributes */
-    visAttrs: (readonly RxWidgetInfoGroup[]) | readonly string;
+    visAttrs: (readonly RxWidgetInfoGroup[]);
     /** Default style for widget */
     readonly visDefaultStyle?: React.CSSProperties;
     /** Position in the widget set */

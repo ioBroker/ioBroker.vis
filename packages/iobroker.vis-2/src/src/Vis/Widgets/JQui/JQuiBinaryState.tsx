@@ -13,6 +13,7 @@
  * (Free for non-commercial use).
  */
 
+import type { CSSProperties } from 'react';
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -27,16 +28,34 @@ import {
     I18n, Icon,
 } from '@iobroker/adapter-react-v5';
 
+import type { VisBaseWidgetProps } from '@/Vis/visBaseWidget';
 import VisBaseWidget from '@/Vis/visBaseWidget';
 // eslint-disable-next-line import/no-cycle
+import type { GetRxDataFromWidget, RxRenderWidgetProps, RxWidgetInfo } from '@iobroker/types-vis-2';
+import type { VisRxWidgetState } from '../../visRxWidget';
 import VisRxWidget from '../../visRxWidget';
 
-class JQuiBinaryState extends VisRxWidget {
-    constructor(props) {
+// eslint-disable-next-line no-use-before-define
+type RxData = Omit<GetRxDataFromWidget<typeof JQuiBinaryState>, 'test'> & {
+    test: string | boolean;
+    on_text: string;
+    off_text: string;
+};
+
+interface JQuiBinaryStateState extends VisRxWidgetState {
+    isOn: boolean;
+    height: number;
+    width: number;
+}
+
+class JQuiBinaryState extends VisRxWidget<RxData, JQuiBinaryStateState> {
+    textsLengthCache: Record<string, number>;
+
+    constructor(props: VisBaseWidgetProps) {
         super(props);
-        this.state.isOn = false;
-        this.state.height = 0;
-        this.state.width = 0;
+        (this.state as JQuiBinaryStateState).isOn = false;
+        (this.state as JQuiBinaryStateState).height = 0;
+        (this.state as JQuiBinaryStateState).width = 0;
     }
 
     static getWidgetInfo() {
@@ -72,13 +91,13 @@ class JQuiBinaryState extends VisRxWidget {
                             type: 'checkbox',
                             label: 'jqui_push_mode',
                             tooltip: 'jqui_push_mode_tooltip',
-                            hidden: data => data.type !== 'button' && data.type !== 'round-button' && data.type !== 'image',
+                            hidden: (data: any) => data.type !== 'button' && data.type !== 'round-button' && data.type !== 'image',
                         },
                         {
                             name: 'click_id',
                             type: 'id',
                             noSubscribe: true,
-                            hidden: data => !!data.readOnly,
+                            hidden: (data: any) => !!data.readOnly,
                         },
                         {
                             name: 'invert',
@@ -100,7 +119,7 @@ class JQuiBinaryState extends VisRxWidget {
                 {
                     name: 'html',
                     label: 'jqui_html',
-                    hidden: data => data.type !== 'html',
+                    hidden: (data: any) => data.type !== 'html',
                     fields: [
                         {
                             name: 'html_true',
@@ -123,26 +142,26 @@ class JQuiBinaryState extends VisRxWidget {
                             type: 'text',
                             label: 'text_false',
                             default: I18n.t('jqui_off').replace('jqui_', ''),
-                            hidden: data => data.type === 'image' || data.type === 'html',
+                            hidden: (data: any) => data.type === 'image' || data.type === 'html',
                         },
                         {
                             name: 'text_true',
                             type: 'text',
                             label: 'text_true',
                             default: I18n.t('jqui_on').replace('jqui_', ''),
-                            hidden: data => data.type === 'image' || data.type === 'html' || data.type === 'round-button',
+                            hidden: (data: any) => data.type === 'image' || data.type === 'html' || data.type === 'round-button',
                         },
                         {
                             name: 'color_false',
                             type: 'color',
                             label: 'color_false',
-                            hidden: data => data.type === 'image' || data.type === 'html' || !data.text_false,
+                            hidden: (data: any) => data.type === 'image' || data.type === 'html' || !data.text_false,
                         },
                         {
                             name: 'color_true',
                             type: 'color',
                             label: 'color_true',
-                            hidden: data => data.type === 'image' || data.type === 'html' || !data.text_true,
+                            hidden: (data: any) => data.type === 'image' || data.type === 'html' || !data.text_true,
                         },
                         {
                             name: 'alt_false',
@@ -159,7 +178,7 @@ class JQuiBinaryState extends VisRxWidget {
                             type: 'checkbox',
                             label: 'jqui_equal_text_length',
                             tooltip: 'jqui_equal_text_length_tooltip',
-                            hidden: data => !data.text_true || !data.text_false,
+                            hidden: (data: any) => !data.text_true || !data.text_false,
                         },
                     ],
                 },
@@ -170,7 +189,7 @@ class JQuiBinaryState extends VisRxWidget {
                             name: 'jquery_style',
                             label: 'jqui_jquery_style',
                             type: 'checkbox',
-                            hidden: data => data.type !== 'button',
+                            hidden: (data: any) => data.type !== 'button',
                         },
                         {
                             name: 'padding',
@@ -178,7 +197,7 @@ class JQuiBinaryState extends VisRxWidget {
                             min: 0,
                             max: 100,
                             default: 5,
-                            // hidden: data => !data.no_style && !data.jquery_style,
+                            // hidden: (data: any) => !data.no_style && !data.jquery_style,
                         },
                         {
                             name: 'variant',
@@ -187,7 +206,7 @@ class JQuiBinaryState extends VisRxWidget {
                             noTranslation: true,
                             options: ['contained', 'outlined', 'standard'],
                             default: 'contained',
-                            hidden: data => data.type !== 'button' && data.type !== 'radio',
+                            hidden: (data: any) => data.type !== 'button' && data.type !== 'radio',
                         },
                         {
                             name: 'orientation',
@@ -196,13 +215,13 @@ class JQuiBinaryState extends VisRxWidget {
                             noTranslation: true,
                             options: ['horizontal', 'vertical'],
                             default: 'horizontal',
-                            hidden: data => data.type !== 'radio',
+                            hidden: (data: any) => data.type !== 'radio',
                         },
                         {
                             name: 'notEqualLength',
                             label: 'jqui_not_equal_length',
                             type: 'checkbox',
-                            hidden: data => data.type !== 'radio' || data.orientation !== 'horizontal',
+                            hidden: (data: any) => data.type !== 'radio' || data.orientation !== 'horizontal',
                         },
                         { name: 'html_prepend', type: 'html' },
                         { name: 'html_append', type: 'html' },
@@ -216,26 +235,26 @@ class JQuiBinaryState extends VisRxWidget {
                             name: 'src_false',
                             label: 'jqui_image',
                             type: 'image',
-                            hidden: data => data.icon_false,
+                            hidden: (data: any) => data.icon_false,
                         },
                         {
                             name: 'icon_false',
                             label: 'jqui_icon',
                             type: 'icon64',
-                            hidden: data => data.src_false,
+                            hidden: (data: any) => data.src_false,
                         },
                         {
                             name: 'icon_color_false',
                             label: 'jqui_color',
                             type: 'color',
-                            hidden: data => !data.icon_false,
+                            hidden: (data: any) => !data.icon_false,
                         },
 
                         {
                             name: 'invert_icon_false',
                             label: 'jqui_invert_icon',
                             type: 'checkbox',
-                            hidden: data => !data.src_false && !data.icon_false,
+                            hidden: (data: any) => !data.src_false && !data.icon_false,
                         },
                         {
                             name: 'imageHeight_false',
@@ -243,7 +262,7 @@ class JQuiBinaryState extends VisRxWidget {
                             type: 'slider',
                             min: 0,
                             max: 200,
-                            hidden: data => !data.src_false && !data.icon_false,
+                            hidden: (data: any) => !data.src_false && !data.icon_false,
                         },
                     ],
                 },
@@ -255,25 +274,25 @@ class JQuiBinaryState extends VisRxWidget {
                             name: 'src_true',
                             label: 'jqui_image',
                             type: 'image',
-                            hidden: data => data.icon_true,
+                            hidden: (data: any) => data.icon_true,
                         },
                         {
                             name: 'icon_true',
                             label: 'jqui_icon',
                             type: 'icon64',
-                            hidden: data => data.src_true,
+                            hidden: (data: any) => data.src_true,
                         },
                         {
                             name: 'icon_color_true',
                             label: 'jqui_color',
                             type: 'color',
-                            hidden: data => !data.icon_true && !data.icon_false,
+                            hidden: (data: any) => !data.icon_true && !data.icon_false,
                         },
                         {
                             name: 'invert_icon_true',
                             label: 'jqui_invert_icon',
                             type: 'checkbox',
-                            hidden: data => !data.src_true && !data.icon_true,
+                            hidden: (data: any) => !data.src_true && !data.icon_true,
                         },
                         {
                             name: 'imageHeight_true',
@@ -281,12 +300,12 @@ class JQuiBinaryState extends VisRxWidget {
                             type: 'slider',
                             min: 0,
                             max: 200,
-                            hidden: data => !data.src_true && !data.icon_true,
+                            hidden: (data: any) => !data.src_true && !data.icon_true,
                         },
                     ],
                 },
             ],
-        };
+        } as const;
     }
 
     async componentDidMount() {
@@ -327,7 +346,7 @@ class JQuiBinaryState extends VisRxWidget {
         }
     }
 
-    static findField(widgetInfo, name) {
+    static findField(widgetInfo: RxWidgetInfo, name: string) {
         return VisRxWidget.findField(widgetInfo, name);
     }
 
@@ -336,7 +355,7 @@ class JQuiBinaryState extends VisRxWidget {
         return JQuiBinaryState.getWidgetInfo();
     }
 
-    onStateUpdated(id, state) {
+    onStateUpdated(id: string, state: ioBroker.State) {
         if (id === this.state.rxData.oid && state) {
             const isOn = state.val === true || state.val === 'true' || state.val === 1 || state.val === '1' || state.val === 'on' || state.val === 'ON' || state.val === 'On';
             if (this.state.isOn !== isOn) {
@@ -355,7 +374,7 @@ class JQuiBinaryState extends VisRxWidget {
         return '';
     }
 
-    onClick(isOn) {
+    onClick(isOn?: boolean) {
         if (this.state.rxData.readOnly || this.props.editMode) {
             return;
         }
@@ -408,7 +427,7 @@ class JQuiBinaryState extends VisRxWidget {
         return value;
     }
 
-    renderIcon(isOn, doNotFallback) {
+    renderIcon(isOn: boolean, doNotFallback?: boolean) {
         let icon;
         let invert;
         let height;
@@ -429,7 +448,7 @@ class JQuiBinaryState extends VisRxWidget {
                 color = color || this.state.rxData.icon_color_false;
             }
         }
-        const style = {};
+        const style: CSSProperties = {};
         if (invert) {
             style.filter = 'invert(1)';
         }
@@ -487,9 +506,9 @@ class JQuiBinaryState extends VisRxWidget {
         return null;
     }
 
-    getTextWidth(text) {
+    getTextWidth(text: string) {
         if (!this.refService.current) {
-            return text * 14;
+            return (text as unknown as number) * 14;
         }
         this.textsLengthCache = this.textsLengthCache || {};
         if (this.textsLengthCache[text]) {
@@ -508,7 +527,7 @@ class JQuiBinaryState extends VisRxWidget {
         return width;
     }
 
-    renderText(isOn) {
+    renderText(isOn: boolean) {
         let text;
         let color;
 
@@ -534,7 +553,7 @@ class JQuiBinaryState extends VisRxWidget {
         return { text, color };
     }
 
-    renderButton(isOn, style) {
+    renderButton(isOn: boolean, style: CSSProperties) {
         const icon = this.renderIcon(isOn);
         const text = this.renderText(isOn);
 
@@ -542,7 +561,7 @@ class JQuiBinaryState extends VisRxWidget {
 
         // Button
         return <Button
-            variant={this.state.rxData.variant === undefined ? 'contained' : this.state.rxData.variant}
+            variant={this.state.rxData.variant === undefined ? 'contained' : this.state.rxData.variant as any}
             color={isOn ? 'primary' : 'grey'}
             onMouseDown={this.state.rxData.pushMode && !this.state.rxData.readOnly && !this.props.editMode ? () => this.onMyMouseDown() : undefined}
             onMouseUp={this.state.rxData.pushMode && !this.state.rxData.readOnly && !this.props.editMode ? () => this.onMyMouseUp() : undefined}
@@ -554,7 +573,7 @@ class JQuiBinaryState extends VisRxWidget {
         </Button>;
     }
 
-    renderFab(isOn, style) {
+    renderFab(isOn: boolean, style: CSSProperties) {
         const icon = this.renderIcon(isOn);
         const text = this.renderText(isOn);
 
@@ -562,7 +581,7 @@ class JQuiBinaryState extends VisRxWidget {
         // Fab
         return <Fab
             style={style}
-            color={isOn ? 'primary' : 'grey'}
+            color={isOn ? 'primary' : 'grey' as any}
             onMouseDown={this.state.rxData.pushMode && !this.state.rxData.readOnly && !this.props.editMode ? () => this.onMyMouseDown() : undefined}
             onMouseUp={this.state.rxData.pushMode && !this.state.rxData.readOnly && !this.props.editMode ? () => this.onMyMouseUp() : undefined}
             onClick={!this.state.rxData.pushMode && !this.state.rxData.readOnly && !this.props.editMode ? () => this.onClick() : undefined}
@@ -571,7 +590,7 @@ class JQuiBinaryState extends VisRxWidget {
         </Fab>;
     }
 
-    renderHtml(isOn) {
+    renderHtml(isOn: boolean) {
         let html;
         if (isOn) {
             html = this.state.rxData.html_true;
@@ -602,7 +621,7 @@ class JQuiBinaryState extends VisRxWidget {
         ];
     }
 
-    renderSwitch(isOn, style) {
+    renderSwitch(isOn: boolean, style: CSSProperties) {
         const on = this.state.rxData.text_true !== undefined ? this.state.rxData.text_true : this.state.rxData.on_text; // back compatibility with radio on/off
         const textColorOn = this.state.rxData.color_true;
         const off = this.state.rxData.text_false !== undefined ? this.state.rxData.text_false : this.state.rxData.off_text; // back compatibility with radio on/off
@@ -655,7 +674,7 @@ class JQuiBinaryState extends VisRxWidget {
         </div>;
     }
 
-    renderCheckbox(isOn, style) {
+    renderCheckbox(isOn: boolean, style: CSSProperties) {
         let text = isOn ?
             (this.state.rxData.text_true !== undefined ? this.state.rxData.text_true : this.state.rxData.on_text) // back compatibility with radio on/off
             : (this.state.rxData.text_false !== undefined ? this.state.rxData.text_false : this.state.rxData.off_text); // back compatibility with radio on/off
@@ -686,7 +705,7 @@ class JQuiBinaryState extends VisRxWidget {
         />;
     }
 
-    renderRadio(isOn, style) {
+    renderRadio(isOn: boolean, style: CSSProperties) {
         const on = this.state.rxData.text_true !== undefined ? this.state.rxData.text_true : this.state.rxData.on_text; // back compatibility with radio on/off
         const off = this.state.rxData.text_false !== undefined ? this.state.rxData.text_false : this.state.rxData.off_text; // back compatibility with radio on/off
         const onIcon = this.renderIcon(true);
@@ -701,8 +720,8 @@ class JQuiBinaryState extends VisRxWidget {
 
         return <ButtonGroup
             style={style}
-            variant={variant}
-            orientation={this.state.rxData.orientation || 'horizontal'}
+            variant={variant as any}
+            orientation={this.state.rxData.orientation as any || 'horizontal'}
         >
             <Button
                 style={buttonStyle}
@@ -733,13 +752,13 @@ class JQuiBinaryState extends VisRxWidget {
         ) {
             if (this.state.rxData.type === 'button') {
                 const el = this.refService.current.getElementsByClassName('vis-widget-body');
-                if (el?.length && !this.refService.current._jQueryDone) {
-                    this.refService.current._jQueryDone = true;
-                    window.jQuery(el[0]).button();
+                if (el?.length && !(this.refService.current as any)._jQueryDone) {
+                    (this.refService.current as any)._jQueryDone = true;
+                    (window.jQuery as any)(el[0]).button();
                     const textEl = el[0].getElementsByClassName('ui-button-text');
                     if (textEl?.length) {
-                        textEl[0].style.display = 'flex';
-                        textEl[0].style.alignItems = 'center';
+                        (textEl[0] as any).style.display = 'flex';
+                        (textEl[0] as any).style.alignItems = 'center';
                     }
                 }
             }
@@ -755,14 +774,14 @@ class JQuiBinaryState extends VisRxWidget {
         }
     }
 
-    renderWidgetBody(props) {
+    renderWidgetBody(props: RxRenderWidgetProps) {
         super.renderWidgetBody(props);
         const isOn = this.isOn();
 
-        const buttonStyle = {};
+        const buttonStyle: CSSProperties = {};
         // apply style from the element
         Object.keys(this.state.rxStyle).forEach(attr => {
-            const value = this.state.rxStyle[attr];
+            const value = this.state.rxStyle[attr as keyof typeof this.state.rxStyle];
             if (value !== null &&
                 value !== undefined &&
                 VisRxWidget.POSSIBLE_MUI_STYLES.includes(attr)
@@ -771,7 +790,7 @@ class JQuiBinaryState extends VisRxWidget {
                     /(-\w)/g,
                     text => text[1].toUpperCase(),
                 );
-                buttonStyle[attr] = value;
+                (buttonStyle as any)[attr] = value;
             }
         });
 
@@ -791,7 +810,7 @@ class JQuiBinaryState extends VisRxWidget {
         buttonStyle.height = '100%';
         buttonStyle.minWidth = 'unset';
         let content;
-        const bodyStyle = { textAlign: 'center' };
+        const bodyStyle: CSSProperties = { textAlign: 'center' };
         if (type === 'radio') {
             content = this.renderRadio(isOn, buttonStyle);
         } else if (type === 'html' || (type === 'button' && this.state.rxData.jquery_style)) {
@@ -808,7 +827,7 @@ class JQuiBinaryState extends VisRxWidget {
             content = this.renderCheckbox(isOn, buttonStyle);
         } else if (type === 'image') {
             bodyStyle.cursor = !this.state.rxData.readOnly ? 'pointer' : undefined;
-            content = this.renderIcon(isOn, buttonStyle);
+            content = this.renderIcon(isOn, !!buttonStyle);
         } else if (type === 'round-button') {
             content = this.renderFab(isOn, buttonStyle);
         } else if (!this.state.rxData.jquery_style) {
@@ -831,13 +850,5 @@ class JQuiBinaryState extends VisRxWidget {
         return result;
     }
 }
-
-JQuiBinaryState.propTypes = {
-    id: PropTypes.string.isRequired,
-    context: PropTypes.object.isRequired,
-    view: PropTypes.string.isRequired,
-    editMode: PropTypes.bool.isRequired,
-    tpl: PropTypes.string.isRequired,
-};
 
 export default JQuiBinaryState;
