@@ -17,9 +17,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 // eslint-disable-next-line import/no-cycle
+import type { GetRxDataFromWidget, RxRenderWidgetProps } from '@iobroker/types-vis-2';
 import VisRxWidget from '../../visRxWidget';
 
-class BasicSvgBool extends VisRxWidget {
+// eslint-disable-next-line no-use-before-define
+type RxData = GetRxDataFromWidget<typeof BasicSvgBool>;
+
+class BasicSvgBool extends VisRxWidget<RxData> {
     static getWidgetInfo() {
         return {
             id: 'tplValueBoolCtrlSvg',
@@ -62,7 +66,7 @@ class BasicSvgBool extends VisRxWidget {
                 width: 85,
                 height: 85,
             },
-        };
+        } as const;
     }
 
     // eslint-disable-next-line class-methods-use-this
@@ -96,11 +100,11 @@ class BasicSvgBool extends VisRxWidget {
         const val = parseFloat(str);
         let opacity = this.state.rxData.svg_opacity;
         if (this.props.editMode) {
-            if (opacity === undefined || opacity === null || opacity === '') {
+            if (opacity === undefined || opacity === null || (opacity as unknown as string) === '') {
                 opacity = 1;
             }
 
-            if (parseFloat(opacity) < 0.2) {
+            if (parseFloat(opacity as unknown as string) < 0.2) {
                 opacity = 0.2;
             }
         }
@@ -122,7 +126,7 @@ class BasicSvgBool extends VisRxWidget {
         />;
     }
 
-    renderWidgetBody(props) {
+    renderWidgetBody(props: RxRenderWidgetProps) {
         super.renderWidgetBody(props);
 
         return <div
@@ -133,12 +137,5 @@ class BasicSvgBool extends VisRxWidget {
         </div>;
     }
 }
-
-BasicSvgBool.propTypes = {
-    id: PropTypes.string.isRequired,
-    context: PropTypes.object.isRequired,
-    view: PropTypes.string.isRequired,
-    editMode: PropTypes.bool.isRequired,
-};
 
 export default BasicSvgBool;

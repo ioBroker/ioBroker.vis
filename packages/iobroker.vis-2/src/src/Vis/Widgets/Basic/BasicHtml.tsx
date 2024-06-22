@@ -17,10 +17,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 // eslint-disable-next-line import/no-cycle
+import type { GetRxDataFromWidget, RxRenderWidgetProps } from '@iobroker/types-vis-2';
 import VisRxWidget from '../../visRxWidget';
 import DangerousHtmlWithScript from '../Utils/DangerousHtmlWithScript';
 
-class BasicHtml extends VisRxWidget {
+// eslint-disable-next-line no-use-before-define
+type RxData = GetRxDataFromWidget<typeof BasicHtml>;
+
+class BasicHtml extends VisRxWidget<RxData> {
+    interval: ReturnType<typeof setInterval> | null = null;
+
     static getWidgetInfo() {
         return {
             id: 'tplHtml',
@@ -48,7 +54,7 @@ class BasicHtml extends VisRxWidget {
                 width: 200,
                 height: 130,
             },
-        };
+        } as const;
     }
 
     // eslint-disable-next-line class-methods-use-this
@@ -64,19 +70,19 @@ class BasicHtml extends VisRxWidget {
 
     async componentDidMount() {
         super.componentDidMount();
-        if (parseInt(this.state.rxData.refreshInterval, 10)) {
-            this.interval = setInterval(() => this.forceUpdate(), parseInt(this.state.rxData.refreshInterval, 10));
+        if (parseInt(this.state.rxData.refreshInterval as unknown as string, 10)) {
+            this.interval = setInterval(() => this.forceUpdate(), parseInt(this.state.rxData.refreshInterval as unknown as string, 10));
         }
     }
 
-    onRxDataChanged(prevRxData) {
+    onRxDataChanged(prevRxData: typeof this.state.rxData) {
         super.onRxDataChanged(prevRxData);
         if (this.interval) {
             clearInterval(this.interval);
             this.interval = null;
         }
-        if (parseInt(this.state.rxData.refreshInterval, 10)) {
-            this.interval = setInterval(() => this.forceUpdate(), parseInt(this.state.rxData.refreshInterval, 10));
+        if (parseInt(this.state.rxData.refreshInterval as unknown as string, 10)) {
+            this.interval = setInterval(() => this.forceUpdate(), parseInt(this.state.rxData.refreshInterval as unknown as string, 10));
         }
     }
 
@@ -85,18 +91,11 @@ class BasicHtml extends VisRxWidget {
      *
      * @return {Element}
      */
-    renderWidgetBody(props) {
+    renderWidgetBody(props: RxRenderWidgetProps) {
         super.renderWidgetBody(props);
 
         return <DangerousHtmlWithScript className="vis-widget-body" html={this.state.rxData.html} isDiv wid={this.props.id} />;
     }
 }
-
-BasicHtml.propTypes = {
-    id: PropTypes.string.isRequired,
-    context: PropTypes.object.isRequired,
-    view: PropTypes.string.isRequired,
-    editMode: PropTypes.bool.isRequired,
-};
 
 export default BasicHtml;

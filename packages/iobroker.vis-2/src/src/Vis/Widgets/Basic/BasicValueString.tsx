@@ -19,9 +19,13 @@ import PropTypes from 'prop-types';
 import { Icon } from '@iobroker/adapter-react-v5';
 
 // eslint-disable-next-line import/no-cycle
+import type { GetRxDataFromWidget, RxRenderWidgetProps } from '@iobroker/types-vis-2';
 import VisRxWidget from '../../visRxWidget';
 
-class BasicValueString extends VisRxWidget {
+// eslint-disable-next-line no-use-before-define
+type RxData = GetRxDataFromWidget<typeof BasicValueString>;
+
+class BasicValueString extends VisRxWidget<RxData> {
     static getWidgetInfo() {
         return {
             id: 'tplValueString',
@@ -51,7 +55,7 @@ class BasicValueString extends VisRxWidget {
                 width: 100,
                 height: 30,
             },
-        };
+        } as const;
     }
 
     // eslint-disable-next-line class-methods-use-this
@@ -59,7 +63,7 @@ class BasicValueString extends VisRxWidget {
         return BasicValueString.getWidgetInfo();
     }
 
-    renderWidgetBody(props) {
+    renderWidgetBody(props: RxRenderWidgetProps) {
         super.renderWidgetBody(props);
 
         // set default width and height
@@ -113,12 +117,5 @@ class BasicValueString extends VisRxWidget {
         </div>;
     }
 }
-
-BasicValueString.propTypes = {
-    id: PropTypes.string.isRequired,
-    context: PropTypes.object.isRequired,
-    view: PropTypes.string.isRequired,
-    editMode: PropTypes.bool.isRequired,
-};
 
 export default BasicValueString;

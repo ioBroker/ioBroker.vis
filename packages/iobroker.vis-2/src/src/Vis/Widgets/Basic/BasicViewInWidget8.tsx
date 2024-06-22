@@ -13,15 +13,23 @@
  * (Free for non-commercial use).
  */
 
+import type { CSSProperties } from 'react';
 import React from 'react';
 import PropTypes from 'prop-types';
 
 import { I18n } from '@iobroker/adapter-react-v5';
 
 // eslint-disable-next-line import/no-cycle
+import type { GetRxDataFromWidget, RxRenderWidgetProps } from '@iobroker/types-vis-2';
 import VisRxWidget from '../../visRxWidget';
 
-class BasicViewInWidget8 extends VisRxWidget {
+interface RxData {
+    oid: string;
+    count: number;
+    [key: `contains_view_${number}`]: string;
+}
+
+class BasicViewInWidget8 extends VisRxWidget<RxData> {
     static getWidgetInfo() {
         return {
             id: 'tplStatefulContainerView8',
@@ -29,7 +37,7 @@ class BasicViewInWidget8 extends VisRxWidget {
             visName: 'View in widget 8',
             visAttrs: 'oid;count[1]/number;group.views;contains_view_(0-count)/views',
             visPrev: 'widgets/basic/img/Prev_StatefulContainerView8.png',
-        };
+        } as const;
     }
 
     // eslint-disable-next-line class-methods-use-this
@@ -37,7 +45,7 @@ class BasicViewInWidget8 extends VisRxWidget {
         return BasicViewInWidget8.getWidgetInfo();
     }
 
-    renderWidgetBody(props) {
+    renderWidgetBody(props: RxRenderWidgetProps) {
         super.renderWidgetBody(props);
         // set default width and height
         if (props.style.width === undefined) {
@@ -91,7 +99,7 @@ class BasicViewInWidget8 extends VisRxWidget {
             </div>;
         }
 
-        const style = {
+        const style: CSSProperties = {
             position: 'absolute',
         };
         if (this.state.rxStyle['overflow-x'] && this.state.rxStyle['overflow-y']) {
@@ -108,8 +116,8 @@ class BasicViewInWidget8 extends VisRxWidget {
         } else if (this.state.rxStyle['overflow-y']) {
             style.overflowY = this.state.rxStyle['overflow-y'];
             delete props.style.overflow;
-        } else if (this.state.rxStyle.overflow) {
-            style.overflow = this.state.rxStyle.overflow;
+        } else if ((this.state.rxStyle as any).overflow) {
+            style.overflow = (this.state.rxStyle as any).overflow;
         } else {
             style.overflow = 'hidden';
         }
@@ -119,17 +127,9 @@ class BasicViewInWidget8 extends VisRxWidget {
 
         return <div className="vis-widget-body" style={style}>
             {this.state.editMode ? <div className="vis-editmode-helper" /> : null}
-            {super.getWidgetView(view)}
+            {super.getWidgetView(view, undefined)}
         </div>;
     }
 }
-
-BasicViewInWidget8.propTypes = {
-    id: PropTypes.string.isRequired,
-    context: PropTypes.object.isRequired,
-    view: PropTypes.string.isRequired,
-    editMode: PropTypes.bool.isRequired,
-    dateFormat: PropTypes.string,
-};
 
 export default BasicViewInWidget8;

@@ -1214,7 +1214,7 @@ interface RxWidgetInfo {
     readonly visWidgetColor?: string;
 
     /** Groups of attributes */
-    visAttrs: (readonly RxWidgetInfoGroup[]);
+    visAttrs: (readonly RxWidgetInfoGroup[]) | readonly string;
     /** Default style for widget */
     readonly visDefaultStyle?: React.CSSProperties;
     /** Position in the widget set */

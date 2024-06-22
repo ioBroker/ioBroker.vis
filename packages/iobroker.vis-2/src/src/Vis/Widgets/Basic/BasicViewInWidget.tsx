@@ -13,6 +13,7 @@
  * (Free for non-commercial use).
  */
 
+import type { CSSProperties } from 'react';
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -33,9 +34,32 @@ import { FaFolderOpen as FolderOpenedIcon } from 'react-icons/fa';
 import { I18n } from '@iobroker/adapter-react-v5';
 
 // eslint-disable-next-line import/no-cycle
+import type { GetRxDataFromWidget, Project, RxRenderWidgetProps } from '@iobroker/types-vis-2';
+import type { VisRxWidgetState } from '../../visRxWidget';
 import VisRxWidget from '../../visRxWidget';
 
-class BasicViewInWidget extends VisRxWidget {
+// eslint-disable-next-line no-use-before-define
+type RxData = GetRxDataFromWidget<typeof BasicViewInWidget>;
+
+interface BasicViewInWidgetState extends VisRxWidgetState {
+    showViewSelector: boolean;
+}
+
+type BasicViewInWidgetOptions = {
+    type: 'folder';
+    folder: {
+        id: string;
+        name: string;
+        parentId: string;
+    };
+    level: number;
+} | {
+    type: 'view';
+    view: string;
+    level: number;
+};
+
+class BasicViewInWidget extends VisRxWidget<RxData, BasicViewInWidgetState> {
     static getWidgetInfo() {
         return {
             id: 'tplContainerView',
@@ -79,7 +103,7 @@ class BasicViewInWidget extends VisRxWidget {
                 width: 300,
                 height: 200,
             },
-        };
+        } as const;
     }
 
     // eslint-disable-next-line class-methods-use-this
@@ -87,7 +111,7 @@ class BasicViewInWidget extends VisRxWidget {
         return BasicViewInWidget.getWidgetInfo();
     }
 
-    getViewOptions(project, options = [], parentId = null, level = 0) {
+    getViewOptions(project: Project, options: BasicViewInWidgetOptions[], parentId: string = null, level = 0): BasicViewInWidgetOptions[] {
         project.___settings.folders
             .filter(folder => (folder.parentId || null) === parentId)
             .forEach(folder => {
@@ -115,7 +139,7 @@ class BasicViewInWidget extends VisRxWidget {
     }
 
     renderViewSelector() {
-        const options = this.getViewOptions(this.props.context.views, [], null, 0, true)
+        const options = this.getViewOptions(this.props.context.views, [], null, 0)
             .filter(option => option.type === 'folder' || option.view !== this.props.view);
 
         return [
@@ -182,7 +206,7 @@ class BasicViewInWidget extends VisRxWidget {
         ];
     }
 
-    renderWidgetBody(props) {
+    renderWidgetBody(props: RxRenderWidgetProps) {
         super.renderWidgetBody(props);
         // set default width and height
         if (props.style.width === undefined) {
@@ -206,7 +230,7 @@ class BasicViewInWidget extends VisRxWidget {
             </div>;
         }
 
-        const style = {
+        const style: CSSProperties = {
             position: 'absolute',
         };
         if (this.state.rxStyle['overflow-x'] && this.state.rxStyle['overflow-y']) {
@@ -223,8 +247,8 @@ class BasicViewInWidget extends VisRxWidget {
         } else if (this.state.rxStyle['overflow-y']) {
             style.overflowY = this.state.rxStyle['overflow-y'];
             delete props.style.overflow;
-        } else if (this.state.rxStyle.overflow) {
-            style.overflow = this.state.rxStyle.overflow;
+        } else if ((this.state.rxStyle as any).overflow) {
+            style.overflow = (this.state.rxStyle as any).overflow;
         } else {
             style.overflow = 'hidden';
         }
@@ -234,17 +258,9 @@ class BasicViewInWidget extends VisRxWidget {
 
         return <div className="vis-widget-body" style={style}>
             {this.state.editMode ? <div className="vis-editmode-helper" /> : null}
-            {super.getWidgetView(view)}
+            {super.getWidgetView(view, undefined)}
         </div>;
     }
 }
-
-BasicViewInWidget.propTypes = {
-    id: PropTypes.string.isRequired,
-    context: PropTypes.object.isRequired,
-    view: PropTypes.string.isRequired,
-    editMode: PropTypes.bool.isRequired,
-    onIgnoreMouseEvents: PropTypes.func,
-};
 
 export default BasicViewInWidget;
