@@ -13,6 +13,7 @@
  * (Free for non-commercial use).
  */
 
+import type { CSSProperties } from 'react';
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -33,24 +34,94 @@ import {
     Utils, IconCopy,
 } from '@iobroker/adapter-react-v5';
 
+import type { VisBaseWidgetProps, VisWidgetCommand } from '@/Vis/visBaseWidget';
 import VisBaseWidget from '@/Vis/visBaseWidget';
+import type {
+    GetRxDataFromWidget, RxRenderWidgetProps, RxWidgetInfo, RxWidgetInfoAttributesField,
+    RxWidgetInfoWriteable,
+    Writeable,
+} from '@iobroker/types-vis-2';
 import { isVarFinite } from '../../../Utils/utils';
 // eslint-disable-next-line import/no-cycle
+import type { VisRxWidgetState } from '../../visRxWidget';
 import VisRxWidget from '../../visRxWidget';
 
-class JQuiButton extends VisRxWidget {
-    constructor(props) {
+// eslint-disable-next-line no-use-before-define
+export type JQuiButtonDataProps = {
+    buttontext: string;
+    html: string;
+    Password: string;
+    nav_view: string;
+    buttontext_view: boolean;
+    sub_view: string;
+    href: string;
+    url: string;
+    target: string;
+    no_style: boolean;
+    jquery_style: boolean;
+    padding: number;
+    variant: string;
+    color: string;
+    html_prepend: string;
+    html_append: string;
+    visResizable: boolean;
+    src: string;
+    icon: string;
+    invert_icon: boolean;
+    imageHeight: number;
+    html_dialog: string;
+    contains_view: string;
+    title: string;
+    modal: boolean;
+    dialog_width: string;
+    dialog_height: string;
+    dialog_class: string;
+    persistent: boolean;
+    preload: boolean;
+    closeOnClick: boolean;
+    hideCloseButton: boolean;
+    dialogBackgroundColor: string;
+    dialogTitleColor: string;
+    overflowX: string;
+    overflowY: string;
+    setId: string;
+    setValue: string;
+    dialogName: string;
+    externalDialog: boolean;
+    autoclose: number | string | boolean;
+    text: string;
+};
+
+export interface JQuiButtonState extends VisRxWidgetState {
+    width: number;
+    height: number;
+    dialogVisible: boolean;
+    showPassword: boolean;
+    password: string;
+    passwordError: boolean;
+}
+
+class JQuiButton<P extends JQuiButtonDataProps = JQuiButtonDataProps, S extends JQuiButtonState = JQuiButtonState> extends VisRxWidget<P, S> {
+    refButton: React.RefObject<HTMLButtonElement>;
+
+    refDialog: React.RefObject<HTMLDivElement>;
+
+    hideTimeout: ReturnType<typeof setTimeout>;
+
+    setObjectType: string;
+
+    constructor(props: VisBaseWidgetProps) {
         super(props);
-        this.state.width = 0;
-        this.state.height = 0;
-        this.state.dialogVisible = false;
-        this.state.showPassword = false;
-        this.state.password = '';
+        (this.state as JQuiButtonState).width = 0;
+        (this.state as JQuiButtonState).height = 0;
+        (this.state as JQuiButtonState).dialogVisible = false;
+        (this.state as JQuiButtonState).showPassword = false;
+        (this.state as JQuiButtonState).password = '';
         this.refButton = React.createRef();
         this.refDialog = React.createRef();
     }
 
-    static getWidgetInfo() {
+    static getWidgetInfo(): RxWidgetInfo {
         return {
             id: 'tplJquiButtonLink',
             visSet: 'jqui',
@@ -67,28 +138,28 @@ class JQuiButton extends VisRxWidget {
                             name: 'buttontext',
                             type: 'text',
                             default: 'URL',
-                            hidden: data => !!data.html || !!(data.buttontext_view && data.nav_view) || !!data.externalDialog,
+                            hidden: (data: any) => !!data.html || !!(data.buttontext_view && data.nav_view) || !!data.externalDialog,
                         },
                         {
                             name: 'html',
                             type: 'html',
                             default: '',
                             tooltip: 'jqui_html_tooltip',
-                            disabled: data => !!data.buttontext || !!data.icon || !!data.src || !!data.externalDialog,
+                            disabled: (data: any) => !!data.buttontext || !!data.icon || !!data.src || !!data.externalDialog,
                         },
                         {
                             name: 'Password',
                             type: 'password',
                             label: 'password',
                             tooltip: 'jqui_password_tooltip',
-                            disabled: data => !data.nav_view && !data.url && !data.href && !data.html_dialog && !data.contains_view,
+                            disabled: (data: any) => !data.nav_view && !data.url && !data.href && !data.html_dialog && !data.contains_view,
                         },
                     ],
                 },
                 {
                     name: 'view',
                     label: 'jqui_view_group',
-                    hidden: data => !!data.url || !!data.href || !!data.html_dialog || !!data.contains_view,
+                    hidden: (data: any) => !!data.url || !!data.href || !!data.html_dialog || !!data.contains_view,
                     fields: [
                         {
                             name: 'nav_view',
@@ -99,55 +170,55 @@ class JQuiButton extends VisRxWidget {
                             name: 'buttontext_view',
                             label: 'jqui_buttontext_view',
                             type: 'checkbox',
-                            hidden: data => !data.nav_view,
+                            hidden: (data: any) => !data.nav_view,
                         },
                         {
                             name: 'sub_view',
                             label: 'basic_sub_view',
                             type: 'text',
                             tooltip: 'sub_view_tooltip',
-                            hidden: data => !data.nav_view,
+                            hidden: (data: any) => !data.nav_view,
                         },
                     ],
                 },
                 {
                     name: 'URL',
                     label: 'jqui_url_group',
-                    hidden: data => !!data.html_dialog || !!data.contains_view || !!data.nav_view,
+                    hidden: (data: any) => !!data.html_dialog || !!data.contains_view || !!data.nav_view,
                     fields: [
                         {
                             name: 'href',
                             label: 'jqui_url_in_browser',
                             type: 'url',
-                            hidden: data => !!data.url,
+                            hidden: (data: any) => !!data.url,
                             tooltip: 'jqui_href_tooltip',
                         },
                         {
                             name: 'url',
                             label: 'jqui_url_in_background',
                             type: 'url',
-                            hidden: data => !!data.href,
+                            hidden: (data: any) => !!data.href,
                             tooltip: 'jqui_url_tooltip',
                         },
                         {
                             name: 'target',
                             type: 'auto',
                             options: ['_blank', '_self', '_parent', '_top'],
-                            hidden: data => !!data.url || !data.href,
+                            hidden: (data: any) => !!data.url || !data.href,
                         },
                     ],
                 },
                 {
                     name: 'style',
                     label: 'Style',
-                    hidden: data => !!data.externalDialog,
+                    hidden: (data: any) => !!data.externalDialog,
                     fields: [
-                        { name: 'no_style', type: 'checkbox', hidden: data => data.jquery_style },
+                        { name: 'no_style', type: 'checkbox', hidden: (data: any) => data.jquery_style },
                         {
                             name: 'jquery_style',
                             label: 'jqui_jquery_style',
                             type: 'checkbox',
-                            hidden: data => data.no_style,
+                            hidden: (data: any) => data.no_style,
                         },
                         {
                             name: 'padding',
@@ -155,7 +226,7 @@ class JQuiButton extends VisRxWidget {
                             min: 0,
                             max: 100,
                             default: 5,
-                            // hidden: data => !data.no_style && !data.jquery_style,
+                            // hidden: (data: any) => !data.no_style && !data.jquery_style,
                         },
                         {
                             name: 'variant',
@@ -164,7 +235,7 @@ class JQuiButton extends VisRxWidget {
                             noTranslation: true,
                             options: ['contained', 'outlined', 'standard'],
                             default: 'contained',
-                            hidden: data => data.jquery_style || data.no_style,
+                            hidden: (data: any) => data.jquery_style || data.no_style,
                         },
                         {
                             name: 'color',
@@ -173,7 +244,7 @@ class JQuiButton extends VisRxWidget {
                             noTranslation: true,
                             options: ['', 'primary', 'secondary'],
                             default: '',
-                            hidden: data => data.jquery_style || data.no_style,
+                            hidden: (data: any) => data.jquery_style || data.no_style,
                         },
                         { name: 'html_prepend', type: 'html' },
                         { name: 'html_append', type: 'html' },
@@ -188,24 +259,24 @@ class JQuiButton extends VisRxWidget {
                 },
                 {
                     name: 'icon',
-                    hidden: data => !!data.externalDialog || data.jquery_style,
+                    hidden: (data: any) => !!data.externalDialog || data.jquery_style,
                     fields: [
                         {
                             name: 'src',
                             label: 'jqui_image',
                             type: 'image',
-                            hidden: data => data.icon,
+                            hidden: (data: any) => data.icon,
                         },
                         {
                             name: 'icon',
                             label: 'jqui_icon',
                             type: 'icon64',
-                            hidden: data => data.src,
+                            hidden: (data: any) => data.src,
                         },
                         {
                             name: 'invert_icon',
                             type: 'checkbox',
-                            hidden: data => (!data.icon && !data.src),
+                            hidden: (data: any) => (!data.icon && !data.src),
                         },
                         {
                             name: 'imageHeight',
@@ -213,28 +284,28 @@ class JQuiButton extends VisRxWidget {
                             min: 0,
                             max: 200,
                             default: 100,
-                            hidden: data => !data.src,
+                            hidden: (data: any) => !data.src,
                         },
                     ],
                 },
                 {
                     name: 'dialog',
-                    hidden: data => !!data.url || !!data.href || !!data.nav_view,
+                    hidden: (data: any) => !!data.url || !!data.href || !!data.nav_view,
                     fields: [
                         {
                             name: 'html_dialog',
                             type: 'html',
-                            hidden: data => !!data.contains_view,
+                            hidden: (data: any) => !!data.contains_view,
                         },
                         {
                             name: 'contains_view',
                             type: 'views',
-                            hidden: data => !!data.html_dialog,
+                            hidden: (data: any) => !!data.html_dialog,
                         },
                         {
                             name: 'title',
                             type: 'text',
-                            hidden: data => !data.html_dialog && !data.contains_view,
+                            hidden: (data: any) => !data.html_dialog && !data.contains_view,
                         },
                         {
                             name: 'autoclose',
@@ -242,73 +313,73 @@ class JQuiButton extends VisRxWidget {
                             min: 0,
                             max: 30000,
                             step: 100,
-                            hidden: data => !data.html_dialog && !data.contains_view,
+                            hidden: (data: any) => !data.html_dialog && !data.contains_view,
                         },
                         {
                             name: 'modal',
                             type: 'checkbox',
                             default: true,
-                            hidden: data => !data.html_dialog && !data.contains_view,
+                            hidden: (data: any) => !data.html_dialog && !data.contains_view,
                         },
                         {
                             name: 'dialog_width',
                             type: 'text',
-                            hidden: data => !data.html_dialog && !data.contains_view,
+                            hidden: (data: any) => !data.html_dialog && !data.contains_view,
                         },
                         {
                             name: 'dialog_height',
                             type: 'text',
-                            hidden: data => !data.html_dialog && !data.contains_view,
+                            hidden: (data: any) => !data.html_dialog && !data.contains_view,
                         },
                         {
                             name: 'dialog_class',
                             label: 'CSS Class',
                             type: 'text',
-                            hidden: data => !data.html_dialog && !data.contains_view,
+                            hidden: (data: any) => !data.html_dialog && !data.contains_view,
                         },
                         {
                             name: 'persistent',
                             type: 'checkbox',
-                            hidden: data => !data.html_dialog && !data.contains_view,
+                            hidden: (data: any) => !data.html_dialog && !data.contains_view,
                         },
                         {
                             name: 'preload',
                             type: 'checkbox',
-                            hidden: data => !data.html_dialog && !data.contains_view,
+                            hidden: (data: any) => !data.html_dialog && !data.contains_view,
                         },
                         {
                             name: 'closeOnClick',
                             type: 'checkbox',
-                            hidden: data => !data.html_dialog && !data.contains_view,
+                            hidden: (data: any) => !data.html_dialog && !data.contains_view,
                         },
                         {
                             name: 'hideCloseButton',
                             label: 'jqui_hide_close_button',
                             type: 'checkbox',
-                            hidden: data => !data.html_dialog && !data.contains_view && !!data.closeOnClick,
+                            hidden: (data: any) => !data.html_dialog && !data.contains_view && !!data.closeOnClick,
                         },
                         {
                             name: 'dialogBackgroundColor',
                             label: 'Background color',
                             type: 'color',
-                            hidden: data => !data.html_dialog && !data.contains_view,
+                            hidden: (data: any) => !data.html_dialog && !data.contains_view,
                         },
                         {
                             name: 'dialogTitleColor',
                             type: 'color',
                             label: 'Text color',
-                            hidden: data => !data.html_dialog && !data.contains_view,
+                            hidden: (data: any) => !data.html_dialog && !data.contains_view,
                         },
                         /*
                         {
                             name: 'dialog_top',
                             type: 'text',
-                            hidden: data => !data.html_dialog && !data.contains_view,
+                            hidden: (data: any) => !data.html_dialog && !data.contains_view,
                         },
                         {
                             name: 'dialog_left',
                             type: 'text',
-                            hidden: data => !data.html_dialog && !data.contains_view,
+                            hidden: (data: any) => !data.html_dialog && !data.contains_view,
                         },
                         */
                         {
@@ -316,51 +387,51 @@ class JQuiButton extends VisRxWidget {
                             type: 'select',
                             noTranslation: true,
                             options: ['', 'auto', 'hidden', 'visible', 'scroll', 'initial', 'inherit'],
-                            hidden: data => !data.html_dialog && !data.contains_view,
+                            hidden: (data: any) => !data.html_dialog && !data.contains_view,
                         },
                         {
                             name: 'overflowY',
                             type: 'select',
                             noTranslation: true,
                             options: ['', 'auto', 'hidden', 'visible', 'scroll', 'initial', 'inherit'],
-                            hidden: data => !data.html_dialog && !data.contains_view,
+                            hidden: (data: any) => !data.html_dialog && !data.contains_view,
                         },
                         {
                             name: 'setId',
                             type: 'id',
                             tooltip: 'jqui_dialog_set_id_tooltip',
-                            hidden: data => !data.html_dialog && !data.contains_view,
+                            hidden: (data: any) => !data.html_dialog && !data.contains_view,
                         },
                         {
                             name: 'setValue',
                             type: 'text',
-                            hidden: data => !data.setId || (!data.html_dialog && !data.contains_view),
+                            hidden: (data: any) => !data.setId || (!data.html_dialog && !data.contains_view),
                         },
                         {
                             name: 'dialogName',
                             label: 'jqui_dialog_name',
                             type: 'text',
-                            hidden: data => !data.html_dialog && !data.contains_view,
+                            hidden: (data: any) => !data.html_dialog && !data.contains_view,
                         },
                         {
                             name: 'externalDialog',
                             label: 'jqui_external_dialog',
                             tooltip: 'jqui_external_dialog_tooltip',
                             type: 'checkbox',
-                            hidden: data => !data.html_dialog && !data.contains_view,
+                            hidden: (data: any) => !data.html_dialog && !data.contains_view,
                         },
                     ],
                 },
             ],
-        };
+        } as const;
     }
 
-    static findField(widgetInfo, name) {
-        return VisRxWidget.findField(widgetInfo, name);
+    static findField<Field extends { [x: string]: any } = RxWidgetInfoAttributesField>(widgetInfo: RxWidgetInfo | RxWidgetInfoWriteable, name: string): Writeable<Field> {
+        return VisRxWidget.findField(widgetInfo as RxWidgetInfo, name) as unknown as Writeable<Field>;
     }
 
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo() {
+    getWidgetInfo(): RxWidgetInfo {
         return JQuiButton.getWidgetInfo();
     }
 
@@ -377,17 +448,17 @@ class JQuiButton extends VisRxWidget {
 
     async componentDidUpdate() {
         if (this.refButton.current) {
-            if (this.state.rxData.jquery_style && !this.refButton.current._jQueryDone) {
-                this.refButton.current._jQueryDone = true;
-                window.jQuery(this.refButton.current).button();
+            if (this.state.rxData.jquery_style && !(this.refButton.current as any)._jQueryDone) {
+                (this.refButton.current as any)._jQueryDone = true;
+                (window.jQuery as any)(this.refButton.current).button();
             }
             if (this.refButton.current.clientWidth !== this.state.width || this.refButton.current.clientHeight !== this.state.height) {
                 this.setState({ width: this.refButton.current.clientWidth, height: this.refButton.current.clientHeight });
             }
         }
         // from base class
-        if (this.refService.current && (this.state.rxData.html_dialog || this.state.rxData.contains_view) && !this.refService.current._showDialog) {
-            this.refService.current._showDialog = this.showDialog;
+        if (this.refService.current && (this.state.rxData.html_dialog || this.state.rxData.contains_view) && !(this.refService.current as any)._showDialog) {
+            (this.refService.current as any)._showDialog = this.showDialog;
         }
         if (this.refService.current) {
             const dialogName = this.refService.current.dataset.dialogName;
@@ -401,7 +472,7 @@ class JQuiButton extends VisRxWidget {
         }
     }
 
-    showDialog = show => {
+    showDialog = (show: boolean) => {
         this.setState({ dialogVisible: show });
 
         // Auto-close
@@ -412,7 +483,7 @@ class JQuiButton extends VisRxWidget {
         if (timeout === null || timeout === undefined || timeout === '') {
             return;
         }
-        timeout = parseInt(timeout, 10);
+        timeout = parseInt(timeout as string, 10);
         if (timeout < 60) {
             // maybe this is seconds
             timeout *= 1000;
@@ -496,7 +567,7 @@ class JQuiButton extends VisRxWidget {
         </Dialog>;
     }
 
-    async setObjectWithState(oid, value) {
+    async setObjectWithState(oid: string, value: ioBroker.State['val']) {
         if (this.setObjectType === undefined) {
             try {
                 const obj = await this.props.context.socket.getObject(oid);
@@ -510,7 +581,7 @@ class JQuiButton extends VisRxWidget {
         if (this.setObjectType === 'boolean') {
             value = value === 'true' || value === true || value === '1' || value === 1 || value === 'on' || value === 'ON';
         } else if (this.setObjectType === 'number') {
-            value = parseFloat(value);
+            value = parseFloat(value as string);
         } else if (value !== null && value !== undefined) {
             value = value.toString();
         }
@@ -518,7 +589,7 @@ class JQuiButton extends VisRxWidget {
         await this.props.context.setValue(oid, value);
     }
 
-    onCommand(command) {
+    onCommand(command: VisWidgetCommand) {
         super.onCommand(command);
         if (command === 'openDialog') {
             this.showDialog(true);
@@ -531,7 +602,7 @@ class JQuiButton extends VisRxWidget {
         return false;
     }
 
-    onClick(passwordChecked) {
+    onClick(passwordChecked?: boolean) {
         if (this.state.dialogVisible) {
             return;
         }
@@ -556,7 +627,7 @@ class JQuiButton extends VisRxWidget {
                 window.location.href = this.state.rxData.href;
             }
         } else if (this.state.rxData.url) {
-            this.props.socket.getRawSocket().emit('httpGet', this.state.rxData.url, data =>
+            this.props.socket.getRawSocket().emit('httpGet', this.state.rxData.url, (data: any) =>
                 console.log('httpGet', this.state.rxData.url, data));
         }
 
@@ -570,7 +641,7 @@ class JQuiButton extends VisRxWidget {
         }
     }
 
-    renderRxDialog(dialogStyle, content) {
+    renderRxDialog(dialogStyle: CSSProperties, content: React.JSX.Element) {
         console.log('test');
         if (this.state.rxData.modal) {
             console.log('in');
@@ -609,10 +680,10 @@ class JQuiButton extends VisRxWidget {
             dialogStyle.display = 'none';
         }
 
-        if (!dialogStyle.minWidth || dialogStyle.minWidth < 200) {
+        if (!dialogStyle.minWidth || (dialogStyle.minWidth as number) < 200) {
             dialogStyle.minWidth = 200;
         }
-        if (!dialogStyle.minHeight || dialogStyle.minHeight < 100) {
+        if (!dialogStyle.minHeight || (dialogStyle.minHeight as number) < 100) {
             dialogStyle.minHeight = 100;
         }
 
@@ -659,7 +730,7 @@ class JQuiButton extends VisRxWidget {
         </Popper>;
     }
 
-    renderJQueryDialog(dialogStyle, content) {
+    renderJQueryDialog(dialogStyle: CSSProperties, content: React.JSX.Element) {
         return <div
             id={`${this.props.id}_dialog`}
             className="vis-widget-dialog"
@@ -688,13 +759,13 @@ class JQuiButton extends VisRxWidget {
         // eslint-disable-next-line no-restricted-properties
         const height = isVarFinite(this.state.rxData.dialog_height) ? parseFloat(this.state.rxData.dialog_height) : this.state.rxData.dialog_height;
 
-        const dialogStyle = {
+        const dialogStyle: CSSProperties = {
             minWidth: width || (window.innerWidth - 50),
             minHeight: height || (window.innerHeight - 50),
             // top: top || top === 0 ? top : undefined,
             // left: left || left === 0 ? left : undefined,
-            overflowX: this.state.rxData.overflowX,
-            overflowY: this.state.rxData.overflowY,
+            overflowX: this.state.rxData.overflowX as any,
+            overflowY: this.state.rxData.overflowY as any,
         };
 
         let content;
@@ -703,7 +774,7 @@ class JQuiButton extends VisRxWidget {
                 style={dialogStyle}
                 className={this.state.rxData.dialog_class}
             >
-                {super.getWidgetView(this.state.rxData.contains_view)}
+                {super.getWidgetView(this.state.rxData.contains_view, undefined)}
             </div>;
         } else {
             content = <div
@@ -721,10 +792,10 @@ class JQuiButton extends VisRxWidget {
         return this.renderRxDialog(dialogStyle, content);
     }
 
-    renderWidgetBody(props) {
+    renderWidgetBody(props: RxRenderWidgetProps) {
         super.renderWidgetBody(props);
 
-        const iconStyle = {
+        const iconStyle: CSSProperties = {
             marginRight: 4,
             filter: this.state.rxData.invert_icon ? 'invert(1)' : undefined,
         };
@@ -748,10 +819,10 @@ class JQuiButton extends VisRxWidget {
             style={iconStyle}
         /> : null;
 
-        const buttonStyle = { textTransform: 'none' };
+        const buttonStyle: CSSProperties = { textTransform: 'none' };
         // apply style from the element
         Object.keys(this.state.rxStyle).forEach(attr => {
-            const value = this.state.rxStyle[attr];
+            const value = (this.state.rxStyle as any)[attr];
             if (value !== null &&
                 value !== undefined &&
                 VisRxWidget.POSSIBLE_MUI_STYLES.includes(attr)
@@ -760,7 +831,7 @@ class JQuiButton extends VisRxWidget {
                     /(-\w)/g,
                     text => text[1].toUpperCase(),
                 );
-                buttonStyle[attr] = value;
+                (buttonStyle as any)[attr] = value;
             }
         });
         if (buttonStyle.borderWidth) {
@@ -876,8 +947,8 @@ class JQuiButton extends VisRxWidget {
                             style={buttonStyle}
                             color={this.state.rxData.nav_view && this.state.rxData.nav_view === window.location.hash.slice(1) ?
                                 (this.state.rxData.color === 'primary' ? 'secondary' : 'primary') :
-                                (this.state.rxData.color || 'grey')}
-                            variant={this.state.rxData.variant === undefined ? 'contained' : this.state.rxData.variant}
+                                (this.state.rxData.color || 'grey') as any}
+                            variant={this.state.rxData.variant === undefined ? 'contained' : this.state.rxData.variant as any}
                             onClick={() => this.onClick()}
                         >
                             {icon}
@@ -901,13 +972,5 @@ class JQuiButton extends VisRxWidget {
         </div>;
     }
 }
-
-JQuiButton.propTypes = {
-    id: PropTypes.string.isRequired,
-    context: PropTypes.object.isRequired,
-    view: PropTypes.string.isRequired,
-    editMode: PropTypes.bool.isRequired,
-    tpl: PropTypes.string.isRequired,
-};
 
 export default JQuiButton;

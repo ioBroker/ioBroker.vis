@@ -34,6 +34,8 @@ import type {
     RxWidgetInfoAttributesField,
     RxWidgetInfoAttributesFieldCheckbox,
     VisLinkContextBinding, VisLinkContextItem, VisLinkContextSignalItem, RxRenderWidgetProps,
+    RxWidgetInfoWriteable,
+    Writeable,
 } from '@iobroker/types-vis-2';
 import { deepClone, calculateOverflow } from '@/Utils/utils';
 // eslint-disable-next-line import/no-cycle
@@ -209,7 +211,7 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
         };
     }
 
-    static findField(widgetInfo: RxWidgetInfo, name: string): RxWidgetInfoAttributesField | null {
+    static findField(widgetInfo: RxWidgetInfo | RxWidgetInfoWriteable, name: string): Writeable<RxWidgetInfoAttributesField> | null {
         if (!widgetInfo.visAttrs) {
             return null;
         }

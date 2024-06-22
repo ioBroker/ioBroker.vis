@@ -4,6 +4,7 @@
     "moduleResolution": "Bundler",
     "module": "esnext",
     "target": "esnext",
+    "noErrorTruncation": true,
     "baseUrl": ".",
     "checkJs": false,
     "allowJs": true,

@@ -1236,6 +1236,10 @@ interface RxWidgetInfo {
     readonly customPalette?: (context: CustomPaletteProperties) => React.JSX.Element;
 }
 
+type Writeable<T> = { -readonly [P in keyof T]: Writeable<T[P]> };
+
+type RxWidgetInfoWriteable = Writeable<RxWidgetInfo>;
+
 type AttributeTypeToDataType<TType extends RxWidgetAttributeType> = TType extends 'checkbox' ? boolean : TType extends 'number' | 'slider' ? number :
     string;
 

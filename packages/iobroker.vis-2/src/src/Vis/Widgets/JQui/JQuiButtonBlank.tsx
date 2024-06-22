@@ -15,11 +15,15 @@
 import PropTypes from 'prop-types';
 
 // eslint-disable-next-line import/no-cycle
+import type { RxWidgetInfoAttributesFieldText, RxWidgetInfoWriteable } from '@iobroker/types-vis-2';
+import {
+    type RxWidgetInfo, type RxWidgetInfoAttributesField, type RxWidgetInfoAttributesFieldCheckbox, type RxWidgetInfoAttributesFieldSelect,
+} from '@iobroker/types-vis-2';
 import JQuiButton from './JQuiButton';
 
 class JQuiButtonBlank extends JQuiButton {
-    static getWidgetInfo() {
-        const widgetInfo = JQuiButton.getWidgetInfo();
+    static getWidgetInfo(): RxWidgetInfo {
+        const widgetInfo = JQuiButton.getWidgetInfo() as unknown as RxWidgetInfoWriteable;
         const newWidgetInfo = {
             id: 'tplJquiButtonLinkBlank',
             visSet: 'jqui',
@@ -36,29 +40,22 @@ class JQuiButtonBlank extends JQuiButton {
             type: 'help',
             text: 'jqui_button_link_blank_note',
         });
-        const target = JQuiButton.findField(newWidgetInfo, 'target');
+        const target = JQuiButton.findField<RxWidgetInfoAttributesFieldSelect>(newWidgetInfo, 'target');
         target.default = '_blank';
 
-        const visResizable = JQuiButton.findField(newWidgetInfo, 'visResizable');
+        const visResizable = JQuiButton.findField<RxWidgetInfoAttributesFieldCheckbox>(newWidgetInfo, 'visResizable');
         visResizable.default = false;
 
-        const text = JQuiButton.findField(newWidgetInfo, 'buttontext');
+        const text = JQuiButton.findField<RxWidgetInfoAttributesFieldText>(newWidgetInfo, 'buttontext');
         text.default = 'URL Browser';
 
-        return newWidgetInfo;
+        return newWidgetInfo as RxWidgetInfo;
     }
 
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo() {
+    getWidgetInfo(): RxWidgetInfo {
         return JQuiButtonBlank.getWidgetInfo();
     }
 }
-
-JQuiButtonBlank.propTypes = {
-    id: PropTypes.string.isRequired,
-    context: PropTypes.object.isRequired,
-    view: PropTypes.string.isRequired,
-    editMode: PropTypes.bool.isRequired,
-};
 
 export default JQuiButtonBlank;
