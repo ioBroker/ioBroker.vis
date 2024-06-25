@@ -16,10 +16,11 @@ import PropTypes from 'prop-types';
 
 // eslint-disable-next-line import/no-cycle
 import JQuiButton from './JQuiButton';
+import { RxWidgetInfo, RxWidgetInfoAttributesFieldDefault, RxWidgetInfoAttributesFieldText, RxWidgetInfoWriteable } from '@iobroker/types-vis-2';
 
 class JQuiContainerButtonDialog extends JQuiButton {
     static getWidgetInfo() {
-        const widgetInfo = JQuiButton.getWidgetInfo();
+        const widgetInfo = JQuiButton.getWidgetInfo() as unknown as RxWidgetInfoWriteable;
 
         const newWidgetInfo = {
             id: 'tplContainerButtonDialog',
@@ -38,13 +39,13 @@ class JQuiContainerButtonDialog extends JQuiButton {
             text: 'jqui_button_link_blank_note',
         });
 
-        const buttonText = JQuiButton.findField(newWidgetInfo, 'buttontext');
+        const buttonText = JQuiButton.findField<RxWidgetInfoAttributesFieldText>(newWidgetInfo, 'buttontext');
         buttonText.default = 'Container Dialog';
 
-        const containsView = JQuiButton.findField(newWidgetInfo, 'contains_view');
+        const containsView = JQuiButton.findField<RxWidgetInfoAttributesFieldDefault>(newWidgetInfo, 'contains_view');
         containsView.default = '';
 
-        return newWidgetInfo;
+        return newWidgetInfo as RxWidgetInfo;
     }
 
     // eslint-disable-next-line class-methods-use-this
@@ -52,12 +53,5 @@ class JQuiContainerButtonDialog extends JQuiButton {
         return JQuiContainerButtonDialog.getWidgetInfo();
     }
 }
-
-JQuiContainerButtonDialog.propTypes = {
-    id: PropTypes.string.isRequired,
-    context: PropTypes.object.isRequired,
-    view: PropTypes.string.isRequired,
-    editMode: PropTypes.bool.isRequired,
-};
 
 export default JQuiContainerButtonDialog;

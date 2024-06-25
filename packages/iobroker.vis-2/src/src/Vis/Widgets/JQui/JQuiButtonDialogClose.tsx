@@ -13,6 +13,7 @@
  * (Free for non-commercial use).
  */
 
+import type { CSSProperties } from 'react';
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -25,15 +26,28 @@ import {
     I18n, Icon,
 } from '@iobroker/adapter-react-v5';
 
+import type { VisBaseWidgetProps, WidgetStyleState } from '@/Vis/visBaseWidget';
 import VisBaseWidget from '@/Vis/visBaseWidget';
 // eslint-disable-next-line import/no-cycle
+import type {
+    AnyWidgetId, GetRxDataFromWidget, RxRenderWidgetProps, RxWidgetInfoAttributesField, RxWidgetInfoCustomComponentProperties, ViewCommand, WidgetData,
+} from '@iobroker/types-vis-2';
+import type { VisRxWidgetState } from '../../visRxWidget';
 import VisRxWidget from '../../visRxWidget';
 
-class JQuiButtonDialogClose extends VisRxWidget {
-    constructor(props) {
+// eslint-disable-next-line no-use-before-define
+type RxData = GetRxDataFromWidget<typeof JQuiButtonDialogClose>;
+
+interface JQuiButtonDialogCloseState extends VisRxWidgetState {
+    width: number;
+    height: number;
+}
+
+class JQuiButtonDialogClose extends VisRxWidget<RxData, JQuiButtonDialogCloseState> {
+    constructor(props: VisBaseWidgetProps) {
         super(props);
-        this.state.width = 0;
-        this.state.height = 0;
+        (this.state as JQuiButtonDialogCloseState).width = 0;
+        (this.state as JQuiButtonDialogCloseState).height = 0;
     }
 
     static getWidgetInfo() {
@@ -54,16 +68,16 @@ class JQuiButtonDialogClose extends VisRxWidget {
                             tooltip: 'jqui_dialog_name_tooltip',
                             type: 'custom',
                             component: (
-                                field,
-                                data,
-                                onDataChange,
-                                options, // {context: {adapterName, instance, projectName, socket, views}, selectedView, selectedWidget, selectedWidgets}
-                            ) => {
+                                field: RxWidgetInfoAttributesField,
+                                data: WidgetData,
+                                onDataChange: (newData: WidgetData) => void,
+                                options: RxWidgetInfoCustomComponentProperties,
+                            ): React.JSX.Element | React.JSX.Element[] => {
                                 // find all possible dialogs
-                                const names = [];
+                                const names: {label: string; value: string}[] = [];
                                 Object.keys(options.context.views).forEach(id => {
                                     const widgets = options.context.views[id].widgets;
-                                    widgets && Object.keys(widgets).forEach(widget => {
+                                    widgets && Object.keys(widgets).forEach((widget: AnyWidgetId) => {
                                         if (widgets[widget].data?.html_dialog || widgets[widget].data?.contains_view || widgets[widget].data?.externalDialog) {
                                             if (widgets[widget].data.dialogName) {
                                                 names.push({ label: `${widgets[widget].data.dialogName} (${widget})`, value: widgets[widget].data.dialogName });
@@ -73,15 +87,15 @@ class JQuiButtonDialogClose extends VisRxWidget {
                                         }
                                     });
                                 });
-                                return <Autocomplete
+                                return <Autocomplete<{label: string; value: string}, false, false, true>
                                     freeSolo
                                     options={names}
-                                    variant="standard"
+                                    // variant="standard"
                                     value={data[field.name] || ''}
                                     sx={{ width: '100%' }}
                                     onInputChange={(e, inputValue) => {
                                         if (typeof inputValue === 'object' && inputValue !== null) {
-                                            inputValue = inputValue.value;
+                                            inputValue = (inputValue as {label: string; value: string}).value;
                                         }
                                         onDataChange({ [field.name]: inputValue });
                                     }}
@@ -105,27 +119,27 @@ class JQuiButtonDialogClose extends VisRxWidget {
                             name: 'buttontext',
                             type: 'text',
                             default: I18n.t('jqui_Close').replace('jqui_', ''),
-                            hidden: data => !!data.html,
+                            hidden: (data: any) => !!data.html,
                         },
                         {
                             name: 'html',
                             type: 'html',
                             default: '',
                             tooltip: 'jqui_html_tooltip',
-                            disabled: data => !!data.buttontext || !!data.icon || !!data.src,
+                            disabled: (data: any) => !!data.buttontext || !!data.icon || !!data.src,
                         },
                     ],
                 },
                 {
                     name: 'style',
-                    hidden: data => !!data.externalDialog,
+                    hidden: (data: any) => !!data.externalDialog,
                     fields: [
-                        { name: 'no_style', type: 'checkbox', hidden: data => data.jquery_style },
+                        { name: 'no_style', type: 'checkbox', hidden: (data: any) => data.jquery_style },
                         {
                             name: 'jquery_style',
                             label: 'jqui_jquery_style',
                             type: 'checkbox',
-                            hidden: data => data.no_style,
+                            hidden: (data: any) => data.no_style,
                         },
                         {
                             name: 'padding',
@@ -133,7 +147,7 @@ class JQuiButtonDialogClose extends VisRxWidget {
                             min: 0,
                             max: 100,
                             default: 5,
-                            // hidden: data => !data.no_style && !data.jquery_style,
+                            // hidden: (data: any) => !data.no_style && !data.jquery_style,
                         },
                         {
                             name: 'variant',
@@ -142,7 +156,7 @@ class JQuiButtonDialogClose extends VisRxWidget {
                             noTranslation: true,
                             options: ['contained', 'outlined', 'standard'],
                             default: 'contained',
-                            hidden: data => data.jquery_style || data.no_style,
+                            hidden: (data: any) => data.jquery_style || data.no_style,
                         },
                         {
                             name: 'color',
@@ -151,7 +165,7 @@ class JQuiButtonDialogClose extends VisRxWidget {
                             noTranslation: true,
                             options: ['', 'primary', 'secondary'],
                             default: '',
-                            hidden: data => data.jquery_style || data.no_style,
+                            hidden: (data: any) => data.jquery_style || data.no_style,
                         },
                         { name: 'html_prepend', type: 'html' },
                         { name: 'html_append', type: 'html' },
@@ -166,25 +180,25 @@ class JQuiButtonDialogClose extends VisRxWidget {
                 },
                 {
                     name: 'icon',
-                    hidden: data => !!data.html,
+                    hidden: (data: any) => !!data.html,
                     fields: [
                         {
                             name: 'src',
                             label: 'jqui_image',
                             type: 'image',
-                            hidden: data => data.icon || data.jquery_style,
+                            hidden: (data: any) => data.icon || data.jquery_style,
                         },
                         {
                             name: 'icon',
                             label: 'jqui_icon',
                             type: 'icon64',
                             default: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSJjdXJyZW50Q29sb3IiIGQ9Ik0xOSA2LjQxTDE3LjU5IDVMMTIgMTAuNTlMNi40MSA1TDUgNi40MUwxMC41OSAxMkw1IDE3LjU5TDYuNDEgMTlMMTIgMTMuNDFMMTcuNTkgMTlMMTkgMTcuNTlMMTMuNDEgMTJ6Ii8+PC9zdmc+',
-                            hidden: data => data.src || data.jquery_style,
+                            hidden: (data: any) => data.src || data.jquery_style,
                         },
                         {
                             name: 'invert_icon',
                             type: 'checkbox',
-                            hidden: data => (!data.icon || !data.image) && data.jquery_style,
+                            hidden: (data: any) => (!data.icon || !data.image) && data.jquery_style,
                         },
                         {
                             name: 'imageHeight',
@@ -192,12 +206,12 @@ class JQuiButtonDialogClose extends VisRxWidget {
                             min: 0,
                             max: 200,
                             default: 100,
-                            hidden: data => !data.src || data.jquery_style,
+                            hidden: (data: any) => !data.src || data.jquery_style,
                         },
                     ],
                 },
             ],
-        };
+        } as const;
     }
 
     // eslint-disable-next-line class-methods-use-this
@@ -206,14 +220,14 @@ class JQuiButtonDialogClose extends VisRxWidget {
     }
 
     onClick() {
-        let dlgName = this.state.rxData.dlgName;
+        let dlgName: AnyWidgetId = this.state.rxData.dlgName as AnyWidgetId;
         if (!dlgName) {
             // go through all widgets and find the one with dialog content as this view
             const views = Object.keys(this.props.context.views);
             for (let i = 0; i < views.length; i++) {
                 const widgets = this.props.context.views[views[i]].widgets;
                 if (widgets) {
-                    const wids = Object.keys(widgets);
+                    const wids: AnyWidgetId[] = Object.keys(widgets) as AnyWidgetId[];
                     for (let j = 0; j < wids.length; j++) {
                         if (widgets[wids[j]].data?.contains_view === this.props.view) {
                             dlgName = wids[j];
@@ -230,23 +244,23 @@ class JQuiButtonDialogClose extends VisRxWidget {
             const el = window.document.getElementById(dlgName) || window.document.querySelector(`[data-dialog-name="${dlgName}"]`);
 
             const viewName = Object.keys(this.props.context.views).find(view => this.props.context.views[view].widgets[dlgName]);
-            this.props.context.onCommand('closeDialog', viewName, dlgName);
+            this.props.context.onCommand('closeDialog', viewName as ViewCommand, dlgName as unknown as Record<string, string>);
 
-            if (el?._showDialog) {
-                el._showDialog(false);
+            if ((el as any)?._showDialog) {
+                (el as any)._showDialog(false);
             } else {
                 // noinspection JSJQueryEfficiency
-                window.jQuery(`#${dlgName}_dialog`).dialog('close');
+                (window.jQuery as any)(`#${dlgName}_dialog`).dialog('close');
             }
         } else {
             window.alert('Dialog not found');
         }
     }
 
-    renderWidgetBody(props) {
+    renderWidgetBody(props: RxRenderWidgetProps) {
         super.renderWidgetBody(props);
 
-        const iconStyle = {
+        const iconStyle: CSSProperties = {
             filter: this.state.rxData.invert_icon ? 'invert(1)' : undefined,
         };
 
@@ -270,19 +284,19 @@ class JQuiButtonDialogClose extends VisRxWidget {
             style={iconStyle}
         /> : null;
 
-        const buttonStyle = {};
+        const buttonStyle: CSSProperties = {};
         // apply style from the element
-        Object.keys(this.state.rxStyle).forEach(attr => {
+        Object.keys(this.state.rxStyle).forEach((attr: keyof WidgetStyleState) => {
             const value = this.state.rxStyle[attr];
             if (value !== null &&
                 value !== undefined &&
                 VisRxWidget.POSSIBLE_MUI_STYLES.includes(attr)
             ) {
-                attr = attr.replace(
+                (attr as string) = attr.replace(
                     /(-\w)/g,
                     text => text[1].toUpperCase(),
                 );
-                buttonStyle[attr] = value;
+                (buttonStyle as any)[attr] = value;
             }
         });
         buttonStyle.minWidth = 'unset';
@@ -338,7 +352,7 @@ class JQuiButtonDialogClose extends VisRxWidget {
                                 zIndex: this.props.editMode ? 0 : undefined,
                             }}
                             key="content"
-                            color={this.state.rxData.color || 'grey'}
+                            color={this.state.rxData.color || 'grey' as any}
                             onClick={() => this.onClick()}
                             size="small"
                         >
@@ -347,8 +361,8 @@ class JQuiButtonDialogClose extends VisRxWidget {
                         <Button
                             key="content"
                             style={buttonStyle}
-                            color={this.state.rxData.color || 'grey'}
-                            variant={this.state.rxData.variant === undefined ? 'contained' : this.state.rxData.variant}
+                            color={this.state.rxData.color || 'grey' as any}
+                            variant={this.state.rxData.variant === undefined ? 'contained' : this.state.rxData.variant as any}
                             onClick={() => this.onClick()}
                             startIcon={icon}
                         >
@@ -369,13 +383,5 @@ class JQuiButtonDialogClose extends VisRxWidget {
         </div>;
     }
 }
-
-JQuiButtonDialogClose.propTypes = {
-    id: PropTypes.string.isRequired,
-    context: PropTypes.object.isRequired,
-    view: PropTypes.string.isRequired,
-    editMode: PropTypes.bool.isRequired,
-    tpl: PropTypes.string.isRequired,
-};
 
 export default JQuiButtonDialogClose;

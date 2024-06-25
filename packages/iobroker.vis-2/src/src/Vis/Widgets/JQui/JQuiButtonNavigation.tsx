@@ -15,19 +15,23 @@
 import PropTypes from 'prop-types';
 
 // eslint-disable-next-line import/no-cycle
+import type {
+    RxWidgetInfo, RxWidgetInfoAttributesFieldCheckbox, RxWidgetInfoAttributesFieldDefault, RxWidgetInfoAttributesFieldText, RxWidgetInfoWriteable,
+} from '@iobroker/types-vis-2';
+import type { RxWidgetInfoAttributesFieldAll } from '@/Vis/visWidgetsCatalog';
 import JQuiButton from './JQuiButton';
 
-class JQuiButtonPasswordNavigation extends JQuiButton {
+class JQuiButtonNavigation extends JQuiButton {
     static getWidgetInfo() {
-        const widgetInfo = JQuiButton.getWidgetInfo();
+        const widgetInfo = JQuiButton.getWidgetInfo() as unknown as RxWidgetInfoWriteable;
 
         const newWidgetInfo = {
-            id: 'tplJquiNavPw',
+            id: 'tplJquiButtonNav',
             visSet: 'jqui',
-            visName: 'Navigation with password',
-            visWidgetLabel: 'jqui_navigation_password',
-            visPrev: 'widgets/jqui/img/Prev_ButtonNavPw.png',
-            visOrder: 10,
+            visName: 'Navigation Button',
+            visWidgetLabel: 'jqui_navigation_button',
+            visPrev: 'widgets/jqui/img/Prev_ButtonNav.png',
+            visOrder: 8,
             visAttrs: widgetInfo.visAttrs,
         };
 
@@ -38,37 +42,26 @@ class JQuiButtonPasswordNavigation extends JQuiButton {
             text: 'jqui_button_nav_blank_note',
         });
 
-        const modal = JQuiButton.findField(newWidgetInfo, 'modal');
+        const modal = JQuiButton.findField<RxWidgetInfoAttributesFieldCheckbox>(newWidgetInfo, 'modal');
         delete modal.default;
 
-        const text = JQuiButton.findField(newWidgetInfo, 'buttontext');
-        text.default = 'Password';
-
-        const navView = JQuiButton.findField(newWidgetInfo, 'nav_view');
+        const navView = JQuiButton.findField<RxWidgetInfoAttributesFieldDefault>(newWidgetInfo, 'nav_view');
         navView.default = '';
 
-        const password = JQuiButton.findField(newWidgetInfo, 'Password');
-        password.default = '';
+        const text = JQuiButton.findField<RxWidgetInfoAttributesFieldText>(newWidgetInfo, 'buttontext');
+        text.default = 'View';
 
         // set resizable to true
-        const visResizable = JQuiButton.findField(newWidgetInfo, 'visResizable');
+        const visResizable = JQuiButton.findField<RxWidgetInfoAttributesFieldCheckbox>(newWidgetInfo, 'visResizable');
         visResizable.default = true;
 
-        return newWidgetInfo;
+        return newWidgetInfo as RxWidgetInfo;
     }
 
     // eslint-disable-next-line class-methods-use-this
     getWidgetInfo() {
-        return JQuiButtonPasswordNavigation.getWidgetInfo();
+        return JQuiButtonNavigation.getWidgetInfo();
     }
 }
 
-JQuiButtonPasswordNavigation.propTypes = {
-    id: PropTypes.string.isRequired,
-    context: PropTypes.object.isRequired,
-    view: PropTypes.string.isRequired,
-    editMode: PropTypes.bool.isRequired,
-    tpl: PropTypes.string.isRequired,
-};
-
-export default JQuiButtonPasswordNavigation;
+export default JQuiButtonNavigation;
