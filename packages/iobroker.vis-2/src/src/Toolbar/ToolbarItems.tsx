@@ -125,6 +125,7 @@ export interface TextFieldToolbarItem extends BaseToolbarItem {
 
 export type ToolbarItem = SelectToolbarItem | MultiselectToolbarItem | CheckboxToolbarItem | IconButtonToolbarItem | TextToolbarItem | ButtonToolbarItem | DividerToolbarItem | TextFieldToolbarItem;
 
+// eslint-disable-next-line no-use-before-define
 const getItem = (item: ToolbarItem, key: number, props: ToolbarItemsProps, full?: boolean) => {
     const { visProject } = store.getState();
     const view = visProject[props.selectedView];
@@ -302,12 +303,16 @@ const getItem = (item: ToolbarItem, key: number, props: ToolbarItemsProps, full?
 
 interface ToolbarItemsProps {
     classes: Record<string, string>;
+    // eslint-disable-next-line react/no-unused-prop-types
     themeType: ThemeType;
     group: { name: string | React.JSX.Element; doNotTranslateName?: boolean; items: (ToolbarItem[][] | ToolbarItem[] | ToolbarItem)[] };
     last?: boolean;
     toolbarHeight: 'full' | 'narrow' | 'veryNarrow';
+    // eslint-disable-next-line react/no-unused-prop-types
     changeProject: EditorClass['changeProject'];
+    // eslint-disable-next-line react/no-unused-prop-types
     selectedView: string;
+    // eslint-disable-next-line react/no-unused-prop-types
     setSelectedWidgets: EditorClass['setSelectedWidgets'];
 }
 

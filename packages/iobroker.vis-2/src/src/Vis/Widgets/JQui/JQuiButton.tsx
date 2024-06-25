@@ -15,7 +15,6 @@
 
 import type { CSSProperties } from 'react';
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import {
     Button,
@@ -37,7 +36,7 @@ import {
 import type { VisBaseWidgetProps, VisWidgetCommand } from '@/Vis/visBaseWidget';
 import VisBaseWidget from '@/Vis/visBaseWidget';
 import type {
-    GetRxDataFromWidget, RxRenderWidgetProps, RxWidgetInfo, RxWidgetInfoAttributesField,
+    RxRenderWidgetProps, RxWidgetInfo, RxWidgetInfoAttributesField,
     RxWidgetInfoWriteable,
     Writeable,
 } from '@iobroker/types-vis-2';

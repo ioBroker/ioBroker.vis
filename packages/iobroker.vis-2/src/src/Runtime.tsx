@@ -33,9 +33,6 @@ import type { GenericAppProps, GenericAppState, ThemeName } from '@iobroker/adap
 import type {
     AnyWidgetId, GroupWidgetId, Project, SingleWidgetId, ViewSettings, VisTheme, WidgetData, WidgetStyle,
 } from '@iobroker/types-vis-2';
-import {
-    GroupWidget, SingleWidget, View, Widget,
-} from '@iobroker/types-vis-2';
 import VisEngine from './Vis/visEngine';
 import {
     extractBinding,
@@ -171,6 +168,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
 
     onIgnoreMouseEvents: (ignore: boolean) => void;
 
+    // eslint-disable-next-line no-shadow
     askAboutInclude: (wid: AnyWidgetId, toWid: AnyWidgetId, cb: (wid: AnyWidgetId, toWid: AnyWidgetId) => void) => void;
 
     showConfirmDialog?(dialog: {

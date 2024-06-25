@@ -30,6 +30,8 @@ import type {
     RxRenderWidgetProps,
     RxWidgetInfo,
     RxWidgetInfoAttributesField,
+    RxWidgetInfoWriteable,
+    Writeable,
 } from '@iobroker/types-vis-2';
 
 import VisBaseWidget from '@/Vis/visBaseWidget';
@@ -270,7 +272,7 @@ class JQuiWriteState extends VisRxWidget<RxData, JQuiWriteStateState> {
         }
     }
 
-    static findField(widgetInfo: RxWidgetInfo, name: string): RxWidgetInfoAttributesField | null {
+    static findField(widgetInfo: RxWidgetInfo | RxWidgetInfoWriteable, name: string): Writeable<RxWidgetInfoAttributesField> | null {
         return VisRxWidget.findField(widgetInfo, name);
     }
 

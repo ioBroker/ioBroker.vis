@@ -12,12 +12,11 @@
  * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
  * (Free for non-commercial use).
  */
-import PropTypes from 'prop-types';
 
 // eslint-disable-next-line import/no-cycle
-import type { RxWidgetInfoAttributesFieldText, RxWidgetInfoWriteable } from '@iobroker/types-vis-2';
 import {
-    type RxWidgetInfo, type RxWidgetInfoAttributesField, type RxWidgetInfoAttributesFieldCheckbox, type RxWidgetInfoAttributesFieldSelect,
+    type RxWidgetInfo, type RxWidgetInfoAttributesFieldCheckbox, type RxWidgetInfoAttributesFieldSelect,
+    type RxWidgetInfoAttributesFieldText, type RxWidgetInfoWriteable,
 } from '@iobroker/types-vis-2';
 import JQuiButton from './JQuiButton';
 

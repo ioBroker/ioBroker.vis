@@ -56,7 +56,8 @@ interface ViewsProps {
 
 const Views = (props: ViewsProps) => {
     const [dialog, setDialog] = useState(null);
-    const [dialogCallback, setDialogCallback] = useState<{ cb:(dialogName: string) => void }>(null);
+    // eslint-disable-next-line no-spaced-func, func-call-spacing
+    const [dialogCallback, setDialogCallback] = useState<{ cb: (dialogName: string) => void }>(null);
     const [dialogName, setDialogName] = useState('');
     const [dialogView, setDialogView] = useState(null);
     const [dialogParentId, setDialogParentId] = useState(null);
@@ -65,6 +66,7 @@ const Views = (props: ViewsProps) => {
         type: 'add' | 'rename' | 'delete' | 'copy',
         view?: string,
         parentId?: string,
+        // eslint-disable-next-line no-shadow
         cb?: (dialogName: string) => void,
     ) => {
         view = view || props.selectedView;

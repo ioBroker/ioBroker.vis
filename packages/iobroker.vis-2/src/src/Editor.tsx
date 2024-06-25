@@ -7,7 +7,7 @@ import {
 import { DndProvider, useDrop } from 'react-dnd';
 import { TouchBackend } from 'react-dnd-touch-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import ReactSplit, { SplitDirection, GutterTheme } from '@devbookhq/splitter';
+import ReactSplit, { SplitDirection } from '@devbookhq/splitter';
 
 import {
     IconButton, Paper, Popper, Tab, Tabs, Tooltip, LinearProgress, Button,
@@ -38,7 +38,6 @@ import {
 import type {
     AnyWidgetId, GroupData, GroupWidget, GroupWidgetId, MarketplaceWidgetRevision, Project, RxWidgetInfoGroup, SingleWidget, SingleWidgetId, ViewSettings, Widget, WidgetData, WidgetSetName, WidgetStyle,
 } from '@iobroker/types-vis-2';
-import { View } from '@iobroker/types-vis-2';
 import { recalculateFields, store, updateProject } from './Store';
 import {
     isGroup, getNewWidgetId, getNewGroupId, pasteGroup, unsyncMultipleWidgets, deepClone, pasteSingleWidget,
@@ -60,7 +59,6 @@ import { findWidgetUsages } from './Vis/visUtils';
 import type { MarketplaceDialogProps } from './Marketplace/MarketplaceDialog';
 import MarketplaceDialog from './Marketplace/MarketplaceDialog';
 import type { VisEngineHandlers } from './Vis/visView';
-import VisEngine from './Vis/visEngine';
 
 const generateClassName = createGenerateClassName({
     productionPrefix: 'vis-e',
@@ -179,7 +177,9 @@ const styles: Styles<IobTheme & {classes: Record<string, CSSProperties>}, any> =
 });
 
 interface ViewDropProps {
+    // eslint-disable-next-line no-use-before-define
     addMarketplaceWidget: EditorClass['addMarketplaceWidget'];
+    // eslint-disable-next-line no-use-before-define
     addWidget: EditorClass['addWidget'];
     editMode: boolean;
     children: React.JSX.Element;
@@ -1526,6 +1526,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         return null;
     }
 
+    // eslint-disable-next-line no-shadow
     askAboutInclude = (wid: AnyWidgetId, toWid: AnyWidgetId, cb: (wid: AnyWidgetId, toWid: AnyWidgetId) => void) =>
         this.setState({ askAboutInclude: { wid, toWid, cb } });
 
@@ -1678,7 +1679,6 @@ class Editor extends Runtime<EditorProps, EditorState> {
                 updateWidgets={this.updateWidgets}
                 selectedView={this.state.selectedView}
                 changeView={this.changeView}
-                project={store.getState().visProject}
                 changeProject={this.changeProject}
                 socket={this.socket as unknown as LegacyConnection}
                 editMode={this.state.editMode}
@@ -1724,7 +1724,6 @@ class Editor extends Runtime<EditorProps, EditorState> {
                             pasteWidgets={this.pasteWidgets}
                             orderWidgets={this.orderWidgets}
                             widgetsClipboard={this.state.widgetsClipboard}
-                            project={store.getState().visProject}
                             selectedView={this.state.selectedView}
                             changeProject={this.changeProject}
                             lockWidgets={this.lockWidgets}

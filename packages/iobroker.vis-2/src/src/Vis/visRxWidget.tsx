@@ -253,6 +253,7 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
         return I18n.getLanguage();
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onCommand(command: VisWidgetCommand, _option?: any) {
         const result = super.onCommand(command);
         if (result === false) {
@@ -273,7 +274,7 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,class-methods-use-this
     onStateUpdated(id: string, state: ioBroker.State) {
-
+        //
     }
 
     onIoBrokerStateChanged = (id: StateID, state: ioBroker.State | null | undefined) => {
@@ -402,14 +403,14 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
             .catch(e => console.error(`Cannot subscribe on ${this.linkContext.IDs}: ${e}`));
     }
 
-    // eslint-disable-next-line no-unused-vars,class-methods-use-this
+    // eslint-disable-next-line no-unused-vars,class-methods-use-this, @typescript-eslint/no-unused-vars
     onRxDataChanged(_prevRxData: typeof this.state.rxData) {
-
+        //
     }
 
-    // eslint-disable-next-line no-unused-vars,class-methods-use-this
+    // eslint-disable-next-line no-unused-vars,class-methods-use-this, @typescript-eslint/no-unused-vars
     onRxStyleChanged(_prevRxStyle: typeof this.state.rxStyle) {
-
+        //
     }
 
     componentDidUpdate(prevProps: VisRxWidgetProps, prevState: typeof this.state) {

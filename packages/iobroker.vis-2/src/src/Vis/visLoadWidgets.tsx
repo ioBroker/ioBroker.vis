@@ -67,8 +67,8 @@ const getOrLoadRemote = (
             // @ts-expect-error todo fix
             if (!window[remote].__initialized) {
                 // if share scope doesn't exist (like in webpack 4) then expect shareScope to be a manual object
-                // eslint-disable-next-line camelcase
                 // @ts-expect-error this is a trick
+                // eslint-disable-next-line camelcase
                 if (typeof __webpack_share_scopes__ === 'undefined' && window[remote].init) {
                     // use the default share scope object, passed in manually
                     // @ts-expect-error todo fix
@@ -77,8 +77,8 @@ const getOrLoadRemote = (
                 } else if (window[remote].init) {
                     // otherwise, init share scope as usual
                     try {
-                        // eslint-disable-next-line camelcase, no-undef
                         // @ts-expect-error this is a trick
+                        // eslint-disable-next-line camelcase, no-undef
                         await window[remote].init(__webpack_share_scopes__[shareScope]);
                     } catch (e) {
                         console.error(`Cannot init remote "${remote}" with "${shareScope}"`);

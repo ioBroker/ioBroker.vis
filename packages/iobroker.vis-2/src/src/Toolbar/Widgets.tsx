@@ -70,9 +70,11 @@ const Widgets: React.FC<WidgetsProps> = props => {
     const [importDialog, setImportDialog] = useState(false);
     const [filterDialog, setFilterDialog] = useState(false);
 
+    // eslint-disable-next-line no-spaced-func
     const toolbar = useMemo<{
         name: string;
-        items:(ToolbarItem | ToolbarItem[] | ToolbarItem[][])[];
+        // eslint-disable-next-line func-call-spacing
+        items: (ToolbarItem | ToolbarItem[] | ToolbarItem[][])[];
             }>(() => {
                 const project = store.getState().visProject;
 

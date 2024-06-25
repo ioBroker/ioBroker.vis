@@ -319,6 +319,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
                 this.refService.current.style.cursor = 'crosshair';
                 this.refService.current.className = addClass(this.refService.current.className, 'vis-editmode-steal-style');
             }
+            // eslint-disable-next-line no-undef
             const resizers = this.refService.current?.querySelectorAll('.vis-editmode-resizer') as NodeListOf<HTMLDivElement>;
             resizers?.forEach(item => item.style.display = 'none');
             return true;
@@ -332,6 +333,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
             if (this.refService.current) {
                 this.refService.current.className = removeClass(this.refService.current.className, 'vis-editmode-steal-style');
             }
+            // eslint-disable-next-line no-undef
             const resizers = this.refService.current?.querySelectorAll('.vis-editmode-resizer') as NodeListOf<HTMLDivElement>;
             resizers?.forEach(item => item.style.display = '');
             return true;
@@ -369,6 +371,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
             }
 
             // show resizers again
+            // eslint-disable-next-line no-undef
             const resizers = this.refService.current?.querySelectorAll('.vis-editmode-resizer') as NodeListOf<HTMLDivElement>;
             resizers?.forEach(item => item.style.display = 'block');
 
@@ -712,6 +715,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
                         height: rect.height,
                     };
                 }
+                // eslint-disable-next-line no-undef
                 const resizers = this.refService.current.querySelectorAll('.vis-editmode-resizer') as NodeListOf<ResizerElement>;
                 resizers.forEach(item => {
                     item._storedOpacity = item.style.opacity;
@@ -846,6 +850,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
 
             // end of resize
             if (save) {
+                // eslint-disable-next-line no-undef
                 const resizers = this.refService.current?.querySelectorAll('.vis-editmode-resizer') as NodeListOf<HTMLDivElementResizers>;
                 resizers?.forEach(item => {
                     if (item._storedOpacity !== undefined) {
@@ -882,6 +887,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
             };
 
             // hide resizers
+            // eslint-disable-next-line no-undef
             const resizers = this.refService.current.querySelectorAll('.vis-editmode-resizer') as NodeListOf<HTMLDivElement>;
             resizers.forEach(item => item.style.display = 'none');
 
@@ -918,6 +924,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
             // End of movement
             if (save) {
                 // show resizers
+                // eslint-disable-next-line no-undef
                 const resizers = this.refService.current.querySelectorAll('.vis-editmode-resizer') as NodeListOf<HTMLDivElement>;
                 resizers.forEach(item => item.style.display = 'block');
 
@@ -1301,7 +1308,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
      *
      * @param _props
      */
-    // eslint-disable-next-line class-methods-use-this,no-unused-vars
+    // eslint-disable-next-line class-methods-use-this,no-unused-vars, @typescript-eslint/no-unused-vars
     renderWidgetBody(_props: RxRenderWidgetProps): React.JSX.Element | null {
         // Default render method. Normally it should be overwritten
         return <div

@@ -14,7 +14,6 @@
  */
 
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import { Icon } from '@iobroker/adapter-react-v5';
 

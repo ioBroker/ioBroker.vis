@@ -30,13 +30,12 @@ import type {
     ThemeType,
 } from '@iobroker/adapter-react-v5';
 
-import type { Marketplace, MarketplaceWidgetRevision, Project } from '@iobroker/types-vis-2';
+import type { Marketplace, MarketplaceWidgetRevision } from '@iobroker/types-vis-2';
 import { store } from '@/Store';
 
 import type { WidgetType } from '@/Vis/visWidgetsCatalog';
 import { getWidgetTypes } from '@/Vis/visWidgetsCatalog';
 import { loadComponent } from '@/Vis/visLoadWidgets';
-import type { MarketplaceDialogProps } from '@/Marketplace/MarketplaceDialog';
 import type { EditorClass } from '../Editor';
 import Widget from './Widget';
 import MarketplacePalette from '../Marketplace/MarketplacePalette';
@@ -172,7 +171,6 @@ interface PaletteProps {
     themeType: ThemeType;
     editMode: boolean;
     selectedView: string;
-    project: Project;
 }
 
 interface PaletteState {

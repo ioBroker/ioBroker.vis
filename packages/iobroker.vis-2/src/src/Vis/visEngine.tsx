@@ -14,7 +14,6 @@
  */
 
 import React from 'react';
-import PropTypes, { any } from 'prop-types';
 import moment from 'moment';
 import 'moment/locale/de';
 import 'moment/locale/ru';
@@ -38,7 +37,7 @@ import {
 } from '@mui/material';
 
 import type {
-    IobTheme, LegacyConnection, ThemeName, ThemeType,
+    LegacyConnection, ThemeName, ThemeType,
 } from '@iobroker/adapter-react-v5';
 import { I18n } from '@iobroker/adapter-react-v5';
 import CloseIcon from '@mui/icons-material/Close';
@@ -53,7 +52,7 @@ import './visWords';
 
 import { store } from '@/Store';
 import type {
-    AnyWidgetId, ArgumentChanged, CanWidgetStore, GroupWidgetId, ViewCommand, ViewCommandOptions, VisChangeHandlerCallback, VisContext, VisLegacy, VisLinkContext, VisLinkContextBinding, VisLinkContextItem, VisRxWidgetStateValues, VisTheme, Widget,
+    AnyWidgetId, ArgumentChanged, CanWidgetStore, GroupWidgetId, ViewCommand, ViewCommandOptions, VisChangeHandlerCallback, VisContext, VisLegacy, VisLinkContext, VisLinkContextBinding, VisLinkContextItem, VisTheme,
     VisFormatUtils as VisFormatUtilsType,
 } from '@iobroker/types-vis-2';
 import type { EditorClass } from '@/Editor';
@@ -246,14 +245,17 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
 
     lastChange: number;
 
+    // eslint-disable-next-line react/no-unused-class-component-methods
     _authInfo: {
         user: string;
         hash: string;
         salt: string;
     };
 
+    // eslint-disable-next-line react/no-unused-class-component-methods
     _authRunning: boolean;
 
+    // eslint-disable-next-line no-use-before-define
     conn: ReturnType<VisEngine['createConnection']>;
 
     visContext: VisContext;
@@ -264,6 +266,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
 
     viewsActiveFilter: Record<string, string[]>;
 
+    // eslint-disable-next-line react/no-unused-class-component-methods
     defaultMode: any;
 
     can: any;
@@ -598,6 +601,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                 const refViews = this.refViews;
                 Object.keys(refViews).forEach(view => refViews[view].onCommand('updateContainers'));
             },
+            // eslint-disable-next-line no-shadow
             renderView: (viewDiv, view: string | boolean, hidden: boolean | ((viewDiv: string, view: string) => void), cb) => {
                 if (typeof view === 'boolean') {
                     cb = hidden as () => void;
@@ -657,8 +661,10 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                 return false;
             },
             setValue: this.setValue,
+            // eslint-disable-next-line no-shadow
             changeView: (viewDiv, view, hideOptions, showOptions, sync: boolean | ((viewDiv: string, view: string) => void), cb) => {
                 if (typeof view === 'object') {
+                    // eslint-disable-next-line no-shadow
                     cb = sync as (viewDiv: string, view: string) => void;
                     sync = showOptions;
                     hideOptions = showOptions;
@@ -884,7 +890,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
             config: {}, // storage of dialog positions and size (Deprecated)
             showCode: (code, title, mode) => this.props.onShowCode(code, title, mode),
             findCommonAttributes: (/* view, widgets */) => {
-
+                //
             },
             bindWidgetClick: () => {
                 // used in vis.1
@@ -1250,6 +1256,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                                 const instance = `system.adapter.${this.props.adapterName}.${this.props.instance}`;
                                 // find out the default file mode
                                 if (objects[instance]?.native?.defaultFileMode) {
+                                    // eslint-disable-next-line react/no-unused-class-component-methods
                                     this.defaultMode = objects[instance].native.defaultFileMode;
                                 }
                             });
@@ -1294,9 +1301,11 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                 cb && cb();
             },
             authenticate: (user: string, password: string, salt: string) => {
+                // eslint-disable-next-line react/no-unused-class-component-methods
                 this._authRunning = true;
 
                 if (user !== undefined) {
+                    // eslint-disable-next-line react/no-unused-class-component-methods
                     this._authInfo = {
                         user,
                         hash: password + salt,

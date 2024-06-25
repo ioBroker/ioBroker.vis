@@ -15,12 +15,11 @@
 
 import type { CSSProperties } from 'react';
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import { I18n } from '@iobroker/adapter-react-v5';
 
 // eslint-disable-next-line import/no-cycle
-import type { GetRxDataFromWidget, RxRenderWidgetProps, RxWidgetInfoGroup } from '@iobroker/types-vis-2';
+import type { RxRenderWidgetProps, RxWidgetInfoGroup } from '@iobroker/types-vis-2';
 import VisRxWidget from '../../visRxWidget';
 
 interface RxData {
