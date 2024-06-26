@@ -4,11 +4,8 @@ import {
     IconButton,
     Tooltip,
     Menu as DropMenu,
-    MenuItem as DropMenuItem,
+    MenuItem as DropMenuItem, Box,
 } from '@mui/material';
-
-import type { CSSProperties, Styles } from '@mui/styles';
-import { withStyles } from '@mui/styles';
 
 import {
     Close as CloseIcon,
@@ -24,7 +21,6 @@ import {
 } from '@mui/icons-material';
 
 import type {
-    IobTheme,
     LegacyConnection,
     ThemeName,
     ThemeType,
@@ -37,12 +33,12 @@ import {
 } from '@iobroker/adapter-react-v5';
 
 import type { EditorClass } from '@/Editor';
-import type { AnyWidgetId, GroupWidgetId } from '@iobroker/types-vis-2';
+import type { AnyWidgetId, GroupWidgetId, VisTheme } from '@iobroker/types-vis-2';
 import Views from './Views';
 import Widgets from './Widgets';
 import Projects from './Projects';
 
-const styles: Styles<IobTheme & {classes: Record<string, CSSProperties>} | any, any> = theme => ({
+const styles: Record<string, any> = {
     text: {
         paddingRight: 4,
     },
@@ -67,8 +63,8 @@ const styles: Styles<IobTheme & {classes: Record<string, CSSProperties>} | any, 
         width: 22,
         height: 22,
     },
-    lightedPanel: theme.classes.lightedPanel,
-    toolbar: theme.classes.toolbar,
+    lightedPanel: (theme: VisTheme) => theme.classes.lightedPanel,
+    toolbar: (theme: VisTheme) => theme.classes.toolbar,
     narrowToolbar: {
         paddingTop: 4,
         paddingBottom: 4,
@@ -79,21 +75,10 @@ const styles: Styles<IobTheme & {classes: Record<string, CSSProperties>} | any, 
     heightButton: {
 
     },
-    '@keyframes blink': {
-        '0%': {
-            opacity: 1,
-        },
-        '50%': {
-            opacity: 0,
-        },
-        '100%': {
-            opacity: 1,
-        },
-    },
-    saveIcon: {
+    saveIcon: (theme: VisTheme) => ({
         animation: `blink 2000ms ${theme.transitions.easing.easeInOut}`,
         color: theme.palette.primary.main,
-    },
+    }),
     version: {
         fontStyle: 'italic',
         marginRight: 10,
@@ -101,62 +86,61 @@ const styles: Styles<IobTheme & {classes: Record<string, CSSProperties>} | any, 
         fontSize: 10,
         textAlign: 'right',
     },
-});
+};
 
 interface ToolbarProps {
-    classes: Record<string, string>;
-    currentUser: Record<string, any>;
-    needSave: boolean;
-    socket: LegacyConnection;
-    toggleTheme: EditorClass['toggleTheme'];
-    themeName: ThemeName;
-    themeType: ThemeType;
-    editMode: boolean;
-    selectedGroup: GroupWidgetId;
-    setToolbarHeight: (value: 'narrow' | 'veryNarrow' | 'full') => void;
-    projectsDialog: boolean;
-    setProjectsDialog: EditorClass['setProjectsDialog'];
-    toolbarHeight: 'full' | 'narrow' | 'veryNarrow';
     adapterName: string;
-    instance: number;
-    projectName: string;
-    version: string;
-    setSelectedWidgets: EditorClass['setSelectedWidgets'];
-    selectedView: string;
+    addProject: EditorClass['addProject'];
+    alignWidgets: EditorClass['alignWidgets'];
     changeProject: EditorClass['changeProject'];
     changeView: EditorClass['changeView'];
-    viewsManager: boolean;
-    setViewsManager: EditorClass['setViewsManager'];
-    toggleView: EditorClass['toggleView'];
-    alignWidgets: EditorClass['alignWidgets'];
     cloneWidgets: EditorClass['cloneWidgets'];
     copyWidgets: EditorClass['copyWidgets'];
+    currentUser: Record<string, any>;
     cutWidgets: EditorClass['cutWidgets'];
+    deleteProject: EditorClass['deleteProject'];
     deleteWidgets: EditorClass['deleteWidgets'];
+    editMode: boolean;
     history: EditorClass['state']['history'];
     historyCursor: EditorClass['state']['historyCursor'];
+    instance: number;
+    loadProject: EditorClass['loadProject'];
     lockDragging: boolean;
+    needSave: boolean;
     openedViews: string[];
     orderWidgets: EditorClass['orderWidgets'];
     pasteWidgets: EditorClass['pasteWidgets'];
+    projectName: string;
+    projects: string[];
+    projectsDialog: boolean;
     redo: EditorClass['redo'];
+    refreshProjects: EditorClass['refreshProjects'];
+    renameProject: EditorClass['renameProject'];
+    selectedGroup: GroupWidgetId;
+    selectedView: string;
     selectedWidgets: AnyWidgetId[];
+    setProjectsDialog: EditorClass['setProjectsDialog'];
+    setSelectedWidgets: EditorClass['setSelectedWidgets'];
+    setToolbarHeight: (value: 'narrow' | 'veryNarrow' | 'full') => void;
+    setViewsManager: EditorClass['setViewsManager'];
+    socket: LegacyConnection;
+    theme: VisTheme;
+    themeName: ThemeName;
+    themeType: ThemeType;
     toggleLockDragging: EditorClass['toggleLockDragging'];
+    toggleTheme: EditorClass['toggleTheme'];
+    toggleView: EditorClass['toggleView'];
     toggleWidgetHint: EditorClass['toggleWidgetHint'];
+    toolbarHeight: 'full' | 'narrow' | 'veryNarrow';
     undo: EditorClass['undo'];
+    version: string;
+    viewsManager: boolean;
     widgetHint: string;
     widgetsClipboard: EditorClass['state']['widgetsClipboard'];
     widgetsLoaded: boolean;
-    addProject: EditorClass['addProject'];
-    deleteProject: EditorClass['deleteProject'];
-    loadProject: EditorClass['loadProject'];
-    projects: string[];
-    refreshProjects: EditorClass['refreshProjects'];
-    renameProject: EditorClass['renameProject'];
 }
 
 const Toolbar: React.FC<ToolbarProps> = props => {
-    const { classes } = props;
     const [right, setRight] = useState(false);
     const [lastCommand, setLastCommand] = useState(window.localStorage.getItem('Vis.lastCommand') || 'close');
     const rightRef = useRef(null);
@@ -217,7 +201,7 @@ const Toolbar: React.FC<ToolbarProps> = props => {
     if (props.toolbarHeight === 'narrow') {
         heightButton = <Tooltip title={I18n.t('Narrow panel')}>
             <IconButton
-                className={classes.heightButton}
+                style={styles.heightButton}
                 onClick={() => props.setToolbarHeight('veryNarrow')}
             >
                 <HeightNarrowIcon />
@@ -226,7 +210,7 @@ const Toolbar: React.FC<ToolbarProps> = props => {
     } else if (props.toolbarHeight === 'veryNarrow') {
         heightButton = <Tooltip title={I18n.t('Full panel')}>
             <IconButton
-                className={classes.heightButton}
+                style={styles.heightButton}
                 onClick={() => props.setToolbarHeight('full')}
             >
                 <HeightVeryNarrowIcon />
@@ -235,7 +219,7 @@ const Toolbar: React.FC<ToolbarProps> = props => {
     } else {
         heightButton = <Tooltip title={I18n.t('Hide panel names')}>
             <IconButton
-                className={classes.heightButton}
+                style={styles.heightButton}
                 onClick={() => props.setToolbarHeight('narrow')}
             >
                 <HeightFullIcon />
@@ -244,13 +228,13 @@ const Toolbar: React.FC<ToolbarProps> = props => {
     }
 
     const currentUser = props.currentUser ?
-        <div className={classes.rightBlock}>
-            {props.currentUser?.common?.icon ? <Icon src={props.currentUser?.common?.icon || ''} className={classes.icon} /> : <PersonIcon fontSize="small" />}
+        <div style={styles.rightBlock}>
+            {props.currentUser?.common?.icon ? <Icon src={props.currentUser?.common?.icon || ''} style={styles.icon} /> : <PersonIcon fontSize="small" />}
             <span style={{ paddingRight: 8, marginLeft: 8 }}>
                 { Utils.getObjectNameFromObj(props.currentUser, lang) }
             </span>
             { props.socket.isSecure
-                ? <Tooltip title={I18n.t('Exit')} classes={{ popper: classes.tooltip }}>
+                ? <Tooltip title={I18n.t('Exit')} componentsProps={{ popper: { sx: styles.tooltip } }}>
                     <IconButton
                         size="small"
                         onClick={async () => {
@@ -273,29 +257,44 @@ const Toolbar: React.FC<ToolbarProps> = props => {
 
     let lastCommandButton;
     if (lastCommand === 'close') {
-        lastCommandButton = <Tooltip title={I18n.t('Close editor')} classes={{ popper: classes.tooltip }}>
+        lastCommandButton = <Tooltip title={I18n.t('Close editor')} componentsProps={{ popper: { sx: styles.tooltip } }}>
             <IconButton size="small" onClick={() => window.location.href = runtimeURL}>
                 <CloseIcon />
             </IconButton>
         </Tooltip>;
     } else if (lastCommand === 'open') {
-        lastCommandButton = <Tooltip title={I18n.t('Open runtime in new window')} classes={{ popper: classes.tooltip }}>
+        lastCommandButton = <Tooltip title={I18n.t('Open runtime in new window')} componentsProps={{ popper: { sx: styles.tooltip } }}>
             <IconButton size="small" onClick={() => window.open(runtimeURL, 'vis-2.runtime')}>
                 <PlayArrowIcon />
             </IconButton>
         </Tooltip>;
     } else if (lastCommand === 'reload') {
-        lastCommandButton = <Tooltip title={I18n.t('Reload all runtimes')} classes={{ popper: classes.tooltip }}>
+        lastCommandButton = <Tooltip title={I18n.t('Reload all runtimes')} componentsProps={{ popper: { sx: styles.tooltip } }}>
             <IconButton size="small" onClick={onReload}>
                 <SyncIcon />
             </IconButton>
         </Tooltip>;
     }
 
-    return <div className={classes.lightedPanel}>
-        <span className={classes.right}>
-            <div className={classes.rightBlock}>
-                {props.needSave ? <SaveIcon fontSize={'20' as any} className={classes.saveIcon} /> : null}
+    return <Box component="div" sx={styles.lightedPanel}>
+        <style>
+            {`
+                @keyframes blink {
+                    0% {
+                        opacity: 0;
+                    }
+                    50% {
+                        opacity: 1;
+                    }
+                    100% {
+                        opacity: 0;
+                    }
+                }
+            `}
+        </style>
+        <span style={styles.right}>
+            <div style={styles.rightBlock}>
+                {props.needSave ? <SaveIcon fontSize={'20px' as any} style={Utils.getStyle(props.theme, styles.saveIcon)} /> : null}
                 {props.toolbarHeight === 'veryNarrow' ? currentUser : null}
                 {heightButton}
                 <ToggleThemeMenu
@@ -310,14 +309,18 @@ const Toolbar: React.FC<ToolbarProps> = props => {
                 {dropMenu}
             </div>
             {props.toolbarHeight !== 'veryNarrow' ? currentUser : null}
-            {props.toolbarHeight === 'full' && props.version ? <span className={props.classes.version}>
+            {props.toolbarHeight === 'full' && props.version ? <span style={styles.version}>
                 v
                 {props.version}
             </span> : null}
         </span>
-        <div className={Utils.clsx(classes.toolbar, props.toolbarHeight !== 'full' && classes.narrowToolbar)} style={{ alignItems: 'initial' }}>
+        <Box
+            component="div"
+            sx={Utils.getStyle(props.theme, styles.toolbar, props.toolbarHeight !== 'full' && styles.narrowToolbar)}
+            style={{ alignItems: 'initial' }}
+        >
             <Views
-                classes={{}}
+                theme={props.theme}
                 toolbarHeight={props.toolbarHeight}
                 changeProject={props.changeProject}
                 changeView={props.changeView}
@@ -362,6 +365,7 @@ const Toolbar: React.FC<ToolbarProps> = props => {
                 widgetsLoaded={props.widgetsLoaded}
             />
             <Projects
+                theme={props.theme}
                 toolbarHeight={props.toolbarHeight}
                 adapterName={props.adapterName}
                 changeProject={props.changeProject}
@@ -380,8 +384,8 @@ const Toolbar: React.FC<ToolbarProps> = props => {
                 refreshProjects={props.refreshProjects}
                 renameProject={props.renameProject}
             />
-        </div>
-    </div>;
+        </Box>
+    </Box>;
 };
 
-export default withStyles(styles)(Toolbar) as React.FC<ToolbarProps>;
+export default Toolbar;

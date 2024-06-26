@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import { TextField } from '@mui/material';
 
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n, type ThemeType } from '@iobroker/adapter-react-v5';
 
 import IODialog from '../../Components/IODialog';
 import CustomAceEditor from '../../Components/CustomAceEditor';
@@ -14,7 +14,7 @@ interface ImportDialogProps {
     onClose: () => void;
     open: boolean;
     view: string;
-    themeType: string;
+    themeType: ThemeType;
 }
 
 const ImportDialog: React.FC<ImportDialogProps> = props => {

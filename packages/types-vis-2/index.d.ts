@@ -1,7 +1,15 @@
 import type React from 'react';
 import type moment from 'moment';
+import type {
+    CommonColors, PaletteAugmentColorOptions,
+    PaletteColor,
+    PaletteTonalOffset, TypeAction, TypeBackground,
+    TypeDivider,
+    TypeText
+} from '@mui/material/styles/createPalette';
+import type { Color, PaletteMode } from '@mui/material';
+
 import type { LegacyConnection, ThemeType, IobTheme } from '@iobroker/adapter-react-v5';
-import { string } from 'yargs';
 
 interface VisView {
     getOneWidget(index: number, widget: SingleWidget | GroupWidget, options: CreateWidgetOptions): React.JSX.Element | null;
@@ -860,7 +868,7 @@ export interface VisLegacy {
     widgets: any;
     editSelect: (widAttr: string, values: any, notTranslate: boolean, init: () => void, onchange: () => void) => string | {
         input: string;
-        init?: () => void, 
+        init?: () => void,
         onchange?: () => void
     } | null;
     isWidgetHidden: (view: string, widget: AnyWidgetId, visibilityOidValue: null | number | string | undefined | boolean, widgetData: any) => boolean;
@@ -1079,7 +1087,56 @@ export interface VisFormatUtils {
     }): string;
 }
 
+export interface ExTypeText extends TypeText {
+    danger: { color: string };
+    success: { color: string };
+}
+
+export interface ExtendedMuiPalette {
+    common: CommonColors;
+    mode: PaletteMode;
+    contrastThreshold: number;
+    tonalOffset: PaletteTonalOffset;
+    primary: PaletteColor;
+    secondary: PaletteColor;
+    error: PaletteColor;
+    warning: PaletteColor;
+    info: PaletteColor;
+    success: PaletteColor;
+    grey: Color;
+    text: ExTypeText;
+    divider: TypeDivider;
+    action: TypeAction;
+    background: TypeBackground;
+    getContrastText: (background: string) => string;
+    augmentColor: (options: PaletteAugmentColorOptions) => PaletteColor;
+}
+
+interface ExtendedPalette extends ExtendedMuiPalette {
+    mode: ThemeType;
+    expert: string;
+    grey: {
+        main: string;
+        dark: string;
+        50: string;
+        100: string;
+        200: string;
+        300: string;
+        400: string;
+        500: string;
+        600: string;
+        700: string;
+        800: string;
+        900: string;
+        A100: string;
+        A200: string;
+        A400: string;
+        A700: string;
+    };
+}
+
 export interface VisTheme extends IobTheme {
+    palette: ExtendedPalette;
     classes: {
         blockHeader: React.CSSProperties;
         viewTabs: React.CSSProperties;
@@ -1105,7 +1162,7 @@ export interface VisContext {
     changeView: (view: string, subView?: string) => void;
     dateFormat: string;
     disableInteraction: boolean;
-    editModeComponentClass: string;
+    editModeComponentStyle: React.CSSProperties;
     formatUtils: VisFormatUtils;
     instance: number; // vis instance number (not browser instance)
     jQuery: JQuery;

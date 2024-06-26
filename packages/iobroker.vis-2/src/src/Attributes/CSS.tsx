@@ -7,7 +7,7 @@ import {
 
 import { HelpOutline, Check as CheckIcon } from '@mui/icons-material';
 
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n, type ThemeType } from '@iobroker/adapter-react-v5';
 
 import { readFile } from '@/Vis/visUtils';
 import { CustomAceEditor } from '@/Components/CustomAceEditor';
@@ -17,7 +17,7 @@ interface CSSProps {
     socket: any;
     saveCssFile: (directory: string, file: string, value: string) => void;
     adapterId: string;
-    themeType: string;
+    themeType: ThemeType;
     maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
     editMode: boolean;
 }

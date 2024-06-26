@@ -3,8 +3,6 @@ import type { PopoverProps } from '@mui/material';
 import {
     AppBar, Button, IconButton, Tooltip, Menu, MenuItem, CircularProgress,
 } from '@mui/material';
-import type { Styles } from '@mui/styles';
-import { withStyles } from '@mui/styles';
 
 import type JQuery from 'jquery';
 
@@ -17,12 +15,10 @@ import {
 } from '@mui/icons-material';
 import { BiImport, BiExport } from 'react-icons/bi';
 
-import type { IobTheme, LegacyConnection } from '@iobroker/adapter-react-v5';
-import {
-    I18n, Utils,
-} from '@iobroker/adapter-react-v5';
+import { I18n, type ThemeType, type LegacyConnection } from '@iobroker/adapter-react-v5';
 
 import type { EditorClass } from '@/Editor';
+import type { VisTheme } from '@iobroker/types-vis-2';
 import IODialog from '../../Components/IODialog';
 import ImportProjectDialog, { getLiveHost } from './ImportProjectDialog';
 import ProjectDialog from './ProjectDialog';
@@ -34,7 +30,7 @@ declare global {
     }
 }
 
-const styles: Styles<IobTheme, any> = theme => ({
+const styles: Record<string, React.CSSProperties> = {
     projectBlock: {
         display: 'flex',
         alignItems: 'center',
@@ -62,18 +58,10 @@ const styles: Styles<IobTheme, any> = theme => ({
     button: {
         margin: 4,
     },
-    '@keyframes my-blink': {
-        '0%': {
-            backgroundColor: theme.palette.primary.light,
-        },
-        '50%': {
-            backgroundColor: theme.palette.secondary.main,
-        },
-    },
     blink: {
-        animation: '$my-blink 3s infinite',
+        animation: 'my-vis-blink 3s infinite',
     },
-});
+};
 
 interface ProjectsManageProps {
     addProject: EditorClass['addProject'];
@@ -84,8 +72,8 @@ interface ProjectsManageProps {
     projectName: string;
     refreshProjects: EditorClass['refreshProjects'];
     socket: LegacyConnection;
-    themeType: string;
-    classes: Record<string, string>;
+    themeType: ThemeType;
+    theme: VisTheme;
     adapterName: string;
     instance: number;
     selectedView: string;
@@ -201,35 +189,51 @@ const ProjectsManage: React.FC<ProjectsManageProps> = props => {
         closeTitle="Close"
         closeDisabled={!props.projects.length || !!working}
     >
-        <div className={props.classes.dialog}>
-            <AppBar position="static" className={props.classes.topBar}>
+        <style>
+            {` 
+@keyframes my-vis-blink {
+    0% {
+        background-color: ${props.theme.palette.primary.light};
+    }
+    50% {
+        background-color: ${props.theme.palette.secondary.main};
+    }
+}         
+            `}
+        </style>
+        <div style={styles.dialog}>
+            <AppBar position="static" style={styles.topBar}>
                 <Tooltip
                     title={I18n.t('Add')}
                     // size="small"
-                    classes={{ popper: props.classes.tooltip }}
+                    componentsProps={{ popper: { sx: styles.tooltip } }}
                 >
-                    <IconButton onClick={() => showDialog('add')} size="small" className={Utils.clsx(props.classes.button, !props.projects.length && props.classes.blink)}>
+                    <IconButton
+                        onClick={() => showDialog('add')}
+                        size="small"
+                        style={{ ...styles.button, ...(!props.projects.length ? styles.blink : undefined) }}
+                    >
                         <AddIcon />
                     </IconButton>
                 </Tooltip>
-                <Tooltip title={I18n.t('Import')} classes={{ popper: props.classes.tooltip }}>
-                    <IconButton onClick={() => setImportDialog(true)} size="small" style={{ width: 34 }} className={props.classes.button}>
+                <Tooltip title={I18n.t('Import')} componentsProps={{ popper: { sx: styles.tooltip } }}>
+                    <IconButton onClick={() => setImportDialog(true)} size="small" style={{ ...styles.button, width: 34 }}>
                         <BiImport fontSize={20} />
                     </IconButton>
                 </Tooltip>
             </AppBar>
-            {props.projects.sort((projName1, projName2) => projName1.toLowerCase().localeCompare(projName2)).map((projectName, key) => <div key={key} className={props.classes.projectBlock}>
+            {props.projects.sort((projName1, projName2) => projName1.toLowerCase().localeCompare(projName2)).map((projectName, key) => <div key={key} style={styles.projectBlock}>
                 <Button
                     fullWidth
-                    className={props.classes.projectButton}
+                    style={styles.projectButton}
                     color={projectName === props.projectName ? 'primary' : 'grey'}
                     onClick={() => window.location.href = `?${projectName}`}
                     startIcon={<IconDocument />}
                 >
                     {projectName}
                 </Button>
-                <span className={props.classes.viewManageButtonActions}>
-                    <Tooltip title={I18n.t('Permissions')} classes={{ popper: props.classes.tooltip }}>
+                <span style={styles.viewManageButtonActions}>
+                    <Tooltip title={I18n.t('Permissions')} componentsProps={{ popper: { sx: styles.tooltip } }}>
                         {working === projectName ? <CircularProgress size={22} /> :
                             <IconButton
                                 onClick={event => {
@@ -245,7 +249,7 @@ const ProjectsManage: React.FC<ProjectsManageProps> = props => {
                                 <PermissionsIcon fontSize={20 as any} />
                             </IconButton>}
                     </Tooltip>
-                    <Tooltip title={I18n.t('Export')} classes={{ popper: props.classes.tooltip }}>
+                    <Tooltip title={I18n.t('Export')} componentsProps={{ popper: { sx: styles.tooltip } }}>
                         {working === projectName ? <CircularProgress size={22} /> :
                             <IconButton
                                 onClick={event => {
@@ -257,7 +261,7 @@ const ProjectsManage: React.FC<ProjectsManageProps> = props => {
                                 <BiExport fontSize="20" />
                             </IconButton>}
                     </Tooltip>
-                    <Tooltip title={I18n.t('Edit')} classes={{ popper: props.classes.tooltip }}>
+                    <Tooltip title={I18n.t('Edit')} componentsProps={{ popper: { sx: styles.tooltip } }}>
                         <span>
                             <IconButton
                                 size="small"
@@ -268,7 +272,7 @@ const ProjectsManage: React.FC<ProjectsManageProps> = props => {
                             </IconButton>
                         </span>
                     </Tooltip>
-                    <Tooltip title={I18n.t('Delete')} onClick={() => showDialog('delete', projectName)} classes={{ popper: props.classes.tooltip }}>
+                    <Tooltip title={I18n.t('Delete')} onClick={() => showDialog('delete', projectName)} componentsProps={{ popper: { sx: styles.tooltip } }}>
                         <span>
                             <IconButton size="small" disabled={!!working}>
                                 <DeleteIcon />
@@ -319,4 +323,4 @@ const ProjectsManage: React.FC<ProjectsManageProps> = props => {
     </IODialog> : null;
 };
 
-export default withStyles(styles)(ProjectsManage) as React.FC<ProjectsManageProps>;
+export default ProjectsManage;

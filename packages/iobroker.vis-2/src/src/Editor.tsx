@@ -1,9 +1,5 @@
 import React, { useRef } from 'react';
 import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
-import type { Styles, CSSProperties } from '@mui/styles';
-import {
-    withStyles, StylesProvider, createGenerateClassName,
-} from '@mui/styles';
 import { DndProvider, useDrop } from 'react-dnd';
 import { TouchBackend } from 'react-dnd-touch-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -11,7 +7,7 @@ import ReactSplit, { SplitDirection } from '@devbookhq/splitter';
 
 import {
     IconButton, Paper, Popper, Tab, Tabs, Tooltip, LinearProgress, Button,
-    Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText,
+    Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText, Box,
 } from '@mui/material';
 
 import {
@@ -27,7 +23,7 @@ import {
     Layers,
 } from '@mui/icons-material';
 
-import type { IobTheme, LegacyConnection } from '@iobroker/adapter-react-v5';
+import type { IobTheme, LegacyConnection, ThemeName } from '@iobroker/adapter-react-v5';
 import {
     I18n,
     Utils,
@@ -35,8 +31,13 @@ import {
     Message as MessageDialog,
     SelectFile as SelectFileDialog, Icon,
 } from '@iobroker/adapter-react-v5';
+
 import type {
-    AnyWidgetId, GroupData, GroupWidget, GroupWidgetId, MarketplaceWidgetRevision, Project, RxWidgetInfoGroup, SingleWidget, SingleWidgetId, ViewSettings, Widget, WidgetData, WidgetSetName, WidgetStyle,
+    AnyWidgetId, GroupData, GroupWidget,
+    GroupWidgetId, MarketplaceWidgetRevision, Project,
+    RxWidgetInfoGroup, SingleWidget, SingleWidgetId,
+    ViewSettings, Widget, WidgetData, WidgetSetName, WidgetStyle,
+    VisTheme,
 } from '@iobroker/types-vis-2';
 import { recalculateFields, store, updateProject } from './Store';
 import {
@@ -60,11 +61,7 @@ import type { MarketplaceDialogProps } from './Marketplace/MarketplaceDialog';
 import MarketplaceDialog from './Marketplace/MarketplaceDialog';
 import type { VisEngineHandlers } from './Vis/visView';
 
-const generateClassName = createGenerateClassName({
-    productionPrefix: 'vis-e',
-});
-
-const styles: Styles<IobTheme & {classes: Record<string, CSSProperties>}, any> = theme => ({
+const styles: Record<string, any> = {
     block: {
         overflow: 'auto',
         height: 'calc(100vh - 102px)',
@@ -89,10 +86,10 @@ const styles: Styles<IobTheme & {classes: Record<string, CSSProperties>}, any> =
         display: 'flex',
         alignItems: 'center',
     },
-    app: {
+    app: (theme: IobTheme) => ({
         backgroundColor: theme.palette.background.default,
         color: theme.palette.text.primary,
-    },
+    }),
     tabsContainer: {
         width: '100%',
         display: 'flex',
@@ -106,23 +103,23 @@ const styles: Styles<IobTheme & {classes: Record<string, CSSProperties>}, any> =
         lineHeight: '36px',
         verticalAlign: 'top',
     },
-    groupEditTab: {
+    groupEditTab: (theme: VisTheme) => ({
         color: theme.palette.mode === 'dark' ? '#bad700' : '#f3bf00',
-    },
+    }),
     tabsName: {
         whiteSpace: 'nowrap',
         display: 'flex',
         alignItems: 'center',
         textTransform: 'none',
     },
-    viewTabs: {
+    viewTabs: (theme: VisTheme) => ({
         display: 'inline-block',
         ...theme.classes.viewTabs,
-    },
-    viewTab: {
+    }),
+    viewTab: (theme: VisTheme) => ({
         padding: '6px 12px',
         ...theme.classes.viewTab,
-    },
+    }),
     buttonShowAttributes: {
         position: 'absolute',
         top: 4,
@@ -135,22 +132,8 @@ const styles: Styles<IobTheme & {classes: Record<string, CSSProperties>}, any> =
         // left: 0,
         // zIndex: 10,
     },
-    editModeComponentClass: {
-        zIndex: 1002,
-    },
-    '@keyframes colorBlink': {
-        '0%': {
-            color: '#FF0000',
-        },
-        '50%': {
-            color: theme.palette.text.primary,
-        },
-        '100%': {
-            color: '#FF0000',
-        },
-    },
     iconBlink: {
-        animationName: '$colorBlink',
+        animationName: 'colorBlink',
         animationDuration: '1.5s',
         animationIterationCount: 'infinite',
     },
@@ -159,7 +142,7 @@ const styles: Styles<IobTheme & {classes: Record<string, CSSProperties>}, any> =
         height: 24,
         marginRight: 8,
     },
-    loadingText: {
+    loadingText: (theme: VisTheme) => ({
         position: 'absolute',
         height: 50,
         backgroundColor: theme.palette.mode === 'dark' ? 'rgba(0,0,0,0.8)' : 'rgba(255,255,255,0.8)',
@@ -173,8 +156,8 @@ const styles: Styles<IobTheme & {classes: Record<string, CSSProperties>}, any> =
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-    },
-});
+    }),
+};
 
 interface ViewDropProps {
     // eslint-disable-next-line no-use-before-define
@@ -1534,9 +1517,9 @@ class Editor extends Runtime<EditorProps, EditorState> {
         const { visProject } = store.getState();
         const views = visProject.___settings.openedViews.filter(view => Object.keys(visProject).includes(view));
 
-        return <div className={this.props.classes.tabsContainer}>
+        return <div style={styles.tabsContainer}>
             {this.state.hidePalette ? <Tooltip title={I18n.t('Show palette')}>
-                <div className={this.props.classes.tabButton}>
+                <div style={styles.tabButton}>
                     <IconButton
                         size="small"
                         onClick={() => {
@@ -1549,7 +1532,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
                 </div>
             </Tooltip> : null}
             {!this.state.showCode ? <Tooltip title={I18n.t('Toggle runtime')}>
-                <div className={this.props.classes.tabButton}>
+                <div style={styles.tabButton}>
                     <IconButton
                         onClick={() => this.setState({ editMode: !this.state.editMode })}
                         size="small"
@@ -1561,16 +1544,16 @@ class Editor extends Runtime<EditorProps, EditorState> {
                 </div>
             </Tooltip> : null}
             <Tooltip title={I18n.t('Show view')}>
-                <div className={this.props.classes.tabButton}>
+                <div style={styles.tabButton}>
                     <IconButton onClick={() => this.setViewsManager(true)} size="small" disabled={!!this.state.selectedGroup}>
-                        <Layers className={views.length ? '' : this.props.classes.iconBlink} />
+                        <Layers style={views.length ? undefined : styles.iconBlink} />
                     </IconButton>
                 </div>
             </Tooltip>
             <Tabs
                 value={this.state.selectedView === 'null' || this.state.selectedView === 'undefined' || !this.state.selectedView ? views[0] || '' : this.state.selectedView}
                 style={{ width: `calc(100% - ${68 + (!this.state.showCode ? 40 : 0) + (this.state.hidePalette ? 40 : 0) + (this.state.hideAttributes ? 40 : 0)}px)` }}
-                className={this.props.classes.viewTabs}
+                sx={styles.viewTabs}
                 variant="scrollable"
                 scrollButtons="auto"
             >
@@ -1586,8 +1569,11 @@ class Editor extends Runtime<EditorProps, EditorState> {
                         return <Tab
                             component="span"
                             disabled={!!this.state.selectedGroup && view !== this.state.selectedView}
-                            label={<span className={Utils.clsx(isGroupEdited && this.props.classes.groupEditTab, this.props.classes.tabsName)}>
-                                {icon ? <Icon src={icon} className={this.props.classes.listItemIcon} /> : null}
+                            label={<Box
+                                component="span"
+                                style={Utils.getStyle(this.state.theme, isGroupEdited && styles.groupEditTab, styles.tabsName)}
+                            >
+                                {icon ? <Icon src={icon} style={styles.listItemIcon} /> : null}
                                 {isGroupEdited ? `${I18n.t('Group %s', this.state.selectedGroup)}` : (viewSettings.navigationTitle || view)}
                                 <Tooltip title={isGroupEdited ? I18n.t('Close group editor') : I18n.t('Hide')}>
                                     <span>
@@ -1607,8 +1593,8 @@ class Editor extends Runtime<EditorProps, EditorState> {
                                         </IconButton>
                                     </span>
                                 </Tooltip>
-                            </span>}
-                            className={this.props.classes.viewTab}
+                            </Box>}
+                            sx={styles.viewTab}
                             value={view}
                             onClick={() => this.changeView(view)}
                             key={view}
@@ -1621,14 +1607,14 @@ class Editor extends Runtime<EditorProps, EditorState> {
                 onClick={() => this.toggleCode()}
                 size="small"
                 style={{
+                    ...styles.tabButton,
                     cursor: 'default', opacity: this.state.showCode ? 1 : 0, width: 34, height: 34,
                 }}
-                className={this.props.classes.tabButton}
             >
                 {this.state.showCode ? <CodeOffIcon /> : <CodeIcon />}
             </IconButton>
             {views.length > 1 ? <Tooltip title={I18n.t('Close all but current view')}>
-                <div className={this.props.classes.tabButton}>
+                <div style={styles.tabButton}>
                     <IconButton
                         size="small"
                         onClick={() => {
@@ -1642,7 +1628,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
                 </div>
             </Tooltip> : null}
             {this.state.hideAttributes ? <Tooltip title={I18n.t('Show attributes')}>
-                <div className={this.props.classes.tabButton}>
+                <div style={styles.tabButton}>
                     <IconButton
                         size="small"
                         onClick={() => {
@@ -1659,16 +1645,15 @@ class Editor extends Runtime<EditorProps, EditorState> {
 
     renderPalette() {
         return <div
-            style={this.state.hidePalette ? { display: 'none' } : null}
-            className={Utils.clsx(
-                this.props.classes.block,
-                this.state.toolbarHeight === 'narrow' && this.props.classes.blockNarrow,
-                this.state.toolbarHeight === 'veryNarrow' && this.props.classes.blockVeryNarrow,
-            )}
+            style={{
+                ...styles.block,
+                ...(this.state.toolbarHeight === 'narrow' ? styles.blockNarrow : undefined),
+                ...(this.state.toolbarHeight === 'veryNarrow' ? styles.blockVeryNarrow : undefined),
+                display: this.state.hidePalette ? 'none' : undefined,
+            }}
         >
             {this.state.widgetsLoaded !== Runtime.WIDGETS_LOADING_STEP_ALL_LOADED ? <LinearProgress variant="indeterminate" value={(this.state.loadingProgress.step / this.state.loadingProgress.total) * 100} /> : null}
             <Palette
-                classes={{}}
                 widgetsLoaded={this.state.widgetsLoaded === Runtime.WIDGETS_LOADING_STEP_ALL_LOADED}
                 onHide={() => {
                     window.localStorage.setItem('Vis.hidePalette', 'true');
@@ -1693,12 +1678,12 @@ class Editor extends Runtime<EditorProps, EditorState> {
         return <div key="engine">
             {this.renderTabs()}
             <div
-                style={{ overflow: this.state.editMode ? 'auto' : (store.getState().visProject.___settings?.bodyOverflow || 'auto') }}
-                className={Utils.clsx(
-                    this.props.classes.canvas,
-                    this.state.toolbarHeight === 'narrow' && this.props.classes.canvasNarrow,
-                    this.state.toolbarHeight === 'veryNarrow' && this.props.classes.canvasVeryNarrow,
-                )}
+                style={{
+                    ...styles.canvas,
+                    ...(this.state.toolbarHeight === 'narrow' ? styles.canvasNarrow : undefined),
+                    ...(this.state.toolbarHeight === 'veryNarrow' ? styles.canvasVeryNarrow : undefined),
+                    overflow: this.state.editMode ? 'auto' : (store.getState().visProject.___settings?.bodyOverflow || 'auto'),
+                }}
             >
                 {this.state.showCode
                     ? <pre>
@@ -1743,14 +1728,13 @@ class Editor extends Runtime<EditorProps, EditorState> {
 
     renderAttributes() {
         return <div
-            className={Utils.clsx(
-                this.props.classes.block,
-                this.state.toolbarHeight === 'narrow' && this.props.classes.blockNarrow,
-                this.state.toolbarHeight === 'veryNarrow' && this.props.classes.blockVeryNarrow,
-            )}
+            style={{
+                ...styles.block,
+                ...(this.state.toolbarHeight === 'narrow' ? styles.blockNarrow : undefined),
+                ...(this.state.toolbarHeight === 'veryNarrow' ? styles.blockVeryNarrow : undefined),
+            }}
         >
             <Attributes
-                classes={{}}
                 selectedView={this.state.selectedView}
                 userGroups={this.state.userGroups}
                 changeProject={this.changeProject}
@@ -1974,6 +1958,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
             allowView
             showToolbar
             imagePrefix="../"
+            theme={this.state.theme}
             selected={this.state.legacyFileSelector.options?.path || ''}
             filterByType="images"
             onOk={(selected: string) => {
@@ -1999,39 +1984,40 @@ class Editor extends Runtime<EditorProps, EditorState> {
         if (!this.state.loadingText) {
             return null;
         }
-        return <div className={this.props.classes.loadingText}>{this.state.loadingText}</div>;
+        return <Box component="div" sx={styles.loadingText}>{this.state.loadingText}</Box>;
+    }
+
+    toggleTheme(newThemeName?: ThemeName) {
+        super.toggleTheme(newThemeName);
+
+        // apply background color only if not in iframe
+        this.props.setBackground();
     }
 
     render() {
         if (this.state.projectDoesNotExist) {
-            return <StylesProvider generateClassName={generateClassName}>
-                <StyledEngineProvider injectFirst>
-                    <ThemeProvider theme={this.state.theme}>
-                        {this.renderProjectDoesNotExist()}
-                    </ThemeProvider>
-                </StyledEngineProvider>
-            </StylesProvider>;
+            return <StyledEngineProvider injectFirst>
+                <ThemeProvider theme={this.state.theme}>
+                    {this.renderProjectDoesNotExist()}
+                </ThemeProvider>
+            </StyledEngineProvider>;
         }
 
         if (this.state.showProjectsDialog) {
-            return <StylesProvider generateClassName={generateClassName}>
-                <StyledEngineProvider injectFirst>
-                    <ThemeProvider theme={this.state.theme}>
-                        {this.showSmallProjectsDialog()}
-                    </ThemeProvider>
-                </StyledEngineProvider>
-            </StylesProvider>;
+            return <StyledEngineProvider injectFirst>
+                <ThemeProvider theme={this.state.theme}>
+                    {this.showSmallProjectsDialog()}
+                </ThemeProvider>
+            </StyledEngineProvider>;
         }
 
         if (!this.state.loaded || !store.getState().visProject.___settings || !this.state.userGroups) {
-            return <StylesProvider generateClassName={generateClassName}>
-                <StyledEngineProvider injectFirst>
-                    <ThemeProvider theme={this.state.theme}>
-                        {this.renderLoadingText()}
-                        {this.renderLoader()}
-                    </ThemeProvider>
-                </StyledEngineProvider>
-            </StylesProvider>;
+            return <StyledEngineProvider injectFirst>
+                <ThemeProvider theme={this.state.theme}>
+                    {this.renderLoadingText()}
+                    {this.renderLoader()}
+                </ThemeProvider>
+            </StyledEngineProvider>;
         }
 
         if (this.state.runtime) {
@@ -2045,167 +2031,179 @@ class Editor extends Runtime<EditorProps, EditorState> {
             }
         }
 
-        return <StylesProvider generateClassName={generateClassName}>
-            <StyledEngineProvider injectFirst>
-                <ThemeProvider theme={this.state.theme}>
-                    <Popper
-                        id="vis_main_popper"
-                        placement="top-start"
-                        anchorEl={this.mainRef.current}
-                        open={!!Object.keys(this.state.widgetsClipboard.widgets).length}
-                        style={{ width: '100%', textAlign: 'center', pointerEvents: 'none' }}
+        return <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={this.state.theme}>
+                <style>
+                    {`
+@keyframes colorBlink {
+    0% {
+        color: #FF0000;
+    }
+    50% {
+        color: ${this.state.theme.palette.text.primary};
+    }
+    100% {
+        color: #FF0000
+    }
+}`}
+                </style>
+                <Popper
+                    id="vis_main_popper"
+                    placement="top-start"
+                    anchorEl={this.mainRef.current}
+                    open={!!Object.keys(this.state.widgetsClipboard.widgets).length}
+                    style={{ width: '100%', textAlign: 'center', pointerEvents: 'none' }}
+                >
+                    <Paper
+                        style={{
+                            display: 'inline-block',
+                            pointerEvents: 'initial',
+                            zIndex: 1000,
+                            padding: 10,
+                            cursor: 'pointer',
+                            opacity: 0.8,
+                        }}
+                        title={I18n.t('Click to close')}
+                        onClick={() => this.setState({ widgetsClipboard: { widgets: {}, type: '' } })}
                     >
-                        <Paper
-                            style={{
-                                display: 'inline-block',
-                                pointerEvents: 'initial',
-                                zIndex: 1000,
-                                padding: 10,
-                                cursor: 'pointer',
-                                opacity: 0.8,
-                            }}
-                            title={I18n.t('Click to close')}
-                            onClick={() => this.setState({ widgetsClipboard: { widgets: {}, type: '' } })}
-                        >
-                            {Object.keys(this.state.widgetsClipboard.widgets).join(', ')}
-                        </Paper>
-                    </Popper>
-                    <div className={this.props.classes.app}>
-                        <Toolbar
-                            classes={{}}
-                            selectedView={this.state.selectedView}
-                            changeView={this.changeView}
-                            changeProject={this.changeProject}
-                            openedViews={store.getState().visProject.___settings.openedViews}
-                            toggleView={this.toggleView}
-                            socket={this.socket as unknown as LegacyConnection}
-                            projects={this.state.projects}
-                            loadProject={this.loadProject}
-                            projectName={this.state.projectName}
-                            addProject={this.addProject}
-                            renameProject={this.renameProject}
-                            deleteProject={this.deleteProject}
-                            needSave={this.state.needSave}
-                            currentUser={this.state.currentUser}
-                            themeName={this.state.themeName}
-                            themeType={this.state.themeType}
-                            toggleTheme={() => this.toggleTheme()}
-                            refreshProjects={this.refreshProjects}
-                            viewsManager={this.state.viewsManager}
-                            setViewsManager={this.setViewsManager}
-                            projectsDialog={this.state.projects && this.state.projects.length ? this.state.projectsDialog : !this.state.createFirstProjectDialog}
-                            setProjectsDialog={this.setProjectsDialog}
-                            selectedWidgets={this.state.editMode ? this.state.selectedWidgets : []}
-                            setSelectedWidgets={this.setSelectedWidgets}
-                            history={this.state.history}
-                            historyCursor={this.state.historyCursor}
-                            undo={this.undo}
-                            redo={this.redo}
-                            deleteWidgets={this.deleteWidgets}
-                            widgetsLoaded={this.state.widgetsLoaded === Runtime.WIDGETS_LOADING_STEP_ALL_LOADED}
-                            widgetsClipboard={this.state.widgetsClipboard}
-                            cutWidgets={this.cutWidgets}
-                            copyWidgets={this.copyWidgets}
-                            pasteWidgets={this.pasteWidgets}
-                            alignWidgets={this.alignWidgets}
-                            cloneWidgets={this.cloneWidgets}
-                            orderWidgets={this.orderWidgets}
-                            lockDragging={this.state.lockDragging}
-                            // disableInteraction={this.state.disableInteraction}
-                            toggleLockDragging={this.toggleLockDragging}
-                            // toggleDisableInteraction={this.toggleDisableInteraction}
-                            adapterName={this.adapterName}
-                            selectedGroup={this.state.selectedGroup}
-                            // setSelectedGroup={this.setSelectedGroup}
-                            widgetHint={this.state.widgetHint}
-                            toggleWidgetHint={this.toggleWidgetHint}
-                            instance={this.instance}
-                            editMode={this.state.editMode}
-                            toolbarHeight={this.state.toolbarHeight}
-                            setToolbarHeight={(value: 'narrow' | 'veryNarrow') => {
-                                window.localStorage.setItem('Vis.toolbarForm', value);
-                                this.setState({ toolbarHeight: value });
-                            }}
-                            version={this.props.version}
-                        />
-                        <div style={{ position: 'relative' }} ref={this.mainRef}>
-                            <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>
-                                <DndPreview />
-                                {this.state.hidePalette && this.state.hideAttributes ? this.renderWorkspace() : null}
-                                <ReactSplit
-                                    direction={SplitDirection.Horizontal}
-                                    initialSizes={this.state.hidePalette && !this.state.hideAttributes ? [this.state.splitSizes[0] + this.state.splitSizes[1], this.state.splitSizes[2]] : (
-                                        !this.state.hidePalette && this.state.hideAttributes ? [this.state.splitSizes[0], this.state.splitSizes[1] + this.state.splitSizes[2]] : this.state.splitSizes)}
-                                    minWidths={this.state.hidePalette && !this.state.hideAttributes ? [0, 240] : (
-                                        !this.state.hidePalette && this.state.hideAttributes ? [240, 0] : [240, 0, 240])}
-                                    onResizeFinished={(gutterIdx, newSizes: [number, number, number]) => {
-                                        let splitSizes: [number, number, number] = [0, 0, 0];
-                                        if (this.state.hidePalette && !this.state.hideAttributes) {
-                                            splitSizes[0] = this.state.splitSizes[0];
-                                            splitSizes[1] = newSizes[0] - this.state.splitSizes[0];
-                                            splitSizes[2] = newSizes[1];
-                                        } else if (!this.state.hidePalette && this.state.hideAttributes) {
-                                            splitSizes[0] = newSizes[0];
-                                            splitSizes[1] = newSizes[1] - this.state.splitSizes[2];
-                                            splitSizes[2] = this.state.splitSizes[2];
-                                        } else {
-                                            splitSizes = newSizes;
-                                        }
+                        {Object.keys(this.state.widgetsClipboard.widgets).join(', ')}
+                    </Paper>
+                </Popper>
+                <Box component="div" sx={styles.app}>
+                    <Toolbar
+                        selectedView={this.state.selectedView}
+                        changeView={this.changeView}
+                        changeProject={this.changeProject}
+                        openedViews={store.getState().visProject.___settings.openedViews}
+                        toggleView={this.toggleView}
+                        socket={this.socket as unknown as LegacyConnection}
+                        projects={this.state.projects}
+                        loadProject={this.loadProject}
+                        projectName={this.state.projectName}
+                        addProject={this.addProject}
+                        renameProject={this.renameProject}
+                        deleteProject={this.deleteProject}
+                        needSave={this.state.needSave}
+                        currentUser={this.state.currentUser}
+                        themeName={this.state.themeName}
+                        themeType={this.state.themeType}
+                        theme={this.state.theme}
+                        toggleTheme={() => this.toggleTheme()}
+                        refreshProjects={this.refreshProjects}
+                        viewsManager={this.state.viewsManager}
+                        setViewsManager={this.setViewsManager}
+                        projectsDialog={this.state.projects && this.state.projects.length ? this.state.projectsDialog : !this.state.createFirstProjectDialog}
+                        setProjectsDialog={this.setProjectsDialog}
+                        selectedWidgets={this.state.editMode ? this.state.selectedWidgets : []}
+                        setSelectedWidgets={this.setSelectedWidgets}
+                        history={this.state.history}
+                        historyCursor={this.state.historyCursor}
+                        undo={this.undo}
+                        redo={this.redo}
+                        deleteWidgets={this.deleteWidgets}
+                        widgetsLoaded={this.state.widgetsLoaded === Runtime.WIDGETS_LOADING_STEP_ALL_LOADED}
+                        widgetsClipboard={this.state.widgetsClipboard}
+                        cutWidgets={this.cutWidgets}
+                        copyWidgets={this.copyWidgets}
+                        pasteWidgets={this.pasteWidgets}
+                        alignWidgets={this.alignWidgets}
+                        cloneWidgets={this.cloneWidgets}
+                        orderWidgets={this.orderWidgets}
+                        lockDragging={this.state.lockDragging}
+                        // disableInteraction={this.state.disableInteraction}
+                        toggleLockDragging={this.toggleLockDragging}
+                        // toggleDisableInteraction={this.toggleDisableInteraction}
+                        adapterName={this.adapterName}
+                        selectedGroup={this.state.selectedGroup}
+                        // setSelectedGroup={this.setSelectedGroup}
+                        widgetHint={this.state.widgetHint}
+                        toggleWidgetHint={this.toggleWidgetHint}
+                        instance={this.instance}
+                        editMode={this.state.editMode}
+                        toolbarHeight={this.state.toolbarHeight}
+                        setToolbarHeight={(value: 'narrow' | 'veryNarrow') => {
+                            window.localStorage.setItem('Vis.toolbarForm', value);
+                            this.setState({ toolbarHeight: value });
+                        }}
+                        version={this.props.version}
+                    />
+                    <div style={{ position: 'relative' }} ref={this.mainRef}>
+                        <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>
+                            <DndPreview />
+                            {this.state.hidePalette && this.state.hideAttributes ? this.renderWorkspace() : null}
+                            <ReactSplit
+                                direction={SplitDirection.Horizontal}
+                                initialSizes={this.state.hidePalette && !this.state.hideAttributes ? [this.state.splitSizes[0] + this.state.splitSizes[1], this.state.splitSizes[2]] : (
+                                    !this.state.hidePalette && this.state.hideAttributes ? [this.state.splitSizes[0], this.state.splitSizes[1] + this.state.splitSizes[2]] : this.state.splitSizes)}
+                                minWidths={this.state.hidePalette && !this.state.hideAttributes ? [0, 240] : (
+                                    !this.state.hidePalette && this.state.hideAttributes ? [240, 0] : [240, 0, 240])}
+                                onResizeFinished={(gutterIdx, newSizes: [number, number, number]) => {
+                                    let splitSizes: [number, number, number] = [0, 0, 0];
+                                    if (this.state.hidePalette && !this.state.hideAttributes) {
+                                        splitSizes[0] = this.state.splitSizes[0];
+                                        splitSizes[1] = newSizes[0] - this.state.splitSizes[0];
+                                        splitSizes[2] = newSizes[1];
+                                    } else if (!this.state.hidePalette && this.state.hideAttributes) {
+                                        splitSizes[0] = newSizes[0];
+                                        splitSizes[1] = newSizes[1] - this.state.splitSizes[2];
+                                        splitSizes[2] = this.state.splitSizes[2];
+                                    } else {
+                                        splitSizes = newSizes;
+                                    }
 
-                                        const sum = splitSizes.reduce((prev, curr) => prev + curr);
-                                        if (Math.ceil(sum) !== 100) {
-                                            if (Math.ceil(sum) === 101 || Math.ceil(sum) === 99) {
-                                                // Round the first 2 sizes to 0.01 and calculate the last
-                                                splitSizes[0] = Math.round(splitSizes[0] * 100) / 100;
-                                                splitSizes[1] = Math.round(splitSizes[1] * 100) / 100;
-                                                splitSizes[2] = 100 - splitSizes[0] - splitSizes[1];
-                                                this.setState({ splitSizes });
-                                                window.localStorage.setItem('Vis.splitSizes', JSON.stringify(splitSizes));
-                                            } else {
-                                                // https://github.com/devbookhq/splitter/issues/15
-                                                console.log('Decline resize, to work around bug in @devbookhq/splitter');
-                                                this.setState({ splitSizes: this.state.splitSizes });
-                                            }
-                                        } else {
+                                    const sum = splitSizes.reduce((prev, curr) => prev + curr);
+                                    if (Math.ceil(sum) !== 100) {
+                                        if (Math.ceil(sum) === 101 || Math.ceil(sum) === 99) {
+                                            // Round the first 2 sizes to 0.01 and calculate the last
+                                            splitSizes[0] = Math.round(splitSizes[0] * 100) / 100;
+                                            splitSizes[1] = Math.round(splitSizes[1] * 100) / 100;
+                                            splitSizes[2] = 100 - splitSizes[0] - splitSizes[1];
                                             this.setState({ splitSizes });
                                             window.localStorage.setItem('Vis.splitSizes', JSON.stringify(splitSizes));
+                                        } else {
+                                            // https://github.com/devbookhq/splitter/issues/15
+                                            console.log('Decline resize, to work around bug in @devbookhq/splitter');
+                                            this.setState({ splitSizes: this.state.splitSizes });
                                         }
-                                    }}
-                                    // theme={this.state.themeType === 'dark' ? GutterTheme.Dark : GutterTheme.Light}
-                                    gutterClassName={this.state.themeType === 'dark' ? 'Dark visGutter' : 'Light visGutter'}
-                                >
-                                    {!this.state.hidePalette ? this.renderPalette() : null}
-                                    {this.renderWorkspace()}
-                                    {!this.state.hideAttributes ? this.renderAttributes() : null}
-                                </ReactSplit>
-                            </DndProvider>
-                        </div>
+                                    } else {
+                                        this.setState({ splitSizes });
+                                        window.localStorage.setItem('Vis.splitSizes', JSON.stringify(splitSizes));
+                                    }
+                                }}
+                                // theme={this.state.themeType === 'dark' ? GutterTheme.Dark : GutterTheme.Light}
+                                gutterClassName={this.state.themeType === 'dark' ? 'Dark visGutter' : 'Light visGutter'}
+                            >
+                                {!this.state.hidePalette ? this.renderPalette() : null}
+                                {this.renderWorkspace()}
+                                {!this.state.hideAttributes ? this.renderAttributes() : null}
+                            </ReactSplit>
+                        </DndProvider>
                     </div>
-                    {this.renderLoadingText()}
-                    {this.renderCreateFirstProjectDialog()}
-                    {this.renderDeleteDialog()}
-                    {this.renderUpdateDialog()}
-                    {this.renderAlertDialog()}
-                    {this.renderConfirmDialog()}
-                    {this.renderShowCodeDialog()}
-                    {this.renderShowProjectUpdateDialog()}
-                    {this.renderMessageDialog()}
-                    {this.renderLegacyFileSelectorDialog()}
-                    {this.renderAskAboutIncludeDialog()}
-                    {this.state.marketplaceDialog ? <MarketplaceDialog
-                        onClose={() => this.setState({ marketplaceDialog: false })}
-                        installWidget={this.installWidget}
-                        updateWidgets={this.updateWidgets}
-                        installedWidgets={store.getState().visProject?.___settings.marketplace}
-                        {...this.state.marketplaceDialog}
-                        themeName={this.state.themeName}
-                    /> : null}
-                </ThemeProvider>
-            </StyledEngineProvider>
-        </StylesProvider>;
+                </Box>
+                {this.renderLoadingText()}
+                {this.renderCreateFirstProjectDialog()}
+                {this.renderDeleteDialog()}
+                {this.renderUpdateDialog()}
+                {this.renderAlertDialog()}
+                {this.renderConfirmDialog()}
+                {this.renderShowCodeDialog()}
+                {this.renderShowProjectUpdateDialog()}
+                {this.renderMessageDialog()}
+                {this.renderLegacyFileSelectorDialog()}
+                {this.renderAskAboutIncludeDialog()}
+                {this.state.marketplaceDialog ? <MarketplaceDialog
+                    onClose={() => this.setState({ marketplaceDialog: false })}
+                    installWidget={this.installWidget}
+                    updateWidgets={this.updateWidgets}
+                    installedWidgets={store.getState().visProject?.___settings.marketplace}
+                    {...this.state.marketplaceDialog}
+                    themeName={this.state.themeName}
+                /> : null}
+            </ThemeProvider>
+        </StyledEngineProvider>;
     }
 }
 
 export type EditorClass = Editor;
 
-export default withStyles(styles)(Editor);
+export default Editor;

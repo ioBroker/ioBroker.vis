@@ -5,8 +5,10 @@ import {
 
 import { BiImport } from 'react-icons/bi';
 
-import type { LegacyConnection } from '@iobroker/adapter-react-v5';
-import { I18n, Confirm as ConfirmDialog } from '@iobroker/adapter-react-v5';
+import {
+    I18n, Confirm as ConfirmDialog,
+    type ThemeType, type LegacyConnection,
+} from '@iobroker/adapter-react-v5';
 
 import type { EditorClass } from '@/Editor';
 import UploadFile from '../../Components/UploadFile';
@@ -33,7 +35,7 @@ interface ImportProjectDialogProps {
     projectName: string;
     refreshProjects: EditorClass['refreshProjects'];
     socket: LegacyConnection;
-    themeType: string;
+    themeType: ThemeType;
     loadProject: EditorClass['loadProject'];
     adapterName: string;
     instance: number;

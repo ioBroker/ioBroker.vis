@@ -1,6 +1,4 @@
-import type { Styles } from '@mui/styles';
-import { withStyles } from '@mui/styles';
-
+import React from 'react';
 import type { SelectChangeEvent } from '@mui/material';
 import {
     Button,
@@ -17,17 +15,15 @@ import {
     Tooltip,
 } from '@mui/material';
 
-import type { IobTheme, ThemeType } from '@iobroker/adapter-react-v5';
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n, type ThemeType } from '@iobroker/adapter-react-v5';
 
 import { deepClone } from '@/Utils/utils';
-import type { ViewSettings } from '@iobroker/types-vis-2';
-import React from 'react';
+import type { ViewSettings, VisTheme } from '@iobroker/types-vis-2';
+import { store } from '@/Store';
 import type { EditorClass } from '@/Editor';
-import { store } from '../Store';
 import MultiSelect from './MultiSelect';
 
-const styles: Styles<IobTheme, any> = theme => ({
+const styles: Record<string, any> = {
     toolbarBlock: {
         display: 'flex',
         flexDirection: 'column',
@@ -36,9 +32,9 @@ const styles: Styles<IobTheme, any> = theme => ({
         padding: '0px 10px',
         borderWidth: 1,
     },
-    disabled: {
+    disabled: (theme: VisTheme) => ({
         color: theme.palette.action.disabled,
-    },
+    }),
     toolbarItems: {
         display: 'flex', flexDirection: 'row', flex: 1,
     },
@@ -56,7 +52,7 @@ const styles: Styles<IobTheme, any> = theme => ({
     toolbarTooltip: {
         pointerEvents: 'none',
     },
-});
+};
 
 export interface BaseToolbarItem {
     name?: string;
@@ -171,6 +167,7 @@ const getItem = (item: ToolbarItem, key: number, props: ToolbarItemsProps, full?
 
     if (item.type === 'multiselect') {
         return <MultiSelect
+            theme={props.theme}
             key={key}
             // style={{ margin: '0px 10px' }}
             label={props.toolbarHeight !== 'veryNarrow' ? (item.doNotTranslateName ? item.name : I18n.t(item.name)) : null}
@@ -235,7 +232,7 @@ const getItem = (item: ToolbarItem, key: number, props: ToolbarItemsProps, full?
         return props.toolbarHeight !== 'veryNarrow' && full ?
             <div key={key} style={{ textAlign: 'center' }}>
                 <ButtonBase
-                    className={item.disabled ? props.classes.disabled : null}
+                    sx={item.disabled ? styles.disabled : undefined}
                     onClick={item.onClick}
                     disabled={item.disabled}
                     style={{
@@ -253,7 +250,7 @@ const getItem = (item: ToolbarItem, key: number, props: ToolbarItemsProps, full?
                 </ButtonBase>
             </div>
             :
-            <Tooltip key={key} title={I18n.t(item.name)} classes={{ popper: props.classes.toolbarTooltip }}>
+            <Tooltip key={key} title={I18n.t(item.name)} componentsProps={{ popper: { sx: styles.tooltip } }}>
                 <div>
                     <IconButton
                         color={item.selected ? 'primary' : undefined}
@@ -270,7 +267,7 @@ const getItem = (item: ToolbarItem, key: number, props: ToolbarItemsProps, full?
     }
 
     if (item.type === 'text') {
-        return <span key={key} className={props.classes.text}>{`${I18n.t(item.text)}:`}</span>;
+        return <span key={key} style={styles.text}>{`${I18n.t(item.text)}:`}</span>;
     }
 
     if (item.type === 'button') {
@@ -279,7 +276,7 @@ const getItem = (item: ToolbarItem, key: number, props: ToolbarItemsProps, full?
             variant="outlined"
             onClick={item.onClick}
             size="small"
-            className={props.classes.button}
+            style={styles.button}
         >
             {I18n.t(item.name)}
         </Button>;
@@ -297,12 +294,12 @@ const getItem = (item: ToolbarItem, key: number, props: ToolbarItemsProps, full?
         onChange={item.onChange ? item.onChange : e => change(e.target.value)}
         InputLabelProps={{ shrink: true }}
         label={props.toolbarHeight !== 'veryNarrow' ? I18n.t(item.name) : null}
-        className={props.classes.textInput}
+        style={styles.textInput}
     />;
 };
 
 interface ToolbarItemsProps {
-    classes: Record<string, string>;
+    theme: VisTheme;
     // eslint-disable-next-line react/no-unused-prop-types
     themeType: ThemeType;
     group: { name: string | React.JSX.Element; doNotTranslateName?: boolean; items: (ToolbarItem[][] | ToolbarItem[] | ToolbarItem)[] };
@@ -341,15 +338,14 @@ const ToolbarItems: React.FC<ToolbarItemsProps> = props => {
     }
 
     return <div
-        className={props.classes.toolbarBlock}
-        style={props.last ? { borderRightWidth: 0 } : null}
+        style={{ ...styles.toolbarBlock, borderRightWidth: props.last ? 0 : undefined }}
     >
-        <div className={props.classes.toolbarItems}>
+        <div style={styles.toolbarItems}>
             {
                 items.map((item, key) => {
                     if (Array.isArray(item)) {
-                        return <div key={key} className={props.classes.toolbarCol}>
-                            {(item as ToolbarItem[][]).map((subItem, subKey) => <div key={subKey} className={props.classes.toolbarRow}>
+                        return <div key={key} style={styles.toolbarCol}>
+                            {(item as ToolbarItem[][]).map((subItem, subKey) => <div key={subKey} style={styles.toolbarRow}>
                                 {subItem.map((subItem2, subKey2) => getItem(subItem2, subKey2, props))}
                             </div>)}
                         </div>;
@@ -358,10 +354,10 @@ const ToolbarItems: React.FC<ToolbarItemsProps> = props => {
                 })
             }
         </div>
-        {props.toolbarHeight === 'full' ? <div className={props.classes.toolbarLabel}>
+        {props.toolbarHeight === 'full' ? <div style={styles.toolbarLabel}>
             <span>{typeof name === 'string' ? (doNotTranslateName ? name : I18n.t(name)) : name}</span>
         </div> : null}
     </div>;
 };
 
-export default withStyles(styles)(ToolbarItems) as React.FC<ToolbarItemsProps>;
+export default ToolbarItems;

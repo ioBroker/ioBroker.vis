@@ -1,6 +1,5 @@
 import React from 'react';
 import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
-import { StylesProvider, createGenerateClassName } from '@mui/styles';
 
 import {
     DialogContent,
@@ -45,13 +44,15 @@ import VisWidgetsCatalog from './Vis/visWidgetsCatalog';
 import { store, updateActiveUser, updateProject } from './Store';
 import { hasProjectAccess, hasViewAccess } from './Utils/utils';
 
-const generateClassName = createGenerateClassName({
-    productionPrefix: 'vis-r',
-});
+const styles: { editModeComponentStyle: React.CSSProperties } = {
+    editModeComponentStyle: {
+        zIndex: 1002,
+    },
+};
 
 export interface RuntimeProps extends GenericAppProps {
-    themeName: string;
-    runtime: boolean;
+    runtime?: boolean;
+    setBackground: () => void;
 }
 
 export interface RuntimeState extends GenericAppState {
@@ -1187,7 +1188,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
             themeName={this.state.themeName}
             theme={this.state.theme as VisTheme}
             adapterId={this.adapterId}
-            editModeComponentClass={this.props.classes?.editModeComponentClass}
+            editModeComponentStyle={styles.editModeComponentStyle}
             onIgnoreMouseEvents={this.onIgnoreMouseEvents}
             setLoadingText={this.setLoadingText}
             onConfirmDialog={(message: string, title: string, icon: string, width: number, callback: (isYes: boolean) => void) => this.showConfirmDialog && this.showConfirmDialog({
@@ -1225,16 +1226,14 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
     }
 
     render() {
-        return <StylesProvider generateClassName={generateClassName}>
-            <StyledEngineProvider injectFirst>
-                <ThemeProvider theme={this.state.theme}>
-                    {!this.state.loaded || !store.getState().visProject.___settings ?
-                        this.renderLoader() : this.getVisEngine()}
-                    {this.state.projectDoesNotExist ? this.renderProjectDoesNotExist() : null}
-                    {this.state.showProjectsDialog ? this.showSmallProjectsDialog() : null}
-                </ThemeProvider>
-            </StyledEngineProvider>
-        </StylesProvider>;
+        return <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={this.state.theme}>
+                {!this.state.loaded || !store.getState().visProject.___settings ?
+                    this.renderLoader() : this.getVisEngine()}
+                {this.state.projectDoesNotExist ? this.renderProjectDoesNotExist() : null}
+                {this.state.showProjectsDialog ? this.showSmallProjectsDialog() : null}
+            </ThemeProvider>
+        </StyledEngineProvider>;
     }
 }
 

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { withStyles } from '@mui/styles';
 
 import {
     Tooltip,
@@ -16,13 +15,14 @@ import type { ThemeName, ThemeType } from '@iobroker/adapter-react-v5';
 import { I18n } from '@iobroker/adapter-react-v5';
 
 import type { EditorClass } from '@/Editor';
+import type { VisTheme } from '@iobroker/types-vis-2';
 import ViewsManager from './ViewsManager';
 import type { ToolbarItem } from './ToolbarItems';
-import ToolbarItems from './ToolbarItems';
 
+import ToolbarItems from './ToolbarItems';
 import ViewDialog from './ViewsManager/ViewDialog';
 
-const styles: Record<string, any> = {
+const styles: Record<string, React.CSSProperties> = {
     label: {
         maxWidth: 180,
         textOverflow: 'ellipsis',
@@ -44,8 +44,8 @@ interface ViewsProps {
     selectedGroup: string;
     editMode: boolean;
     setProjectsDialog: EditorClass['setProjectsDialog'];
-    classes: Record<string, string>;
     changeProject: EditorClass['changeProject'];
+    theme: VisTheme;
     changeView: EditorClass['changeView'];
     setSelectedWidgets: EditorClass['setSelectedWidgets'];
     themeType: ThemeType;
@@ -88,10 +88,10 @@ const Views = (props: ViewsProps) => {
         name: React.JSX.Element;
         items: (ToolbarItem | ToolbarItem[] | ToolbarItem[][])[];
     } = {
-        name: <span className={props.classes.label}>
+        name: <span style={styles.label}>
             <Tooltip title={I18n.t('Current project')}>
                 <span
-                    className={props.classes.projectLabel}
+                    style={styles.projectLabel}
                     onClick={() => props.setProjectsDialog(true)}
                 >
                     {props.projectName}
@@ -123,7 +123,7 @@ const Views = (props: ViewsProps) => {
     return <>
         <ToolbarItems
             group={toolbar}
-            classes={{}}
+            theme={props.theme}
             changeProject={props.changeProject}
             selectedView={props.selectedView}
             setSelectedWidgets={props.setSelectedWidgets}
@@ -160,4 +160,4 @@ const Views = (props: ViewsProps) => {
     </>;
 };
 
-export default withStyles(styles)(Views) as React.FC<ViewsProps>;
+export default Views;

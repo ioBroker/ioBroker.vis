@@ -1,8 +1,12 @@
 import React from 'react';
-import { background, theme as ViewTheme } from '@/Attributes/ViewData';
+
 import { type SelectChangeEvent, TextField } from '@mui/material';
+
 import { Close as CloseIcon } from '@mui/icons-material';
+
 import { I18n, Utils } from '@iobroker/adapter-react-v5';
+
+import { background, theme as ViewTheme } from '@/Attributes/ViewData';
 import { store } from '@/Store';
 import type { Project, View } from '@iobroker/types-vis-2';
 

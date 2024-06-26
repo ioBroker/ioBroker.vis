@@ -6,14 +6,14 @@ import { CircularProgress } from '@mui/material';
 
 import { FolderZip } from '@mui/icons-material';
 
-import { I18n, Utils } from '@iobroker/adapter-react-v5';
+import { I18n, Utils, type ThemeType } from '@iobroker/adapter-react-v5';
 
 const IMAGE_TYPES = ['.png', '.jpg', '.svg', '.gif', '.apng', '.avif', '.webp'];
 
 interface UploadFileProps {
     onUpload: (fileName: string, fileData: string | ArrayBuffer) => void;
     disabled?: boolean;
-    themeType: string;
+    themeType: ThemeType;
     accept?: Record<string, string[]>; // {'application/zip': ['.zip'], 'application/json': ['.json']},
     instruction?: string;
     maxSize?: number;

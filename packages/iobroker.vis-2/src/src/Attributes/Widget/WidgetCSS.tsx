@@ -6,13 +6,13 @@ import {
 
 import { Close } from '@mui/icons-material';
 
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n, type ThemeType } from '@iobroker/adapter-react-v5';
 
 import type { Widget } from '@iobroker/types-vis-2';
 import CustomAceEditor from '../../Components/CustomAceEditor';
 
 interface WidgetCSSProps {
-    themeType: string;
+    themeType: ThemeType;
     editMode: boolean;
     onClose: () => void;
     onChange: (value: string) => void;

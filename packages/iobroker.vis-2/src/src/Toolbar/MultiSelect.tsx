@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
-import { withStyles } from '@mui/styles';
 import {
     Checkbox, FormControl, MenuItem,
     Menu, List,
     ListItemButton, ListItemText,
     ListItemIcon, InputLabel, Button,
-    type Theme,
 } from '@mui/material';
 
 import {
@@ -14,14 +12,15 @@ import {
 } from '@mui/icons-material';
 
 import { Utils, I18n, type ThemeType } from '@iobroker/adapter-react-v5';
+import type { VisTheme } from '@iobroker/types-vis-2';
 
-const styles: Record<string, any> = (theme: Theme) => ({
-    navMain: {
+const styles: Record<string, any> = {
+    navMain: (theme: VisTheme) => ({
         borderBottom: '1px solid transparent',
         '&:hover': {
             borderBottom: `1px solid ${theme.palette.mode === 'dark' ? '#BBB' : '#555'}`,
         },
-    },
+    }),
     listItemButton: {
         padding: 0,
         margin: 0,
@@ -68,12 +67,12 @@ const styles: Record<string, any> = (theme: Theme) => ({
         display: 'inline-block',
         height: 24,
     },
-    menuToolbar: {
-        paddingLeft: 8,
-        paddingRight: 8,
+    menuToolbar: (theme: VisTheme) => ({
+        pl: 1,
+        pr: 1,
         backgroundColor: theme.palette.mode === 'dark' ? theme.palette.secondary.dark : theme.palette.secondary.light,
-    },
-});
+    }),
+};
 
 interface MultiSelectProps {
     value: string[];
@@ -83,7 +82,7 @@ interface MultiSelectProps {
     onChange: (value: string[]) => void;
     setSelectedWidgets: (widgets: string[]) => void;
     themeType: ThemeType;
-    classes: Record<string, string>;
+    theme: VisTheme;
 }
 
 interface MultiSelectState {
@@ -114,7 +113,7 @@ class MultiSelect extends Component<MultiSelectProps, MultiSelectState> {
                 color = item.color;
                 icon = item.icon ? <img
                     src={item.icon}
-                    className={props.classes.icon}
+                    style={styles.icon}
                     alt={item.name}
                 /> : null;
             } else {
@@ -144,25 +143,29 @@ class MultiSelect extends Component<MultiSelectProps, MultiSelectState> {
                     width: props.width,
                     marginTop: isNarrow ? 0 : 16,
                 }}
-                className={`${this.props.classes.navMain} ${isNarrow ? this.props.classes.nav : null}`}
+                sx={Utils.getStyle(this.props.theme, styles.navMain, isNarrow && styles.nav)}
             >
                 <ListItemButton
                     onClick={e => this.setState({ elAnchor: e.currentTarget })}
-                    classes={{ root: props.classes.listItemButton }}
+                    style={styles.listItemButton}
                 >
                     {icon ? <ListItemIcon style={{ minWidth: 28 }}>
                         {icon}
                     </ListItemIcon> : null}
                     <ListItemText
-                        classes={{
-                            root: props.classes.listItemButton,
-                            primary: props.classes.primary,
-                            secondary: props.classes.secondary,
+                        sx={{
+                            '&.MuiListItemText-root': styles.listItemButton,
+                            '& .MuiListItemText-primary': styles.primary,
+                            '& .MuiListItemText-secondary': styles.secondary,
                         }}
                         primary={text}
                         secondary={<span
-                            style={{ color, background: backColor, whiteSpace: 'nowrap' }}
-                            className={color ? props.classes.coloredSecondary : undefined}
+                            style={{
+                                ...(color ? styles.coloredSecondary : undefined),
+                                color,
+                                background: backColor,
+                                whiteSpace: 'nowrap',
+                            }}
                         >
                             {subText}
                         </span>}
@@ -175,7 +178,7 @@ class MultiSelect extends Component<MultiSelectProps, MultiSelectState> {
                 anchorEl={this.state.elAnchor}
                 onClose={() => this.setState({ elAnchor: null })}
             >
-                <div className={this.props.classes.menuToolbar}>
+                <div style={styles.menuToolbar}>
                     {I18n.t('All')}
                     <Button
                         disabled={value.length === props.options.length}
@@ -195,7 +198,7 @@ class MultiSelect extends Component<MultiSelectProps, MultiSelectState> {
                 {props.options.map(item => <MenuItem
                     value={item.value}
                     key={item.value}
-                    className={props.classes.menuItem}
+                    style={styles.menuItem}
                     onClick={() =>
                         this.setState({ elAnchor: null }, () =>
                             props.onChange([item.value]))}
@@ -218,18 +221,18 @@ class MultiSelect extends Component<MultiSelectProps, MultiSelectState> {
                             />
                         </div>
                         <div>
-                            {item.icon ? <div className={props.classes.menuItemIcon}>
-                                <img src={item.icon} className={props.classes.icon} alt={item.name} />
+                            {item.icon ? <div style={styles.menuItemIcon}>
+                                <img src={item.icon} style={styles.icon} alt={item.name} />
                             </div> : null}
-                            <div className={props.classes.menuItemMainText}>{item.name}</div>
+                            <div style={styles.menuItemMainText}>{item.name}</div>
                             <div
                                 style={{
+                                    ...(color ? styles.coloredSecondary : undefined),
                                     fontSize: 10,
                                     fontStyle: 'italic',
                                     color: item.color,
                                     background: item.color ? Utils.getInvertedColor(item.color, props.themeType, false) : undefined,
                                 }}
-                                className={color ? props.classes.coloredSecondary : undefined}
                             >
                                 {item.subName}
                             </div>
@@ -241,4 +244,4 @@ class MultiSelect extends Component<MultiSelectProps, MultiSelectState> {
     }
 }
 
-export default withStyles(styles)(MultiSelect);
+export default MultiSelect;

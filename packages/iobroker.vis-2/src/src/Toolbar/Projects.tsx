@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { withStyles } from '@mui/styles';
 
 import {
     Menu as MenuIcon,
@@ -13,41 +12,35 @@ import {
     I18n,
     SelectFile as SelectFileDialog,
     Utils,
+    type Connection, type ThemeType, type LegacyConnection,
 } from '@iobroker/adapter-react-v5';
-import type { Connection, ThemeType, LegacyConnection } from '@iobroker/adapter-react-v5';
 
+import type { VisTheme } from '@iobroker/types-vis-2';
 import type { EditorClass } from '@/Editor';
 import type { ToolbarItem } from './ToolbarItems';
 import ToolbarItems from './ToolbarItems';
 import Settings from './Settings';
 import ProjectsManager from './ProjectsManager';
 
-const styles = () => ({
-    objectsDialog: {
-        minWidth: 800,
-        height: '100%',
-        overflow: 'hidden',
-    },
-});
-
 interface ToolsProps {
-    socket: LegacyConnection;
-    projectsDialog: boolean;
-    setProjectsDialog: EditorClass['setProjectsDialog'];
     adapterName: string;
-    instance: number;
-    projectName: string;
-    changeProject: EditorClass['changeProject'];
-    selectedView: string;
-    setSelectedWidgets: EditorClass['setSelectedWidgets'];
-    themeType: ThemeType;
-    toolbarHeight: 'full' | 'narrow' | 'veryNarrow';
     addProject: EditorClass['addProject'];
+    changeProject: EditorClass['changeProject'];
     deleteProject: EditorClass['deleteProject'];
+    instance: number;
     loadProject: EditorClass['loadProject'];
+    projectName: string;
     projects: string[];
+    projectsDialog: boolean;
     refreshProjects: EditorClass['refreshProjects'];
     renameProject: EditorClass['renameProject'];
+    selectedView: string;
+    setProjectsDialog: EditorClass['setProjectsDialog'];
+    setSelectedWidgets: EditorClass['setSelectedWidgets'];
+    socket: LegacyConnection;
+    theme: VisTheme;
+    themeType: ThemeType;
+    toolbarHeight: 'full' | 'narrow' | 'veryNarrow';
 }
 
 const Tools = (props: ToolsProps) => {
@@ -80,8 +73,8 @@ const Tools = (props: ToolsProps) => {
         <ToolbarItems
             group={toolbar}
             last
-            classes={{}}
             changeProject={props.changeProject}
+            theme={props.theme}
             selectedView={props.selectedView}
             setSelectedWidgets={props.setSelectedWidgets}
             themeType={props.themeType}
@@ -89,7 +82,6 @@ const Tools = (props: ToolsProps) => {
         />
         {settingsDialog ? <Settings
             onClose={() => setSettingsDialog(false)}
-            classes={{}}
             adapterName={props.adapterName}
             instance={props.instance}
             projectName={props.projectName}
@@ -122,6 +114,7 @@ const Tools = (props: ToolsProps) => {
                 title={I18n.t('Browse objects')}
                 columns={['role', 'func', 'val', 'name']}
                 notEditable={false}
+                theme={props.theme}
                 onOk={_selected => {
                     const selected: string = Array.isArray(_selected) ? _selected[0] : _selected as string;
                     Utils.copyToClipboard(selected);
@@ -144,6 +137,7 @@ const Tools = (props: ToolsProps) => {
                 allowDelete
                 allowView
                 showToolbar
+                theme={props.theme}
                 imagePrefix="../"
                 selected=""
                 showTypeSelector
@@ -170,4 +164,4 @@ const Tools = (props: ToolsProps) => {
     </>;
 };
 
-export default withStyles(styles)(Tools) as React.FC<ToolsProps>;
+export default Tools;

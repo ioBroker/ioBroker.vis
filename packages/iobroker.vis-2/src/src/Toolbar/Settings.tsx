@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import type { Styles } from '@mui/styles';
-import { withStyles } from '@mui/styles';
 
 import {
     Button,
@@ -17,16 +15,16 @@ import {
 
 import { Save as SaveIcon } from '@mui/icons-material';
 
-import type { IobTheme, LegacyConnection } from '@iobroker/adapter-react-v5';
+import type { LegacyConnection } from '@iobroker/adapter-react-v5';
 import { I18n } from '@iobroker/adapter-react-v5';
 
 import type { EditorClass } from '@/Editor';
+import { store } from '@/Store';
 import { deepClone } from '@/Utils/utils';
 import type { ProjectSettings } from '@iobroker/types-vis-2';
 import IODialog from '../Components/IODialog';
-import { store } from '../Store';
 
-const styles: Styles<IobTheme, any> = () => ({
+const styles: { dialog: React.CSSProperties; field: React.CSSProperties } = {
     dialog: {
         width: 400,
     },
@@ -35,7 +33,7 @@ const styles: Styles<IobTheme, any> = () => ({
         alignItems: 'center',
         padding: '4px 0px',
     },
-});
+};
 
 interface SettingsFieldBase {
     name?: string;
@@ -75,7 +73,6 @@ interface SettingsProps {
     adapterName: string;
     instance: number;
     projectName: string;
-    classes: Record<string, string>;
 }
 
 const Settings: React.FC<SettingsProps> = props => {
@@ -222,7 +219,7 @@ const Settings: React.FC<SettingsProps> = props => {
         actionTitle="Save"
         actionDisabled={JSON.stringify(store.getState().visProject.___settings) === JSON.stringify(settings)}
     >
-        <div className={props.classes.dialog}>
+        <div style={styles.dialog}>
             {fields.map((field, key) => {
                 const value = settings[field.field as keyof ProjectSettings];
 
@@ -300,10 +297,10 @@ const Settings: React.FC<SettingsProps> = props => {
                     />;
                 }
 
-                return <div key={key} className={props.classes.field}>{result}</div>;
+                return <div key={key} style={styles.field}>{result}</div>;
             })}
         </div>
     </IODialog>;
 };
 
-export default withStyles(styles)(Settings) as React.FC<SettingsProps>;
+export default Settings;

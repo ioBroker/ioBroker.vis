@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
+import type { ThemeType } from '@iobroker/adapter-react-v5';
+
 import IODialog from '../../Components/IODialog';
 import CustomAceEditor from '../../Components/CustomAceEditor';
 
@@ -7,7 +9,7 @@ interface TextDialogProps {
     onChange: (value: string) => void;
     onClose: () => void;
     open: boolean;
-    themeType: string;
+    themeType: ThemeType;
     type: string;
     value: string;
 }

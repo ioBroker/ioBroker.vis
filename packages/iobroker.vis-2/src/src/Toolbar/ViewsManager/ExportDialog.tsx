@@ -1,7 +1,6 @@
 import { FileCopy as FileCopyIcon } from '@mui/icons-material';
 
-import type { ThemeType } from '@iobroker/adapter-react-v5';
-import { Utils, I18n } from '@iobroker/adapter-react-v5';
+import { Utils, I18n, type ThemeType } from '@iobroker/adapter-react-v5';
 
 import React from 'react';
 import IODialog from '../../Components/IODialog';

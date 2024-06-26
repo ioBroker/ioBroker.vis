@@ -17,8 +17,10 @@ import {
     UnfoldLess as UnfoldLessIcon, ListAlt as IconAttributes,
 } from '@mui/icons-material';
 
-import type { LegacyConnection } from '@iobroker/adapter-react-v5';
-import { I18n, Utils } from '@iobroker/adapter-react-v5';
+import {
+    I18n, Utils, type ThemeType,
+    type LegacyConnection,
+} from '@iobroker/adapter-react-v5';
 
 import type { EditorClass } from '@/Editor';
 import CSS from './CSS';
@@ -43,7 +45,7 @@ const tabs: Record<string, JSXElementConstructor<any> | ((props: Record<string, 
 
 interface AttributesProps {
     classes: Record<string, string>;
-    themeType: string;
+    themeType: ThemeType;
     openedViews: string[];
     adapterName: string;
     instance: number;

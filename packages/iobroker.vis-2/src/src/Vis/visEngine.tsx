@@ -126,7 +126,7 @@ interface VisEngineProps {
     editMode: boolean;
     runtime: boolean;
     activeView: string;
-    editModeComponentClass: string;
+    editModeComponentStyle: React.CSSProperties;
     selectedWidgets: AnyWidgetId[];
     showWidgetNames?: boolean;
     visCommonCss: string;
@@ -2251,7 +2251,7 @@ ${this.scripts}
             changeView: this.changeView,
             dateFormat: this.vis.dateFormat,
             disableInteraction: this.props.disableInteraction,
-            editModeComponentClass: this.props.editModeComponentClass,
+            editModeComponentStyle: this.props.editModeComponentStyle,
             formatUtils: this.formatUtils as unknown as VisFormatUtilsType,
             instance: this.props.instance,
             jQuery: window.jQuery,

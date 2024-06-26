@@ -1,10 +1,9 @@
 import React, { useEffect } from 'react';
-import type { CSSProperties, Styles } from '@mui/styles';
-import { withStyles } from '@mui/styles';
 import { useDrag, useDrop } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 
 import {
+    Box,
     IconButton, Tooltip,
 } from '@mui/material';
 
@@ -16,23 +15,23 @@ import {
 } from '@mui/icons-material';
 import { FaFolder as FolderClosedIcon, FaFolderOpen as FolderOpenedIcon } from 'react-icons/fa';
 
-import type { IobTheme } from '@iobroker/adapter-react-v5';
 import { Utils, I18n } from '@iobroker/adapter-react-v5';
+import type { VisTheme } from '@iobroker/types-vis-2';
 import { store } from '../../Store';
 
-const styles: Styles<IobTheme & {classes?: Record<string, CSSProperties>}, any> = theme => ({
-    viewManageBlock: theme.classes.viewManageBlock,
-    viewManageButtonActions: theme.classes.viewManageButtonActions,
+const styles: Record<string, any> = {
+    viewManageBlock: (theme: VisTheme) => theme.classes.viewManageBlock,
+    viewManageButtonActions: (theme: VisTheme) => theme.classes.viewManageButtonActions,
     folderName: {
-        marginLeft: theme.spacing(1),
+        marginLeft: 8,
         fontWeight: 'bold',
     },
-    icon: {
+    icon: (theme: VisTheme) => ({
         cursor: 'grab',
         display: 'inline-block',
         lineHeight: '16px',
         color: theme.palette.mode === 'dark' ? '#bad700' : '#f3bf00',
-    },
+    }),
     noDrop: {
         opacity: 0.4,
     },
@@ -50,16 +49,15 @@ const styles: Styles<IobTheme & {classes?: Record<string, CSSProperties>}, any> 
     tooltip: {
         pointerEvents: 'none',
     },
-});
+};
 
 export interface FolderType {
-        id: string;
-        name: string;
-        parentId: string;
+    id: string;
+    name: string;
+    parentId: string;
 }
 
 interface FolderProps {
-    classes: Record<string, string>;
     folder: FolderType;
     moveFolder: (id: string, parentId: string) => void;
     setFolderDialog: (dialog: 'add' | 'rename' | 'delete') => void;
@@ -72,15 +70,16 @@ interface FolderProps {
     foldersCollapsed: string[];
     setFoldersCollapsed: (foldersCollapsed: string[]) => void;
     showDialog: (dialog: string, view: string, parentId: string) => void;
+    theme: VisTheme;
 }
 
 const Folder: React.FC<FolderProps> = props => {
-    const folderBlock = <div className={props.classes.viewManageBlock}>
+    const folderBlock = <Box component="div" sx={styles.viewManageBlock}>
         {props.foldersCollapsed.includes(props.folder.id)
             ? <FolderClosedIcon fontSize={20} />
             : <FolderOpenedIcon fontSize={20} />}
-        <span className={props.classes.folderName}>{props.folder.name}</span>
-    </div>;
+        <span style={styles.folderName}>{props.folder.name}</span>
+    </Box>;
 
     const [{ canDrop }, drop] = useDrop<{
         name: string;
@@ -143,11 +142,17 @@ const Folder: React.FC<FolderProps> = props => {
 
     console.log(`${props.folder.name} ${props.isDragging} ${canDrop}`);
 
-    return <div
+    return <Box
+        component="div"
         ref={drop}
-        className={Utils.clsx(props.classes.root, props.classes.viewManageBlock, props.isDragging && !canDrop && props.classes.noDrop, props.isDragging && canDrop && props.classes.rootCanDrop)}
+        sx={Utils.getStyle(props.theme, styles.root, styles.viewManageBlock, props.isDragging && !canDrop && styles.noDrop, props.isDragging && canDrop && styles.rootCanDrop)}
     >
-        <div className={props.classes.icon} ref={dragRef} title={I18n.t('Drag me')}>
+        <Box
+            component="div"
+            sx={styles.icon}
+            ref={dragRef}
+            title={I18n.t('Drag me')}
+        >
             {props.foldersCollapsed.includes(props.folder.id)
                 ? <FolderClosedIcon
                     fontSize={20}
@@ -167,10 +172,10 @@ const Folder: React.FC<FolderProps> = props => {
                         window.localStorage.setItem('ViewsManager.foldersCollapsed', JSON.stringify(foldersCollapsed));
                     }}
                 />}
-        </div>
-        <span className={props.classes.folderName}>{props.folder.name}</span>
-        <span className={props.classes.viewManageButtonActions}>
-            {props.editMode ? <Tooltip title={I18n.t('Add view')} classes={{ popper: props.classes.tooltip }}>
+        </Box>
+        <span style={styles.folderName}>{props.folder.name}</span>
+        <Box component="span" sx={styles.viewManageButtonActions}>
+            {props.editMode ? <Tooltip title={I18n.t('Add view')} componentsProps={{ popper: { sx: styles.tooltip } }}>
                 <IconButton
                     size="small"
                     onClick={() => {
@@ -180,7 +185,7 @@ const Folder: React.FC<FolderProps> = props => {
                     <AddIcon />
                 </IconButton>
             </Tooltip> : null}
-            {props.editMode ? <Tooltip title={I18n.t('Add sub-folder')} classes={{ popper: props.classes.tooltip }}>
+            {props.editMode ? <Tooltip title={I18n.t('Add sub-folder')} componentsProps={{ popper: { sx: styles.tooltip } }}>
                 <IconButton
                     size="small"
                     onClick={() => {
@@ -192,7 +197,7 @@ const Folder: React.FC<FolderProps> = props => {
                     <CreateNewFolderClosedIcon />
                 </IconButton>
             </Tooltip> : null}
-            {props.editMode ? <Tooltip title={I18n.t('Rename')} classes={{ popper: props.classes.tooltip }}>
+            {props.editMode ? <Tooltip title={I18n.t('Rename')} componentsProps={{ popper: { sx: styles.tooltip } }}>
                 <IconButton
                     size="small"
                     onClick={() => {
@@ -204,7 +209,7 @@ const Folder: React.FC<FolderProps> = props => {
                     <EditIcon />
                 </IconButton>
             </Tooltip> : null}
-            {props.editMode ? <Tooltip title={I18n.t('Delete')} classes={{ popper: props.classes.tooltip }}>
+            {props.editMode ? <Tooltip title={I18n.t('Delete')} componentsProps={{ popper: { sx: styles.tooltip } }}>
                 <span>
                     <IconButton
                         size="small"
@@ -219,8 +224,8 @@ const Folder: React.FC<FolderProps> = props => {
                     </IconButton>
                 </span>
             </Tooltip> : null}
-        </span>
-    </div>;
+        </Box>
+    </Box>;
 };
 
-export default withStyles(styles)(Folder);
+export default Folder;

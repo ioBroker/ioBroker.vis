@@ -891,12 +891,12 @@ class JQuiButton<P extends JQuiButtonDataProps = JQuiButtonDataProps, S extends 
             >
                 <IconButton
                     style={{
+                        ...this.props.context.editModeComponentStyle,
                         position: 'absolute',
                         bottom: 0,
                         right: 0,
                         opacity: 0.4,
                     }}
-                    className={this.props.context.editModeComponentClass}
                     onClick={e => {
                         e.stopPropagation();
                         e.preventDefault();

@@ -144,7 +144,7 @@ class BasicViewInWidget extends VisRxWidget<RxData, BasicViewInWidgetState> {
         return [
             <IconButton
                 key="button"
-                className={this.props.context.editModeComponentClass}
+                style={this.props.context.editModeComponentStyle}
                 onMouseDown={e => {
                     e.stopPropagation();
                     e.preventDefault();
