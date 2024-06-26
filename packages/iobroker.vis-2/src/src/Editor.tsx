@@ -222,7 +222,8 @@ export interface EditorProps extends RuntimeProps {
     version: string;
 }
 
-export interface EditorState extends RuntimeState{
+export interface EditorState extends RuntimeState {
+    theme: VisTheme;
     needSave: boolean;
     widgetsClipboard: {
         type: 'cut' | 'copy' | '';
