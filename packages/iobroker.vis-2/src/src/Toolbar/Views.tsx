@@ -134,7 +134,7 @@ const Views = (props: ViewsProps) => {
             open={props.viewsManager}
             onClose={() => props.setViewsManager(false)}
             showDialog={showDialog}
-            classes={{}}
+            theme={props.theme}
             changeProject={props.changeProject}
             editMode={props.editMode}
             selectedView={props.selectedView}

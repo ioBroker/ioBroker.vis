@@ -25,7 +25,7 @@ import {
 
 import type { ThemeType } from '@iobroker/adapter-react-v5';
 import { I18n } from '@iobroker/adapter-react-v5';
-import type { AnyWidgetId, GroupWidgetId } from '@iobroker/types-vis-2';
+import type { AnyWidgetId, GroupWidgetId, VisTheme } from '@iobroker/types-vis-2';
 import type { EditorClass } from '@/Editor';
 import { store } from '../Store';
 
@@ -63,6 +63,7 @@ interface WidgetsProps {
     toggleWidgetHint: EditorClass['toggleWidgetHint'];
     widgetsClipboard: EditorClass['state']['widgetsClipboard'];
     toolbarHeight: 'full' | 'narrow' | 'veryNarrow';
+    theme: VisTheme;
 }
 
 const Widgets: React.FC<WidgetsProps> = props => {
@@ -413,8 +414,8 @@ const Widgets: React.FC<WidgetsProps> = props => {
 
     return <>
         <ToolbarItems
+            theme={props.theme}
             group={toolbar}
-            classes={{}}
             changeProject={props.changeProject}
             selectedView={props.selectedView}
             setSelectedWidgets={props.setSelectedWidgets}

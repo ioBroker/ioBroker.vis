@@ -66,10 +66,10 @@ interface FolderProps {
     setFolderDialogParentId: (parentId: string) => void;
     setIsDragging: (isDragging: string) => void;
     isDragging: string;
-    editMode: boolean;
+    editMode?: boolean;
     foldersCollapsed: string[];
     setFoldersCollapsed: (foldersCollapsed: string[]) => void;
-    showDialog: (dialog: string, view: string, parentId: string) => void;
+    showDialog?: (dialog: string, view: string, parentId: string) => void;
     theme: VisTheme;
 }
 

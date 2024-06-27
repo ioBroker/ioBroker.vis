@@ -14,7 +14,8 @@ import { I18n } from '@iobroker/adapter-react-v5';
 
 import { store } from '@/Store';
 import {
-    deepClone, getNewWidgetId, isGroup, pasteGroup,
+    deepClone, getNewWidgetId,
+    isGroup, pasteGroup,
 } from '@/Utils/utils';
 import { useFocus } from '@/Utils';
 import IODialog from '@/Components/IODialog';
@@ -205,15 +206,14 @@ const ViewDialog = (props: ViewDialogProps) => {
         actionColor={props.dialog === 'delete' ? 'secondary' : 'primary'}
         actionDisabled={dialogDisabled}
     >
-        {props.dialog === 'delete' ? null
-            : <TextField
-                inputRef={inputField}
-                variant="standard"
-                label={dialogInputs[props.dialog]}
-                fullWidth
-                value={props.dialogName}
-                onChange={e => props.setDialogName(e.target.value)}
-            /> }
+        {props.dialog === 'delete' ? null : <TextField
+            inputRef={inputField}
+            variant="standard"
+            label={dialogInputs[props.dialog]}
+            fullWidth
+            value={props.dialogName}
+            onChange={e => props.setDialogName(e.target.value)}
+        />}
     </IODialog>;
 };
 

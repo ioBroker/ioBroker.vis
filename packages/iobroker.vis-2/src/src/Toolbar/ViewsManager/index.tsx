@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react';
 
-import type { CSSProperties, Styles } from '@mui/styles';
-import { withStyles } from '@mui/styles';
-
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
@@ -17,13 +14,13 @@ import {
 } from '@mui/icons-material';
 import { BiImport } from 'react-icons/bi';
 
-import type { IobTheme, ThemeName, ThemeType } from '@iobroker/adapter-react-v5';
+import type { ThemeName, ThemeType } from '@iobroker/adapter-react-v5';
 import { I18n } from '@iobroker/adapter-react-v5';
 
 import type { EditorClass } from '@/Editor';
 import type {
     View as ViewType,
-    AnyWidgetId,
+    AnyWidgetId, VisTheme,
 } from '@iobroker/types-vis-2';
 import IODialog from '../../Components/IODialog';
 import Folder from './Folder';
@@ -35,11 +32,12 @@ import FolderDialog from './FolderDialog';
 import { DndPreview, isTouchDevice } from '../../Utils';
 import { store } from '../../Store';
 import {
-    deepClone, getNewWidgetId, hasViewAccess, isGroup, pasteGroup,
+    deepClone, getNewWidgetId,
+    hasViewAccess, isGroup,
+    pasteGroup,
 } from '../../Utils/utils';
 
-const styles: Styles<IobTheme & {classes: Record<string, CSSProperties>}, any> = theme => ({
-    viewManageButtonActions: theme.classes.viewManageButtonActions,
+const styles: Record<string, any> = {
     dialog: {
         minWidth: 400,
         minHeight: 300,
@@ -70,11 +68,10 @@ const styles: Styles<IobTheme & {classes: Record<string, CSSProperties>}, any> =
     tooltip: {
         pointerEvents: 'none',
     },
-});
+};
 
 interface ViewsManagerProps {
     changeProject: EditorClass['changeProject'];
-    classes: Record<string, string>;
     name?: string;
     onClose: () => void;
     open: boolean;
@@ -86,10 +83,10 @@ interface ViewsManagerProps {
     ) => void;
     themeName: ThemeName;
     themeType: ThemeType;
+    theme: VisTheme;
     toggleView: EditorClass['toggleView'];
     editMode: boolean;
     selectedView: string;
-
 }
 
 const ViewsManager: React.FC<ViewsManagerProps> = props => {
@@ -160,7 +157,7 @@ const ViewsManager: React.FC<ViewsManagerProps> = props => {
         .filter(name => !name.startsWith('___'))
         .filter(name => (parentId ? visProject[name].parentId === parentId : !visProject[name].parentId))
         .sort((name1, name2) => (name1.toLowerCase().localeCompare(name2.toLowerCase())))
-        .map((name, key) => <div key={key} className={props.classes.viewContainer}>
+        .map((name, key) => <div key={key} style={styles.viewContainer}>
             <View
                 name={name}
                 setIsDragging={setIsDragging}
@@ -169,8 +166,9 @@ const ViewsManager: React.FC<ViewsManagerProps> = props => {
                 setExportDialog={setExportDialog}
                 setImportDialog={setImportDialog}
                 selectedView={props.selectedView}
+                theme={props.theme}
+                openedViews={store.getState().visProject.___settings.openedViews}
                 {...props}
-                classes={{}}
                 hasPermissions={hasViewAccess({
                     view: name, user: activeUser, project: visProject, editMode: props.editMode,
                 })}
@@ -183,11 +181,12 @@ const ViewsManager: React.FC<ViewsManagerProps> = props => {
             .sort((folder1, folder2) => folder1.name.toLowerCase().localeCompare(folder2.name.toLowerCase()));
 
         return folders.map((folder, key) => <div key={key}>
-            <div className={props.classes.folderContainer}>
+            <div style={styles.folderContainer}>
                 <Folder
                     setIsDragging={setIsDragging}
                     isDragging={isDragging}
                     folder={folder}
+                    theme={props.theme}
                     setFolderDialog={setFolderDialog}
                     setFolderDialogName={setFolderDialogName}
                     setFolderDialogId={setFolderDialogId}
@@ -195,7 +194,6 @@ const ViewsManager: React.FC<ViewsManagerProps> = props => {
                     moveFolder={moveFolder}
                     foldersCollapsed={foldersCollapsed}
                     setFoldersCollapsed={setFoldersCollapsed}
-                    classes={{}}
                 />
             </div>
             {foldersCollapsed.includes(folder.id) ? null : <div style={{ paddingLeft: 10 }}>
@@ -206,11 +204,11 @@ const ViewsManager: React.FC<ViewsManagerProps> = props => {
     };
 
     return <IODialog open={props.open} onClose={props.onClose} title="Manage views" closeTitle="Close">
-        <div className={props.classes.dialog}>
+        <div style={styles.dialog}>
             <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>
                 <DndPreview />
-                {props.editMode ? <AppBar position="static" className={props.classes.topBar}>
-                    {props.editMode ? <Tooltip title={I18n.t('Add view')} classes={{ popper: props.classes.tooltip }}>
+                {props.editMode ? <AppBar position="static" style={styles.topBar}>
+                    {props.editMode ? <Tooltip title={I18n.t('Add view')} componentsProps={{ popper: { sx: styles.tooltip } }}>
                         <IconButton
                             size="small"
                             onClick={() => props.showDialog('add', props.name, null, (newView: string) => {
@@ -220,12 +218,12 @@ const ViewsManager: React.FC<ViewsManagerProps> = props => {
                             <AddIcon />
                         </IconButton>
                     </Tooltip> : null}
-                    {props.editMode ? <Tooltip title={I18n.t('Import')} classes={{ popper: props.classes.tooltip }}>
+                    {props.editMode ? <Tooltip title={I18n.t('Import')} componentsProps={{ popper: { sx: styles.tooltip } }}>
                         <IconButton onClick={() => setImportDialog('')} size="small">
                             <BiImport />
                         </IconButton>
                     </Tooltip> : null}
-                    {props.editMode ? <Tooltip title={I18n.t('Add folder')} classes={{ popper: props.classes.tooltip }}>
+                    {props.editMode ? <Tooltip title={I18n.t('Add folder')} componentsProps={{ popper: { sx: styles.tooltip } }}>
                         <IconButton
                             size="small"
                             onClick={() => {
@@ -237,7 +235,7 @@ const ViewsManager: React.FC<ViewsManagerProps> = props => {
                             <CreateNewFolderIcon />
                         </IconButton>
                     </Tooltip> : null}
-                    {props.editMode ? <Tooltip title={I18n.t('Show all views')} classes={{ popper: props.classes.tooltip }}>
+                    {props.editMode ? <Tooltip title={I18n.t('Show all views')} componentsProps={{ popper: { sx: styles.tooltip } }}>
                         <IconButton
                             size="small"
                             onClick={async () => {
@@ -255,7 +253,7 @@ const ViewsManager: React.FC<ViewsManagerProps> = props => {
                             <VisibilityIcon />
                         </IconButton>
                     </Tooltip> : null}
-                    {props.editMode ? <Tooltip title={I18n.t('Hide all views')} classes={{ popper: props.classes.tooltip }}>
+                    {props.editMode ? <Tooltip title={I18n.t('Hide all views')} componentsProps={{ popper: { sx: styles.tooltip } }}>
                         <IconButton
                             size="small"
                             onClick={async () => {
@@ -314,4 +312,4 @@ const ViewsManager: React.FC<ViewsManagerProps> = props => {
     </IODialog>;
 };
 
-export default withStyles(styles)(ViewsManager) as React.FC<ViewsManagerProps>;
+export default ViewsManager as React.FC<ViewsManagerProps>;
