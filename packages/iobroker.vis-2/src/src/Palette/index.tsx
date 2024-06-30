@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { withStyles } from '@mui/styles';
 
 import {
     Accordion,
@@ -9,7 +8,6 @@ import {
     TextField,
     Tooltip,
     Typography,
-    type Theme,
 } from '@mui/material';
 
 import {
@@ -24,18 +22,17 @@ import {
 import {
     I18n, Utils,
     Icon,
-} from '@iobroker/adapter-react-v5';
-import type {
-    LegacyConnection,
-    ThemeType,
+    type LegacyConnection,
+    type ThemeType,
 } from '@iobroker/adapter-react-v5';
 
-import type { Marketplace, MarketplaceWidgetRevision } from '@iobroker/types-vis-2';
+import type { Marketplace, MarketplaceWidgetRevision, VisTheme } from '@iobroker/types-vis-2';
 import { store } from '@/Store';
 
 import type { WidgetType } from '@/Vis/visWidgetsCatalog';
 import { getWidgetTypes } from '@/Vis/visWidgetsCatalog';
 import { loadComponent } from '@/Vis/visLoadWidgets';
+import commonStyles from '@/Utils/styles';
 import type { EditorClass } from '../Editor';
 import Widget from './Widget';
 import MarketplacePalette from '../Marketplace/MarketplacePalette';
@@ -55,11 +52,11 @@ import MarketplacePalette from '../Marketplace/MarketplacePalette';
 //     }
 // }
 
-const styles: Record<string, any> = (theme: Theme) => ({
+const styles: Record<string, any> = {
     widgets: {
         textAlign: 'center',
         overflowY: 'auto',
-        height: 'calc(100% - 84px)',
+        height: 'calc(100% - 86px)',
     },
     toggle: {
         width: 30,
@@ -78,11 +75,9 @@ const styles: Record<string, any> = (theme: Theme) => ({
         display: 'none',
     },
     accordionRoot: {
-        '&&&&': {
-            padding: 0,
-            margin: 0,
-            minHeight: 'initial',
-        },
+        p: 0,
+        m: 0,
+        minHeight: 'initial',
         '&:before': {
             opacity: 0,
         },
@@ -90,38 +85,26 @@ const styles: Record<string, any> = (theme: Theme) => ({
     accordionOpenedSummary: {
         fontWeight: 'bold',
     },
-    clearPadding: {
-        '&&&&': {
-            padding: 0,
-            margin: 0,
-            minHeight: 'initial',
-        },
-    },
     groupSummary: {
-        '&&&&&&': {
-            marginTop: 10,
-            borderRadius: 4,
-            padding: 2,
-        },
+        mt: '10px',
+        borderRadius: '4px',
+        p: '2px',
+        minHeight: 0,
     },
     groupSummaryExpanded: {
-        '&&&&&&': {
-            marginTop: 10,
-            borderTopRightRadius: 4,
-            borderTopLeftRadius: 4,
-            padding: 2,
-        },
+        minHeight: 0,
+        mt: '10px',
+        borderTopRightRadius: '4px',
+        borderTopLeftRadius: '4px',
+        p: '2px',
     },
-    // @ts-expect-error no idea how to solve it
-    blockHeader: theme.classes.blockHeader,
-    // @ts-expect-error no idea how to solve it
-    lightedPanel: theme.classes.lightedPanel,
-    accordionDetails: {
-        // @ts-expect-error no idea how to solve it
+    blockHeader: (theme: VisTheme) => theme.classes.blockHeader,
+    lightedPanel: (theme: VisTheme) => theme.classes.lightedPanel,
+    accordionDetails: (theme: VisTheme) => ({
         ...theme.classes.lightedPanel,
         borderRadius: '0 0 4px 4px',
         flexDirection: 'column',
-    },
+    }),
     selectClearContainer: {
         display: 'flex',
     },
@@ -140,12 +123,13 @@ const styles: Record<string, any> = (theme: Theme) => ({
         textAlign: 'left',
     },
     searchLabel: {
+        display: 'block',
         '& label': {
-            marginLeft: 32,
-            marginTop: -5,
+            ml: '32px',
+            mt: '-5px',
         },
     },
-});
+};
 
 const DEVELOPER_MODE = window.localStorage.getItem('developerMode') === 'true';
 
@@ -159,7 +143,6 @@ interface WidgetSetProps {
 }
 
 interface PaletteProps {
-    classes: Record<string, string>;
     onHide: (hide: boolean) => void;
     changeView: EditorClass['changeView'];
     changeProject: EditorClass['changeProject'];
@@ -169,6 +152,7 @@ interface PaletteProps {
     widgetsLoaded: boolean;
     socket: LegacyConnection;
     themeType: ThemeType;
+    theme: VisTheme;
     editMode: boolean;
     selectedView: string;
 }
@@ -372,17 +356,16 @@ class Palette extends Component<PaletteProps, PaletteState> {
     }
 
     renderMarketplace() {
-        const classes = this.props.classes;
         const opened = this.state.accordionOpen.__marketplace;
 
         return <Accordion
-            classes={{
-                root: classes.accordionRoot,
-                expanded: classes.clearPadding,
+            sx={{
+                ...styles.accordionRoot,
+                '& .MuiAccordion-expanded': commonStyles.clearPadding,
             }}
             elevation={0}
             expanded={opened || false}
-            onChange={(e, expanded) => {
+            onChange={(_e, expanded) => {
                 const accordionOpen = JSON.parse(JSON.stringify(this.state.accordionOpen));
                 accordionOpen.__marketplace = expanded;
                 window.localStorage.setItem('widgets', JSON.stringify(accordionOpen));
@@ -394,20 +377,23 @@ class Palette extends Component<PaletteProps, PaletteState> {
                 id="summary___marketplace"
                 expandIcon={<ExpandMoreIcon />}
                 className={Utils.clsx('vis-palette-widget-set', opened && 'vis-palette-summary-expanded')}
-                classes={{
-                    root: Utils.clsx(
-                        classes.clearPadding,
-                        opened ? classes.groupSummaryExpanded : classes.groupSummary,
-                        classes.lightedPanel,
+                sx={{
+                    ...Utils.getStyle(
+                        this.props.theme,
+                        commonStyles.clearPadding,
+                        opened ? styles.groupSummaryExpanded : styles.groupSummary,
+                        styles.lightedPanel,
+                        { minHeight: 0 },
                     ),
-                    content: Utils.clsx(classes.clearPadding, opened && classes.accordionOpenedSummary),
-                    // expandIcon: classes.clearPadding,
+                    '&.Mui-expanded': { minHeight: 0 },
+                    '& .MuiAccordionSummary-content': { ...commonStyles.clearPadding, ...(opened ? styles.accordionOpenedSummary : undefined) },
+                    // '& .MuiAccordionSummary-expandIcon': commonStyles.clearPadding,
                 }}
             >
-                <Icon className={classes.groupIcon} src="img/marketplace.png" />
+                <Icon style={styles.groupIcon} src="img/marketplace.png" />
                 {I18n.t('__marketplace')}
             </AccordionSummary>
-            <AccordionDetails classes={{ root: classes.accordionDetails }}>
+            <AccordionDetails sx={styles.accordionDetails}>
                 {opened && this.state.marketplaceLoading ? <LinearProgress /> : null}
                 {opened && this.state.marketplaceUpdates && <div>
                     <MarketplacePalette setMarketplaceDialog={this.props.setMarketplaceDialog} />
@@ -509,19 +495,18 @@ class Palette extends Component<PaletteProps, PaletteState> {
 
         const allOpened = !Object.keys(this.state.widgetsList).find(group => !this.state.accordionOpen[group]);
         const allClosed = !Object.keys(this.state.widgetsList).find(group => this.state.accordionOpen[group]);
-        const classes = this.props.classes;
 
         return <>
             <Typography
                 variant="h6"
                 gutterBottom
-                className={Utils.clsx(classes.blockHeader, classes.lightedPanel)}
+                sx={Utils.getStyle(this.props.theme, styles.blockHeader, styles.lightedPanel)}
                 style={{ display: 'flex', lineHeight: '34px' }}
             >
                 <IconPalette style={{ marginTop: 4, marginRight: 4 }} />
                 <span style={{ verticalAlign: 'middle' }}>{I18n.t('Palette')}</span>
                 <div style={{ flex: 1 }} />
-                {!allOpened ? <Tooltip title={I18n.t('Expand all')}>
+                {!allOpened ? <Tooltip title={I18n.t('Expand all')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                     <IconButton
                         size="small"
                         onClick={() => {
@@ -537,7 +522,7 @@ class Palette extends Component<PaletteProps, PaletteState> {
                         <UnfoldMoreIcon />
                     </IconButton>
                 </Tooltip> : <IconButton size="small" disabled><UnfoldMoreIcon /></IconButton>}
-                {!allClosed ? <Tooltip title={I18n.t('Collapse all')}>
+                {!allClosed ? <Tooltip title={I18n.t('Collapse all')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                     <IconButton onClick={() => {
                         const accordionOpen: Record<string, boolean> = {};
                         Object.keys(this.state.widgetsList).forEach(group => accordionOpen[group] = false);
@@ -549,7 +534,7 @@ class Palette extends Component<PaletteProps, PaletteState> {
                         <UnfoldLessIcon />
                     </IconButton>
                 </Tooltip> : <IconButton size="small" disabled><UnfoldLessIcon /></IconButton> }
-                <Tooltip title={I18n.t('Hide palette')}>
+                <Tooltip title={I18n.t('Hide palette')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                     <IconButton
                         size="small"
                         onClick={() => this.props.onHide(true)}
@@ -558,41 +543,32 @@ class Palette extends Component<PaletteProps, PaletteState> {
                     </IconButton>
                 </Tooltip>
             </Typography>
-            <div>
-                <TextField
-                    variant="standard"
-                    fullWidth
-                    value={this.state.filter}
-                    onChange={e => this.setState({ filter: e.target.value }, () => this.buildListTrigger())}
-                    label={this.state.filter ? ' ' : I18n.t('Search')}
-                    className={classes.searchLabel}
-                    InputProps={{
-                        className: classes.clearPadding,
-                        endAdornment: this.state.filter ? <IconButton size="small" onClick={() => this.setState({ filter: '' }, () => this.buildListTrigger())}>
-                            <ClearIcon />
-                        </IconButton> : null,
-                        startAdornment: <InputAdornment position="start">
-                            <Search />
-                        </InputAdornment>,
-                    }}
-                    InputLabelProps={{
-                        shrink: false,
-                        classes: {
-                            root: classes.label,
-                            shrink: classes.labelShrink,
-                        },
-                    }}
-                />
-            </div>
-            <div className={classes.widgets} style={!this.props.editMode ? { opacity: 0.3 } : null}>
+            <TextField
+                variant="standard"
+                fullWidth
+                value={this.state.filter}
+                onChange={e => this.setState({ filter: e.target.value }, () => this.buildListTrigger())}
+                placeholder={I18n.t('Search')}
+                sx={styles.searchLabel}
+                InputProps={{
+                    sx: styles.clearPadding,
+                    endAdornment: this.state.filter ? <IconButton size="small" onClick={() => this.setState({ filter: '' }, () => this.buildListTrigger())}>
+                        <ClearIcon style={{ width: 22, height: 22 }} />
+                    </IconButton> : null,
+                    startAdornment: <InputAdornment position="start">
+                        <Search />
+                    </InputAdornment>,
+                }}
+            />
+            <div style={{ ...styles.widgets, opacity: !this.props.editMode ? 0.3 : undefined }}>
                 {this.renderMarketplace()}
                 {Object.keys(this.state.widgetsList).map((category, categoryKey) => {
                     let version = null;
                     if (this.state.widgetSetProps[category]?.version) {
                         if (DEVELOPER_MODE) {
                             version = <div
-                                className={classes.version}
                                 style={{
+                                    ...styles.version,
                                     cursor: 'pointer',
                                     color: this.state.widgetSetProps[category].developerMode ? '#ff4242' : 'inherit',
                                     fontWeight: this.state.widgetSetProps[category].developerMode ? 'bold' : 'inherit',
@@ -602,19 +578,19 @@ class Palette extends Component<PaletteProps, PaletteState> {
                                 {this.state.widgetSetProps[category]?.version}
                             </div>;
                         } else {
-                            version = <div className={classes.version}>{this.state.widgetSetProps[category]?.version}</div>;
+                            version = <div style={styles.version}>{this.state.widgetSetProps[category]?.version}</div>;
                         }
                     }
 
                     return <Accordion
-                        classes={{
-                            root: classes.accordionRoot,
-                            expanded: classes.clearPadding,
+                        sx={{
+                            ...styles.accordionRoot,
+                            '& .MuiAccordion-expanded': styles.clearPadding,
                         }}
                         key={categoryKey}
                         elevation={0}
                         expanded={this.state.accordionOpen[category] || false}
-                        onChange={(e, expanded) => {
+                        onChange={(_e, expanded) => {
                             const accordionOpen = JSON.parse(JSON.stringify(this.state.accordionOpen));
                             accordionOpen[category] = expanded;
                             window.localStorage.setItem('widgets', JSON.stringify(accordionOpen));
@@ -625,18 +601,19 @@ class Palette extends Component<PaletteProps, PaletteState> {
                             id={`summary_${category}`}
                             expandIcon={<ExpandMoreIcon />}
                             className={Utils.clsx('vis-palette-widget-set', this.state.accordionOpen[category] && 'vis-palette-summary-expanded')}
-                            classes={{
-                                root: Utils.clsx(
-                                    classes.clearPadding,
-                                    this.state.accordionOpen[category] ? classes.groupSummaryExpanded : classes.groupSummary,
-                                    classes.lightedPanel,
+                            sx={{
+                                ...Utils.getStyle(
+                                    this.props.theme,
+                                    commonStyles.clearPadding,
+                                    this.state.accordionOpen[category] ? styles.groupSummaryExpanded : styles.groupSummary,
+                                    styles.lightedPanel,
                                 ),
-                                content: Utils.clsx(classes.clearPadding, this.state.accordionOpen[category] && classes.accordionOpenedSummary),
-                                // expandIcon: classes.clearPadding,
+                                '&.Mui-expanded': { minHeight: 0 },
+                                '& .MuiAccordionSummary-content': { ...commonStyles.clearPadding, ...(this.state.accordionOpen[category] ? styles.accordionOpenedSummary : undefined) },
                             }}
                         >
                             {this.state.widgetSetProps[category]?.icon ?
-                                <Icon className={classes.groupIcon} src={this.state.widgetSetProps[category].icon} />
+                                <Icon style={styles.groupIcon} src={this.state.widgetSetProps[category].icon} />
                                 :
                                 null}
                             {this.state.widgetSetProps[category]?.label ?
@@ -645,7 +622,7 @@ class Palette extends Component<PaletteProps, PaletteState> {
                                 :
                                 I18n.t(category)}
                         </AccordionSummary>
-                        <AccordionDetails classes={{ root: classes.accordionDetails }}>
+                        <AccordionDetails sx={styles.accordionDetails}>
                             {version}
                             <div>
                                 {this.state.accordionOpen[category] ? this.state.widgetsList[category].map(widgetItem =>
@@ -671,4 +648,4 @@ class Palette extends Component<PaletteProps, PaletteState> {
     }
 }
 
-export default withStyles(styles)(Palette);
+export default Palette;

@@ -33,6 +33,7 @@ import {
 } from '@iobroker/adapter-react-v5';
 
 import type { EditorClass } from '@/Editor';
+import commonStyles from '@/Utils/styles';
 import type { AnyWidgetId, GroupWidgetId, VisTheme } from '@iobroker/types-vis-2';
 import Views from './Views';
 import Widgets from './Widgets';
@@ -66,11 +67,8 @@ const styles: Record<string, any> = {
     lightedPanel: (theme: VisTheme) => theme.classes.lightedPanel,
     toolbar: (theme: VisTheme) => theme.classes.toolbar,
     narrowToolbar: {
-        paddingTop: 4,
-        paddingBottom: 4,
-    },
-    tooltip: {
-        pointerEvents: 'none',
+        pt: '4px',
+        pb: '4px',
     },
     heightButton: {
 
@@ -140,7 +138,7 @@ interface ToolbarProps {
     widgetsLoaded: boolean;
 }
 
-const Toolbar: React.FC<ToolbarProps> = props => {
+const Toolbar = (props: ToolbarProps): React.JSX.Element => {
     const [right, setRight] = useState(false);
     const [lastCommand, setLastCommand] = useState(window.localStorage.getItem('Vis.lastCommand') || 'close');
     const rightRef = useRef(null);
@@ -178,7 +176,7 @@ const Toolbar: React.FC<ToolbarProps> = props => {
             window.location.href = runtimeURL;
         }}
         >
-            <CloseIcon />
+            <CloseIcon style={{ marginRight: 8, color: props.themeType === 'dark' ? '#6388fd' : '#5fa5fe' }} />
             {I18n.t('Close editor')}
         </DropMenuItem>
         <DropMenuItem onClick={() => {
@@ -188,18 +186,18 @@ const Toolbar: React.FC<ToolbarProps> = props => {
             window.open(runtimeURL, 'vis-2.runtime');
         }}
         >
-            <PlayArrowIcon />
+            <PlayArrowIcon style={{ marginRight: 8, color: props.themeType === 'dark' ? '#ffa947' : '#884900' }} />
             {I18n.t('Open runtime in new window')}
         </DropMenuItem>
         <DropMenuItem onClick={onReload}>
-            <SyncIcon />
+            <SyncIcon style={{ marginRight: 8, color: props.themeType === 'dark' ? '#50ff50' : '#008800' }} />
             {I18n.t('Reload all runtimes')}
         </DropMenuItem>
     </DropMenu>;
 
     let heightButton;
     if (props.toolbarHeight === 'narrow') {
-        heightButton = <Tooltip title={I18n.t('Narrow panel')}>
+        heightButton = <Tooltip title={I18n.t('Narrow panel')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
             <IconButton
                 style={styles.heightButton}
                 onClick={() => props.setToolbarHeight('veryNarrow')}
@@ -208,7 +206,7 @@ const Toolbar: React.FC<ToolbarProps> = props => {
             </IconButton>
         </Tooltip>;
     } else if (props.toolbarHeight === 'veryNarrow') {
-        heightButton = <Tooltip title={I18n.t('Full panel')}>
+        heightButton = <Tooltip title={I18n.t('Full panel')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
             <IconButton
                 style={styles.heightButton}
                 onClick={() => props.setToolbarHeight('full')}
@@ -217,7 +215,7 @@ const Toolbar: React.FC<ToolbarProps> = props => {
             </IconButton>
         </Tooltip>;
     } else {
-        heightButton = <Tooltip title={I18n.t('Hide panel names')}>
+        heightButton = <Tooltip title={I18n.t('Hide panel names')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
             <IconButton
                 style={styles.heightButton}
                 onClick={() => props.setToolbarHeight('narrow')}
@@ -234,7 +232,7 @@ const Toolbar: React.FC<ToolbarProps> = props => {
                 { Utils.getObjectNameFromObj(props.currentUser, lang) }
             </span>
             { props.socket.isSecure
-                ? <Tooltip title={I18n.t('Exit')} componentsProps={{ popper: { sx: styles.tooltip } }}>
+                ? <Tooltip title={I18n.t('Exit')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                     <IconButton
                         size="small"
                         onClick={async () => {
@@ -257,21 +255,21 @@ const Toolbar: React.FC<ToolbarProps> = props => {
 
     let lastCommandButton;
     if (lastCommand === 'close') {
-        lastCommandButton = <Tooltip title={I18n.t('Close editor')} componentsProps={{ popper: { sx: styles.tooltip } }}>
+        lastCommandButton = <Tooltip title={I18n.t('Close editor')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
             <IconButton size="small" onClick={() => window.location.href = runtimeURL}>
-                <CloseIcon />
+                <CloseIcon style={{ color: props.themeType === 'dark' ? '#6388fd' : '#5fa5fe' }} />
             </IconButton>
         </Tooltip>;
     } else if (lastCommand === 'open') {
-        lastCommandButton = <Tooltip title={I18n.t('Open runtime in new window')} componentsProps={{ popper: { sx: styles.tooltip } }}>
+        lastCommandButton = <Tooltip title={I18n.t('Open runtime in new window')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
             <IconButton size="small" onClick={() => window.open(runtimeURL, 'vis-2.runtime')}>
-                <PlayArrowIcon />
+                <PlayArrowIcon style={{ color: props.themeType === 'dark' ? '#ffa947' : '#884900' }} />
             </IconButton>
         </Tooltip>;
     } else if (lastCommand === 'reload') {
-        lastCommandButton = <Tooltip title={I18n.t('Reload all runtimes')} componentsProps={{ popper: { sx: styles.tooltip } }}>
+        lastCommandButton = <Tooltip title={I18n.t('Reload all runtimes')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
             <IconButton size="small" onClick={onReload}>
-                <SyncIcon />
+                <SyncIcon style={{ color: props.themeType === 'dark' ? '#50ff50' : '#008800' }} />
             </IconButton>
         </Tooltip>;
     }
@@ -294,7 +292,7 @@ const Toolbar: React.FC<ToolbarProps> = props => {
         </style>
         <span style={styles.right}>
             <div style={styles.rightBlock}>
-                {props.needSave ? <SaveIcon fontSize={'20px' as any} style={Utils.getStyle(props.theme, styles.saveIcon)} /> : null}
+                {props.needSave ? <SaveIcon fontSize="small" style={Utils.getStyle(props.theme, styles.saveIcon)} /> : null}
                 {props.toolbarHeight === 'veryNarrow' ? currentUser : null}
                 {heightButton}
                 <ToggleThemeMenu
@@ -320,7 +318,6 @@ const Toolbar: React.FC<ToolbarProps> = props => {
             style={{ alignItems: 'initial' }}
         >
             <Views
-                theme={props.theme}
                 toolbarHeight={props.toolbarHeight}
                 changeProject={props.changeProject}
                 changeView={props.changeView}
@@ -333,6 +330,7 @@ const Toolbar: React.FC<ToolbarProps> = props => {
                 setViewsManager={props.setViewsManager}
                 themeName={props.themeName}
                 themeType={props.themeType}
+                theme={props.theme}
                 toggleView={props.toggleView}
                 viewsManager={props.viewsManager}
             />
@@ -357,6 +355,7 @@ const Toolbar: React.FC<ToolbarProps> = props => {
                 selectedWidgets={props.selectedWidgets}
                 setSelectedWidgets={props.setSelectedWidgets}
                 themeType={props.themeType}
+                theme={props.theme}
                 toggleLockDragging={props.toggleLockDragging}
                 toggleWidgetHint={props.toggleWidgetHint}
                 undo={props.undo}

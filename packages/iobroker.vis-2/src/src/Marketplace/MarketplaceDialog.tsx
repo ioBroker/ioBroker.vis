@@ -27,8 +27,8 @@ export interface MarketplaceDialogProps {
         image?: string;
     };
     installedWidgets: MarketplaceWidgetRevision[];
-    updateWidgets: (widget: MarketplaceWidgetRevision) => void;
-    installWidget: (widgetId: string, id: string) => void;
+    updateWidgets: (widget: MarketplaceWidgetRevision) => Promise<void>;
+    installWidget: (widgetId: string, id: string) => Promise<void>;
     themeName: ThemeName;
 }
 

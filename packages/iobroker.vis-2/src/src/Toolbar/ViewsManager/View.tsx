@@ -21,6 +21,7 @@ import { I18n, Utils } from '@iobroker/adapter-react-v5';
 
 import type { VisTheme } from '@iobroker/types-vis-2';
 import { store } from '@/Store';
+import commonStyles from '@/Utils/styles';
 
 const styles: Record<string, any> = {
     viewManageBlock: (theme: VisTheme) => theme.classes.viewManageBlock,
@@ -41,9 +42,6 @@ const styles: Record<string, any> = {
     }),
     noDrop: {
         opacity: 0.4,
-    },
-    tooltip: {
-        pointerEvents: 'none',
     },
     visibleView: (theme: VisTheme) => ({
         color: theme.palette.primary.main,
@@ -73,7 +71,7 @@ interface ViewProps {
 const View = (props: ViewProps) => {
     const viewBlockPreview = <Box component="div" sx={styles.viewManageBlock}>
         <FileIcon />
-        <Tooltip title={I18n.t(props.openedViews.includes(props.name) ? 'Hide' : 'Show')} componentsProps={{ popper: { sx: styles.tooltip } }}>
+        <Tooltip title={I18n.t(props.openedViews.includes(props.name) ? 'Hide' : 'Show')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
             <IconButton
                 size="small"
                 onClick={() => props.toggleView(props.name, !props.openedViews.includes(props.name))}
@@ -127,7 +125,7 @@ const View = (props: ViewProps) => {
             </div> : <FileIcon color="disabled" />}
             <Tooltip
                 title={I18n.t(props.openedViews.includes(props.name) ? 'Hide' : 'Show')}
-                componentsProps={{ popper: { sx: styles.tooltip } }}
+                componentsProps={{ popper: { sx: commonStyles.tooltip } }}
             >
                 <IconButton
                     disabled={!props.hasPermissions}
@@ -140,27 +138,27 @@ const View = (props: ViewProps) => {
             </Tooltip>
             {props.hasPermissions ? <Box component="span" onClick={selectView} sx={styles.name}>{props.name}</Box> : <span style={{ color: 'grey' }}>{props.name}</span>}
             <Box component="span" sx={styles.viewManageButtonActions}>
-                {props.editMode && props.hasPermissions ? <Tooltip title={I18n.t('Import')} componentsProps={{ popper: { sx: styles.tooltip } }}>
+                {props.editMode && props.hasPermissions ? <Tooltip title={I18n.t('Import')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                     <IconButton onClick={() => props.setImportDialog(props.name)} size="small">
                         <BiImport />
                     </IconButton>
                 </Tooltip> : null}
-                <Tooltip title={I18n.t('Export')} componentsProps={{ popper: { sx: styles.tooltip } }}>
+                <Tooltip title={I18n.t('Export')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                     <IconButton onClick={() => props.setExportDialog(props.name)} size="small">
                         <BiExport />
                     </IconButton>
                 </Tooltip>
-                {props.editMode && props.hasPermissions ? <Tooltip title={I18n.t('Rename')} componentsProps={{ popper: { sx: styles.tooltip } }}>
+                {props.editMode && props.hasPermissions ? <Tooltip title={I18n.t('Rename')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                     <IconButton onClick={() => props.showDialog('rename', props.name)} size="small">
                         <EditIcon />
                     </IconButton>
                 </Tooltip> : null}
-                {props.editMode && props.hasPermissions ? <Tooltip title={I18n.t('Copy')} componentsProps={{ popper: { sx: styles.tooltip } }}>
+                {props.editMode && props.hasPermissions ? <Tooltip title={I18n.t('Copy')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                     <IconButton onClick={() => props.showDialog('copy', props.name)} size="small">
                         <FileCopyIcon />
                     </IconButton>
                 </Tooltip> : null}
-                {props.editMode && props.hasPermissions ? <Tooltip title={I18n.t('Delete')} componentsProps={{ popper: { sx: styles.tooltip } }}>
+                {props.editMode && props.hasPermissions ? <Tooltip title={I18n.t('Delete')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                     <IconButton onClick={() => props.showDialog('delete', props.name)} size="small">
                         <DeleteIcon />
                     </IconButton>

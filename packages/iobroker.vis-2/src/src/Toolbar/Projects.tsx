@@ -91,7 +91,6 @@ const Tools = (props: ToolsProps) => {
         {props.projectsDialog ? <ProjectsManager
             open={!0}
             onClose={() => props.setProjectsDialog(false)}
-            classes={{}}
             adapterName={props.adapterName}
             instance={props.instance}
             addProject={props.addProject}
@@ -105,6 +104,7 @@ const Tools = (props: ToolsProps) => {
             selectedView={props.selectedView}
             socket={props.socket}
             themeType={props.themeType}
+            theme={props.theme}
         /> : null}
         {
             objectsDialog ? <SelectID

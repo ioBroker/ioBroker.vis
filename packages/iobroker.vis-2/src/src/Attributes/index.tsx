@@ -4,8 +4,6 @@ import React, {
     useState,
 } from 'react';
 
-import { withStyles } from '@mui/styles';
-
 import {
     IconButton,
     Tab, Tabs, Tooltip, Typography,
@@ -23,18 +21,20 @@ import {
 } from '@iobroker/adapter-react-v5';
 
 import type { EditorClass } from '@/Editor';
+import type { VisTheme } from '@iobroker/types-vis-2';
+import commonStyles from '@/Utils/styles';
 import CSS from './CSS';
 import Scripts from './Scripts';
 import View from './View';
 import Widget from './Widget';
 import usePrevious from '../Utils/usePrevious';
 
-const style: Record<string, any> = (theme: Record<string, any>) => ({
-    blockHeader: theme.classes.blockHeader,
-    lightedPanel: theme.classes.lightedPanel,
-    viewTabs: theme.classes.viewTabs,
-    viewTab: theme.classes.viewTab,
-});
+const styles: Record<string, any> = {
+    blockHeader: (theme: VisTheme) => theme.classes.blockHeader,
+    lightedPanel: (theme: VisTheme) => theme.classes.lightedPanel,
+    viewTabs: (theme: VisTheme) => theme.classes.viewTabs,
+    viewTab: (theme: VisTheme) => theme.classes.viewTab,
+};
 
 const tabs: Record<string, JSXElementConstructor<any> | ((props: Record<string, any>) => ReactNode)> = {
     View,
@@ -44,7 +44,6 @@ const tabs: Record<string, JSXElementConstructor<any> | ((props: Record<string, 
 };
 
 interface AttributesProps {
-    classes: Record<string, string>;
     themeType: ThemeType;
     openedViews: string[];
     adapterName: string;
@@ -64,6 +63,7 @@ interface AttributesProps {
     cssClone: EditorClass['cssClone'];
     onPxToPercent: EditorClass['onPxToPercent'];
     onPercentToPx: EditorClass['onPercentToPx'];
+    theme: VisTheme;
 }
 
 const Attributes = (props: AttributesProps)  => {
@@ -96,7 +96,7 @@ const Attributes = (props: AttributesProps)  => {
         <Typography
             variant="h6"
             gutterBottom
-            className={Utils.clsx(props.classes.blockHeader, props.classes.lightedPanel)}
+            sx={Utils.getStyle(props.theme, styles.blockHeader, styles.lightedPanel)}
             style={{
                 display: 'flex',
                 lineHeight: '34px',
@@ -107,7 +107,7 @@ const Attributes = (props: AttributesProps)  => {
             {I18n.t('Attributes')}
             <div style={{ flex: 1 }}></div>
             {selected === 'View' || selected === 'Widget' ? <div style={{ textAlign: 'right' }}>
-                {!isAllOpened ? <Tooltip title={I18n.t('Expand all')}>
+                {!isAllOpened ? <Tooltip title={I18n.t('Expand all')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                     <IconButton
                         size="small"
                         onClick={() => setTriggerAllOpened(triggerAllOpened + 1)}
@@ -115,11 +115,11 @@ const Attributes = (props: AttributesProps)  => {
                         <UnfoldMoreIcon />
                     </IconButton>
                 </Tooltip> : <IconButton size="small" disabled><UnfoldMoreIcon /></IconButton>}
-                { !isAllClosed ? <Tooltip title={I18n.t('Collapse all')}>
+                {!isAllClosed ? <Tooltip title={I18n.t('Collapse all')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                     <IconButton onClick={() => setTriggerAllClosed(triggerAllClosed + 1)}>
                         <UnfoldLessIcon />
                     </IconButton>
-                </Tooltip> : <IconButton size="small" disabled><UnfoldLessIcon /></IconButton> }
+                </Tooltip> : <IconButton size="small" disabled><UnfoldLessIcon /></IconButton>}
             </div> : null}
             <Tooltip title={I18n.t('Hide attributes')}>
                 <IconButton
@@ -132,7 +132,7 @@ const Attributes = (props: AttributesProps)  => {
             </Tooltip>
         </Typography>
         <Tabs
-            className={props.classes.viewTabs}
+            sx={styles.viewTabs}
             value={selected || 'View'}
             variant="scrollable"
             scrollButtons="auto"
@@ -143,7 +143,7 @@ const Attributes = (props: AttributesProps)  => {
                     value={tab}
                     disabled={tab === 'Widget' && !props.selectedWidgets.length}
                     key={tab}
-                    className={props.classes.viewTab}
+                    sx={styles.viewTab}
                     onClick={() => {
                         setSelected(tab);
                         window.localStorage.setItem('Attributes', tab);
@@ -172,4 +172,4 @@ const Attributes = (props: AttributesProps)  => {
     </>;
 };
 
-export default withStyles(style)(Attributes);
+export default Attributes;

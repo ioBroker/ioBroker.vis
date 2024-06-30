@@ -22,6 +22,7 @@ import type {
     View as ViewType,
     AnyWidgetId, VisTheme,
 } from '@iobroker/types-vis-2';
+import commonStyles from '@/Utils/styles';
 import IODialog from '../../Components/IODialog';
 import Folder from './Folder';
 import Root from './Root';
@@ -64,9 +65,6 @@ const styles: Record<string, any> = {
         '&:hover $viewManageButtonActions': {
             visibility: 'initial',
         },
-    },
-    tooltip: {
-        pointerEvents: 'none',
     },
 };
 
@@ -208,7 +206,7 @@ const ViewsManager: React.FC<ViewsManagerProps> = props => {
             <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>
                 <DndPreview />
                 {props.editMode ? <AppBar position="static" style={styles.topBar}>
-                    {props.editMode ? <Tooltip title={I18n.t('Add view')} componentsProps={{ popper: { sx: styles.tooltip } }}>
+                    {props.editMode ? <Tooltip title={I18n.t('Add view')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                         <IconButton
                             size="small"
                             onClick={() => props.showDialog('add', props.name, null, (newView: string) => {
@@ -218,12 +216,12 @@ const ViewsManager: React.FC<ViewsManagerProps> = props => {
                             <AddIcon />
                         </IconButton>
                     </Tooltip> : null}
-                    {props.editMode ? <Tooltip title={I18n.t('Import')} componentsProps={{ popper: { sx: styles.tooltip } }}>
+                    {props.editMode ? <Tooltip title={I18n.t('Import')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                         <IconButton onClick={() => setImportDialog('')} size="small">
                             <BiImport />
                         </IconButton>
                     </Tooltip> : null}
-                    {props.editMode ? <Tooltip title={I18n.t('Add folder')} componentsProps={{ popper: { sx: styles.tooltip } }}>
+                    {props.editMode ? <Tooltip title={I18n.t('Add folder')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                         <IconButton
                             size="small"
                             onClick={() => {
@@ -235,7 +233,7 @@ const ViewsManager: React.FC<ViewsManagerProps> = props => {
                             <CreateNewFolderIcon />
                         </IconButton>
                     </Tooltip> : null}
-                    {props.editMode ? <Tooltip title={I18n.t('Show all views')} componentsProps={{ popper: { sx: styles.tooltip } }}>
+                    {props.editMode ? <Tooltip title={I18n.t('Show all views')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                         <IconButton
                             size="small"
                             onClick={async () => {
@@ -253,7 +251,7 @@ const ViewsManager: React.FC<ViewsManagerProps> = props => {
                             <VisibilityIcon />
                         </IconButton>
                     </Tooltip> : null}
-                    {props.editMode ? <Tooltip title={I18n.t('Hide all views')} componentsProps={{ popper: { sx: styles.tooltip } }}>
+                    {props.editMode ? <Tooltip title={I18n.t('Hide all views')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                         <IconButton
                             size="small"
                             onClick={async () => {

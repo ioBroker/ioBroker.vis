@@ -1,16 +1,18 @@
 import React, { useRef } from 'react';
-import { type Styles, withStyles } from '@mui/styles';
 import { useDrag, useDrop, DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
 import { Menu, MenuItem } from '@mui/material';
 
-import { I18n, Utils } from '@iobroker/adapter-react-v5';
-import type { AnyWidgetId } from '@iobroker/types-vis-2';
+import { I18n, type ThemeType, Utils } from '@iobroker/adapter-react-v5';
+import type {
+    AnyWidgetId, GroupWidget,
+    Project, SingleWidget,
+} from '@iobroker/types-vis-2';
 
 import { getWidgetTypes, type WidgetType } from './visWidgetsCatalog';
 
-const styles: Styles<string, any> = () => ({
+const styles: Record<string, React.CSSProperties> = {
     widgetIcon: {
         overflow: 'hidden',
         width: 40,
@@ -50,7 +52,7 @@ const styles: Styles<string, any> = () => ({
     number: {
         marginRight: 8,
     },
-});
+};
 
 const WIDGET_ICON_HEIGHT = 34;
 
@@ -153,10 +155,9 @@ interface VisOrderMenuProps {
     view: string;
     anchorEl: any;
     order: AnyWidgetId[];
-    views: Record<string, any>;
-    themeType: 'dark' | 'light';
+    views: Project;
+    themeType: ThemeType;
     onClose: (order?: AnyWidgetId[]) => void;
-    classes: Record<string, string>;
 }
 
 interface VisOrderMenuState {
@@ -200,8 +201,8 @@ class VisOrderMenu extends React.Component<VisOrderMenuProps, VisOrderMenuState>
         this.setState({ order });
     };
 
-    getWidgetDiv(id: string, index: number) {
-        const widget = this.props.views[this.props.view].widgets[id];
+    getWidgetDiv(id: AnyWidgetId, index: number) {
+        const widget: GroupWidget | SingleWidget = this.props.views[this.props.view].widgets[id];
         const tpl = widget.tpl;
         const _widgetType = this.widgetTypes.find(foundWidgetType => foundWidgetType.name === tpl);
         let widgetLabel = _widgetType?.title || '';
@@ -239,18 +240,18 @@ class VisOrderMenu extends React.Component<VisOrderMenuProps, VisOrderMenuState>
         if (_widgetType?.preview?.startsWith('<img')) {
             const m = _widgetType?.preview.match(/src="([^"]+)"/) || _widgetType?.preview.match(/src='([^']+)'/);
             if (m) {
-                img = <img src={m[1]} className={this.props.classes.icon} alt={id} />;
+                img = <img src={m[1]} style={styles.icon} alt={id} />;
             }
         } else if (_widgetType?.preview) {
             const preview = _widgetType.preview.toLowerCase();
             if (IMAGE_TYPES.find(ext => preview.endsWith(ext))) {
-                img = <img src={_widgetType?.preview} className={this.props.classes.icon} alt={id} />;
+                img = <img src={_widgetType?.preview} style={styles.icon} alt={id} />;
             }
         }
 
         if (!img && _widgetType?.preview) {
             img = <span
-                className={this.props.classes.widgetImage}
+                style={styles.widgetImage}
                 ref={this.imageRef[index]}
                 // eslint-disable-next-line react/no-danger
                 dangerouslySetInnerHTML={{ __html: _widgetType.preview }}
@@ -283,20 +284,21 @@ class VisOrderMenu extends React.Component<VisOrderMenuProps, VisOrderMenuState>
             onDropped={i => this.onMove(i)}
         >
             <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                {widgetIcon ? <div className={this.props.classes.widgetIcon}>{img}</div> : null}
-                <div className={this.props.classes.widgetName}>{id}</div>
-                <div className={this.props.classes.widgetType}>
+                {widgetIcon ? <div style={styles.widgetIcon}>{img}</div> : null}
+                <div style={styles.widgetName}>{id}</div>
+                <div style={styles.widgetType}>
                     <div
                         style={{
+                            ...styles.widgetNameText,
+                            ...(widgetBackColor ? styles.coloredWidgetSet : undefined),
                             fontWeight: 'bold',
                             color: widgetColor,
                             backgroundColor: widgetBackColor,
                         }}
-                        className={Utils.clsx(this.props.classes.widgetNameText, widgetBackColor && this.props.classes.coloredWidgetSet)}
                     >
                         {setLabel}
                     </div>
-                    <div className={this.props.classes.widgetNameText}>{widgetLabel}</div>
+                    <div style={styles.widgetNameText}>{widgetLabel}</div>
                 </div>
             </div>
         </Widget>;
@@ -347,4 +349,4 @@ class VisOrderMenu extends React.Component<VisOrderMenuProps, VisOrderMenuState>
     }
 }
 
-export default withStyles(styles)(VisOrderMenu);
+export default VisOrderMenu;

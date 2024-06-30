@@ -21,6 +21,7 @@ import { deepClone } from '@/Utils/utils';
 import type { ViewSettings, VisTheme } from '@iobroker/types-vis-2';
 import { store } from '@/Store';
 import type { EditorClass } from '@/Editor';
+import commonStyles from '@/Utils/styles';
 import MultiSelect from './MultiSelect';
 
 const styles: Record<string, any> = {
@@ -121,8 +122,29 @@ export interface TextFieldToolbarItem extends BaseToolbarItem {
 
 export type ToolbarItem = SelectToolbarItem | MultiselectToolbarItem | CheckboxToolbarItem | IconButtonToolbarItem | TextToolbarItem | ButtonToolbarItem | DividerToolbarItem | TextFieldToolbarItem;
 
+interface ToolbarItemsProps {
+    theme: VisTheme;
+    // eslint-disable-next-line react/no-unused-prop-types
+    themeType: ThemeType;
+    group: { name: string | React.JSX.Element; doNotTranslateName?: boolean; items: (ToolbarItem[][] | ToolbarItem[] | ToolbarItem)[] };
+    last?: boolean;
+    toolbarHeight: 'full' | 'narrow' | 'veryNarrow';
+    // eslint-disable-next-line react/no-unused-prop-types
+    changeProject: EditorClass['changeProject'];
+    // eslint-disable-next-line react/no-unused-prop-types
+    selectedView: string;
+    // eslint-disable-next-line react/no-unused-prop-types
+    setSelectedWidgets: EditorClass['setSelectedWidgets'];
+}
+
 // eslint-disable-next-line no-use-before-define
-const getItem = (item: ToolbarItem, key: number, props: ToolbarItemsProps, full?: boolean) => {
+function getItem(
+    item: ToolbarItem,
+    key: number,
+    props: ToolbarItemsProps,
+    theme: VisTheme,
+    full?: boolean,
+): null | React.JSX.Element {
     const { visProject } = store.getState();
     const view = visProject[props.selectedView];
 
@@ -167,7 +189,7 @@ const getItem = (item: ToolbarItem, key: number, props: ToolbarItemsProps, full?
 
     if (item.type === 'multiselect') {
         return <MultiSelect
-            theme={props.theme}
+            theme={theme}
             key={key}
             // style={{ margin: '0px 10px' }}
             label={props.toolbarHeight !== 'veryNarrow' ? (item.doNotTranslateName ? item.name : I18n.t(item.name)) : null}
@@ -250,7 +272,7 @@ const getItem = (item: ToolbarItem, key: number, props: ToolbarItemsProps, full?
                 </ButtonBase>
             </div>
             :
-            <Tooltip key={key} title={I18n.t(item.name)} componentsProps={{ popper: { sx: styles.tooltip } }}>
+            <Tooltip key={key} title={I18n.t(item.name)} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                 <div>
                     <IconButton
                         color={item.selected ? 'primary' : undefined}
@@ -296,21 +318,6 @@ const getItem = (item: ToolbarItem, key: number, props: ToolbarItemsProps, full?
         label={props.toolbarHeight !== 'veryNarrow' ? I18n.t(item.name) : null}
         style={styles.textInput}
     />;
-};
-
-interface ToolbarItemsProps {
-    theme: VisTheme;
-    // eslint-disable-next-line react/no-unused-prop-types
-    themeType: ThemeType;
-    group: { name: string | React.JSX.Element; doNotTranslateName?: boolean; items: (ToolbarItem[][] | ToolbarItem[] | ToolbarItem)[] };
-    last?: boolean;
-    toolbarHeight: 'full' | 'narrow' | 'veryNarrow';
-    // eslint-disable-next-line react/no-unused-prop-types
-    changeProject: EditorClass['changeProject'];
-    // eslint-disable-next-line react/no-unused-prop-types
-    selectedView: string;
-    // eslint-disable-next-line react/no-unused-prop-types
-    setSelectedWidgets: EditorClass['setSelectedWidgets'];
 }
 
 const ToolbarItems: React.FC<ToolbarItemsProps> = props => {
@@ -341,18 +348,16 @@ const ToolbarItems: React.FC<ToolbarItemsProps> = props => {
         style={{ ...styles.toolbarBlock, borderRightWidth: props.last ? 0 : undefined }}
     >
         <div style={styles.toolbarItems}>
-            {
-                items.map((item, key) => {
-                    if (Array.isArray(item)) {
-                        return <div key={key} style={styles.toolbarCol}>
-                            {(item as ToolbarItem[][]).map((subItem, subKey) => <div key={subKey} style={styles.toolbarRow}>
-                                {subItem.map((subItem2, subKey2) => getItem(subItem2, subKey2, props))}
-                            </div>)}
-                        </div>;
-                    }
-                    return getItem(item, key, props, true);
-                })
-            }
+            {items.map((item, key) => {
+                if (Array.isArray(item)) {
+                    return <div key={key} style={styles.toolbarCol}>
+                        {(item as ToolbarItem[][]).map((subItem, subKey) => <div key={subKey} style={styles.toolbarRow}>
+                            {subItem.map((subItem2, subKey2) => getItem(subItem2, subKey2, props, props.theme))}
+                        </div>)}
+                    </div>;
+                }
+                return getItem(item, key, props, props.theme, true);
+            })}
         </div>
         {props.toolbarHeight === 'full' ? <div style={styles.toolbarLabel}>
             <span>{typeof name === 'string' ? (doNotTranslateName ? name : I18n.t(name)) : name}</span>

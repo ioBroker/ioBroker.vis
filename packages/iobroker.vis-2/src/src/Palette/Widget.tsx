@@ -1,9 +1,8 @@
 import React, { useEffect, useRef } from 'react';
-import { withStyles } from '@mui/styles';
 import { useDrag } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 
-import { IconButton, Tooltip } from '@mui/material';
+import { Box, IconButton, Tooltip } from '@mui/material';
 import {
     Delete as DeleteIcon,
     Update as UpdateIcon,
@@ -24,6 +23,7 @@ import type { MarketplaceWidgetRevision, Project } from '@iobroker/types-vis-2';
 import { store } from '@/Store';
 import type { WidgetType } from '@/Vis/visWidgetsCatalog';
 import helpers from '../Components/WizardHelpers';
+import commonStyles from "@/Utils/styles";
 
 const IMAGE_TYPES = ['.png', '.jpg', '.svg', '.gif', '.apng', '.avif', '.webp'];
 
@@ -88,7 +88,6 @@ const styles: Record<string, any> = {
 const WIDGET_ICON_HEIGHT = 34;
 
 interface WidgetProps {
-    classes: Record<string, string>;
     widgetSetProps?: Record<string, any>;
     widgetSet: string;
     widgetType: WidgetType;
@@ -143,7 +142,7 @@ const Widget = (props: WidgetProps) => {
     if (props.widgetType.preview?.startsWith('<img')) {
         const m = props.widgetType.preview.match(/src="([^"]+)"/) || props.widgetType.preview.match(/src='([^']+)'/);
         if (m) {
-            img = <img src={m[1]} className={props.classes.widgetImageWithSrc} alt={props.widgetType.name} />;
+            img = <img src={m[1]} style={styles.widgetImageWithSrc} alt={props.widgetType.name} />;
         }
     } else if (props.widgetType.preview &&
         (
@@ -153,7 +152,7 @@ const Widget = (props: WidgetProps) => {
     ) {
         img = <img
             src={props.widgetType.preview}
-            className={props.classes.widgetImageWithSrc}
+            style={styles.widgetImageWithSrc}
             alt={props.widgetType.name}
             onError={e => {
                 if (e.target) {
@@ -167,7 +166,7 @@ const Widget = (props: WidgetProps) => {
 
     if (!img) {
         img = <span
-            className={props.classes.widgetImage}
+            style={styles.widgetImage}
             ref={imageRef}
             // eslint-disable-next-line react/no-danger
             dangerouslySetInnerHTML={{ __html: props.widgetType.preview }}
@@ -188,27 +187,28 @@ const Widget = (props: WidgetProps) => {
     }
 
     const result = <Tooltip
-        title={<div className={props.classes.widgetTooltip}>
+        title={<Box component="div" sx={styles.widgetTooltip}>
             <div>{img}</div>
             {props.widgetType.help ? <div>{props.widgetType.help}</div> : null}
-        </div>}
+        </Box>}
+        componentsProps={{ popper: { sx: commonStyles.tooltip } }}
         placement="right-end"
     >
-        <div className={props.classes.widget} style={style}>
+        <div style={{ ...styles.widget, ...style }}>
             <span style={{ display: 'none' }}>{props.widgetTypeName}</span>
-            <div className={props.classes.widgetTitle} style={titleStyle}>
+            <div style={{ ...styles.widgetTitle, ...titleStyle }}>
                 <div>{label}</div>
-                {props.widgetSet === '__marketplace' && props.marketplace && <div className={props.classes.widgetMarketplace}>
+                {props.widgetSet === '__marketplace' && props.marketplace && <div style={styles.widgetMarketplace}>
                     {`${I18n.t('version')} ${props.marketplace.version}`}
                 </div>}
             </div>
             {props.widgetSet === '__marketplace' && <>
-                <Tooltip title={I18n.t('Uninstall')}>
+                <Tooltip title={I18n.t('Uninstall')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                     <IconButton onClick={() => props.uninstallWidget(props.widgetType.name)}>
                         <DeleteIcon />
                     </IconButton>
                 </Tooltip>
-                {marketplaceUpdate && <Tooltip title={`${I18n.t('Update to version')} ${marketplaceUpdate.version}`}>
+                {marketplaceUpdate && <Tooltip title={`${I18n.t('Update to version')} ${marketplaceUpdate.version}`} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                     <IconButton onClick={async () => {
                         await props.updateWidgets(marketplaceUpdate);
                     }}
@@ -216,11 +216,11 @@ const Widget = (props: WidgetProps) => {
                         <UpdateIcon />
                     </IconButton>
                 </Tooltip>}
-                {marketplaceDeleted && <Tooltip title={I18n.t('Widget was deleted in widgeteria')}>
-                    <DeletedIcon className={props.classes.widgetDeleted} />
+                {marketplaceDeleted && <Tooltip title={I18n.t('Widget was deleted in widgeteria')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
+                    <DeletedIcon style={styles.widgetDeleted} />
                 </Tooltip>}
             </>}
-            <span className={props.classes.widgetImageContainer}>
+            <span style={styles.widgetImageContainer}>
                 {img}
             </span>
         </div>
@@ -268,4 +268,4 @@ const Widget = (props: WidgetProps) => {
     </span>;
 };
 
-export default withStyles(styles)(Widget);
+export default Widget;

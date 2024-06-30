@@ -1,6 +1,5 @@
 import React from 'react';
-import { withStyles } from '@mui/styles';
-import type { LegacyConnection, Connection } from '@iobroker/adapter-react-v5';
+import type { LegacyConnection, Connection, ThemeType } from '@iobroker/adapter-react-v5';
 
 import {
     Button,
@@ -36,10 +35,11 @@ import {
     ColorPicker,
     I18n,
     Icon, SelectFile as SelectFileDialog,
-    Utils,
 } from '@iobroker/adapter-react-v5';
 
 import MaterialIconSelector from '@/Components/MaterialIconSelector';
+import type { VisTheme } from '@iobroker/types-vis-2';
+import commonStyles from '@/Utils/styles';
 
 const BUTTONS: Record<string, string> = {
     AUTO: 'thermostat_auto',
@@ -54,24 +54,6 @@ const BUTTONS: Record<string, string> = {
     HEATING: 'wb_sunny',
     OFF: 'power_settings_new',
 };
-
-const styles = () => ({
-    clearPadding: {
-        '&&&&': {
-            padding: 0,
-            margin: 0,
-            minHeight: 'initial',
-        },
-    },
-    fieldContent: {
-        '&&&&&&': {
-            fontSize: '80%',
-        },
-        '& svg': {
-            fontSize: '1rem',
-        },
-    },
-});
 
 interface BulkEditorData {
     variant?: 'outlined' | 'contained';
@@ -91,12 +73,11 @@ interface BulkEditorData {
 interface BulkEditorProps {
     socket: LegacyConnection;
     data: BulkEditorData;
-    themeType: 'dark' | 'light';
+    themeType: ThemeType;
+    theme: VisTheme;
     adapterName: string;
     instance: number;
     projectName: string;
-    /** The css classes */
-    classes: Record<keyof ReturnType<typeof styles>, any>;
     onDataChange: (data: BulkEditorData) => void;
 }
 
@@ -407,6 +388,7 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
             return null;
         }
         return <MaterialIconSelector
+            theme={this.props.theme}
             key="iconDialog"
             themeType={this.props.themeType}
             value={this.state.icons[this.state.iconDialog]}
@@ -453,6 +435,7 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
         };
 
         return <SelectFileDialog
+            theme={this.props.theme}
             key="imageDialog"
             title={I18n.t('jqui_Select file')}
             onClose={() => this.setState({ imageDialog: null })}
@@ -619,7 +602,7 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
                     variant="standard"
                     fullWidth
                     InputProps={{
-                        classes: { input: Utils.clsx(this.props.classes.clearPadding, this.props.classes.fieldContent) },
+                        sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
                         endAdornment: <Button size="small" onClick={() => this.setState({ imageDialog: i })}>...</Button>,
                     }}
                     ref={this.textRef[i]}
@@ -734,9 +717,7 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
                             >
                                 <Clear />
                             </IconButton> : null,
-                            classes: {
-                                input: Utils.clsx(this.props.classes.clearPadding, this.props.classes.fieldContent),
-                            },
+                            sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
                         }}
                     />
                     <Button
@@ -885,7 +866,7 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
                                     label: '20',
                                 },
                             ]}
-                            onChange={(e, value) => this.setState({ steps: value as number })}
+                            onChange={(_e, value) => this.setState({ steps: value as number })}
                         />
                     </div>
                 </div>
@@ -1110,4 +1091,4 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
     }
 }
 
-export default withStyles(styles)(BulkEditor);
+export default BulkEditor;

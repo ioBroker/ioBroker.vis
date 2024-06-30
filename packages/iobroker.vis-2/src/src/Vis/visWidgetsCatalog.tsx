@@ -585,13 +585,14 @@ export const parseAttributes = (
                 return;
             }
 
-            if (fieldString.split('/')[0].startsWith('group.')) {
-                groupName = fieldString.split('/')[0].split('.')[1];
+            if (fieldString.startsWith('group.')) {
+                const pparts = fieldString.split('/');
+                groupName = pparts[0].split('.')[1];
                 if (widgetIndex !== undefined && widgetIndex > 0 && commonGroups && !commonGroups[groupName]) {
                     return;
                 }
                 indexedGroups = {};
-                if (fieldString.split('/')[1] !== 'byindex') {
+                if (pparts[1] !== 'byindex') {
                     currentGroup = fields.find(group => group.name === groupName);
                     if (!currentGroup) {
                         fields.push(
@@ -621,14 +622,14 @@ export const parseAttributes = (
                 }
 
                 const repeats = match[2];
-                let type: RxWidgetAttributeType;
+                let type: RxWidgetAttributeType | null;
                 let onChangeFunc: string | undefined;
                 if (match[4]) {
                     const parts = match[4].substring(1).split('/');
                     type = parts[0] as RxWidgetAttributeType;
                     onChangeFunc = parts[1];
                 } else {
-                    type = 'text';
+                    type = null;
                 }
                 const field: WidgetAttributeInfoStored = {
                     name: match[1],
@@ -676,6 +677,8 @@ export const parseAttributes = (
                     field.type = 'text';
                 } else if (field.name.includes('_eff_opt')) {
                     // field.type = 'effect-options';
+                    field.type = 'text';
+                } else if (!field.type) {
                     field.type = 'text';
                 }
 

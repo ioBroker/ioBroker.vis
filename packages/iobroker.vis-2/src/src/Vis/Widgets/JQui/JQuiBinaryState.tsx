@@ -31,6 +31,7 @@ import type { VisBaseWidgetProps } from '@/Vis/visBaseWidget';
 import VisBaseWidget from '@/Vis/visBaseWidget';
 // eslint-disable-next-line import/no-cycle
 import type { GetRxDataFromWidget, RxRenderWidgetProps, RxWidgetInfo } from '@iobroker/types-vis-2';
+import commonStyles from '@/Utils/styles';
 import type { VisRxWidgetState } from '../../visRxWidget';
 import VisRxWidget from '../../visRxWidget';
 
@@ -841,10 +842,10 @@ class JQuiBinaryState extends VisRxWidget<RxData, JQuiBinaryStateState> {
             {content}
         </div>;
         if (isOn && this.state.rxData.alt_true) {
-            return <Tooltip title={this.state.rxData.alt_true}>{result}</Tooltip>;
+            return <Tooltip title={this.state.rxData.alt_true} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>{result}</Tooltip>;
         }
         if (!isOn && this.state.rxData.alt_false) {
-            return <Tooltip title={this.state.rxData.alt_false}>{result}</Tooltip>;
+            return <Tooltip title={this.state.rxData.alt_false} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>{result}</Tooltip>;
         }
         return result;
     }

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { v4 as uuid } from 'uuid';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
-import { type Styles, withStyles } from '@mui/styles';
 
 import type { Connection } from '@iobroker/adapter-react-v5';
 
@@ -15,7 +14,6 @@ import {
     TableRow,
     TextField,
     Checkbox,
-    type Theme,
 } from '@mui/material';
 
 import {
@@ -33,11 +31,11 @@ import {
     SelectFile as SelectFileDialog,
 } from '@iobroker/adapter-react-v5';
 
-import type { VisContext } from '@iobroker/types-vis-2';
+import type { RxWidgetInfoCustomComponentContext, VisTheme } from '@iobroker/types-vis-2';
 
 import MaterialIconSelector from '../../../Components/MaterialIconSelector';
 
-const styles: Styles<any, any> = (theme: Theme) => ({
+const styles: Record<string, any> = {
     handlerCell: {
         alignItems: 'center',
         whiteSpace: 'nowrap',
@@ -67,10 +65,10 @@ const styles: Styles<any, any> = (theme: Theme) => ({
     cellButton: {
         padding: '0px 4px',
     },
-    rowEven: {
+    rowEven: (theme: VisTheme) => ({
         backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0, 0, 0, 0.04)',
-    },
-});
+    }),
+};
 
 interface Item {
     id?: string;
@@ -86,9 +84,8 @@ interface Item {
 interface FiltersEditorDialogProps {
     items: Item[] | undefined;
     onClose: (items?: Item[]) => void;
-    context: VisContext;
+    context: RxWidgetInfoCustomComponentContext;
     multiple?: boolean;
-    classes: Record<string, string>;
 }
 
 interface FiltersEditorDialogState {
@@ -130,7 +127,8 @@ class FiltersEditorDialog extends Component<FiltersEditorDialogProps, FiltersEdi
             return null;
         }
         return <MaterialIconSelector
-            themeType={this.props.context.themeType}
+            themeType={this.props.context.theme.palette.mode}
+            theme={this.props.context.theme}
             value={this.state.items[this.state.selectIcon]}
             onClose={(icon: string | null) => {
                 if (icon !== null) {
@@ -214,6 +212,7 @@ class FiltersEditorDialog extends Component<FiltersEditorDialogProps, FiltersEdi
         }
 
         return <SelectFileDialog
+            theme={this.props.context.theme}
             title={I18n.t('Select file')}
             onClose={() => this.setState({ selectImage: null })}
             restrictToFolder={`${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}`}
@@ -258,21 +257,21 @@ class FiltersEditorDialog extends Component<FiltersEditorDialogProps, FiltersEdi
 
         return <Draggable key={item.id} draggableId={item.id || ''} index={index}>
             {(dragProvided /* dragSnapshot */) => <TableRow
-                className={index % 2 ? this.props.classes.rowEven : ''}
+                sx={index % 2 ? styles.rowEven : undefined}
                 ref={dragProvided.innerRef}
                 {...dragProvided.draggableProps}
             >
                 <TableCell
-                    className={this.props.classes.handlerCell}
+                    style={styles.handlerCell}
                     {...dragProvided.dragHandleProps}
                 >
-                    <DragHandle className={this.props.classes.grab} />
-                    <div className={this.props.classes.index}>
+                    <DragHandle style={styles.grab} />
+                    <div style={styles.index}>
                         {index + 1}
                         .
                     </div>
                 </TableCell>
-                <TableCell className={this.props.classes.cellText}>
+                <TableCell style={styles.cellText}>
                     <TextField
                         variant="standard"
                         fullWidth
@@ -285,7 +284,7 @@ class FiltersEditorDialog extends Component<FiltersEditorDialogProps, FiltersEdi
                         InputLabelProps={{ shrink: true }}
                     />
                 </TableCell>
-                <TableCell className={this.props.classes.cellText}>
+                <TableCell style={styles.cellText}>
                     <TextField
                         variant="standard"
                         fullWidth
@@ -298,7 +297,7 @@ class FiltersEditorDialog extends Component<FiltersEditorDialogProps, FiltersEdi
                         InputLabelProps={{ shrink: true }}
                     />
                 </TableCell>
-                <TableCell className={this.props.classes.cellImage}>
+                <TableCell style={styles.cellImage}>
                     {item.image ? null : <div style={{ display: 'flex', alignItems: 'center' }}>
                         <TextField
                             fullWidth
@@ -332,7 +331,7 @@ class FiltersEditorDialog extends Component<FiltersEditorDialogProps, FiltersEdi
                         </Button>
                     </div>}
                 </TableCell>
-                <TableCell className={this.props.classes.cellImage}>
+                <TableCell style={styles.cellImage}>
                     {item.icon ? null : <div style={{ display: 'flex', alignItems: 'center' }}>
                         <TextField
                             variant="standard"
@@ -365,7 +364,7 @@ class FiltersEditorDialog extends Component<FiltersEditorDialogProps, FiltersEdi
                         </Button>
                     </div>}
                 </TableCell>
-                <TableCell className={this.props.classes.cell}>
+                <TableCell style={styles.cell}>
                     <ColorPicker
                         style={{ width: '100%' }}
                         value={item.color}
@@ -376,7 +375,7 @@ class FiltersEditorDialog extends Component<FiltersEditorDialogProps, FiltersEdi
                         }}
                     />
                 </TableCell>
-                <TableCell className={this.props.classes.cell}>
+                <TableCell style={styles.cell}>
                     <ColorPicker
                         style={{ width: '100%' }}
                         value={item.activeColor}
@@ -387,7 +386,7 @@ class FiltersEditorDialog extends Component<FiltersEditorDialogProps, FiltersEdi
                         }}
                     />
                 </TableCell>
-                <TableCell className={this.props.classes.cellButton}>
+                <TableCell style={styles.cellButton}>
                     <Checkbox
                         checked={!!item.default}
                         onChange={e => {
@@ -400,7 +399,7 @@ class FiltersEditorDialog extends Component<FiltersEditorDialogProps, FiltersEdi
                         }}
                     />
                 </TableCell>
-                <TableCell className={this.props.classes.cellButton}>
+                <TableCell style={styles.cellButton}>
                     <IconButton
                         size="small"
                         onClick={() => {
@@ -497,4 +496,4 @@ class FiltersEditorDialog extends Component<FiltersEditorDialogProps, FiltersEdi
     }
 }
 
-export default withStyles(styles)(FiltersEditorDialog);
+export default FiltersEditorDialog;

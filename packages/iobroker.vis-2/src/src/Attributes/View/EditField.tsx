@@ -13,7 +13,6 @@ import {
     I18n,
     IconPicker,
     TextWithIcon,
-    Utils,
 } from '@iobroker/adapter-react-v5';
 import type {
     LegacyConnection,
@@ -23,8 +22,9 @@ import type {
 import { Clear as ClearIcon } from '@mui/icons-material';
 
 import { deepClone } from '@/Utils/utils';
+import commonStyles from '@/Utils/styles';
 import type { Field } from '@/Attributes/View/Items';
-import type { Project } from '@iobroker/types-vis-2';
+import type { Project, VisTheme } from '@iobroker/types-vis-2';
 
 import EditFieldImage from './EditFieldImage';
 import EditFieldIcon64 from './EditFieldIcon64';
@@ -33,8 +33,8 @@ interface EditFieldProps {
     field: Field;
     view: string;
     editMode: boolean;
-    classes: Record<string, string>;
     themeType: ThemeType;
+    theme: VisTheme;
     checkFunction: (funcText: boolean | string | ((settings: Record<string, any>) => boolean), settings: Record<string, any>) => boolean;
     changeProject: (project: Project) => void;
     userGroups: Record<string, ioBroker.GroupObject>;
@@ -51,7 +51,6 @@ export default function getEditField(gProps: EditFieldProps): React.JSX.Element 
         field,
         view,
         editMode,
-        classes,
         themeType,
         checkFunction,
         changeProject,
@@ -62,6 +61,7 @@ export default function getEditField(gProps: EditFieldProps): React.JSX.Element 
         projectName,
         socket,
         disabled,
+        theme,
     } = gProps;
     const viewSettings = project[view].settings;
 
@@ -104,11 +104,9 @@ export default function getEditField(gProps: EditFieldProps): React.JSX.Element 
             disabled={!editMode || disabled}
             inputValue={value}
             value={value}
-            onInputChange={(e, inputValue) => change(inputValue)}
-            onChange={(e, inputValue) => change(inputValue)}
-            classes={{
-                input: Utils.clsx(classes.clearPadding, classes.fieldContent),
-            }}
+            onInputChange={(_e, inputValue) => change(inputValue)}
+            onChange={(_e, inputValue) => change(inputValue)}
+            sx={{ ...commonStyles.clearPadding, ...commonStyles.fieldContent }}
             renderInput={params => (
                 <TextField
                     variant="standard"
@@ -121,9 +119,7 @@ export default function getEditField(gProps: EditFieldProps): React.JSX.Element 
         return <Checkbox
             disabled={!editMode || disabled}
             checked={!!value}
-            classes={{
-                root: Utils.clsx(classes.fieldContent, classes.clearPadding),
-            }}
+            sx={{ ...commonStyles.clearPadding, ...commonStyles.fieldContent }}
             size="small"
             onChange={e => change(e.target.checked)}
         />;
@@ -133,9 +129,9 @@ export default function getEditField(gProps: EditFieldProps): React.JSX.Element 
             disabled={!editMode || disabled}
             variant="standard"
             value={field.value ? field.value : value}
-            classes={{
-                root: classes.clearPadding,
-                select: Utils.clsx(classes.fieldContent, classes.clearPadding),
+            sx={{
+                ...commonStyles.clearPadding,
+                '& .MuiSelect-select': { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
             }}
             onChange={field.onChange ? field.onChange : (e: SelectChangeEvent<string | number>) => change(e.target.value)}
             renderValue={field.renderValue}
@@ -154,9 +150,9 @@ export default function getEditField(gProps: EditFieldProps): React.JSX.Element 
             disabled={!editMode || disabled}
             variant="standard"
             renderValue={selected => selected.join(', ')}
-            classes={{
-                root: classes.clearPadding,
-                select: Utils.clsx(classes.fieldContent, classes.clearPadding),
+            sx={{
+                ...commonStyles.clearPadding,
+                '& .MuiSelect-select': { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
             }}
             value={value || []}
             onChange={e => change(e.target.value)}
@@ -179,9 +175,9 @@ export default function getEditField(gProps: EditFieldProps): React.JSX.Element 
             value={value || []}
             fullWidth
             multiple
-            classes={{
-                root: classes.clearPadding,
-                select: Utils.clsx(classes.fieldContent, classes.clearPadding),
+            sx={{
+                ...commonStyles.clearPadding,
+                '& .MuiSelect-select': { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
             }}
             renderValue={selected => <div style={{ display: 'flex' }}>
                 {Object.values(userGroups)
@@ -219,7 +215,7 @@ export default function getEditField(gProps: EditFieldProps): React.JSX.Element 
     if (field.type === 'color') {
         return <ColorPicker
             value={value}
-            className={classes.fieldContentColor}
+            style={commonStyles.fieldContentColor}
             disabled={!editMode || disabled}
             onChange={color => change(color)}
         />;
@@ -228,7 +224,6 @@ export default function getEditField(gProps: EditFieldProps): React.JSX.Element 
         return <IconPicker
             value={value}
             onChange={fileBlob => change(fileBlob)}
-            previewClassName={classes.iconPreview}
             disabled={!editMode || disabled}
             // icon={ImageIcon}
             // classes={classes}
@@ -236,12 +231,12 @@ export default function getEditField(gProps: EditFieldProps): React.JSX.Element 
     }
     if (field.type === 'image') {
         return <EditFieldImage
+            theme={theme}
             field={field}
             value={value}
             error={error}
             editMode={editMode}
             disabled={disabled}
-            classes={classes}
             themeType={themeType}
             change={change}
             adapterName={adapterName}
@@ -254,7 +249,7 @@ export default function getEditField(gProps: EditFieldProps): React.JSX.Element 
         return <div style={{ display: 'flex' }}>
             <Slider
                 disabled={!editMode || disabled}
-                className={classes.fieldContentSlider}
+                style={commonStyles.fieldContentSlider}
                 size="small"
                 onChange={(_e, newValue) => change(Array.isArray(newValue) ? newValue[0] : newValue)}
                 value={typeof value === 'number' ? value : 0}
@@ -265,12 +260,12 @@ export default function getEditField(gProps: EditFieldProps): React.JSX.Element 
                 valueLabelDisplay={field.valueLabelDisplay}
             />
             <Input
-                className={classes.fieldContentSliderInput}
+                style={commonStyles.fieldContentSliderInput}
                 value={value}
                 disabled={!editMode || disabled}
                 size="small"
                 onChange={e => change(parseFloat(e.target.value))}
-                classes={{ input: Utils.clsx(classes.clearPadding, classes.fieldContent) }}
+                sx={{ ...commonStyles.clearPadding, ...commonStyles.fieldContent }}
                 inputProps={{
                     step: field.step,
                     min: field.min,
@@ -287,9 +282,9 @@ export default function getEditField(gProps: EditFieldProps): React.JSX.Element 
             error={error}
             editMode={editMode}
             disabled={disabled}
-            classes={classes}
             themeType={themeType}
             change={change}
+            theme={theme}
         />;
     }
 
@@ -301,9 +296,7 @@ export default function getEditField(gProps: EditFieldProps): React.JSX.Element 
             endAdornment: field.clearButton && rawValue !== null && rawValue !== undefined ? <IconButton size="small" onClick={() => change(null)}>
                 <ClearIcon />
             </IconButton> : null,
-            classes: {
-                input: Utils.clsx(classes.clearPadding, classes.fieldContent),
-            },
+            sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
         }}
         value={value}
         onChange={e => change(e.target.value)}

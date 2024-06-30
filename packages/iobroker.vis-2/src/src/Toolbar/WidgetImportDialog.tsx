@@ -6,7 +6,7 @@ import {
 
 import { Close as CloseIcon, ImportExport } from '@mui/icons-material';
 
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n, type ThemeType } from '@iobroker/adapter-react-v5';
 import {
     isGroup, getNewGroupId, getNewWidgetId, deepClone,
 } from '@/Utils/utils';
@@ -22,7 +22,7 @@ import CustomAceEditor from '../Components/CustomAceEditor';
 interface WidgetImportDialogProps {
     changeProject: (project: Project) => void;
     onClose: () => void;
-    themeType: 'dark' | 'light';
+    themeType: ThemeType;
     selectedView: string;
     selectedGroup?: GroupWidgetId;
 }

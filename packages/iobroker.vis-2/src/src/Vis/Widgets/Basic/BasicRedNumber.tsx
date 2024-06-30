@@ -35,10 +35,6 @@ export default class BasicRedNumber extends VisRxWidget<RxData> {
                         type: 'id',
                     },
                     {
-                        name: 'oid',
-                        type: 'id',
-                    },
-                    {
                         name: 'type',
                         type: 'select',
                         options: [

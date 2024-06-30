@@ -14,13 +14,12 @@
  */
 
 import React from 'react';
-import { ThemeProvider, StyledEngineProvider, createTheme } from '@mui/material/styles';
-import type { CSSProperties } from '@mui/styles';
-import { StylesProvider, createGenerateClassName } from '@mui/styles';
+import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 
-import { Utils, Theme } from '@iobroker/adapter-react-v5';
+import { Utils } from '@iobroker/adapter-react-v5';
 
 import type VisRxWidget from '@/Vis/visRxWidget';
+import createTheme from  '@/theme';
 import type {
     AnyWidgetId, GroupWidgetId,
     Widget, ViewSettings, VisContext,
@@ -36,10 +35,6 @@ import VisCanWidget from './visCanWidget';
 import { addClass, parseDimension } from './visUtils';
 import VisNavigation from './visNavigation';
 import VisWidgetsCatalog from './visWidgetsCatalog';
-
-const generateClassNameEngine = createGenerateClassName({
-    productionPrefix: 'vis',
-});
 
 const MAX_COLUMNS = 8;
 
@@ -94,6 +89,7 @@ interface VisViewProps {
     onIgnoreMouseEvents?: (ignore: boolean) => void;
     style?: React.CSSProperties;
     visInWidget?: boolean;
+    theme: VisTheme;
 }
 
 interface CreateWidgetOptions {
@@ -1456,13 +1452,13 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
             view={this.props.view}
             editMode={this.props.editMode}
             menuWidth={this.state.menuWidth}
-            classes={{}}
-            setMenuWidth={menuWidth => {
+            theme={this.props.theme}
+            setMenuWidth={(menuWidth: string) => {
                 window.localStorage.setItem('vis.menuWidth', menuWidth);
                 this.setState({ menuWidth });
 
                 return new Promise(resolve => {
-                // re-calculate the width of the view
+                    // re-calculate the width of the view
                     setTimeout(() => {
                         this.updateViewWidth();
                         resolve(null);
@@ -1823,10 +1819,13 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         let theme = this.props.context.theme;
         const customThemeType = this.props.customSettings?.themeType;
         // if custom theme differs from the current one => create new theme
-        if (customThemeType && customThemeType !== theme.palette.mode) {
+        if (this.props.customSettings?.viewStyle?.overrides) {
+            // override the theme with custom settings
+            theme = createTheme(customThemeType || this.props.context.theme.palette.mode, this.props.customSettings.viewStyle.overrides);
+        } else if (customThemeType && customThemeType !== theme.palette.mode) {
             if (!this.theme[customThemeType]) {
                 // cache theme
-                this.theme[customThemeType] = Theme(customThemeType);
+                this.theme[customThemeType] = createTheme(customThemeType);
             }
             theme = this.theme[customThemeType];
         }
@@ -1854,11 +1853,6 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         // override font family from custom settings
         if (!style.fontFamily && this.props.customSettings?.viewStyle?.fontFamily) {
             style.fontFamily = this.props.customSettings.viewStyle.fontFamily;
-        }
-
-        if (this.props.customSettings?.viewStyle?.overrides) {
-            // override the theme with custom settings
-            theme = createTheme(theme, this.props.customSettings.viewStyle.overrides) as VisTheme;
         }
 
         // if the current view is not active, so hide it and show only if it is active
@@ -1914,7 +1908,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
 
         let renderedWidgets;
 
-        let limitScreenStyle: CSSProperties | null = null;
+        let limitScreenStyle: React.CSSProperties | null = null;
         // limit screen size of desired
         if (settings && settings.limitScreen && ((window.screen.width >= 800 && window.screen.height >= 800) || !settings.limitScreenDesktop)) {
             const ww = isVarFinite(settings.sizex) ? parseFloat(settings.sizex as unknown as string) : 0;
@@ -2022,13 +2016,11 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
             window.document.documentElement.className = backgroundClass;
         }
 
-        return <StylesProvider generateClassName={generateClassNameEngine}>
-            <StyledEngineProvider injectFirst>
-                <ThemeProvider theme={theme}>
-                    {renderedView}
-                </ThemeProvider>
-            </StyledEngineProvider>
-        </StylesProvider>;
+        return <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={theme}>
+                {renderedView}
+            </ThemeProvider>
+        </StyledEngineProvider>;
     }
 }
 

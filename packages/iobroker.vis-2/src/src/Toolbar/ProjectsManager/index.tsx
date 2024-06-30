@@ -19,6 +19,7 @@ import { I18n, type ThemeType, type LegacyConnection } from '@iobroker/adapter-r
 
 import type { EditorClass } from '@/Editor';
 import type { VisTheme } from '@iobroker/types-vis-2';
+import commonStyles from '@/Utils/styles';
 import IODialog from '../../Components/IODialog';
 import ImportProjectDialog, { getLiveHost } from './ImportProjectDialog';
 import ProjectDialog from './ProjectDialog';
@@ -51,9 +52,6 @@ const styles: Record<string, React.CSSProperties> = {
         flexDirection: 'row',
         borderRadius: 4,
         marginBottom: 12,
-    },
-    tooltip: {
-        pointerEvents: 'none',
     },
     button: {
         margin: 4,
@@ -206,7 +204,7 @@ const ProjectsManage: React.FC<ProjectsManageProps> = props => {
                 <Tooltip
                     title={I18n.t('Add')}
                     // size="small"
-                    componentsProps={{ popper: { sx: styles.tooltip } }}
+                    componentsProps={{ popper: { sx: commonStyles.tooltip } }}
                 >
                     <IconButton
                         onClick={() => showDialog('add')}
@@ -216,9 +214,9 @@ const ProjectsManage: React.FC<ProjectsManageProps> = props => {
                         <AddIcon />
                     </IconButton>
                 </Tooltip>
-                <Tooltip title={I18n.t('Import')} componentsProps={{ popper: { sx: styles.tooltip } }}>
+                <Tooltip title={I18n.t('Import')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                     <IconButton onClick={() => setImportDialog(true)} size="small" style={{ ...styles.button, width: 34 }}>
-                        <BiImport fontSize={20} />
+                        <BiImport fontSize="medium" />
                     </IconButton>
                 </Tooltip>
             </AppBar>
@@ -233,7 +231,7 @@ const ProjectsManage: React.FC<ProjectsManageProps> = props => {
                     {projectName}
                 </Button>
                 <span style={styles.viewManageButtonActions}>
-                    <Tooltip title={I18n.t('Permissions')} componentsProps={{ popper: { sx: styles.tooltip } }}>
+                    <Tooltip title={I18n.t('Permissions')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                         {working === projectName ? <CircularProgress size={22} /> :
                             <IconButton
                                 onClick={event => {
@@ -246,10 +244,10 @@ const ProjectsManage: React.FC<ProjectsManageProps> = props => {
                                 }}
                                 size="small"
                             >
-                                <PermissionsIcon fontSize={20 as any} />
+                                <PermissionsIcon fontSize="medium" />
                             </IconButton>}
                     </Tooltip>
-                    <Tooltip title={I18n.t('Export')} componentsProps={{ popper: { sx: styles.tooltip } }}>
+                    <Tooltip title={I18n.t('Export')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                         {working === projectName ? <CircularProgress size={22} /> :
                             <IconButton
                                 onClick={event => {
@@ -258,10 +256,10 @@ const ProjectsManage: React.FC<ProjectsManageProps> = props => {
                                 }}
                                 size="small"
                             >
-                                <BiExport fontSize="20" />
+                                <BiExport fontSize="medium" />
                             </IconButton>}
                     </Tooltip>
-                    <Tooltip title={I18n.t('Edit')} componentsProps={{ popper: { sx: styles.tooltip } }}>
+                    <Tooltip title={I18n.t('Edit')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                         <span>
                             <IconButton
                                 size="small"
@@ -272,7 +270,7 @@ const ProjectsManage: React.FC<ProjectsManageProps> = props => {
                             </IconButton>
                         </span>
                     </Tooltip>
-                    <Tooltip title={I18n.t('Delete')} onClick={() => showDialog('delete', projectName)} componentsProps={{ popper: { sx: styles.tooltip } }}>
+                    <Tooltip title={I18n.t('Delete')} onClick={() => showDialog('delete', projectName)} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                         <span>
                             <IconButton size="small" disabled={!!working}>
                                 <DeleteIcon />

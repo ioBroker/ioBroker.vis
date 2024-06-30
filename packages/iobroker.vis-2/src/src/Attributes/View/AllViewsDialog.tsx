@@ -13,19 +13,29 @@ import { Close, DragHandle, FormatPaint } from '@mui/icons-material';
 import { I18n } from '@iobroker/adapter-react-v5';
 import type { LegacyConnection, ThemeType } from '@iobroker/adapter-react-v5';
 
-import type { Project } from '@iobroker/types-vis-2';
+import type { Project, VisTheme } from '@iobroker/types-vis-2';
 import { getViewsWithDifferentValues } from '@/Attributes/View/ApplyProperties';
 import getEditField from '@/Attributes/View/EditField';
 import type { Field } from '@/Attributes/View/Items';
 import { deepClone } from '@/Utils/utils';
+import commonStyles from "@/Utils/styles";
+
+const styles: { draggableItem: React.CSSProperties } = {
+    draggableItem: {
+        width: '100%',
+        display: 'flex',
+        padding: 8,
+        alignItems: 'center',
+    },
+};
 
 interface ShowAllViewsDialogProps {
     project: Project;
     field: Field;
     changeProject: (newProject: Project) => void;
     onClose: () => void;
-    classes: Record<string, string>;
     themeType: ThemeType;
+    theme: VisTheme;
     checkFunction: (funcText: boolean | string | ((settings: Record<string, any>) => boolean), settings: Record<string, any>) => boolean;
     userGroups: Record<string, ioBroker.GroupObject>;
     adapterName: string;
@@ -59,7 +69,6 @@ export default function showAllViewsDialog(props: ShowAllViewsDialogProps) {
             view,
             editMode: true,
             changeProject: props.changeProject,
-            classes: props.classes,
             userGroups: props.userGroups,
             adapterName: props.adapterName,
             themeType: props.themeType,
@@ -68,6 +77,7 @@ export default function showAllViewsDialog(props: ShowAllViewsDialogProps) {
             socket: props.socket,
             checkFunction: props.checkFunction,
             project: props.project,
+            theme: props.theme,
         });
         if (!control) {
             return null;
@@ -124,7 +134,7 @@ export default function showAllViewsDialog(props: ShowAllViewsDialogProps) {
                                 key={item.view}
                                 ref={dragProvided.innerRef}
                                 {...dragProvided.draggableProps}
-                                className={props.classes.draggableItem}
+                                style={styles.draggableItem}
                             >
                                 <div {...dragProvided.dragHandleProps} style={{ display: 'inline-block', width: 24, marginRight: 8 }}>
                                     <DragHandle />
@@ -141,7 +151,7 @@ export default function showAllViewsDialog(props: ShowAllViewsDialogProps) {
                                 </div>
                                 {applyToAllButtonVisible ? <Tooltip
                                     title={I18n.t('Apply to all views')}
-                                    classes={{ tooltip: 'vis-tooltip' }}
+                                    componentsProps={{ popper: { sx: commonStyles.tooltip } }}
                                 >
                                     <IconButton
                                         size="small"

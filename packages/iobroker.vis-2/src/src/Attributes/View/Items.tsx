@@ -4,11 +4,12 @@ import { type SelectChangeEvent, TextField } from '@mui/material';
 
 import { Close as CloseIcon } from '@mui/icons-material';
 
-import { I18n, Utils } from '@iobroker/adapter-react-v5';
+import { I18n } from '@iobroker/adapter-react-v5';
 
 import { background, theme as ViewTheme } from '@/Attributes/ViewData';
 import { store } from '@/Store';
 import type { Project, View } from '@iobroker/types-vis-2';
+import commonStyles from '@/Utils/styles';
 
 export interface Field {
     label: string;
@@ -89,7 +90,6 @@ export const resolution = [
 export function getFields(
     resolutionSelect: string,
     view: View,
-    classes: Record<string, string>,
     selectedView: string,
     editMode: boolean,
     changeProject: (project: Project) => void,
@@ -196,13 +196,13 @@ export function getFields(
                 attr: 'background_class',
                 // eslint-disable-next-line react/no-unstable-nested-components
                 itemModify: item => <>
-                    <span className={`${classes.backgroundClassSquare} ${item.value}`} />
+                    <span style={commonStyles.backgroundClassSquare} className={item.value} />
                     {I18n.t(item.label)}
                 </>,
                 renderValue: (value: string) => {
                     const backItem = background.find(item => item?.value === value);
-                    return <div className={classes.backgroundClass}>
-                        <span className={`${classes.backgroundClassSquare} ${value}`} />
+                    return <div style={commonStyles.backgroundClass}>
+                        <span style={commonStyles.backgroundClassSquare} className={value} />
                         {I18n.t(backItem?.label || value)}
                     </div>;
                 },
@@ -365,9 +365,7 @@ export function getFields(
                         value={view.settings?.sizex === undefined ? '' : view.settings.sizex}
                         disabled={!editMode || resolutionSelect !== 'user'}
                         InputProps={{
-                            classes: {
-                                input: Utils.clsx(classes.clearPadding, classes.fieldContent),
-                            },
+                            sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
                         }}
                         onChange={e => {
                             const project = JSON.parse(JSON.stringify(store.getState().visProject));
@@ -386,9 +384,7 @@ export function getFields(
                         value={view.settings?.sizey === undefined ? '' : view.settings.sizey}
                         disabled={!editMode || resolutionSelect !== 'user'}
                         InputProps={{
-                            classes: {
-                                input: Utils.clsx(classes.clearPadding, classes.fieldContent),
-                            },
+                            sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
                         }}
                         onChange={e => {
                             const project = JSON.parse(JSON.stringify(store.getState().visProject));

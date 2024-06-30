@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { withStyles } from '@mui/styles';
 import moment from 'moment';
 import 'moment/locale/de';
 import 'moment/locale/ru';
@@ -31,11 +30,14 @@ import {
 
 import type { LegacyConnection, Connection } from '@iobroker/adapter-react-v5';
 import {
-    I18n, Utils,
+    I18n,
     SelectID,
 } from '@iobroker/adapter-react-v5';
 
-import type { AnyWidgetId, Project, VisBindingOperationArgument } from '@iobroker/types-vis-2';
+import type {
+    AnyWidgetId, Project,
+    VisBindingOperationArgument, VisTheme,
+} from '@iobroker/types-vis-2';
 
 import { store, recalculateFields } from '@/Store';
 
@@ -78,6 +80,13 @@ const styles: Record<string, any> = {
             fontSize: '80%',
         },
     },
+    clearPadding: {
+        '&&&&': {
+            p: 0,
+            m: 0,
+            minHeight: 'initial',
+        },
+    },
     clickable: {
         cursor: 'pointer',
         textDecoration: 'underline',
@@ -95,7 +104,6 @@ interface WidgetBindingFieldProps {
     field: any;
     widget: any;
     isStyle: boolean;
-    classes: Record<string, string>;
     changeProject: (project: Project) => void;
     socket: LegacyConnection;
     selectedView: string;
@@ -103,6 +111,7 @@ interface WidgetBindingFieldProps {
     isDifferent?: boolean;
     label?: string;
     disabled?: boolean;
+    theme: VisTheme;
 }
 
 interface ModifyOptions {
@@ -295,66 +304,64 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
     }
 
     renderSpecialNames() {
-        const classes = this.props.classes;
         return <div>
             <h4>Special bindings</h4>
             <p>There are a number of different internal bindings to provide additional information in views:</p>
             <ul>
                 <li>
-                    <b className={classes.clickable} onClick={() => this.insertInText('username')}>username</b>
-                    <span className={classes.space}>- shows logged-in user</span>
+                    <b style={styles.clickable} onClick={() => this.insertInText('username')}>username</b>
+                    <span style={styles.space}>- shows logged-in user</span>
                 </li>
                 <li>
-                    <b className={classes.clickable} onClick={() => this.insertInText('view')}>view</b>
-                    <span className={classes.space}>- name of actual view</span>
+                    <b style={styles.clickable} onClick={() => this.insertInText('view')}>view</b>
+                    <span style={styles.space}>- name of actual view</span>
                 </li>
                 <li>
-                    <b className={classes.clickable} onClick={() => this.insertInText('wname')}>wname</b>
-                    <span className={classes.space}>- widget name</span>
+                    <b style={styles.clickable} onClick={() => this.insertInText('wname')}>wname</b>
+                    <span style={styles.space}>- widget name</span>
                 </li>
                 <li>
-                    <b className={classes.clickable} onClick={() => this.insertInText('widget')}>widget</b>
-                    <span className={classes.space}>
+                    <b style={styles.clickable} onClick={() => this.insertInText('widget')}>widget</b>
+                    <span style={styles.space}>
                         - is an object with all data of widget. Can be used only in JS part, like
-                        <span className={`${classes.code} ${classes.space}`}>&#123;a:a;widget.data.name&#125;</span>
+                        <span style={{ ...styles.code, ...styles.space }}>&#123;a:a;widget.data.name&#125;</span>
                     </span>
                 </li>
                 <li>
-                    <b className={classes.clickable} onClick={() => this.insertInText('wid')}>wid</b>
-                    <span className={classes.space}>- name of actual widget</span>
+                    <b style={styles.clickable} onClick={() => this.insertInText('wid')}>wid</b>
+                    <span style={styles.space}>- name of actual widget</span>
                 </li>
                 <li>
-                    <b className={classes.clickable} onClick={() => this.insertInText('language')}>language</b>
-                    <span className={classes.space}>- can be</span>
-                    <b className={classes.space}>de</b>
+                    <b style={styles.clickable} onClick={() => this.insertInText('language')}>language</b>
+                    <span style={styles.space}>- can be</span>
+                    <b style={styles.space}>de</b>
                     ,
-                    <b className={classes.space}>en</b>
-                    <span className={classes.space}>or</span>
-                    <b className={classes.space}>ru</b>
+                    <b style={styles.space}>en</b>
+                    <span style={styles.space}>or</span>
+                    <b style={styles.space}>ru</b>
                     .
                 </li>
                 <li>
-                    <b className={classes.clickable} onClick={() => this.insertInText('instance')}>instance</b>
-                    <span className={classes.space}>- browser instance</span>
+                    <b style={styles.clickable} onClick={() => this.insertInText('instance')}>instance</b>
+                    <span style={styles.space}>- browser instance</span>
                 </li>
                 <li>
-                    <b className={classes.clickable} onClick={() => this.insertInText('login')}>login</b>
-                    <span className={classes.space}>- if login required or not (e.g., to show/hide logout button)</span>
+                    <b style={styles.clickable} onClick={() => this.insertInText('login')}>login</b>
+                    <span style={styles.space}>- if login required or not (e.g., to show/hide logout button)</span>
                 </li>
                 <li>
-                    <b className={classes.clickable} onClick={() => this.insertInText('local_')}>local_*</b>
-                    <span className={classes.space}>
+                    <b style={styles.clickable} onClick={() => this.insertInText('local_')}>local_*</b>
+                    <span style={styles.space}>
                         - if state name is started from
-                        <b className={classes.space}>local_</b>
-                        <span className={classes.space}>it will not be reported to ioBroker but will update all widgets, that depends on this state. (Local variable for current browser session)</span>
+                        <b style={styles.space}>local_</b>
+                        <span style={styles.space}>it will not be reported to ioBroker but will update all widgets, that depends on this state. (Local variable for current browser session)</span>
                     </span>
                 </li>
             </ul>
         </div>;
     }
 
-    renderHelpForNewStyle() {
-        const classes = this.props.classes;
+    static renderHelpForNewStyle() {
         return <div>
             <h4>Bindings of objects</h4>
             <p>Normally, most of the widgets have ObjectID attribute and this attribute can be bound with some value of object ID.</p>
@@ -362,24 +369,24 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
 
             <p>
                 Just write into attribute
-                <i className={classes.space}>&#123;object.id&#125;</i>
-                <span className={classes.space}>and it will be bound to this object&apos;s value.</span>
+                <i style={styles.space}>&#123;object.id&#125;</i>
+                <span style={styles.space}>and it will be bound to this object&apos;s value.</span>
             </p>
             <p>If you use the special format, you can even make some simple operations with it, e.g., multiplying or formatting.</p>
 
             <p>E.g., to calculate the hypotenuse of a triangle:</p>
 
-            <p className={classes.code}>&#123;h:javascript.0.myCustom.height;w:javascript.0.myCustom.width;Math.max(20, Math.sqrt(h*h + w*w))&#125;</p>
-            <p className={classes.space}>will be interpreted as function:</p>
+            <p style={styles.code}>&#123;h:javascript.0.myCustom.height;w:javascript.0.myCustom.width;Math.max(20, Math.sqrt(h*h + w*w))&#125;</p>
+            <p style={styles.space}>will be interpreted as function:</p>
 
-            <p className={classes.code}>
+            <p style={styles.code}>
                 value = await (async function () &#123;
                 <br />
-                <span className={classes.indent}>var h = (await getState(&apos;javascript.0.myCustom.height&apos;)).val;</span>
+                <span style={styles.indent}>var h = (await getState(&apos;javascript.0.myCustom.height&apos;)).val;</span>
                 <br />
-                <span className={classes.indent}>var w = (await getState(&apos;javascript.0.myCustom.width&apos;)).val;</span>
+                <span style={styles.indent}>var w = (await getState(&apos;javascript.0.myCustom.width&apos;)).val;</span>
                 <br />
-                <span className={classes.indent}>return Math.max(20, Math.sqrt(h * h + w * w));</span>
+                <span style={styles.indent}>return Math.max(20, Math.sqrt(h * h + w * w));</span>
                 <br />
                 &#125;)();
             </p>
@@ -387,8 +394,8 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
             <p>or</p>
 
             <p>
-                <span className={classes.code}>&#123;h:javascript.0.myCustom.height;w:javascript.0.myCustom.width;h*w&#125;</span>
-                <span className={classes.space}>will just multiply height with width.</span>
+                <span style={styles.code}>&#123;h:javascript.0.myCustom.height;w:javascript.0.myCustom.width;h*w&#125;</span>
+                <span style={styles.space}>will just multiply height with width.</span>
             </p>
 
             <p>You can use *any* javascript (browser) functions. Arguments must be defined with &apos;:&apos;, if not, it will be interpreted as formula.</p>
@@ -396,27 +403,26 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
             <p>Take care about types. All of them are defined as strings. To be sure, that value will be treated as number use parseFloat function.</p>
 
             <p>So our Hypotenuse calculation will be:</p>
-            <p className={classes.code}>
+            <p style={styles.code}>
                 &#123;h:javascript.0.myCustom.height;w:javascript.0.myCustom.width;Math.max(20, Math.sqrt(Math.pow(parseFloat(h), 2) + Math.pow(parseFloat(w), 2)))&#125;
             </p>
         </div>;
     }
 
     renderHelpForOldStyle() {
-        const classes = this.props.classes;
         return <div>
             <h4>Deprecated format</h4>
             <p>Patten has the following format:</p>
 
             <p>
-                <span className={classes.code}>&#123;objectID;operation1;operation2;...&#125;</span>
+                <span style={styles.code}>&#123;objectID;operation1;operation2;...&#125;</span>
             </p>
 
             <p>The following operations are supported:</p>
             <ul>
                 <li>
                     <b
-                        className={classes.clickable}
+                        style={styles.clickable}
                         onClick={() => this.insertInText('*', {
                             oldStyle: true,
                             desc: 'Multiply with N',
@@ -426,13 +432,13 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
                         *(N)
                     </b>
                     - multiplying. Argument must be in brackets, like
-                    <i className={classes.space}>&quot;*(4)&quot;</i>
+                    <i style={styles.space}>&quot;*(4)&quot;</i>
                     .
-                    <span className={classes.space}>this sample, we multiply the value with 4.</span>
+                    <span style={styles.space}>this sample, we multiply the value with 4.</span>
                 </li>
                 <li>
                     <b
-                        className={classes.clickable}
+                        style={styles.clickable}
                         onClick={() => this.insertInText('+', {
                             oldStyle: true,
                             desc: 'Add to N',
@@ -442,13 +448,13 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
                         +(N)
                     </b>
                     - add. Argument must be in brackets, like
-                    <i className={classes.space}>&quot;+(4.5)&quot;</i>
+                    <i style={styles.space}>&quot;+(4.5)&quot;</i>
                     .
-                    <span className={classes.space}>In this sample we add to value 4.5.</span>
+                    <span style={styles.space}>In this sample we add to value 4.5.</span>
                 </li>
                 <li>
                     <b
-                        className={classes.clickable}
+                        style={styles.clickable}
                         onClick={() => this.insertInText('-', {
                             oldStyle: true,
                             desc: 'Subtract N from value',
@@ -458,13 +464,13 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
                         -(N)
                     </b>
                     - subtract. Argument must be in brackets, like
-                    <i className={classes.space}>&quot;-(-674.5)&quot;</i>
+                    <i style={styles.space}>&quot;-(-674.5)&quot;</i>
                     .
-                    <span className={classes.space}>In this sample we subtract from value -674.5.</span>
+                    <span style={styles.space}>In this sample we subtract from value -674.5.</span>
                 </li>
                 <li>
                     <b
-                        className={classes.clickable}
+                        style={styles.clickable}
                         onClick={() => this.insertInText('/', {
                             oldStyle: true,
                             desc: 'Divide by D',
@@ -474,13 +480,13 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
                         /(D)
                     </b>
                     - dividing. Argument must be in brackets, like
-                    <i className={classes.space}>&quot;/(0.5)&quot;</i>
+                    <i style={styles.space}>&quot;/(0.5)&quot;</i>
                     .
-                    <span className={classes.space}>In this sample, we divide the value by 0.5.</span>
+                    <span style={styles.space}>In this sample, we divide the value by 0.5.</span>
                 </li>
                 <li>
                     <b
-                        className={classes.clickable}
+                        style={styles.clickable}
                         onClick={() => this.insertInText('%', {
                             oldStyle: true,
                             desc: 'Modulo with M',
@@ -490,13 +496,13 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
                         %(M)
                     </b>
                     - modulo. Argument must be in brackets, like
-                    <i className={classes.space}>&quot;%(5)&quot;</i>
+                    <i style={styles.space}>&quot;%(5)&quot;</i>
                     .
-                    <span className={classes.space}>In this sample, we take modulo of 5.</span>
+                    <span style={styles.space}>In this sample, we take modulo of 5.</span>
                 </li>
                 <li>
                     <b
-                        className={classes.clickable}
+                        style={styles.clickable}
                         onClick={() => this.insertInText('round', {
                             oldStyle: true,
                             desc: 'Round to integer',
@@ -508,7 +514,7 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
                 </li>
                 <li>
                     <b
-                        className={classes.clickable}
+                        style={styles.clickable}
                         onClick={() => this.insertInText('round', {
                             oldStyle: true,
                             desc: 'Round with R places after comma',
@@ -522,7 +528,7 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
                 </li>
                 <li>
                     <b
-                        className={classes.clickable}
+                        style={styles.clickable}
                         onClick={() => this.insertInText('hex', {
                             oldStyle: true,
                             desc: 'convert value to hexadecimal value',
@@ -535,7 +541,7 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
                 </li>
                 <li>
                     <b
-                        className={classes.clickable}
+                        style={styles.clickable}
                         onClick={() => this.insertInText('hex2', {
                             oldStyle: true,
                             desc: 'Convert value to hexadecimal value. If value less 16, so the leading zero will be added',
@@ -548,7 +554,7 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
                 </li>
                 <li>
                     <b
-                        className={classes.clickable}
+                        style={styles.clickable}
                         onClick={() => this.insertInText('HEX', {
                             oldStyle: true,
                             desc: 'Convert value to hexadecimal value. All letters are upper cased',
@@ -561,7 +567,7 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
                 </li>
                 <li>
                     <b
-                        className={classes.clickable}
+                        style={styles.clickable}
                         onClick={() => this.insertInText('HEX2', {
                             oldStyle: true,
                             desc: 'Convert value to hexadecimal value. All letters are upper cased. If value less 16, so the leading zero will be added',
@@ -574,7 +580,7 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
                 </li>
                 <li>
                     <b
-                        className={classes.clickable}
+                        style={styles.clickable}
                         onClick={() => this.insertInText('min', {
                             oldStyle: true,
                             desc: 'if value is less than N, take the N, else take the value',
@@ -587,7 +593,7 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
                 </li>
                 <li>
                     <b
-                        className={classes.clickable}
+                        style={styles.clickable}
                         onClick={() => this.insertInText('max', {
                             oldStyle: true,
                             desc: 'if value is greater than M, take the M, else take the value',
@@ -600,7 +606,7 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
                 </li>
                 <li>
                     <b
-                        className={classes.clickable}
+                        style={styles.clickable}
                         onClick={() => this.insertInText('sqrt', {
                             oldStyle: true,
                             desc: 'square root',
@@ -612,7 +618,7 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
                 </li>
                 <li>
                     <b
-                        className={classes.clickable}
+                        style={styles.clickable}
                         onClick={() => this.insertInText('pow', {
                             oldStyle: true,
                             desc: 'power of N',
@@ -625,7 +631,7 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
                 </li>
                 <li>
                     <b
-                        className={classes.clickable}
+                        style={styles.clickable}
                         onClick={() => this.insertInText('pow', {
                             oldStyle: true,
                             desc: 'power of 2',
@@ -637,7 +643,7 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
                 </li>
                 <li>
                     <b
-                        className={classes.clickable}
+                        style={styles.clickable}
                         onClick={() => this.insertInText('floor', {
                             oldStyle: true,
                             desc: 'Math.floor',
@@ -649,7 +655,7 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
                 </li>
                 <li>
                     <b
-                        className={classes.clickable}
+                        style={styles.clickable}
                         onClick={() => this.insertInText('ceil', {
                             oldStyle: true,
                             desc: 'Math.ceil',
@@ -661,7 +667,7 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
                 </li>
                 <li>
                     <b
-                        className={classes.clickable}
+                        style={styles.clickable}
                         onClick={() => this.insertInText('random', {
                             oldStyle: true,
                             desc: 'Math.random',
@@ -670,7 +676,7 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
                         random
                     </b>
                     <b
-                        className={classes.clickable}
+                        style={styles.clickable}
                         onClick={() => this.insertInText('random', {
                             oldStyle: true,
                             desc: 'Math.random',
@@ -683,7 +689,7 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
                 </li>
                 <li>
                     <b
-                        className={classes.clickable}
+                        style={styles.clickable}
                         onClick={() => this.insertInText('formatValue', {
                             oldStyle: true,
                             desc: 'format value according to system settings and use decimals',
@@ -696,7 +702,7 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
                 </li>
                 <li>
                     <b
-                        className={classes.clickable}
+                        style={styles.clickable}
                         onClick={() => this.insertInText('date', {
                             oldStyle: true,
                             desc: 'format value as date. The format is like "YYYY-MM-DD hh:mm:ss.sss"',
@@ -706,17 +712,17 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
                         date(format)
                     </b>
                     - format value as date. The format is like:
-                    <i className={classes.space}>&quot;YYYY-MM-DD hh:mm:ss.sss&quot;</i>
+                    <i style={styles.space}>&quot;YYYY-MM-DD hh:mm:ss.sss&quot;</i>
                     . Format is the same as in
-                    <a className={classes.space} href="https://github.com/iobroker/iobroker.javascript/blob/master/README.md#formatdate" target="_blank" rel="noreferrer">
+                    <a style={styles.space} href="https://github.com/iobroker/iobroker.javascript/blob/master/README.md#formatdate" target="_blank" rel="noreferrer">
                         iobroker.javascript
                     </a>
                     .
-                    <span className={classes.space}>If no format given, so the system date format will be used.</span>
+                    <span style={styles.space}>If no format given, so the system date format will be used.</span>
                 </li>
                 <li>
                     <b
-                        className={classes.clickable}
+                        style={styles.clickable}
                         onClick={() => this.insertInText('momentDate', {
                             oldStyle: true,
                             desc: 'format value as date using Moment.js',
@@ -730,15 +736,15 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
                         momentDate(format, useTodayOrYesterday)
                     </b>
                     - format value as date using Moment.js.
-                    <a className={classes.space} href="https://momentjs.com/docs/#/displaying/format/" target="_blank" rel="noreferrer">
+                    <a style={styles.space} href="https://momentjs.com/docs/#/displaying/format/" target="_blank" rel="noreferrer">
                         formats must be entered according to the moment.js library
                     </a>
                     .
-                    <span className={classes.space}>With &apos;useTodayOrYesterday=true&apos; the &apos;moment.js&apos; format &apos;ddd&apos;/&apos;dddd&apos; are overwritten with today / yesterday</span>
+                    <span style={styles.space}>With &apos;useTodayOrYesterday=true&apos; the &apos;moment.js&apos; format &apos;ddd&apos;/&apos;dddd&apos; are overwritten with today / yesterday</span>
                 </li>
                 <li>
                     <b
-                        className={classes.clickable}
+                        style={styles.clickable}
                         onClick={() => this.insertInText('array', {
                             oldStyle: true,
                             desc: 'returns the element in given array according to index (converted from value)',
@@ -748,26 +754,26 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
                         array(element1,element2[,element3,element4])
                     </b>
                     - returns the element of index. e.g.:
-                    <span className={`${classes.code} ${classes.space}`}>&#123;id.ack;array(ack is false,ack is true)&#125;</span>
+                    <span style={{ ...styles.code, ...styles.space }}>&#123;id.ack;array(ack is false,ack is true)&#125;</span>
                 </li>
             </ul>
 
             <p>You can use this pattern in any text, like</p>
-            <p className={classes.code}>
+            <p style={styles.code}>
                 My calculations with &#123;objectID1;operation1;operation2;...&#125; are &#123;objectID2;operation3;operation4;...&#125;
             </p>
             <p>or color calculations:</p>
-            <p className={classes.code}>
+            <p style={styles.code}>
                 #&#123;objectRed;/(100);*(255);HEX2&#125;&#123;objectGreen;HEX2&#125;&#123;objectBlue;HEX2&#125;
             </p>
             <p>
                 To show timestamp of object write
-                <b className={classes.space}>.ts</b>
-                <span className={classes.space}>or</span>
-                <b className={classes.space}>.lc</b>
-                <span className={classes.space}>(for last change) at the end of object id, e.g.:</span>
+                <b style={styles.space}>.ts</b>
+                <span style={styles.space}>or</span>
+                <b style={styles.space}>.lc</b>
+                <span style={styles.space}>(for last change) at the end of object id, e.g.:</span>
             </p>
-            <p className={classes.code}>
+            <p style={styles.code}>
                 Last change: &#123;objectRed.lc;date(hh:mm)&#125;
             </p>
         </div>;
@@ -784,15 +790,15 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
         const varValuesKeys = this.state.values ? Object.keys(this.state.values) : [];
 
         return <Dialog
-            classes={{ paper: this.props.classes.dialog }}
+            sx={{ '& .MuiDialog-paper': styles.dialog }}
             open={!0}
             maxWidth="lg"
             fullWidth
             key="editDialog"
         >
             <DialogTitle>{I18n.t('Edit binding')}</DialogTitle>
-            <DialogContent className={this.props.classes.content}>
-                <div className={this.props.classes.edit}>
+            <DialogContent style={styles.content}>
+                <div style={styles.edit}>
                     <TextField
                         variant="standard"
                         label={this.props.label}
@@ -848,18 +854,17 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
                         ...
                     </Button>
                 </div>
-                {varValuesKeys.length ? <div className={this.props.classes.values}>
+                {varValuesKeys.length ? <div style={styles.values}>
                     {varValuesKeys.map(id => <div key={id}>
-                        <span className={this.props.classes.valueTitle}>{id}</span>
+                        <span style={styles.valueTitle}>{id}</span>
                         <span>:</span>
-                        <span className={`${this.props.classes.space} ${this.props.classes.valueContent}`}>
+                        <span style={{ ...styles.space, ...styles.valueContent }}>
                             {`${this.state.values[id] === null || this.state.values[id] === undefined ? 'null' : this.state.values[id].toString()} [${typeof this.state.values[id]}]`}
                         </span>
                     </div>)}
                 </div> : null}
                 <div
-                    className={this.props.classes.help}
-                    style={{ height: `calc(100% - ${71 + 22 * varValuesKeys.length}px)` }}
+                    style={{ ...styles.help, height: `calc(100% - ${71 + 22 * varValuesKeys.length}px)` }}
                 >
                     <div>
                         {I18n.t('Old style')}
@@ -871,7 +876,7 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
                     </div>
                     <div style={{ height: 'calc(100% - 38px)', overflow: 'auto' }}>
                         {this.renderSpecialNames()}
-                        {this.state.newStyle ? this.renderHelpForNewStyle() : this.renderHelpForOldStyle()}
+                        {this.state.newStyle ? WidgetBindingField.renderHelpForNewStyle() : this.renderHelpForOldStyle()}
                     </div>
                 </div>
             </DialogContent>
@@ -1117,6 +1122,7 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
             key="selectDialog"
             imagePrefix="../"
             selected={this.state.selectionValue}
+            theme={this.props.theme}
             onOk={async _selected => {
                 let selected;
                 if (Array.isArray(_selected)) {
@@ -1137,11 +1143,11 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
             <TextField
                 key="text"
                 variant="standard"
-                className={this.props.classes.fieldContent}
+                sx={styles.fieldContent}
                 fullWidth
                 placeholder={this.props.isDifferent ? I18n.t('different') : null}
                 InputProps={{
-                    classes: { input: Utils.clsx(this.props.classes.clearPadding, this.props.classes.fieldContent) },
+                    sx: { ...styles.clearPadding, ...styles.fieldContent },
                     endAdornment: <Button
                         title={I18n.t('Edit binding')}
                         disabled={this.props.disabled}
@@ -1175,4 +1181,4 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
     }
 }
 
-export default withStyles(styles)(WidgetBindingField);
+export default WidgetBindingField;

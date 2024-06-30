@@ -130,6 +130,7 @@ export const CustomAceEditor = (props: CustomAceEditorProps) => {
             width: props.width || '100%',
             height: props.height || '100%',
             border: props.error ? '1px solid #800' : '1px solid transparent',
+            boxSizing: 'border-box',
         }}
         ref={refEditor}
     >

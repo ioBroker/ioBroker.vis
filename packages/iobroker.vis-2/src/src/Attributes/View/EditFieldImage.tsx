@@ -10,7 +10,6 @@ import { Clear as ClearIcon } from '@mui/icons-material';
 import {
     I18n,
     SelectFile as SelectFileDialog,
-    Utils,
 } from '@iobroker/adapter-react-v5';
 import type {
     LegacyConnection,
@@ -19,6 +18,8 @@ import type {
 } from '@iobroker/adapter-react-v5';
 
 import type { Field } from '@/Attributes/View/Items';
+import commonStyles from '@/Utils/styles';
+import type { VisTheme } from '@iobroker/types-vis-2';
 
 interface EditFieldImageProps {
     value: string;
@@ -31,8 +32,8 @@ interface EditFieldImageProps {
     adapterName: string;
     projectName: string;
     socket: LegacyConnection;
-    classes: Record<string, string>;
     themeType: ThemeType;
+    theme: VisTheme;
 }
 
 export default function EditFieldImage(props: EditFieldImageProps) {
@@ -73,6 +74,7 @@ export default function EditFieldImage(props: EditFieldImageProps) {
             _value = _value.replace('_PRJ_NAME', `../${props.adapterName}.${props.instance}/${props.projectName}/`);
         }
         showDialogControl = <SelectFileDialog
+            theme={props.theme}
             title={I18n.t('Select file')}
             onClose={() => setShowDialog(false)}
             restrictToFolder={`${props.adapterName}.${props.instance}/${props.projectName}`}
@@ -113,7 +115,7 @@ export default function EditFieldImage(props: EditFieldImageProps) {
             // helperText={typeof props.error === 'string' ? I18n.t(props.error) : null}
             disabled={!props.editMode || props.disabled}
             InputProps={{
-                classes: { input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) },
+                sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
                 endAdornment: [
                     props.value ?
                         <IconButton key="clear" onClick={() => props.change('')} size="small"><ClearIcon /></IconButton> : null,

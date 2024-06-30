@@ -16,9 +16,10 @@ import { I18n } from '@iobroker/adapter-react-v5';
 
 import type { EditorClass } from '@/Editor';
 import type { VisTheme } from '@iobroker/types-vis-2';
+import commonStyles from '@/Utils/styles';
 import ViewsManager from './ViewsManager';
-import type { ToolbarItem } from './ToolbarItems';
 
+import type { ToolbarItem } from './ToolbarItems';
 import ToolbarItems from './ToolbarItems';
 import ViewDialog from './ViewsManager/ViewDialog';
 
@@ -89,7 +90,7 @@ const Views = (props: ViewsProps) => {
         items: (ToolbarItem | ToolbarItem[] | ToolbarItem[][])[];
     } = {
         name: <span style={styles.label}>
-            <Tooltip title={I18n.t('Current project')}>
+            <Tooltip title={I18n.t('Current project')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                 <span
                     style={styles.projectLabel}
                     onClick={() => props.setProjectsDialog(true)}

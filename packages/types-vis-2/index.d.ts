@@ -53,6 +53,7 @@ export interface RxWidgetInfoCustomComponentContext {
     readonly instance: number;
     readonly adapterName: string;
     readonly views: Project;
+    readonly theme: VisTheme;
 }
 
 export interface RxWidgetInfoCustomComponentProperties {
@@ -885,7 +886,7 @@ export interface MaterialIconSelectorProps {
     customIcons?: string; // path to additional icons file
     customColor?: string; // additional icons color
     themeType: ThemeType;
-    classes: Record<string, string>;
+    theme: VisTheme;
 }
 
 export interface MarketplaceWidgetRevision {
@@ -921,7 +922,7 @@ export interface ClassesValue {
     name: string;
     file: string;
     attrs?: React.CSSProperties;
-    parentClass?: string;
+    parentStyle?: React.CSSProperties;
 }
 
 declare global {

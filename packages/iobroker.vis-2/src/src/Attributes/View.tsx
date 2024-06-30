@@ -3,14 +3,13 @@ import React, {
     useState,
     useMemo,
 } from 'react';
-import { withStyles } from '@mui/styles';
 
 import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
     Tooltip,
-    IconButton,
+    IconButton, Box,
 } from '@mui/material';
 
 import {
@@ -26,120 +25,55 @@ import {
 } from '@iobroker/adapter-react-v5';
 
 import { store } from '@/Store';
-import type { Project, View } from '@iobroker/types-vis-2';
+import type { Project, View, VisTheme } from '@iobroker/types-vis-2';
 
+import commonStyles from '@/Utils/styles';
 import { resolution, getFields, type Field } from './View/Items';
 import getEditField from './View/EditField';
 import { renderApplyDialog, getViewsWithDifferentValues, type ApplyField } from './View/ApplyProperties';
 import showAllViewsDialog from './View/AllViewsDialog';
 
-const styles: Record<string, any> = (theme: Record<string, any>) => ({
-    backgroundClass: {
-        display: 'flex',
-        alignItems: 'center',
-    },
-    backgroundClassSquare: {
-        width: 40,
-        height: 40,
-        display: 'inline-block',
-        marginRight: 4,
-    },
+const styles: Record<string, any> = {
     accordionRoot: {
-        '&&&&': {
-            padding: 0,
-            margin: 0,
-            minHeight: 'initial',
-        },
+        p: 0,
+        m: 0,
+        minHeight: 0,
         '&:before': {
             opacity: 0,
-        },
-    },
-    clearPadding: {
-        '&&&&': {
-            padding: 0,
-            margin: 0,
-            minHeight: 'initial',
         },
     },
     accordionOpenedSummary: {
         fontWeight: 'bold',
     },
-    lightedPanel: theme.classes.lightedPanel,
-    accordionDetails: {
+    lightedPanel: (theme: VisTheme) => theme.classes.lightedPanel,
+    accordionDetails: (theme: VisTheme) => ({
         ...theme.classes.lightedPanel,
         borderRadius: '0 0 4px 4px',
         flexDirection: 'column',
-        padding: 0,
-        margin: 0,
-    },
+        p: 0,
+        m: 0,
+    }),
     fieldTitle: {
         width: 140,
         fontSize: '80%',
-    },
-    fieldContent: {
-        '&&&&&&': {
-            fontSize: '80%',
-        },
-        '& svg': {
-            fontSize: '1rem',
-        },
-    },
-    fieldContentDiv: {
         display: 'flex',
-        justifyContent: 'space-between',
-        width: '100%',
         alignItems: 'center',
-    },
-    fieldContentColor: {
-        '&&&&&& label': {
-            display: 'none',
-        },
-        '&&&&&& input': {
-            fontSize: '80%',
-        },
+        justifyContent: 'space-between',
     },
     groupSummary: {
-        '&&&&&&': {
-            marginTop: 10,
-            borderRadius: '4px',
-            padding: '2px',
-        },
+        mt: '10px',
+        borderRadius: '4px',
+        p: '2px',
+        minHeight: 0,
     },
     groupSummaryExpanded: {
-        '&&&&&&': {
-            marginTop: 10,
-            borderTopRightRadius: '4px',
-            borderTopLeftRadius: '4px',
-            padding: '2px',
-        },
+        mt: '10px',
+        borderTopRightRadius: '4px',
+        borderTopLeftRadius: '4px',
+        p: '2px',
+        minHeight: 0,
     },
-    fieldContentSlider: {
-        display: 'inline',
-        width: 'calc(100% - 82px)',
-        marginRight: 8,
-    },
-    fieldContentSliderInput: {
-        display: 'inline',
-        width: 50,
-    },
-    fieldContentSliderClear: {
-        display: 'inline',
-        width: 32,
-    },
-    fieldHelpText: {
-        float: 'right',
-        fontSize: 16,
-    },
-    tooltip: {
-        pointerEvents: 'none',
-    },
-    draggableItem: {
-        width: '100%',
-        display: 'flex',
-        padding: 8,
-        alignItems: 'center',
-    },
-});
+};
 
 const checkFunction = (
     funcText: boolean | string | ((settings: Record<string, any>) => boolean),
@@ -169,7 +103,6 @@ const checkFunction = (
 function addButton(
     content: React.JSX.Element,
     disabled: boolean,
-    classes: Record<string, string>,
     onShowViews: () => void,
     onClick?: () => void,
 ) {
@@ -187,7 +120,7 @@ function addButton(
         </div>
         {onClick ? <Tooltip
             title={I18n.t('Apply ALL navigation properties to all views')}
-            classes={{ popper: classes.tooltip }}
+            componentsProps={{ popper: { sx: commonStyles.tooltip } }}
         >
             <span>
                 <IconButton
@@ -202,7 +135,7 @@ function addButton(
         </Tooltip> : null}
         {onShowViews ? <Tooltip
             title={I18n.t('Show this attribute by all views')}
-            classes={{ popper: classes.tooltip }}
+            componentsProps={{ popper: { sx: commonStyles.tooltip } }}
         >
             <span>
                 <IconButton
@@ -221,7 +154,6 @@ interface ViewProps {
     selectedView: string;
     editMode: boolean;
     changeProject: (project: Record<string, any>) => void;
-    classes: Record<string, any>;
     triggerAllOpened: number;
     triggerAllClosed: number;
     isAllClosed: boolean;
@@ -231,6 +163,7 @@ interface ViewProps {
     userGroups: Record<string, ioBroker.GroupObject>;
     adapterName: string;
     themeType: ThemeType;
+    theme: VisTheme;
     instance: number;
     projectName: string;
     socket: LegacyConnection;
@@ -241,7 +174,6 @@ const ViewAttributes = (props: ViewProps) => {
     if (!project?.[props.selectedView]) {
         return null;
     }
-    const classes = props.classes;
 
     const [triggerAllOpened, setTriggerAllOpened] = useState(0);
     const [triggerAllClosed, setTriggerAllClosed] = useState(0);
@@ -258,34 +190,53 @@ const ViewAttributes = (props: ViewProps) => {
     }
 
     const fields = useMemo(
-        () => getFields(resolutionSelect, view, classes, props.selectedView, props.editMode, props.changeProject),
+        () => getFields(resolutionSelect, view, props.selectedView, props.editMode, props.changeProject),
         [resolutionSelect, view.settings?.sizex, view.settings?.sizey, props.selectedView, props.editMode],
     );
 
-    const [accordionOpen, setAccordionOpen] = useState(
-        window.localStorage.getItem('attributesView')
-            ? JSON.parse(window.localStorage.getItem('attributesView') || '')
-            : fields.map(() => false),
-    );
+    const [accordionOpen, setAccordionOpen] = useState<Record<string, 0 | 1 | 2>>({});
+    useEffect(() => {
+        // init by start
+        let _accordionOpen: Record<string, 0 | 1 | 2>;
+        const accordionOpenStr = window.localStorage.getItem('attributesView');
+        if (_accordionOpen) {
+            try {
+                _accordionOpen = JSON.parse(accordionOpenStr || '');
+            } catch (e) {
+                // ignore
+            }
+        }
+        if (_accordionOpen) {
+            // convert from old format
+            Object.keys(_accordionOpen).forEach(key => {
+                if (_accordionOpen[key] as any === true || _accordionOpen[key] === 1) {
+                    _accordionOpen[key] = 1;
+                } else {
+                    _accordionOpen[key] = 0;
+                }
+            });
+            setAccordionOpen(_accordionOpen);
+        }
+    }, []);
 
     useEffect(() => {
-        const newAccordionOpen: Record<string, boolean> = {};
+        const newAccordionOpen: Record<string, 0 | 1 |2> = {};
         if (props.triggerAllOpened !== triggerAllOpened) {
-            fields.forEach((group, key) => newAccordionOpen[key] = true);
+            fields.forEach((_group, key) => newAccordionOpen[key] = 1);
             setTriggerAllOpened(props.triggerAllOpened || 0);
             window.localStorage.setItem('attributesView', JSON.stringify(newAccordionOpen));
             setAccordionOpen(newAccordionOpen);
         }
         if (props.triggerAllClosed !== triggerAllClosed) {
-            fields.forEach((group, key) => newAccordionOpen[key] = false);
+            fields.forEach((_group, key) => newAccordionOpen[key] = 0);
             setTriggerAllClosed(props.triggerAllClosed || 0);
             window.localStorage.setItem('attributesView', JSON.stringify(newAccordionOpen));
             setAccordionOpen(newAccordionOpen);
         }
     }, [props.triggerAllOpened, props.triggerAllClosed]);
 
-    const allOpened = !fields.find((group, key) => !accordionOpen[key]);
-    const allClosed = !fields.find((group, key) => accordionOpen[key]);
+    const allOpened = !fields.find((_group, key) => accordionOpen[key] === 0 || accordionOpen[key] === 2);
+    const allClosed = !fields.find((_group, key) => accordionOpen[key] === 1);
 
     if (props.isAllClosed !== allClosed) {
         setTimeout(() => props.setIsAllClosed(allClosed), 50);
@@ -311,13 +262,13 @@ const ViewAttributes = (props: ViewProps) => {
         field: showViewsDialog,
         onClose: () => setShowViewsDialog(null),
         changeProject: props.changeProject,
-        classes,
         userGroups: props.userGroups,
         adapterName: props.adapterName,
         themeType: props.themeType,
         instance: props.instance,
         projectName: props.projectName,
         socket: props.socket,
+        theme: props.theme,
         checkFunction,
     });
 
@@ -327,36 +278,52 @@ const ViewAttributes = (props: ViewProps) => {
                 return null;
             }
             return <Accordion
-                classes={{
-                    root: classes.accordionRoot,
-                    expanded: classes.clearPadding,
+                sx={{
+                    '&.MuiAccordion-root': styles.accordionRoot,
+                    '& .Mui-expanded': commonStyles.clearPadding,
                 }}
                 square
                 key={key}
                 elevation={0}
-                expanded={accordionOpen[key]}
-                onChange={(e, expanded) => {
-                    const newAccordionOpen = JSON.parse(JSON.stringify(accordionOpen));
-                    newAccordionOpen[key] = expanded;
-                    window.localStorage.setItem('attributesView', JSON.stringify(newAccordionOpen));
+                expanded={accordionOpen[key] === 1}
+                onChange={(_e, expanded) => {
+                    const newAccordionOpen: Record<string, 0 | 1 | 2> = { ...accordionOpen };
+                    newAccordionOpen[key] = expanded ? 1 : 2;
+                    expanded && window.localStorage.setItem('attributesView', JSON.stringify(newAccordionOpen));
                     setAccordionOpen(newAccordionOpen);
+
+                    if (!expanded) {
+                        props.setIsAllClosed(false);
+                        setTimeout(() => {
+                            const _newAccordionOpen: Record<string, 0 | 1 | 2> = { ...accordionOpen };
+                            _newAccordionOpen[key] = 0;
+                            window.localStorage.setItem('attributesView', JSON.stringify(_newAccordionOpen));
+                            setAccordionOpen(_newAccordionOpen);
+                        }, 200);
+                    }
                 }}
             >
                 <AccordionSummary
-                    classes={{
-                        root: Utils.clsx(classes.clearPadding, accordionOpen[key]
-                            ? classes.groupSummaryExpanded : classes.groupSummary, classes.lightedPanel),
-                        content:  Utils.clsx(classes.clearPadding, accordionOpen[key] && classes.accordionOpenedSummary),
-                        expanded: classes.clearPadding,
-                        expandIconWrapper: classes.clearPadding,
+                    sx={{
+                        '&.MuiAccordionSummary-root': Utils.getStyle(
+                            props.theme,
+                            commonStyles.clearPadding,
+                            accordionOpen[key] === 1 ? styles.groupSummaryExpanded : styles.groupSummary,
+                            styles.lightedPanel,
+                        ),
+                        '& .MuiAccordionSummary-content': Utils.getStyle(
+                            props.theme,
+                            commonStyles.clearPadding,
+                            accordionOpen[key] === 1 && styles.accordionOpenedSummary,
+                        ),
+                        '& .Mui-expanded': commonStyles.clearPadding,
+                        '& .MuiAccordionSummary-expandIconWrapper': commonStyles.clearPadding,
                     }}
                     expandIcon={<ExpandMoreIcon />}
                 >
                     {I18n.t(group.label)}
                 </AccordionSummary>
-                {accordionOpen[key] ? <AccordionDetails
-                    classes={{ root: classes.accordionDetails }}
-                >
+                {accordionOpen[key] !== 0 ? <AccordionDetails sx={styles.accordionDetails}>
                     <table style={{ width: '100%' }}>
                         <tbody>
                             {group.fields.map((field, key2) => {
@@ -377,7 +344,6 @@ const ViewAttributes = (props: ViewProps) => {
                                     view: props.selectedView,
                                     editMode: props.editMode,
                                     changeProject: props.changeProject,
-                                    classes,
                                     userGroups: props.userGroups,
                                     adapterName: props.adapterName,
                                     themeType: props.themeType,
@@ -386,6 +352,7 @@ const ViewAttributes = (props: ViewProps) => {
                                     socket: props.socket,
                                     checkFunction,
                                     project,
+                                    theme: props.theme,
                                 });
 
                                 if (!result) {
@@ -394,8 +361,11 @@ const ViewAttributes = (props: ViewProps) => {
 
                                 let helpText = null;
                                 if (field.title) {
-                                    helpText = <Tooltip title={I18n.t(field.title)} classes={{ popper: props.classes.tooltip }}>
-                                        <InfoIcon className={classes.fieldHelpText} />
+                                    helpText = <Tooltip
+                                        title={I18n.t(field.title)}
+                                        componentsProps={{ popper: { sx: commonStyles.tooltip } }}
+                                    >
+                                        <InfoIcon style={styles.fieldHelpText} fontSize="small" />
                                     </Tooltip>;
                                 }
 
@@ -415,7 +385,6 @@ const ViewAttributes = (props: ViewProps) => {
                                     result = addButton(
                                         result,
                                         !props.editMode || disabled,
-                                        props.classes,
                                         () => setShowViewsDialog(field),
                                         isShow && (project[props.selectedView].settings as Record<string, any>)?.[field.attr] ? () => setShowAllViewDialog({ ...field, group }) : null,
                                     );
@@ -423,20 +392,19 @@ const ViewAttributes = (props: ViewProps) => {
                                     result = addButton(
                                         result,
                                         !props.editMode || disabled,
-                                        props.classes,
                                         () => setShowViewsDialog(field),
                                     );
                                 }
 
                                 return <tr key={key2}>
                                     <td
-                                        className={classes.fieldTitle}
+                                        style={styles.fieldTitle}
                                         title={!field.title ? undefined : I18n.t(field.title)}
                                     >
                                         {I18n.t(field.label)}
                                         {helpText}
                                     </td>
-                                    <td className={classes.fieldContent}>{result}</td>
+                                    <Box component="td" sx={{ ...commonStyles.fieldContent, width: '100%' }}>{result}</Box>
                                 </tr>;
                             })}
                         </tbody>
@@ -449,4 +417,4 @@ const ViewAttributes = (props: ViewProps) => {
     </div>;
 };
 
-export default withStyles(styles)(ViewAttributes);
+export default ViewAttributes;

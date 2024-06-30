@@ -19,11 +19,10 @@ import {
 } from '@mui/icons-material';
 import { FaFolderOpen as FolderOpenedIcon } from 'react-icons/fa';
 
-import type { Connection, LegacyConnection } from '@iobroker/adapter-react-v5';
+import type { Connection, LegacyConnection, ThemeType } from '@iobroker/adapter-react-v5';
 import {
     I18n,
     IconPicker,
-    Utils,
     Icon,
     TextWithIcon,
     ColorPicker,
@@ -41,6 +40,7 @@ import type {
     WidgetStyle,
     ClassesValue,
     RxWidgetInfoAttributesField,
+    VisTheme,
 } from '@iobroker/types-vis-2';
 
 import type {
@@ -49,6 +49,7 @@ import type {
 } from '@iobroker/adapter-react-v5/Components/types';
 
 import type { RxFieldOption, WidgetAttributeInfoStored, WidgetType } from '@/Vis/visWidgetsCatalog';
+import commonStyles from '@/Utils/styles';
 import TextDialog from './TextDialog';
 import MaterialIconSelector from '../../Components/MaterialIconSelector';
 
@@ -126,11 +127,11 @@ function collectClasses(): Record<string, ClassesValue> {
 }
 
 function getStylesOptions(options: {
-    filterFile:  string;
-    filterName:  string;
+    filterFile: string;
+    filterName: string;
     filterAttrs: string;
-    removeName:  string;
-    styles?:      Record<string, ClassesValue>;
+    removeName: string;
+    styles?: Record<string, ClassesValue>;
 }) {
     // Fill the list with styles
     const _internalList = window.collectClassesValue;
@@ -139,10 +140,10 @@ function getStylesOptions(options: {
     options.filterAttrs = options.filterAttrs || '';
     options.filterFile  = options.filterFile  || '';
 
-    let styles: Record<string, ClassesValue> = {};
+    let gStyles: Record<string, ClassesValue> = {};
 
     if (options.styles) {
-        styles = { ...options.styles };
+        gStyles = { ...options.styles };
     } else if (options.filterFile || options.filterName) {
         // IF filter defined
         const filters = options.filterName  ? options.filterName.split(' ')  : null;
@@ -174,19 +175,19 @@ function getStylesOptions(options: {
                             n = n.replace(options.removeName, '');
                             n = n[0].toUpperCase() + n.substring(1).toLowerCase();
                         }
-                        styles[style] = {
+                        gStyles[style] = {
                             name:        n,
                             file:        _internalList[style].file,
-                            parentClass: _internalList[style].parentClass,
+                            parentStyle: _internalList[style].parentStyle,
                         };
                     }
                 }
             }));
     } else {
-        styles = { ...styles, ..._internalList };
+        gStyles = { ...gStyles, ..._internalList };
     }
 
-    return styles;
+    return gStyles;
 }
 
 const getViewOptions = (
@@ -274,10 +275,10 @@ interface WidgetFieldProps {
     changeProject: (project: Project) => void;
     onPxToPercent: (widgets: string[], attr: string, cb: (newValues: string[]) => void) => void;
     onPercentToPx: (widgets: string[], attr: string, cb: (newValues: string[]) => void) => void;
-    classes: Record<string, string>;
     fonts: string[];
     userGroups: ioBroker.UserGroup[];
-    themeType: 'light' | 'dark';
+    themeType: ThemeType;
+    theme: VisTheme;
 }
 
 const WidgetField = (props: WidgetFieldProps) => {
@@ -644,9 +645,18 @@ const WidgetField = (props: WidgetFieldProps) => {
                 variant="standard"
                 fullWidth
                 placeholder={isDifferent ? t('different') : null}
+                sx={{
+                    '& .MuiInputBase-root': { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
+                }}
                 InputProps={{
-                    classes: { input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) },
-                    endAdornment: <Button disabled={disabled} size="small" onClick={() => setIdDialog(true)}>...</Button>,
+                    endAdornment: <Button
+                        style={{ minWidth: 30 }}
+                        disabled={disabled}
+                        size="small"
+                        onClick={() => setIdDialog(true)}
+                    >
+                        ...
+                    </Button>,
                 }}
                 error={!!error}
                 helperText={typeof error === 'string' ? I18n.t(error) : null}
@@ -654,11 +664,12 @@ const WidgetField = (props: WidgetFieldProps) => {
                 value={value}
                 onChange={e => change(e.target.value)}
             />
-            <div style={{ fontStyle: 'italic' }}>
+            <div style={{ ...commonStyles.fieldContent, fontStyle: 'italic' }}>
                 {objectCache ? (typeof objectCache.common.name === 'object' ? objectCache.common.name[I18n.lang] : objectCache.common.name) : null}
             </div>
             {idDialog && !disabled ? <SelectID
                 imagePrefix="../"
+                theme={props.theme}
                 selected={value as string}
                 onOk={selected => change(selected)}
                 onClose={() => setIdDialog(false)}
@@ -680,7 +691,7 @@ const WidgetField = (props: WidgetFieldProps) => {
             <Checkbox
                 disabled={disabled}
                 checked={!!value}
-                classes={{ root: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding) }}
+                sx={{ ...commonStyles.clearPadding, ...commonStyles.fieldContent }}
                 size="small"
                 onChange={e => {
                     store.dispatch(recalculateFields(true));
@@ -711,8 +722,8 @@ const WidgetField = (props: WidgetFieldProps) => {
                 helperText={typeof error === 'string' ? I18n.t(error) : null}
                 disabled={disabled}
                 InputProps={{
-                    classes: { input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) },
-                    endAdornment: <Button disabled={disabled} size="small" onClick={() => setIdDialog(true)}>...</Button>,
+                    sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
+                    endAdornment: <Button style={{ minWidth: 30 }} disabled={disabled} size="small" onClick={() => setIdDialog(true)}>...</Button>,
                 }}
                 ref={textRef}
                 value={value}
@@ -735,6 +746,7 @@ const WidgetField = (props: WidgetFieldProps) => {
                 imagePrefix="../"
                 selected={_value}
                 filterByType="images"
+                theme={props.theme}
                 onOk={_selected => {
                     let selected = Array.isArray(_selected) ? _selected[0] : _selected;
                     const projectPrefix = `${adapterName}.${instance}/${projectName}/`;
@@ -790,11 +802,11 @@ const WidgetField = (props: WidgetFieldProps) => {
             return <Autocomplete
                 options={options}
                 freeSolo
-                classes={{
-                    inputRoot: props.classes.clearPadding,
+                sx={{
+                    '& .MuiInput-root': { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
                 }}
                 value={strValue}
-                onChange={((e, aVal) => change(aVal))}
+                onChange={((_e, aVal) => change(aVal))}
                 renderInput={params => <TextField
                     {...params}
                     variant="standard"
@@ -805,7 +817,7 @@ const WidgetField = (props: WidgetFieldProps) => {
                     disabled={disabled}
                     InputProps={{
                         ...params.InputProps,
-                        classes: { input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) },
+                        sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
                         endAdornment: !isDifferent && !customValue ? <Button
                             style={{ minWidth: 30 }}
                             size="small"
@@ -835,7 +847,7 @@ const WidgetField = (props: WidgetFieldProps) => {
             helperText={typeof error === 'string' ? I18n.t(error) : null}
             disabled={disabled}
             InputProps={{
-                classes: { input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) },
+                sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
                 endAdornment: !customValue ? <Button
                     size="small"
                     style={{ minWidth: 30 }}
@@ -859,9 +871,11 @@ const WidgetField = (props: WidgetFieldProps) => {
 
     if (field.type === 'color') {
         return <ColorPicker
+            // @ts-expect-error fixed in adapter-react
+            theme={props.theme}
             disabled={disabled}
             value={value as string || ''}
-            className={props.classes.fieldContentColor}
+            sx={commonStyles.fieldContentColor}
             onChange={color => change(color)}
         />;
     }
@@ -876,14 +890,14 @@ const WidgetField = (props: WidgetFieldProps) => {
     }
 
     if (field.type === 'slider') {
-        // make space before slider element, as if it is at minimum it overlaps with the label
+        // make space before a slider element, as if it is at a minimum it overlaps with the label
         return <div style={{ display: 'flex' }}>
             <div style={{ width: 5 }}></div>
             <Slider
                 disabled={disabled}
-                className={props.classes.fieldContentSlider}
+                style={commonStyles.fieldContentSlider}
                 size="small"
-                onChange={(e, newValue) => change(newValue)}
+                onChange={(_e, newValue) => change(newValue)}
                 value={typeof value === 'number' ? value : 0}
                 min={field.min}
                 max={field.max}
@@ -892,13 +906,12 @@ const WidgetField = (props: WidgetFieldProps) => {
                 valueLabelDisplay={field.valueLabelDisplay}
             />
             <Input
-                className={props.classes.fieldContentSliderInput}
-                style={{ width: field.max > 100000 ? 70 : (field.max > 10000 ? 60 : 50) }}
+                style={{ ...commonStyles.fieldContentSliderInput, width: field.max > 100000 ? 70 : (field.max > 10000 ? 60 : 50) }}
                 value={value}
                 disabled={disabled}
                 size="small"
                 onChange={e => (e.target.value === '' ? change('') : change(parseFloat(e.target.value)))}
-                classes={{ input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) }}
+                sx={{ ...commonStyles.clearPadding, ...commonStyles.fieldContent }}
                 inputProps={{
                     step: field.step,
                     min: field.min,
@@ -1003,9 +1016,9 @@ const WidgetField = (props: WidgetFieldProps) => {
             value={value}
             placeholder={isDifferent ? t('different') : null}
             defaultValue={field.default}
-            classes={{
-                root: props.classes.clearPadding,
-                select: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding),
+            sx={{
+                ...commonStyles.clearPadding,
+                '& .MuiSelect-select': { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
             }}
             onChange={(e: SelectChangeEvent<string>) => {
                 if (field.type === 'widget' &&
@@ -1086,9 +1099,9 @@ const WidgetField = (props: WidgetFieldProps) => {
                 }
                 return selected;
             }}
-            classes={{
-                root: props.classes.clearPadding,
-                select: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding),
+            sx={{
+                ...commonStyles.clearPadding,
+                '& .MuiSelect-select': { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
             }}
             onChange={e => {
                 if (Array.isArray(e.target.value)) {
@@ -1118,8 +1131,8 @@ const WidgetField = (props: WidgetFieldProps) => {
                     <ListItemText primary={option.label} style={{ verticalAlign: 'middle' }} />
                 </MenuItem>
                 :
-                <ListSubheader key={key} style={{ paddingLeft: option.level * 16 }} className={props.classes.listFolder}>
-                    <FolderOpenedIcon className={props.classes.iconFolder} />
+                <ListSubheader key={key} style={{ ...commonStyles.listFolder, paddingLeft: option.level * 16 }}>
+                    <FolderOpenedIcon style={commonStyles.iconFolder} />
                     <span style={{ fontSize: '1rem' }}>{option.folder.name}</span>
                 </ListSubheader>))}
         </Select>;
@@ -1145,9 +1158,9 @@ const WidgetField = (props: WidgetFieldProps) => {
                             />
                         </span>)}
             </div>}
-            classes={{
-                root: props.classes.clearPadding,
-                select: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding),
+            sx={{
+                ...commonStyles.clearPadding,
+                '& .MuiSelect-select': { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
             }}
             onChange={e => change(e.target.value)}
             fullWidth
@@ -1188,9 +1201,11 @@ const WidgetField = (props: WidgetFieldProps) => {
             options={options as string[] || []}
             inputValue={value as string || ''}
             value={value || ''}
-            onInputChange={(e, inputValue) => change(inputValue)}
-            onChange={(e, inputValue) => change(inputValue)}
-            classes={{ input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) }}
+            onInputChange={(_e, inputValue) => change(inputValue)}
+            onChange={(_e, inputValue) => change(inputValue)}
+            sx={{
+                '& .MuiInput-root': { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
+            }}
             renderOption={field.name === 'font-family' || field.name === 'lc-font-family' ?
                 (optionProps, option) => <li
                     style={{ fontFamily: option as string }}
@@ -1219,14 +1234,16 @@ const WidgetField = (props: WidgetFieldProps) => {
             options={options || []}
             inputValue={value as string || ''}
             value={value as string || ''}
-            onInputChange={(e, inputValue) => change(inputValue)}
-            onChange={(e, inputValue) => {
+            onInputChange={(_e, inputValue) => change(inputValue)}
+            onChange={(_e, inputValue) => {
                 if (typeof inputValue === 'object' && inputValue !== null) {
                     inputValue = inputValue.type === 'view' ? inputValue.view : inputValue.folder.name;
                 }
                 change(inputValue);
             }}
-            classes={{ input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) }}
+            sx={{
+                '& .MuiInput-root': { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
+            }}
             getOptionLabel={option => {
                 if (typeof option === 'string') {
                     return option;
@@ -1238,9 +1255,9 @@ const WidgetField = (props: WidgetFieldProps) => {
                 (option.type === 'view' ?
                     <Box
                         component="li"
-                        style={{ paddingLeft: option.level * 16 }}
+                        style={{ ...commonStyles.menuItem, paddingLeft: option.level * 16 }}
                         {...optionProps}
-                        className={Utils.clsx(props.classes.menuItem, value === option.view ? props.classes.selected : null)}
+                        sx={value === option.view ? commonStyles.selected : undefined}
                         key={`view${option.view}`}
                     >
                         <FileIcon />
@@ -1281,14 +1298,14 @@ const WidgetField = (props: WidgetFieldProps) => {
             disabled={disabled}
             placeholder={isDifferent ? t('different') : null}
             defaultValue={field.default}
-            classes={{
-                root: props.classes.clearPadding,
-                select: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding),
+            sx={{
+                ...commonStyles.clearPadding,
+                '& .MuiSelect-select': { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
             }}
             onChange={e => change(e.target.value)}
-            renderValue={(selectValue: string) => <div className={props.classes.backgroundClass}>
-                <span className={stylesOptions[selectValue]?.parentClass}>
-                    <span className={`${props.classes.backgroundClassSquare} ${selectValue}`} />
+            renderValue={(selectValue: string) => <div style={commonStyles.backgroundClass}>
+                <span style={stylesOptions[selectValue]?.parentStyle}>
+                    <span style={commonStyles.backgroundClassSquare} className={selectValue} />
                 </span>
                 {t(stylesOptions[selectValue]?.name)}
             </div>}
@@ -1298,8 +1315,8 @@ const WidgetField = (props: WidgetFieldProps) => {
                 value={styleName}
                 key={`${styleName}_${i}`}
             >
-                <span className={stylesOptions[styleName].parentClass}>
-                    <span className={`${props.classes.backgroundClassSquare} ${styleName}`} />
+                <span style={stylesOptions[styleName].parentStyle}>
+                    <span style={commonStyles.backgroundClassSquare} className={styleName} />
                 </span>
                 {t(stylesOptions[styleName].name)}
             </MenuItem>)}
@@ -1334,6 +1351,7 @@ const WidgetField = (props: WidgetFieldProps) => {
                             instance,
                             adapterName,
                             views: store.getState().visProject,
+                            theme: props.theme,
                         },
                         selectedView: props.selectedView,
                         selectedWidgets: props.selectedWidgets,
@@ -1359,9 +1377,9 @@ const WidgetField = (props: WidgetFieldProps) => {
             disabled={disabled}
             placeholder={isDifferent ? t('different') : null}
             defaultValue={field.default}
-            classes={{
-                root: props.classes.clearPadding,
-                select: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding),
+            sx={{
+                ...commonStyles.clearPadding,
+                '& .MuiSelect-select': { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
             }}
             onChange={e => change(e.target.value)}
             renderValue={selectValue => selectValue}
@@ -1385,7 +1403,7 @@ const WidgetField = (props: WidgetFieldProps) => {
             value={value}
             disabled={disabled}
             onChange={fileBlob => change(fileBlob)}
-            previewClassName={props.classes.iconPreview}
+            previewStyle={commonStyles.iconPreview}
         />;
     }
 
@@ -1408,9 +1426,7 @@ const WidgetField = (props: WidgetFieldProps) => {
                     >
                         <ClearIcon />
                     </IconButton> : null,
-                    classes: {
-                        input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
-                    },
+                    sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
                 }}
             />
             <Button
@@ -1420,17 +1436,17 @@ const WidgetField = (props: WidgetFieldProps) => {
             >
                 {value ? <Icon src={value as string} style={{ width: 36, height: 36 }} /> : '...'}
             </Button>
-            {idDialog &&
-                <MaterialIconSelector
-                    themeType={props.themeType}
-                    value={value as string}
-                    onClose={(icon: string | null) => {
-                        setIdDialog(false);
-                        if (icon !== null) {
-                            change(icon);
-                        }
-                    }}
-                />}
+            {idDialog && <MaterialIconSelector
+                themeType={props.themeType}
+                theme={props.theme}
+                value={value as string}
+                onClose={(icon: string | null) => {
+                    setIdDialog(false);
+                    if (icon !== null) {
+                        change(icon);
+                    }
+                }}
+            />}
         </div>;
     }
 
@@ -1451,13 +1467,12 @@ const WidgetField = (props: WidgetFieldProps) => {
                     endAdornment: field.noButton ? null : <Button
                         disabled={disabled}
                         size="small"
+                        style={{ minWidth: 30 }}
                         onClick={() => setIdDialog(true)}
                     >
                         <EditIcon />
                     </Button>,
-                    classes: {
-                        input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
-                    },
+                    sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
                 }}
                 rows={2}
             />
@@ -1519,7 +1534,7 @@ const WidgetField = (props: WidgetFieldProps) => {
                     endAdornment: field.clearButton && cachedValue !== null && cachedValue !== undefined ? <IconButton size="small" onClick={() => change(null)}>
                         <ClearIcon />
                     </IconButton> : null,
-                    classes: { input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) },
+                    sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
                 }}
                 value={value}
                 onChange={e => change(e.target.value)}

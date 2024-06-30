@@ -2293,6 +2293,7 @@ ${this.scripts}
                     (!this.props.editMode && this.state.legacyRequestedViews.includes(view))
             )) {
                 return <VisView
+                    theme={this.props.theme}
                     context={this.visContext}
                     activeView={this.props.activeView}
                     editMode={this.props.editMode}

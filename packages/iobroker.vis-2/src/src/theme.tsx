@@ -1,12 +1,14 @@
 import type React from 'react';
-import { Theme } from '@iobroker/adapter-react-v5';
-import type { ThemeName } from '@iobroker/adapter-react-v5/types';
+import { Theme, type ThemeName } from '@iobroker/adapter-react-v5';
 import type { VisTheme } from '@iobroker/types-vis-2';
 
-export default function createTheme(themeName: ThemeName): VisTheme {
+export default function createTheme(
+    themeName: ThemeName,
+    overrides?: Record<string, any>,
+): VisTheme {
     const danger = '#dd5325';
     const success = '#73b6a8';
-    const theme: VisTheme = { ...Theme(themeName) } as VisTheme;
+    const theme: VisTheme = Theme(themeName, overrides) as VisTheme;
     theme.palette.text.danger = {
         color: danger,
     };
@@ -26,9 +28,9 @@ export default function createTheme(themeName: ThemeName): VisTheme {
         blockHeader: {
             fontSize: 16,
             textAlign: 'left',
-            marginTop: 8,
-            borderRadius: 2,
-            paddingLeft: 8,
+            marginTop: '8px',
+            borderRadius: '2px',
+            paddingLeft: '8px',
         },
         viewTabs: {
             minHeight: 0,
@@ -43,8 +45,8 @@ export default function createTheme(themeName: ThemeName): VisTheme {
         toolbar: {
             display: 'flex',
             alignItems: 'center',
-            paddingTop: 10,
-            paddingBottom: 10,
+            paddingTop: '10px',
+            paddingBottom: '10px',
         },
         viewManageBlock: {
             display: 'flex',

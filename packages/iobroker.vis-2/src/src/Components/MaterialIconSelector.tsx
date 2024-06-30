@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { withStyles } from '@mui/styles';
 
 import {
     Button,
@@ -12,8 +11,7 @@ import {
     InputAdornment,
     Grid,
     Radio,
-    RadioGroup, TextField, LinearProgress, Pagination,
-    type Theme,
+    RadioGroup, TextField, LinearProgress, Pagination, Box,
 } from '@mui/material';
 
 import {
@@ -24,13 +22,13 @@ import {
 } from '@mui/icons-material';
 
 import { I18n, Utils, Icon } from '@iobroker/adapter-react-v5';
-import type { MaterialIconSelectorProps } from '@iobroker/types-vis-2';
+import type { MaterialIconSelectorProps, VisTheme } from '@iobroker/types-vis-2';
 
 import UploadFile from './UploadFile';
 
 const MAX_ICONS = 250;
 
-const styles: Record<string, any> = (theme: Theme) => ({
+const styles: Record<string, any> = {
     dialog: {
         height: '100%',
     },
@@ -40,7 +38,7 @@ const styles: Record<string, any> = (theme: Theme) => ({
         overflow: 'hidden',
         textOverflow: 'ellipsis',
     },
-    iconDiv: {
+    iconDiv: (theme: VisTheme) => ({
         margin: 0,
         textAlign: 'center',
         cursor: 'pointer',
@@ -49,22 +47,22 @@ const styles: Record<string, any> = (theme: Theme) => ({
         '&:hover': {
             backgroundColor: theme.palette.secondary.main,
         },
-    },
-    icon: {
+    }),
+    icon: (theme: VisTheme) => ({
         width: 48,
         height: 48,
         color: theme.palette.text.primary,
-    },
-    iconSelected: {
+    }),
+    iconSelected: (theme: VisTheme) => ({
         backgroundColor: theme.palette.primary.main,
         '&:hover': {
             backgroundColor: theme.palette.primary.light,
         },
-    },
+    }),
     typeName: {
         whiteSpace: 'nowrap',
     },
-});
+};
 
 const ICON_TYPES = ['baseline', 'outline', 'round', 'sharp', 'twotone', 'knx-uf', 'upload'];
 
@@ -222,19 +220,19 @@ class MaterialIconSelector extends Component<MaterialIconSelectorProps, Material
 
         for (let i = (this.state.page - 1) * MAX_ICONS; i < this.state.page * MAX_ICONS && i < this.state.filtered.length; i++) {
             const icon = this.state.filtered[i];
-            icons.push(<div
+            icons.push(<Box
+                component="div"
                 key={icon}
-                className={Utils.clsx(this.props.classes.iconDiv, this.state.selectedIcon === icon && this.props.classes.iconSelected)}
+                sx={Utils.getStyle(this.props.theme, styles.iconDiv, this.state.selectedIcon === icon && styles.iconSelected)}
                 onClick={() => this.setState({ selectedIcon: icon })}
                 onDoubleClick={() => this.setState({ selectedIcon: icon }, () => this.onSelect())}
             >
                 <Icon
                     src={this.list[this.state.iconType][icon]}
-                    className={this.props.classes.icon}
-                    style={iconStyle}
+                    style={Utils.getStyle(this.props.theme, styles.icon, iconStyle)}
                 />
-                <div className={this.props.classes.iconName}>{icon.replace(/_/g, ' ')}</div>
-            </div>);
+                <div style={styles.iconName}>{icon.replace(/_/g, ' ')}</div>
+            </Box>);
         }
 
         return icons;
@@ -245,7 +243,7 @@ class MaterialIconSelector extends Component<MaterialIconSelectorProps, Material
             open={!0}
             maxWidth="lg"
             fullWidth
-            classes={{ paper: this.props.classes.dialog }}
+            sx={{ '& .MuiDialog-paper': styles.dialog }}
         >
             <DialogTitle>
                 <span style={{ marginRight: 20 }}>
@@ -306,7 +304,7 @@ class MaterialIconSelector extends Component<MaterialIconSelectorProps, Material
                                 value={type}
                                 control={<Radio />}
                                 label={I18n.t(`material_icons_${type}`)}
-                                classes={{ label: this.props.classes.typeName }}
+                                sx={{ '.& MuiRadioGroup-label': styles.typeName }}
                             />)}
                             {this.props.customIcons ? <FormControlLabel
                                 onClick={async () => {
@@ -322,7 +320,7 @@ class MaterialIconSelector extends Component<MaterialIconSelectorProps, Material
                                 value="customIcons"
                                 control={<Radio />}
                                 label={I18n.t('custom_icons')}
-                                classes={{ label: this.props.classes.typeName }}
+                                sx={{ '& .MuiFormControlLabel-label': styles.typeName }}
                             /> : null}
                         </RadioGroup>
                     </FormControl>
@@ -435,6 +433,5 @@ class MaterialIconSelector extends Component<MaterialIconSelectorProps, Material
     }
 }
 
-const _MaterialIconSelector = withStyles(styles)(MaterialIconSelector);
-window.VisMaterialIconSelector = _MaterialIconSelector;
-export default _MaterialIconSelector;
+window.VisMaterialIconSelector = MaterialIconSelector;
+export default MaterialIconSelector;

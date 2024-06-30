@@ -1,10 +1,13 @@
 import React from 'react';
+
+import type { ThemeType } from '@iobroker/adapter-react-v5';
 import { store } from '@/Store';
+import type { Project } from '@iobroker/types-vis-2';
 import CustomAceEditor from '../Components/CustomAceEditor';
 
 interface ScriptsProps {
-    changeProject: (project: any) => void;
-    themeType: 'dark' | 'light';
+    changeProject: (project: Project) => void;
+    themeType: ThemeType;
     editMode: boolean;
 }
 

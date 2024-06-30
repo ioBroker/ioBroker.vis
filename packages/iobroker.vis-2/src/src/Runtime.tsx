@@ -22,15 +22,18 @@ import IconClose from '@mui/icons-material/Close';
 import IconDocument from '@mui/icons-material/FileCopy';
 import { BiImport } from 'react-icons/bi';
 
-import GenericApp from '@iobroker/adapter-react-v5/GenericApp';
 import {
     I18n, Loader, LegacyConnection,
     LoaderMV, LoaderPT, LoaderVendor,
+    GenericApp,
+    type GenericAppProps, type GenericAppState, type ThemeName, Utils,
 } from '@iobroker/adapter-react-v5';
 
-import type { GenericAppProps, GenericAppState, ThemeName } from '@iobroker/adapter-react-v5/types';
 import type {
-    AnyWidgetId, GroupWidgetId, Project, SingleWidgetId, ViewSettings, VisTheme, WidgetData, WidgetStyle,
+    AnyWidgetId, GroupWidgetId,
+    Project, SingleWidgetId,
+    ViewSettings, VisTheme,
+    WidgetData, WidgetStyle,
 } from '@iobroker/types-vis-2';
 import VisEngine from './Vis/visEngine';
 import {
@@ -42,6 +45,7 @@ import { registerWidgetsLoadIndicator } from './Vis/visLoadWidgets';
 import VisWidgetsCatalog from './Vis/visWidgetsCatalog';
 
 import { store, updateActiveUser, updateProject } from './Store';
+import createTheme from './theme';
 import { hasProjectAccess, hasViewAccess } from './Utils/utils';
 
 const styles: { editModeComponentStyle: React.CSSProperties } = {
@@ -56,6 +60,7 @@ export interface RuntimeProps extends GenericAppProps {
 }
 
 export interface RuntimeState extends GenericAppState {
+    theme: VisTheme;
     alert: boolean;
     alertType: 'info' | 'warning' | 'error' | 'success';
     alertMessage: string;
@@ -238,6 +243,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         this.socket.setStateToIgnore('nothing_selected');
 
         this.alert = window.alert;
+
         window.alert = message => {
             if (message && message.toString().toLowerCase().includes('error')) {
                 console.error(message);
@@ -253,6 +259,10 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         // temporary disable translation warnings
         // I18n.disableWarning(true);
         registerWidgetsLoadIndicator(this.setWidgetsLoadingProgress);
+    }
+
+    createTheme(name?: ThemeName | null | undefined): VisTheme {
+        return createTheme(Utils.getThemeName(name));
     }
 
     setWidgetsLoadingProgress: (step: number, total: number) => void;
@@ -1094,7 +1104,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
                             onClick={() => this.setState({ showImportDialog: true })}
                             style={{ backgroundColor: '#112233', color: '#4b9ed3' }}
                         >
-                            <ListItemIcon><BiImport fontSize="20" /></ListItemIcon>
+                            <ListItemIcon><BiImport fontSize="small" /></ListItemIcon>
                             <ListItemText>{I18n.t('Import project')}</ListItemText>
                         </ListItemButton> : null}
                     </MenuList>

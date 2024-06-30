@@ -35,11 +35,12 @@ import {
 } from '@iobroker/adapter-react-v5';
 
 import VisBaseWidget from '@/Vis/visBaseWidget';
+import commonStyles from '@/Utils/styles';
+import { deepClone } from '@/Utils/utils';
 
 // eslint-disable-next-line import/no-cycle
 import VisRxWidget from '../../visRxWidget';
 import BulkEditor from './BulkEditor';
-import { deepClone } from '../../../Utils/utils';
 
 class JQuiState extends VisRxWidget {
     static getWidgetInfo() {
@@ -100,6 +101,7 @@ class JQuiState extends VisRxWidget {
                                 props, // {context: {views, view, socket, themeType, projectName, adapterName, instance, id, widget}, selectedView, selectedWidget, selectedWidgets}
                             ) => <BulkEditor
                                 // TODO: if multiple widgets of this type selected data will get undefined, check why
+                                theme={props.context.theme}
                                 data={data || {}}
                                 onDataChange={onDataChange}
                                 socket={props.context.socket}
@@ -445,7 +447,7 @@ class JQuiState extends VisRxWidget {
         </Button>;
 
         if (this.state.rxData[`tooltip${i}`]) {
-            return <Tooltip key={i} title={this.state.rxData[`tooltip${i}`]}>
+            return <Tooltip key={i} title={this.state.rxData[`tooltip${i}`]} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                 {button}
             </Tooltip>;
         }
@@ -477,7 +479,7 @@ class JQuiState extends VisRxWidget {
         />;
 
         if (this.state.rxData[`tooltip${i}`]) {
-            return <Tooltip key={i} title={this.state.rxData[`tooltip${i}`]}>
+            return <Tooltip key={i} title={this.state.rxData[`tooltip${i}`]} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                 {button}
             </Tooltip>;
         }

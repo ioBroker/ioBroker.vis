@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import { withStyles } from '@mui/styles';
 
 import {
     Accordion, AccordionDetails, AccordionSummary,
     Checkbox, Divider, Button, IconButton,
-    Tooltip,
+    Tooltip, Box,
 } from '@mui/material';
 
 import {
@@ -48,6 +47,7 @@ import type {
     RxWidgetInfoGroup,
 } from '@iobroker/types-vis-2';
 
+import commonStyles from '@/Utils/styles';
 import WidgetField from './WidgetField';
 import IODialog from '../../Components/IODialog';
 import WidgetCSS from './WidgetCSS';
@@ -59,40 +59,14 @@ const ICONS: Record<string, React.JSX.Element> = {
     locked: <LockIcon fontSize="small" />,
 };
 
-const styles: Record<string, any> = (theme: VisTheme) => ({
-    backgroundClass: {
-        display: 'flex',
-        alignItems: 'center',
-    },
-    backgroundClassSquare: {
-        width: 40,
-        height: 40,
-        display: 'inline-block',
-        marginRight: 4,
-    },
+const styles: Record<string, any> = {
     accordionRoot: {
-        '&&&&': {
-            padding: 0,
-            margin: 0,
-            minHeight: 'initial',
-        },
+        p: 0,
+        m: 0,
+        minHeight: 'initial',
         '&:before': {
             opacity: 0,
         },
-    },
-    clearPadding: {
-        '&&&&': {
-            padding: 0,
-            margin: 0,
-            minHeight: 'initial',
-        },
-    },
-    menuItem: {
-        cursor: 'pointer',
-    },
-    selected: {
-        backgroundColor: theme.palette.primary.main,
-        color: theme.palette.primary.contrastText,
     },
     checkBox: {
         marginTop: '-4px !important',
@@ -110,8 +84,16 @@ const styles: Record<string, any> = (theme: VisTheme) => ({
     fieldTitleDisabled: {
         opacity: 0.8,
     },
-    fieldTitleError: {
+    fieldTitleError: (theme: VisTheme) => ({
         color: theme.palette.error.main,
+    }),
+    colorizeDiv: {
+        '& svg:hover': {
+            opacity: 1,
+        },
+        '& svg::active': {
+            transform: 'scale(0.8)',
+        },
     },
     colorize: {
         display: 'none',
@@ -119,12 +101,6 @@ const styles: Record<string, any> = (theme: VisTheme) => ({
         right: 0,
         cursor: 'pointer',
         opacity: 0.3,
-        '&:hover': {
-            opacity: 1,
-        },
-        '&:active': {
-            transform: 'scale(0.8)',
-        },
     },
     fieldRow: {
         '&:hover $colorize': {
@@ -143,60 +119,31 @@ const styles: Record<string, any> = (theme: VisTheme) => ({
     grow: {
         flexGrow: 1,
     },
-    fieldContent: {
-        '&&&&&&': {
-            fontSize: '80%',
-        },
-        '& svg': {
-            fontSize: '1rem',
-        },
-    },
     fieldInput: {
         width: '100%',
     },
-    fieldContentColor: {
-        '&&&&&& label': {
-            display: 'none',
-        },
-        '&&&&&& input': {
-            fontSize: '80%',
-        },
-    },
-    fieldContentSlider: {
-        display: 'inline',
-        width: 'calc(100% - 50px)',
-        marginRight: 8,
-    },
-    fieldContentSliderInput: {
-        display: 'inline',
-        width: 50,
-    },
     groupSummary: {
-        '&&&&&&': {
-            marginTop: 10,
-            borderRadius: '4px',
-            padding: '2px',
-        },
+        marginTop: '10px',
+        borderRadius: '4px',
+        padding: '2px',
     },
     groupSummaryExpanded: {
-        '&&&&&&': {
-            marginTop: 10,
-            borderTopRightRadius: '4px',
-            borderTopLeftRadius: '4px',
-            padding: '2px',
-        },
+        marginTop: '10px',
+        borderTopRightRadius: '4px',
+        borderTopLeftRadius: '4px',
+        padding: '2px',
     },
     accordionOpenedSummary: {
         fontWeight: 'bold',
     },
-    lightedPanel: theme.classes.lightedPanel,
-    accordionDetails: {
+    lightedPanel: (theme: VisTheme) => theme.classes.lightedPanel,
+    accordionDetails: (theme: VisTheme) => ({
         ...theme.classes.lightedPanel,
         borderRadius: '0 0 4px 4px',
         flexDirection: 'column',
-        padding: 0,
-        margin: 0,
-    },
+        p: 0,
+        m: 0,
+    }),
     infoIcon: {
         verticalAlign: 'middle',
         marginLeft: 3,
@@ -268,13 +215,13 @@ const styles: Record<string, any> = (theme: VisTheme) => ({
     widgetNameText: {
         lineHeight: '20px',
     },
-    fieldHelp: {
+    fieldHelp: (theme: VisTheme) => ({
         fontSize: 12,
         fontStyle: 'italic',
-        paddingLeft: 16,
+        pl: '16px',
         color: theme.palette.mode === 'dark' ? '#00931a' : '#014807',
-    },
-});
+    }),
+};
 
 const WIDGET_ICON_HEIGHT = 34;
 const IMAGE_TYPES = ['.png', '.jpg', '.svg', '.gif', '.apng', '.avif', '.webp'];
@@ -289,11 +236,11 @@ interface WidgetProps {
     selectedWidgets: AnyWidgetId[];
     socket: LegacyConnection;
     themeType: ThemeType;
+    theme: VisTheme;
     projectName: string;
     adapterName: string;
     instance: number;
     widgetsLoaded: boolean;
-    classes: Record<string, string>;
     changeProject: (newProject: Project) => void;
     editMode: boolean;
     isAllClosed: boolean;
@@ -316,7 +263,7 @@ interface WidgetState {
     showWidgetCode: boolean;
     triggerAllOpened: number;
     triggerAllClosed: number;
-    accordionOpen: Record<string, boolean>;
+    accordionOpen: Record<string, 0 | 1 | 2>; // 0 - closed, 1 - opened, 2 - closing
     widgetsLoaded: boolean;
     widgetTypes: WidgetType[] | null;
     fields: PaletteGroup[] | null;
@@ -342,6 +289,26 @@ class Widget extends Component<WidgetProps, WidgetState> {
     constructor(props: WidgetProps) {
         super(props);
 
+        const accordionOpenStr = window.localStorage.getItem('attributesWidget');
+        let accordionOpen: Record<string, 0 | 1 | 2>;
+        if (accordionOpenStr && accordionOpenStr[0] === '{') {
+            try {
+                accordionOpen = JSON.parse(accordionOpenStr) as Record<string, 0 | 1 | 2>;
+                // convert from old
+                Object.keys(accordionOpen).forEach(key => {
+                    if (accordionOpen[key] as any === true || accordionOpen[key] === 1) {
+                        accordionOpen[key] = 1;
+                    } else {
+                        accordionOpen[key] = 0;
+                    }
+                });
+            } catch (e) {
+                accordionOpen = {};
+            }
+        } else {
+            accordionOpen = {};
+        }
+
         this.state = {
             cssDialogOpened: false,
             jsDialogOpened: false,
@@ -349,9 +316,7 @@ class Widget extends Component<WidgetProps, WidgetState> {
             showWidgetCode: window.localStorage.getItem('showWidgetCode') === 'true',
             triggerAllOpened: 0,
             triggerAllClosed: 0,
-            accordionOpen: window.localStorage.getItem('attributesWidget') && window.localStorage.getItem('attributesWidget')[0] === '{'
-                ? JSON.parse(window.localStorage.getItem('attributesWidget'))
-                : {},
+            accordionOpen,
             widgetsLoaded: props.widgetsLoaded,
             widgetTypes: null,
             fields: null,
@@ -862,15 +827,15 @@ class Widget extends Component<WidgetProps, WidgetState> {
             if (_widgetType?.preview?.startsWith('<img')) {
                 const m = _widgetType?.preview.match(/src="([^"]+)"/) || _widgetType?.preview.match(/src='([^']+)'/);
                 if (m) {
-                    img = <img src={m[1]} className={this.props.classes.icon} alt={this.props.selectedWidgets[0]} />;
+                    img = <img src={m[1]} style={styles.icon} alt={this.props.selectedWidgets[0]} />;
                 }
             } else if (_widgetType?.preview && IMAGE_TYPES.find(ext => _widgetType.preview.toLowerCase().endsWith(ext))) {
-                img = <img src={_widgetType?.preview} className={this.props.classes.icon} alt={this.props.selectedWidgets[0]} />;
+                img = <img src={_widgetType?.preview} style={styles.icon} alt={this.props.selectedWidgets[0]} />;
             }
 
             if (!img) {
                 img = <span
-                    className={this.props.classes.widgetImage}
+                    style={styles.widgetImage}
                     ref={this.imageRef}
                     // eslint-disable-next-line react/no-danger
                     dangerouslySetInnerHTML={
@@ -896,20 +861,21 @@ class Widget extends Component<WidgetProps, WidgetState> {
                 widgetLabel = `${I18n.t('version')} ${widgets[this.props.selectedWidgets[0]].marketplace.version}`;
             }
             list = <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                {widgetIcon ? <div className={this.props.classes.widgetIcon}>{img}</div> : null}
-                <div className={this.props.classes.widgetName}>{this.props.selectedWidgets[0]}</div>
-                <div className={this.props.classes.widgetType}>
+                {widgetIcon ? <div style={styles.widgetIcon}>{img}</div> : null}
+                <div style={styles.widgetName}>{this.props.selectedWidgets[0]}</div>
+                <div style={styles.widgetType}>
                     <div
                         style={{
+                            ...styles.widgetNameText,
+                            ...(widgetBackColor ? styles.coloredWidgetSet : undefined),
                             fontWeight: 'bold',
                             color: widgetColor,
                             backgroundColor: widgetBackColor,
                         }}
-                        className={Utils.clsx(this.props.classes.widgetNameText, widgetBackColor && this.props.classes.coloredWidgetSet)}
                     >
                         {setLabel}
                     </div>
-                    <div className={this.props.classes.widgetNameText}>{widgetLabel}</div>
+                    <div style={styles.widgetNameText}>{widgetLabel}</div>
                 </div>
                 {!widgets[this.props.selectedWidgets[0]].marketplace && <>
                     {window.location.port === '3000' ? <Button onClick={() => this.setState({ cssDialogOpened: true })}>CSS</Button> : null}
@@ -946,14 +912,14 @@ class Widget extends Component<WidgetProps, WidgetState> {
         </div>;
     }
 
-    setAccordionState(accordionOpen?: { [groupName: string]: boolean }, cb?: () => void) {
+    setAccordionState(accordionOpen?: { [groupName: string]: 0 | 1 | 2 }, cb?: () => void) {
         if (!this.state.fields) {
             return;
         }
 
         const _accordionOpen = accordionOpen || this.state.accordionOpen;
-        const allOpened = !this.state.fields.find(group => !_accordionOpen[group.name]);
-        const allClosed = !this.state.fields.find(group => _accordionOpen[group.name]);
+        const allOpened = !this.state.fields.find(group => _accordionOpen[group.name] === 0 || _accordionOpen[group.name] === 2);
+        const allClosed = !this.state.fields.find(group => _accordionOpen[group.name] === 1);
 
         if (this.props.isAllClosed !== allClosed) {
             setTimeout(() => this.props.setIsAllClosed(allClosed), 50);
@@ -1058,7 +1024,7 @@ class Widget extends Component<WidgetProps, WidgetState> {
                 widgetData[`g_${iterable.group}-${newIndex}`] = true;
 
                 // enable the opened flag
-                accordionOpen[`${iterable.group}-${newIndex}`] = true;
+                accordionOpen[`${iterable.group}-${newIndex}`] = 1; // open
                 widgetData[iterable.indexTo] = newIndex;
             });
             this.setAccordionState(accordionOpen, () => {
@@ -1106,16 +1072,23 @@ class Widget extends Component<WidgetProps, WidgetState> {
     }
 
     renderGroupHeader(group: PaletteGroup) {
-        const classes = this.props.classes;
         return <AccordionSummary
-            classes={{
-                root: Utils.clsx(classes.clearPadding, this.state.accordionOpen[group.name]
-                    ? classes.groupSummaryExpanded : classes.groupSummary, classes.lightedPanel),
-                content:  Utils.clsx(classes.clearPadding, this.state.accordionOpen[group.name] && group.hasValues && classes.accordionOpenedSummary),
-                expanded: classes.clearPadding,
+            sx={{
+                '&.MuiAccordionSummary-root': Utils.getStyle(
+                    this.props.theme,
+                    commonStyles.clearPadding,
+                    this.state.accordionOpen[group.name] === 1 && group.hasValues ? styles.groupSummaryExpanded : styles.groupSummary,
+                    styles.lightedPanel,
+                ),
+                '& .MuiAccordionSummary-content':  Utils.getStyle(
+                    this.props.theme,
+                    commonStyles.clearPadding,
+                    this.state.accordionOpen[group.name] === 1 && group.hasValues && styles.accordionOpenedSummary,
+                ),
+                '& .Mui-expanded': commonStyles.clearPadding,
                 // expandIcon: classes.clearPadding,
             }}
-            expandIcon={group.hasValues ? <ExpandMoreIcon /> : <div className={classes.emptyMoreIcon} />}
+            expandIcon={group.hasValues ? <ExpandMoreIcon /> : <div style={styles.emptyMoreIcon} />}
         >
             <div
                 style={{
@@ -1125,7 +1098,7 @@ class Widget extends Component<WidgetProps, WidgetState> {
                     alignItems: 'center',
                 }}
             >
-                <div>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
                     {ICONS[`group.${group.singleName || group.name}`] ? ICONS[`group.${group.singleName || group.name}`] : null}
                     {group.label ?
                         I18n.t(group.label) + (group.index !== undefined ? ` [${group.index}]` : '')
@@ -1133,10 +1106,10 @@ class Widget extends Component<WidgetProps, WidgetState> {
                         (window.vis._(`group_${group.singleName || group.name}`) + (group.index !== undefined ? ` [${group.index}]` : ''))}
                 </div>
                 {group.iterable ? <>
-                    <div className={classes.grow} />
-                    {group.iterable.indexTo ? <Tooltip title={I18n.t('Delete')}>
+                    <div style={styles.grow} />
+                    {group.iterable.indexTo ? <Tooltip title={I18n.t('Delete')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                         <IconButton
-                            className={classes.groupButton}
+                            style={styles.groupButton}
                             size="small"
                             onClick={e => this.onGroupMove(e, group.index, group.iterable, 0)}
                         >
@@ -1144,10 +1117,10 @@ class Widget extends Component<WidgetProps, WidgetState> {
                         </IconButton>
                     </Tooltip> : null}
                     {group.iterable.isFirst ?
-                        <div className={classes.groupButton} /> :
-                        <Tooltip title={I18n.t('Move up')}>
+                        <div style={styles.groupButton} /> :
+                        <Tooltip title={I18n.t('Move up')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                             <IconButton
-                                className={classes.groupButton}
+                                style={styles.groupButton}
                                 size="small"
                                 onClick={e => this.onGroupMove(e, group.index, group.iterable, -1)}
                             >
@@ -1155,19 +1128,19 @@ class Widget extends Component<WidgetProps, WidgetState> {
                             </IconButton>
                         </Tooltip>}
                     {group.iterable.isLast ?
-                        (group.iterable.indexTo ? <Tooltip title={I18n.t('Add')}>
+                        (group.iterable.indexTo ? <Tooltip title={I18n.t('Add')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                             <IconButton
-                                className={classes.groupButton}
+                                style={styles.groupButton}
                                 size="small"
                                 onClick={e => this.onGroupMove(e, group.index, group.iterable, true)}
                             >
                                 <Add />
                             </IconButton>
-                        </Tooltip> : <div className={classes.groupButton} />)
+                        </Tooltip> : <div style={styles.groupButton} />)
                         :
                         <Tooltip title={I18n.t('Move down')}>
                             <IconButton
-                                className={classes.groupButton}
+                                style={styles.groupButton}
                                 size="small"
                                 onClick={e => this.onGroupMove(e, group.index, group.iterable, 1)}
                             >
@@ -1211,14 +1184,14 @@ class Widget extends Component<WidgetProps, WidgetState> {
                                     project[this.props.selectedView].widgets[wid].data[`g_${group.name}`] = true;
                                 });
                                 const accordionOpen = { ...this.state.accordionOpen };
-                                accordionOpen[group.name] = true;
+                                accordionOpen[group.name] = 1;
                                 this.setAccordionState(accordionOpen, () => this.props.changeProject(project));
                             }
                             e.stopPropagation();
                             store.dispatch(recalculateFields(true));
                         }}
                         size="small"
-                        classes={{ root: Utils.clsx(classes.fieldContent, classes.clearPadding, classes.checkBox) }}
+                        sx={Utils.getStyle(this.props.theme, commonStyles.fieldContent, commonStyles.clearPadding, styles.checkBox)}
                     />
                 </div>
             </div>
@@ -1259,17 +1232,17 @@ class Widget extends Component<WidgetProps, WidgetState> {
             }
         }
         if (field.type === 'help') {
-            return <tr key={fieldIndex} className={this.props.classes.fieldRow}>
-                <td colSpan={2} className={this.props.classes.fieldHelp} style={field.style}>
+            return <Box component="tr" key={fieldIndex} sx={styles.fieldRow}>
+                <Box component="td" colSpan={2} sx={styles.fieldHelp} style={field.style}>
                     {field.noTranslation ? field.text : I18n.t(field.text)}
-                </td>
-            </tr>;
+                </Box>
+            </Box>;
         }
         if (field.type === 'delimiter') {
-            return <tr key={fieldIndex} className={this.props.classes.fieldRow}>
+            return <Box component="tr" key={fieldIndex} sx={styles.fieldRow}>
                 {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-                <td colSpan={2} className={this.props.classes.fieldDivider} style={field.style} />
-            </tr>;
+                <td colSpan={2} style={{ ...styles.fieldDivider, ...field.style }} />
+            </Box>;
         }
 
         if (field.error) {
@@ -1311,30 +1284,31 @@ class Widget extends Component<WidgetProps, WidgetState> {
 
         // @ts-expect-error fix later
         if (field.type === 'delimiter') {
-            return <tr key={fieldIndex} className={this.props.classes.fieldRow}>
+            return <Box component="tr" key={fieldIndex} sx={styles.fieldRow}>
                 {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
                 <td colSpan={2}>
                     <Divider style={{ borderBottomWidth: 'thick' }} />
                 </td>
-            </tr>;
+            </Box>;
         }
 
-        return <tr key={fieldIndex} className={this.props.classes.fieldRow}>
-            <td
-                className={Utils.clsx(this.props.classes.fieldTitle, disabled && this.props.classes.fieldTitleDisabled, error && this.props.classes.fieldTitleError)}
+        return <Box component="tr" key={fieldIndex} sx={styles.fieldRow}>
+            <Box
+                component="td"
+                sx={Utils.getStyle(this.props.theme, styles.fieldTitle, disabled && styles.fieldTitleDisabled, error && styles.fieldTitleError)}
                 title={field.tooltip ? I18n.t(field.tooltip) : null}
                 style={labelStyle}
             >
                 {ICONS[field.singleName || field.name] ? ICONS[field.singleName || field.name] : null}
                 {label}
                 {field.type === 'image' && !this.state.isDifferent[field.name] && selectedWidget?.data[field.name] ?
-                    <div className={this.props.classes.smallImageDiv}>
+                    <div style={styles.smallImageDiv}>
                         <Icon
                             src={selectedWidget.data[field.name].startsWith('_PRJ_NAME/') ?
                                 selectedWidget.data[field.name].replace('_PRJ_NAME/', `../${this.props.adapterName}.${this.props.instance}/${this.props.projectName}/`)
                                 :
                                 selectedWidget.data[field.name]}
-                            className={this.props.classes.smallImage}
+                            style={styles.smallImage}
                             onError={e => {
                                 (e.target as HTMLImageElement).onerror = null;
                                 (e.target as HTMLImageElement).style.display = 'none';
@@ -1344,29 +1318,27 @@ class Widget extends Component<WidgetProps, WidgetState> {
                     </div> : null}
                 {(field.type !== 'custom' || field.label) && !field.noBinding ? (isBoundField ?
                     <span
-                        className={this.props.classes.bindIconSpan}
+                        style={styles.bindIconSpan}
                         title={I18n.t('Deactivate binding and use field as standard input')}
                     >
                         <LinkOff
                             onClick={() => this.props.editMode && this.changeBinding(group.isStyle, field.name)}
-                            className={this.props.classes.bindIcon}
-                            style={disabled ? { cursor: 'default' } : null}
+                            style={{ ...styles.bindIcon, cursor: disabled ? 'default' : undefined }}
                         />
                     </span> :
                     <span
-                        className={this.props.classes.bindIconSpan}
+                        style={styles.bindIconSpan}
                         title={I18n.t('Use field as binding')}
                     >
                         <LinkIcon
-                            className={this.props.classes.bindIcon}
-                            style={disabled ? { cursor: 'default' } : null}
+                            style={{ ...styles.bindIcon, cursor: disabled ? 'default' : undefined }}
                             onClick={() => this.props.editMode && this.changeBinding(group.isStyle, field.name)}
                         />
                     </span>) : null}
-                {group.isStyle ?
+                {group.isStyle ? <Box component="span" sx={styles.colorizeDiv}>
                     <ColorizeIcon
                         fontSize="small"
-                        className={this.props.classes.colorize}
+                        style={styles.colorize}
                         onClick={() => this.props.cssClone(field.name, newValue => {
                             if (newValue !== null && newValue !== undefined) {
                                 const project = deepClone(store.getState().visProject);
@@ -1380,13 +1352,14 @@ class Widget extends Component<WidgetProps, WidgetState> {
                             }
                         })}
                     />
-                    : null}
-                {field.tooltip ? <InfoIcon className={this.props.classes.infoIcon} /> : null}
-            </td>
-            <td className={this.props.classes.fieldContent}>
-                <div className={this.props.classes.fieldInput}>
+                </Box> : null}
+                {field.tooltip ? <InfoIcon style={styles.infoIcon} /> : null}
+            </Box>
+            <Box component="td">
+                <div style={styles.fieldInput}>
                     {isBoundField ?
                         <WidgetBindingField
+                            theme={this.props.theme}
                             disabled={disabled}
                             field={field}
                             label={label}
@@ -1401,6 +1374,7 @@ class Widget extends Component<WidgetProps, WidgetState> {
                         : <WidgetField
                             widgetType={this.state.widgetType}
                             themeType={this.props.themeType}
+                            theme={this.props.theme}
                             disabled={disabled}
                             field={field}
                             widget={this.props.selectedWidgets.length > 1 ? this.state.commonValues as SingleGroupWidget : selectedWidget}
@@ -1420,19 +1394,18 @@ class Widget extends Component<WidgetProps, WidgetState> {
                             userGroups={this.props.userGroups}
                             error={error}
                             selectedWidgets={this.props.selectedWidgets}
-                            classes={this.props.classes}
                         />}
                 </div>
-            </td>
-        </tr>;
+            </Box>
+        </Box>;
     }
 
     renderGroupBody(group: PaletteGroup) {
-        if (!this.state.accordionOpen[group.name] || !group.hasValues) {
+        if (this.state.accordionOpen[group.name] === 0 || !group.hasValues) {
             return null;
         }
         return <AccordionDetails
-            classes={{ root: this.props.classes.accordionDetails }}
+            sx={styles.accordionDetails}
         >
             <table style={{ width: '100%' }}>
                 <tbody>
@@ -1444,18 +1417,25 @@ class Widget extends Component<WidgetProps, WidgetState> {
 
     renderGroup(group: PaletteGroup) {
         return <Accordion
-            classes={{
-                root: this.props.classes.accordionRoot,
-                expanded: this.props.classes.clearPadding,
+            sx={{
+                '&.MuiAccordion-root': styles.accordionRoot,
+                '& .Mui-expanded': commonStyles.clearPadding,
             }}
             square
             key={group.name}
             elevation={0}
-            expanded={!!(this.state.accordionOpen[group.name] && group.hasValues)}
+            expanded={this.state.accordionOpen[group.name] === 1 && group.hasValues}
             onChange={(_e, expanded) => {
                 const accordionOpen = { ...this.state.accordionOpen };
-                accordionOpen[group.name] = expanded;
-                this.setAccordionState(accordionOpen);
+                accordionOpen[group.name] = expanded ? 1 : 2;
+                this.setAccordionState(accordionOpen, () => {
+                    if (!expanded) {
+                        setTimeout(() => {
+                            const _accordionOpen = { ...this.state.accordionOpen };
+                            _accordionOpen[group.name] = 0;
+                        }, 200);
+                    }
+                });
             }}
             TransitionProps={{ timeout: this.state.transitionTime }}
         >
@@ -1506,8 +1486,8 @@ class Widget extends Component<WidgetProps, WidgetState> {
         if (this.props.triggerAllOpened !== this.state.triggerAllOpened) {
             this.triggerTimer = this.triggerTimer || setTimeout(() => {
                 this.triggerTimer = null;
-                const accordionOpen: { [groupName: string]: boolean }  = {};
-                this.state.fields?.forEach(group => accordionOpen[group.name] = true);
+                const accordionOpen: { [groupName: string]: 0 | 1 | 2 }  = {};
+                this.state.fields?.forEach(group => accordionOpen[group.name] = 1);
                 this.setState({ triggerAllOpened: this.props.triggerAllOpened }, () => this.setAccordionState(accordionOpen));
             }, 50);
         }
@@ -1515,8 +1495,8 @@ class Widget extends Component<WidgetProps, WidgetState> {
         if (this.props.triggerAllClosed !== this.state.triggerAllClosed) {
             this.triggerTimer = this.triggerTimer || setTimeout(() => {
                 this.triggerTimer = null;
-                const accordionOpen: { [groupName: string]: boolean }  = {};
-                this.state.fields?.forEach(group => accordionOpen[group.name] = false);
+                const accordionOpen: { [groupName: string]: 0 | 1 | 2 }  = {};
+                this.state.fields?.forEach(group => accordionOpen[group.name] = 0);
                 this.setState({ triggerAllClosed: this.props.triggerAllClosed }, () => this.setAccordionState(accordionOpen));
             }, 50);
         }
@@ -1576,4 +1556,4 @@ class Widget extends Component<WidgetProps, WidgetState> {
     }
 }
 
-export default withStyles(styles)(Widget);
+export default Widget;

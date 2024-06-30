@@ -17,6 +17,7 @@ import { FaFolder as FolderClosedIcon, FaFolderOpen as FolderOpenedIcon } from '
 
 import { Utils, I18n } from '@iobroker/adapter-react-v5';
 import type { VisTheme } from '@iobroker/types-vis-2';
+import commonStyles from '@/Utils/styles';
 import { store } from '../../Store';
 
 const styles: Record<string, any> = {
@@ -46,9 +47,6 @@ const styles: Record<string, any> = {
     rootCanDrop: {
         borderColor: 'rgba(200, 200, 200, 1)',
     },
-    tooltip: {
-        pointerEvents: 'none',
-    },
 };
 
 export interface FolderType {
@@ -76,8 +74,8 @@ interface FolderProps {
 const Folder: React.FC<FolderProps> = props => {
     const folderBlock = <Box component="div" sx={styles.viewManageBlock}>
         {props.foldersCollapsed.includes(props.folder.id)
-            ? <FolderClosedIcon fontSize={20} />
-            : <FolderOpenedIcon fontSize={20} />}
+            ? <FolderClosedIcon fontSize="small" />
+            : <FolderOpenedIcon fontSize="small" />}
         <span style={styles.folderName}>{props.folder.name}</span>
     </Box>;
 
@@ -155,7 +153,7 @@ const Folder: React.FC<FolderProps> = props => {
         >
             {props.foldersCollapsed.includes(props.folder.id)
                 ? <FolderClosedIcon
-                    fontSize={20}
+                    fontSize="small"
                     onClick={() => {
                         const foldersCollapsed = JSON.parse(JSON.stringify(props.foldersCollapsed));
                         foldersCollapsed.splice(foldersCollapsed.indexOf(props.folder.id), 1);
@@ -164,7 +162,7 @@ const Folder: React.FC<FolderProps> = props => {
                     }}
                 />
                 : <FolderOpenedIcon
-                    fontSize={20}
+                    fontSize="small"
                     onClick={() => {
                         const foldersCollapsed = JSON.parse(JSON.stringify(props.foldersCollapsed));
                         foldersCollapsed.push(props.folder.id);
@@ -175,7 +173,7 @@ const Folder: React.FC<FolderProps> = props => {
         </Box>
         <span style={styles.folderName}>{props.folder.name}</span>
         <Box component="span" sx={styles.viewManageButtonActions}>
-            {props.editMode ? <Tooltip title={I18n.t('Add view')} componentsProps={{ popper: { sx: styles.tooltip } }}>
+            {props.editMode ? <Tooltip title={I18n.t('Add view')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                 <IconButton
                     size="small"
                     onClick={() => {
@@ -185,7 +183,7 @@ const Folder: React.FC<FolderProps> = props => {
                     <AddIcon />
                 </IconButton>
             </Tooltip> : null}
-            {props.editMode ? <Tooltip title={I18n.t('Add sub-folder')} componentsProps={{ popper: { sx: styles.tooltip } }}>
+            {props.editMode ? <Tooltip title={I18n.t('Add sub-folder')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                 <IconButton
                     size="small"
                     onClick={() => {
@@ -197,7 +195,7 @@ const Folder: React.FC<FolderProps> = props => {
                     <CreateNewFolderClosedIcon />
                 </IconButton>
             </Tooltip> : null}
-            {props.editMode ? <Tooltip title={I18n.t('Rename')} componentsProps={{ popper: { sx: styles.tooltip } }}>
+            {props.editMode ? <Tooltip title={I18n.t('Rename')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                 <IconButton
                     size="small"
                     onClick={() => {
@@ -209,7 +207,7 @@ const Folder: React.FC<FolderProps> = props => {
                     <EditIcon />
                 </IconButton>
             </Tooltip> : null}
-            {props.editMode ? <Tooltip title={I18n.t('Delete')} componentsProps={{ popper: { sx: styles.tooltip } }}>
+            {props.editMode ? <Tooltip title={I18n.t('Delete')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                 <span>
                     <IconButton
                         size="small"

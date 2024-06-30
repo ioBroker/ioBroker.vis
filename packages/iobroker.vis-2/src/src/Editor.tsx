@@ -39,6 +39,7 @@ import type {
     ViewSettings, Widget, WidgetData, WidgetSetName, WidgetStyle,
     VisTheme,
 } from '@iobroker/types-vis-2';
+import commonStyles from '@/Utils/styles';
 import { recalculateFields, store, updateProject } from './Store';
 import {
     isGroup, getNewWidgetId, getNewGroupId, pasteGroup, unsyncMultipleWidgets, deepClone, pasteSingleWidget,
@@ -150,16 +151,13 @@ const styles: Record<string, any> = {
         width: 320,
         zIndex: 2000,
         top: 50,
-        borderRadius: 10,
+        borderRadius: '10px',
         left: 'calc(50% - 160px)',
-        padding: 8,
+        padding: '8px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
     }),
-    tooltip: {
-        pointerEvents: 'none',
-    },
 };
 
 interface ViewDropProps {
@@ -1522,7 +1520,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         const views = visProject.___settings.openedViews.filter(view => Object.keys(visProject).includes(view));
 
         return <div style={styles.tabsContainer}>
-            {this.state.hidePalette ? <Tooltip title={I18n.t('Show palette')} componentsProps={{ popper: { sx: styles.tooltip } }}>
+            {this.state.hidePalette ? <Tooltip title={I18n.t('Show palette')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                 <div style={styles.tabButton}>
                     <IconButton
                         size="small"
@@ -1535,7 +1533,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
                     </IconButton>
                 </div>
             </Tooltip> : null}
-            {!this.state.showCode ? <Tooltip title={I18n.t('Toggle runtime')} componentsProps={{ popper: { sx: styles.tooltip } }}>
+            {!this.state.showCode ? <Tooltip title={I18n.t('Toggle runtime')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                 <div style={styles.tabButton}>
                     <IconButton
                         onClick={() => this.setState({ editMode: !this.state.editMode })}
@@ -1547,7 +1545,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
                     </IconButton>
                 </div>
             </Tooltip> : null}
-            <Tooltip title={I18n.t('Show view')} componentsProps={{ popper: { sx: styles.tooltip } }}>
+            <Tooltip title={I18n.t('Show view')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                 <div style={styles.tabButton}>
                     <IconButton onClick={() => this.setViewsManager(true)} size="small" disabled={!!this.state.selectedGroup}>
                         <Layers style={views.length ? undefined : styles.iconBlink} />
@@ -1579,7 +1577,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
                             >
                                 {icon ? <Icon src={icon} style={styles.listItemIcon} /> : null}
                                 {isGroupEdited ? `${I18n.t('Group %s', this.state.selectedGroup)}` : (viewSettings.navigationTitle || view)}
-                                <Tooltip title={isGroupEdited ? I18n.t('Close group editor') : I18n.t('Hide')} componentsProps={{ popper: { sx: styles.tooltip } }}>
+                                <Tooltip title={isGroupEdited ? I18n.t('Close group editor') : I18n.t('Hide')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                                     <span>
                                         <IconButton
                                             size="small"
@@ -1612,12 +1610,15 @@ class Editor extends Runtime<EditorProps, EditorState> {
                 size="small"
                 style={{
                     ...styles.tabButton,
-                    cursor: 'default', opacity: this.state.showCode ? 1 : 0, width: 34, height: 34,
+                    cursor: 'default',
+                    opacity: this.state.showCode ? 1 : 0,
+                    width: 34,
+                    height: 34,
                 }}
             >
                 {this.state.showCode ? <CodeOffIcon /> : <CodeIcon />}
             </IconButton>
-            {views.length > 1 ? <Tooltip title={I18n.t('Close all but current view')} componentsProps={{ popper: { sx: styles.tooltip } }}>
+            {views.length > 1 ? <Tooltip title={I18n.t('Close all but current view')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                 <div style={styles.tabButton}>
                     <IconButton
                         size="small"
@@ -1631,7 +1632,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
                     </IconButton>
                 </div>
             </Tooltip> : null}
-            {this.state.hideAttributes ? <Tooltip title={I18n.t('Show attributes')} componentsProps={{ popper: { sx: styles.tooltip } }}>
+            {this.state.hideAttributes ? <Tooltip title={I18n.t('Show attributes')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                 <div style={styles.tabButton}>
                     <IconButton
                         size="small"
@@ -1658,6 +1659,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         >
             {this.state.widgetsLoaded !== Runtime.WIDGETS_LOADING_STEP_ALL_LOADED ? <LinearProgress variant="indeterminate" value={(this.state.loadingProgress.step / this.state.loadingProgress.total) * 100} /> : null}
             <Palette
+                theme={this.state.theme}
                 widgetsLoaded={this.state.widgetsLoaded === Runtime.WIDGETS_LOADING_STEP_ALL_LOADED}
                 onHide={() => {
                     window.localStorage.setItem('Vis.hidePalette', 'true');
@@ -1739,6 +1741,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
             }}
         >
             <Attributes
+                theme={this.state.theme}
                 selectedView={this.state.selectedView}
                 userGroups={this.state.userGroups}
                 changeProject={this.changeProject}

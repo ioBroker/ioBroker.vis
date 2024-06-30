@@ -14,7 +14,6 @@
  */
 
 import React from 'react';
-import { withStyles } from '@mui/styles';
 
 import { TimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -36,7 +35,7 @@ import type { GetRxDataFromWidget, RxRenderWidgetProps } from '@iobroker/types-v
 import type { TextFieldVariants } from '@mui/material';
 import VisRxWidget from '../../visRxWidget';
 
-const styles = {
+const styles: { textRoot: { [key: string]: React.CSSProperties } } = {
     textRoot: {
         '& .MuiInputBase-root': {
             width: '100%',
@@ -166,8 +165,9 @@ class JQuiInputDateTime extends VisRxWidget<RxData> {
                                 width: '100%',
                                 height: '100%',
                             },
-                            classes: {
-                                root: this.props.classes.textRoot,
+                            sx: {
+                                // TODO
+                                '& .Mui-root': styles.textRoot,
                             },
                         },
                         field: { clearable: this.state.rxData.clearable, onClear: () => this.props.context.setValue(this.state.rxData.oid, '') },
@@ -178,4 +178,4 @@ class JQuiInputDateTime extends VisRxWidget<RxData> {
     }
 }
 
-export default withStyles(styles)(JQuiInputDateTime);
+export default JQuiInputDateTime;

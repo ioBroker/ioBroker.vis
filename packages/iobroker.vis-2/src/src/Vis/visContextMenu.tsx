@@ -17,7 +17,7 @@ import {
     AiOutlineGroup, AiOutlineUngroup,
 } from 'react-icons/ai';
 
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n, type ThemeType } from '@iobroker/adapter-react-v5';
 
 import { store } from '@/Store';
 import type {
@@ -52,7 +52,7 @@ interface VisContextMenuProps {
     setSelectedWidgets: (widgets: AnyWidgetId[]) => void;
     ungroupWidgets: () => void;
     widgetsClipboard: Record<string, any>;
-    themeType: 'dark' | 'light';
+    themeType: ThemeType;
     setMarketplaceDialog: EditorClass['setMarketplaceDialog'];
 }
 

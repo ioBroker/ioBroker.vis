@@ -7,11 +7,12 @@ import { Clear as ClearIcon } from '@mui/icons-material';
 
 import {
     Icon,
-    Utils,
     type ThemeType,
 } from '@iobroker/adapter-react-v5';
 
 import MaterialIconSelector from '@/Components/MaterialIconSelector';
+import type { VisTheme } from '@iobroker/types-vis-2';
+import commonStyles from '@/Utils/styles';
 
 interface EditFieldIcon64Props {
     value: string;
@@ -19,8 +20,8 @@ interface EditFieldIcon64Props {
     disabled?: boolean;
     error?: boolean;
     editMode: boolean;
-    classes: Record<string, string>;
     themeType: ThemeType;
+    theme: VisTheme;
 }
 
 export default function EditFieldIcon64(props: EditFieldIcon64Props) {
@@ -43,9 +44,7 @@ export default function EditFieldIcon64(props: EditFieldIcon64Props) {
                 >
                     <ClearIcon />
                 </IconButton> : null,
-                classes: {
-                    input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
-                },
+                sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
             }}
         />
         <Button
@@ -59,6 +58,7 @@ export default function EditFieldIcon64(props: EditFieldIcon64Props) {
         {showDialog &&
             <MaterialIconSelector
                 themeType={props.themeType}
+                theme={props.theme}
                 value={props.value}
                 onClose={(icon: string | null) => {
                     setShowDialog(false);
