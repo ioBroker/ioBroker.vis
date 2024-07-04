@@ -829,6 +829,7 @@ export const parseAttributes = (
                     ...deepClone(group),
                     index: i,
                     name: `${group.singleName}-${i}`,
+                    hidden: group.hidden,
                     iterable: {
                         group: group.singleName || '',
                         isFirst: i === from,

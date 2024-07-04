@@ -871,7 +871,6 @@ const WidgetField = (props: WidgetFieldProps) => {
 
     if (field.type === 'color') {
         return <ColorPicker
-            // @ts-expect-error fixed in adapter-react
             theme={props.theme}
             disabled={disabled}
             value={value as string || ''}

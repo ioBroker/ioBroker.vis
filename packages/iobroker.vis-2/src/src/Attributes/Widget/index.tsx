@@ -752,6 +752,9 @@ class Widget extends Component<WidgetProps, WidgetState> {
             const customGroups: PaletteGroup[] = fields.map(group => ({
                 fields: group.fields,
                 name: group.name,
+                hidden: group.hidden,
+                label: group.label,
+                index: group.index,
             }));
 
             newState.fields = [
