@@ -876,6 +876,8 @@ export interface VisLegacy {
     getUserGroups: () => Record<string, ioBroker.GroupObject>;
     detectBounce: (el: any, isUp?: boolean) => boolean;
     isFloatComma?: boolean;
+    subscribe: (IDs: string[], cb: () => void) => void;
+    unsubscribe: (IDs: string[], cb: () => void) => void;
 }
 
 export interface MaterialIconSelectorProps {

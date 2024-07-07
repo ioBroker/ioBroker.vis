@@ -1339,7 +1339,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                     .then(() => cb && cb())
                     .catch(error => cb && cb(error));
             },
-            sendTo: (instance, command, data, cb) => {
+            sendTo: (instance: string, command: string, data: any, cb?: (result: Record<string, any>) => void) => {
                 this.props.socket.sendTo(instance, command, data)
                     .then(result => cb && cb(result))
                     .catch(error => cb && cb(error));
