@@ -667,6 +667,8 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                 return false;
             },
             setValue: this.setValue,
+            subscribe: this.subscribe,
+            unsubscribe: this.unsubscribe,
             // eslint-disable-next-line no-shadow
             changeView: (viewDiv, view, hideOptions, showOptions, sync: boolean | ((viewDiv: string, view: string) => void), cb) => {
                 if (typeof view === 'object') {
@@ -1335,6 +1337,11 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                 }
                 this.props.socket.setState(id, val)
                     .then(() => cb && cb())
+                    .catch(error => cb && cb(error));
+            },
+            sendTo: (instance, command, data, cb) => {
+                this.props.socket.sendTo(instance, command, data)
+                    .then(result => cb && cb(result))
                     .catch(error => cb && cb(error));
             },
             setReloadTimeout: () => {
