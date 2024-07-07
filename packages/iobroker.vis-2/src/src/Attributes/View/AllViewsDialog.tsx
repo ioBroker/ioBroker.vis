@@ -18,7 +18,7 @@ import { getViewsWithDifferentValues } from '@/Attributes/View/ApplyProperties';
 import getEditField from '@/Attributes/View/EditField';
 import type { Field } from '@/Attributes/View/Items';
 import { deepClone } from '@/Utils/utils';
-import commonStyles from "@/Utils/styles";
+import commonStyles from '@/Utils/styles';
 
 const styles: { draggableItem: React.CSSProperties } = {
     draggableItem: {

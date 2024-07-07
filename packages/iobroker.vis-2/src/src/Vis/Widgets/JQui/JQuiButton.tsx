@@ -626,7 +626,7 @@ class JQuiButton<P extends JQuiButtonDataProps = JQuiButtonDataProps, S extends 
                 window.location.href = this.state.rxData.href;
             }
         } else if (this.state.rxData.url) {
-            this.props.socket.getRawSocket().emit('httpGet', this.state.rxData.url, (data: any) =>
+            this.props.context.socket.getRawSocket().emit('httpGet', this.state.rxData.url, (data: any) =>
                 console.log('httpGet', this.state.rxData.url, data));
         }
 

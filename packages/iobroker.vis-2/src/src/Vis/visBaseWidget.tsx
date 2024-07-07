@@ -23,7 +23,6 @@ import {
     KeyboardReturn,
 } from '@mui/icons-material';
 
-import type { LegacyConnection } from '@iobroker/adapter-react-v5';
 import { I18n, Utils } from '@iobroker/adapter-react-v5';
 
 import { calculateOverflow, deepClone, isVarFinite } from '@/Utils/utils';
@@ -76,10 +75,6 @@ export interface VisBaseWidgetProps {
     refParent: React.RefObject<HTMLElement>;
     // eslint-disable-next-line react/no-unused-prop-types
     customSettings: Record<string, any>;
-    // eslint-disable-next-line react/no-unused-prop-types
-    classes: Record<string, string>;
-    // eslint-disable-next-line react/no-unused-prop-types
-    socket: LegacyConnection;
 }
 
 interface HTMLDivElementResizers extends HTMLDivElement {
