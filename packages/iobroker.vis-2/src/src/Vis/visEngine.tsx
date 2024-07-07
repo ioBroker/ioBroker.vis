@@ -99,26 +99,22 @@ function _translateWord(text: string, lang?: string, dictionary?: Record<string,
 function translate(text: string, arg1?: any, arg2?: any, arg3?: any): string {
     text = _translateWord(text);
 
-    let pos = text.includes('%s');
-    if (pos) {
-        text = text.replace('%s', arg1);
-    } else {
+    if (!text.includes('%s')) {
         return text;
     }
 
-    pos = text.includes('%s');
-    if (pos) {
-        text = text.replace('%s', arg2);
-    } else {
+    text = text.replace('%s', arg1);
+
+    if (!text.includes('%s')) {
+        return text;
+    }
+    text = text.replace('%s', arg2);
+
+    if (!text.includes('%s')) {
         return text;
     }
 
-    pos = text.includes('%s');
-    if (pos) {
-        text = text.replace('%s', arg3);
-    }
-
-    return text;
+    return text.replace('%s', arg3);
 }
 
 interface VisEngineProps {

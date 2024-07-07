@@ -18,7 +18,6 @@ import type React from 'react';
 import { I18n } from '@iobroker/adapter-react-v5';
 
 import type {
-    GetRxDataFromWidget,
     RxRenderWidgetProps,
     RxWidgetInfo,
     WidgetData,
@@ -37,8 +36,9 @@ import VisView from '@/Vis/visView';
 import type { VisRxWidgetState } from '../../visRxWidget';
 import VisRxWidget from '../../visRxWidget';
 
-// eslint-disable-next-line no-use-before-define
-type RxData = GetRxDataFromWidget<typeof BasicGroup>;
+type RxData = {
+    [key: string]: string | boolean | number;
+}
 
 interface BasicGroupState extends VisRxWidgetState {
     mounted: boolean;
