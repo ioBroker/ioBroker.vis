@@ -150,9 +150,9 @@ export default class BasicBulb extends VisRxWidget<RxData> {
 
             if (urlTrue) {
                 if (val) {
-                    this.props.socket.getRawSocket().emit('httpGet', urlTrue);
+                    this.props.context.socket.getRawSocket().emit('httpGet', urlTrue);
                 } else {
-                    this.props.socket.getRawSocket().emit('httpGet', urlFalse);
+                    this.props.context.socket.getRawSocket().emit('httpGet', urlFalse);
                 }
             }
         } else if ((finalMin === '' && (val === null || val === '' || val === undefined || val === false || val === 'false')) ||

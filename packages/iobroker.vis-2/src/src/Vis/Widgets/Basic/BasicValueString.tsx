@@ -94,6 +94,7 @@ class BasicValueString extends VisRxWidget<RxData> {
             display: 'flex',
             alignItems: 'center',
         } : {};
+
         return <div className="vis-widget-body">
             <div data-oid={oid} style={style}>
                 {this.state.rxData.icon ? <Icon

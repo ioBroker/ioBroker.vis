@@ -294,6 +294,10 @@ npm run start
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### 2.10.0 (2024-07-07)
+* (bluefox) Removed incompatible package for styles
+* (bluefox) All widgets must be updated
+
 ### 2.9.64 (2024-05-23)
 * (bluefox) Added possibility to clear a text field by button
 
