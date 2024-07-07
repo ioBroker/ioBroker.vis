@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.9.64",
+    "version": "2.10.0",
     "news": {
+      "2.10.0": {
+        "en": "Removed incompatible package for styles\nAll widgets must be updated",
+        "de": "Unverträgliches Paket für Styles entfernt\nAlle Widgets müssen aktualisiert werden",
+        "ru": "Удаленный несовместимый пакет для стилей\nВсе виджеты должны быть обновлены",
+        "pt": "Pacote incompatível removido para estilos\nTodos os widgets devem ser atualizados",
+        "nl": "Incompatibel pakket voor stijlen verwijderd\nAlle widgets moeten bijgewerkt worden",
+        "fr": "Enlever le paquet incompatible pour les styles\nTous les widgets doivent être actualisés",
+        "it": "Pacchetto incompatibile rimosso per stili\nTutti i widget devono essere aggiornati",
+        "es": "Paquete incompatible eliminado para estilos\nTodos los widgets deben ser actualizados",
+        "pl": "Usunięty niekompatybilny pakiet stylów\nWszystkie widżety muszą być aktualizowane",
+        "uk": "Видалено несумісний пакет для стилів\nВсі віджети повинні бути оновлені",
+        "zh-cn": "删除样式不兼容的软件包\n所有部件都必须更新"
+      },
       "2.9.64": {
         "en": "Added possibility to clear a text field by button",
         "de": "Möglichkeit hinzugefügt, ein Textfeld per Knopf zu löschen",

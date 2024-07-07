@@ -263,7 +263,7 @@ E.g., if it was used in a menu and the menu is red, the circle would be red.
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.10.0 (2024-07-07)
 * (bluefox) Removed incompatible package for styles
 * (bluefox) All widgets must be updated
 
