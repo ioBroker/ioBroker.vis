@@ -186,11 +186,11 @@ const Toolbar = (props: ToolbarProps): React.JSX.Element => {
             window.open(runtimeURL, 'vis-2.runtime');
         }}
         >
-            <PlayArrowIcon style={{ marginRight: 8, color: props.themeType === 'dark' ? '#ffa947' : '#884900' }} />
+            <PlayArrowIcon style={{ marginRight: 8, color: props.themeType === 'dark' ? '#50ff50' : '#008800' }} />
             {I18n.t('Open runtime in new window')}
         </DropMenuItem>
         <DropMenuItem onClick={onReload}>
-            <SyncIcon style={{ marginRight: 8, color: props.themeType === 'dark' ? '#50ff50' : '#008800' }} />
+            <SyncIcon style={{ marginRight: 8, color: props.themeType === 'dark' ? '#ffa947' : '#884900' }} />
             {I18n.t('Reload all runtimes')}
         </DropMenuItem>
     </DropMenu>;
@@ -263,13 +263,13 @@ const Toolbar = (props: ToolbarProps): React.JSX.Element => {
     } else if (lastCommand === 'open') {
         lastCommandButton = <Tooltip title={I18n.t('Open runtime in new window')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
             <IconButton size="small" onClick={() => window.open(runtimeURL, 'vis-2.runtime')}>
-                <PlayArrowIcon style={{ color: props.themeType === 'dark' ? '#ffa947' : '#884900' }} />
+                <PlayArrowIcon style={{ color: props.themeType === 'dark' ? '#50ff50' : '#008800' }} />
             </IconButton>
         </Tooltip>;
     } else if (lastCommand === 'reload') {
         lastCommandButton = <Tooltip title={I18n.t('Reload all runtimes')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
             <IconButton size="small" onClick={onReload}>
-                <SyncIcon style={{ color: props.themeType === 'dark' ? '#50ff50' : '#008800' }} />
+                <SyncIcon style={{ color: props.themeType === 'dark' ? '#ffa947' : '#884900' }} />
             </IconButton>
         </Tooltip>;
     }

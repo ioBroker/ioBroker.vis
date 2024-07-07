@@ -1452,7 +1452,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
             view={this.props.view}
             editMode={this.props.editMode}
             menuWidth={this.state.menuWidth}
-            theme={this.props.theme}
+            theme={this.props.context.theme}
             setMenuWidth={(menuWidth: string) => {
                 window.localStorage.setItem('vis.menuWidth', menuWidth);
                 this.setState({ menuWidth });

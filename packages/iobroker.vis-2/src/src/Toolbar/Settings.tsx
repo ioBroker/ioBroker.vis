@@ -299,6 +299,38 @@ const Settings: React.FC<SettingsProps> = props => {
 
                 return <div key={key} style={styles.field}>{result}</div>;
             })}
+            <Button
+                style={{
+                    marginTop: 10,
+                    opacity: window.localStorage.getItem('developerMode') === 'true' ? 1 : 0,
+                }}
+                variant="contained"
+                onClick={async () => {
+                    if (window.localStorage.getItem('developerMode') === 'true') {
+                        window.localStorage.removeItem('developerMode');
+                        // disable all development URL
+                        const objects = await props.socket.getObjectViewSystem(
+                            'instance',
+                            'system.adapter.',
+                            'system.adapter.\u9999',
+                        );
+                        const instances = Object.values(objects);
+                        for (let i = 0; i < instances.length; i++) {
+                            if (instances[i].common?.visWidgets) {
+                                if (Object.keys(instances[i].common.visWidgets).find(key => instances[i].common.visWidgets[key].url?.startsWith('http'))) {
+                                    Object.keys(instances[i].common.visWidgets).forEach(key => instances[i].common.visWidgets[key].url = `${instances[i].common.name}/customWidgets.js`);
+                                    await props.socket.setObject(instances[i]._id, instances[i]);
+                                }
+                            }
+                        }
+                    } else {
+                        window.localStorage.setItem('developerMode', 'true');
+                    }
+                    window.location.reload();
+                }}
+            >
+                Development mode
+            </Button>
         </div>
     </IODialog>;
 };

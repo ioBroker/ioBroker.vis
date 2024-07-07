@@ -29,15 +29,16 @@ interface VisRxWidgetWithInfo<
     url: string;
     i18nPrefix?: string;
 }
+interface WidgetSetStruct {
+    __initialized: boolean;
+    get: (module: string) => Promise<() => { default: VisRxWidgetWithInfo<any> }>;
+    init?: (shareScope: string) => Promise<void>;
+}
 
 declare global {
     interface Window {
         [promiseName: PromiseName]: Promise<any>;
-        [widgetSetName: WidgetSetName]: {
-            __initialized: boolean;
-            get: (module: string) => Promise<() => { default: VisRxWidgetWithInfo<any> }>;
-            init?: (shareScope: string) => Promise<void>;
-        };
+        [widgetSetName: WidgetSetName]: WidgetSetStruct;
     }
 }
 
@@ -53,9 +54,10 @@ const getOrLoadRemote = (
         const existingRemote = document.querySelector(`[data-webpack="${remote}"]`);
         // when remote is loaded...
         const onload = async () => {
+            const gRemote: WidgetSetStruct = window[remote as any] as any as WidgetSetStruct;
+
             // check if it was initialized
-            // @ts-expect-error todo fix
-            if (!window[remote]) {
+            if (!gRemote) {
                 if (remoteFallbackUrl && (remoteFallbackUrl.startsWith('http://') || remoteFallbackUrl.startsWith('https://'))) {
                     console.error(`Cannot load remote from url "${remoteFallbackUrl}"`);
                 } else {
@@ -64,22 +66,20 @@ const getOrLoadRemote = (
                 resolve(null);
                 return;
             }
-            // @ts-expect-error todo fix
-            if (!window[remote].__initialized) {
+
+            if (!gRemote.__initialized) {
                 // if share scope doesn't exist (like in webpack 4) then expect shareScope to be a manual object
                 // @ts-expect-error this is a trick
                 // eslint-disable-next-line camelcase
-                if (typeof __webpack_share_scopes__ === 'undefined' && window[remote].init) {
+                if (typeof __webpack_share_scopes__ === 'undefined' && gRemote.init) {
                     // use the default share scope object, passed in manually
-                    // @ts-expect-error todo fix
-                    await window[remote].init(shareScope);
-                    // @ts-expect-error todo fix
-                } else if (window[remote].init) {
+                    await gRemote.init(shareScope);
+                } else if (gRemote.init) {
                     // otherwise, init share scope as usual
                     try {
                         // @ts-expect-error this is a trick
                         // eslint-disable-next-line camelcase, no-undef
-                        await window[remote].init(__webpack_share_scopes__[shareScope]);
+                        await gRemote.init(__webpack_share_scopes__[shareScope]);
                     } catch (e) {
                         console.error(`Cannot init remote "${remote}" with "${shareScope}"`);
                         console.error(e);
@@ -92,12 +92,12 @@ const getOrLoadRemote = (
                     return;
                 }
                 // mark remote as initialized
-                // @ts-expect-error todo fix
-                window[remote].__initialized = true;
+                gRemote.__initialized = true;
             }
             // resolve promise so marking remote as loaded
             resolve(null);
         };
+
         if (existingRemote) {
             console.warn(`SOMEONE IS LOADING THE REMOTE ${remote}`);
             // if existing remote but not loaded, hook into its onload and wait for it to be ready
@@ -141,8 +141,9 @@ export const loadComponent = (
     url: string,
 ): () => Promise<{ default: VisRxWidgetWithInfo<any> } | null> => async (): Promise<{ default: VisRxWidgetWithInfo<any> } | null> => {
     await getOrLoadRemote(remote, sharedScope, url);
-    if (window[remote]) {
-        const factory: () => { default: VisRxWidgetWithInfo<any> } | null = (await window[remote].get(module)) as () => { default: VisRxWidgetWithInfo<any> } | null;
+    const gRemote: WidgetSetStruct = window[remote];
+    if (gRemote) {
+        const factory: () => { default: VisRxWidgetWithInfo<any> } | null = (await gRemote.get(module)) as () => { default: VisRxWidgetWithInfo<any> } | null;
         return factory ? factory() : null;
     }
     return null;
@@ -295,8 +296,7 @@ function getRemoteWidgets(
                                         promises.push(i18nPromiseWait);
                                     } else if (collection.url && collection.i18n === 'component') {
                                         // instance.common.visWidgets.i18n is deprecated
-                                        // @ts-expect-error todo fix
-                                        i18nPromiseWait = loadComponent(collection.name, 'default', './translations', collection.url)()
+                                        i18nPromiseWait = loadComponent(collection.name as WidgetSetName, 'default', './translations', collection.url)()
                                             .then((translations: any) => {
                                                 countRef.count++;
 

@@ -35,29 +35,35 @@ import {
     DialogActions,
     LinearProgress,
 } from '@mui/material';
+import {
+    Close as CloseIcon,
+    Check as CheckIcon,
+    Warning as AlertIcon,
+} from '@mui/icons-material';
 
-import type {
-    LegacyConnection, ThemeName, ThemeType,
+import {
+    I18n,
+    type LegacyConnection,
+    type ThemeName,
+    type ThemeType,
 } from '@iobroker/adapter-react-v5';
-import { I18n } from '@iobroker/adapter-react-v5';
-import CloseIcon from '@mui/icons-material/Close';
-import CheckIcon from '@mui/icons-material/Check';
-import AlertIcon from '@mui/icons-material/Warning';
 
 import './css/vis.css';
 import './css/backgrounds.css';
 // import './lib/can.custom.js';
 // import $$ from './lib/quo.standalone'; // Gestures library
-import './visWords';
 
 import { store } from '@/Store';
 import type {
-    AnyWidgetId, ArgumentChanged, CanWidgetStore, GroupWidgetId, ViewCommand, ViewCommandOptions, VisChangeHandlerCallback, VisContext, VisLegacy, VisLinkContext, VisLinkContextBinding, VisLinkContextItem, VisTheme,
+    AnyWidgetId, ArgumentChanged, CanWidgetStore, GroupWidgetId, ViewCommand,
+    ViewCommandOptions, VisChangeHandlerCallback, VisContext,
+    VisLegacy, VisLinkContext, VisLinkContextBinding, VisLinkContextItem, VisTheme,
     VisFormatUtils as VisFormatUtilsType,
 } from '@iobroker/types-vis-2';
 import type { EditorClass } from '@/Editor';
 import { deepClone } from '@/Utils/utils';
 import type JQuery from 'jquery';
+import './visWords';
 import VisView from './visView';
 import VisFormatUtils from './visFormatUtils';
 import { getUrlParameter, extractBinding, readFile } from './visUtils';

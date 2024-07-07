@@ -515,7 +515,7 @@ export const getWidgetTypes: (_usedWidgetSets?: string[]) => WidgetType[] = (use
     return (window as any).visWidgetTypes;
 };
 
-const deepClone = (obj: any[] | Record<string, any>) => {
+const deepCloneRx = (obj: any[] | Record<string, any>) => {
     if (Array.isArray(obj)) {
         const newObj: any[] = [];
         for (const key in obj as any[]) {
@@ -525,7 +525,7 @@ const deepClone = (obj: any[] | Record<string, any>) => {
                     if (Object.prototype.hasOwnProperty.call(obj, '$$typeof')) {
                         newObj[key] = obj[key];
                     } else {
-                        newObj[key] = deepClone(obj[key]);
+                        newObj[key] = deepCloneRx(obj[key]);
                     }
                 } else {
                     newObj[key] = obj[key];
@@ -543,7 +543,7 @@ const deepClone = (obj: any[] | Record<string, any>) => {
                 if (Object.prototype.hasOwnProperty.call(obj, '$$typeof')) {
                     newObj[key] = obj[key];
                 } else {
-                    newObj[key] = deepClone(obj[key]);
+                    newObj[key] = deepCloneRx(obj[key]);
                 }
             } else {
                 newObj[key] = obj[key];
@@ -797,7 +797,7 @@ export const parseAttributes = (
     if (Array.isArray(widgetParams)) {
         commonGroups = commonGroups || { common: 1 };
         commonFields = commonFields || {};
-        const fields = deepClone(widgetParams) as WidgetAttributesGroupInfoStored[];
+        const fields = deepCloneRx(widgetParams) as WidgetAttributesGroupInfoStored[];
         let groupIndex = fields.findIndex(group => typeof group.indexFrom === 'number');
 
         // if enumerable
@@ -826,7 +826,7 @@ export const parseAttributes = (
 
             for (let i = from; i <= to; i++) {
                 const indexedGroup: WidgetAttributesGroupInfoStored = {
-                    ...deepClone(group),
+                    ...deepCloneRx(group),
                     index: i,
                     name: `${group.singleName}-${i}`,
                     hidden: group.hidden,
@@ -906,7 +906,7 @@ export const parseAttributes = (
                     delete field.indexTo;
                     const indexedFields = [];
                     for (let i = from; i <= to; i++) {
-                        const indexedField = deepClone(field) as WidgetAttributeInfoStored;
+                        const indexedField = deepCloneRx(field) as WidgetAttributeInfoStored;
                         indexedField.index = i;
                         indexedField.name = `${field.singleName}${i}`;
                         indexedField.iterable = {
