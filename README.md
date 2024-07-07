@@ -257,13 +257,16 @@ Here's a simple example with a circle in an SVG:
 In this case, if the SVG takes the color of parent element.
 E.g., if it was used in a menu and the menu is red, the circle would be red.
 
-
 ## Todo
 <!--
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Removed incompatible package for styles
+* (bluefox) All widgets must be updated
+
 ### 2.9.64 (2024-05-23)
 * (bluefox) Added possibility to clear a text field by button
 
