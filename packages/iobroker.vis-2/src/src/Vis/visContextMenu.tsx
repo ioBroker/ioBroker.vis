@@ -28,7 +28,7 @@ import type {
     View, Widget,
 } from '@iobroker/types-vis-2';
 
-import type { EditorClass } from '@/Editor';
+import type Editor from '@/Editor';
 import IOContextMenu from '../Components/IOContextMenu';
 import WidgetExportDialog from '../Toolbar/WidgetExportDialog';
 import WidgetImportDialog from '../Toolbar/WidgetImportDialog';
@@ -53,7 +53,7 @@ interface VisContextMenuProps {
     ungroupWidgets: () => void;
     widgetsClipboard: Record<string, any>;
     themeType: ThemeType;
-    setMarketplaceDialog: EditorClass['setMarketplaceDialog'];
+    setMarketplaceDialog: Editor['setMarketplaceDialog'];
 }
 
 export interface VisMarketplaceProps {

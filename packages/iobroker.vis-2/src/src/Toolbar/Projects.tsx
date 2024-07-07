@@ -16,7 +16,7 @@ import {
 } from '@iobroker/adapter-react-v5';
 
 import type { VisTheme } from '@iobroker/types-vis-2';
-import type { EditorClass } from '@/Editor';
+import type Editor from '@/Editor';
 import type { ToolbarItem } from './ToolbarItems';
 import ToolbarItems from './ToolbarItems';
 import Settings from './Settings';
@@ -24,19 +24,19 @@ import ProjectsManager from './ProjectsManager';
 
 interface ToolsProps {
     adapterName: string;
-    addProject: EditorClass['addProject'];
-    changeProject: EditorClass['changeProject'];
-    deleteProject: EditorClass['deleteProject'];
+    addProject: Editor['addProject'];
+    changeProject: Editor['changeProject'];
+    deleteProject: Editor['deleteProject'];
     instance: number;
-    loadProject: EditorClass['loadProject'];
+    loadProject: Editor['loadProject'];
     projectName: string;
     projects: string[];
     projectsDialog: boolean;
-    refreshProjects: EditorClass['refreshProjects'];
-    renameProject: EditorClass['renameProject'];
+    refreshProjects: Editor['refreshProjects'];
+    renameProject: Editor['renameProject'];
     selectedView: string;
-    setProjectsDialog: EditorClass['setProjectsDialog'];
-    setSelectedWidgets: EditorClass['setSelectedWidgets'];
+    setProjectsDialog: Editor['setProjectsDialog'];
+    setSelectedWidgets: Editor['setSelectedWidgets'];
     socket: LegacyConnection;
     theme: VisTheme;
     themeType: ThemeType;

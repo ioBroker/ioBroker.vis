@@ -14,7 +14,7 @@ import {
 import type { ThemeName, ThemeType } from '@iobroker/adapter-react-v5';
 import { I18n } from '@iobroker/adapter-react-v5';
 
-import type { EditorClass } from '@/Editor';
+import type Editor from '@/Editor';
 import type { VisTheme } from '@iobroker/types-vis-2';
 import commonStyles from '@/Utils/styles';
 import ViewsManager from './ViewsManager';
@@ -40,19 +40,19 @@ const styles: Record<string, React.CSSProperties> = {
 interface ViewsProps {
     projectName: string;
     selectedView: string;
-    setViewsManager: EditorClass['setViewsManager'];
+    setViewsManager: Editor['setViewsManager'];
     viewsManager: boolean;
     selectedGroup: string;
     editMode: boolean;
-    setProjectsDialog: EditorClass['setProjectsDialog'];
-    changeProject: EditorClass['changeProject'];
+    setProjectsDialog: Editor['setProjectsDialog'];
+    changeProject: Editor['changeProject'];
     theme: VisTheme;
-    changeView: EditorClass['changeView'];
-    setSelectedWidgets: EditorClass['setSelectedWidgets'];
+    changeView: Editor['changeView'];
+    setSelectedWidgets: Editor['setSelectedWidgets'];
     themeType: ThemeType;
     toolbarHeight: 'full' | 'narrow' | 'veryNarrow';
     themeName: ThemeName;
-    toggleView: EditorClass['toggleView'];
+    toggleView: Editor['toggleView'];
 }
 
 const Views = (props: ViewsProps) => {

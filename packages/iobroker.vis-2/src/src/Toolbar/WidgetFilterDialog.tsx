@@ -20,12 +20,12 @@ import {
 } from '@mui/icons-material';
 
 import { I18n } from '@iobroker/adapter-react-v5';
-import type { EditorClass } from '@/Editor';
+import type Editor from '@/Editor';
 import type { AnyWidgetId } from '@iobroker/types-vis-2';
 import { store } from '../Store';
 
 interface WidgetFilterDialogProps {
-    changeProject: EditorClass['changeProject'];
+    changeProject: Editor['changeProject'];
     onClose: () => void;
     selectedView: string;
 }

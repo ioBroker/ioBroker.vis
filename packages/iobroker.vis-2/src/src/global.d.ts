@@ -4,9 +4,12 @@ import type VisRxWidget from '@/Vis/visRxWidget';
 declare global {
     interface Window {
         webkitSpeechRecognition?: SpeechRecognition;
+        adapterName: string;
         /** The vis-2 adapter instance */
         visAdapterInstance?: number;
-        visRxWidget?: VisRxWidget;
+        visRxWidget?: typeof VisRxWidget;
         visConfigLoaded?: Promise<void>;
+        sentryDSN?: string;
+        disableDataReporting?: boolean;
     }
 }

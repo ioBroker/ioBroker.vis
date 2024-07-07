@@ -18,7 +18,7 @@ import { Save as SaveIcon } from '@mui/icons-material';
 import type { LegacyConnection } from '@iobroker/adapter-react-v5';
 import { I18n } from '@iobroker/adapter-react-v5';
 
-import type { EditorClass } from '@/Editor';
+import type Editor from '@/Editor';
 import { store } from '@/Store';
 import { deepClone } from '@/Utils/utils';
 import type { ProjectSettings } from '@iobroker/types-vis-2';
@@ -67,7 +67,7 @@ interface SettingsFieldNumber extends SettingsFieldBase {
 type SettingsField = SettingsFieldSelect | SettingsFieldRaw | SettingsFieldCheckbox | SettingsFieldSwitchMode | SettingsFieldNumber;
 
 interface SettingsProps {
-    changeProject: EditorClass['changeProject'];
+    changeProject: Editor['changeProject'];
     onClose: () => void;
     socket: LegacyConnection;
     adapterName: string;

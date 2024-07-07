@@ -33,7 +33,7 @@ import type { WidgetType } from '@/Vis/visWidgetsCatalog';
 import { getWidgetTypes } from '@/Vis/visWidgetsCatalog';
 import { loadComponent } from '@/Vis/visLoadWidgets';
 import commonStyles from '@/Utils/styles';
-import type { EditorClass } from '../Editor';
+import type Editor from '../Editor';
 import Widget from './Widget';
 import MarketplacePalette from '../Marketplace/MarketplacePalette';
 
@@ -144,11 +144,11 @@ interface WidgetSetProps {
 
 interface PaletteProps {
     onHide: (hide: boolean) => void;
-    changeView: EditorClass['changeView'];
-    changeProject: EditorClass['changeProject'];
-    uninstallWidget: EditorClass['uninstallWidget'];
-    setMarketplaceDialog: EditorClass['setMarketplaceDialog'];
-    updateWidgets: EditorClass['updateWidgets'];
+    changeView: Editor['changeView'];
+    changeProject: Editor['changeProject'];
+    uninstallWidget: Editor['uninstallWidget'];
+    setMarketplaceDialog: Editor['setMarketplaceDialog'];
+    updateWidgets: Editor['updateWidgets'];
     widgetsLoaded: boolean;
     socket: LegacyConnection;
     themeType: ThemeType;

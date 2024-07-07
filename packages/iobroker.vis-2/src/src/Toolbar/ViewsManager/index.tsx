@@ -16,7 +16,7 @@ import { BiImport } from 'react-icons/bi';
 
 import { I18n, type ThemeName, type ThemeType } from '@iobroker/adapter-react-v5';
 
-import type { EditorClass } from '@/Editor';
+import type Editor from '@/Editor';
 import type {
     View as ViewType,
     AnyWidgetId, VisTheme,
@@ -68,7 +68,7 @@ const styles: Record<string, any> = {
 };
 
 interface ViewsManagerProps {
-    changeProject: EditorClass['changeProject'];
+    changeProject: Editor['changeProject'];
     name?: string;
     onClose: () => void;
     open: boolean;
@@ -81,7 +81,7 @@ interface ViewsManagerProps {
     themeName: ThemeName;
     themeType: ThemeType;
     theme: VisTheme;
-    toggleView: EditorClass['toggleView'];
+    toggleView: Editor['toggleView'];
     editMode: boolean;
     selectedView: string;
 }

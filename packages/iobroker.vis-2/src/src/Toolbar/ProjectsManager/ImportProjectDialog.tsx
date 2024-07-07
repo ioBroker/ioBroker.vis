@@ -10,7 +10,7 @@ import {
     type ThemeType, type LegacyConnection,
 } from '@iobroker/adapter-react-v5';
 
-import type { EditorClass } from '@/Editor';
+import type Editor from '@/Editor';
 import UploadFile from '../../Components/UploadFile';
 import IODialog from '../../Components/IODialog';
 
@@ -33,10 +33,10 @@ export const getLiveHost = async (socket: LegacyConnection) => {
 interface ImportProjectDialogProps {
     onClose: (isYes?: boolean, projectName?: string) => void;
     projectName: string;
-    refreshProjects: EditorClass['refreshProjects'];
+    refreshProjects: Editor['refreshProjects'];
     socket: LegacyConnection;
     themeType: ThemeType;
-    loadProject: EditorClass['loadProject'];
+    loadProject: Editor['loadProject'];
     adapterName: string;
     instance: number;
     openNewProjectOnCreate?: boolean;

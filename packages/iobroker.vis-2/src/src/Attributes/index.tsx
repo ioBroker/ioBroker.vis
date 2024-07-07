@@ -20,7 +20,7 @@ import {
     type LegacyConnection,
 } from '@iobroker/adapter-react-v5';
 
-import type { EditorClass } from '@/Editor';
+import type Editor from '@/Editor';
 import type { VisTheme } from '@iobroker/types-vis-2';
 import commonStyles from '@/Utils/styles';
 import CSS from './CSS';
@@ -49,20 +49,20 @@ interface AttributesProps {
     adapterName: string;
     instance: number;
     projectName: string;
-    saveCssFile: EditorClass['saveCssFile'];
+    saveCssFile: Editor['saveCssFile'];
     editMode: boolean;
     onHide: (hide: boolean) => void;
     adapterId: string;
-    userGroups: EditorClass['state']['userGroups'];
+    userGroups: Editor['state']['userGroups'];
     selectedWidgets: string[];
     widgetsLoaded: boolean;
     selectedView: string;
-    changeProject: EditorClass['changeProject'];
+    changeProject: Editor['changeProject'];
     socket: LegacyConnection;
     fonts: string[];
-    cssClone: EditorClass['cssClone'];
-    onPxToPercent: EditorClass['onPxToPercent'];
-    onPercentToPx: EditorClass['onPercentToPx'];
+    cssClone: Editor['cssClone'];
+    onPxToPercent: Editor['onPxToPercent'];
+    onPercentToPx: Editor['onPercentToPx'];
     theme: VisTheme;
 }
 

@@ -32,7 +32,7 @@ import {
     ToggleThemeMenu,
 } from '@iobroker/adapter-react-v5';
 
-import type { EditorClass } from '@/Editor';
+import type Editor from '@/Editor';
 import commonStyles from '@/Utils/styles';
 import type { AnyWidgetId, GroupWidgetId, VisTheme } from '@iobroker/types-vis-2';
 import Views from './Views';
@@ -88,53 +88,53 @@ const styles: Record<string, any> = {
 
 interface ToolbarProps {
     adapterName: string;
-    addProject: EditorClass['addProject'];
-    alignWidgets: EditorClass['alignWidgets'];
-    changeProject: EditorClass['changeProject'];
-    changeView: EditorClass['changeView'];
-    cloneWidgets: EditorClass['cloneWidgets'];
-    copyWidgets: EditorClass['copyWidgets'];
+    addProject: Editor['addProject'];
+    alignWidgets: Editor['alignWidgets'];
+    changeProject: Editor['changeProject'];
+    changeView: Editor['changeView'];
+    cloneWidgets: Editor['cloneWidgets'];
+    copyWidgets: Editor['copyWidgets'];
     currentUser: Record<string, any>;
-    cutWidgets: EditorClass['cutWidgets'];
-    deleteProject: EditorClass['deleteProject'];
-    deleteWidgets: EditorClass['deleteWidgets'];
+    cutWidgets: Editor['cutWidgets'];
+    deleteProject: Editor['deleteProject'];
+    deleteWidgets: Editor['deleteWidgets'];
     editMode: boolean;
-    history: EditorClass['state']['history'];
-    historyCursor: EditorClass['state']['historyCursor'];
+    history: Editor['state']['history'];
+    historyCursor: Editor['state']['historyCursor'];
     instance: number;
-    loadProject: EditorClass['loadProject'];
+    loadProject: Editor['loadProject'];
     lockDragging: boolean;
     needSave: boolean;
     openedViews: string[];
-    orderWidgets: EditorClass['orderWidgets'];
-    pasteWidgets: EditorClass['pasteWidgets'];
+    orderWidgets: Editor['orderWidgets'];
+    pasteWidgets: Editor['pasteWidgets'];
     projectName: string;
     projects: string[];
     projectsDialog: boolean;
-    redo: EditorClass['redo'];
-    refreshProjects: EditorClass['refreshProjects'];
-    renameProject: EditorClass['renameProject'];
+    redo: Editor['redo'];
+    refreshProjects: Editor['refreshProjects'];
+    renameProject: Editor['renameProject'];
     selectedGroup: GroupWidgetId;
     selectedView: string;
     selectedWidgets: AnyWidgetId[];
-    setProjectsDialog: EditorClass['setProjectsDialog'];
-    setSelectedWidgets: EditorClass['setSelectedWidgets'];
+    setProjectsDialog: Editor['setProjectsDialog'];
+    setSelectedWidgets: Editor['setSelectedWidgets'];
     setToolbarHeight: (value: 'narrow' | 'veryNarrow' | 'full') => void;
-    setViewsManager: EditorClass['setViewsManager'];
+    setViewsManager: Editor['setViewsManager'];
     socket: LegacyConnection;
     theme: VisTheme;
     themeName: ThemeName;
     themeType: ThemeType;
-    toggleLockDragging: EditorClass['toggleLockDragging'];
-    toggleTheme: EditorClass['toggleTheme'];
-    toggleView: EditorClass['toggleView'];
-    toggleWidgetHint: EditorClass['toggleWidgetHint'];
+    toggleLockDragging: Editor['toggleLockDragging'];
+    toggleTheme: Editor['toggleTheme'];
+    toggleView: Editor['toggleView'];
+    toggleWidgetHint: Editor['toggleWidgetHint'];
     toolbarHeight: 'full' | 'narrow' | 'veryNarrow';
-    undo: EditorClass['undo'];
+    undo: Editor['undo'];
     version: string;
     viewsManager: boolean;
     widgetHint: string;
-    widgetsClipboard: EditorClass['state']['widgetsClipboard'];
+    widgetsClipboard: Editor['state']['widgetsClipboard'];
     widgetsLoaded: boolean;
 }
 

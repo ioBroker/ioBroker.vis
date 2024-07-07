@@ -17,7 +17,7 @@ import { BiImport, BiExport } from 'react-icons/bi';
 
 import { I18n, type ThemeType, type LegacyConnection } from '@iobroker/adapter-react-v5';
 
-import type { EditorClass } from '@/Editor';
+import type Editor from '@/Editor';
 import type { VisTheme } from '@iobroker/types-vis-2';
 import commonStyles from '@/Utils/styles';
 import IODialog from '../../Components/IODialog';
@@ -62,22 +62,22 @@ const styles: Record<string, React.CSSProperties> = {
 };
 
 interface ProjectsManageProps {
-    addProject: EditorClass['addProject'];
-    loadProject: EditorClass['loadProject'];
+    addProject: Editor['addProject'];
+    loadProject: Editor['loadProject'];
     onClose: () => void;
     open: boolean;
     projects: string[];
     projectName: string;
-    refreshProjects: EditorClass['refreshProjects'];
+    refreshProjects: Editor['refreshProjects'];
     socket: LegacyConnection;
     themeType: ThemeType;
     theme: VisTheme;
     adapterName: string;
     instance: number;
     selectedView: string;
-    changeProject: EditorClass['changeProject'];
-    deleteProject: EditorClass['deleteProject'];
-    renameProject: EditorClass['renameProject'];
+    changeProject: Editor['changeProject'];
+    deleteProject: Editor['deleteProject'];
+    renameProject: Editor['renameProject'];
 }
 
 const ProjectsManage: React.FC<ProjectsManageProps> = props => {

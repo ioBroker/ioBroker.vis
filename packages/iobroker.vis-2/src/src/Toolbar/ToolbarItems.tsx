@@ -20,7 +20,7 @@ import { I18n, type ThemeType } from '@iobroker/adapter-react-v5';
 import { deepClone } from '@/Utils/utils';
 import type { ViewSettings, VisTheme } from '@iobroker/types-vis-2';
 import { store } from '@/Store';
-import type { EditorClass } from '@/Editor';
+import type Editor from '@/Editor';
 import commonStyles from '@/Utils/styles';
 import MultiSelect from './MultiSelect';
 
@@ -130,11 +130,11 @@ interface ToolbarItemsProps {
     last?: boolean;
     toolbarHeight: 'full' | 'narrow' | 'veryNarrow';
     // eslint-disable-next-line react/no-unused-prop-types
-    changeProject: EditorClass['changeProject'];
+    changeProject: Editor['changeProject'];
     // eslint-disable-next-line react/no-unused-prop-types
     selectedView: string;
     // eslint-disable-next-line react/no-unused-prop-types
-    setSelectedWidgets: EditorClass['setSelectedWidgets'];
+    setSelectedWidgets: Editor['setSelectedWidgets'];
 }
 
 // eslint-disable-next-line no-use-before-define

@@ -60,7 +60,7 @@ import type {
     VisLegacy, VisLinkContext, VisLinkContextBinding, VisLinkContextItem, VisTheme,
     VisFormatUtils as VisFormatUtilsType,
 } from '@iobroker/types-vis-2';
-import type { EditorClass } from '@/Editor';
+import type Editor from '@/Editor';
 import { deepClone } from '@/Utils/utils';
 import type JQuery from 'jquery';
 import './visWords';
@@ -143,25 +143,25 @@ interface VisEngineProps {
     themeName: ThemeName;
     theme: VisTheme;
     adapterId: string;
-    userGroups: EditorClass['state']['userGroups'];
+    userGroups: Editor['state']['userGroups'];
     widgetsLoaded: number;
     lockDragging: boolean;
     disableInteraction: boolean;
-    registerEditorCallback: EditorClass['registerCallback'];
-    setSelectedWidgets: EditorClass['setSelectedWidgets'];
-    onWidgetsChanged: EditorClass['onWidgetsChanged'];
-    showLegacyFileSelector: EditorClass['showLegacyFileSelector'];
-    setLoadingText: EditorClass['setLoadingText'];
-    onFontsUpdate: EditorClass['onFontsUpdate'];
-    setSelectedGroup: EditorClass['setSelectedGroup'];
+    registerEditorCallback: Editor['registerCallback'];
+    setSelectedWidgets: Editor['setSelectedWidgets'];
+    onWidgetsChanged: Editor['onWidgetsChanged'];
+    showLegacyFileSelector: Editor['showLegacyFileSelector'];
+    setLoadingText: Editor['setLoadingText'];
+    onFontsUpdate: Editor['onFontsUpdate'];
+    setSelectedGroup: Editor['setSelectedGroup'];
     onConfirmDialog: (message: string, title: string, icon: string, width: number, callback: (isYes: boolean) => void) => void;
     onShowCode: (code: string, title: string, mode: string) => void;
-    renderAlertDialog: EditorClass['renderAlertDialog'];
-    toggleTheme: EditorClass['toggleTheme'];
-    askAboutInclude: EditorClass['askAboutInclude'];
-    changeProject: EditorClass['changeProject'];
+    renderAlertDialog: Editor['renderAlertDialog'];
+    toggleTheme: Editor['toggleTheme'];
+    askAboutInclude: Editor['askAboutInclude'];
+    changeProject: Editor['changeProject'];
     onLoaded: () => void;
-    onIgnoreMouseEvents: EditorClass['onIgnoreMouseEvents'];
+    onIgnoreMouseEvents: Editor['onIgnoreMouseEvents'];
 }
 
 interface VisEngineState {

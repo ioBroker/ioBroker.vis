@@ -162,9 +162,9 @@ const styles: Record<string, any> = {
 
 interface ViewDropProps {
     // eslint-disable-next-line no-use-before-define
-    addMarketplaceWidget: EditorClass['addMarketplaceWidget'];
+    addMarketplaceWidget: Editor['addMarketplaceWidget'];
     // eslint-disable-next-line no-use-before-define
-    addWidget: EditorClass['addWidget'];
+    addWidget: Editor['addWidget'];
     editMode: boolean;
     children: React.JSX.Element;
 }
@@ -2210,7 +2210,5 @@ class Editor extends Runtime<EditorProps, EditorState> {
         </StyledEngineProvider>;
     }
 }
-
-export type EditorClass = Editor;
 
 export default Editor;

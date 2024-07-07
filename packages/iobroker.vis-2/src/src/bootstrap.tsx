@@ -2,17 +2,29 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { Utils } from '@iobroker/adapter-react-v5';
+
+import type VisRxWidget from '@/Vis/visRxWidget';
 import './index.css';
 import App from './Editor';
 import * as serviceWorker from './serviceWorker';
 import packageJson from './version.json';
+
+declare global {
+    interface Window {
+        adapterName: string;
+        visRxWidget?: typeof VisRxWidget;
+        disableDataReporting?: boolean;
+        sentryDSN?: string;
+        visConfigLoaded?: Promise<void>;
+    }
+}
 
 window.adapterName = 'vis-2';
 
 console.log(`iobroker.${window.adapterName}@${packageJson.version}`);
 
 import('./Vis/visRxWidget')
-    .then(VisRxWidget => window.visRxWidget = VisRxWidget.default);
+    .then(_VisRxWidget => window.visRxWidget = _VisRxWidget.default);
 
 function modifyClasses(className: string, addClass?: string, removeClass?: string): string {
     const classes = (className || '').split(' ').map(c => c.trim()).filter(c => c);

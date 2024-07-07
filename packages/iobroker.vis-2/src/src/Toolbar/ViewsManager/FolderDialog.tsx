@@ -10,7 +10,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import { I18n } from '@iobroker/adapter-react-v5';
 
-import type { EditorClass } from '@/Editor';
+import type Editor from '@/Editor';
 import React from 'react';
 import { deepClone } from '@/Utils/utils';
 import IODialog from '../../Components/IODialog';
@@ -18,7 +18,7 @@ import { useFocus } from '../../Utils';
 import { store } from '../../Store';
 
 interface FolderDialogProps {
-    changeProject: EditorClass['changeProject'];
+    changeProject: Editor['changeProject'];
     dialog: 'add' | 'rename' | 'delete';
     dialogFolder: string;
     dialogName: string;

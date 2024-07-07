@@ -117,8 +117,9 @@ export interface RuntimeState extends GenericAppState {
 
 declare global {
     interface Window {
-        sentryDSN: string;
-        disableDataReporting: boolean;
+        sentryDSN?: string;
+        disableDataReporting?: boolean;
+        visAdapterInstance?: number;
     }
 }
 
@@ -261,6 +262,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         registerWidgetsLoadIndicator(this.setWidgetsLoadingProgress);
     }
 
+    // eslint-disable-next-line class-methods-use-this
     createTheme(name?: ThemeName | null | undefined): VisTheme {
         return createTheme(Utils.getThemeName(name));
     }
