@@ -19,7 +19,7 @@ import {
 } from '@/Utils/utils';
 import { useFocus } from '@/Utils';
 import IODialog from '@/Components/IODialog';
-import type { Project, SingleWidgetId } from '@iobroker/types-vis-2';
+import type { Project, SingleWidgetId, View } from '@iobroker/types-vis-2';
 
 interface ViewDialogProps {
     changeProject: (project: Project) => Promise<void>;
@@ -43,7 +43,7 @@ const ViewDialog = (props: ViewDialogProps) => {
 
     const deleteView = async () => {
         const view = props.dialogView || props.selectedView;
-        const project = JSON.parse(JSON.stringify(store.getState().visProject));
+        const project = deepClone(store.getState().visProject);
         delete project[view];
         await props.changeView(Object.keys(project).filter(foundView => !foundView.startsWith('__'))[0]);
         await props.changeProject(project);
@@ -51,20 +51,20 @@ const ViewDialog = (props: ViewDialogProps) => {
     };
 
     const addView = async () => {
-        const project = JSON.parse(JSON.stringify(store.getState().visProject));
-        project[props.dialogName] = {
+        const project: Project = deepClone(store.getState().visProject);
+        project[props.dialogName.trim()] = {
             name: props.dialogName,
             parentId: props.dialogParentId,
             settings: {
                 style: {},
             },
             widgets: {},
-            activeWidgets: {},
-        };
+            activeWidgets: [],
+        } as View;
         await props.changeProject(project);
-        await props.changeView(props.dialogName);
+        await props.changeView(props.dialogName.trim());
         props.setDialog(null); // close dialog
-        props.dialogCallback?.cb(props.dialogName);
+        props.dialogCallback?.cb(props.dialogName.trim());
     };
 
     interface RenameReferencesOptions {
@@ -108,23 +108,24 @@ const ViewDialog = (props: ViewDialogProps) => {
 
     const renameView = async () => {
         const oldViewName = props.dialogView || props.selectedView;
+        const newViewName = props.dialogName.trim();
         const project = deepClone(store.getState().visProject);
-        project[props.dialogName] = project[oldViewName];
+        project[newViewName] = project[oldViewName];
         delete project[oldViewName];
 
         // Rename view where applicable
         renameReferences({ project, oldViewName });
 
         await props.changeProject(project);
-        await props.changeView(props.dialogName);
+        await props.changeView(newViewName);
         props.setDialog(null);
-        props.dialogCallback?.cb(props.dialogName);
+        props.dialogCallback?.cb(newViewName);
     };
 
     const copyView = async () => {
         const view = props.dialogView || props.selectedView;
         const project = deepClone(store.getState().visProject);
-        project[props.dialogName] = { ...project[view], widgets: {}, activeWidgets: [] };
+        project[props.dialogName] = { ...project[view], widgets: {}, activeWidgets: [] } as View;
         const originalWidgets = deepClone(project[view].widgets);
 
         for (const [wid, widget] of Object.entries(originalWidgets)) {
@@ -182,7 +183,7 @@ const ViewDialog = (props: ViewDialogProps) => {
 
     let dialogDisabled = false;
     if (props.dialog !== 'delete') {
-        if (store.getState().visProject[props.dialogName]) {
+        if (!props.dialogName || store.getState().visProject[props.dialogName.trim()]) {
             dialogDisabled = true;
         }
     }

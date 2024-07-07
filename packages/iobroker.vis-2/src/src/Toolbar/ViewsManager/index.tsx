@@ -14,8 +14,7 @@ import {
 } from '@mui/icons-material';
 import { BiImport } from 'react-icons/bi';
 
-import type { ThemeName, ThemeType } from '@iobroker/adapter-react-v5';
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n, type ThemeName, type ThemeType } from '@iobroker/adapter-react-v5';
 
 import type { EditorClass } from '@/Editor';
 import type {
