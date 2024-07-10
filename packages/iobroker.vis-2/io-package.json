@@ -3,19 +3,6 @@
     "name": "vis-2",
     "version": "2.10.1",
     "news": {
-      "2.10.1": {
-        "en": "Removed incompatible package for styles\nAll widgets must be updated\nThe basic input value widget was migrated to ReactJS",
-        "de": "Unverträgliches Paket für Styles entfernt\nAlle Widgets müssen aktualisiert werden\nDas grundlegende Eingabewert-Widget wurde zu ReactJS migriert",
-        "ru": "Удаленный несовместимый пакет для стилей\nВсе виджеты должны быть обновлены\nОсновной виджет входного значения был перенесен в ReactJS",
-        "pt": "Pacote incompatível removido para estilos\nTodos os widgets devem ser atualizados\nO widget básico do valor de entrada foi migrado para ReactJS",
-        "nl": "Incompatibel pakket voor stijlen verwijderd\nAlle widgets moeten bijgewerkt worden\nDe basis invoerwaarde widget is gemigreerd naar ReactJS",
-        "fr": "Enlever le paquet incompatible pour les styles\nTous les widgets doivent être actualisés\nLe widget de valeur d'entrée de base a été migré vers ReactJS",
-        "it": "Pacchetto incompatibile rimosso per stili\nTutti i widget devono essere aggiornati\nIl widget di base del valore di input è stato migrato a ReactJS",
-        "es": "Paquete incompatible eliminado para estilos\nTodos los widgets deben ser actualizados\nEl widget de valor de entrada básico fue migrado a ReactJS",
-        "pl": "Usunięty niekompatybilny pakiet stylów\nWszystkie widżety muszą być aktualizowane\nPodstawowa wartość wejściowa widget została przeniesiona do ReactJS",
-        "uk": "Видалено несумісний пакет для стилів\nВсі віджети повинні бути оновлені\nБазовий віджет значення вводу був мігрований до ReactJS",
-        "zh-cn": "删除样式不兼容的软件包\n所有部件都必须更新\n基本输入值部件已迁移到 ReactJS"
-      },
       "2.9.64": {
         "en": "Added possibility to clear a text field by button",
         "de": "Möglichkeit hinzugefügt, ein Textfeld per Knopf zu löschen",
