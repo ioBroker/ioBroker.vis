@@ -18,7 +18,7 @@ import {
     Delete,
     Add,
     LinkOff,
-    Link as LinkIcon,
+    Link as LinkIcon, ContentCopy,
 } from '@mui/icons-material';
 
 import { I18n, Icon, Utils } from '@iobroker/adapter-react-v5';
@@ -58,6 +58,8 @@ const ICONS: Record<string, React.JSX.Element> = {
     'group.fixed': <FilterAltIcon fontSize="small" />,
     locked: <LockIcon fontSize="small" />,
 };
+
+type GroupAction = 'add' | 'delete' | 'down' | 'up' | 'clone';
 
 const styles: Record<string, any> = {
     accordionRoot: {
@@ -756,6 +758,7 @@ class Widget extends Component<WidgetProps, WidgetState> {
                 label: group.label,
                 index: group.index,
                 iterable: group.iterable,
+                singleName: group.singleName,
             }));
 
             newState.fields = [
@@ -955,7 +958,7 @@ class Widget extends Component<WidgetProps, WidgetState> {
         e: React.MouseEvent,
         index: number,
         iterable: WidgetAttributeIterable,
-        direction: 0 | -1 | 1 | true,
+        direction: GroupAction,
     ) {
         e.stopPropagation();
         const project = deepClone(store.getState().visProject);
@@ -964,7 +967,7 @@ class Widget extends Component<WidgetProps, WidgetState> {
         const accordionOpen = { ...this.state.accordionOpen };
 
         // if deletion
-        if (!direction) {
+        if (direction === 'delete') {
             if (iterable.indexTo) {
                 const lastGroup = this.state.fields.find(f => f.singleName  === iterable.group && f.iterable?.isLast);
                 for (let idx = index; idx < lastGroup.index; idx++) {
@@ -1011,8 +1014,48 @@ class Widget extends Component<WidgetProps, WidgetState> {
             return;
         }
 
-        if (direction === true) {
-            const lastGroup = this.state.fields.find(f => f.singleName  === iterable.group && f.iterable?.isLast);
+        if (direction === 'clone') {
+            const lastGroup = this.state.fields.find(f => f.singleName === iterable.group && f.iterable?.isLast);
+            // move all indexes after the current one
+            // add one line
+            const maxIndex = lastGroup.index;
+            this.props.selectedWidgets.forEach(wid => {
+                // order all attributes for better readability
+                const widgetData = _widgets[wid].data;
+                for (let i = maxIndex; i > index; i--) {
+                    lastGroup.fields.forEach(attr => {
+                        const oldName = attr.name.replace(/\d?\d+$/, i.toString());
+                        widgetData[oldName.replace(/\d?\d+$/, (i + 1).toString())] = widgetData[oldName];
+                    });
+
+                    // move group-used flag
+                    widgetData[`g_${iterable.group}-${i + 1}`] = widgetData[`g_${iterable.group}-${i}`];
+
+                    // move the opened flag
+                    accordionOpen[`${iterable.group}-${i + 1}`] = accordionOpen[`${iterable.group}-${i}`];
+                }
+                // copy current into index + 1
+                lastGroup.fields.forEach(attr => {
+                    const oldName = attr.name.replace(/\d?\d+$/, index.toString());
+                    widgetData[oldName.replace(/\d?\d+$/, (index + 1).toString())] = widgetData[oldName];
+                });
+
+                // enable group-used flag
+                widgetData[`g_${iterable.group}-${index + 1}`] = true;
+
+                // enable the opened flag
+                accordionOpen[`${iterable.group}-${index + 1}`] = 1; // open
+                widgetData[iterable.indexTo] = maxIndex + 1;
+            });
+            this.setAccordionState(accordionOpen, () => {
+                this.props.changeProject(project);
+                store.dispatch(recalculateFields(true));
+            });
+            return;
+        }
+
+        if (direction === 'add') {
+            const lastGroup = this.state.fields.find(f => f.singleName === iterable.group && f.iterable?.isLast);
             // add one line
             const newIndex = lastGroup.index + 1;
             this.props.selectedWidgets.forEach(wid => {
@@ -1036,7 +1079,7 @@ class Widget extends Component<WidgetProps, WidgetState> {
                 store.dispatch(recalculateFields(true));
             });
         } else {
-            const newIndex = index + direction;
+            const newIndex = index + (direction === 'up' ? -1 : 1);
             const newGroup = this.state.fields.find(f => f.name === `${iterable.group}-${newIndex}`);
 
             // for every selected widget
@@ -1111,11 +1154,20 @@ class Widget extends Component<WidgetProps, WidgetState> {
                 </div>
                 {group.iterable ? <>
                     <div style={styles.grow} />
+                    {group.iterable.indexTo ? <Tooltip title={I18n.t('Clone')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
+                        <IconButton
+                            style={styles.groupButton}
+                            size="small"
+                            onClick={e => this.onGroupMove(e, group.index, group.iterable, 'clone')}
+                        >
+                            <ContentCopy />
+                        </IconButton>
+                    </Tooltip> : null}
                     {group.iterable.indexTo ? <Tooltip title={I18n.t('Delete')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                         <IconButton
                             style={styles.groupButton}
                             size="small"
-                            onClick={e => this.onGroupMove(e, group.index, group.iterable, 0)}
+                            onClick={e => this.onGroupMove(e, group.index, group.iterable, 'delete')}
                         >
                             <Delete />
                         </IconButton>
@@ -1126,7 +1178,7 @@ class Widget extends Component<WidgetProps, WidgetState> {
                             <IconButton
                                 style={styles.groupButton}
                                 size="small"
-                                onClick={e => this.onGroupMove(e, group.index, group.iterable, -1)}
+                                onClick={e => this.onGroupMove(e, group.index, group.iterable, 'up')}
                             >
                                 <ArrowUpward />
                             </IconButton>
@@ -1136,7 +1188,7 @@ class Widget extends Component<WidgetProps, WidgetState> {
                             <IconButton
                                 style={styles.groupButton}
                                 size="small"
-                                onClick={e => this.onGroupMove(e, group.index, group.iterable, true)}
+                                onClick={e => this.onGroupMove(e, group.index, group.iterable, 'add')}
                             >
                                 <Add />
                             </IconButton>
@@ -1146,7 +1198,7 @@ class Widget extends Component<WidgetProps, WidgetState> {
                             <IconButton
                                 style={styles.groupButton}
                                 size="small"
-                                onClick={e => this.onGroupMove(e, group.index, group.iterable, 1)}
+                                onClick={e => this.onGroupMove(e, group.index, group.iterable, 'down')}
                             >
                                 <ArrowDownward />
                             </IconButton>

@@ -744,5 +744,6 @@
   "Do not ask again": "不要再问了",
   "vis-2-widgets-basic-input_value": "输入值",
   "vis-2-widgets-basic-autoSetDelay": "自动写入延迟",
-  "vis-2-widgets-basic-noStyle": "没有风格"
+  "vis-2-widgets-basic-noStyle": "没有风格",
+  "Clone": "克隆"
 }

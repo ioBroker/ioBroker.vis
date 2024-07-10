@@ -744,5 +744,6 @@
   "Do not ask again": "Non chiedere di nuovo",
   "vis-2-widgets-basic-input_value": "Valore immesso",
   "vis-2-widgets-basic-autoSetDelay": "Ritardo per la scrittura automatica",
-  "vis-2-widgets-basic-noStyle": "Nessuno stile"
+  "vis-2-widgets-basic-noStyle": "Nessuno stile",
+  "Clone": "Clone"
 }
