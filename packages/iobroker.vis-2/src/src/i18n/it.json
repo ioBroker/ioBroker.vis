@@ -741,5 +741,8 @@
   "Following views will be changed": "Le visualizzazioni seguenti verranno modificate",
   "Show this attribute by all views": "Mostra questo attributo per tutte le visualizzazioni",
   "Menu width": "Larghezza del menù",
-  "Do not ask again": "Non chiedere di nuovo"
+  "Do not ask again": "Non chiedere di nuovo",
+  "vis-2-widgets-basic-input_value": "Valore immesso",
+  "vis-2-widgets-basic-autoSetDelay": "Ritardo per la scrittura automatica",
+  "vis-2-widgets-basic-noStyle": "Nessuno stile"
 }

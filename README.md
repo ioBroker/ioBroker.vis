@@ -297,6 +297,7 @@ npm run start
 ### **WORK IN PROGRESS**
 * (bluefox) Removed incompatible package for styles
 * (bluefox) All widgets must be updated
+* (bluefox) The basic input value widget was migrated to ReactJS
 
 ### 2.9.64 (2024-05-23)
 * (bluefox) Added possibility to clear a text field by button

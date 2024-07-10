@@ -242,6 +242,8 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
     }
 
     static t(key: string, ...args: string[]) {
+        // it is a very strange construction,
+        // but "this" at this place takes the spout class (what is required) and not the instance
         if (this.getI18nPrefix) {
             return I18n.t(`${this.getI18nPrefix()}${key}`,  ...args);
         }

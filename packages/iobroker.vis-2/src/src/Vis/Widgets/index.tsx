@@ -4,6 +4,7 @@ import BasicBulb from './Basic/BasicBulb';
 import BasicRedNumber from './Basic/BasicRedNumber';
 import BasicHtml from './Basic/BasicHtml';
 import BasicValueString from './Basic/BasicValueString';
+import BasicValueInput from './Basic/BasicValueInput';
 import BasicViewInWidget from './Basic/BasicViewInWidget';
 import BasicViewInWidget8 from './Basic/BasicViewInWidget8';
 import BasicGroup from './Basic/BasicGroup';
@@ -60,6 +61,7 @@ const WIDGETS = [
     BasicFilterDropdown,
     BasicLink,
     BasicValueString,
+    BasicValueInput,
     BasicViewInWidget,
     BasicViewInWidget8,
     BasicGroup,

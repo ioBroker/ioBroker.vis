@@ -741,5 +741,8 @@
   "Following views will be changed": "Следующие представления будут изменены",
   "Show this attribute by all views": "Показать этот атрибут во всех представлениях",
   "Menu width": "Ширина меню",
-  "Do not ask again": "Не спрашивай снова"
+  "Do not ask again": "Не спрашивай снова",
+  "vis-2-widgets-basic-input_value": "Входное значение",
+  "vis-2-widgets-basic-autoSetDelay": "Задержка для автозаписи",
+  "vis-2-widgets-basic-noStyle": "Нет стиля"
 }

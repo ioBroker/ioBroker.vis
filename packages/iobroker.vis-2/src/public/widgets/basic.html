@@ -778,7 +778,7 @@
                 if (data.autoSet) {
                     $this.keyup(function(e) {
                         var timer = $this.data('timer');
-                        if (timer) clearTimeout(timer);
+                        timer && clearTimeout(timer);
                         $this.data('timer', setTimeout(function () {
                             $this.trigger('change');
                         }), 1000);
@@ -2520,7 +2520,7 @@
     </div>
 </script>
 
-<script id="tplValueInput"
+<!--script id="tplValueInput"
         type="text/ejs"
         class="vis-tpl"
         data-vis-prev='<img src="widgets/basic/img/Prev_ValueInput.png"></img>'
@@ -2543,7 +2543,7 @@
 			<%== this.data.attr('html_append') %>
         </div>
     </div>
-</script>
+</script-->
 
 <script id="tplValueBoolSelect"
         type="text/ejs"

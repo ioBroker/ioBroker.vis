@@ -741,5 +741,8 @@
   "Following views will be changed": "De volgende weergaven zullen worden gewijzigd",
   "Show this attribute by all views": "Toon dit attribuut bij alle weergaven",
   "Menu width": "Menubreedte",
-  "Do not ask again": "Niet meer vragen"
+  "Do not ask again": "Niet meer vragen",
+  "vis-2-widgets-basic-input_value": "Invoerwaarde",
+  "vis-2-widgets-basic-autoSetDelay": "Vertraging voor automatisch schrijven",
+  "vis-2-widgets-basic-noStyle": "Geen stijl"
 }

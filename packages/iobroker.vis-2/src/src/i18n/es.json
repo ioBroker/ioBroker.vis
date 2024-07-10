@@ -741,5 +741,8 @@
   "Following views will be changed": "Se cambiarán las siguientes vistas",
   "Show this attribute by all views": "Mostrar este atributo en todas las vistas.",
   "Menu width": "Ancho del menú",
-  "Do not ask again": "No preguntes de nuevo"
+  "Do not ask again": "No preguntes de nuevo",
+  "vis-2-widgets-basic-input_value": "Valor de entrada",
+  "vis-2-widgets-basic-autoSetDelay": "Retraso para la escritura automática",
+  "vis-2-widgets-basic-noStyle": "Sin estilo"
 }

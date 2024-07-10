@@ -741,5 +741,8 @@
   "Following views will be changed": "Following views will be changed",
   "Show this attribute by all views": "Show this attribute by all views",
   "Menu width": "Menu width",
-  "Do not ask again": "Do not ask again"
+  "Do not ask again": "Do not ask again",
+  "vis-2-widgets-basic-input_value": "Input value",
+  "vis-2-widgets-basic-autoSetDelay": "Delay for auto-write",
+  "vis-2-widgets-basic-noStyle": "No style"
 }

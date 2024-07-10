@@ -741,5 +741,8 @@
   "Following views will be changed": "以下视图将被更改",
   "Show this attribute by all views": "通过所有视图显示此属性",
   "Menu width": "菜单宽度",
-  "Do not ask again": "不要再问了"
+  "Do not ask again": "不要再问了",
+  "vis-2-widgets-basic-input_value": "输入值",
+  "vis-2-widgets-basic-autoSetDelay": "自动写入延迟",
+  "vis-2-widgets-basic-noStyle": "没有风格"
 }
