@@ -294,7 +294,7 @@ npm run start
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.10.1 (2024-07-10)
 * (bluefox) Removed incompatible package for styles
 * (bluefox) All widgets must be updated
 * (bluefox) The basic input value widget was migrated to ReactJS
