@@ -1088,6 +1088,7 @@ export interface VisFormatUtils {
         values?: VisRxWidgetStateValues;
         moment: any;
     }): string;
+    formatDate(dateObj: string | Date | number, isDuration?: boolean | string, _format?: string): string;
 }
 
 export interface ExTypeText extends TypeText {

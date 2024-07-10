@@ -23,7 +23,6 @@ import { KeyboardReturn as EnterIcon } from '@mui/icons-material';
 import type { RxRenderWidgetProps } from '@iobroker/types-vis-2';
 import VisRxWidget, { type VisRxWidgetState } from '../../visRxWidget';
 
-// eslint-disable-next-line no-use-before-define
 type RxData = {
     oid: string;
     html_prepend?: string;
