@@ -228,7 +228,7 @@ class JQuiState extends VisRxWidget {
             ],
             visDefaultStyle: {
                 width: 300,
-                height: 40,
+                height: 45,
             },
         };
     }
@@ -437,6 +437,7 @@ class JQuiState extends VisRxWidget {
 
         // Button
         const button = <Button
+            disabled={this.props.editMode}
             key={i}
             style={{ ...buttonStyle, flexGrow: 1 }}
             startIcon={text ? icon : undefined}
@@ -471,6 +472,7 @@ class JQuiState extends VisRxWidget {
             key={i}
             style={buttonStyle}
             control={<Radio
+                disabled={this.props.editMode}
                 onClick={() => this.onClick(i)}
                 checked={selectedIndex === i}
             />}
@@ -500,6 +502,7 @@ class JQuiState extends VisRxWidget {
         // Button
         return <MenuItem
             title={this.state.rxData[`tooltip${i}`]}
+            disabled={this.props.editMode}
             key={i}
             selected={selectedIndex === i}
             style={buttonStyle}
@@ -606,10 +609,16 @@ class JQuiState extends VisRxWidget {
                 </List>;
             } else {
                 content = <Select
+                    disabled={this.props.editMode}
                     style={{ width: '100%', height: '100%' }}
                     value={this.state.value === undefined ? '' : this.state.value}
                     onChange={e => this.onClick(this.getSelectedIndex(e.target.value))}
                     variant={variant}
+                    sx={{
+                        '& .MuiSelect-select': variant === 'filled' ? {
+                            mb: '10px',
+                        } : undefined,
+                    }}
                 >
                     {buttons}
                 </Select>;
@@ -625,6 +634,7 @@ class JQuiState extends VisRxWidget {
             }
 
             content = <Slider
+                disabled={this.props.editMode}
                 style={!this.state.rxData.orientation || this.state.rxData.orientation === 'horizontal' ?
                     { marginLeft: 20, marginRight: 20, width: 'calc(100% - 40px)' } :
                     { marginTop: 10, marginBottom: 10 }}
@@ -644,6 +654,7 @@ class JQuiState extends VisRxWidget {
             }
 
             content = <ButtonGroup
+                disabled={this.props.editMode}
                 style={{ width: '100%', height: '100%' }}
                 orientation={this.state.rxData.orientation || 'horizontal'}
                 variant={this.state.rxData.variant === undefined ? 'contained' : this.state.rxData.variant}
@@ -655,10 +666,11 @@ class JQuiState extends VisRxWidget {
         if (this.state.rxData.widgetTitle) {
             content = <FormControl
                 fullWidth
+                variant={this.state.rxData.variant === undefined ? 'contained' : this.state.rxData.variant}
                 style={{
-                    marginTop: this.state.rxData.type === 'select' ? 5 : undefined,
+                    marginTop: this.state.rxData.type === 'select' && this.state.rxData.variant === 'outlined' ? 5 : undefined,
                     width: '100%',
-                    height: '100%',
+                    height: this.state.rxData.type === 'select' && this.state.rxData.variant === 'outlined' ? 'calc(100% - 5px)' : '100%',
                 }}
             >
                 {this.state.rxData.type === 'select' ?

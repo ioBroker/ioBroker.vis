@@ -755,6 +755,7 @@ class Widget extends Component<WidgetProps, WidgetState> {
                 hidden: group.hidden,
                 label: group.label,
                 index: group.index,
+                iterable: group.iterable,
             }));
 
             newState.fields = [
