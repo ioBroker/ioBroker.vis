@@ -3,7 +3,7 @@ import {
     Checkbox, FormControl, MenuItem,
     Menu, List,
     ListItemButton, ListItemText,
-    ListItemIcon, InputLabel, Button,
+    ListItemIcon, InputLabel, Button, Box,
 } from '@mui/material';
 
 import {
@@ -178,7 +178,7 @@ class MultiSelect extends Component<MultiSelectProps, MultiSelectState> {
                 anchorEl={this.state.elAnchor}
                 onClose={() => this.setState({ elAnchor: null })}
             >
-                <div style={styles.menuToolbar}>
+                <Box sx={styles.menuToolbar}>
                     {I18n.t('All')}
                     <Button
                         disabled={value.length === props.options.length}
@@ -194,7 +194,7 @@ class MultiSelect extends Component<MultiSelectProps, MultiSelectState> {
                     >
                         {I18n.t('Unselect')}
                     </Button>
-                </div>
+                </Box>
                 {props.options.map(item => <MenuItem
                     value={item.value}
                     key={item.value}

@@ -745,5 +745,6 @@
   "vis-2-widgets-basic-input_value": "Input value",
   "vis-2-widgets-basic-autoSetDelay": "Delay for auto-write",
   "vis-2-widgets-basic-noStyle": "No style",
-  "Clone": "Clone"
+  "Clone": "Clone",
+  "jqui_Write state": "Write state"
 }

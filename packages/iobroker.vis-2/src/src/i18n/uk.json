@@ -745,5 +745,6 @@
   "vis-2-widgets-basic-input_value": "Вхідне значення",
   "vis-2-widgets-basic-autoSetDelay": "Затримка для автозапису",
   "vis-2-widgets-basic-noStyle": "Ніякого стилю",
-  "Clone": "Клон"
+  "Clone": "Клон",
+  "jqui_Write state": "Написати стан"
 }

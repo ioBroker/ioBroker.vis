@@ -209,7 +209,7 @@ class JQuiWriteState extends VisRxWidget<RxData, JQuiWriteStateState> {
                         {
                             name: 'text',
                             type: 'text',
-                            default: I18n.t('Write state'),
+                            default: I18n.t('jqui_Write state'),
                         },
                         {
                             name: 'src',

@@ -198,7 +198,11 @@ function getItem(
             onChange={_value => item.onChange(_value)}
             setSelectedWidgets={props.setSelectedWidgets}
             options={item.items.map(option => ({
-                name: option.name as string, subname: option.subName, value: option.value, color: option.color, icon: option.icon,
+                name: option.name as string,
+                subname: option.subName,
+                value: option.value,
+                color: option.color,
+                icon: option.icon,
             }))}
             themeType={props.themeType}
         />;

@@ -745,5 +745,6 @@
   "vis-2-widgets-basic-input_value": "输入值",
   "vis-2-widgets-basic-autoSetDelay": "自动写入延迟",
   "vis-2-widgets-basic-noStyle": "没有风格",
-  "Clone": "克隆"
+  "Clone": "克隆",
+  "jqui_Write state": "写状态"
 }

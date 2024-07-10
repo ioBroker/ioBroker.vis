@@ -23,8 +23,7 @@ import {
     VisibilityOff as VisibilityOffIcon,
 } from '@mui/icons-material';
 
-import type { ThemeType } from '@iobroker/adapter-react-v5';
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n, type ThemeType } from '@iobroker/adapter-react-v5';
 import type { AnyWidgetId, GroupWidgetId, VisTheme } from '@iobroker/types-vis-2';
 import type Editor from '@/Editor';
 import { store } from '../Store';
