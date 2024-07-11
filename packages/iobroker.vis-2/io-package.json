@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.10.2",
+    "version": "2.10.3",
     "news": {
+      "2.10.3": {
+        "en": "Converted the CanJSWidget to typescript\nAdded \"clone\" button to the attribute groups",
+        "de": "Konvertiert das CanJSWidget in Schrift\nSchaltfläche \"Klon\" zu den Attributgruppen hinzugefügt",
+        "ru": "Преобразование CanJSWidget в Typescript\nДобавлена кнопка \"клон\" к группам атрибутов",
+        "pt": "Convertido o CanJSWidget para digitar oscript\nAdicionado botão \"clone\" para os grupos de atributos",
+        "nl": "Het CanJSWidget omzetten naar typescript\n\"kloon\" toegevoegd aan de attribuutgroepen",
+        "fr": "Converti le CanJSWidget en dactylographie\nAjout du bouton \"clone\" aux groupes d'attributs",
+        "it": "Convertito il CanJSWidget a typescript\nAggiunto \"clone\" pulsante ai gruppi attribute",
+        "es": "Convertir el CanJSWidget en typescript\nAñadido botón \"clone\" a los grupos de atributos",
+        "pl": "Konwersja CanJSwidget na maszynopis\nDodano przycisk \"clone\" do grup atrybutów",
+        "uk": "Перетворено CanJSWidget у форматіscript\nДодано кнопку \"клон\" до груп атрибутів",
+        "zh-cn": "将 CanJSWidget 转换为打字符\n在属性组中添加“ clone” 按钮"
+      },
       "2.10.2": {
         "en": "Removed incompatible package for styles\nAll widgets must be updated\nThe basic input value widget was migrated to ReactJS",
         "de": "Unverträgliches Paket für Styles entfernt\nAlle Widgets müssen aktualisiert werden\nDas grundlegende Eingabewert-Widget wurde zu ReactJS migriert",
