@@ -22,7 +22,7 @@ import {
 
 import { type LegacyConnection, I18n, Icon } from '@iobroker/adapter-react-v5';
 
-import type {
+import {
     Project,
     AnyWidgetId,
     RxWidgetInfo,
@@ -35,7 +35,7 @@ import type {
     RxWidgetInfoAttributesFieldCheckbox,
     VisLinkContextBinding, VisLinkContextItem, VisLinkContextSignalItem, RxRenderWidgetProps,
     RxWidgetInfoWriteable,
-    Writeable,
+    Writeable, VisViewProps,
 } from '@iobroker/types-vis-2';
 import { deepClone, calculateOverflow } from '@/Utils/utils';
 // eslint-disable-next-line import/no-cycle
@@ -664,21 +664,20 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
         return null;
     }
 
-    getWidgetView(view: any, props: any) {
+    getWidgetView(view: string, props?: Partial<VisViewProps>) {
         const context = this.props.context;
-        const VisViewComponent = context.VisView as any as VisView;
+        const VisViewComponent = context.VisView;
         props = props || {};
 
-        // @ts-expect-error I don't know how to solve it
         return <VisViewComponent
             context={this.props.context}
             viewsActiveFilter={this.props.viewsActiveFilter}
             activeView={view}
             editMode={false}
             key={`${this.props.id}_${view}`}
-            askView={this.props.askView}
             view={view}
             visInWidget
+            theme={this.props.context.theme}
             {...props}
         />;
     }

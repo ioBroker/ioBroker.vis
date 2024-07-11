@@ -14,15 +14,34 @@
  */
 
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import { Tab, Tabs } from '@mui/material';
 import { Icon } from '@iobroker/adapter-react-v5';
 
 // eslint-disable-next-line import/no-cycle
-import VisRxWidget from '../../visRxWidget';
+import VisRxWidget, { type VisRxWidgetState } from '../../visRxWidget';
+import type {RxRenderWidgetProps} from "@iobroker/types-vis-2";
 
-class TabsSliderTabs extends VisRxWidget {
+interface RxData {
+    show_tabs: number;
+    vertical: boolean;
+    variant: '' | 'centered' | 'fullWidth';
+    color: string;
+    [key: `title_tab_${number}`]: string;
+    [key: `contains_view_${number}`]: string;
+    [key: `icon_tab_${number}`]: string;
+    [key: `image_tab_${number}`]: string;
+    [key: `icon_size_${number}`]: number;
+    [key: `icon_color_${number}`]: string;
+    [key: `overflow_x_${number}`]: '' | 'visible' | 'hidden' | 'scroll' | 'auto' | 'initial' | 'inherit';
+    [key: `overflow_y_${number}`]: '' | 'visible' | 'hidden' | 'scroll' | 'auto' | 'initial' | 'inherit';
+}
+
+interface TabsSliderTabsState extends VisRxWidgetState {
+    tabIndex: number;
+}
+
+class TabsSliderTabs extends VisRxWidget<RxData, TabsSliderTabsState> {
     static getWidgetInfo() {
         return {
             id: 'tplSTab',
@@ -53,7 +72,7 @@ class TabsSliderTabs extends VisRxWidget {
                             name: 'variant',
                             type: 'select',
                             label: 'vis_2_widgets_widgets_tabs_variant',
-                            hidden: data => data.vertical,
+                            hidden: '!!data.vertical',
                             options: [
                                 { value: '', label: 'vis_2_widgets_widgets_tabs_variant_default' },
                                 { value: 'centered', label: 'vis_2_widgets_widgets_tabs_variant_centered' },
@@ -88,13 +107,13 @@ class TabsSliderTabs extends VisRxWidget {
                             name: 'icon_tab_',
                             type: 'icon64',
                             label: 'vis_2_widgets_widgets_tabs_tab_icon',
-                            hidden: (data, index) => data[`image_tab_${index}`],
+                            hidden: '!!data["image_tab_" + index"]',
                         },
                         {
                             name: 'image_tab_',
                             type: 'image',
                             label: 'vis_2_widgets_widgets_tabs_tab_image',
-                            hidden: (data, index) => data[`icon_tab_${index}`],
+                            hidden: '!!data["icon_tab_" + index"]',
                         },
                         {
                             name: 'icon_size_',
@@ -102,13 +121,13 @@ class TabsSliderTabs extends VisRxWidget {
                             min: 0,
                             max: 100,
                             label: 'vis_2_widgets_widgets_tabs_tab_icon_size',
-                            hidden: (data, index) => !data[`icon_tab_${index}`] && !data[`image_tab_${index}`],
+                            hidden: '!data["icon_tab_" + index"] && !data["image_tab_" + index"]',
                         },
                         {
                             name: 'icon_color_',
                             type: 'color',
                             label: 'vis_2_widgets_widgets_tabs_tab_icon_color',
-                            hidden: (data, index) => !data[`icon_tab_${index}`],
+                            hidden: '!data["icon_tab_" + index"]',
                         },
                         {
                             name: 'overflow_x_',
@@ -131,14 +150,15 @@ class TabsSliderTabs extends VisRxWidget {
                 width: 250,
                 height: 250,
             },
-        };
+        } as const;
     }
 
     async componentDidMount() {
         super.componentDidMount();
-        let tabIndex = window.localStorage.getItem(`${this.props.id}-tabIndex`);
-        if (tabIndex) {
-            tabIndex = parseInt(tabIndex, 10) || 0;
+        const tabIndexStr = window.localStorage.getItem(`${this.props.id}-tabIndex`);
+        let tabIndex = 0;
+        if (tabIndexStr) {
+            tabIndex = parseInt(tabIndexStr, 10) || 0;
         }
         this.setState({ tabIndex });
     }
@@ -150,7 +170,7 @@ class TabsSliderTabs extends VisRxWidget {
 
     getWidgetView() {
         const view = this.state.rxData[`contains_view_${this.state.tabIndex + 1}`];
-        const style = {
+        const style: React.CSSProperties = {
             flex: 1,
             position: 'relative',
         };
@@ -181,7 +201,7 @@ class TabsSliderTabs extends VisRxWidget {
         </div>;
     }
 
-    renderWidgetBody(props) {
+    renderWidgetBody(props: RxRenderWidgetProps): React.JSX.Element {
         super.renderWidgetBody(props);
 
         // set default width and height
@@ -193,7 +213,7 @@ class TabsSliderTabs extends VisRxWidget {
         }
 
         const tabs = [];
-        for (let t = 0; t < parseInt(this.state.rxData.show_tabs, 10); t++) {
+        for (let t = 0; t < parseInt(this.state.rxData.show_tabs as unknown as string, 10); t++) {
             const color = this.state.rxData[`icon_color_${t + 1}`];
             const icon = this.state.rxData[`icon_tab_${t + 1}`];
             let image = this.state.rxData[`image_tab_${t + 1}`];
@@ -246,12 +266,5 @@ class TabsSliderTabs extends VisRxWidget {
         </div>;
     }
 }
-
-TabsSliderTabs.propTypes = {
-    id: PropTypes.string.isRequired,
-    context: PropTypes.object.isRequired,
-    view: PropTypes.string.isRequired,
-    editMode: PropTypes.bool.isRequired,
-};
 
 export default TabsSliderTabs;

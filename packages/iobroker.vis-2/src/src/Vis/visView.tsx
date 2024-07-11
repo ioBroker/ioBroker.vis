@@ -20,10 +20,10 @@ import { Utils } from '@iobroker/adapter-react-v5';
 
 import type VisRxWidget from '@/Vis/visRxWidget';
 import createTheme from  '@/theme';
-import type {
+import {
     AnyWidgetId, GroupWidgetId,
     Widget, ViewSettings, VisContext,
-    WidgetStyle, VisTheme,
+    WidgetStyle, VisViewProps, SingleWidget, GroupWidget,
 } from '@iobroker/types-vis-2';
 import { hasWidgetAccess, isVarFinite } from '@/Utils/utils';
 import { recalculateFields, selectView, store } from '@/Store';
@@ -75,21 +75,6 @@ interface VisViewMovement {
     simpleMode?: boolean;
     isResize?: boolean;
     startWidget?: DOMRect;
-}
-
-interface VisViewProps {
-    context: VisContext;
-    view: string;
-    activeView: string;
-    editMode: boolean;
-    selectedWidgets: AnyWidgetId[];
-    selectedGroup: GroupWidgetId;
-    viewsActiveFilter: Record<string, string[]>;
-    customSettings?: Record<string, any>;
-    onIgnoreMouseEvents?: (ignore: boolean) => void;
-    style?: React.CSSProperties;
-    visInWidget?: boolean;
-    theme: VisTheme;
 }
 
 interface CreateWidgetOptions {
@@ -411,8 +396,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
 
     doubleClickOnView = () => {
         if (this.props.editMode &&
-            this.props.selectedWidgets &&
-            this.props.selectedWidgets.length === 1 &&
+            this.props.selectedWidgets?.length === 1 &&
             store.getState().visProject[this.props.view].widgets[this.props.selectedWidgets[0]].tpl === '_tplGroup'
         ) {
             this.props.context.setSelectedGroup(this.props.selectedWidgets[0]);
@@ -563,8 +547,8 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
 
         if (this.props.context.disableInteraction || this.props.context.lockDragging ||
             this.props.selectedWidgets
-                .map(selectedWidget => store.getState().visProject[this.props.view].widgets[selectedWidget])
-                .find(widget => widget.data.locked)
+                .map((selectedWidget: AnyWidgetId) => store.getState().visProject[this.props.view].widgets[selectedWidget])
+                .find((widget: GroupWidget | SingleWidget) => widget.data.locked)
         ) {
             return;
         }
@@ -600,14 +584,14 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
 
         const widgetsRefs = this.widgetsRefs;
 
-        this.props.selectedWidgets.forEach(selectedWidget => {
+        this.props.selectedWidgets.forEach((selectedWidget: AnyWidgetId) => {
             const widgetRect = widgetsRefs[selectedWidget].refService?.current?.getBoundingClientRect();
             if (this.movement && widgetRect && e.pageX <= widgetRect.right && e.pageX >= widgetRect.left && e.pageY <= widgetRect.bottom && e.pageY >= widgetRect.top) {
                 this.movement.startWidget = widgetsRefs[selectedWidget].refService?.current?.getBoundingClientRect();
             }
         });
 
-        this.props.selectedWidgets.forEach(_wid => {
+        this.props.selectedWidgets.forEach((_wid: AnyWidgetId) => {
             if (widgetsRefs[_wid]?.onMove) {
                 widgetsRefs[_wid].onMove(); // indicate the start of movement
             }
@@ -688,7 +672,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
 
         this.showRulers();
 
-        this.props.selectedWidgets.forEach(wid => {
+        this.props.selectedWidgets.forEach((wid: AnyWidgetId) => {
             const onMove = widgetsRefs[wid]?.onMove;
             if (onMove && this.movement) {
                 onMove(this.movement.x, this.movement.y, false, this.calculateRelativeWidgetPosition);
@@ -824,7 +808,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         this.onMouseWidgetUp && window.document.removeEventListener('mouseup', this.onMouseWidgetUp);
 
         if (this.movement?.moved) {
-            this.props.selectedWidgets.forEach(wid => {
+            this.props.selectedWidgets.forEach((wid: AnyWidgetId) => {
                 const onMove = widgetsRefs[wid]?.onMove;
                 if (onMove && this.movement) {
                     onMove(this.movement.x, this.movement.y, true); // indicate end of movement
@@ -865,7 +849,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
                     baseRect.right <= rect.right &&
                     baseRect.bottom <= rect.bottom
                 ) {
-                    this.props.context.askAboutInclude(this.props.selectedWidgets[0], widgetId, (_wid, toWid) => {
+                    this.props.context.askAboutInclude(this.props.selectedWidgets[0], widgetId, (_wid: AnyWidgetId, toWid: AnyWidgetId) => {
                         const onCommand = widgetsRefs[toWid]?.onCommand;
                         if (onCommand) {
                             onCommand('include', _wid);
@@ -1163,7 +1147,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
                 x: 0,
                 y: 0,
             };
-            this.props.selectedWidgets.forEach(_wid => {
+            this.props.selectedWidgets.forEach((_wid: AnyWidgetId) => {
                 const onMove = this.widgetsRefs[_wid]?.onMove;
                 if (onMove) {
                     onMove(); // indicate the start of movement
@@ -1185,7 +1169,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         this.movement.x += leftShift;
         this.movement.y += topShift;
 
-        this.props.selectedWidgets.forEach(wid => {
+        this.props.selectedWidgets.forEach((wid: AnyWidgetId) => {
             const widgetsRefs = this.widgetsRefs;
             const onMove = widgetsRefs[wid]?.onMove;
             if (onMove && this.movement) {
@@ -1201,7 +1185,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
             this.showRulers(true);
             store.dispatch(recalculateFields(true));
 
-            this.props.selectedWidgets.forEach(wid => {
+            this.props.selectedWidgets.forEach((wid: AnyWidgetId) => {
                 const onMove = this.widgetsRefs[wid]?.onMove;
                 if (onMove && this.movement) {
                     onMove(this.movement.x, this.movement.y, true, this.calculateRelativeWidgetPosition); // indicate end of movement
@@ -1235,7 +1219,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
                 }
             });
 
-            this.props.selectedWidgets.forEach(_wid => {
+            this.props.selectedWidgets.forEach((_wid: AnyWidgetId) => {
                 const onMove = this.widgetsRefs[_wid]?.onMove;
                 if (onMove) {
                     onMove(); // indicate the start of resizing
@@ -1249,7 +1233,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         this.movement.x += widthShift;
         this.movement.y += heightShift;
 
-        this.props.selectedWidgets.forEach(wid => {
+        this.props.selectedWidgets.forEach((wid: AnyWidgetId) => {
             const widgetsRefs = this.widgetsRefs;
             const onMove = widgetsRefs[wid]?.onMove;
             if (onMove && this.movement) {
@@ -1264,7 +1248,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
             this.moveTimer = null;
             this.showRulers(true);
 
-            this.props.selectedWidgets.forEach(wid => {
+            this.props.selectedWidgets.forEach((wid: AnyWidgetId) => {
                 const onMove = this.widgetsRefs[wid]?.onMove;
                 // indicate end of movement
                 if (onMove && this.movement) {
@@ -1542,7 +1526,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
                 const unknownWidgets = [];
 
                 if (this.props.editMode && this.props.selectedWidgets?.length) {
-                    this.props.selectedWidgets.forEach(id => {
+                    this.props.selectedWidgets.forEach((id: AnyWidgetId) => {
                         const widget = contextView.widgets[id];
                         if (!widget || (widget.groupid && !this.props.selectedGroup)) {
                             return;

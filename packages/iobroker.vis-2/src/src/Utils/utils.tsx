@@ -18,7 +18,7 @@ export const NOTHING_SELECTED = 'nothing_selected';
  *
  * @param style the style to modify
  */
-export function calculateOverflow(style: React.CSSProperties): void {
+export function calculateOverflow(style: CSSStyleDeclaration | React.CSSProperties): void {
     if (!style.overflowX && !style.overflowY) {
         style.overflow = 'visible';
     } else if (style.overflow) {

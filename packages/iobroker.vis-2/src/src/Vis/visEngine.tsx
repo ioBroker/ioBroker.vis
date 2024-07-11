@@ -54,14 +54,15 @@ import './css/backgrounds.css';
 // import $$ from './lib/quo.standalone'; // Gestures library
 
 import { store } from '@/Store';
-import type {
+import {
     AnyWidgetId, ArgumentChanged, CanWidgetStore, GroupWidgetId, ViewCommand,
     ViewCommandOptions, VisChangeHandlerCallback, VisContext,
     VisLegacy, VisLinkContext, VisLinkContextBinding, VisLinkContextItem, VisTheme,
-    VisFormatUtils as VisFormatUtilsType,
+    VisFormatUtils as VisFormatUtilsType, VisCanWidgetStateValues,
 } from '@iobroker/types-vis-2';
 import type Editor from '@/Editor';
 import { deepClone } from '@/Utils/utils';
+// eslint-disable-next-line no-unused-vars
 import type JQuery from 'jquery';
 import './visWords';
 import VisView from './visView';
@@ -264,7 +265,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
 
     widgetChangeHandlers: Record<AnyWidgetId, VisChangeHandlerCallback>;
 
-    canStates: JQuery;
+    canStates: VisCanWidgetStateValues;
 
     viewsActiveFilter: Record<string, string[]>;
 
@@ -2248,7 +2249,8 @@ ${this.scripts}
 
         this.visContext = {
             $$: window.$$,
-            VisView,
+            // todo
+            VisView: VisView as unknown as VisContext['VisView'],
             activeView: this.props.activeView,
             adapterName: this.props.adapterName,
             allWidgets: this.allWidgets,

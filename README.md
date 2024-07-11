@@ -294,6 +294,10 @@ npm run start
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Converted the CanJSWidget to typescript
+* (bluefox) Added "clone" button to the attribute groups
+
 ### 2.10.2 (2024-07-10)
 * (bluefox) Removed incompatible package for styles
 * (bluefox) All widgets must be updated

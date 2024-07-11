@@ -11,7 +11,7 @@ import type { Color, PaletteMode } from '@mui/material';
 
 import type { LegacyConnection, ThemeType, IobTheme } from '@iobroker/adapter-react-v5';
 
-interface VisView {
+interface VisView extends React.FC<VisViewProps> {
     getOneWidget(index: number, widget: SingleWidget | GroupWidget, options: CreateWidgetOptions): React.JSX.Element | null;
 }
 
@@ -808,12 +808,17 @@ export interface VisRxWidgetStateValues {
     [timestamp: `${string}.lc`]: number;
 }
 
+export interface VisCanWidgetStateValues extends VisRxWidgetStateValues {
+    attr: (id: string | VisRxWidgetStateValues, val?: string | number | boolean) => any;
+    removeAttr: (id: string) => void;
+}
+
 export interface VisLegacy {
     instance: string;
     navChangeCallbacks: (() => void)[];
     findNearestResolution: (width?: number, height?: number) => string;
     version: number;
-    states: JQuery;
+    states: VisCanWidgetStateValues;
     objects: Record<string, any>;
     isTouch: boolean;
     activeWidgets: string[];
@@ -995,8 +1000,8 @@ export interface RxWidgetState extends BaseWidgetState {
 }
 
 export interface CanWidgetStore {
-    style: Record<string, string | number>;
-    data: Record<string, string | number | boolean>;
+    style: CanObservable<WidgetStyle>;
+    data: CanObservable<WidgetData>;
     wid: string;
 }
 
@@ -1152,6 +1157,11 @@ export interface VisTheme extends IobTheme {
     };
 }
 
+type CanObservable<T> = T & {
+    attr: (id: VisRxWidgetStateValues | string, val?: string | number | boolean) => string | number | boolean | undefined | null | void;
+    removeAttr: (id: string) => void;
+}
+
 export interface VisContext {
     $$: any;
     VisView: VisView;
@@ -1160,8 +1170,20 @@ export interface VisContext {
     allWidgets: Record<string, CanWidgetStore>;
     askAboutInclude: (wid: AnyWidgetId, toWid: AnyWidgetId, cb: (_wid: AnyWidgetId, _toWid: AnyWidgetId) => void) => void;
     buildLegacyStructures: () => void;
-    can: any;
-    canStates: JQuery;
+    can: {
+        // https://v2.canjs.com/docs/can.Map.html
+        Map: any;
+        // https://v2.canjs.com/docs/can.view.html
+        // Loads a template, renders it with data and helper functions and returns the HTML of the template
+        view: (templateName: string, data: {
+            data: CanWidgetStore['data'];
+            viewDiv: string;
+            view: string;
+            style: WidgetStyle;
+            val?: string | number | boolean;
+        }) => HTMLElement;
+    };
+    canStates: CanObservable<VisRxWidgetStateValues>;
     changeProject: (project: Project, ignoreHistory?: boolean) => Promise<void>;
     changeView: (view: string, subView?: string) => void;
     dateFormat: string;
@@ -1208,6 +1230,21 @@ export interface VisContext {
     views: Project; // project
     widgetHint: 'light' | 'dark' | 'hide';
     container?: boolean;
+}
+
+export interface VisViewProps {
+    context: VisContext;
+    view: string;
+    activeView: string;
+    editMode: boolean;
+    selectedWidgets?: AnyWidgetId[];
+    selectedGroup?: GroupWidgetId;
+    viewsActiveFilter: Record<string, string[]>;
+    customSettings?: Record<string, any>;
+    onIgnoreMouseEvents?: (ignore: boolean) => void;
+    style?: React.CSSProperties;
+    visInWidget?: boolean;
+    theme: VisTheme;
 }
 
 export interface RxWidgetProps extends RxRenderWidgetProps {

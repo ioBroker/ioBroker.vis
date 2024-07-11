@@ -101,23 +101,23 @@ export interface WidgetStyleState extends WidgetStyle {
 }
 
 export interface VisBaseWidgetState {
-    data: WidgetDataState | GroupDataState;
-    style: WidgetStyleState;
-    editMode: boolean;
-    rxStyle?: WidgetStyleState;
     applyBindings?: false | true | { top: string | number; left: string | number };
-    multiViewWidget?: boolean;
-    selected?: boolean;
-    selectedOne?: boolean;
-    resizable?: boolean;
-    resizeHandles?: ResizeHandler[];
-    widgetHint?: 'light' | 'dark' | 'hide';
+    data: WidgetDataState | GroupDataState;
+    draggable?: boolean;
+    editMode: boolean;
+    gap?: number;
     hideHelper?: boolean;
     isHidden?: boolean;
-    gap?: number;
-    draggable?: boolean;
+    multiViewWidget?: boolean;
+    resizable?: boolean;
+    resizeHandles?: ResizeHandler[];
+    rxStyle?: WidgetStyleState;
+    selected?: boolean;
+    selectedOne?: boolean;
     showRelativeMoveMenu?: boolean;
+    style: WidgetStyleState;
     usedInWidget: boolean;
+    widgetHint?: 'light' | 'dark' | 'hide';
 }
 
 export interface VisBaseWidgetMovement {
@@ -156,6 +156,14 @@ interface VisBaseWidget {
     renderLastChange(style: unknown): React.ReactNode;
 }
 
+interface CanHTMLDivElement extends HTMLDivElement {
+    _customHandlers?: {
+        onShow: (el: HTMLDivElement, id: string) => void;
+        onHide: (el: HTMLDivElement, id: string) => void;
+    };
+    _storedDisplay?: React.CSSProperties['display'];
+}
+
 class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetState> extends React.Component<VisBaseWidgetProps, TState & VisBaseWidgetState> {
     static FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~]+/g; // from https://github.com/ioBroker/ioBroker.js-controller/blob/master/packages/common/lib/common/tools.js
 
@@ -169,7 +177,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
 
     protected refService = React.createRef<HTMLDivElement>();
 
-    protected widDiv: null | HTMLDivElement = null;
+    protected widDiv: null | CanHTMLDivElement = null;
 
     readonly onCommandBound: typeof this.onCommand;
 
@@ -519,8 +527,8 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
         });
     }
 
-    static parseStyle(style: string, isRxStyle: boolean) {
-        const result: Record<string, unknown> = {};
+    static parseStyle(style: string, isRxStyle?: boolean): Record<string, string | number> {
+        const result: Record<string, string | number> = {};
         // style is like "height: 10; width: 20"
         (style || '').split(';').forEach(part => {
             part = part.trim();
@@ -1304,7 +1312,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
      * @param _props
      */
     // eslint-disable-next-line class-methods-use-this,no-unused-vars, @typescript-eslint/no-unused-vars
-    renderWidgetBody(_props: RxRenderWidgetProps): React.JSX.Element | null {
+    renderWidgetBody(_props: RxRenderWidgetProps): React.JSX.Element | React.JSX.Element[] | null {
         // Default render method. Normally it should be overwritten
         return <div
             style={{
@@ -1922,13 +1930,13 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
                         if (value && typeof value === 'string' && !value.includes('{')) {
                             anyStyle[attr] = VisBaseWidget.correctStylePxValue(value);
                         }
-                    } else if (this.props.context.allWidgets[this.props.id] &&
-                        this.props.context.allWidgets[this.props.id].style &&
-                        this.props.context.allWidgets[this.props.id].style[attr] !== undefined
-                    ) {
-                        // try to steal style by canWidget
-                        if (!(this.props.context.allWidgets[this.props.id].style[attr] as string).includes('{')) {
-                            anyStyle[attr] = VisBaseWidget.correctStylePxValue(this.props.context.allWidgets[this.props.id].style[attr]);
+                    } else {
+                        const styleVal: string | number | undefined | null = (this.props.context.allWidgets[this.props.id]?.style as unknown as Record<string, string | number>)?.[attr];
+                        if (styleVal !== undefined && styleVal !== null) {
+                            // try to steal style by canWidget
+                            if (!styleVal.toString().includes('{')) {
+                                anyStyle[attr] = VisBaseWidget.correctStylePxValue(styleVal);
+                            }
                         }
                     }
                 }
