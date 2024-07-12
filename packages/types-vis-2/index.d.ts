@@ -197,6 +197,8 @@ export type RxWidgetInfoAttributesFieldInstance = {
     readonly default?: string;
     /** Additionally, you can provide `adapter` to filter the instances of specific adapter. With special adapter name `_dataSources` you can get all adapters with flag `common.getHistory`. */
     readonly adapter?: string;
+    /** Additionally, you can provide `adapters` to filter the instances of specific adapters. */
+    readonly adapters?: string;
     /** In this case, only instance number (like `0`) is shown and not `history.0`. It can be set to true only with non-empty `adapter` setting. */
     readonly iShort?: boolean;
 

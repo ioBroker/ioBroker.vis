@@ -443,18 +443,39 @@ const WidgetField = (props: WidgetFieldProps) => {
                                 idShort: obj._id.split('.').pop(),
                                 name: obj.common.name,
                                 icon: obj.common.icon,
-                            }));
+                            }))
+                            .sort((a, b) =>
+                                (a.name > b.name ? 1 : (a.name < b.name ? -1 : 0)));
+                        setInstances(inst);
+                    });
+            } else if (Array.isArray(field.adapters)) {
+                props.socket.getAdapterInstances('')
+                    .then(_instances => {
+                        const inst = _instances
+                            .filter(obj => field.adapters.includes(obj.common.name))
+                            .map(obj => ({
+                                id: obj._id.replace('system.adapter.', ''),
+                                idShort: obj._id.split('.').pop(),
+                                name: obj.common.name,
+                                icon: obj.common.icon,
+                            }))
+                            .sort((a, b) =>
+                                (a.name > b.name ? 1 : (a.name < b.name ? -1 : 0)));
                         setInstances(inst);
                     });
             } else {
                 props.socket.getAdapterInstances(field.adapter || '')
                     .then(_instances => {
-                        const inst = _instances.map(obj => ({
-                            id: obj._id.replace('system.adapter.', ''),
-                            idShort: obj._id.split('.').pop(),
-                            name: obj.common.name,
-                            icon: obj.common.icon,
-                        }));
+                        const inst = _instances
+                            .map(obj => ({
+                                id: obj._id.replace('system.adapter.', ''),
+                                idShort: obj._id.split('.').pop(),
+                                name: obj.common.name,
+                                icon: obj.common.icon,
+                            }))
+                            .sort((a, b) =>
+                                (a.name > b.name ? 1 : (a.name < b.name ? -1 : 0)));
+
                         setInstances(inst);
                     });
             }

@@ -18,9 +18,9 @@ import React from 'react';
 import { Tab, Tabs } from '@mui/material';
 import { Icon } from '@iobroker/adapter-react-v5';
 
+import type { RxRenderWidgetProps } from '@iobroker/types-vis-2';
 // eslint-disable-next-line import/no-cycle
 import VisRxWidget, { type VisRxWidgetState } from '../../visRxWidget';
-import type {RxRenderWidgetProps} from "@iobroker/types-vis-2";
 
 interface RxData {
     show_tabs: number;

@@ -13,8 +13,7 @@
  * (Free for non-commercial use).
  */
 
-import type { Component } from 'react';
-import React from 'react';
+import React, { type Component } from 'react';
 import {
     Card,
     CardContent,
@@ -22,7 +21,7 @@ import {
 
 import { type LegacyConnection, I18n, Icon } from '@iobroker/adapter-react-v5';
 
-import {
+import type {
     Project,
     AnyWidgetId,
     RxWidgetInfo,

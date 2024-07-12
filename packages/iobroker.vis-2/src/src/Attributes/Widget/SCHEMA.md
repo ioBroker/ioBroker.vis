@@ -140,6 +140,7 @@ onChange: async (field, data, changeData, socket) => {
 - `type`: default value is '' and just an input field. It can have the following values:
   - `instance` - Instance selector. It could have additional settings: 
      - `adapter` - [optional] Additionally, you can provide `adapter` to filter the instances of specific adapter. With special adapter name `_dataSources` you can get all adapters with flag `common.getHistory`.
+     - `adapters` - [optional] Additionally, you can provide `adapters` to filter the instances of specific adapters. It is an array of adapter names.
      - `isShort` - [optional] In this case only instance number (like `0`) is shown and not `history.0`. It can be set to true only with non-empty `adapter` setting.
   - `number` - Number input. It could have additional settings:
     - `min` - [optional] minimum value
