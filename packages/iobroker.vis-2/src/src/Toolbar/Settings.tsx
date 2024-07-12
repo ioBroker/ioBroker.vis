@@ -13,7 +13,7 @@ import {
     FormHelperText, IconButton,
 } from '@mui/material';
 
-import { ContentCopy, Save as SaveIcon } from '@mui/icons-material';
+import { ContentCopy, Save as SaveIcon, Refresh } from '@mui/icons-material';
 
 import { I18n, Utils, type LegacyConnection } from '@iobroker/adapter-react-v5';
 
@@ -169,15 +169,22 @@ const Settings: React.FC<SettingsProps> = props => {
         { name: 'States Debounce Time (millis)', field: 'statesDebounceTime', type: 'number' },
         {
             type: 'raw',
-            Node: <>
+            Node: <div
+                style={{
+                    width: '100%',
+                    display: 'flex',
+                    gap: 8,
+                    alignItems: 'baseline',
+                }}
+            >
                 <TextField
                     variant="standard"
+                    style={{ flexGrow: 1 }}
                     label={I18n.t('Browser instance ID')}
                     value={instance || ''}
                     onChange={e => setInstance(e.target.value)}
                     InputProps={{
                         endAdornment: instance ? <IconButton
-                            size="small"
                             onClick={() => Utils.copyToClipboard(instance)}
                         >
                             <ContentCopy />
@@ -188,6 +195,9 @@ const Settings: React.FC<SettingsProps> = props => {
                 <Button
                     variant="contained"
                     color="grey"
+                    style={{
+                        whiteSpace: 'nowrap',
+                    }}
                     onClick={() => {
                         let newInstance = (Math.random() * 4294967296).toString(16);
                         newInstance = `0000000${newInstance}`;
@@ -196,10 +206,11 @@ const Settings: React.FC<SettingsProps> = props => {
                         window.vis.instance = newInstance;
                         setInstance(newInstance);
                     }}
+                    startIcon={<Refresh />}
                 >
                     {I18n.t('Create instance')}
                 </Button>
-            </>,
+            </div>,
         },
         { type: 'switchMode' }, // very specific control
         {
