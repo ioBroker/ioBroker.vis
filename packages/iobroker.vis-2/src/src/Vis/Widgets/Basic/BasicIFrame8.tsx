@@ -1,12 +1,24 @@
 import React from 'react';
 
-import type { GetRxDataFromWidget, RxRenderWidgetProps } from '@iobroker/types-vis-2';
+import type { RxRenderWidgetProps } from '@iobroker/types-vis-2';
 import VisRxWidget from '@/Vis/visRxWidget';
 
 // eslint-disable-next-line no-use-before-define
-type RxData = GetRxDataFromWidget<typeof BasicIFrame>;
+type RxData = {
+    oid: string;
+    refreshInterval: number;
+    refreshOnWakeUp: boolean;
+    refreshOnViewChange: boolean;
+    refreshWithNoQuery: boolean;
+    scrollX: boolean;
+    scrollY: boolean;
+    seamless: boolean;
+    count: number;
+    [key: `src_${number}`]: string;
+    [key: `noSandbox${number}`]: boolean;
+};
 
-export default class BasicIFrame extends VisRxWidget<RxData> {
+export default class BasicIFrame8 extends VisRxWidget<RxData> {
     private refreshInterval: ReturnType<typeof setInterval> | null = null;
 
     private readonly frameRef: React.RefObject<HTMLIFrameElement>;
@@ -28,16 +40,16 @@ export default class BasicIFrame extends VisRxWidget<RxData> {
      */
     static getWidgetInfo() {
         return {
-            id: 'tplIFrame',
+            id: 'tplStatefulIFrame8',
             visSet: 'basic',
-            visName: 'iFrame',
-            visPrev: 'widgets/basic/img/Prev_iFrame.png',
+            visName: 'iFrame 8',
+            visPrev: 'widgets/basic/img/Prev_StatefulIFrame8.png',
             visAttrs: [{
                 name: 'common',
                 fields: [
                     {
-                        name: 'src',
-                        type: 'url',
+                        name: 'oid',
+                        type: 'id',
                     },
                     {
                         name: 'refreshInterval',
@@ -47,10 +59,6 @@ export default class BasicIFrame extends VisRxWidget<RxData> {
                         max: 180000,
                         step: 100,
                         default: 0,
-                    },
-                    {
-                        name: 'noSandbox',
-                        type: 'checkbox',
                     },
                     {
                         name: 'refreshOnWakeUp',
@@ -76,6 +84,29 @@ export default class BasicIFrame extends VisRxWidget<RxData> {
                         name: 'seamless',
                         type: 'checkbox',
                         default: true,
+                    },
+                    {
+                        name: 'count',
+                        type: 'slider',
+                        min: 1,
+                        max: 20,
+                        default: 2,
+                    },
+                ],
+            },
+            {
+                name: 'frames',
+                label: 'frames',
+                indexFrom: 0,
+                indexTo: 'count',
+                fields: [
+                    {
+                        name: 'src_',
+                        type: 'id',
+                    },
+                    {
+                        name: 'noSandbox',
+                        type: 'checkbox',
                     },
                 ],
             }],
@@ -106,7 +137,26 @@ export default class BasicIFrame extends VisRxWidget<RxData> {
      */
     // eslint-disable-next-line class-methods-use-this
     getWidgetInfo() {
-        return BasicIFrame.getWidgetInfo();
+        return BasicIFrame8.getWidgetInfo();
+    }
+
+    getSrc() {
+        const value = this.state.values[`${this.state.rxData.oid}.val`];
+        if (value === undefined || value === null) {
+            return this.state.rxData.src_1;
+        }
+        return this.state.rxData[`src_${value}`] || '';
+    }
+
+    getNoSandBox() {
+        const value = this.state.values[`${this.state.rxData.oid}.val`];
+        if (value === undefined || value === null) {
+            return this.state.rxData.noSandbox1;
+        }
+
+        return this.state.rxData[`noSandbox${value}`] === true ||
+            // @ts-expect-error back compatibility
+            this.state.rxData[`noSandbox${value}`] === 'true';
     }
 
     onHashChange = () => {
@@ -119,7 +169,8 @@ export default class BasicIFrame extends VisRxWidget<RxData> {
         if (this.state.rxData.refreshWithNoQuery === true) {
             this.frameRef.current?.contentWindow?.location.reload();
         } else if (this.frameRef.current) {
-            this.frameRef.current.src = `${this.state.rxData.src}${this.state.rxData.src.includes('?') ? '&' : '?'}_refts=${Date.now()}`;
+            const src = this.getSrc();
+            this.frameRef.current.src = `${src}${src.includes('?') ? '&' : '?'}_refts=${Date.now()}`;
         }
     }
 
@@ -139,7 +190,7 @@ export default class BasicIFrame extends VisRxWidget<RxData> {
     }
 
     onPropertyUpdate() {
-        const src     = this.state.rxData.src || '';
+        const src = this.getSrc();
         const refreshInterval = Number(this.state.rxData.refreshInterval) || 0;
         const refreshOnViewChange = this.state.rxData.refreshOnViewChange === true;
         const refreshOnWakeUp = this.state.rxData.refreshOnWakeUp === true;
@@ -164,8 +215,8 @@ export default class BasicIFrame extends VisRxWidget<RxData> {
                 }
                 // install refresh handler
                 this.refreshInterval = this.refreshInterval || setInterval(() => {
-                    if (this.frameRef.current && !BasicIFrame.isHidden(this.frameRef.current as HTMLElement)) {
-                        const parents = BasicIFrame.getParents(this.frameRef.current).filter(el => BasicIFrame.isHidden(el));
+                    if (this.frameRef.current && !BasicIFrame8.isHidden(this.frameRef.current as HTMLElement)) {
+                        const parents = BasicIFrame8.getParents(this.frameRef.current).filter(el => BasicIFrame8.isHidden(el));
                         if (!parents.length || parents[0].tagName === 'BODY' || parents[0].id === 'materialdesign-vuetify-container') {
                             this.refreshIFrame();
                         }
@@ -217,15 +268,16 @@ export default class BasicIFrame extends VisRxWidget<RxData> {
             overflowX: this.state.rxData.scrollX ? 'scroll' : 'hidden',
             overflowY: this.state.rxData.scrollY ? 'scroll' : 'hidden',
         };
-        const src = this.state.rxData.src || '';
+        const src = this.getSrc();
+        const noSandbox = this.getNoSandBox();
 
         return src ? <div className="vis-widget-body">
             <iframe
                 style={style}
                 ref={this.frameRef}
                 title={this.props.id}
-                src={this.state.rxData.src}
-                sandbox={this.state.rxData.noSandbox ? 'allow-modals allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts' : undefined}
+                src={src}
+                sandbox={noSandbox ? 'allow-modals allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts' : undefined}
                 seamless={this.state.rxData.seamless}
             />
         </div> : null;

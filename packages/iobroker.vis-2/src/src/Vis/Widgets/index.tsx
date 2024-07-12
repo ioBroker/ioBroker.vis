@@ -13,6 +13,7 @@ import BasicSvgShape from './Basic/BasicSvgShape';
 import BasicScreenResolution from './Basic/BasicScreenResolution';
 import BasicSpeechToText from './Basic/BasicSpeechToText';
 import BasicIFrame from './Basic/BasicIFrame';
+import BasicIFrame8 from './Basic/BasicIFrame8';
 import BasicImage from './Basic/BasicImage';
 import BasicHtmlNav from './Basic/BasicHtmlNav';
 import BasicFilterDropdown from './Basic/BasicFilterDropdown';
@@ -71,6 +72,7 @@ const WIDGETS = [
     BasicScreenResolution,
     BasicSpeechToText,
     BasicIFrame,
+    BasicIFrame8,
     BasicImage,
     BasicImage8,
 

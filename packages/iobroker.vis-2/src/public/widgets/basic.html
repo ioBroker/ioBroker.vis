@@ -253,7 +253,7 @@
         },
     });
 
-    vis.binds.stateful = {
+    /*vis.binds.stateful = {
         view: function (el, viewArr, persistent, notIfInvisible) {
             var $this = $(el);
             var oid   = $this.attr('data-oid');
@@ -392,7 +392,7 @@
                 return values[0];
             }
         }
-    };
+    };*/
     vis.binds.container = function (el, view) {
         var $this = $(el);
         if (vis.views[view]) {
@@ -2077,7 +2077,7 @@
     </div>
 </script>
 
-<script id="tplStatefulIFrame8"
+<!--script id="tplStatefulIFrame8"
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
@@ -2105,7 +2105,7 @@
             <div <%= (el) -> vis.binds.stateful.iframe(el, srcArr, data.attr('refreshInterval')) %> />
         </div>
     </div>
-</script>
+</script-->
 
 <!-- basic Container -->
 <!--script id="tplContainerView"
