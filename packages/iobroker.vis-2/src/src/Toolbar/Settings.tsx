@@ -10,18 +10,18 @@ import {
     Select,
     Switch,
     TextField,
-    FormHelperText,
+    FormHelperText, IconButton,
 } from '@mui/material';
 
-import { Save as SaveIcon } from '@mui/icons-material';
+import { ContentCopy, Save as SaveIcon } from '@mui/icons-material';
 
-import type { LegacyConnection } from '@iobroker/adapter-react-v5';
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n, Utils, type LegacyConnection } from '@iobroker/adapter-react-v5';
 
 import type Editor from '@/Editor';
 import { store } from '@/Store';
 import { deepClone } from '@/Utils/utils';
 import type { ProjectSettings } from '@iobroker/types-vis-2';
+import commonStyles from '@/Utils/styles';
 import IODialog from '../Components/IODialog';
 
 const styles: { dialog: React.CSSProperties; field: React.CSSProperties } = {
@@ -170,7 +170,21 @@ const Settings: React.FC<SettingsProps> = props => {
         {
             type: 'raw',
             Node: <>
-                <TextField variant="standard" label={I18n.t('Browser instance ID')} value={instance || ''} onChange={e => setInstance(e.target.value)} />
+                <TextField
+                    variant="standard"
+                    label={I18n.t('Browser instance ID')}
+                    value={instance || ''}
+                    onChange={e => setInstance(e.target.value)}
+                    InputProps={{
+                        endAdornment: instance ? <IconButton
+                            size="small"
+                            onClick={() => Utils.copyToClipboard(instance)}
+                        >
+                            <ContentCopy />
+                        </IconButton> : null,
+                        sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
+                    }}
+                />
                 <Button
                     variant="contained"
                     color="grey"

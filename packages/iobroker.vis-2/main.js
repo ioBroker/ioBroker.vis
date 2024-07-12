@@ -855,7 +855,7 @@ async function buildHtmlPages(forceBuild) {
         } catch (err) {
             // ignore
         }
-        if (typeof uploadedIndexHtml === 'object') {
+        if (uploadedIndexHtml && typeof uploadedIndexHtml === 'object') {
             uploadedIndexHtml = uploadedIndexHtml.file;
         }
         uploadedIndexHtml = uploadedIndexHtml ? uploadedIndexHtml.toString('utf8') : uploadedIndexHtml;
@@ -870,7 +870,7 @@ async function buildHtmlPages(forceBuild) {
         } catch (err) {
             // ignore
         }
-        if (typeof uploadedEditHtml === 'object') {
+        if (uploadedEditHtml && typeof uploadedEditHtml === 'object') {
             uploadedEditHtml = uploadedEditHtml.file;
         }
         uploadedEditHtml = uploadedEditHtml ? uploadedEditHtml.toString('utf8') : uploadedEditHtml;
