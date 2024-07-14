@@ -127,7 +127,7 @@ There are a number of different internal bindings to provide additional informat
 * `view` - name of actual view
 * `wname` - widget name
 * `widget` - is an object with all data of widget. Can be used only in JS part, like `{a:a;widget.data.name}`
-* `widgetOid` - use the oid of the widget to assign the widgets value in the assignment section, like `{t:widgetOid.val;t}`
+* `widgetOid` - use the OID of the widget to assign the widget's value in the assignment section, like `{t:widgetOid.val;t}`
 * `wid` - name of actual widget
 * `language` - can be `de`, `en` or `ru`.
 * `instance` - browser instance
@@ -277,7 +277,7 @@ git clone https://github.com/<your profile name>/ioBroker.vis-2.git
 npm run install-monorepo
 ```
 
-5. to start the editor in the browser please execute the following command. 
+5. to start the editor in the browser, please execute the following command. 
 An already separately running iobroker server instance must be available on port 8082.
 
 ```
@@ -294,6 +294,9 @@ npm run start
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Corrected the jumping by object selection
+
 ### 2.10.3 (2024-07-11)
 * (bluefox) Converted the CanJSWidget to typescript
 * (bluefox) Added "clone" button to the attribute groups
@@ -463,7 +466,7 @@ npm run start
 * (foxriver76) fixed issue on theme switch
 
 ### 2.9.7 (2023-12-19)
-* (bluefox) Allowed the read only flag for Styled/Input
+* (bluefox) Allowed the read-only flag for Styled/Input
 
 ### 2.9.6 (2023-12-14)
 * (foxriver76) fixed issues with the BulkEditor

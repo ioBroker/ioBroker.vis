@@ -17,16 +17,21 @@ import {
     ListItemIcon,
 } from '@mui/material';
 
-import IconAdd from '@mui/icons-material/Add';
-import IconClose from '@mui/icons-material/Close';
-import IconDocument from '@mui/icons-material/FileCopy';
+import {
+    Add as IconAdd,
+    Close as IconClose,
+    FileCopy as IconDocument,
+} from '@mui/icons-material';
 import { BiImport } from 'react-icons/bi';
 
 import {
     I18n, Loader, LegacyConnection,
     LoaderMV, LoaderPT, LoaderVendor,
     GenericApp,
-    type GenericAppProps, type GenericAppState, type ThemeName, Utils,
+    type GenericAppProps,
+    type GenericAppState,
+    type ThemeName,
+    Utils,
 } from '@iobroker/adapter-react-v5';
 
 import type {
