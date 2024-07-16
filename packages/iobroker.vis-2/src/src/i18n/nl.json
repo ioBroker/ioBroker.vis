@@ -746,5 +746,8 @@
   "vis-2-widgets-basic-autoSetDelay": "Vertraging voor automatisch schrijven",
   "vis-2-widgets-basic-noStyle": "Geen stijl",
   "Clone": "Kloon",
-  "jqui_Write state": "Schrijf staat"
+  "jqui_Write state": "Schrijf staat",
+  "vis_2_widgets_widgets_swipe_label": "Swipe",
+  "vis_2_widgets_swipe_hide_indication_label": "Indicatie verbergen",
+  "vis_2_widgets_swipe_threshold_label": "Drempelwaarde"
 }

@@ -184,6 +184,7 @@ const ViewsManager: React.FC<ViewsManagerProps> = props => {
                     isDragging={isDragging}
                     folder={folder}
                     theme={props.theme}
+                    editMode={props.editMode}
                     setFolderDialog={setFolderDialog}
                     setFolderDialogName={setFolderDialogName}
                     setFolderDialogId={setFolderDialogId}
@@ -191,6 +192,7 @@ const ViewsManager: React.FC<ViewsManagerProps> = props => {
                     moveFolder={moveFolder}
                     foldersCollapsed={foldersCollapsed}
                     setFoldersCollapsed={setFoldersCollapsed}
+                    showDialog={props.showDialog}
                 />
             </div>
             {foldersCollapsed.includes(folder.id) ? null : <div style={{ paddingLeft: 10 }}>
@@ -200,7 +202,12 @@ const ViewsManager: React.FC<ViewsManagerProps> = props => {
         </div>);
     };
 
-    return <IODialog open={props.open} onClose={props.onClose} title="Manage views" closeTitle="Close">
+    return <IODialog
+        open={props.open}
+        onClose={props.onClose}
+        title="Manage views"
+        closeTitle="Close"
+    >
         <div style={styles.dialog}>
             <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>
                 <DndPreview />

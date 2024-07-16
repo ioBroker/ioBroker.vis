@@ -746,5 +746,8 @@
   "vis-2-widgets-basic-autoSetDelay": "Délai d'écriture automatique",
   "vis-2-widgets-basic-noStyle": "Aucun style",
   "Clone": "Cloner",
-  "jqui_Write state": "État d'écriture"
+  "jqui_Write state": "État d'écriture",
+  "vis_2_widgets_widgets_swipe_label": "Swipe",
+  "vis_2_widgets_swipe_hide_indication_label": "Masquer l'indication",
+  "vis_2_widgets_swipe_threshold_label": "Seuil"
 }

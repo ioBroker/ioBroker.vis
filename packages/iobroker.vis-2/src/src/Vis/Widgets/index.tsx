@@ -54,6 +54,8 @@ import JQuiToggle from './JQui/JQuiToggle';
 
 import TabsSliderTabs from './Tabs/TabsSliderTabs';
 
+import Swipe from './Swipe/Swipe';
+
 const WIDGETS = [
     BasicBar,
     BasicBulb,
@@ -109,6 +111,8 @@ const WIDGETS = [
     JQuiToggle,
 
     TabsSliderTabs,
+
+    Swipe,
 ];
 
 export default WIDGETS;

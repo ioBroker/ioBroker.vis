@@ -77,6 +77,10 @@ interface VisViewMovement {
     startWidget?: DOMRect;
 }
 
+interface ViewElement extends HTMLDivElement {
+    _originalParent?: HTMLElement;
+}
+
 interface CreateWidgetOptions {
     context: VisContext;
     editMode: boolean;
@@ -119,7 +123,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
 
     private readonly promiseToCollect: Promise<Record<string, VisRxWidget<any>>>;
 
-    private readonly refView: React.RefObject<HTMLDivElement>;
+    private readonly refView: React.RefObject<ViewElement>;
 
     private readonly refRelativeView: React.RefObject<HTMLDivElement>;
 
@@ -195,11 +199,8 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
     componentWillUnmount() {
         this.props.context.linkContext.unregisterViewRef(this.props.view, this.refView);
 
-        // @ts-expect-error it is a trick
         if (this.refView.current?._originalParent) {
-            // @ts-expect-error it is a trick
             this.refView.current._originalParent.appendChild(this.refView.current);
-            // @ts-expect-error it is a trick
             this.refView.current._originalParent = null;
         }
 
@@ -1072,14 +1073,20 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         />;
     }
 
-    static getOneWidget(index: number, widget: Widget, options: CreateWidgetOptions): React.JSX.Element | null {
+    static getOneWidget(
+        index: number,
+        widget: Widget,
+        options: CreateWidgetOptions,
+    ): React.JSX.Element | null {
         if (!VisWidgetsCatalog.rxWidgets) {
             return null;
         }
         // context, id, isRelative, refParent, askView, mouseDownOnView, view,
         // relativeWidgetOrder, moveAllowed, editMode, multiView, ignoreMouseEvents, selectedGroup
         // viewsActiveFilter, customSettings, onIgnoreMouseEvents
-        const WidgetEl = (VisWidgetsCatalog.rxWidgets[widget.tpl] || (VisWidgetsCatalog.allWidgetsList?.includes(widget.tpl) ? VisCanWidget : VisBaseWidget));
+        const WidgetEl =
+            (VisWidgetsCatalog.rxWidgets[widget.tpl] ||
+                (VisWidgetsCatalog.allWidgetsList?.includes(widget.tpl) ? VisCanWidget : VisBaseWidget));
 
         // @ts-expect-error fix later
         return <WidgetEl

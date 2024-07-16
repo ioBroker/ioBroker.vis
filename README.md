@@ -296,6 +296,7 @@ npm run start
 ## Changelog
 ### **WORK IN PROGRESS**
 * (bluefox) Corrected the jumping by object selection
+* (bluefox) Implemented swipe widget
 
 ### 2.10.3 (2024-07-11)
 * (bluefox) Converted the CanJSWidget to typescript
@@ -440,8 +441,8 @@ npm run start
 ### 2.9.13 (2024-01-08)
 * (foxriver76) correctly detect IDs in bindings when they contain hash character
 * (foxriver76) fix crash when multiple JquiState widgets selected
-* (foxriver76) prevent showing widget in group after it is already cut out
-* (foxriver76) prevent usage of widgets which are not in group for calculating rulers on group view
+* (foxriver76) prevent showing widget in a group after it is already cut out
+* (foxriver76) prevent usage of widgets which are not in a group for calculating rulers on group view
 
 ### 2.9.12 (2024-01-04)
 * (foxriver76) optimized copy/paste/cut in groups
@@ -453,7 +454,7 @@ npm run start
 * (foxriver76) remove accidentally added script file, which lead to crash
 
 ### 2.9.9 (2024-01-01)
-* (foxriver76) allow to import views without attribute `activeWidgets`
+* (foxriver76) allow importing views without attribute `activeWidgets`
 * (foxriver76) make BasicBulb behave more like its old version
 * (foxriver76) fixed issue that data of different widget is displayed in edit mode
 * (foxriver76) fixed issue that every state update is used for visibility calculation

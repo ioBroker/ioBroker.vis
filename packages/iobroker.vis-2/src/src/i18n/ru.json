@@ -746,5 +746,8 @@
   "vis-2-widgets-basic-autoSetDelay": "Задержка для автозаписи",
   "vis-2-widgets-basic-noStyle": "Нет стиля",
   "Clone": "Клонировать",
-  "jqui_Write state": "Написать состояние"
+  "jqui_Write state": "Написать состояние",
+  "vis_2_widgets_widgets_swipe_label": "Swipe",
+  "vis_2_widgets_swipe_hide_indication_label": "Скрыть индикацию",
+  "vis_2_widgets_swipe_threshold_label": "Порог"
 }

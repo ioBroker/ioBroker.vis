@@ -1,14 +1,13 @@
-import React from 'react';
-
-import { Icon } from '@iobroker/adapter-react-v5';
-import type { GetRxDataFromWidget, RxRenderWidgetProps } from '@iobroker/types-vis-2';
+import BasicImageGeneric, { type RxDataBasicImageGeneric } from './BasicImageGeneric';
 import { store, recalculateFields } from '@/Store';
-import VisRxWidget from '@/Vis/visRxWidget';
 
-// eslint-disable-next-line no-use-before-define
-type RxData = GetRxDataFromWidget<typeof BasicImage8>;
+interface RxData extends RxDataBasicImageGeneric {
+    count: number;
+    oid: string;
+    [key: `src_${number}`]: string;
+}
 
-export default class BasicImage8 extends VisRxWidget<RxData> {
+export default class BasicImage8 extends BasicImageGeneric<RxData> {
     /**
      * Returns the widget info which is rendered in the edit mode
      */
@@ -33,7 +32,11 @@ export default class BasicImage8 extends VisRxWidget<RxData> {
                         name: 'count',
                         type: 'number',
                         default: 0,
-                        onChange: async (_field: unknown, data: Record<string, any>, changeData: (newData: Record<string, any>) => void) => {
+                        onChange: async (
+                            _field: unknown,
+                            data: Record<string, any>,
+                            changeData: (newData: Record<string, any>) => void
+                        ) => {
                             const { count } = data;
 
                             for (let i = 0;  i < count; i++) {
@@ -43,6 +46,35 @@ export default class BasicImage8 extends VisRxWidget<RxData> {
                             changeData(data);
                             store.dispatch(recalculateFields(true));
                         },
+                    },
+                    {
+                        name: 'stretch',
+                        type: 'checkbox',
+                    },
+                    {
+                        name: 'refreshInterval',
+                        tooltip: 'basic_refreshInterval_tooltip',
+                        type: 'slider',
+                        min: 0,
+                        max: 180000,
+                        step: 100,
+                        default: 0,
+                    },
+                    {
+                        name: 'refreshOnWakeUp',
+                        type: 'checkbox',
+                    },
+                    {
+                        name: 'refreshOnViewChange',
+                        type: 'checkbox',
+                    },
+                    {
+                        name: 'refreshWithNoQuery',
+                        type: 'checkbox',
+                    },
+                    {
+                        name: 'allowUserInteractions',
+                        type: 'checkbox',
                     },
                 ],
             }, {
@@ -69,41 +101,20 @@ export default class BasicImage8 extends VisRxWidget<RxData> {
     }
 
     /**
-     * Renders the widget
-     *
-     * @param props props passed to the parent classes render method
-     */
-    renderWidgetBody(props: RxRenderWidgetProps): React.JSX.Element {
-        super.renderWidgetBody(props);
-        const classes = ['vis-widget-body'];
-
-        const srcArr: string[] = [];
+     * Get image according to current state
+     **/
+    getImage(): string {
+        const images: string[] = [];
 
         for (let i = 0; i <= this.state.rxData.count; i++) {
-            // @ts-expect-error check this
             if (this.state.rxData[`src_${i}`])  {
-                // @ts-expect-error check this
-                srcArr.push(this.state.rxData[`src_${i}`]);
+                images.push(this.state.rxData[`src_${i}`]);
             }
         }
 
-        return <div className={classes.join(' ')}>
-            <Icon
-                className="vis-widget-element"
-                style={{ position: 'absolute', width: '100%' }}
-                src={this.getImage(srcArr)}
-                alt="selected_image"
-            />
-        </div>;
-    }
-
-    /**
-     * Get image according to current state
-     *
-     * @param images array of images
-     */
-    getImage(images: string[]) {
-        if (this.state.rxData.oid !== 'nothing_selected' && this.state.values[`${this.state.rxData.oid}.val`] !== undefined) {
+        if (this.state.rxData.oid !== 'nothing_selected' &&
+            this.state.values[`${this.state.rxData.oid}.val`] !== undefined
+        ) {
             let val = this.state.values[`${this.state.rxData.oid}.val`];
             if (val === 'true'  || val === true)  {
                 val = 1;
@@ -112,8 +123,9 @@ export default class BasicImage8 extends VisRxWidget<RxData> {
             if (val === 'false' || val === false) {
                 val = 0;
             }
-            return images[val];
+            return images[val] || '';
         }
-        return images[0];
+
+        return images[0] || '';
     }
 }

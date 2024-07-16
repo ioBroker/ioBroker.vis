@@ -746,5 +746,8 @@
   "vis-2-widgets-basic-autoSetDelay": "Delay for auto-write",
   "vis-2-widgets-basic-noStyle": "No style",
   "Clone": "Clone",
-  "jqui_Write state": "Write state"
+  "jqui_Write state": "Write state",
+  "vis_2_widgets_widgets_swipe_label": "Swipe",
+  "vis_2_widgets_swipe_hide_indication_label": "Hide indication",
+  "vis_2_widgets_swipe_threshold_label": "Threshold"
 }

@@ -18,7 +18,7 @@ import { FaFolder as FolderClosedIcon, FaFolderOpen as FolderOpenedIcon } from '
 import { Utils, I18n } from '@iobroker/adapter-react-v5';
 import type { VisTheme } from '@iobroker/types-vis-2';
 import commonStyles from '@/Utils/styles';
-import { store } from '../../Store';
+import { store } from '@/Store';
 
 const styles: Record<string, any> = {
     viewManageBlock: (theme: VisTheme) => theme.classes.viewManageBlock,
@@ -26,6 +26,7 @@ const styles: Record<string, any> = {
     folderName: {
         marginLeft: 8,
         fontWeight: 'bold',
+        cursor: 'pointer',
     },
     icon: (theme: VisTheme) => ({
         cursor: 'grab',
@@ -143,7 +144,13 @@ const Folder: React.FC<FolderProps> = props => {
     return <Box
         component="div"
         ref={drop}
-        sx={Utils.getStyle(props.theme, styles.root, styles.viewManageBlock, props.isDragging && !canDrop && styles.noDrop, props.isDragging && canDrop && styles.rootCanDrop)}
+        sx={Utils.getStyle(
+            props.theme,
+            styles.root,
+            styles.viewManageBlock,
+            props.isDragging && !canDrop && styles.noDrop,
+            props.isDragging && canDrop && styles.rootCanDrop,
+        )}
     >
         <Box
             component="div"
@@ -153,32 +160,45 @@ const Folder: React.FC<FolderProps> = props => {
         >
             {props.foldersCollapsed.includes(props.folder.id)
                 ? <FolderClosedIcon
-                    fontSize="small"
+                    fontSize="large"
                     onClick={() => {
-                        const foldersCollapsed = JSON.parse(JSON.stringify(props.foldersCollapsed));
+                        const foldersCollapsed: string[] = JSON.parse(JSON.stringify(props.foldersCollapsed));
                         foldersCollapsed.splice(foldersCollapsed.indexOf(props.folder.id), 1);
                         props.setFoldersCollapsed(foldersCollapsed);
                         window.localStorage.setItem('ViewsManager.foldersCollapsed', JSON.stringify(foldersCollapsed));
                     }}
                 />
                 : <FolderOpenedIcon
-                    fontSize="small"
+                    fontSize="large"
                     onClick={() => {
-                        const foldersCollapsed = JSON.parse(JSON.stringify(props.foldersCollapsed));
+                        const foldersCollapsed: string[] = JSON.parse(JSON.stringify(props.foldersCollapsed));
                         foldersCollapsed.push(props.folder.id);
                         props.setFoldersCollapsed(foldersCollapsed);
                         window.localStorage.setItem('ViewsManager.foldersCollapsed', JSON.stringify(foldersCollapsed));
                     }}
                 />}
         </Box>
-        <span style={styles.folderName}>{props.folder.name}</span>
+        <span
+            style={styles.folderName}
+            onClick={() => {
+                const foldersCollapsed: string[] = JSON.parse(JSON.stringify(props.foldersCollapsed));
+                const index = foldersCollapsed.indexOf(props.folder.id);
+                if (index !== -1) {
+                    foldersCollapsed.splice(index, 1);
+                } else {
+                    foldersCollapsed.push(props.folder.id);
+                }
+                props.setFoldersCollapsed(foldersCollapsed);
+                window.localStorage.setItem('ViewsManager.foldersCollapsed', JSON.stringify(foldersCollapsed));
+            }}
+        >
+            {props.folder.name}
+        </span>
         <Box component="span" sx={styles.viewManageButtonActions}>
             {props.editMode ? <Tooltip title={I18n.t('Add view')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
                 <IconButton
                     size="small"
-                    onClick={() => {
-                        props.showDialog('add', null, props.folder.id);
-                    }}
+                    onClick={() => props.showDialog('add', null, props.folder.id)}
                 >
                     <AddIcon />
                 </IconButton>

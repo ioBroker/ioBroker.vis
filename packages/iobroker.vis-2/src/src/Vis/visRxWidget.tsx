@@ -77,7 +77,7 @@ const POSSIBLE_MUI_STYLES = [
     'word-spacing',
 ];
 
-type VisRxWidgetProps = VisBaseWidgetProps
+type VisRxWidgetProps = VisBaseWidgetProps;
 
 interface RxData {
     _originalData: any;
