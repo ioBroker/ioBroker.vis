@@ -588,7 +588,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
             projectPrefix: this.props.projectName,
             _: translate,
             dateFormat: '',
-            instance: window.localStorage.getItem('visInstance'),
+            instance: (window.localStorage.getItem('visInstance') || '').replace(/^"/, '').replace(/"$/, ''),
             loginRequired: false,
             viewsActiveFilter: this.viewsActiveFilter,
             onChangeCallbacks: this.onChangeCallbacks,
@@ -1776,7 +1776,18 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
     };
 
     onUserCommand(instance: string, command: string, data: any) {
-        const currentInstance = window.localStorage.getItem('visInstance');
+        const currentInstance = (window.localStorage.getItem('visInstance') || '').replace(/^"/, '').replace(/"$/, '');
+
+        if (instance === null || instance === undefined) {
+            instance = '';
+        } else {
+            instance = instance.toString();
+        }
+
+        if (instance && typeof instance === 'string') {
+            instance = instance.replace(/^"/, '').replace(/"$/, '');
+        }
+
         if (!instance || (instance !== currentInstance && instance !== 'FFFFFFFF' && !instance.includes('*'))) {
             return false;
         }

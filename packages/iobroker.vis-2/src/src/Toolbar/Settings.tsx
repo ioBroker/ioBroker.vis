@@ -79,13 +79,16 @@ const Settings: React.FC<SettingsProps> = props => {
     const [projectMode, setProjectMode] = useState(0);
 
     const [settings, setSettings] = useState<ProjectSettings>({} as ProjectSettings);
-    const [instance, setInstance] = useState(window.localStorage.getItem('visInstance'));
+    const [instance, setInstance] = useState('');
     /* eslint no-underscore-dangle: 0 */
     useEffect(() => {
         const _settings = { ...store.getState().visProject.___settings };
         if (_settings.reloadOnEdit === undefined) {
             _settings.reloadOnEdit = true;
         }
+
+        let _instance = (window.localStorage.getItem('visInstance') || '').replace(/^"/, '').replace(/"$/, '');
+        setInstance(_instance);
 
         // read project settings
         props.socket.readDir(`${props.adapterName}.${props.instance}`, props.projectName)
