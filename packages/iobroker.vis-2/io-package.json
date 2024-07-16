@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.10.3",
+    "version": "2.10.4",
     "news": {
+      "2.10.4": {
+        "en": "Corrected the jumping by object selection\nImplemented swipe widget",
+        "de": "Korrektur des Sprungs durch Objektauswahl\nErgänztes Swipe Widget",
+        "ru": "Исправлена прыжок с помощью выбора объекта\nРеализованный виджет",
+        "pt": "Corrigido o salto por seleção de objetos\nImplementado widget swipe",
+        "nl": "Het springen door objectselectie gecorrigeerd\nGeïmplementeerd widget",
+        "fr": "Correction de la sélection de saut par objet\nWidget de balayage mis en œuvre",
+        "it": "Corretto il salto dalla selezione degli oggetti\nWidget di swipe implementato",
+        "es": "Corregido el salto por selección de objetos\nWidget implementado",
+        "pl": "Skok poprawiony przez wybór obiektu\nWbudowany widżet przewijania",
+        "uk": "Виправлено стрибки за вибором об'єкта\nРеалізовано віджет swipe",
+        "zh-cn": "通过对象选择修正跳跃\n已执行的刷新部件"
+      },
       "2.10.3": {
         "en": "Converted the CanJSWidget to typescript\nAdded \"clone\" button to the attribute groups",
         "de": "Konvertiert das CanJSWidget in Schrift\nSchaltfläche \"Klon\" zu den Attributgruppen hinzugefügt",

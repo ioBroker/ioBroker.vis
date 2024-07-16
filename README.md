@@ -294,7 +294,7 @@ npm run start
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.10.4 (2024-07-16)
 * (bluefox) Corrected the jumping by object selection
 * (bluefox) Implemented swipe widget
 
