@@ -22,7 +22,7 @@ import {
 import { I18n } from '@iobroker/adapter-react-v5';
 import type Editor from '@/Editor';
 import type { AnyWidgetId } from '@iobroker/types-vis-2';
-import { store } from '../Store';
+import { store } from '@/Store';
 
 interface WidgetFilterDialogProps {
     changeProject: Editor['changeProject'];
@@ -100,7 +100,9 @@ const WidgetFilterDialog: React.FC<WidgetFilterDialogProps> = props => {
                 </Box>
             </div>
             <div>
-                {!filters.length ? I18n.t('To use it, define by some widget the filter key') : null}
+                {!filters.length ? <div style={{ marginTop: 20, fontStyle: 'italic', fontSize: 'smaller' }}>
+                    {I18n.t('To use it, define by some widget the filter key')}
+                </div> : null}
                 {filters.map(filter => <ListItemButton
                     key={filter.key}
                     onClick={() => {
