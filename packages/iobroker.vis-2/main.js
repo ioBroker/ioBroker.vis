@@ -12,7 +12,8 @@ const path = require('node:path');
 const https = require('node:https');
 const utils = require('@iobroker/adapter-core'); // Get common adapter utils
 const jwt = require('jsonwebtoken');
-const adapterName = require('./package.json').name.split('.').pop();
+const ioPack = require('./io-package.json');
+const adapterName = require('./package.json').split('.').pop();
 const syncWidgetSets = require('./lib/install');
 const cert = fs.readFileSync(`${__dirname}/lib/cloudCert.crt`);
 
@@ -978,7 +979,7 @@ async function main() {
     }
 
     // create a vis "meta" object if not exists
-    if (!visObj || visObj.type !== 'meta') {
+    if (visObj?.type !== 'meta') {
         await adapter.setForeignObjectAsync(adapterName, {
             type: 'meta',
             common: {
@@ -991,7 +992,7 @@ async function main() {
 
     // create a vis-2.0 "meta" object, if not exists
     const visObjNS = await adapter.getForeignObjectAsync(adapter.namespace);
-    if (!visObjNS || visObjNS.type !== 'meta') {
+    if (visObjNS?.type !== 'meta') {
         await adapter.setForeignObjectAsync(adapter.namespace, {
             type: 'meta',
             common: {
@@ -1011,11 +1012,18 @@ async function main() {
         await adapter.setForeignObjectAsync(systemView._id, systemView);
     }
 
-    // Change running mode to daemon
+    // Change running mode to daemon, enable messagebox and correct the local links
     const instanceObj = await adapter.getForeignObjectAsync(`system.adapter.${adapter.namespace}`);
-    if (instanceObj && instanceObj.common && (instanceObj.common.mode !== 'daemon' || !instanceObj.common.messagebox)) {
+    if (instanceObj?.common &&
+        (
+            instanceObj.common.mode !== 'daemon' || // mode must be "daemon"
+            !instanceObj.common.messagebox || // messagebox must be enabled
+            JSON.stringify(instanceObj.common.localLinks) !== JSON.stringify(ioPack.common.localLinks)
+        )
+    ) {
         instanceObj.common.mode = 'daemon';
         instanceObj.common.messagebox = true;
+        instanceObj.common.localLinks = ioPack.common.localLinks;
 
         await adapter.setForeignObjectAsync(instanceObj._id, instanceObj);
         // controller will do restart
