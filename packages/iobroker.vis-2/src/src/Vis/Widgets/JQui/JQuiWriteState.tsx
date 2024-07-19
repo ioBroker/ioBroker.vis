@@ -26,22 +26,41 @@ import {
 } from '@iobroker/adapter-react-v5';
 
 import type {
-    GetRxDataFromWidget,
     RxRenderWidgetProps,
     RxWidgetInfo,
     RxWidgetInfoAttributesField,
-    RxWidgetInfoWriteable,
+    RxWidgetInfoWriteable, VisBaseWidgetProps,
     Writeable,
 } from '@iobroker/types-vis-2';
 
 import VisBaseWidget from '@/Vis/visBaseWidget';
 
 // eslint-disable-next-line import/no-cycle
-import type { VisRxWidgetState } from '../../visRxWidget';
-import VisRxWidget from '../../visRxWidget';
+import VisRxWidget, { type VisRxWidgetState } from '../../visRxWidget';
 
 // eslint-disable-next-line no-use-before-define
-type RxData = GetRxDataFromWidget<typeof JQuiWriteState>
+type RxData = {
+    oid: string;
+    click_id: string;
+    type: 'value' | 'oid' | 'toggle' | 'change';
+    value_oid: string;
+    value: string;
+    step: number;
+    minmax: number;
+    repeat_delay: number;
+    repeat_interval: number;
+    min: number;
+    max: number;
+    src_active: string;
+    icon_active: string;
+    text_active: string;
+    src: string;
+    icon: string;
+    text: string;
+    invert_icon: boolean;
+    invert_icon_active: boolean;
+    variant: 'contained' | 'outlined' | 'standard';
+};
 
 interface JQuiWriteStateState extends VisRxWidgetState {
     value: string | number;
@@ -53,8 +72,7 @@ class JQuiWriteState extends VisRxWidget<RxData, JQuiWriteStateState> {
 
     private iterateTimeout: ReturnType<typeof setTimeout> | null = null;
 
-    constructor(props: RxRenderWidgetProps) {
-        // @ts-expect-error refactor types to extend from parent types
+    constructor(props: VisBaseWidgetProps) {
         super(props);
         Object.assign(this.state, {
             value: '',
@@ -156,13 +174,13 @@ class JQuiWriteState extends VisRxWidget<RxData, JQuiWriteStateState> {
                             name: 'minmax',
                             label: 'jqui_max',
                             type: 'number',
-                            hidden:(data: Record<string, any>) => data.type !== 'change' || (parseFloat(data.step) || 0) < 0,
+                            hidden: (data: Record<string, any>) => data.type !== 'change' || (parseFloat(data.step) || 0) < 0,
                             default: 1,
                         },                        {
                             name: 'minmax',
                             label: 'jqui_min',
                             type: 'number',
-                            hidden:(data: Record<string, any>) => data.type !== 'change' || (parseFloat(data.step) || 0) >= 0,
+                            hidden: (data: Record<string, any>) => data.type !== 'change' || (parseFloat(data.step) || 0) >= 0,
                             default: 1,
                         },
                         {

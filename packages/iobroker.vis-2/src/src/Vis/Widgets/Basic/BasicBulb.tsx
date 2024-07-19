@@ -1,11 +1,22 @@
 import React from 'react';
-// eslint-disable-next-line import/no-cycle
 import VisRxWidget from '@/Vis/visRxWidget';
-import type { GetRxDataFromWidget, RxRenderWidgetProps } from '@iobroker/types-vis-2';
+import type { RxRenderWidgetProps } from '@iobroker/types-vis-2';
 import { NOTHING_SELECTED } from '@/Utils/utils';
 
-// eslint-disable-next-line no-use-before-define
-type RxData = GetRxDataFromWidget<typeof BasicBulb>
+type RxData = {
+    oid: string;
+    min?: string;
+    max?: string;
+    icon_on?: string;
+    icon_off?: string;
+    readOnly?: boolean;
+    urlTrue?: string;
+    urlFalse?: string;
+    oidTrue?: string;
+    oidFalse?: string;
+    oidTrueValue?: string;
+    oidFalseValue?: string;
+};
 
 export default class BasicBulb extends VisRxWidget<RxData> {
     /**
@@ -93,7 +104,8 @@ export default class BasicBulb extends VisRxWidget<RxData> {
         let val = this.state.values[`${this.state.rxData.oid}.val`];
 
         const {
-            oidTrue, urlTrue, oid, min, max, oidTrueValue, oidFalseValue,
+            oidTrue, urlTrue, oid, min,
+            max, oidTrueValue, oidFalseValue,
         } = this.state.rxData;
         let {
             urlFalse, oidFalse,
@@ -113,33 +125,53 @@ export default class BasicBulb extends VisRxWidget<RxData> {
             }
 
             if (finalMax !== '') {
-                if (finalMax === 'true')  finalMax = true;
-                if (finalMax === 'false') finalMax = false;
-                if (val === 'true')  val = true;
-                if (val === 'false') val = false;
-                val = (val === finalMax);
+                if (finalMax === 'true') {
+                    finalMax = true;
+                } else if (finalMax === 'false') {
+                    finalMax = false;
+                }
+                if (val === 'true') {
+                    val = true;
+                } else if (val === 'false') {
+                    val = false;
+                }
+                val = val === finalMax;
             } else {
-                val = (val === 1 || val === '1' || val === true || val === 'true');
+                val = val === 1 || val === '1' || val === true || val === 'true';
             }
             val = !val; // invert
 
-            if (finalMin === '' || finalMin === 'false' || finalMin === null) finalMin = false;
-            if (finalMax === '' || finalMax === 'true'  || finalMax === null) finalMax = true;
+            if (finalMin === '' || finalMin === 'false' || finalMin === null) {
+                finalMin = false;
+            } else if (finalMax === '' || finalMax === 'true'  || finalMax === null) {
+                finalMax = true;
+            }
 
             if (oidTrue && typeof oidTrue === 'string') {
                 if (val) {
-                    if (oidTrueValueFinal === '') oidTrueValueFinal = finalMax;
-                    if (oidTrueValueFinal === 'false') oidTrueValueFinal = false;
-                    if (oidTrueValueFinal === 'true')  oidTrueValueFinal = true;
+                    if (oidTrueValueFinal === '') {
+                        oidTrueValueFinal = finalMax;
+                    }
+                    if (oidTrueValueFinal === 'false') {
+                        oidTrueValueFinal = false;
+                    } else if (oidTrueValueFinal === 'true') {
+                        oidTrueValueFinal = true;
+                    }
                     if (typeof oidTrueValueFinal === 'string') {
                         const f = parseFloat(oidTrueValueFinal);
-                        if (f.toString() === oidTrueValueFinal) oidTrueValueFinal = f;
+                        if (f.toString() === oidTrueValueFinal) {
+                            oidTrueValueFinal = f;
+                        }
                     }
                     this.props.context.setValue(oidTrue, oidTrueValueFinal);
                 } else if (typeof oidFalse === 'string') {
-                    if (oidFalseValueFinal === '') oidFalseValueFinal = finalMin;
-                    if (oidFalseValueFinal === 'false') oidFalseValueFinal = false;
-                    if (oidFalseValueFinal === 'true')  oidFalseValueFinal = true;
+                    if (oidFalseValueFinal === '') {
+                        oidFalseValueFinal = finalMin;
+                    } else if (oidFalseValueFinal === 'false') {
+                        oidFalseValueFinal = false;
+                    } else if (oidFalseValueFinal === 'true') {
+                        oidFalseValueFinal = true;
+                    }
                     if (typeof oidFalseValueFinal === 'string') {
                         const f = parseFloat(oidFalseValueFinal);
                         if (f.toString() === oidFalseValueFinal) oidFalseValueFinal = f;
@@ -155,12 +187,12 @@ export default class BasicBulb extends VisRxWidget<RxData> {
                     this.props.context.socket.getRawSocket().emit('httpGet', urlFalse);
                 }
             }
-        } else if ((finalMin === '' && (val === null || val === '' || val === undefined || val === false || val === 'false')) ||
+        } else if ((finalMin === '' &&
+                (val === null || val === '' || val === undefined || val === false || val === 'false')) ||
                         (finalMin !== '' && finalMin === val)) {
             typeof oid === 'string' && this.props.context.setValue(oid, finalMax !== '' ? finalMax : true);
         } else
-            if ((finalMax === '' && (val === true || val === 'true')) ||
-                        (finalMax !== '' && val === finalMax)) {
+            if ((finalMax === '' && (val === true || val === 'true')) || (finalMax !== '' && val === finalMax)) {
                 typeof oid === 'string' && this.props.context.setValue(oid,  finalMin !== '' ? finalMin : false);
             } else if (typeof oid === 'string') {
                 val = parseFloat(val);

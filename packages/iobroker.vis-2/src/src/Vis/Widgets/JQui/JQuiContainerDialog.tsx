@@ -12,14 +12,18 @@
  * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
  * (Free for non-commercial use).
  */
-import PropTypes from 'prop-types';
-
-// eslint-disable-next-line import/no-cycle
+import type {
+    RxWidgetInfo,
+    RxWidgetInfoAttributesFieldCheckbox,
+    RxWidgetInfoAttributesFieldHTML,
+    RxWidgetInfoAttributesFieldText,
+    RxWidgetInfoWriteable,
+} from '@iobroker/types-vis-2';
 import JQuiButton from './JQuiButton';
 
 class JQuiContainerDialog extends JQuiButton {
     static getWidgetInfo() {
-        const widgetInfo = JQuiButton.getWidgetInfo();
+        const widgetInfo = JQuiButton.getWidgetInfo() as unknown as RxWidgetInfoWriteable;
 
         const newWidgetInfo = {
             id: 'tplContainerDialog',
@@ -39,16 +43,16 @@ class JQuiContainerDialog extends JQuiButton {
         });
 
         // set resizable to true
-        const visResizable = JQuiButton.findField(newWidgetInfo, 'visResizable');
+        const visResizable = JQuiButton.findField<RxWidgetInfoAttributesFieldCheckbox>(newWidgetInfo, 'visResizable');
         visResizable.default = true;
 
-        const buttonText = JQuiButton.findField(newWidgetInfo, 'buttontext');
+        const buttonText = JQuiButton.findField<RxWidgetInfoAttributesFieldText>(newWidgetInfo, 'buttontext');
         buttonText.default = 'Container Dialog';
 
-        const htmlDialog = JQuiButton.findField(newWidgetInfo, 'html_dialog');
+        const htmlDialog = JQuiButton.findField<RxWidgetInfoAttributesFieldHTML>(newWidgetInfo, 'html_dialog');
         htmlDialog.default = '<div>HTML Dialog</div>';
 
-        return newWidgetInfo;
+        return newWidgetInfo as RxWidgetInfo;
     }
 
     // eslint-disable-next-line class-methods-use-this
@@ -56,12 +60,5 @@ class JQuiContainerDialog extends JQuiButton {
         return JQuiContainerDialog.getWidgetInfo();
     }
 }
-
-JQuiContainerDialog.propTypes = {
-    id: PropTypes.string.isRequired,
-    context: PropTypes.object.isRequired,
-    view: PropTypes.string.isRequired,
-    editMode: PropTypes.bool.isRequired,
-};
 
 export default JQuiContainerDialog;

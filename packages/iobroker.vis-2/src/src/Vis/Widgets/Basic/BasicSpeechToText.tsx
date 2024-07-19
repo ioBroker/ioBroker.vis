@@ -4,15 +4,28 @@ import type * as SpeechRecognition from 'dom-speech-recognition';
 
 import { I18n, Icon } from '@iobroker/adapter-react-v5';
 
-// eslint-disable-next-line import/no-cycle
 import VisRxWidget from '@/Vis/visRxWidget';
-import type {
-    GetRxDataFromWidget, RxRenderWidgetProps,
-} from '@iobroker/types-vis-2';
+import type { RxRenderWidgetProps } from '@iobroker/types-vis-2';
 import type { VisBaseWidgetState } from '@/Vis/visBaseWidget';
 
-// eslint-disable-next-line no-use-before-define
-type RxData = GetRxDataFromWidget<typeof BasicSpeechToText>
+type RxData = {
+    oid: string;
+    speechMode: 'single' | 'startstop' | 'continuous';
+    language: string;
+    keywords: string;
+    imageInactive: string;
+    imageActive: string;
+    imageStarted: string;
+    imageDetected: string;
+    imageSent: string;
+    imageHeightPx: number;
+    imageWidthPx: number;
+    noImage: boolean;
+    noText: boolean;
+    noResults: boolean;
+    keyWordColor: string;
+    textSentColor: string;
+}
 
 interface BasicSpeechToTextState extends VisBaseWidgetState {
     /** Current shown module text */

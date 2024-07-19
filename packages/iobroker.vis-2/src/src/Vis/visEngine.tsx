@@ -54,7 +54,7 @@ import './css/backgrounds.css';
 // import $$ from './lib/quo.standalone'; // Gestures library
 
 import { store } from '@/Store';
-import {
+import type {
     AnyWidgetId, ArgumentChanged, CanWidgetStore, GroupWidgetId, ViewCommand,
     ViewCommandOptions, VisChangeHandlerCallback, VisContext,
     VisLegacy, VisLinkContext, VisLinkContextBinding, VisLinkContextItem, VisTheme,

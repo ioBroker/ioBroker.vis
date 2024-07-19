@@ -30,9 +30,9 @@ import 'dayjs/locale/pl';
 import 'dayjs/locale/pt';
 import 'dayjs/locale/nl';
 
-// eslint-disable-next-line import/no-cycle
-import type { GetRxDataFromWidget, RxRenderWidgetProps } from '@iobroker/types-vis-2';
 import type { TextFieldVariants } from '@mui/material';
+
+import type { RxRenderWidgetProps } from '@iobroker/types-vis-2';
 import VisRxWidget from '../../visRxWidget';
 
 const styles: { textRoot: { [key: string]: React.CSSProperties } } = {
@@ -44,8 +44,16 @@ const styles: { textRoot: { [key: string]: React.CSSProperties } } = {
     },
 };
 
-// eslint-disable-next-line no-use-before-define
-type RxData = GetRxDataFromWidget<typeof JQuiInputDateTime>
+type RxData = {
+    oid: string;
+    variant: TextFieldVariants;
+    autoFocus: boolean;
+    clearable: boolean;
+    widgetTitle: string;
+    ampm: boolean;
+    asDate: boolean;
+    stepMinute: number;
+};
 
 class JQuiInputDateTime extends VisRxWidget<RxData> {
     static getWidgetInfo() {
@@ -136,6 +144,7 @@ class JQuiInputDateTime extends VisRxWidget<RxData> {
 
         const val = this.state.values[`${this.state.rxData.oid}.val`];
         const asDate = this.state.rxData.asDate;
+        props.style.overflow = 'visible';
 
         return <div
             className="vis-widget-body"
@@ -144,7 +153,7 @@ class JQuiInputDateTime extends VisRxWidget<RxData> {
                 <TimePicker
                     value={val && !asDate ? dayjs(val, 'HH:mm') : dayjs(val)}
                     ampm={this.state.rxData.ampm || false}
-                    minutesStep={parseInt(this.state.rxData.stepMinute, 10) || 1}
+                    minutesStep={parseInt(this.state.rxData.stepMinute as any as string, 10) || 1}
                     label={this.state.rxData.widgetTitle || null}
                     formatDensity="dense"
                     format="HH:mm"
@@ -165,10 +174,7 @@ class JQuiInputDateTime extends VisRxWidget<RxData> {
                                 width: '100%',
                                 height: '100%',
                             },
-                            sx: {
-                                // TODO
-                                '& .Mui-root': styles.textRoot,
-                            },
+                            sx: styles.textRoot,
                         },
                         field: { clearable: this.state.rxData.clearable, onClear: () => this.props.context.setValue(this.state.rxData.oid, '') },
                     }}

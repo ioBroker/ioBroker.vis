@@ -87,7 +87,7 @@ const Settings: React.FC<SettingsProps> = props => {
             _settings.reloadOnEdit = true;
         }
 
-        let _instance = (window.localStorage.getItem('visInstance') || '').replace(/^"/, '').replace(/"$/, '');
+        const _instance = (window.localStorage.getItem('visInstance') || '').replace(/^"/, '').replace(/"$/, '');
         setInstance(_instance);
 
         // read project settings

@@ -1,10 +1,22 @@
 import React from 'react';
 
-import type { GetRxDataFromWidget, RxRenderWidgetProps } from '@iobroker/types-vis-2';
+import type {
+    RxRenderWidgetProps,
+    VisBaseWidgetProps,
+} from '@iobroker/types-vis-2';
 import VisRxWidget from '@/Vis/visRxWidget';
 
-// eslint-disable-next-line no-use-before-define
-type RxData = GetRxDataFromWidget<typeof BasicIFrame>;
+type RxData = {
+    src: string;
+    refreshInterval: number;
+    noSandbox: boolean;
+    refreshOnWakeUp: boolean;
+    refreshOnViewChange: boolean;
+    refreshWithNoQuery: boolean;
+    scrollX: boolean;
+    scrollY: boolean;
+    seamless: boolean;
+};
 
 export default class BasicIFrame extends VisRxWidget<RxData> {
     private refreshInterval: ReturnType<typeof setInterval> | null = null;
@@ -17,8 +29,7 @@ export default class BasicIFrame extends VisRxWidget<RxData> {
 
     private startedInterval = 0;
 
-    constructor(props: RxRenderWidgetProps) {
-        // @ts-expect-error refactor types to extend from parent types
+    constructor(props: VisBaseWidgetProps) {
         super(props);
         this.frameRef = React.createRef();
     }

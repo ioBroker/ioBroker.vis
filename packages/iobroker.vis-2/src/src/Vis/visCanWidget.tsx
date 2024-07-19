@@ -14,21 +14,28 @@
  */
 
 import React from 'react';
+
+import type {
+    CanObservable,
+    CanWidgetStore,
+    ResizeHandler,
+    RxRenderWidgetProps,
+    SingleWidget, SingleWidgetId,
+    StateID, VisBaseWidgetProps,
+    VisLinkContextBinding,
+    VisLinkContextItem,
+    VisLinkContextSignalItem,
+    VisStateUsage, VisWidgetCommand,
+    WidgetData, WidgetStyle,
+} from '@iobroker/types-vis-2';
+
 import { calculateOverflow, isVarFinite, deepClone } from '@/Utils/utils';
 import {
     replaceGroupAttr,
     addClass,
     getUsedObjectIDsInWidget,
 } from './visUtils';
-import VisBaseWidget, {type VisBaseWidgetProps, type VisBaseWidgetState, VisWidgetCommand} from './visBaseWidget';
-import {
-    CanObservable,
-    CanWidgetStore,
-    ResizeHandler,
-    type RxRenderWidgetProps, SingleWidget, SingleWidgetId,
-    StateID, VisLinkContextBinding, VisLinkContextItem, VisLinkContextSignalItem, VisStateUsage, VisViewProps,
-    WidgetData, WidgetStyle,
-} from '@iobroker/types-vis-2';
+import VisBaseWidget, { type VisBaseWidgetState } from './visBaseWidget';
 
 interface WidgetDataWithParsedFilter extends WidgetData {
     wid: SingleWidgetId;
@@ -76,7 +83,7 @@ function analyzeDraggableResizable(
             }
         }
 
-        let draggableOptionsStr = el.dataset.visDraggable;
+        const draggableOptionsStr = el.dataset.visDraggable;
         if (draggableOptionsStr) {
             let draggableOptions: { disabled?: boolean } | null = null;
             try {
@@ -453,7 +460,7 @@ class VisCanWidget extends VisBaseWidget<VisCanWidgetState> {
             this.widDiv.remove();
             this.widDiv = null;
         }
-    };
+    }
 
     changeHandler = (
         type: 'style' | 'signal' | 'visibility' | 'lastChange' | 'binding',
@@ -519,7 +526,7 @@ class VisCanWidget extends VisBaseWidget<VisCanWidgetState> {
                     VisBaseWidget.isWidgetHidden(
                         widgetData,
                         this.props.context.canStates,
-                        this.props.id
+                        this.props.id,
                     ) ||
                     this.isWidgetFilteredOut(widgetData)
                 ) {
@@ -1067,7 +1074,11 @@ class VisCanWidget extends VisBaseWidget<VisCanWidgetState> {
         wid: SingleWidgetId,
         widget: SingleWidget,
         newWidgetStyle?: WidgetStyle,
-    ): { widgetData: WidgetDataWithParsedFilter | null, widgetStyle: WidgetStyle | null, isRelative: boolean } {
+    ): {
+        widgetData: WidgetDataWithParsedFilter | null;
+        widgetStyle: WidgetStyle | null;
+        isRelative: boolean;
+    } {
         let widgetData: WidgetDataWithParsedFilter;
         let widgetStyle: WidgetStyle;
         let isRelative: boolean;
@@ -1136,7 +1147,7 @@ class VisCanWidget extends VisBaseWidget<VisCanWidgetState> {
     ) {
         _count = _count || 0;
         // console.log(`[${Date.now()}] Render widget`);
-        let parentDivRef: React.RefObject<HTMLElement> = this.props.refParent;
+        const parentDivRef: React.RefObject<HTMLElement> = this.props.refParent;
         let parentDiv: HTMLElement;
         if (Object.prototype.hasOwnProperty.call(parentDivRef, 'current')) {
             parentDiv = parentDivRef.current;

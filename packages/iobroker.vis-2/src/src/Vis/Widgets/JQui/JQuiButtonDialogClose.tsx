@@ -25,11 +25,12 @@ import {
     I18n, Icon,
 } from '@iobroker/adapter-react-v5';
 
-import type { VisBaseWidgetProps, WidgetStyleState } from '@/Vis/visBaseWidget';
+import type { WidgetStyleState } from '@/Vis/visBaseWidget';
 import VisBaseWidget from '@/Vis/visBaseWidget';
-// eslint-disable-next-line import/no-cycle
 import type {
-    AnyWidgetId, GetRxDataFromWidget, RxRenderWidgetProps, RxWidgetInfoAttributesField, RxWidgetInfoCustomComponentProperties, ViewCommand, WidgetData,
+    AnyWidgetId, GetRxDataFromWidget, RxRenderWidgetProps,
+    RxWidgetInfoAttributesField, RxWidgetInfoCustomComponentProperties,
+    ViewCommand, WidgetData, VisBaseWidgetProps,
 } from '@iobroker/types-vis-2';
 import type { VisRxWidgetState } from '../../visRxWidget';
 import VisRxWidget from '../../visRxWidget';

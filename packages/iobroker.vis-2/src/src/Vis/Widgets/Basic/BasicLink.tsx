@@ -15,13 +15,16 @@
 
 import React from 'react';
 
-import type { GetRxDataFromWidget, RxRenderWidgetProps } from '@iobroker/types-vis-2';
+import type { RxRenderWidgetProps } from '@iobroker/types-vis-2';
 import VisRxWidget from '@/Vis/visRxWidget';
 
 import DangerousHtmlWithScript from '../Utils/DangerousHtmlWithScript';
 
-// eslint-disable-next-line no-use-before-define
-type RxData = GetRxDataFromWidget<typeof BasicLink>
+type RxData = {
+    html: string;
+    href: string;
+    target: 'auto' | '_blank' | '_self' | '_parent' | '_top' | string;
+};
 
 class BasicLink extends VisRxWidget<RxData> {
     static getWidgetInfo() {

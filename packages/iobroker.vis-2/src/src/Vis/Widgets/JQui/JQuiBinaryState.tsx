@@ -27,10 +27,12 @@ import {
     I18n, Icon,
 } from '@iobroker/adapter-react-v5';
 
-import type { VisBaseWidgetProps } from '@/Vis/visBaseWidget';
 import VisBaseWidget from '@/Vis/visBaseWidget';
 // eslint-disable-next-line import/no-cycle
-import type { GetRxDataFromWidget, RxRenderWidgetProps, RxWidgetInfo } from '@iobroker/types-vis-2';
+import type {
+    GetRxDataFromWidget, RxRenderWidgetProps,
+    RxWidgetInfo, VisBaseWidgetProps,
+} from '@iobroker/types-vis-2';
 import commonStyles from '@/Utils/styles';
 import type { VisRxWidgetState } from '../../visRxWidget';
 import VisRxWidget from '../../visRxWidget';

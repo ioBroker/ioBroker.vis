@@ -33,8 +33,7 @@ import type {
 import VisView from '@/Vis/visView';
 
 // eslint-disable-next-line import/no-cycle
-import type { VisRxWidgetState } from '../../visRxWidget';
-import VisRxWidget from '../../visRxWidget';
+import VisRxWidget, { type VisRxWidgetState } from '../../visRxWidget';
 
 type RxData = {
     [key: string]: string | boolean | number;

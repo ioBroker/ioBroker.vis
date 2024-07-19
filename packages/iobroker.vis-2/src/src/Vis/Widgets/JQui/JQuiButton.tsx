@@ -33,17 +33,14 @@ import {
     Utils, IconCopy,
 } from '@iobroker/adapter-react-v5';
 
-import type { VisBaseWidgetProps, VisWidgetCommand } from '@/Vis/visBaseWidget';
 import VisBaseWidget from '@/Vis/visBaseWidget';
 import type {
     RxRenderWidgetProps, RxWidgetInfo, RxWidgetInfoAttributesField,
     RxWidgetInfoWriteable,
-    Writeable,
+    Writeable, VisBaseWidgetProps, VisWidgetCommand,
 } from '@iobroker/types-vis-2';
 import { isVarFinite } from '../../../Utils/utils';
-// eslint-disable-next-line import/no-cycle
-import type { VisRxWidgetState } from '../../visRxWidget';
-import VisRxWidget from '../../visRxWidget';
+import VisRxWidget, { type VisRxWidgetState } from '../../visRxWidget';
 
 // eslint-disable-next-line no-use-before-define
 export type JQuiButtonDataProps = {

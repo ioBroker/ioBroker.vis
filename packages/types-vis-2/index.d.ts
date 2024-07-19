@@ -15,6 +15,58 @@ interface VisView extends React.FC<VisViewProps> {
     getOneWidget(index: number, widget: SingleWidget | GroupWidget, options: CreateWidgetOptions): React.JSX.Element | null;
 }
 
+export type AskViewCommand = 'register' | 'unregister' | 'update' | 'getRef' | 'getViewClass';
+
+export type VisWidgetCommand = 'includePossible' | 'includePossibleNOT' | 'startStealMode' | 'cancelStealMode' | 'startMove' | 'startResize' | 'stopMove' | 'stopResize' | 'collectFilters' | 'changeFilter' | 'updateContainers' | 'closeDialog' | 'openDialog' | 'updatePosition' | 'include';
+
+export type WidgetReference = {
+    id: AnyWidgetId;
+    uuid?: string;
+    widDiv?: HTMLDivElement | null;
+    refService?: React.RefObject<HTMLElement>;
+    onMove?: (x?: number, y?: number, save?: boolean, calculateRelativeWidgetPosition?: null | ((...props: any[]) => void)) => void;
+    onResize?: undefined | (() => void);
+    onTempSelect?: (selected?: boolean) => void;
+    onCommand?: (command: VisWidgetCommand, options?: any) => any;
+    canHaveWidgets?: boolean;
+    doNotWantIncludeWidgets?: boolean;
+}
+
+export interface VisBaseWidgetProps {
+    /** Widget ID */
+    id: AnyWidgetId;
+    /** If edit mode */
+    editMode: boolean;
+    /** If runtime */
+    runtime: boolean;
+    /** View where widget is on */
+    view: string;
+    /** If it is positioned relative */
+    isRelative: boolean;
+    /** Currently selected widgets */
+    selectedWidgets: AnyWidgetId[];
+    /** Relative order of widgets */
+    relativeWidgetOrder: AnyWidgetId[];
+    /** If moving of widget is allowed */
+    moveAllowed: boolean;
+    /** Currently selected group */
+    selectedGroup: GroupWidgetId;
+    /** Additional context */
+    context: VisContext;
+    /** TPL type */
+    tpl: string;
+    /** Some filter */
+    viewsActiveFilter: { [view: string]: string[] } | null;
+    /** Function to register the widget */
+    askView: (command: AskViewCommand, props?: WidgetReference) => any;
+    onIgnoreMouseEvents: (bool: boolean) => void;
+    onWidgetsChanged: (...props: any[]) => void;
+    mouseDownOnView: (...props: any[]) => void;
+    refParent: React.RefObject<HTMLElement>;
+    // eslint-disable-next-line react/no-unused-prop-types
+    customSettings: Record<string, any>;
+}
+
 export type ViewCommand = 'updateContainers' | 'changeFilter' | 'closeDialog' | 'openDialog' | 'collectFilters';
 export type ViewCommandOptions = {
     filter?: string[] | string;
@@ -783,7 +835,7 @@ export interface RxRenderWidgetProps {
     overlayClassNames: string[];
     style: React.CSSProperties;
     id: string;
-    refService: React.Ref<HTMLDivElement>;
+    refService: React.RefObject<HTMLElement>;
     widget: Widget;
 }
 
@@ -1334,6 +1386,19 @@ interface RxWidgetInfo {
 
     /** Function to generate custom palette element */
     readonly customPalette?: (context: CustomPaletteProperties) => React.JSX.Element;
+}
+
+export interface CustomWidgetProperties {
+    context: {
+        socket: LegacyConnection;
+        projectName: string;
+        instance: number;
+        adapterName: string;
+        views: Project;
+    };
+    selectedView: string;
+    selectedWidgets: AnyWidgetId[];
+    selectedWidget: AnyWidgetId;
 }
 
 type Writeable<T> = { -readonly [P in keyof T]: Writeable<T[P]> };

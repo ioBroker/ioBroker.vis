@@ -28,10 +28,11 @@ import { I18n, Utils } from '@iobroker/adapter-react-v5';
 import { calculateOverflow, deepClone, isVarFinite } from '@/Utils/utils';
 import type {
     AnyWidgetId, ResizeHandler,
-    VisContext, GroupData, WidgetData,
+    GroupData, WidgetData,
     WidgetStyle,
-    GroupWidgetId,
-    Widget, RxRenderWidgetProps, VisRxWidgetStateValues,
+    Widget, RxRenderWidgetProps,
+    VisRxWidgetStateValues, VisWidgetCommand,
+    VisBaseWidgetProps,
 } from '@iobroker/types-vis-2';
 import {
     addClass,
@@ -40,50 +41,12 @@ import {
 } from './visUtils';
 
 import VisOrderMenu from './visOrderMenu';
-import type { AskViewCommand, WidgetReference } from './visView';
-
-export interface VisBaseWidgetProps {
-    /** Widget ID */
-    id: AnyWidgetId;
-    /** If edit mode */
-    editMode: boolean;
-    /** If runtime */
-    runtime: boolean;
-    /** View where widget is on */
-    view: string;
-    /** If it is positioned relative */
-    isRelative: boolean;
-    /** Currently selected widgets */
-    selectedWidgets: AnyWidgetId[];
-    /** Relative order of widgets */
-    relativeWidgetOrder: AnyWidgetId[];
-    /** If moving of widget is allowed */
-    moveAllowed: boolean;
-    /** Currently selected group */
-    selectedGroup: GroupWidgetId;
-    /** Additional context */
-    context: VisContext;
-    /** TPL type */
-    tpl: string;
-    /** Some filter */
-    viewsActiveFilter: { [view: string]: string[] } | null;
-    /** Function to register the widget */
-    askView: (command: AskViewCommand, props?: WidgetReference) => any;
-    onIgnoreMouseEvents: (bool: boolean) => void;
-    onWidgetsChanged: (...props: any[]) => void;
-    mouseDownOnView: (...props: any[]) => void;
-    refParent: React.RefObject<HTMLElement>;
-    // eslint-disable-next-line react/no-unused-prop-types
-    customSettings: Record<string, any>;
-}
 
 interface HTMLDivElementResizers extends HTMLDivElement {
     _storedOpacity: string;
 }
 
-export type VisWidgetCommand = 'includePossible' | 'includePossibleNOT' | 'startStealMode' | 'cancelStealMode' | 'startMove' | 'startResize' | 'stopMove' | 'stopResize' | 'collectFilters' | 'changeFilter' | 'updateContainers' | 'closeDialog' | 'openDialog' | 'updatePosition' | 'include';
-
-type Resize = 'left' | 'right' | 'top' | 'bottom' | 'bottom-left' | 'bottom-right' | 'top-left' | 'top-right' | boolean
+type Resize = 'left' | 'right' | 'top' | 'bottom' | 'bottom-left' | 'bottom-right' | 'top-left' | 'top-right' | boolean;
 
 export interface WidgetDataState extends WidgetData {
     bindings: string[];

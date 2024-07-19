@@ -294,6 +294,9 @@ npm run start
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Improved the typing in typescript
+
 ### 2.10.4 (2024-07-16)
 * (bluefox) Corrected the jumping by object selection
 * (bluefox) Implemented swipe widget
@@ -420,7 +423,7 @@ npm run start
 * (foxriver76) added select box to dimension attributes if multiple widgets selected
 
 ### 2.9.18 (2024-01-15)
-* (foxriver76) fixed issue, that old attributes value is shown in some scenarios
+* (foxriver76) fixed issue that old attributes value is shown in some scenarios
 * (foxriver76) dedicated permission system extended to view level
 
 ### 2.9.17 (2024-01-13)
@@ -435,7 +438,7 @@ npm run start
 ### 2.9.14 (2024-01-09)
 * (foxriver76) fixed last change y-offset for some widgets
 * (foxriver76) fixed issue where JquiState did not respect data type
-* (foxriver76) fixed issues with BulkEdtior (dialog not closing and other dialog showing wrong button)
+* (foxriver76) fixed issues with BulkEdtior (dialog not closing and other dialog showing the wrong button)
 * (foxriver76) implemented workaround resize bug for https://github.com/devbookhq/splitter/issues/15
 
 ### 2.9.13 (2024-01-08)
@@ -451,7 +454,7 @@ npm run start
 * (foxriver76) fixed bug with visibility calculation
 
 ### 2.9.10 (2024-01-02)
-* (foxriver76) remove accidentally added script file, which lead to crash
+* (foxriver76) remove accidentally added script file, which leads to crash
 
 ### 2.9.9 (2024-01-01)
 * (foxriver76) allow importing views without attribute `activeWidgets`
@@ -494,7 +497,7 @@ npm run start
 * (foxriver76) fixed import of views, which were inside a folder
 * (foxriver76) fixed theme also applied in iframe
 * (foxriver76) do not simply reuse widget ids when importing or copying views
-* (foxriver76) implemented basic bulb widget as react widget
+* (foxriver76) implemented basic bulb widget as React widget
 * (foxriver76) made script tags work in basic html widget
 
 ### 2.9.2 (2023-11-29)
@@ -505,19 +508,19 @@ npm run start
 
 ### 2.9.1 (2023-11-28)
 * (foxriver76) recalculate fields after moving widgets
-* (foxriver76) fixed pasting group on other view
+* (foxriver76) fixed a pasting group on other view
 * (foxriver76) fixed theme also applied in iframe
-* (bluefox) implemented Basic Image as react widget
+* (bluefox) implemented Basic Image as React widget
 
 ### 2.9.0 (2023-11-27)
 * (bluefox) implemented SVG shape and Screen Resolution widgets natively
-* (bluefox) implemented Basic iFrame as react widget
+* (bluefox) implemented Basic iFrame as React widget
 * (foxriver76) only allow zip files at project import
 * (foxriver76) fix overflow being overwritten
 * (foxriver76) sort pages and projects alphabetically
 * (foxriver76) fixed problem on saving
 * (foxriver76) fixed problem with groups when `always render` is activated
-* (foxriver76) allow to change color and write lowercase in tabs component
+* (foxriver76) allow changing color and write lowercase in a tabs component
 * (foxriver76) fixed problem that navigation from a alwaysRender page is shown on different page
 
 ### 2.8.0 (2023-11-24)

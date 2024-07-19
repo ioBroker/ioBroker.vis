@@ -20,17 +20,17 @@ import { Utils } from '@iobroker/adapter-react-v5';
 
 import type VisRxWidget from '@/Vis/visRxWidget';
 import createTheme from  '@/theme';
-import {
+import type {
     AnyWidgetId, GroupWidgetId,
     Widget, ViewSettings, VisContext,
-    WidgetStyle, VisViewProps, SingleWidget, GroupWidget,
+    WidgetStyle, VisViewProps, SingleWidget,
+    GroupWidget, AskViewCommand, WidgetReference,
 } from '@iobroker/types-vis-2';
 import { hasWidgetAccess, isVarFinite } from '@/Utils/utils';
 import { recalculateFields, selectView, store } from '@/Store';
 import type { Property } from 'csstype';
 
 import VisBaseWidget from './visBaseWidget';
-import { type VisWidgetCommand } from './visBaseWidget';
 import VisCanWidget from './visCanWidget';
 import { addClass, parseDimension } from './visUtils';
 import VisNavigation from './visNavigation';
@@ -42,20 +42,6 @@ export type ViewCommand = 'updateContainers' | 'changeFilter' | 'closeDialog' | 
 export type ViewCommandOptions = {
     filter?: string[];
 } | null;
-export type AskViewCommand = 'register' | 'unregister' | 'update' | 'getRef' | 'getViewClass';
-
-export type WidgetReference = {
-    id: AnyWidgetId;
-    uuid?: string;
-    widDiv?: HTMLDivElement | null;
-    refService?: React.RefObject<HTMLElement>;
-    onMove?: (x?: number, y?: number, save?: boolean, calculateRelativeWidgetPosition?: null | ((...props: any[]) => void)) => void;
-    onResize?: undefined | (() => void);
-    onTempSelect?: (selected?: boolean) => void;
-    onCommand?: (command: VisWidgetCommand, options?: any) => any;
-    canHaveWidgets?: boolean;
-    doNotWantIncludeWidgets?: boolean;
-}
 
 declare global {
     interface Window {

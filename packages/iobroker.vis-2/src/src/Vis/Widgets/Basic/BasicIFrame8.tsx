@@ -1,9 +1,8 @@
 import React from 'react';
 
-import type { RxRenderWidgetProps } from '@iobroker/types-vis-2';
+import type { RxRenderWidgetProps, VisBaseWidgetProps } from '@iobroker/types-vis-2';
 import VisRxWidget from '@/Vis/visRxWidget';
 
-// eslint-disable-next-line no-use-before-define
 type RxData = {
     oid: string;
     refreshInterval: number;
@@ -29,8 +28,7 @@ export default class BasicIFrame8 extends VisRxWidget<RxData> {
 
     private startedInterval = 0;
 
-    constructor(props: RxRenderWidgetProps) {
-        // @ts-expect-error refactor types to extend from parent types
+    constructor(props: VisBaseWidgetProps) {
         super(props);
         this.frameRef = React.createRef();
     }

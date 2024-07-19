@@ -13,10 +13,9 @@
  * (Free for non-commercial use).
  */
 
-// eslint-disable-next-line import/no-cycle
-import {
-    type RxWidgetInfo, type RxWidgetInfoAttributesFieldCheckbox, type RxWidgetInfoAttributesFieldSelect,
-    type RxWidgetInfoAttributesFieldText, type RxWidgetInfoWriteable,
+import type {
+    RxWidgetInfo, RxWidgetInfoAttributesFieldCheckbox, RxWidgetInfoAttributesFieldSelect,
+    RxWidgetInfoAttributesFieldText, RxWidgetInfoWriteable,
 } from '@iobroker/types-vis-2';
 import JQuiButton from './JQuiButton';
 

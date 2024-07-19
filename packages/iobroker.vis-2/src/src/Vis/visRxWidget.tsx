@@ -19,10 +19,8 @@ import {
     CardContent,
 } from '@mui/material';
 
-import { type LegacyConnection, I18n, Icon } from '@iobroker/adapter-react-v5';
-
+import { I18n, Icon } from '@iobroker/adapter-react-v5';
 import type {
-    Project,
     AnyWidgetId,
     RxWidgetInfo,
     WidgetData,
@@ -32,23 +30,40 @@ import type {
     RxWidgetInfoAttributesFieldSelectSimple,
     RxWidgetInfoAttributesField,
     RxWidgetInfoAttributesFieldCheckbox,
-    VisLinkContextBinding, VisLinkContextItem, VisLinkContextSignalItem, RxRenderWidgetProps,
+    VisLinkContextBinding, VisLinkContextItem,
+    VisLinkContextSignalItem, RxRenderWidgetProps,
     RxWidgetInfoWriteable,
     Writeable, VisViewProps,
+    VisBaseWidgetProps, VisWidgetCommand, GroupData,
 } from '@iobroker/types-vis-2';
 import { deepClone, calculateOverflow } from '@/Utils/utils';
-// eslint-disable-next-line import/no-cycle
 import type {
-    VisBaseWidgetProps,
     VisBaseWidgetState,
     WidgetStyleState,
-    VisWidgetCommand,
 } from './visBaseWidget';
 import VisBaseWidget from './visBaseWidget';
 import VisView from './visView';
 import { addClass, getUsedObjectIDsInWidget } from './visUtils';
 
-const POSSIBLE_MUI_STYLES = [
+type VisRxWidgetProps = VisBaseWidgetProps;
+
+interface VisRxData {
+    _originalData?: string;
+    filterkey?: string | string[];
+    /** If value is hide widget should be hidden if user not in groups, else disabled */
+    'visibility-groups-action': 'hide' | 'disabled';
+    /** If entry in an array but user not in array, apply visibility-groups-action logic */
+    'visibility-groups': string[];
+}
+
+export interface VisRxWidgetState extends VisBaseWidgetState {
+    rxData: VisRxData;
+    values: VisRxWidgetStateValues;
+    visible: boolean;
+    disabled?: boolean;
+}
+
+export const POSSIBLE_MUI_STYLES = [
     'background',
     'background-clip',
     'background-color',
@@ -76,37 +91,6 @@ const POSSIBLE_MUI_STYLES = [
     'text-shadow',
     'word-spacing',
 ];
-
-type VisRxWidgetProps = VisBaseWidgetProps;
-
-interface RxData {
-    _originalData: any;
-    filterkey: any;
-    /** If value is hide widget should be hidden if user not in groups, else disabled */
-    'visibility-groups-action': 'hide' | 'disabled';
-    /** If entry in an array but user not in array, apply visibility-groups-action logic */
-    'visibility-groups': string[];
-}
-
-export interface CustomWidgetProperties {
-    context: {
-        socket: LegacyConnection;
-        projectName: string;
-        instance: number;
-        adapterName: string;
-        views: Project;
-    };
-    selectedView: string;
-    selectedWidgets: AnyWidgetId[];
-    selectedWidget: AnyWidgetId;
-}
-
-export interface VisRxWidgetState extends VisBaseWidgetState {
-    rxData: RxData;
-    values: VisRxWidgetStateValues;
-    visible: boolean;
-    disabled?: boolean;
-}
 
 class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<VisRxWidgetState> = VisRxWidgetState> extends VisBaseWidget<VisRxWidgetState & TState & { rxData: TRxData }> {
     static POSSIBLE_MUI_STYLES = POSSIBLE_MUI_STYLES;
@@ -284,12 +268,11 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
 
     /**
      * Called if ioBroker state changed
-     *
-     * @param state state object
-     * @param doNotApplyState if state should not be set
      */
     onStateChanged(
+        /** state object */
         id?: StateID | null,
+        /** state value */
         state?: ioBroker.State | null | undefined,
         /** if state should not be set */
         doNotApplyState?: boolean,
@@ -461,14 +444,14 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
         }
 
         if (!this.state.editMode) {
-            if (!this.isWidgetFilteredOut(newState.rxData)) {
+            if (!this.isWidgetFilteredOut(newState.rxData as WidgetData | GroupData)) {
                 if (stateId) {
                     if (this.linkContext.visibility[stateId]) {
-                        return !VisBaseWidget.isWidgetHidden(newState.rxData, newState.values, this.props.id);
+                        return !VisBaseWidget.isWidgetHidden(newState.rxData as WidgetData | GroupData, newState.values, this.props.id);
                     }
                 } else {
                     // check if visible
-                    return !VisBaseWidget.isWidgetHidden(newState.rxData, newState.values, this.props.id);
+                    return !VisBaseWidget.isWidgetHidden(newState.rxData as WidgetData | GroupData, newState.values, this.props.id);
                 }
             } else {
                 return false;
@@ -682,7 +665,15 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
     }
 
     // eslint-disable-next-line no-unused-vars
-    getWidgetInWidget(view: any, wid: AnyWidgetId, props: any) {
+    getWidgetInWidget(
+        view: string,
+        wid: AnyWidgetId,
+        props?: {
+            index?: number;
+            refParent?: React.RefObject<HTMLDivElement>;
+            isRelative?: boolean;
+        },
+    ) {
         props = props || {};
 
         // old (can) widgets require props.refParent

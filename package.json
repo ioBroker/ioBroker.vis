@@ -81,9 +81,9 @@
   "scripts": {
     "build": "npm run clean && lerna run build",
     "clean": "lerna run clean",
-    "install-monorepo": "npm i -f && npm i -w packages/iobroker.vis-2 -f",
+    "install-monorepo": "npm i -f && npm i -w packages/iobroker.vis-2 -f && npm i -w packages/types-vis-2 -f",
     "npm": "npm run install-monorepo",
-    "update-packages": "ncu --upgrade && cd package/iobroker.vis-2 && ncu --upgrade && cd package/iobroker.vis-2/src && ncu --upgrade",
+    "update-packages": "ncu --upgrade && cd package/iobroker.vis-2 && ncu --upgrade && cd package/iobroker.vis-2/src && ncu --upgrade && cd package/types-vis-2 && ncu --upgrade",
     "start": "npm run start -w packages/iobroker.vis-2",
     "release": "release-script",
     "release-patch": "release-script patch --yes --no-update-lockfile --publishAll",

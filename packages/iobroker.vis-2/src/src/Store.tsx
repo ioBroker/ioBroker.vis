@@ -2,7 +2,8 @@ import {
     createReducer, configureStore, createAction, createSelector,
 } from '@reduxjs/toolkit';
 import type {
-    View, Project, AnyWidgetId, SingleWidgetId, SingleWidget, GroupWidget, GroupWidgetId,
+    View, Project, AnyWidgetId, SingleWidgetId,
+    SingleWidget, GroupWidget, GroupWidgetId,
 } from '@iobroker/types-vis-2';
 
 /** This id is used by some special widgets to work with non-existing widgets */

@@ -14,6 +14,7 @@
  */
 
 import React from 'react';
+import dayjs from 'dayjs';
 
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -29,9 +30,9 @@ import 'dayjs/locale/pl';
 import 'dayjs/locale/pt';
 import 'dayjs/locale/nl';
 
-import type { GetRxDataFromWidget, RxRenderWidgetProps } from '@iobroker/types-vis-2';
 import type { TextFieldVariants } from '@mui/material';
-import dayjs from 'dayjs';
+
+import type { RxRenderWidgetProps } from '@iobroker/types-vis-2';
 import VisRxWidget from '../../visRxWidget';
 
 const styles: { textRoot: { [key: string]: React.CSSProperties } } = {
@@ -43,11 +44,21 @@ const styles: { textRoot: { [key: string]: React.CSSProperties } } = {
     },
 };
 
-// eslint-disable-next-line no-use-before-define
-type RxData = GetRxDataFromWidget<typeof JQuiInputDate>
+type RxData = {
+    oid: string;
+    variant: TextFieldVariants;
+    autoFocus: boolean;
+    clearable: boolean;
+    widgetTitle: string;
+    disableFuture: boolean;
+    disablePast: boolean;
+    asFullDate: boolean;
+    displayWeekNumber: boolean;
+    wideFormat: boolean;
+};
 
 class JQuiInputDate extends VisRxWidget<RxData> {
-    /** If user does not want to use full date */
+    /** If a user does not want to use full date */
     private readonly EASY_DATE_FORMAT = 'DD.MM.YYYY';
 
     static getWidgetInfo() {
@@ -135,6 +146,7 @@ class JQuiInputDate extends VisRxWidget<RxData> {
 
     renderWidgetBody(props: RxRenderWidgetProps) {
         super.renderWidgetBody(props);
+        props.style.overflow = 'visible';
 
         return <div
             className="vis-widget-body"
@@ -161,10 +173,7 @@ class JQuiInputDate extends VisRxWidget<RxData> {
                                 width: '100%',
                                 height: '100%',
                             },
-                            sx: {
-                                // TODO
-                                '& .Mui-root': styles.textRoot,
-                            },
+                            sx: styles.textRoot,
                         },
                         field: { clearable: this.state.rxData.clearable, onClear: () => this.props.context.setValue(this.state.rxData.oid, '') },
                     }}

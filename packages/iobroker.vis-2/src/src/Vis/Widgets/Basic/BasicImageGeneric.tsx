@@ -1,9 +1,11 @@
 import React from 'react';
 
 import { Icon } from '@iobroker/adapter-react-v5';
-import type { RxRenderWidgetProps } from '@iobroker/types-vis-2';
+import type {
+    RxRenderWidgetProps,
+    VisBaseWidgetProps,
+} from '@iobroker/types-vis-2';
 import VisRxWidget from '@/Vis/visRxWidget';
-import { VisBaseWidgetProps } from '@/Vis/visBaseWidget';
 
 export interface RxDataBasicImageGeneric {
     stretch: boolean;

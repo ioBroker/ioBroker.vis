@@ -1,10 +1,18 @@
 import React from 'react';
 
-import type { GetRxDataFromWidget, RxRenderWidgetProps } from '@iobroker/types-vis-2';
+import type { RxRenderWidgetProps } from '@iobroker/types-vis-2';
 import VisRxWidget from '@/Vis/visRxWidget';
 
-// eslint-disable-next-line no-use-before-define
-type RxData = GetRxDataFromWidget<typeof BasicBar>;
+type RxData = {
+    oid: string;
+    min?: number;
+    max?: number;
+    orientation?: 'horizontal' | 'vertical';
+    color?: string;
+    border?: string;
+    shadow?: string;
+    reverse?: boolean;
+};
 
 export default class BasicBar extends VisRxWidget<RxData> {
     /**

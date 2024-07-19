@@ -1,5 +1,5 @@
-import BasicImageGeneric, { type RxDataBasicImageGeneric } from './BasicImageGeneric';
 import { store, recalculateFields } from '@/Store';
+import BasicImageGeneric, { type RxDataBasicImageGeneric } from './BasicImageGeneric';
 
 interface RxData extends RxDataBasicImageGeneric {
     count: number;
@@ -35,7 +35,7 @@ export default class BasicImage8 extends BasicImageGeneric<RxData> {
                         onChange: async (
                             _field: unknown,
                             data: Record<string, any>,
-                            changeData: (newData: Record<string, any>) => void
+                            changeData: (newData: Record<string, any>) => void,
                         ) => {
                             const { count } = data;
 
@@ -102,7 +102,7 @@ export default class BasicImage8 extends BasicImageGeneric<RxData> {
 
     /**
      * Get image according to current state
-     **/
+     * */
     getImage(): string {
         const images: string[] = [];
 

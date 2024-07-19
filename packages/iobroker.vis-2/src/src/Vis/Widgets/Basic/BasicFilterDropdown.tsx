@@ -26,15 +26,14 @@ import { Edit } from '@mui/icons-material';
 import { I18n, Icon } from '@iobroker/adapter-react-v5';
 
 import type {
-    GetRxDataFromWidget, RxRenderWidgetProps, RxWidgetInfo, WidgetData,
-    RxWidgetInfoAttributesField, RxWidgetInfoCustomComponentProperties, RxWidgetInfoCustomComponentContext,
+    RxRenderWidgetProps, RxWidgetInfo, WidgetData,
+    RxWidgetInfoAttributesField,
+    RxWidgetInfoCustomComponentProperties,
+    RxWidgetInfoCustomComponentContext,
+    VisWidgetCommand,
 } from '@iobroker/types-vis-2';
 import VisRxWidget from '@/Vis/visRxWidget';
-import type { VisWidgetCommand } from '@/Vis/visBaseWidget';
 import FiltersEditorDialog from './FiltersEditorDialog';
-
-// eslint-disable-next-line no-use-before-define
-type RxData = GetRxDataFromWidget<typeof BasicFilterDropdown>
 
 interface Item {
     id?: string;
@@ -45,6 +44,19 @@ interface Item {
     color?: string;
     activeColor?: string;
     default?: boolean;
+}
+
+type RxData = {
+    items: Item[];
+    type: 'dropdown' | 'horizontal_buttons' | 'vertical_buttons';
+    widgetTitle?: string;
+    autoFocus?: boolean;
+    multiple?: boolean;
+    noAllOption?: boolean;
+    noFilterText?: string;
+    dropdownVariant?: 'standard' | 'outlined' | 'filled';
+    buttonsVariant?: 'outlined' | 'contained' | 'text';
+    dropdownSmall?: boolean;
 }
 
 function processFilter(filters: string[]) {
