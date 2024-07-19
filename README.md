@@ -294,7 +294,7 @@ npm run start
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.10.5 (2024-07-19)
 * (bluefox) Improved the typing in typescript
 
 ### 2.10.4 (2024-07-16)

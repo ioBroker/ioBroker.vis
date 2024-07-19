@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.10.4",
+    "version": "2.10.5",
     "news": {
+      "2.10.5": {
+        "en": "Improved the typing in typescript",
+        "de": "Verbessert die Eingabe in der Schrift",
+        "ru": "Улучшен типографский состав",
+        "pt": "Melhoria da digitação no typescript",
+        "nl": "Het typen in typescript verbeterd",
+        "fr": "Amélioration de la dactylographie",
+        "it": "Migliorata la digitazione in typescript",
+        "es": "Mejora de la escritura",
+        "pl": "Ulepszenie pisania na maszynie",
+        "uk": "Покращує типування у форматі",
+        "zh-cn": "改进打字符"
+      },
       "2.10.4": {
         "en": "Corrected the jumping by object selection\nImplemented swipe widget",
         "de": "Korrektur des Sprungs durch Objektauswahl\nErgänztes Swipe Widget",
@@ -80,19 +93,6 @@
         "pl": "Migrowała pliki na maszynie",
         "uk": "Переміщено деякі файли для відображення",
         "zh-cn": "将一些文件移动到打字符"
-      },
-      "2.9.60": {
-        "en": "test automatic release",
-        "de": "test automatische freigabe",
-        "ru": "автоматический выпуск",
-        "pt": "teste de liberação automática",
-        "nl": "automatische vrijgave van de test",
-        "fr": "essai de libération automatique",
-        "it": "prova rilascio automatico",
-        "es": "prueba de liberación automática",
-        "pl": "automatyczne zwolnienie badania",
-        "uk": "тест автоматичний реліз",
-        "zh-cn": "测试自动释放"
       }
     },
     "title": "Visualisation Next Generation",
