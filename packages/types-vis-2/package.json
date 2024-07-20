@@ -6,6 +6,7 @@
     "index.d.ts",
     "LICENSE"
   ],
+  "main": "index.js",
   "types": "index.d.ts",
   "publishConfig": {
     "access": "public"
