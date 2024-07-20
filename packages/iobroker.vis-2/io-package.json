@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.10.5",
+    "version": "2.10.6",
     "news": {
+      "2.10.6": {
+        "en": "Improved the typing in typescript",
+        "de": "Verbessert die Eingabe in der Schrift",
+        "ru": "Улучшен типографский состав",
+        "pt": "Melhoria da digitação no typescript",
+        "nl": "Het typen in typescript verbeterd",
+        "fr": "Amélioration de la dactylographie",
+        "it": "Migliorata la digitazione in typescript",
+        "es": "Mejora de la escritura",
+        "pl": "Ulepszenie pisania na maszynie",
+        "uk": "Покращує типування у форматі",
+        "zh-cn": "改进打字符"
+      },
       "2.10.4": {
         "en": "Corrected the jumping by object selection\nImplemented swipe widget",
         "de": "Korrektur des Sprungs durch Objektauswahl\nErgänztes Swipe Widget",
