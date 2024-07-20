@@ -101,7 +101,7 @@ export interface RuntimeState extends GenericAppState {
     alignType: 'width' | 'height';
     alignIndex: number;
     alignValues: number[];
-    selectedGroup: GroupWidgetId;
+    selectedGroup: GroupWidgetId | null;
     projectsDialog: boolean;
     showImportDialog: boolean;
     lockDragging: boolean;

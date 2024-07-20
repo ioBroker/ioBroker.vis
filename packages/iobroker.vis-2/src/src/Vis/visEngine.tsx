@@ -213,7 +213,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
 
     oldTime: number;
 
-    systemConfig: ioBroker.Object;
+    systemConfig: ioBroker.SystemConfigObject;
 
     _cmdData: ioBroker.StateValue;
 
@@ -376,7 +376,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                 this.vis.loginRequired = this.props.socket.isSecure as false;
                 return this.props.socket.getSystemConfig();
             })
-            .then((systemConfig: ioBroker.Object) => {
+            .then((systemConfig: ioBroker.SystemConfigObject) => {
                 this.vis.dateFormat = systemConfig.common.dateFormat;
                 this.vis.isFloatComma = systemConfig.common.isFloatComma;
                 this.vis.language = systemConfig.common.language || 'en';
@@ -1211,9 +1211,9 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                     .then(groups => cb(groups))
                     .catch(error => cb(error));
             },
-            getConfig: (useCache: boolean, cb: (arg1: any, arg2?: any) => void) => {
+            getConfig: (useCache: boolean, cb?: (error: string | null, systemConfig?: ioBroker.SystemConfigCommon) => void) => {
                 if (typeof useCache === 'function') {
-                    cb = useCache;
+                    cb = useCache as unknown as (error: string | null, systemConfig?: ioBroker.SystemConfigCommon) => void;
                     useCache = false;
                 }
 
@@ -1221,9 +1221,9 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                     .then(systemConfig => cb(null, systemConfig.common))
                     .catch(error => cb(error));
             },
-            getObjects: (useCache?: boolean, cb?: (arg1: any, arg2?: any) => void) => {
+            getObjects: (useCache?: boolean, cb?: (error: string | null, objects?: Record<string, ioBroker.Object>) => void) => {
                 if (typeof useCache === 'function') {
-                    cb = useCache;
+                    cb = useCache as unknown as (error: string | null, objects?: Record<string, ioBroker.Object>) => void;
                     useCache = false;
                 }
                 let objects: Record<string, ioBroker.Object> = {};

@@ -50,7 +50,7 @@ export interface VisBaseWidgetProps {
     /** If moving of widget is allowed */
     moveAllowed: boolean;
     /** Currently selected group */
-    selectedGroup: GroupWidgetId;
+    selectedGroup: GroupWidgetId | null;
     /** Additional context */
     context: VisContext;
     /** TPL type */
@@ -884,7 +884,7 @@ export interface VisLegacy {
     user: string;
     projectPrefix: string;
     _: (word: string) => string;
-    dateFormat: '';
+    dateFormat: string;
     loginRequired: false;
     viewsActiveFilter: Record<string, string[]>;
     onChangeCallbacks: ArgumentChanged[];
@@ -1251,7 +1251,7 @@ export interface VisContext {
     lockDragging: boolean;
     moment: typeof moment;
     onCommand: (view: string, command: ViewCommand, options?: ViewCommandOptions) => any;
-    onWidgetsChanged: (
+    onWidgetsChanged: null | ((
         changedData: {
             wid: AnyWidgetId;
             view: string;
@@ -1260,19 +1260,19 @@ export interface VisContext {
         }[] | null,
         view?: string,
         viewSettings?: ViewSettings,
-    ) => void | null;
-    onIgnoreMouseEvents: (ignore: boolean) => void;
+    ) => void | null);
+    onIgnoreMouseEvents: null | ((ignore: boolean) => void);
     projectName: string;
-    registerEditorCallback: (name: 'onStealStyle' | 'onPxToPercent' | 'pxToPercent' | 'onPercentToPx', view: string, cb?: (...args: any) => any) => void;
+    registerEditorCallback: null | ((name: 'onStealStyle' | 'onPxToPercent' | 'pxToPercent' | 'onPercentToPx', view: string, cb?: (...args: any) => any) => void);
     runtime: boolean;
-    setSelectedGroup: (groupId: string) => void;
-    setSelectedWidgets: (widgets: AnyWidgetId[], view?: string, cb?: () => void) => void;
+    setSelectedGroup: null | ((groupId: string) => void);
+    setSelectedWidgets: null | ((widgets: AnyWidgetId[], view?: string, cb?: () => void) => void);
     setTimeInterval: (timeInterval: string) => void;
     setTimeStart: (timeStart: string) => void;
     setValue: (id: string, value: string | boolean | number | null) => void;
     showWidgetNames: boolean;
     socket: LegacyConnection;
-    systemConfig: ioBroker.Object;
+    systemConfig: ioBroker.SystemConfigObject;
     theme: VisTheme;
     themeName: string;
     themeType: 'dark' | 'light';
