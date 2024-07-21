@@ -219,7 +219,7 @@
     ],
     "licenseInformation": {
       "type": "commercial",
-      "link": "https://github.com/ioBroker/ioBroker.vis-2?tab=readme-ov-file#license-requirements",
+      "link": "https://raw.githubusercontent.com/ioBroker/ioBroker.vis-2/master/LICENSE",
       "license": "CC-BY-NC-4.0"
     },
     "stopBeforeUpdate": true
