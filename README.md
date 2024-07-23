@@ -294,6 +294,9 @@ npm run start
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Optimization of the module federation
+
 ### 2.10.6 (2024-07-20)
 * (bluefox) Improved the typing in typescript
 
