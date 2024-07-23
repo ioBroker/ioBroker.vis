@@ -7,7 +7,7 @@ declare global {
         adapterName: string;
         /** The vis-2 adapter instance */
         visAdapterInstance?: number;
-        visRxWidget?: typeof VisRxWidget;
+        visRxWidget: typeof VisRxWidget;
         visConfigLoaded?: Promise<void>;
         sentryDSN?: string;
         disableDataReporting?: boolean;

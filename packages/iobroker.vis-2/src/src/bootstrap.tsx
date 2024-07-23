@@ -12,7 +12,7 @@ import packageJson from './version.json';
 declare global {
     interface Window {
         adapterName: string;
-        visRxWidget?: typeof VisRxWidget;
+        visRxWidget: typeof VisRxWidget;
         disableDataReporting?: boolean;
         sentryDSN?: string;
         visConfigLoaded?: Promise<void>;
