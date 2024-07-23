@@ -294,7 +294,7 @@ npm run start
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.10.7 (2024-07-23)
 * (bluefox) Optimization of the module federation
 
 ### 2.10.6 (2024-07-20)

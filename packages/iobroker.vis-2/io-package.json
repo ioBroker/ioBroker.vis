@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.10.6",
+    "version": "2.10.7",
     "news": {
+      "2.10.7": {
+        "en": "Optimization of the module federation",
+        "de": "Optimierung der Modulbeschickung",
+        "ru": "Оптимизация федерации модулей",
+        "pt": "Otimização da federação do módulo",
+        "nl": "Optimalisatie van de modulefederatie",
+        "fr": "Optimisation de la fédération des modules",
+        "it": "Ottimizzazione della federazione del modulo",
+        "es": "Optimización de la federación del módulo",
+        "pl": "Optymalizacja federacji modułów",
+        "uk": "Оптимізація федерації модуля",
+        "zh-cn": "优化模块联合会"
+      },
       "2.10.6": {
         "en": "Improved the typing in typescript",
         "de": "Verbessert die Eingabe in der Schrift",
@@ -69,19 +82,6 @@
         "zh-cn": "添加按键清除文本字段的可能性"
       },
       "2.9.63": {
-        "en": "Migrated some files to typescript",
-        "de": "Einige Dateien zu beschreiben",
-        "ru": "Перечислили некоторые файлы для печатания",
-        "pt": "Migrado alguns arquivos para digitar",
-        "nl": "Sommige bestanden naar typescript migreren",
-        "fr": "Migré certains fichiers pour dactylographier",
-        "it": "Migrato alcuni file per typescript",
-        "es": "Migrated algunos archivos para escribirscript",
-        "pl": "Migrowała pliki na maszynie",
-        "uk": "Переміщено деякі файли для відображення",
-        "zh-cn": "将一些文件移动到打字符"
-      },
-      "2.9.62": {
         "en": "Migrated some files to typescript",
         "de": "Einige Dateien zu beschreiben",
         "ru": "Перечислили некоторые файлы для печатания",
