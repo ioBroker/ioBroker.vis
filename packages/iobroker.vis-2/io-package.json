@@ -167,7 +167,20 @@
         "color": "#ffe9c8",
         "pro": "vis-2/index.htm",
         "cloud": "vis-2/index.html",
-        "intro": true
+        "intro": true,
+        "name": {
+          "en": "vis-2 Runtime",
+          "de": "vis-2 Runtime",
+          "ru": "vis-2 Runtime",
+          "pt": "vis-2 Runtime",
+          "nl": "vis-2 Runtime",
+          "fr": "vis-2 Runtime",
+          "it": "vis-2 Runtime",
+          "es": "vis-2 Runtime",
+          "pl": "vis-2 Runtime",
+          "uk": "vis-2 Runtime",
+          "zh-cn": "vis-2 Runtime"
+        }
       }
     },
     "license": "CC-BY-NC-4.0",
