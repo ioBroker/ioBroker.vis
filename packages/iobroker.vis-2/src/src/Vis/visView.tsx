@@ -1887,32 +1887,46 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
 
         let limitScreenStyle: React.CSSProperties | null = null;
         // limit screen size of desired
-        if (settings && settings.limitScreen && ((window.screen.width >= 800 && window.screen.height >= 800) || !settings.limitScreenDesktop)) {
-            const ww = isVarFinite(settings.sizex) ? parseFloat(settings.sizex as unknown as string) : 0;
-            const hh = isVarFinite(settings.sizey) ? parseFloat(settings.sizey as unknown as string) : 0;
-            if (ww && hh) {
-                const borderWidth = parseFloat(settings.limitScreenBorderWidth as unknown as string) || 0;
-                const borderColor = settings.limitScreenBorderColor || '#333';
-                const borderStyle = settings.limitScreenBorderStyle || 'dotted';
-                const bgColor = settings.limitScreenBackgroundColor || null;
+        if (settings?.limitScreen && ((window.screen.width >= 800 && window.screen.height >= 800) || !settings.limitScreenDesktop)) {
+            let ignore = false;
+            if (settings.limitForInstances) {
+                const visInstance = window.localStorage.getItem('visInstance');
+                if (visInstance) {
+                    const instances = settings.limitForInstances.split(',').map(i => i.trim()).filter(i => i);
+                    if (instances.length && !instances.includes(visInstance)) {
+                        ignore = true;
+                    }
+                } else {
+                    ignore = true;
+                }
+            }
+            if (!ignore) {
+                const ww = isVarFinite(settings.sizex) ? parseFloat(settings.sizex as unknown as string) : 0;
+                const hh = isVarFinite(settings.sizey) ? parseFloat(settings.sizey as unknown as string) : 0;
+                if (ww && hh) {
+                    const borderWidth = parseFloat(settings.limitScreenBorderWidth as unknown as string) || 0;
+                    const borderColor = settings.limitScreenBorderColor || '#333';
+                    const borderStyle = settings.limitScreenBorderStyle || 'dotted';
+                    const bgColor = settings.limitScreenBackgroundColor || null;
 
-                limitScreenStyle = {
-                    ...backgroundStyle,
-                    width: ww + borderWidth * 2,
-                    height: hh + borderWidth * 2,
-                    minWidth: ww + borderWidth * 2,
-                    minHeight: hh + borderWidth * 2,
-                    overflow: 'auto',
-                    position: 'relative',
-                    boxSizing: 'border-box',
-                    borderWidth,
-                    borderColor,
-                    borderStyle,
-                };
-                style.display = 'flex';
-                style.justifyContent = 'center';
-                style.alignItems = 'center';
-                style.backgroundColor = bgColor as Property.BackgroundColor;
+                    limitScreenStyle = {
+                        ...backgroundStyle,
+                        width: ww + borderWidth * 2,
+                        height: hh + borderWidth * 2,
+                        minWidth: ww + borderWidth * 2,
+                        minHeight: hh + borderWidth * 2,
+                        overflow: 'auto',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        borderWidth,
+                        borderColor,
+                        borderStyle,
+                    };
+                    style.display = 'flex';
+                    style.justifyContent = 'center';
+                    style.alignItems = 'center';
+                    style.backgroundColor = bgColor as Property.BackgroundColor;
+                }
             }
         }
 

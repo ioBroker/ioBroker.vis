@@ -767,6 +767,7 @@ export interface ViewSettings {
     sizex?: number;
     sizey?: number;
     limitScreen?: boolean;
+    limitForInstances?: string;
     limitScreenDesktop?: boolean;
     limitScreenBorderWidth?: number;
     limitScreenBorderColor?: string;
