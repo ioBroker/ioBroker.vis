@@ -1,5 +1,5 @@
 /**
- *  ioBroker.vis
+ *  ioBroker.vis-2
  *  https://github.com/ioBroker/ioBroker.vis
  *
  *  Copyright (c) 2023 Denis Haev https://github.com/GermanBluefox,
