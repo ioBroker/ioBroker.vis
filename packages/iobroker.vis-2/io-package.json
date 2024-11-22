@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.10.7",
+    "version": "2.10.8",
     "news": {
+      "2.10.8": {
+        "en": "Added new option for view: \"Limit only for instances\"",
+        "de": "Neue Option zur Ansicht hinzugefügt: \"Limit nur für Instanzen\"",
+        "ru": "Добавлена новая опция для просмотра: \"Подобный только для случаев\"",
+        "pt": "Adicionado nova opção para visualização: \"Limitar apenas por instâncias\"",
+        "nl": "Nieuwe optie toegevoegd voor weergave: \"Alleen voor instanties beperken\"",
+        "fr": "Ajout d'une nouvelle option pour la vue: \"Limiter uniquement pour les instances\"",
+        "it": "Aggiunto nuova opzione per visualizzare: \"Limit solo per istanze\"",
+        "es": "Añadido nueva opción para ver: \"Limit only for instances\"",
+        "pl": "Dodano nową opcję widoku: \"Limit tylko dla instancji\"",
+        "uk": "Додано новий варіант для перегляду: \"Всі тільки екземпляри\"",
+        "zh-cn": "为视图添加了新选项 : “ 仅限实例”"
+      },
       "2.10.7": {
         "en": "Optimization of the module federation",
         "de": "Optimierung der Modulbeschickung",
@@ -80,19 +93,6 @@
         "pl": "Dodano możliwość wyczyszczenia pola tekstowego za pomocą przycisku",
         "uk": "Додано можливість очистити текстове поле за допомогою кнопки",
         "zh-cn": "添加按键清除文本字段的可能性"
-      },
-      "2.9.63": {
-        "en": "Migrated some files to typescript",
-        "de": "Einige Dateien zu beschreiben",
-        "ru": "Перечислили некоторые файлы для печатания",
-        "pt": "Migrado alguns arquivos para digitar",
-        "nl": "Sommige bestanden naar typescript migreren",
-        "fr": "Migré certains fichiers pour dactylographier",
-        "it": "Migrato alcuni file per typescript",
-        "es": "Migrated algunos archivos para escribirscript",
-        "pl": "Migrowała pliki na maszynie",
-        "uk": "Переміщено деякі файли для відображення",
-        "zh-cn": "将一些文件移动到打字符"
       }
     },
     "title": "Visualisation Next Generation",
