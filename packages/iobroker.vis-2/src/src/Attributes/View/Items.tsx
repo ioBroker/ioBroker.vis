@@ -403,6 +403,14 @@ export function getFields(
                 notStyle: true,
             },
             {
+                type: 'text',
+                label: 'Limit only for instances',
+                attr: 'limitForInstances',
+                hidden: '!data.limitScreen',
+                title: 'Enter the browser instances divided by comma',
+                notStyle: true,
+            },
+            {
                 type: 'checkbox',
                 label: 'Only for desktop',
                 attr: 'limitScreenDesktop',

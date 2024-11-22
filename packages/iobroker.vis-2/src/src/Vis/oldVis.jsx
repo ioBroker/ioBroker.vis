@@ -1,6 +1,6 @@
 /**
- *  ioBroker.vis
- *  https://github.com/ioBroker/ioBroker.vis
+ *  ioBroker.vis-2
+ *  https://github.com/ioBroker/ioBroker.vis-2
  *
  *  Copyright (c) 2013-2022 Denis Haev https://github.com/GermanBluefox,
  *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker
