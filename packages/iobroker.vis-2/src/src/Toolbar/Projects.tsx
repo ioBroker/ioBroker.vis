@@ -17,7 +17,7 @@ import {
 
 import type { VisTheme } from '@iobroker/types-vis-2';
 import type Editor from '@/Editor';
-import type { ToolbarItem } from './ToolbarItems';
+import {ToolbarGroup, ToolbarItem} from './ToolbarItems';
 import ToolbarItems from './ToolbarItems';
 import Settings from './Settings';
 import ProjectsManager from './ProjectsManager';
@@ -48,23 +48,21 @@ const Tools = (props: ToolsProps) => {
     const [objectsDialog, setObjectsDialog] = useState(false);
     const [filesDialog, setFilesDialog] = useState(false);
 
-    const toolbar: {
-        name: string;
-        items: (ToolbarItem | ToolbarItem[] | ToolbarItem[][])[];
-    } = {
+    const toolbar: ToolbarGroup = {
         name: 'Projects',
+        compact: window.innerWidth < 1230 ? { tooltip: 'Projects', icon: <MenuIcon /> } : undefined,
         items: [
             {
-                type: 'icon-button', Icon: SettingsIcon, name: 'Settings', onClick: () => setSettingsDialog(true),
+                type: 'icon-button', Icon: SettingsIcon, name: 'Settings', onAction: () => setSettingsDialog(true),
             },
             {
-                type: 'icon-button', Icon: MenuIcon, name: 'Manage projects', onClick: () => props.setProjectsDialog(true),
+                type: 'icon-button', Icon: MenuIcon, name: 'Manage projects', onAction: () => props.setProjectsDialog(true),
             },
             {
-                type: 'icon-button', Icon: ListIcon, name: 'Objects', onClick: () => setObjectsDialog(true),
+                type: 'icon-button', Icon: ListIcon, name: 'Objects', onAction: () => setObjectsDialog(true),
             },
             {
-                type: 'icon-button', Icon: FilesIcon, name: 'Files', onClick: () => setFilesDialog(true),
+                type: 'icon-button', Icon: FilesIcon, name: 'Files', onAction: () => setFilesDialog(true),
             },
         ],
     };

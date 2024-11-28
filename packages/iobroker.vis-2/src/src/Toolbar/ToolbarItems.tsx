@@ -1,5 +1,4 @@
 import React from 'react';
-import type { SelectChangeEvent } from '@mui/material';
 import {
     Button,
     ButtonBase,
@@ -13,12 +12,15 @@ import {
     Select,
     TextField,
     Tooltip,
+    Menu, type SelectChangeEvent,
 } from '@mui/material';
 
+import { Menu as MenuIcon } from '@mui/icons-material';
+
 import { I18n, type ThemeType } from '@iobroker/adapter-react-v5';
+import type { ViewSettings, VisTheme } from '@iobroker/types-vis-2';
 
 import { deepClone } from '@/Utils/utils';
-import type { ViewSettings, VisTheme } from '@iobroker/types-vis-2';
 import { store } from '@/Store';
 import type Editor from '@/Editor';
 import commonStyles from '@/Utils/styles';
@@ -60,6 +62,7 @@ export interface BaseToolbarItem {
     field?: keyof ViewSettings;
     hide?: boolean;
     doNotTranslateName?: boolean;
+    onAction?: (value: any) => void;
 }
 
 export interface SelectToolbarItem extends BaseToolbarItem {
@@ -67,7 +70,7 @@ export interface SelectToolbarItem extends BaseToolbarItem {
     items: { name: string; value: string }[];
     width: number;
     value?: string;
-    onChange?: (value: SelectChangeEvent) => void;
+    onAction?: (value: SelectChangeEvent) => void;
 }
 
 export interface MultiselectToolbarItem extends BaseToolbarItem {
@@ -80,19 +83,19 @@ export interface MultiselectToolbarItem extends BaseToolbarItem {
      }[];
     width: number;
     value?: string[];
-    onChange: (value: string[]) => void;
+    onAction: (value: string[]) => void;
 }
 
 export interface CheckboxToolbarItem extends BaseToolbarItem {
     type: 'checkbox';
     value?: boolean;
-    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onAction?: (value: string) => void;
 }
 
 export interface IconButtonToolbarItem extends BaseToolbarItem {
     type: 'icon-button';
     Icon: React.FC<any>;
-    onClick: () => void;
+    onAction: () => void;
     disabled?: boolean;
     selected?: boolean;
     size?: 'small' | 'inherit' | 'default' | 'large' | 'normal';
@@ -107,7 +110,7 @@ export interface TextToolbarItem extends BaseToolbarItem {
 
 export interface ButtonToolbarItem extends BaseToolbarItem {
     type: 'button';
-    onClick: () => void;
+    onAction: () => void;
 }
 
 export interface DividerToolbarItem extends BaseToolbarItem {
@@ -117,16 +120,23 @@ export interface DividerToolbarItem extends BaseToolbarItem {
 export interface TextFieldToolbarItem extends BaseToolbarItem {
     type?: 'password' | 'number';
     value: string;
-    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+    onAction: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }
 
 export type ToolbarItem = SelectToolbarItem | MultiselectToolbarItem | CheckboxToolbarItem | IconButtonToolbarItem | TextToolbarItem | ButtonToolbarItem | DividerToolbarItem | TextFieldToolbarItem;
+
+export interface ToolbarGroup {
+    name: string | React.JSX.Element;
+    doNotTranslateName?: boolean;
+    items: (ToolbarItem[][] | ToolbarItem[] | ToolbarItem)[];
+    compact?: { tooltip: 'Projects'; icon: React.JSX.Element } | undefined;
+}
 
 interface ToolbarItemsProps {
     theme: VisTheme;
     // eslint-disable-next-line react/no-unused-prop-types
     themeType: ThemeType;
-    group: { name: string | React.JSX.Element; doNotTranslateName?: boolean; items: (ToolbarItem[][] | ToolbarItem[] | ToolbarItem)[] };
+    group: ToolbarGroup;
     last?: boolean;
     toolbarHeight: 'full' | 'narrow' | 'veryNarrow';
     // eslint-disable-next-line react/no-unused-prop-types
@@ -137,45 +147,45 @@ interface ToolbarItemsProps {
     setSelectedWidgets: Editor['setSelectedWidgets'];
 }
 
-// eslint-disable-next-line no-use-before-define
-function getItem(
-    item: ToolbarItem,
-    key: number,
-    props: ToolbarItemsProps,
-    theme: VisTheme,
-    full?: boolean,
-): null | React.JSX.Element {
-    const { visProject } = store.getState();
-    const view = visProject[props.selectedView];
+interface ToolbarItemsState {
+    opened: HTMLButtonElement | null;
+}
 
-    if (!item || item.hide) {
-        !item && console.warn(`Strange item: ${key}`);
-        return null;
+class ToolbarItems extends React.Component<ToolbarItemsProps, ToolbarItemsState> {
+    constructor(props: ToolbarItemsProps) {
+        super(props);
+        this.state = { opened: null };
     }
 
-    let value = view && item.field ? view.settings[item.field] : null;
-    if (item.field && (value === null || value === undefined)) {
-        value = '';
+    closeMenu() {
+        this.setState({ opened: null });
     }
 
-    const change = (changeValue: any) => {
-        if (!item.field) {
+    onAction = (item: ToolbarItem, changeValue?: any): void => {
+        this.closeMenu();
+
+        if (item.onAction) {
+            item.onAction(changeValue);
             return;
         }
-        const project = deepClone(visProject);
-        (project[props.selectedView].settings[item.field] as any) = changeValue;
 
-        props.changeProject(project);
+        if (changeValue !== undefined && item.field) {
+            const { visProject } = store.getState();
+            const project = deepClone(visProject);
+            (project[this.props.selectedView].settings[item.field] as any) = changeValue;
+
+            this.props.changeProject(project);
+        }
     };
 
-    if (item.type === 'select') {
+    getItemSelect(item: SelectToolbarItem, key: number, value: string): React.JSX.Element {
         return <FormControl variant="standard" key={key} style={{ margin: '0px 10px' }}>
-            {props.toolbarHeight !== 'veryNarrow' ? <InputLabel shrink>{I18n.t(item.name)}</InputLabel> : null}
+            {this.props.toolbarHeight !== 'veryNarrow' ? <InputLabel shrink>{I18n.t(item.name)}</InputLabel> : null}
             <Select
                 variant="standard"
                 style={{ width: item.width }}
                 value={item.value ? item.value : value}
-                onChange={item.onChange ? item.onChange : e => change(e.target.value)}
+                onChange={e => this.onAction(item, e.target.value)}
             >
                 {item.items.map(selectItem => <MenuItem
                     value={selectItem.value}
@@ -187,16 +197,16 @@ function getItem(
         </FormControl>;
     }
 
-    if (item.type === 'multiselect') {
+    getItemMultiselect(item: MultiselectToolbarItem, key: number, value: string[]): React.JSX.Element {
         return <MultiSelect
-            theme={theme}
+            theme={this.props.theme}
             key={key}
             // style={{ margin: '0px 10px' }}
-            label={props.toolbarHeight !== 'veryNarrow' ? (item.doNotTranslateName ? item.name : I18n.t(item.name)) : null}
+            label={this.props.toolbarHeight !== 'veryNarrow' ? (item.doNotTranslateName ? item.name : I18n.t(item.name)) : null}
             width={item.width}
             value={item.value ? item.value : value as string[]}
-            onChange={_value => item.onChange(_value)}
-            setSelectedWidgets={props.setSelectedWidgets}
+            onChange={_value => this.onAction(item, _value)}
+            setSelectedWidgets={this.props.setSelectedWidgets}
             options={item.items.map(option => ({
                 name: option.name as string,
                 subname: option.subName,
@@ -204,7 +214,7 @@ function getItem(
                 color: option.color,
                 icon: option.icon,
             }))}
-            themeType={props.themeType}
+            themeType={this.props.themeType}
         />;
         /*
         return <FormControl variant="standard" key={key} style={{ margin: '0px 10px' }}>
@@ -242,24 +252,25 @@ function getItem(
         </FormControl>;
         */
     }
-    if (item.type === 'checkbox') {
+
+    getItemCheckbox(item: CheckboxToolbarItem, key: number, value: boolean): React.JSX.Element {
         return <FormControlLabel
             key={key}
             control={<Checkbox
-                checked={value as boolean}
-                onChange={item.onChange ? item.onChange : e => change(e.target.checked)}
+                checked={value}
+                onChange={e => this.onAction(item, e.target.checked)}
                 size="small"
             />}
             label={I18n.t(item.name)}
         />;
     }
 
-    if (item.type === 'icon-button') {
-        return props.toolbarHeight !== 'veryNarrow' && full ?
+    getItemIconButton(item: IconButtonToolbarItem, key: number, full: boolean): React.JSX.Element {
+        return this.props.toolbarHeight !== 'veryNarrow' && full ?
             <div key={key} style={{ textAlign: 'center' }}>
                 <ButtonBase
                     sx={item.disabled ? styles.disabled : undefined}
-                    onClick={item.onClick}
+                    onClick={() => this.onAction(item)}
                     disabled={item.disabled}
                     style={{
                         flexDirection: 'column',
@@ -283,7 +294,7 @@ function getItem(
                         size="small"
                         key={key}
                         disabled={item.disabled}
-                        onClick={item.onClick}
+                        onClick={() => this.onAction(item)}
                         style={{ height: full ? '100%' : null, color: item.color }}
                     >
                         <item.Icon fontSize={(item.size ? item.size : 'small') as any} />
@@ -292,81 +303,148 @@ function getItem(
             </Tooltip>;
     }
 
-    if (item.type === 'text') {
-        return <span key={key} style={styles.text}>{`${I18n.t(item.text)}:`}</span>;
-    }
+    getItem(
+        item: ToolbarItem,
+        key: number,
+        full?: boolean,
+    ): null | React.JSX.Element {
+        const { visProject } = store.getState();
+        const view = visProject[this.props.selectedView];
 
-    if (item.type === 'button') {
-        return <Button
+        if (!item || item.hide) {
+            return null;
+        }
+
+        let value = view && item.field ? view.settings[item.field] : null;
+        if (item.field && (value === null || value === undefined)) {
+            value = '';
+        }
+
+        if (item.type === 'select') {
+            return this.getItemSelect(item, key, value as string);
+        }
+
+        if (item.type === 'multiselect') {
+            return this.getItemMultiselect(item, key, value as string[]);
+        }
+
+        if (item.type === 'checkbox') {
+            return this.getItemCheckbox(item, key, value as boolean);
+        }
+
+        if (item.type === 'icon-button') {
+            return this.getItemIconButton(item, key, full);
+        }
+
+        if (item.type === 'text') {
+            return <span key={key} style={styles.text}>{`${I18n.t(item.text)}:`}</span>;
+        }
+
+        if (item.type === 'button') {
+            return <Button
+                key={key}
+                variant="outlined"
+                onClick={() => this.onAction(item)}
+                size="small"
+                style={styles.button}
+            >
+                {I18n.t(item.name)}
+            </Button>;
+        }
+
+        if (item.type === 'divider') {
+            return <Divider key={key} orientation="vertical" flexItem style={{ margin: '0px 10px' }} />;
+        }
+
+        return <TextField
+            variant="standard"
             key={key}
-            variant="outlined"
-            onClick={item.onClick}
-            size="small"
-            style={styles.button}
-        >
-            {I18n.t(item.name)}
-        </Button>;
+            value={value}
+            type={item.type}
+            onChange={e => this.onAction(item, e.target.value)}
+            InputLabelProps={{ shrink: true }}
+            label={this.props.toolbarHeight !== 'veryNarrow' ? I18n.t(item.name) : null}
+            style={styles.textInput}
+        />;
     }
 
-    if (item.type === 'divider') {
-        return <Divider key={key} orientation="vertical" flexItem style={{ margin: '0px 10px' }} />;
-    }
+    render(): React.JSX.Element | React.JSX.Element[] {
+        let items = this.props.group.items;
+        const name = this.props.group.name;
+        const doNotTranslateName = this.props.group.doNotTranslateName;
 
-    return <TextField
-        variant="standard"
-        key={key}
-        value={value}
-        type={item.type}
-        onChange={item.onChange ? item.onChange : e => change(e.target.value)}
-        InputLabelProps={{ shrink: true }}
-        label={props.toolbarHeight !== 'veryNarrow' ? I18n.t(item.name) : null}
-        style={styles.textInput}
-    />;
-}
-
-const ToolbarItems: React.FC<ToolbarItemsProps> = props => {
-    let items = props.group.items;
-    const name = props.group.name;
-    const doNotTranslateName = props.group.doNotTranslateName;
-
-    // flatten buttons
-    if (props.toolbarHeight === 'veryNarrow') {
-        const _items: ToolbarItem[] = [];
-        items.forEach(item => {
-            if (Array.isArray(item)) {
-                item.forEach(_item => {
-                    if (Array.isArray(_item)) {
-                        _item.forEach(__item => _items.push(__item));
-                    } else {
-                        _items.push(_item);
-                    }
-                });
-            } else {
-                _items.push(item);
-            }
-        });
-        items = _items;
-    }
-
-    return <div
-        style={{ ...styles.toolbarBlock, borderRightWidth: props.last ? 0 : undefined }}
-    >
-        <div style={styles.toolbarItems}>
-            {items.map((item, key) => {
+        // flatten buttons
+        if (this.props.toolbarHeight === 'veryNarrow') {
+            const _items: ToolbarItem[] = [];
+            items.forEach(item => {
                 if (Array.isArray(item)) {
-                    return <div key={key} style={styles.toolbarCol}>
-                        {(item as ToolbarItem[][]).map((subItem, subKey) => <div key={subKey} style={styles.toolbarRow}>
-                            {subItem.map((subItem2, subKey2) => getItem(subItem2, subKey2, props, props.theme))}
-                        </div>)}
-                    </div>;
+                    item.forEach(_item => {
+                        if (Array.isArray(_item)) {
+                            _item.forEach(__item => _items.push(__item));
+                        } else {
+                            _items.push(_item);
+                        }
+                    });
+                } else {
+                    _items.push(item);
                 }
-                return getItem(item, key, props, props.theme, true);
-            })}
-        </div>
-        {props.toolbarHeight === 'full' ? <div style={styles.toolbarLabel}>
-            <span>{typeof name === 'string' ? (doNotTranslateName ? name : I18n.t(name)) : name}</span>
-        </div> : null}
-    </div>;
-};
+            });
+            items = _items;
+        }
+
+        const div = <div
+            style={{ ...styles.toolbarBlock, borderRightWidth: this.props.last ? 0 : undefined }}
+        >
+            <div style={styles.toolbarItems}>
+                {items.map((item, key) => {
+                    if (Array.isArray(item)) {
+                        return <div key={key} style={styles.toolbarCol}>
+                            {(item as ToolbarItem[][]).map((subItem, subKey) => <div key={subKey} style={styles.toolbarRow}>
+                                {subItem.map((subItem2, subKey2) => this.getItem(subItem2, subKey2, false))}
+                            </div>)}
+                        </div>;
+                    }
+                    return this.getItem(item, key, true);
+                })}
+            </div>
+            {this.props.toolbarHeight === 'full' ? <div style={styles.toolbarLabel}>
+                <span>{typeof name === 'string' ? (doNotTranslateName ? name : I18n.t(name)) : name}</span>
+            </div> : null}
+        </div>;
+
+        if (this.props.group.compact) {
+            return [
+                <Tooltip
+                    title={I18n.t(this.props.group.compact.tooltip)}
+                    key="icon"
+                    componentsProps={{ popper: { sx: commonStyles.tooltip } }}
+                >
+                    <IconButton
+                        onClick={e => this.setState({ opened: this.state.opened ? null : e.currentTarget })}
+                        style={{ height: '100%' }}
+                    >
+                        {this.props.group.compact.icon || <MenuIcon />}
+                    </IconButton>
+                </Tooltip>,
+                <Menu
+                    key="menu"
+                    onClose={() => this.closeMenu()}
+                    open={!!this.state.opened}
+                    anchorEl={this.state.opened}
+                    sx={{
+                        '& .MuiList-root': {
+                            border: '2px solid grey',
+                            borderRadius: 4,
+                        },
+                    }}
+                >
+                    {div}
+                </Menu>,
+            ];
+        }
+
+        return div;
+    }
+}
 
 export default ToolbarItems;

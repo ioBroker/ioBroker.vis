@@ -478,6 +478,7 @@ export function getFields(
                 type: 'number', label: 'Order', attr: 'navigationOrder', notStyle: true, hidden: '!data.navigation',
             },
             {
+                // Icon for THIS page in navigation menu. It can be defined icon or image but not together
                 type: 'icon64',
                 label: 'Icon',
                 attr: 'navigationIcon',
@@ -485,6 +486,7 @@ export function getFields(
                 hidden: '!data.navigation || data.navigationImage',
             },
             {
+                // Image for THIS page in navigation menu. It can be defined icon or image but not together
                 type: 'image',
                 label: 'Image',
                 attr: 'navigationImage',
@@ -492,6 +494,7 @@ export function getFields(
                 hidden: '!data.navigation || data.navigationIcon',
             },
             {
+                // Menu orientation
                 type: 'select',
                 label: 'Orientation',
                 attr: 'navigationOrientation',
@@ -505,9 +508,11 @@ export function getFields(
                 ],
             },
             {
+                // By horizontal menu do not show text if icon provided
                 type: 'checkbox',
                 label: 'Only icon',
                 attr: 'navigationOnlyIcon',
+                title: 'By horizontal menu do not show text if icon provided',
                 notStyle: true,
                 default: true,
                 hidden: '!data.navigation || data.navigationOrientation !== "horizontal"',
@@ -538,17 +543,27 @@ export function getFields(
                 applyToAll: true,
             },
             {
+                // Color of text in the upper/top corner if the header is defined
                 type: 'color',
                 label: 'Menu header text color',
                 attr: 'navigationHeaderTextColor',
                 notStyle: true,
-                hidden: '!data.navigation',
+                hidden: '!data.navigation || data.navigationOrientation === "horizontal"',
             },
             {
                 type: 'color',
                 label: 'Text color',
                 attr: 'navigationColor',
                 notStyle: true,
+                hidden: '!data.navigation',
+                applyToAll: true,
+            },
+            {
+                type: 'checkbox',
+                label: 'Hide menu',
+                attr: 'navigationHideMenu',
+                notStyle: true,
+                title: 'Show only toolbar on the top and hide menu itself',
                 hidden: '!data.navigation || data.navigationOrientation === "horizontal"',
                 applyToAll: true,
             },
@@ -557,15 +572,7 @@ export function getFields(
                 label: 'Chevron icon color',
                 attr: 'navigationChevronColor',
                 notStyle: true,
-                hidden: '!data.navigation || data.navigationOrientation === "horizontal"',
-                applyToAll: true,
-            },
-            {
-                type: 'checkbox',
-                label: 'Hide menu',
-                attr: 'navigationHideMenu',
-                notStyle: true,
-                hidden: '!data.navigation || data.navigationOrientation === "horizontal"',
+                hidden: '!data.navigation || data.navigationOrientation === "horizontal" || data.navigationHideMenu',
                 applyToAll: true,
             },
             {
@@ -573,7 +580,7 @@ export function getFields(
                 label: 'Hide after selection',
                 attr: 'navigationHideOnSelection',
                 notStyle: true,
-                hidden: '!data.navigation || data.navigationOrientation === "horizontal"',
+                hidden: '!data.navigation || data.navigationOrientation === "horizontal" || data.navigationHideMenu',
                 applyToAll: true,
             },
             {
@@ -589,7 +596,7 @@ export function getFields(
                 label: 'Do not hide menu',
                 attr: 'navigationNoHide',
                 notStyle: true,
-                hidden: '!data.navigation || data.navigationOrientation === "horizontal"',
+                hidden: '!data.navigation || data.navigationOrientation === "horizontal" || data.navigationHideMenu',
                 applyToAll: true,
             },
             {

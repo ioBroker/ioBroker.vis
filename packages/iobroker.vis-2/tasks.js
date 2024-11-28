@@ -1,91 +1,19 @@
 'use strict';
 
-const gulp = require('gulp');
 const fs = require('node:fs');
 const path = require('node:path');
-const cp = require('node:child_process');
+const { deleteFoldersRecursive, buildReact, npmInstall } = require('@iobroker/build-tools');
 const axios = require('axios');
 const unzipper = require('unzipper');
 const rootDir = path.join(__dirname, '..', '..');
 
-function deleteFoldersRecursive(path, exceptions) {
-    if (fs.existsSync(path)) {
-        const stat = fs.statSync(path);
-        if (stat.isDirectory()) {
-            const files = fs.readdirSync(path);
-            for (const file of files) {
-                const curPath = `${path}/${file}`;
-                if (exceptions && exceptions.find(e => curPath.endsWith(e))) {
-                    continue;
-                }
-
-                const stat = fs.statSync(curPath);
-                if (stat.isDirectory()) {
-                    deleteFoldersRecursive(curPath);
-                    fs.rmdirSync(curPath);
-                } else {
-                    fs.unlinkSync(curPath);
-                }
-            }
-        } else {
-            fs.unlinkSync(path);
-        }
-    }
-}
-
-function buildRuntime() {
-    return new Promise((resolve, reject) => {
-        const options = {
-            stdio: 'pipe',
-            cwd:   `${__dirname}/runtime/`,
-        };
-
-        const version = JSON.parse(fs.readFileSync(`${__dirname}/package.json`).toString('utf8')).version;
-        const data = JSON.parse(fs.readFileSync(`${__dirname}/runtime/src/version.json`).toString('utf8'));
-        if (data.version !== version) {
-            data.version = version;
-            fs.writeFileSync(`${__dirname}/runtime/src/version.json`, JSON.stringify(data, null, 4));
-        }
-
-        console.log(options.cwd);
-
-        let script = `${__dirname}/runtime/node_modules/@craco/craco/dist/bin/craco.js`;
-        if (!fs.existsSync(script)) {
-            script = `${rootDir}/node_modules/@craco/craco/dist/bin/craco.js`;
-        }
-
-        if (!fs.existsSync(script)) {
-            console.error(`Cannot find execution file: ${script}`);
-            reject(`Cannot find execution file: ${script}`);
-        } else {
-            const cmd = `node ${script} --max-old-space-size=7000 build`;
-            const child = cp.exec(cmd, { cwd: `${__dirname}/runtime` });
-
-            child.stderr.pipe(process.stderr);
-            child.stdout.pipe(process.stdout);
-
-            child.on('exit', (code /* , signal */) => {
-                // code 1 is a strange error that cannot be explained. Everything is installed but error :(
-                if (code && code !== 1) {
-                    reject(`Cannot install: ${code}`);
-                } else {
-                    console.log(`"${cmd} in ${__dirname}/runtime finished.`);
-                    // command succeeded
-                    resolve(null);
-                }
-            });
-        }
-    });
-}
-
-gulp.task('runtime-0-clean', done => {
+function clean() {
     deleteFoldersRecursive(`${__dirname}/www`);
     deleteFoldersRecursive(`${__dirname}/../../www`);
     deleteFoldersRecursive(`${__dirname}/runtime`, ['node_modules', 'package-lock.json']);
-    done();
-});
+}
 
-gulp.task('runtime-1-copy-src', done => {
+function copyRuntimeSrc() {
     !fs.existsSync(`${__dirname}/runtime`) && fs.mkdirSync(`${__dirname}/runtime`);
     !fs.existsSync(`${__dirname}/runtime/src`) && fs.mkdirSync(`${__dirname}/runtime/src`);
     // copy only single shared utils file now
@@ -176,80 +104,17 @@ export default FiltersEditorDialog;
     fs.writeFileSync(`${__dirname}/runtime/src/index.css`, fs.readFileSync(`${__dirname}/src/src/index.css`));
     fs.writeFileSync(`${__dirname}/runtime/src/Utils/styles.tsx`, 'const commonStyles: Record<string, any> = {};\nexport default commonStyles;');
     copyFolder(`${__dirname}/src/src/i18nRuntime`, `${__dirname}/runtime/src/i18n`);
-    done();
-});
-
-gulp.task('runtime-2-npm', () => {
-    return npmInstall(`${__dirname}/runtime`);
-});
-
-gulp.task('runtime-2-npm-dep', gulp.series('runtime-0-clean', 'runtime-1-copy-src', 'runtime-2-npm'));
-
-gulp.task('runtime-4-build', () => buildRuntime());
-
-gulp.task('runtime-4-build-dep', gulp.series('runtime-2-npm-dep', 'runtime-4-build'));
-
-function copyRuntimeFiles() {
-    copyFolder(path.join(__dirname, 'runtime/build'), path.join(__dirname, 'www'), ['asset-manifest.json']);
-    return Promise.resolve();
 }
 
-gulp.task('runtime-6-copy', () => copyRuntimeFiles());
+function copyRuntimeDist() {
+    copyFolder(path.join(__dirname, 'runtime/build'), path.join(__dirname, 'www'), ['asset-manifest.json']);
+}
 
-gulp.task('runtime-6-copy-dep', gulp.series('runtime-4-build-dep', 'runtime-6-copy'));
-
-gulp.task('runtime-7-patch', done => {
+function patchRuntime() {
     patchFile(`${__dirname}/www/index.html`);
     patchFile(`${__dirname}/runtime/build/index.html`);
     copyFolder(`${__dirname}/www`, `${__dirname}/../../www`);
-    done();
-});
-
-gulp.task('runtime-7-patch-dep',  gulp.series('runtime-6-copy-dep', 'runtime-7-patch'));
-
-gulp.task('0-clean', done => {
-    deleteFoldersRecursive(`${__dirname}/src/build`);
-    done();
-});
-
-function npmInstall(dir) {
-    dir = dir || `${__dirname}/src/`;
-    return new Promise((resolve, reject) => {
-        // Install node modules
-        const cwd = dir.replace(/\\/g, '/');
-
-        const cmd = `npm install -f`;
-        console.log(`"${cmd} in ${cwd}`);
-
-        // System call used for update of js-controller itself,
-        // because during the installation of the npm packet will be deleted too, but some files must be loaded even during the installation process.
-        const child = cp.exec(cmd, {cwd});
-
-        child.stderr.pipe(process.stderr);
-        child.stdout.pipe(process.stdout);
-
-        child.on('exit', (code /* , signal */) => {
-            // code 1 is a strange error that cannot be explained. Everything is installed but error :(
-            if (code && code !== 1) {
-                reject(`Cannot install: ${code}`);
-            } else {
-                console.log(`"${cmd} in ${cwd} finished.`);
-                // command succeeded
-                resolve(null);
-            }
-        });
-    });
 }
-
-gulp.task('2-npm', () => {
-    if (fs.existsSync(`${__dirname}/src/node_modules`)) {
-        return Promise.resolve();
-    } else {
-        return npmInstall();
-    }
-});
-
-gulp.task('2-npm-dep', gulp.series('0-clean', '2-npm'));
 
 function updateFile(fileName, data) {
     const oldData = fs.readFileSync(fileName).toString('utf8').replace(/\r\n/g, '\n');
@@ -259,7 +124,7 @@ function updateFile(fileName, data) {
     }
 }
 
-gulp.task('3-svg-icons', done => {
+async function generateSvgFiles() {
     const svgPath = path.join(rootDir, '/node_modules/@material-icons/svg/');
     const data = JSON.parse(fs.readFileSync(`${svgPath}data.json`).toString('utf8'));
 
@@ -293,54 +158,49 @@ gulp.task('3-svg-icons', done => {
 
     // prepare https://github.com/OpenAutomationProject/knx-uf-iconset/archive/refs/heads/master.zip
     if (!fs.existsSync(`${__dirname}/knx-uf-iconset/master.zip`)) {
-        axios('https://github.com/OpenAutomationProject/knx-uf-iconset/archive/refs/heads/master.zip', {responseType: 'arraybuffer'})
-            .then(async res => {
-                !fs.existsSync(`${__dirname}/knx-uf-iconset`) && fs.mkdirSync(`${__dirname}/knx-uf-iconset`);
-                fs.writeFileSync(`${__dirname}/knx-uf-iconset/master.zip`, res.data);
+        const res = await axios('https://github.com/OpenAutomationProject/knx-uf-iconset/archive/refs/heads/master.zip', {responseType: 'arraybuffer'});
+        !fs.existsSync(`${__dirname}/knx-uf-iconset`) && fs.mkdirSync(`${__dirname}/knx-uf-iconset`);
+        fs.writeFileSync(`${__dirname}/knx-uf-iconset/master.zip`, res.data);
 
-                const zip = fs.createReadStream(`${__dirname}/knx-uf-iconset/master.zip`).pipe(unzipper.Parse({forceStream: true}));
-                for await (const entry of zip) {
-                    const fileName = entry.path;
-                    if (entry.type === 'File' && fileName.endsWith('.svg')) {
-                        entry.pipe(fs.createWriteStream(`${__dirname}/knx-uf-iconset/${path.basename(fileName)}`));
-                    } else {
-                        entry.autodrain();
-                    }
-                }
+        const zip = fs.createReadStream(`${__dirname}/knx-uf-iconset/master.zip`).pipe(unzipper.Parse({forceStream: true}));
+        for await (const entry of zip) {
+            const fileName = entry.path;
+            if (entry.type === 'File' && fileName.endsWith('.svg')) {
+                entry.pipe(fs.createWriteStream(`${__dirname}/knx-uf-iconset/${path.basename(fileName)}`));
+            } else {
+                entry.autodrain();
+            }
+        }
 
-                // prepare KNX-UF icons
-                const files = fs.readdirSync(`${__dirname}/knx-uf-iconset/`).filter(file => file.endsWith('.svg'));
-                const result = {}
-                for (let f = 0; f < files.length; f++) {
-                    let data = fs.readFileSync(`${__dirname}/knx-uf-iconset/${files[f]}`).toString('utf8');
-                    // add currentColor
-                    data = data.replace(/fill="#FFFFFF"/g, 'fill="currentColor"');
-                    data = data.replace(/stroke="#FFFFFF"/g, 'stroke="currentColor"');
-                    data = data.replace(/fill:#FFFFFF/g, 'fill:currentColor');
-                    data = data.replace(/stroke:#FFFFFF/g, 'stroke:currentColor');
-                    data = data.replace(/xmlns:xlink="http:\/\/www.w3.org\/1999\/xlink"\s?/g, '');
-                    data = data.replace(/<!DOCTYPE\s[^>]+>\s?/g, '');
-                    data = data.replace(/x="0px"\s?/g, '');
-                    data = data.replace(/y="0px"\s?/g, '');
-                    data = data.replace(/<!--[^>]+>/g, '');
-                    data = data.replace(/\s?xml:space="preserve"/g, '');
-                    data = data.replace(/\r\n/g, '\n');
-                    data = data.replace(/\n\n/g, '\n');
-                    data = data.replace(/\n\n/g, '\n');
-                    data = data.replace(/\sid="([^"]+)?"/g, '');
-                    data = data.replace(/<g>\n<\/g>\n?/g, '');
-                    data = data.replace(/<g>\n<\/g>\n?/g, '');
+        // prepare KNX-UF icons
+        const files = fs.readdirSync(`${__dirname}/knx-uf-iconset/`).filter(file => file.endsWith('.svg'));
+        const result = {}
+        for (let f = 0; f < files.length; f++) {
+            let data = fs.readFileSync(`${__dirname}/knx-uf-iconset/${files[f]}`).toString('utf8');
+            // add currentColor
+            data = data.replace(/fill="#FFFFFF"/g, 'fill="currentColor"');
+            data = data.replace(/stroke="#FFFFFF"/g, 'stroke="currentColor"');
+            data = data.replace(/fill:#FFFFFF/g, 'fill:currentColor');
+            data = data.replace(/stroke:#FFFFFF/g, 'stroke:currentColor');
+            data = data.replace(/xmlns:xlink="http:\/\/www.w3.org\/1999\/xlink"\s?/g, '');
+            data = data.replace(/<!DOCTYPE\s[^>]+>\s?/g, '');
+            data = data.replace(/x="0px"\s?/g, '');
+            data = data.replace(/y="0px"\s?/g, '');
+            data = data.replace(/<!--[^>]+>/g, '');
+            data = data.replace(/\s?xml:space="preserve"/g, '');
+            data = data.replace(/\r\n/g, '\n');
+            data = data.replace(/\n\n/g, '\n');
+            data = data.replace(/\n\n/g, '\n');
+            data = data.replace(/\sid="([^"]+)?"/g, '');
+            data = data.replace(/<g>\n<\/g>\n?/g, '');
+            data = data.replace(/<g>\n<\/g>\n?/g, '');
 
-                    result[files[f].replace('.svg', '')] = Buffer.from(data).toString('base64');
-                }
+            result[files[f].replace('.svg', '')] = Buffer.from(data).toString('base64');
+        }
 
-                updateFile(`${__dirname}/src/public/material-icons/knx-uf.json`, JSON.stringify(result));
-                done();
-            });
-    } else {
-        done();
+        updateFile(`${__dirname}/src/public/material-icons/knx-uf.json`, JSON.stringify(result));
     }
-});
+}
 
 function syncFiles(target, dest) {
     let dataSource = fs.readFileSync(dest).toString('utf8');
@@ -357,8 +217,7 @@ function syncFiles(target, dest) {
     }
 }
 
-
-function build() {
+function buildEditor() {
     // copy ace files into src/public/lib/js/ace
     let ace = `${rootDir}/node_modules/ace-builds/src-min-noconflict/`;
     syncFiles(`${__dirname}/src/public/lib/js/ace/worker-html.js`, `${ace}worker-html.js`);
@@ -409,60 +268,14 @@ function build() {
             fs.writeFileSync(`${__dirname}/src/src/i18n/${lang}.json`, JSON.stringify(langsEditor[lang], null, 2)));
     }
 
-    return new Promise((resolve, reject) => {
-        const options = {
-            stdio: 'pipe',
-            cwd:   `${__dirname}/src/`
-        };
-
-        const version = JSON.parse(fs.readFileSync(`${__dirname}/package.json`).toString('utf8')).version;
-        const data = JSON.parse(fs.readFileSync(`${__dirname}/src/src/version.json`).toString('utf8'));
-        data.version = version;
-        fs.writeFileSync(`${__dirname}/src/src/version.json`, JSON.stringify(data, null, 4));
-
-        console.log(options.cwd);
-
-        let script = `${rootDir}/node_modules/@craco/craco/dist/bin/craco.js`;
-        if (!fs.existsSync(script)) {
-            script = `${rootDir}/node_modules/@craco/craco/dist/bin/craco.js`;
-        }
-        if (!fs.existsSync(script)) {
-            console.error(`Cannot find execution file: ${script}`);
-            reject(`Cannot find execution file: ${script}`);
-        } else {
-            const cmd = `node ${script} --max-old-space-size=7000 build`;
-            const child = cp.exec(cmd, { cwd: `${__dirname}/src` });
-
-            child.stderr.pipe(process.stderr);
-            child.stdout.pipe(process.stdout);
-
-            child.on('exit', (code /* , signal */) => {
-                // code 1 is a strange error that cannot be explained. Everything is installed but error :(
-                if (code && code !== 1) {
-                    reject(`Cannot install: ${code}`);
-                } else {
-                    console.log(`"${cmd} in ${__dirname}/src finished.`);
-                    // command succeeded
-                    resolve(null);
-                }
-            });
-        }
-    });
+    return buildReact(`${__dirname}/src/`, { craco: true, ramSize: 7000, rootDir: `${__dirname}/../../` });
 }
 
-gulp.task('4-build', () => build());
-
-gulp.task('4-build-dep', gulp.series('2-npm-dep', '3-svg-icons', '4-build'));
-
-function copyFiles() {
+function copyAllFiles() {
     copyFolder(path.join(__dirname, 'src/build'), path.join(__dirname, 'www'), ['index.html']);
     fs.writeFileSync(path.join(__dirname, 'www/edit.html'), fs.readFileSync(path.join(__dirname, 'src', 'build', 'index.html')));
     return Promise.resolve();
 }
-
-gulp.task('6-copy', () => copyFiles());
-
-gulp.task('6-copy-dep', gulp.series('4-build-dep', '6-copy'));
 
 function patchFile(htmlFile) {
     if (fs.existsSync(htmlFile)) {
@@ -504,7 +317,7 @@ function copyFolder(source, target, ignore) {
     }
 }
 
-gulp.task('7-patch', done => {
+function patchEditor() {
     patchFile(`${__dirname}/www/edit.html`);
     patchFile(`${__dirname}/www/index.html`);
     patchFile(`${__dirname}/src/build/index.html`);
@@ -518,12 +331,56 @@ gulp.task('7-patch', done => {
     let readme = fs.readFileSync(`${__dirname}/../../README.md`).toString('utf8');
     readme = readme.replaceAll('packages/iobroker.vis-2/', '');
     fs.writeFileSync(`${__dirname}/README.md`, readme);
+}
 
-    done();
-});
-
-gulp.task('7-patch-dep',  gulp.series('6-copy-dep', '7-patch'));
-
-gulp.task('buildReact', gulp.series('runtime-7-patch-dep', '7-patch-dep'));
-
-gulp.task('default', gulp.series('buildReact'));
+if (process.argv.includes('--runtime-0-clean')) {
+    clean();
+} else if (process.argv.includes('--runtime-1-copy-src')) {
+    copyRuntimeSrc();
+} else if (process.argv.includes('--runtime-2-npm')) {
+    npmInstall(`${__dirname}/runtime`)
+        .catch(e => console.error(`Cannot install: ${e}`));
+} else if (process.argv.includes('--runtime-3-build')) {
+    buildReact(`${__dirname}/runtime/`, { craco: true, ramSize: 7000, rootDir: `${__dirname}/../../` })
+        .catch(e => console.error(`Cannot build: ${e}`));
+} else if (process.argv.includes('--runtime-4-copy')) {
+    copyRuntimeDist();
+} else if (process.argv.includes('--runtime-5-patch')) {
+    patchRuntime();
+} else if (process.argv.includes('--0-clean')) {
+    deleteFoldersRecursive(`${__dirname}/src/build`);
+} else if (process.argv.includes('--1-npm')) {
+    if (!fs.existsSync(`${__dirname}/src/node_modules`)) {
+        npmInstall(`${__dirname}/src`)
+            .catch(e => console.error(`Cannot install: ${e}`));
+    }
+} else if (process.argv.includes('--2-svg-icons')) {
+    generateSvgFiles()
+        .catch(e => console.error(`Cannot generate SVG icons: ${e}`));
+} else if (process.argv.includes('--3-build')) {
+    buildEditor()
+        .catch(e => console.error(`Cannot build: ${e}`));
+} else if (process.argv.includes('--4-copy')) {
+    copyAllFiles();
+} else if (process.argv.includes('--5-patch')) {
+    patchEditor();
+} else {
+    clean();
+    copyRuntimeSrc();
+    npmInstall(`${__dirname}/runtime`)
+        .then(() => buildReact(`${__dirname}/runtime/`, { craco: true, ramSize: 7000, rootDir: `${__dirname}/../../` }))
+        .then(() => copyRuntimeDist())
+        .then(() => patchRuntime())
+        .then(() => deleteFoldersRecursive(`${__dirname}/src/build`))
+        .then(() => {
+            if (!fs.existsSync(`${__dirname}/src/node_modules`)) {
+                return npmInstall(`${__dirname}/src`);
+            }
+            return Promise.resolve();
+        })
+        .then(() => generateSvgFiles())
+        .then(() => buildEditor())
+        .then(() => copyAllFiles())
+        .then(() => patchEditor())
+        .catch(e => console.error(`Cannot build: ${e}`));
+}

@@ -93,7 +93,7 @@ interface VisViewState {
     loadedjQueryTheme: string;
     themeCode: string;
     width: number;
-    menuWidth: string;
+    menuWidth: 'hidden' | 'full' | 'narrow';
 }
 
 class VisView extends React.Component<VisViewProps, VisViewState> {
@@ -152,7 +152,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
             loadedjQueryTheme: '',
             themeCode: '',
             width: 0,
-            menuWidth: window.localStorage.getItem('vis.menuWidth') || 'full',
+            menuWidth: (window.localStorage.getItem('vis.menuWidth') as null | 'narrow' | 'full' | 'hidden') || 'full',
         };
 
         this.refView = React.createRef();
@@ -1430,7 +1430,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
             editMode={this.props.editMode}
             menuWidth={this.state.menuWidth}
             theme={this.props.context.theme}
-            setMenuWidth={(menuWidth: string) => {
+            setMenuWidth={(menuWidth: 'hidden' | 'narrow' | 'full'): Promise<void> => {
                 window.localStorage.setItem('vis.menuWidth', menuWidth);
                 this.setState({ menuWidth });
 

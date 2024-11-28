@@ -101,22 +101,22 @@ const Views = (props: ViewsProps) => {
         </span>,
         items: [
             {
-                type: 'icon-button', Icon: AddIcon, name: 'Add new view', onClick: () => showDialog('add'), disabled: !!props.selectedGroup || !props.editMode,
+                type: 'icon-button', Icon: AddIcon, name: 'Add new view', onAction: () => showDialog('add'), disabled: !!props.selectedGroup || !props.editMode,
             },
             [
                 [
                     {
-                        type: 'icon-button', Icon: EditIcon, name: 'Rename view', onClick: () => showDialog('rename'), disabled: !!props.selectedGroup || !props.editMode,
+                        type: 'icon-button', Icon: EditIcon, name: 'Rename view', onAction: () => showDialog('rename'), disabled: !!props.selectedGroup || !props.editMode,
                     },
                 ],
                 [
                     {
-                        type: 'icon-button', Icon: DeleteIcon, name: 'Delete actual view', onClick: () => showDialog('delete'), disabled: !!props.selectedGroup || !props.editMode,
+                        type: 'icon-button', Icon: DeleteIcon, name: 'Delete actual view', onAction: () => showDialog('delete'), disabled: !!props.selectedGroup || !props.editMode,
                     },
                 ],
             ],
             {
-                type: 'icon-button', Icon: MenuIcon, name: 'Manage views', onClick: () => props.setViewsManager(true), disabled: !!props.selectedGroup,
+                type: 'icon-button', Icon: MenuIcon, name: 'Manage views', onAction: () => props.setViewsManager(true), disabled: !!props.selectedGroup,
             },
         ],
     };

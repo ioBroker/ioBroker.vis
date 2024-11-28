@@ -1,20 +1,21 @@
 {
-  "name": "@iobroker/types-vis-2",
-  "version": "2.10.8",
-  "description": "Types for vis-2",
-  "files": [
-    "index.d.ts",
-    "LICENSE"
-  ],
-  "main": "index.js",
-  "types": "index.d.ts",
-  "publishConfig": {
-    "access": "public"
-  },
-  "devDependencies": {
-    "@types/validator": "^13.12.0"
-  },
-  "scripts": {
-    "check-ts": "tsc --noEmit --checkJS false"
-  }
+    "name": "@iobroker/types-vis-2",
+    "version": "2.10.8",
+    "description": "Types for vis-2",
+    "files": [
+        "index.d.ts",
+        "LICENSE"
+    ],
+    "main": "index.js",
+    "types": "index.d.ts",
+    "publishConfig": {
+        "access": "public"
+    },
+    "devDependencies": {
+        "@types/validator": "^13.12.0"
+    },
+    "scripts": {
+        "check-ts": "tsc --noEmit --checkJS false",
+        "lint": "eslint -c eslint.config.mjs src"
+    }
 }

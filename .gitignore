@@ -7,6 +7,7 @@ node_modules
 /.build
 /lib
 /www/_socket
+/lerna-debug.log
 knx-uf-iconset
 iob_npm.done
 /packages/**/package-lock.json

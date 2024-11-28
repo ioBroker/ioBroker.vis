@@ -6,12 +6,9 @@
   },
   "scripts": {
     "start": "craco start",
-    "old-start": "react-scripts start",
     "types": "tsc ./src/Vis/visRxWidget.tsx --declaration --emitDeclarationOnly --outDir ../../types-vis-2",
     "lint": "eslint --fix --ext .js,.jsx src",
     "build": "craco build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
     "check-ts": "tsc --noEmit --checkJS false"
   },
   "eslintConfig": {

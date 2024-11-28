@@ -15,7 +15,7 @@ import { Utils, I18n, type ThemeType } from '@iobroker/adapter-react-v5';
 import type { VisTheme } from '@iobroker/types-vis-2';
 
 const styles: Record<string, any> = {
-    navMain: (theme: VisTheme) => ({
+    navMain: (theme: VisTheme): any => ({
         borderBottom: '1px solid transparent',
         '&:hover': {
             borderBottom: `1px solid ${theme.palette.mode === 'dark' ? '#BBB' : '#555'}`,
@@ -67,7 +67,7 @@ const styles: Record<string, any> = {
         display: 'inline-block',
         height: 24,
     },
-    menuToolbar: (theme: VisTheme) => ({
+    menuToolbar: (theme: VisTheme): any => ({
         pl: 1,
         pr: 1,
         backgroundColor: theme.palette.mode === 'dark' ? theme.palette.secondary.dark : theme.palette.secondary.light,

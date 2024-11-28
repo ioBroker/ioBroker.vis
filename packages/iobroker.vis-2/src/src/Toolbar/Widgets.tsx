@@ -28,7 +28,7 @@ import type { AnyWidgetId, GroupWidgetId, VisTheme } from '@iobroker/types-vis-2
 import type Editor from '@/Editor';
 import { store } from '../Store';
 
-import type { ToolbarItem } from './ToolbarItems';
+import {ToolbarGroup, ToolbarItem} from './ToolbarItems';
 import ToolbarItems from './ToolbarItems';
 import { getWidgetTypes } from '../Vis/visWidgetsCatalog';
 import WidgetImportDialog from './WidgetImportDialog';
@@ -71,335 +71,332 @@ const Widgets: React.FC<WidgetsProps> = props => {
     const [filterDialog, setFilterDialog] = useState(false);
 
     // eslint-disable-next-line no-spaced-func
-    const toolbar = useMemo<{
-        name: string;
-        // eslint-disable-next-line func-call-spacing
-        items: (ToolbarItem | ToolbarItem[] | ToolbarItem[][])[];
-            }>(() => {
-                const project = store.getState().visProject;
+    const toolbar = useMemo<ToolbarGroup>(() => {
+        const project = store.getState().visProject;
 
-                if (!props.widgetsLoaded) {
-                    return null;
-                }
-                if (!props.openedViews.length) {
-                    return null;
-                }
-                if (!project[props.selectedView]) {
-                    return null;
-                }
-                const widgetTypes = getWidgetTypes();
-                const widgets = project[props.selectedView].widgets;
+        if (!props.widgetsLoaded) {
+            return null;
+        }
+        if (!props.openedViews.length) {
+            return null;
+        }
+        if (!project[props.selectedView]) {
+            return null;
+        }
 
-                const shownWidgets = Object.keys(widgets)
-                    .filter((widget: AnyWidgetId) => (props.selectedGroup ?
-                        widgets[widget].groupid === props.selectedGroup || widget === props.selectedGroup :
-                        !widgets[widget].groupid));
+        const widgetTypes = getWidgetTypes();
+        const widgets = project[props.selectedView].widgets;
 
-                return {
-                    name: 'Widgets',
-                    items: [
+        const shownWidgets = Object.keys(widgets)
+            .filter((widget: AnyWidgetId) => (props.selectedGroup ?
+                widgets[widget].groupid === props.selectedGroup || widget === props.selectedGroup :
+                !widgets[widget].groupid));
+
+        return {
+            name: 'Widgets',
+            items: [
+                {
+                    type: 'icon-button',
+                    Icon: FilterIcon,
+                    name: 'Filter widgets',
+                    color: project[props.selectedView].filterWidgets?.length ? '#c00000' : undefined,
+                    disabled: !props.editMode,
+                    onAction: () => setFilterDialog(true),
+                } as ToolbarItem,
+                {
+                    type: 'multiselect',
+                    name: I18n.t('Active widget(s) from %s', shownWidgets.length),
+                    doNotTranslateName: true,
+                    items: shownWidgets
+                        .map((widgetId: AnyWidgetId) => {
+                            const tpl = widgets[widgetId].tpl;
+                            const widgetType = widgetTypes.find(w => w.name === tpl);
+                            let widgetLabel = widgetType?.title || '';
+                            let widgetColor = widgetType ? widgetType.setColor : '#FF0000';
+                            if (widgetType?.label) {
+                                widgetLabel = I18n.t(widgetType.label);
+                            }
+
+                            // remove legacy stuff
+                            widgetLabel = widgetLabel.split('<br')[0];
+                            widgetLabel = widgetLabel.split('<span')[0];
+                            widgetLabel = widgetLabel.split('<div')[0];
+
+                            let setLabel = widgetType?.set;
+                            if (widgetType?.setLabel) {
+                                setLabel = I18n.t(widgetType.setLabel);
+                            } else if (setLabel) {
+                                const widgetWithSetLabel = widgetTypes.find(w => w.set === setLabel && w.setLabel);
+                                if (widgetWithSetLabel) {
+                                    widgetColor = widgetWithSetLabel.setColor;
+                                    setLabel = I18n.t(widgetWithSetLabel.setLabel);
+                                }
+                            }
+
+                            let widgetIcon = widgetType ? (widgetType.preview || '') : 'icon/question.svg';
+                            if (widgetIcon.startsWith('<img')) {
+                                const prev = widgetIcon.match(/src="([^"]+)"/);
+                                if (prev && prev[1]) {
+                                    widgetIcon = prev[1];
+                                }
+                            }
+                            let name;
+                            if (widgets[widgetId] && widgets[widgetId].data?.name) {
+                                name = <span>
+                                    <span>{widgets[widgetId].data?.name}</span>
+                                    <span
+                                        style={{
+                                            marginLeft: 4,
+                                            fontSize: 10,
+                                            fontStyle: 'italic',
+                                            opacity: 0.8,
+                                        }}
+                                    >
+                                        {`[${widgetId}]`}
+                                    </span>
+                                </span>;
+                            } else {
+                                name = widgetId;
+                            }
+
+                            let subName = widgetType ? `(${setLabel} - ${tpl === '_tplGroup' ? I18n.t('group') : widgetLabel})` : tpl;
+
+                            if (widgets[widgetId].marketplace) {
+                                subName = `${widgets[widgetId].marketplace.name} (${I18n.t('version')} ${widgets[widgetId].marketplace.version})`;
+                            }
+
+                            return {
+                                name,
+                                subName,
+                                value: widgetId,
+                                color: widgetColor,
+                                icon: widgetIcon.startsWith('<') ? '' : widgetIcon,
+                            };
+                        }),
+                    width: 240,
+                    value: props.selectedWidgets,
+                    onAction: value => props.setSelectedWidgets(value as AnyWidgetId[]),
+                } as ToolbarItem,
+                [
+                    [
                         {
                             type: 'icon-button',
-                            Icon: FilterIcon,
-                            name: 'Filter widgets',
-                            color: project[props.selectedView].filterWidgets?.length ? '#c00000' : undefined,
-                            disabled: !props.editMode,
-                            onClick: () => setFilterDialog(true),
-                        },
-                        {
-                            type: 'multiselect',
-                            name: I18n.t('Active widget(s) from %s', shownWidgets.length),
-                            doNotTranslateName: true,
-                            items: shownWidgets
-                                .map((widgetId: AnyWidgetId) => {
-                                    const tpl = widgets[widgetId].tpl;
-                                    const widgetType = widgetTypes.find(w => w.name === tpl);
-                                    let widgetLabel = widgetType?.title || '';
-                                    let widgetColor = widgetType ? widgetType.setColor : '#FF0000';
-                                    if (widgetType?.label) {
-                                        widgetLabel = I18n.t(widgetType.label);
-                                    }
-
-                                    // remove legacy stuff
-                                    widgetLabel = widgetLabel.split('<br')[0];
-                                    widgetLabel = widgetLabel.split('<span')[0];
-                                    widgetLabel = widgetLabel.split('<div')[0];
-
-                                    let setLabel = widgetType?.set;
-                                    if (widgetType?.setLabel) {
-                                        setLabel = I18n.t(widgetType.setLabel);
-                                    } else if (setLabel) {
-                                        const widgetWithSetLabel = widgetTypes.find(w => w.set === setLabel && w.setLabel);
-                                        if (widgetWithSetLabel) {
-                                            widgetColor = widgetWithSetLabel.setColor;
-                                            setLabel = I18n.t(widgetWithSetLabel.setLabel);
-                                        }
-                                    }
-
-                                    let widgetIcon = widgetType ? (widgetType.preview || '') : 'icon/question.svg';
-                                    if (widgetIcon.startsWith('<img')) {
-                                        const prev = widgetIcon.match(/src="([^"]+)"/);
-                                        if (prev && prev[1]) {
-                                            widgetIcon = prev[1];
-                                        }
-                                    }
-                                    let name;
-                                    if (widgets[widgetId] && widgets[widgetId].data?.name) {
-                                        name = <span>
-                                            <span>{widgets[widgetId].data?.name}</span>
-                                            <span
-                                                style={{
-                                                    marginLeft: 4,
-                                                    fontSize: 10,
-                                                    fontStyle: 'italic',
-                                                    opacity: 0.8,
-                                                }}
-                                            >
-                                                {`[${widgetId}]`}
-                                            </span>
-                                        </span>;
-                                    } else {
-                                        name = widgetId;
-                                    }
-
-                                    let subName = widgetType ? `(${setLabel} - ${tpl === '_tplGroup' ? I18n.t('group') : widgetLabel})` : tpl;
-
-                                    if (widgets[widgetId].marketplace) {
-                                        subName = `${widgets[widgetId].marketplace.name} (${I18n.t('version')} ${widgets[widgetId].marketplace.version})`;
-                                    }
-
-                                    return {
-                                        name,
-                                        subName,
-                                        value: widgetId,
-                                        color: widgetColor,
-                                        icon: widgetIcon.startsWith('<') ? '' : widgetIcon,
-                                    };
-                                }),
-                            width: 240,
-                            value: props.selectedWidgets,
-                            onChange: value => props.setSelectedWidgets(value as AnyWidgetId[]),
-                        },
-                        [
-                            [
-                                {
-                                    type: 'icon-button',
-                                    Icon: DeleteIcon,
-                                    name: 'Delete widgets',
-                                    disabled: !props.selectedWidgets.length || (props.selectedGroup && props.selectedWidgets.includes(props.selectedGroup)),
-                                    onClick: () => props.deleteWidgets(),
-                                },
-                            ],
-                            [
-                                {
-                                    type: 'icon-button',
-                                    Icon: FileCopyIcon,
-                                    name: 'Clone widget',
-                                    disabled: !props.selectedWidgets.length || (props.selectedGroup && props.selectedWidgets.includes(props.selectedGroup)),
-                                    onClick: () => props.cloneWidgets(),
-                                },
-                            ],
-                        ],
-
-                        { type: 'divider' },
-
-                        [[
-                            {
-                                type: 'icon-button',
-                                Icon: BiCut,
-                                name: 'Cut',
-                                size: 'normal',
-                                disabled: !props.selectedWidgets.length || (props.selectedGroup && props.selectedWidgets.includes(props.selectedGroup)),
-                                onClick: () => props.cutWidgets(),
-                            },
-                            {
-                                type: 'icon-button',
-                                Icon: BiCopy,
-                                name: 'Copy',
-                                size: 'normal',
-                                disabled: !props.selectedWidgets.length || (props.selectedGroup && props.selectedWidgets.includes(props.selectedGroup)),
-                                onClick: () => props.copyWidgets(),
-                            },
-                        ], [
-                            {
-                                type: 'icon-button',
-                                Icon: BiPaste,
-                                name: 'Paste',
-                                size: 'normal',
-                                disabled: !Object.keys(props.widgetsClipboard.widgets).length,
-                                onClick: () => props.pasteWidgets(),
-                            },
-                        ]],
-                        {
-                            type: 'icon-button',
-                            Icon: UndoIcon,
-                            name: 'Undo',
-                            subName: `(${props.historyCursor + 1} / ${props.history.length})`,
-                            onClick: props.undo,
-                            disabled: !props.editMode || props.historyCursor === 0,
-                        },
-                        {
-                            type: 'icon-button',
-                            Icon: RedoIcon,
-                            name: 'Redo',
-                            onClick: props.redo,
-                            disabled: !props.editMode || props.historyCursor === props.history.length - 1,
-                        },
-
-                        { type: 'divider' },
-
-                        [
-                            [
-                                {
-                                    type: 'icon-button',
-                                    Icon: MdAlignHorizontalLeft,
-                                    name: 'Align horizontal/left',
-                                    size: 'normal',
-                                    disabled: props.selectedWidgets.length < 2,
-                                    onClick: () => props.alignWidgets('left'),
-                                },
-                                {
-                                    type: 'icon-button',
-                                    Icon: MdAlignVerticalTop,
-                                    name: 'Align vertical/top',
-                                    size: 'normal',
-                                    disabled: props.selectedWidgets.length < 2,
-                                    onClick: () => props.alignWidgets('top'),
-                                },
-                                {
-                                    type: 'icon-button',
-                                    Icon: MdAlignHorizontalCenter,
-                                    name: 'Align horizontal/center',
-                                    size: 'normal',
-                                    disabled: props.selectedWidgets.length < 2,
-                                    onClick: () => props.alignWidgets('horizontal-center'),
-                                },
-                                {
-                                    type: 'icon-button',
-                                    Icon: CgArrowAlignH,
-                                    name: 'Align horizontal/equal',
-                                    size: 'normal',
-                                    disabled: props.selectedWidgets.length < 2,
-                                    onClick: () => props.alignWidgets('horizontal-equal'),
-                                },
-                                {
-                                    type: 'icon-button',
-                                    Icon: AiOutlineColumnWidth,
-                                    name: 'Align width. Press more time to get the desired width.',
-                                    size: 'normal',
-                                    disabled: props.selectedWidgets.length < 2,
-                                    onClick: () => props.alignWidgets('width'),
-                                },
-                                {
-                                    type: 'icon-button',
-                                    Icon: RiBringToFront,
-                                    name: 'Bring to front',
-                                    size: 'normal',
-                                    disabled: !props.selectedWidgets.length,
-                                    onClick: () => props.orderWidgets('front'),
-                                },
-                            ],
-                            [
-                                {
-                                    type: 'icon-button',
-                                    Icon: MdAlignHorizontalRight,
-                                    name: 'Align horizontal/right',
-                                    size: 'normal',
-                                    disabled: props.selectedWidgets.length < 2,
-                                    onClick: () => props.alignWidgets('right'),
-                                },
-                                {
-                                    type: 'icon-button',
-                                    Icon: MdAlignVerticalBottom,
-                                    name: 'Align vertical/bottom',
-                                    size: 'normal',
-                                    disabled: props.selectedWidgets.length < 2,
-                                    onClick: () => props.alignWidgets('bottom'),
-                                },
-                                {
-                                    type: 'icon-button',
-                                    Icon: MdAlignVerticalCenter,
-                                    name: 'Align vertical/center',
-                                    size: 'normal',
-                                    disabled: props.selectedWidgets.length < 2,
-                                    onClick: () => props.alignWidgets('vertical-center'),
-                                },
-                                {
-                                    type: 'icon-button',
-                                    Icon: CgArrowAlignV,
-                                    name: 'Align vertical/equal',
-                                    size: 'normal',
-                                    disabled: props.selectedWidgets.length < 2,
-                                    onClick: () => props.alignWidgets('vertical-equal'),
-                                },
-                                {
-                                    type: 'icon-button',
-                                    Icon: AiOutlineColumnHeight,
-                                    name: 'Align height. Press more time to get the desired height.',
-                                    size: 'normal',
-                                    disabled: props.selectedWidgets.length < 2,
-                                    onClick: () => props.alignWidgets('height'),
-                                },
-                                {
-                                    type: 'icon-button',
-                                    Icon: RiSendToBack,
-                                    name: 'Send to back',
-                                    size: 'normal',
-                                    disabled: !props.selectedWidgets.length,
-                                    onClick: () => props.orderWidgets('back'),
-                                },
-                            ],
-                        ],
-                        { type: 'divider' },
-                        [
-                            [{
-                                type: 'icon-button',
-                                Icon: OpenInNewIcon,
-                                name: 'Lock dragging',
-                                selected: props.lockDragging,
-                                onClick: () => props.toggleLockDragging(),
-                            }],
-                            [{
-                                type: 'icon-button',
-                                Icon: props.widgetHint === 'hide' ? VisibilityOffIcon : VisibilityIcon,
-                                color: props.widgetHint === 'light' ? 'white' : 'black',
-                                name: `Toggle widget hint (${props.widgetHint})`,
-                                onClick: () => props.toggleWidgetHint(),
-                            }],
-                        ],
-                        { type: 'divider' },
-                        [
-                            [{
-                                type: 'icon-button',
-                                Icon: BiImport,
-                                name: 'Import widgets',
-                                size: 'normal',
-                                disabled: !props.editMode,
-                                onClick: () => setImportDialog(true),
-                            }],
-                            [{
-                                type: 'icon-button',
-                                Icon: BiExport,
-                                name: 'Export widgets',
-                                size: 'normal',
-                                disabled: !props.selectedWidgets.length,
-                                onClick: () => setExportDialog(true),
-                            }],
-                        ],
+                            Icon: DeleteIcon,
+                            name: 'Delete widgets',
+                            disabled: !props.selectedWidgets.length || (props.selectedGroup && props.selectedWidgets.includes(props.selectedGroup)),
+                            onAction: () => props.deleteWidgets(),
+                        } as ToolbarItem,
                     ],
-                };
-            }, [
-                props.selectedGroup,
-                props.selectedWidgets,
-                props.editMode,
-                props.lockDragging,
-                props.widgetHint,
-                props.historyCursor,
-                props.history.length,
-                props.widgetsLoaded,
-                props.openedViews.length,
-                store.getState().visProject[props.selectedView],
-            ]);
+                    [
+                        {
+                            type: 'icon-button',
+                            Icon: FileCopyIcon,
+                            name: 'Clone widget',
+                            disabled: !props.selectedWidgets.length || (props.selectedGroup && props.selectedWidgets.includes(props.selectedGroup)),
+                            onAction: () => props.cloneWidgets(),
+                        } as ToolbarItem,
+                    ],
+                ],
+
+                { type: 'divider' },
+
+                [[
+                    {
+                        type: 'icon-button',
+                        Icon: BiCut,
+                        name: 'Cut',
+                        size: 'normal',
+                        disabled: !props.selectedWidgets.length || (props.selectedGroup && props.selectedWidgets.includes(props.selectedGroup)),
+                        onAction: () => props.cutWidgets(),
+                    } as ToolbarItem,
+                    {
+                        type: 'icon-button',
+                        Icon: BiCopy,
+                        name: 'Copy',
+                        size: 'normal',
+                        disabled: !props.selectedWidgets.length || (props.selectedGroup && props.selectedWidgets.includes(props.selectedGroup)),
+                        onAction: () => props.copyWidgets(),
+                    } as ToolbarItem,
+                ], [
+                    {
+                        type: 'icon-button',
+                        Icon: BiPaste,
+                        name: 'Paste',
+                        size: 'normal',
+                        disabled: !Object.keys(props.widgetsClipboard.widgets).length,
+                        onAction: () => props.pasteWidgets(),
+                    } as ToolbarItem,
+                ]],
+                {
+                    type: 'icon-button',
+                    Icon: UndoIcon,
+                    name: 'Undo',
+                    subName: `(${props.historyCursor + 1} / ${props.history.length})`,
+                    onAction: props.undo,
+                    disabled: !props.editMode || props.historyCursor === 0,
+                } as ToolbarItem,
+                {
+                    type: 'icon-button',
+                    Icon: RedoIcon,
+                    name: 'Redo',
+                    onAction: props.redo,
+                    disabled: !props.editMode || props.historyCursor === props.history.length - 1,
+                } as ToolbarItem,
+
+                { type: 'divider' },
+
+                window.innerWidth > 1410 ? [
+                    [
+                        {
+                            type: 'icon-button',
+                            Icon: MdAlignHorizontalLeft,
+                            name: 'Align horizontal/left',
+                            size: 'normal',
+                            disabled: props.selectedWidgets.length < 2,
+                            onAction: () => props.alignWidgets('left'),
+                        },
+                        {
+                            type: 'icon-button',
+                            Icon: MdAlignVerticalTop,
+                            name: 'Align vertical/top',
+                            size: 'normal',
+                            disabled: props.selectedWidgets.length < 2,
+                            onAction: () => props.alignWidgets('top'),
+                        },
+                        {
+                            type: 'icon-button',
+                            Icon: MdAlignHorizontalCenter,
+                            name: 'Align horizontal/center',
+                            size: 'normal',
+                            disabled: props.selectedWidgets.length < 2,
+                            onAction: () => props.alignWidgets('horizontal-center'),
+                        },
+                        {
+                            type: 'icon-button',
+                            Icon: CgArrowAlignH,
+                            name: 'Align horizontal/equal',
+                            size: 'normal',
+                            disabled: props.selectedWidgets.length < 2,
+                            onAction: () => props.alignWidgets('horizontal-equal'),
+                        },
+                        {
+                            type: 'icon-button',
+                            Icon: AiOutlineColumnWidth,
+                            name: 'Align width. Press more time to get the desired width.',
+                            size: 'normal',
+                            disabled: props.selectedWidgets.length < 2,
+                            onAction: () => props.alignWidgets('width'),
+                        },
+                        {
+                            type: 'icon-button',
+                            Icon: RiBringToFront,
+                            name: 'Bring to front',
+                            size: 'normal',
+                            disabled: !props.selectedWidgets.length,
+                            onAction: () => props.orderWidgets('front'),
+                        },
+                    ] as ToolbarItem[],
+                    [
+                        {
+                            type: 'icon-button',
+                            Icon: MdAlignHorizontalRight,
+                            name: 'Align horizontal/right',
+                            size: 'normal',
+                            disabled: props.selectedWidgets.length < 2,
+                            onAction: () => props.alignWidgets('right'),
+                        },
+                        {
+                            type: 'icon-button',
+                            Icon: MdAlignVerticalBottom,
+                            name: 'Align vertical/bottom',
+                            size: 'normal',
+                            disabled: props.selectedWidgets.length < 2,
+                            onAction: () => props.alignWidgets('bottom'),
+                        },
+                        {
+                            type: 'icon-button',
+                            Icon: MdAlignVerticalCenter,
+                            name: 'Align vertical/center',
+                            size: 'normal',
+                            disabled: props.selectedWidgets.length < 2,
+                            onAction: () => props.alignWidgets('vertical-center'),
+                        },
+                        {
+                            type: 'icon-button',
+                            Icon: CgArrowAlignV,
+                            name: 'Align vertical/equal',
+                            size: 'normal',
+                            disabled: props.selectedWidgets.length < 2,
+                            onAction: () => props.alignWidgets('vertical-equal'),
+                        },
+                        {
+                            type: 'icon-button',
+                            Icon: AiOutlineColumnHeight,
+                            name: 'Align height. Press more time to get the desired height.',
+                            size: 'normal',
+                            disabled: props.selectedWidgets.length < 2,
+                            onAction: () => props.alignWidgets('height'),
+                        },
+                        {
+                            type: 'icon-button',
+                            Icon: RiSendToBack,
+                            name: 'Send to back',
+                            size: 'normal',
+                            disabled: !props.selectedWidgets.length,
+                            onAction: () => props.orderWidgets('back'),
+                        },
+                    ] as ToolbarItem[],
+                ] : null,
+                window.innerWidth > 1410 ? { type: 'divider' } : null,
+                [
+                    [{
+                        type: 'icon-button',
+                        Icon: OpenInNewIcon,
+                        name: 'Lock dragging',
+                        selected: props.lockDragging,
+                        onAction: () => props.toggleLockDragging(),
+                    } as ToolbarItem],
+                    [{
+                        type: 'icon-button',
+                        Icon: props.widgetHint === 'hide' ? VisibilityOffIcon : VisibilityIcon,
+                        color: props.widgetHint === 'light' ? 'white' : 'black',
+                        name: `Toggle widget hint (${props.widgetHint})`,
+                        onAction: () => props.toggleWidgetHint(),
+                    } as ToolbarItem],
+                ],
+                { type: 'divider' },
+                [
+                    [{
+                        type: 'icon-button',
+                        Icon: BiImport,
+                        name: 'Import widgets',
+                        size: 'normal',
+                        disabled: !props.editMode,
+                        onAction: () => setImportDialog(true),
+                    } as ToolbarItem],
+                    [{
+                        type: 'icon-button',
+                        Icon: BiExport,
+                        name: 'Export widgets',
+                        size: 'normal',
+                        disabled: !props.selectedWidgets.length,
+                        onAction: () => setExportDialog(true),
+                    } as ToolbarItem],
+                ],
+            ],
+        } as ToolbarGroup;
+    }, [
+        props.selectedGroup,
+        props.selectedWidgets,
+        props.editMode,
+        props.lockDragging,
+        props.widgetHint,
+        props.historyCursor,
+        props.history.length,
+        props.widgetsLoaded,
+        props.openedViews.length,
+        store.getState().visProject[props.selectedView],
+    ]);
 
     if (!props.widgetsLoaded) {
         return null;

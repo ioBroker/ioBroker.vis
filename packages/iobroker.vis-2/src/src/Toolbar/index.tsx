@@ -64,8 +64,8 @@ const styles: Record<string, any> = {
         width: 22,
         height: 22,
     },
-    lightedPanel: (theme: VisTheme) => theme.classes.lightedPanel,
-    toolbar: (theme: VisTheme) => theme.classes.toolbar,
+    lightedPanel: (theme: VisTheme): React.CSSProperties => theme.classes.lightedPanel,
+    toolbar: (theme: VisTheme): React.CSSProperties => theme.classes.toolbar,
     narrowToolbar: {
         pt: '4px',
         pb: '4px',
@@ -73,7 +73,7 @@ const styles: Record<string, any> = {
     heightButton: {
 
     },
-    saveIcon: (theme: VisTheme) => ({
+    saveIcon: (theme: VisTheme): React.CSSProperties => ({
         animation: `blink 2000ms ${theme.transitions.easing.easeInOut}`,
         color: theme.palette.primary.main,
     }),

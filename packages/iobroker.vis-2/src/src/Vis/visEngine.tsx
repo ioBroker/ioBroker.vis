@@ -506,14 +506,16 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
         this.subscribes = {};
     }
 
-    loadLegacyObjects() {
+    loadLegacyObjects(): Promise<void> {
         if (this.props.runtime) {
             return Promise.resolve();
         }
 
         this.props.setLoadingText && this.props.setLoadingText('Loading objects...');
         return this.conn.getObjects()
-            .then(objects => this.vis.objects = objects);
+            .then((objects: Record<string, ioBroker.Object>) => {
+                this.vis.objects = objects;
+            });
     }
 
     buildLegacyStructures = () => {
@@ -1221,91 +1223,56 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                     .then(systemConfig => cb(null, systemConfig.common))
                     .catch(error => cb(error));
             },
-            getObjects: (useCache?: boolean, cb?: (error: string | null, objects?: Record<string, ioBroker.Object>) => void) => {
-                if (typeof useCache === 'function') {
-                    cb = useCache as unknown as (error: string | null, objects?: Record<string, ioBroker.Object>) => void;
-                    useCache = false;
-                }
-                let objects: Record<string, ioBroker.Object> = {};
-
-                return new Promise((resolve, reject) => {
-                    this.props.socket.getRawSocket().emit('getObjects', (err: any, res: any) => {
+            getObjects: async (
+                useCache?: boolean,
+            ): Promise<Record<string, ioBroker.Object>> => {
+                const promises: Promise<Record<string, ioBroker.Object>>[] = [];
+                promises.push(new Promise((resolve, reject) =>
+                    this.props.socket.getRawSocket().emit('getObjects', (err: Error | null, objects: Record<string, ioBroker.Object>): void => {
                         if (err) {
                             reject(err);
                             return;
                         }
 
-                        if (res && res.rows) {
-                            for (let i = 0; i < res.rows.length; i++) {
-                                objects[res.rows[i].id] = res.rows[i].value;
-                            }
-                        } else {
-                            objects = res;
-                            resolve(objects);
-                        }
-                    });
-                })
-                    .then(() => this.props.socket.getEnums(!useCache as unknown as string))
-                    .then(enums => {
-                        Object.assign(objects, enums);
-                        return this.props.socket.getObjectViewSystem(
-                            'instance',
-                            'system.adapter.',
-                            'system.adapter.\u9999',
-                        )
-                            .then(rows => {
-                                for (let i = 0; i < (rows as any).length; i++) {
-                                    objects[rows[i]._id] = rows[i];
-                                }
+                        resolve(objects);
+                    })));
+                promises.push(this.props.socket.getEnums(undefined, !useCache));
+                promises.push(this.props.socket.getObjectViewSystem('instance', 'system.adapter.', 'system.adapter.\u9999',));
 
-                                const instance = `system.adapter.${this.props.adapterName}.${this.props.instance}`;
-                                // find out the default file mode
-                                if (objects[instance]?.native?.defaultFileMode) {
-                                    // eslint-disable-next-line react/no-unused-class-component-methods
-                                    this.defaultMode = objects[instance].native.defaultFileMode;
-                                }
-                            });
-                    })
-                    .then(() => this.props.socket.getObjectViewSystem('chart', '', '\u9999')
-                        .catch(() => null))
-                    .then(charts => {
-                        charts && Object.assign(objects, charts);
-                        return this.props.socket.getObjectViewSystem('channel', '', '\u9999');
-                    })
-                    .then(channels => {
-                        Object.assign(objects, channels);
-                        return this.props.socket.getObjectViewSystem('device', '', '\u9999');
-                    })
-                    .then(devices => {
-                        Object.assign(objects, devices);
-                        if (cb) {
-                            cb(null, objects);
-                            return null;
+                promises.push(this.props.socket.getObjectViewSystem('chart', '', '\u9999'));
+                promises.push(this.props.socket.getObjectViewSystem('channel', '', '\u9999'));
+                promises.push(this.props.socket.getObjectViewSystem('device', '', '\u9999'));
+
+                return Promise.all(promises)
+                    .then(result => {
+                        const objects = result[0] || {};
+                        for (let i = 1; i < result.length; i++) {
+                            if (result[i]) {
+                                Object.assign(objects, result[i]);
+                            }
+                        }
+
+                        const instance = `system.adapter.${this.props.adapterName}.${this.props.instance}`;
+                        // find out the default file mode
+                        if (objects[instance]?.native?.defaultFileMode) {
+                            // eslint-disable-next-line react/no-unused-class-component-methods
+                            this.defaultMode = objects[instance].native.defaultFileMode;
                         }
 
                         return objects;
-                    })
-                    .catch(error => {
-                        console.error(`Cannot load objects: ${error}`);
-                        if (cb) {
-                            cb(error);
-                            return null;
-                        }
-
-                        return Promise.reject(error);
                     });
             },
             getLoggedUser: (cb: (isSecure: boolean, user: string) => void) => this.props.socket.getCurrentUser()
                 .then(user => cb(this.props.socket.isSecure, user)),
-            subscribe: (IDs: string[], cb: () => void) => {
+            subscribe: (IDs: string[], cb: () => void): void => {
                 this.subscribe(IDs);
                 cb && cb();
             },
-            unsubscribe: (IDs: string[], cb: () => void) => {
+            unsubscribe: (IDs: string[], cb: () => void): void => {
                 this.unsubscribe(IDs);
                 cb && cb();
             },
-            authenticate: (user: string, password: string, salt: string) => {
+            authenticate: (user: string, password: string, salt: string): void => {
                 // eslint-disable-next-line react/no-unused-class-component-methods
                 this._authRunning = true;
 
@@ -1318,7 +1285,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                     };
                 }
             },
-            getStates: (IDs: string, cb: (arg1: any, arg2?: any) => void) => {
+            getStates: (IDs: string, cb: (arg1: any, arg2?: any) => void): void => {
                 if (!IDs || !IDs.length) {
                     cb && cb(null, {});
                     return;
@@ -1327,7 +1294,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                     .then(data => cb(null, data))
                     .catch(error => cb(error || 'Authentication required'));
             },
-            setState: (id: string, val: any, cb: (arg1?: any) => void) => {
+            setState: (id: string, val: any, cb: (arg1?: any) => void): void => {
                 if (!id) {
                     cb && cb('No id');
                     return;
@@ -1336,23 +1303,23 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                     .then(() => cb && cb())
                     .catch(error => cb && cb(error));
             },
-            sendTo: (instance: string, command: string, data: any, cb?: (result: Record<string, any>) => void) => {
+            sendTo: (instance: string, command: string, data: any, cb?: (result: Record<string, any>) => void): void => {
                 this.props.socket.sendTo(instance, command, data)
                     .then(result => cb && cb(result))
                     .catch(error => cb && cb(error));
             },
-            setReloadTimeout: () => {
+            setReloadTimeout: (): void => {
                 //
             },
-            setReconnectInterval: () => {
+            setReconnectInterval: (): void => {
                 //
             },
-            getUser: () => this.userName,
-            sendCommand: (instance: string, command: string, data: any, ack: boolean) => this.props.socket.setState(this.ID_CONTROL_INSTANCE, { val: instance || 'notdefined', ack: true })
+            getUser: (): string => this.userName,
+            sendCommand: (instance: string, command: string, data: any, ack: boolean): Promise<void> => this.props.socket.setState(this.ID_CONTROL_INSTANCE, { val: instance || 'notdefined', ack: true })
                 .then(() => this.props.socket.setState(this.ID_CONTROL_DATA, { val: data, ack: true }))
                 .then(() => this.props.socket.setState(this.ID_CONTROL_COMMAND, { val: command, ack: ack === undefined ? true : ack }))
                 .catch(e => console.error(`Cannot set state: ${e}`)),
-            readFile: (filename: string, cb: (arg1: any, arg2?: any, arg3?: any, arg4?: any) => void) => {
+            readFile: (filename: string, cb: (arg1: any, arg2?: any, arg3?: any, arg4?: any) => void): Promise<void> => {
                 let adapter = this.conn.namespace;
                 if (filename[0] === '/') {
                     const p = filename.split('/');
@@ -1365,10 +1332,12 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                     .then((data: {
                         file: string;
                         mimeType: string;
-                    }) => setTimeout(() => cb(null, data.file, filename, data.mimeType), 0))
+                    }) => {
+                        setTimeout(() => cb(null, data.file, filename, data.mimeType), 0);
+                    })
                     .catch(error => cb(error));
             },
-            getHistory: (id: string, options: ioBroker.GetHistoryOptions & {timeout: number}, cb: (arg1: any, arg2?: any) => void) => {
+            getHistory: (id: string, options: ioBroker.GetHistoryOptions & {timeout: number}, cb: (arg1: any, arg2?: any) => void): void => {
                 options = options || ({} as ioBroker.GetHistoryOptions & {timeout: number});
                 options.timeout = options.timeout || 2000;
 
@@ -1394,9 +1363,9 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                     });
             },
             getHttp: (url: string, callback: (data: any) => void) =>
-                this.props.socket.getRawSocket().emit('httpGet', url, (data: any) => callback && callback(data)),
+                this.props.socket.getRawSocket().emit('httpGet', url, (data: any): void => callback && callback(data)),
             _socket: {
-                emit: (cmd: string, data: any, cb: (arg1: any, arg2?: any) => void) => {
+                emit: (cmd: string, data: any, cb: (arg1: any, arg2?: any) => void): void => {
                     let promise;
                     if (cmd === 'getObject') {
                         promise = this.props.socket.getObject(data);
@@ -1416,7 +1385,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
         };
     }
 
-    registerViewRef = (view: string, ref: React.RefObject<HTMLDivElement>, onCommand: (command: ViewCommand, data?: ViewCommandOptions) => any) => {
+    registerViewRef = (view: string, ref: React.RefObject<HTMLDivElement>, onCommand: (command: ViewCommand, data?: ViewCommandOptions) => any): void => {
         if (this.refViews[view] && this.refViews[view].ref === ref) {
             console.error(`Someone tries to register same ref for view ${view}`);
         } else {
@@ -1425,7 +1394,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
         }
     };
 
-    unregisterViewRef = (view: string, ref: React.RefObject<HTMLDivElement>) => {
+    unregisterViewRef = (view: string, ref: React.RefObject<HTMLDivElement>): void => {
         if (this.refViews[view] && this.refViews[view].ref === ref) {
             delete this.refViews[view];
         } else if (this.refViews[view]) {
@@ -1436,7 +1405,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
 
     getViewRef = (view: string): React.RefObject<HTMLDivElement> | null => this.refViews[view]?.ref;
 
-    static findNearestResolution(resultRequiredOrX: number | false, height: number) {
+    static findNearestResolution(resultRequiredOrX: number | false, height: number): string {
         let w: number;
         let h: number;
 
@@ -1505,18 +1474,18 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
         return result;
     }
 
-    readGroups(groupName: string, useCache: boolean) {
-        return this.props.socket.getGroups(!useCache)
-            .then(groups => {
-                const result: Record<string, ioBroker.GroupObject> = {};
-                if (groupName) {
-                    const gg = `system.group.${groupName}`;
-                    groups = groups.filter(group => group._id.startsWith(`${gg}.`) || group._id === gg);
-                }
-
-                groups.forEach(group => result[group._id] = group);
-                return result;
-            });
+    async readGroups(groupName: string, useCache: boolean): Promise<Record<string, ioBroker.GroupObject>> {
+        const groups: ioBroker.GroupObject[] = await this.props.socket.getGroups(!useCache);
+        const result: Record<string, ioBroker.GroupObject> = {};
+        if (groupName) {
+            const gg = `system.group.${groupName}`;
+            groups
+                .filter(group => group._id.startsWith(`${gg}.`) || group._id === gg)
+                .forEach(group => result[group._id] = group);
+        } else {
+            groups.forEach(group => result[group._id] = group);
+        }
+        return result;
     }
 
     initCanObjects() {
@@ -1575,7 +1544,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
         */
     }
 
-    _setValue(id: string, val: any) {
+    _setValue(id: string, val: any): void {
         const oldVal = this.canStates.attr(`${id}.val`);
 
         // Send ack=false with new value to all widgets
@@ -1604,7 +1573,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
             });
     }
 
-    setValue = (id: string, val: any) => {
+    setValue = (id: string, val: any): void => {
         if (!id) {
             console.log(`ID is null for val=${val}`);
             return;
@@ -1637,7 +1606,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
     static async loadScriptsOfOneWidgetSet(widgetSet: {
         oldScript: HTMLScriptElement;
         newScript: HTMLScriptElement;
-    }[]) {
+    }[]): Promise<void> {
         for (const { oldScript, newScript } of widgetSet) {
             try {
                 newScript.appendChild(document.createTextNode(oldScript.innerHTML));
@@ -1655,7 +1624,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
 
     static loadedSources: string[] = [];
 
-    static async setInnerHTML(elm: HTMLElement, html: string, usedWidgetSets: string[]) {
+    static async setInnerHTML(elm: HTMLElement, html: string, usedWidgetSets: string[]): Promise<void> {
         elm.innerHTML = html;
         // we must load script one after another, to keep the order
         const scripts: HTMLScriptElement[] = Array.from(elm.querySelectorAll('script'));
@@ -1720,9 +1689,9 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                 VisEngine.loadScriptsOfOneWidgetSet(groups[widgetSet])));
     }
 
-    loadEditWords() {
+    loadEditWords(): Promise<void> {
         if (!this.props.runtime) {
-            return new Promise(resolve => {
+            return new Promise((resolve: () => void): void => {
                 const newScript = document.createElement('script');
                 newScript.setAttribute('src', 'lib/js/visEditWords.js');
                 newScript.onload = resolve;
@@ -1733,7 +1702,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
         return Promise.resolve();
     }
 
-    async loadWidgets() {
+    async loadWidgets(): Promise<void> {
         try {
             const data = await fetch('widgets.html');
             const text = await data.text();
@@ -1756,26 +1725,26 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
         item: VisLinkContextBinding | VisLinkContextItem,
         stateId?: string,
         state?: ioBroker.State,
-    ) {
+    ): void {
         if (this.widgetChangeHandlers[wid]) {
             this.widgetChangeHandlers[wid](type, item, stateId, state);
         }
     }
 
-    registerChangeHandler = (wid: AnyWidgetId, cb: VisChangeHandlerCallback) => {
+    registerChangeHandler = (wid: AnyWidgetId, cb: VisChangeHandlerCallback): void => {
         if (this.props.editMode && this.widgetChangeHandlers[wid]) {
             console.error('Someone installs handler without to remove it!');
         }
         this.widgetChangeHandlers[wid] = cb;
     };
 
-    unregisterChangeHandler = (wid: AnyWidgetId, cb: VisChangeHandlerCallback) => {
+    unregisterChangeHandler = (wid: AnyWidgetId, cb: VisChangeHandlerCallback): void => {
         if (this.widgetChangeHandlers[wid] === cb) {
             delete this.widgetChangeHandlers[wid];
         }
     };
 
-    onUserCommand(instance: string, command: string, data: any) {
+    onUserCommand(instance: string, command: string, data: any): boolean {
         const currentInstance = (window.localStorage.getItem('visInstance') || '').replace(/^"/, '').replace(/"$/, '');
 
         if (instance === null || instance === undefined) {
@@ -1928,7 +1897,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
             command: string;
             data: any;
         };
-    }>) => {
+    }>): void => {
         if (!id || state === null || typeof state !== 'object') {
             return;
         }
@@ -2052,7 +2021,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
         });
     };
 
-    subscribe = (IDs: string[]) => {
+    subscribe = (IDs: string[]): void => {
         if (!Array.isArray(IDs)) {
             IDs = [IDs];
         }
@@ -2070,7 +2039,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
         });
     };
 
-    createCanState(id: string) {
+    createCanState(id: string): void {
         const _val = `${id}.val`;
 
         if (this.canStates[_val as any] === undefined || this.canStates[_val as any] === null) {
@@ -2095,7 +2064,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
         }
     }
 
-    unsubscribe = (IDs: string | string[]) => {
+    unsubscribe = (IDs: string | string[]): void => {
         if (!Array.isArray(IDs)) {
             IDs = [IDs];
         }
@@ -2115,7 +2084,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
         });
     };
 
-    updateCustomScripts() {
+    updateCustomScripts(): void {
         const { visProject } = store.getState();
 
         if (visProject) {
@@ -2160,7 +2129,7 @@ ${this.scripts}
      * @param {string} id id of the html style element to insert
      * @param {string} styles the actual styles to insert
      */
-    static applyUserStyles(id: string, styles: string) {
+    static applyUserStyles(id: string, styles: string): void {
         let styleEl = window.document.getElementById(id);
         if (styleEl) {
             styleEl.innerHTML = styles;
@@ -2184,7 +2153,7 @@ ${this.scripts}
         }
     }
 
-    updateCommonCss() {
+    updateCommonCss(): void {
         if (!this.visCommonCssLoaded || (this.props.visCommonCss && this.visCommonCssLoaded !== this.props.visCommonCss)) {
             this.visCommonCssLoaded = this.props.visCommonCss || true;
             if (this.props.visCommonCss) {
@@ -2200,7 +2169,7 @@ ${this.scripts}
         }
     }
 
-    updateUserCss() {
+    updateUserCss(): void {
         if (!this.visUserCssLoaded || (this.props.visUserCss && this.visUserCssLoaded !== this.props.visUserCss)) {
             this.visUserCssLoaded = this.props.visUserCss || true;
             if (this.props.visUserCss) {
@@ -2216,7 +2185,7 @@ ${this.scripts}
         }
     }
 
-    changeView = (view: string, subView?: string) => {
+    changeView = (view: string, subView?: string): void => {
         if (this.props.editMode) {
             window.alert(I18n.t('Ignored in edit mode'));
         } else {
@@ -2224,7 +2193,7 @@ ${this.scripts}
         }
     };
 
-    render() {
+    render(): React.JSX.Element | React.JSX.Element[] {
         if (!this.state.ready || this.props.widgetsLoaded < 2) {
             if (this.props.renderAlertDialog && this.props.runtime) {
                 return <>
