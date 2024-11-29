@@ -17,39 +17,47 @@ import React from 'react';
 
 import { Icon } from '@iobroker/adapter-react-v5';
 
-// eslint-disable-next-line import/no-cycle
-import type { GetRxDataFromWidget, RxRenderWidgetProps } from '@iobroker/types-vis-2';
+import type { RxRenderWidgetProps, RxWidgetInfo } from '@iobroker/types-vis-2';
 import VisRxWidget from '../../visRxWidget';
 
 // eslint-disable-next-line no-use-before-define
-type RxData = GetRxDataFromWidget<typeof BasicValueString>;
+type RxData = {
+    oid: string;
+    html_prepend: string;
+    html_append: string;
+    test_html: string;
+    icon: string;
+    iconSize: number;
+};
 
 class BasicValueString extends VisRxWidget<RxData> {
-    static getWidgetInfo() {
+    static getWidgetInfo(): RxWidgetInfo {
         return {
             id: 'tplValueString',
             visSet: 'basic',
             visName: 'String',
             visPrev: 'widgets/basic/img/Prev_ValueString.png',
-            visAttrs: [{
-                name: 'common',
-                fields: [
-                    { name: 'oid', type: 'id' },
-                    { name: 'html_prepend', type: 'html' },
-                    { name: 'html_append', type: 'html' },
-                    { name: 'test_html', type: 'html' },
-                    { name: 'icon', type: 'icon64' },
-                    {
-                        name: 'iconSize',
-                        label: 'icon_size_in_pixels',
-                        type: 'slider',
-                        min: 5,
-                        max: 200,
-                        hidden: '!data.icon',
-                    },
-                ],
-            }],
-            visWidgetLabel: 'value_string',  // Label of widget
+            visAttrs: [
+                {
+                    name: 'common',
+                    fields: [
+                        { name: 'oid', type: 'id' },
+                        { name: 'html_prepend', type: 'html' },
+                        { name: 'html_append', type: 'html' },
+                        { name: 'test_html', type: 'html' },
+                        { name: 'icon', type: 'icon64' },
+                        {
+                            name: 'iconSize',
+                            label: 'icon_size_in_pixels',
+                            type: 'slider',
+                            min: 5,
+                            max: 200,
+                            hidden: '!data.icon',
+                        },
+                    ],
+                },
+            ],
+            visWidgetLabel: 'value_string', // Label of widget
             visDefaultStyle: {
                 width: 100,
                 height: 30,
@@ -58,11 +66,11 @@ class BasicValueString extends VisRxWidget<RxData> {
     }
 
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo() {
+    getWidgetInfo(): RxWidgetInfo {
         return BasicValueString.getWidgetInfo();
     }
 
-    renderWidgetBody(props: RxRenderWidgetProps) {
+    renderWidgetBody(props: RxRenderWidgetProps): React.JSX.Element {
         super.renderWidgetBody(props);
 
         // set default width and height
@@ -90,31 +98,40 @@ class BasicValueString extends VisRxWidget<RxData> {
             body = '';
         }
 
-        const style = this.state.rxData.icon ? {
-            display: 'flex',
-            alignItems: 'center',
-        } : {};
+        const style = this.state.rxData.icon
+            ? {
+                  display: 'flex',
+                  alignItems: 'center',
+              }
+            : {};
 
-        return <div className="vis-widget-body">
-            <div data-oid={oid} style={style}>
-                {this.state.rxData.icon ? <Icon
-                    src={this.state.rxData.icon}
-                    style={{
-                        width: this.state.rxData.iconSize || 24,
-                        height: this.state.rxData.iconSize || 24,
-                    }}
-                /> : null}
-                <span
-                    // eslint-disable-next-line react/no-danger
-                    dangerouslySetInnerHTML={{ __html: this.state.rxData.html_prepend ?? '' }}
-                />
-                <span>{body}</span>
-                <span
-                    // eslint-disable-next-line react/no-danger
-                    dangerouslySetInnerHTML={{ __html: this.state.rxData.html_append ?? '' }}
-                />
+        return (
+            <div className="vis-widget-body">
+                <div
+                    data-oid={oid}
+                    style={style}
+                >
+                    {this.state.rxData.icon ? (
+                        <Icon
+                            src={this.state.rxData.icon}
+                            style={{
+                                width: this.state.rxData.iconSize || 24,
+                                height: this.state.rxData.iconSize || 24,
+                            }}
+                        />
+                    ) : null}
+                    <span
+                        // eslint-disable-next-line react/no-danger
+                        dangerouslySetInnerHTML={{ __html: this.state.rxData.html_prepend ?? '' }}
+                    />
+                    <span>{body}</span>
+                    <span
+                        // eslint-disable-next-line react/no-danger
+                        dangerouslySetInnerHTML={{ __html: this.state.rxData.html_append ?? '' }}
+                    />
+                </div>
             </div>
-        </div>;
+        );
     }
 }
 

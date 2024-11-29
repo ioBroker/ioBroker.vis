@@ -1,8 +1,15 @@
 import React, { useEffect, useState } from 'react';
 
 import {
-    MenuItem, Select, Dialog, DialogTitle, Button,
-    DialogContent, DialogActions, IconButton, CircularProgress,
+    MenuItem,
+    Select,
+    Dialog,
+    DialogTitle,
+    Button,
+    DialogContent,
+    DialogActions,
+    IconButton,
+    CircularProgress,
 } from '@mui/material';
 
 import { HelpOutline, Check as CheckIcon } from '@mui/icons-material';
@@ -22,7 +29,7 @@ interface CSSProps {
     editMode: boolean;
 }
 
-const CSS = (props: CSSProps) => {
+const CSS = (props: CSSProps): React.JSX.Element => {
     const [type, setType] = useState<'global' | 'local'>('global');
 
     const [localCss, setLocalCss] = useState('');
@@ -52,9 +59,9 @@ const CSS = (props: CSSProps) => {
     };
 
     useEffect(() => {
-        const load = async () => {
+        const load = async (): Promise<void> => {
             try {
-                const commonCss = await readFile(props.socket, props.adapterId, 'vis-common-user.css') as string;
+                const commonCss = (await readFile(props.socket, props.adapterId, 'vis-common-user.css')) as string;
                 setGlobalCss(commonCss);
             } catch (e) {
                 if (e !== 'Not exists') {
@@ -62,7 +69,11 @@ const CSS = (props: CSSProps) => {
                 }
             }
             try {
-                const userCss = await readFile(props.socket, props.adapterId, `${props.projectName}/vis-user.css`) as string;
+                const userCss = (await readFile(
+                    props.socket,
+                    props.adapterId,
+                    `${props.projectName}/vis-user.css`,
+                )) as string;
                 setLocalCss(userCss);
             } catch (e) {
                 if (e !== 'Not exists') {
@@ -74,68 +85,78 @@ const CSS = (props: CSSProps) => {
             }
         };
 
-        load()
-            .catch(e => console.error('Error loading CSS: ', e));
+        load().catch(e => console.error('Error loading CSS: ', e));
     }, []);
 
-    const save = (value: string, saveType: 'global' | 'local') => {
+    const save = (value: string, saveType: 'global' | 'local'): void => {
         timers[saveType].setValue(value);
         clearTimeout(timers[saveType].timer);
-        timers[saveType].setTimer(setTimeout(() => {
-            timers[saveType].setTimer(null);
-            // inform views about changed CSS
-            props.saveCssFile(timers[saveType].directory, timers[saveType].file, value);
-        }, 1000));
+        timers[saveType].setTimer(
+            setTimeout(() => {
+                timers[saveType].setTimer(null);
+                // inform views about changed CSS
+                props.saveCssFile(timers[saveType].directory, timers[saveType].file, value);
+            }, 1000),
+        );
     };
 
     const value = type === 'global' ? globalCss : localCss;
 
-    return <>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-            {showHelp ? <Dialog
-                open={!0}
-                maxWidth={props.maxWidth || 'md'}
-            >
-                <DialogTitle>{I18n.t('Explanation')}</DialogTitle>
-                <DialogContent>
-                    {type === 'global' ? I18n.t('help_css_global') : I18n.t('help_css_project')}
-                </DialogContent>
-                <DialogActions>
-                    <Button
-                        color="grey"
-                        variant="contained"
-                        onClick={() => setShowHelp(false)}
-                        startIcon={<CheckIcon />}
+    return (
+        <>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+                {showHelp ? (
+                    <Dialog
+                        open={!0}
+                        maxWidth={props.maxWidth || 'md'}
                     >
-                        {I18n.t('Ok')}
-                    </Button>
-                </DialogActions>
-            </Dialog> : null}
-            <Select
-                variant="standard"
-                value={type}
-                onChange={e => {
-                    setType(e.target.value as 'global' | 'local');
-                    window.localStorage.setItem('CSS.type', e.target.value);
-                }}
-            >
-                <MenuItem value="global">{I18n.t('Global')}</MenuItem>
-                <MenuItem value="local">{I18n.t('css_project')}</MenuItem>
-            </Select>
-            <IconButton onClick={() => setShowHelp(true)} size="small"><HelpOutline /></IconButton>
-            {globalCssTimer || localCssTimer ? <CircularProgress size={20} /> : null}
-        </div>
-        <CustomAceEditor
-            type="css"
-            themeType={props.themeType}
-            readOnly={!props.editMode}
-            value={value}
-            onChange={newValue => save(newValue, type)}
-            width="100%"
-            focus
-            height="calc(100% - 34px)"
-        />
-    </>;
+                        <DialogTitle>{I18n.t('Explanation')}</DialogTitle>
+                        <DialogContent>
+                            {type === 'global' ? I18n.t('help_css_global') : I18n.t('help_css_project')}
+                        </DialogContent>
+                        <DialogActions>
+                            <Button
+                                color="grey"
+                                variant="contained"
+                                onClick={() => setShowHelp(false)}
+                                startIcon={<CheckIcon />}
+                            >
+                                {I18n.t('Ok')}
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+                ) : null}
+                <Select
+                    variant="standard"
+                    value={type}
+                    onChange={e => {
+                        setType(e.target.value as 'global' | 'local');
+                        window.localStorage.setItem('CSS.type', e.target.value);
+                    }}
+                >
+                    <MenuItem value="global">{I18n.t('Global')}</MenuItem>
+                    <MenuItem value="local">{I18n.t('css_project')}</MenuItem>
+                </Select>
+                <IconButton
+                    onClick={() => setShowHelp(true)}
+                    size="small"
+                >
+                    <HelpOutline />
+                </IconButton>
+                {globalCssTimer || localCssTimer ? <CircularProgress size={20} /> : null}
+            </div>
+            <CustomAceEditor
+                type="css"
+                themeType={props.themeType}
+                readOnly={!props.editMode}
+                value={value}
+                onChange={newValue => save(newValue, type)}
+                width="100%"
+                focus
+                height="calc(100% - 34px)"
+            />
+        </>
+    );
 };
 
 export default CSS;

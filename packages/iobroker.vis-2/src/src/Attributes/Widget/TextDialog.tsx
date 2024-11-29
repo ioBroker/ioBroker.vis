@@ -14,32 +14,34 @@ interface TextDialogProps {
     value: string;
 }
 
-const TextDialog = (props: TextDialogProps) => {
+const TextDialog = (props: TextDialogProps): React.JSX.Element => {
     const [value, changeValue] = useState('');
 
     useEffect(() => {
         changeValue(props.value);
     }, [props.open]);
 
-    return props.open ? <IODialog
-        keyboardDisabled
-        title={props.type === 'json' ? 'JSON edit' : (props.type === 'html' ? 'HTML edit' : 'Text edit')}
-        open={!0}
-        actionTitle="Save"
-        action={() => props.onChange(value)}
-        onClose={props.onClose}
-        minWidth={800}
-        actionDisabled={value === props.value}
-    >
-        <CustomAceEditor
-            type={props.type}
-            themeType={props.themeType}
-            value={value}
-            focus
-            height={400}
-            onChange={newValue => changeValue(newValue)}
-        />
-    </IODialog> : null;
+    return props.open ? (
+        <IODialog
+            keyboardDisabled
+            title={props.type === 'json' ? 'JSON edit' : props.type === 'html' ? 'HTML edit' : 'Text edit'}
+            open={!0}
+            actionTitle="Save"
+            action={() => props.onChange(value)}
+            onClose={props.onClose}
+            minWidth={800}
+            actionDisabled={value === props.value}
+        >
+            <CustomAceEditor
+                type={props.type}
+                themeType={props.themeType}
+                value={value}
+                focus
+                height={400}
+                onChange={newValue => changeValue(newValue)}
+            />
+        </IODialog>
+    ) : null;
 };
 
 export default TextDialog;

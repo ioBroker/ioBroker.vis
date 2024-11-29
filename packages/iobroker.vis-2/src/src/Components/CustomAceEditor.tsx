@@ -60,18 +60,18 @@ interface CustomAceEditorProps {
     focus?: boolean;
 }
 
-export const CustomAceEditor = (props: CustomAceEditorProps) => {
+export const CustomAceEditor = (props: CustomAceEditorProps): React.JSX.Element => {
     const refEditor = useRef();
 
     useEffect(() => {
         let content: HTMLInputElement | null = null;
         let timer: ReturnType<typeof setTimeout>;
-        const keyDown = (e: KeyboardEvent) => {
+        const keyDown = (e: KeyboardEvent): void => {
             if (e.key === 'f' && e.ctrlKey) {
                 // make translations
                 timer = setInterval(() => {
                     const parent = content.parentNode;
-                    let el: HTMLInputElement = parent.querySelector('.ace_search_field') as HTMLInputElement;
+                    let el: HTMLInputElement = parent?.querySelector('.ace_search_field');
                     if (el) {
                         clearInterval(timer);
                         timer = null;
@@ -125,31 +125,33 @@ export const CustomAceEditor = (props: CustomAceEditorProps) => {
         };
     }, []);
 
-    return <div
-        style={{
-            width: props.width || '100%',
-            height: props.height || '100%',
-            border: props.error ? '1px solid #800' : '1px solid transparent',
-            boxSizing: 'border-box',
-        }}
-        ref={refEditor}
-    >
-        <AceEditor
-            mode={props.type === 'text' ? 'html' : props.type}
-            theme={props.themeType === 'dark' ? 'clouds_midnight' : 'chrome'}
-            width="100%"
-            height="100%"
-            value={props.value}
-            onChange={newValue => props.onChange(newValue)}
-            readOnly={props.readOnly || false}
-            focus={props.focus}
-            ref={props.refEditor}
-            highlightActiveLine
-            enableBasicAutocompletion
-            enableLiveAutocompletion
-            enableSnippets
-        />
-    </div>;
+    return (
+        <div
+            style={{
+                width: props.width || '100%',
+                height: props.height || '100%',
+                border: props.error ? '1px solid #800' : '1px solid transparent',
+                boxSizing: 'border-box',
+            }}
+            ref={refEditor}
+        >
+            <AceEditor
+                mode={props.type === 'text' ? 'html' : props.type}
+                theme={props.themeType === 'dark' ? 'clouds_midnight' : 'chrome'}
+                width="100%"
+                height="100%"
+                value={props.value}
+                onChange={newValue => props.onChange(newValue)}
+                readOnly={props.readOnly || false}
+                focus={props.focus}
+                ref={props.refEditor}
+                highlightActiveLine
+                enableBasicAutocompletion
+                enableLiveAutocompletion
+                enableSnippets
+            />
+        </div>
+    );
 };
 
 export default CustomAceEditor;

@@ -1,17 +1,17 @@
 import React, { useState, useMemo } from 'react';
 
 import {
-    MdAlignHorizontalCenter, MdAlignHorizontalLeft, MdAlignHorizontalRight,
-    MdAlignVerticalBottom, MdAlignVerticalCenter, MdAlignVerticalTop,
+    MdAlignHorizontalCenter,
+    MdAlignHorizontalLeft,
+    MdAlignHorizontalRight,
+    MdAlignVerticalBottom,
+    MdAlignVerticalCenter,
+    MdAlignVerticalTop,
 } from 'react-icons/md';
 import { CgArrowAlignH, CgArrowAlignV } from 'react-icons/cg';
 import { AiOutlineColumnWidth, AiOutlineColumnHeight } from 'react-icons/ai';
-import {
-    BiImport, BiExport, BiCut, BiCopy, BiPaste,
-} from 'react-icons/bi';
-import {
-    RiBringToFront, RiSendToBack,
-} from 'react-icons/ri';
+import { BiImport, BiExport, BiCut, BiCopy, BiPaste } from 'react-icons/bi';
+import { RiBringToFront, RiSendToBack } from 'react-icons/ri';
 import {
     Delete as DeleteIcon,
     FilterAlt as FilterIcon,
@@ -28,8 +28,7 @@ import type { AnyWidgetId, GroupWidgetId, VisTheme } from '@iobroker/types-vis-2
 import type Editor from '@/Editor';
 import { store } from '../Store';
 
-import {ToolbarGroup, ToolbarItem} from './ToolbarItems';
-import ToolbarItems from './ToolbarItems';
+import ToolbarItems, { type ToolbarGroup, type ToolbarItem } from './ToolbarItems';
 import { getWidgetTypes } from '../Vis/visWidgetsCatalog';
 import WidgetImportDialog from './WidgetImportDialog';
 import WidgetExportDialog from './WidgetExportDialog';
@@ -87,10 +86,11 @@ const Widgets: React.FC<WidgetsProps> = props => {
         const widgetTypes = getWidgetTypes();
         const widgets = project[props.selectedView].widgets;
 
-        const shownWidgets = Object.keys(widgets)
-            .filter((widget: AnyWidgetId) => (props.selectedGroup ?
-                widgets[widget].groupid === props.selectedGroup || widget === props.selectedGroup :
-                !widgets[widget].groupid));
+        const shownWidgets = Object.keys(widgets).filter((widget: AnyWidgetId) =>
+            props.selectedGroup
+                ? widgets[widget].groupid === props.selectedGroup || widget === props.selectedGroup
+                : !widgets[widget].groupid,
+        );
 
         return {
             name: 'Widgets',
@@ -107,42 +107,42 @@ const Widgets: React.FC<WidgetsProps> = props => {
                     type: 'multiselect',
                     name: I18n.t('Active widget(s) from %s', shownWidgets.length),
                     doNotTranslateName: true,
-                    items: shownWidgets
-                        .map((widgetId: AnyWidgetId) => {
-                            const tpl = widgets[widgetId].tpl;
-                            const widgetType = widgetTypes.find(w => w.name === tpl);
-                            let widgetLabel = widgetType?.title || '';
-                            let widgetColor = widgetType ? widgetType.setColor : '#FF0000';
-                            if (widgetType?.label) {
-                                widgetLabel = I18n.t(widgetType.label);
-                            }
+                    items: shownWidgets.map((widgetId: AnyWidgetId) => {
+                        const tpl = widgets[widgetId].tpl;
+                        const widgetType = widgetTypes.find(w => w.name === tpl);
+                        let widgetLabel = widgetType?.title || '';
+                        let widgetColor = widgetType ? widgetType.setColor : '#FF0000';
+                        if (widgetType?.label) {
+                            widgetLabel = I18n.t(widgetType.label);
+                        }
 
-                            // remove legacy stuff
-                            widgetLabel = widgetLabel.split('<br')[0];
-                            widgetLabel = widgetLabel.split('<span')[0];
-                            widgetLabel = widgetLabel.split('<div')[0];
+                        // remove legacy stuff
+                        widgetLabel = widgetLabel.split('<br')[0];
+                        widgetLabel = widgetLabel.split('<span')[0];
+                        widgetLabel = widgetLabel.split('<div')[0];
 
-                            let setLabel = widgetType?.set;
-                            if (widgetType?.setLabel) {
-                                setLabel = I18n.t(widgetType.setLabel);
-                            } else if (setLabel) {
-                                const widgetWithSetLabel = widgetTypes.find(w => w.set === setLabel && w.setLabel);
-                                if (widgetWithSetLabel) {
-                                    widgetColor = widgetWithSetLabel.setColor;
-                                    setLabel = I18n.t(widgetWithSetLabel.setLabel);
-                                }
+                        let setLabel = widgetType?.set;
+                        if (widgetType?.setLabel) {
+                            setLabel = I18n.t(widgetType.setLabel);
+                        } else if (setLabel) {
+                            const widgetWithSetLabel = widgetTypes.find(w => w.set === setLabel && w.setLabel);
+                            if (widgetWithSetLabel) {
+                                widgetColor = widgetWithSetLabel.setColor;
+                                setLabel = I18n.t(widgetWithSetLabel.setLabel);
                             }
+                        }
 
-                            let widgetIcon = widgetType ? (widgetType.preview || '') : 'icon/question.svg';
-                            if (widgetIcon.startsWith('<img')) {
-                                const prev = widgetIcon.match(/src="([^"]+)"/);
-                                if (prev && prev[1]) {
-                                    widgetIcon = prev[1];
-                                }
+                        let widgetIcon = widgetType ? widgetType.preview || '' : 'icon/question.svg';
+                        if (widgetIcon.startsWith('<img')) {
+                            const prev = widgetIcon.match(/src="([^"]+)"/);
+                            if (prev && prev[1]) {
+                                widgetIcon = prev[1];
                             }
-                            let name;
-                            if (widgets[widgetId] && widgets[widgetId].data?.name) {
-                                name = <span>
+                        }
+                        let name;
+                        if (widgets[widgetId] && widgets[widgetId].data?.name) {
+                            name = (
+                                <span>
                                     <span>{widgets[widgetId].data?.name}</span>
                                     <span
                                         style={{
@@ -154,25 +154,28 @@ const Widgets: React.FC<WidgetsProps> = props => {
                                     >
                                         {`[${widgetId}]`}
                                     </span>
-                                </span>;
-                            } else {
-                                name = widgetId;
-                            }
+                                </span>
+                            );
+                        } else {
+                            name = widgetId;
+                        }
 
-                            let subName = widgetType ? `(${setLabel} - ${tpl === '_tplGroup' ? I18n.t('group') : widgetLabel})` : tpl;
+                        let subName = widgetType
+                            ? `(${setLabel} - ${tpl === '_tplGroup' ? I18n.t('group') : widgetLabel})`
+                            : tpl;
 
-                            if (widgets[widgetId].marketplace) {
-                                subName = `${widgets[widgetId].marketplace.name} (${I18n.t('version')} ${widgets[widgetId].marketplace.version})`;
-                            }
+                        if (widgets[widgetId].marketplace) {
+                            subName = `${widgets[widgetId].marketplace.name} (${I18n.t('version')} ${widgets[widgetId].marketplace.version})`;
+                        }
 
-                            return {
-                                name,
-                                subName,
-                                value: widgetId,
-                                color: widgetColor,
-                                icon: widgetIcon.startsWith('<') ? '' : widgetIcon,
-                            };
-                        }),
+                        return {
+                            name,
+                            subName,
+                            value: widgetId,
+                            color: widgetColor,
+                            icon: widgetIcon.startsWith('<') ? '' : widgetIcon,
+                        };
+                    }),
                     width: 240,
                     value: props.selectedWidgets,
                     onAction: value => props.setSelectedWidgets(value as AnyWidgetId[]),
@@ -183,7 +186,9 @@ const Widgets: React.FC<WidgetsProps> = props => {
                             type: 'icon-button',
                             Icon: DeleteIcon,
                             name: 'Delete widgets',
-                            disabled: !props.selectedWidgets.length || (props.selectedGroup && props.selectedWidgets.includes(props.selectedGroup)),
+                            disabled:
+                                !props.selectedWidgets.length ||
+                                (props.selectedGroup && props.selectedWidgets.includes(props.selectedGroup)),
                             onAction: () => props.deleteWidgets(),
                         } as ToolbarItem,
                     ],
@@ -192,7 +197,9 @@ const Widgets: React.FC<WidgetsProps> = props => {
                             type: 'icon-button',
                             Icon: FileCopyIcon,
                             name: 'Clone widget',
-                            disabled: !props.selectedWidgets.length || (props.selectedGroup && props.selectedWidgets.includes(props.selectedGroup)),
+                            disabled:
+                                !props.selectedWidgets.length ||
+                                (props.selectedGroup && props.selectedWidgets.includes(props.selectedGroup)),
                             onAction: () => props.cloneWidgets(),
                         } as ToolbarItem,
                     ],
@@ -200,33 +207,40 @@ const Widgets: React.FC<WidgetsProps> = props => {
 
                 { type: 'divider' },
 
-                [[
-                    {
-                        type: 'icon-button',
-                        Icon: BiCut,
-                        name: 'Cut',
-                        size: 'normal',
-                        disabled: !props.selectedWidgets.length || (props.selectedGroup && props.selectedWidgets.includes(props.selectedGroup)),
-                        onAction: () => props.cutWidgets(),
-                    } as ToolbarItem,
-                    {
-                        type: 'icon-button',
-                        Icon: BiCopy,
-                        name: 'Copy',
-                        size: 'normal',
-                        disabled: !props.selectedWidgets.length || (props.selectedGroup && props.selectedWidgets.includes(props.selectedGroup)),
-                        onAction: () => props.copyWidgets(),
-                    } as ToolbarItem,
-                ], [
-                    {
-                        type: 'icon-button',
-                        Icon: BiPaste,
-                        name: 'Paste',
-                        size: 'normal',
-                        disabled: !Object.keys(props.widgetsClipboard.widgets).length,
-                        onAction: () => props.pasteWidgets(),
-                    } as ToolbarItem,
-                ]],
+                [
+                    [
+                        {
+                            type: 'icon-button',
+                            Icon: BiCut,
+                            name: 'Cut',
+                            size: 'normal',
+                            disabled:
+                                !props.selectedWidgets.length ||
+                                (props.selectedGroup && props.selectedWidgets.includes(props.selectedGroup)),
+                            onAction: () => props.cutWidgets(),
+                        } as ToolbarItem,
+                        {
+                            type: 'icon-button',
+                            Icon: BiCopy,
+                            name: 'Copy',
+                            size: 'normal',
+                            disabled:
+                                !props.selectedWidgets.length ||
+                                (props.selectedGroup && props.selectedWidgets.includes(props.selectedGroup)),
+                            onAction: () => props.copyWidgets(),
+                        } as ToolbarItem,
+                    ],
+                    [
+                        {
+                            type: 'icon-button',
+                            Icon: BiPaste,
+                            name: 'Paste',
+                            size: 'normal',
+                            disabled: !Object.keys(props.widgetsClipboard.widgets).length,
+                            onAction: () => props.pasteWidgets(),
+                        } as ToolbarItem,
+                    ],
+                ],
                 {
                     type: 'icon-button',
                     Icon: UndoIcon,
@@ -245,143 +259,153 @@ const Widgets: React.FC<WidgetsProps> = props => {
 
                 { type: 'divider' },
 
-                window.innerWidth > 1410 ? [
-                    [
-                        {
-                            type: 'icon-button',
-                            Icon: MdAlignHorizontalLeft,
-                            name: 'Align horizontal/left',
-                            size: 'normal',
-                            disabled: props.selectedWidgets.length < 2,
-                            onAction: () => props.alignWidgets('left'),
-                        },
-                        {
-                            type: 'icon-button',
-                            Icon: MdAlignVerticalTop,
-                            name: 'Align vertical/top',
-                            size: 'normal',
-                            disabled: props.selectedWidgets.length < 2,
-                            onAction: () => props.alignWidgets('top'),
-                        },
-                        {
-                            type: 'icon-button',
-                            Icon: MdAlignHorizontalCenter,
-                            name: 'Align horizontal/center',
-                            size: 'normal',
-                            disabled: props.selectedWidgets.length < 2,
-                            onAction: () => props.alignWidgets('horizontal-center'),
-                        },
-                        {
-                            type: 'icon-button',
-                            Icon: CgArrowAlignH,
-                            name: 'Align horizontal/equal',
-                            size: 'normal',
-                            disabled: props.selectedWidgets.length < 2,
-                            onAction: () => props.alignWidgets('horizontal-equal'),
-                        },
-                        {
-                            type: 'icon-button',
-                            Icon: AiOutlineColumnWidth,
-                            name: 'Align width. Press more time to get the desired width.',
-                            size: 'normal',
-                            disabled: props.selectedWidgets.length < 2,
-                            onAction: () => props.alignWidgets('width'),
-                        },
-                        {
-                            type: 'icon-button',
-                            Icon: RiBringToFront,
-                            name: 'Bring to front',
-                            size: 'normal',
-                            disabled: !props.selectedWidgets.length,
-                            onAction: () => props.orderWidgets('front'),
-                        },
-                    ] as ToolbarItem[],
-                    [
-                        {
-                            type: 'icon-button',
-                            Icon: MdAlignHorizontalRight,
-                            name: 'Align horizontal/right',
-                            size: 'normal',
-                            disabled: props.selectedWidgets.length < 2,
-                            onAction: () => props.alignWidgets('right'),
-                        },
-                        {
-                            type: 'icon-button',
-                            Icon: MdAlignVerticalBottom,
-                            name: 'Align vertical/bottom',
-                            size: 'normal',
-                            disabled: props.selectedWidgets.length < 2,
-                            onAction: () => props.alignWidgets('bottom'),
-                        },
-                        {
-                            type: 'icon-button',
-                            Icon: MdAlignVerticalCenter,
-                            name: 'Align vertical/center',
-                            size: 'normal',
-                            disabled: props.selectedWidgets.length < 2,
-                            onAction: () => props.alignWidgets('vertical-center'),
-                        },
-                        {
-                            type: 'icon-button',
-                            Icon: CgArrowAlignV,
-                            name: 'Align vertical/equal',
-                            size: 'normal',
-                            disabled: props.selectedWidgets.length < 2,
-                            onAction: () => props.alignWidgets('vertical-equal'),
-                        },
-                        {
-                            type: 'icon-button',
-                            Icon: AiOutlineColumnHeight,
-                            name: 'Align height. Press more time to get the desired height.',
-                            size: 'normal',
-                            disabled: props.selectedWidgets.length < 2,
-                            onAction: () => props.alignWidgets('height'),
-                        },
-                        {
-                            type: 'icon-button',
-                            Icon: RiSendToBack,
-                            name: 'Send to back',
-                            size: 'normal',
-                            disabled: !props.selectedWidgets.length,
-                            onAction: () => props.orderWidgets('back'),
-                        },
-                    ] as ToolbarItem[],
-                ] : null,
+                window.innerWidth > 1410
+                    ? [
+                          [
+                              {
+                                  type: 'icon-button',
+                                  Icon: MdAlignHorizontalLeft,
+                                  name: 'Align horizontal/left',
+                                  size: 'normal',
+                                  disabled: props.selectedWidgets.length < 2,
+                                  onAction: () => props.alignWidgets('left'),
+                              },
+                              {
+                                  type: 'icon-button',
+                                  Icon: MdAlignVerticalTop,
+                                  name: 'Align vertical/top',
+                                  size: 'normal',
+                                  disabled: props.selectedWidgets.length < 2,
+                                  onAction: () => props.alignWidgets('top'),
+                              },
+                              {
+                                  type: 'icon-button',
+                                  Icon: MdAlignHorizontalCenter,
+                                  name: 'Align horizontal/center',
+                                  size: 'normal',
+                                  disabled: props.selectedWidgets.length < 2,
+                                  onAction: () => props.alignWidgets('horizontal-center'),
+                              },
+                              {
+                                  type: 'icon-button',
+                                  Icon: CgArrowAlignH,
+                                  name: 'Align horizontal/equal',
+                                  size: 'normal',
+                                  disabled: props.selectedWidgets.length < 2,
+                                  onAction: () => props.alignWidgets('horizontal-equal'),
+                              },
+                              {
+                                  type: 'icon-button',
+                                  Icon: AiOutlineColumnWidth,
+                                  name: 'Align width. Press more time to get the desired width.',
+                                  size: 'normal',
+                                  disabled: props.selectedWidgets.length < 2,
+                                  onAction: () => props.alignWidgets('width'),
+                              },
+                              {
+                                  type: 'icon-button',
+                                  Icon: RiBringToFront,
+                                  name: 'Bring to front',
+                                  size: 'normal',
+                                  disabled: !props.selectedWidgets.length,
+                                  onAction: () => props.orderWidgets('front'),
+                              },
+                          ] as ToolbarItem[],
+                          [
+                              {
+                                  type: 'icon-button',
+                                  Icon: MdAlignHorizontalRight,
+                                  name: 'Align horizontal/right',
+                                  size: 'normal',
+                                  disabled: props.selectedWidgets.length < 2,
+                                  onAction: () => props.alignWidgets('right'),
+                              },
+                              {
+                                  type: 'icon-button',
+                                  Icon: MdAlignVerticalBottom,
+                                  name: 'Align vertical/bottom',
+                                  size: 'normal',
+                                  disabled: props.selectedWidgets.length < 2,
+                                  onAction: () => props.alignWidgets('bottom'),
+                              },
+                              {
+                                  type: 'icon-button',
+                                  Icon: MdAlignVerticalCenter,
+                                  name: 'Align vertical/center',
+                                  size: 'normal',
+                                  disabled: props.selectedWidgets.length < 2,
+                                  onAction: () => props.alignWidgets('vertical-center'),
+                              },
+                              {
+                                  type: 'icon-button',
+                                  Icon: CgArrowAlignV,
+                                  name: 'Align vertical/equal',
+                                  size: 'normal',
+                                  disabled: props.selectedWidgets.length < 2,
+                                  onAction: () => props.alignWidgets('vertical-equal'),
+                              },
+                              {
+                                  type: 'icon-button',
+                                  Icon: AiOutlineColumnHeight,
+                                  name: 'Align height. Press more time to get the desired height.',
+                                  size: 'normal',
+                                  disabled: props.selectedWidgets.length < 2,
+                                  onAction: () => props.alignWidgets('height'),
+                              },
+                              {
+                                  type: 'icon-button',
+                                  Icon: RiSendToBack,
+                                  name: 'Send to back',
+                                  size: 'normal',
+                                  disabled: !props.selectedWidgets.length,
+                                  onAction: () => props.orderWidgets('back'),
+                              },
+                          ] as ToolbarItem[],
+                      ]
+                    : null,
                 window.innerWidth > 1410 ? { type: 'divider' } : null,
                 [
-                    [{
-                        type: 'icon-button',
-                        Icon: OpenInNewIcon,
-                        name: 'Lock dragging',
-                        selected: props.lockDragging,
-                        onAction: () => props.toggleLockDragging(),
-                    } as ToolbarItem],
-                    [{
-                        type: 'icon-button',
-                        Icon: props.widgetHint === 'hide' ? VisibilityOffIcon : VisibilityIcon,
-                        color: props.widgetHint === 'light' ? 'white' : 'black',
-                        name: `Toggle widget hint (${props.widgetHint})`,
-                        onAction: () => props.toggleWidgetHint(),
-                    } as ToolbarItem],
+                    [
+                        {
+                            type: 'icon-button',
+                            Icon: OpenInNewIcon,
+                            name: 'Lock dragging',
+                            selected: props.lockDragging,
+                            onAction: () => props.toggleLockDragging(),
+                        } as ToolbarItem,
+                    ],
+                    [
+                        {
+                            type: 'icon-button',
+                            Icon: props.widgetHint === 'hide' ? VisibilityOffIcon : VisibilityIcon,
+                            color: props.widgetHint === 'light' ? 'white' : 'black',
+                            name: `Toggle widget hint (${props.widgetHint})`,
+                            onAction: () => props.toggleWidgetHint(),
+                        } as ToolbarItem,
+                    ],
                 ],
                 { type: 'divider' },
                 [
-                    [{
-                        type: 'icon-button',
-                        Icon: BiImport,
-                        name: 'Import widgets',
-                        size: 'normal',
-                        disabled: !props.editMode,
-                        onAction: () => setImportDialog(true),
-                    } as ToolbarItem],
-                    [{
-                        type: 'icon-button',
-                        Icon: BiExport,
-                        name: 'Export widgets',
-                        size: 'normal',
-                        disabled: !props.selectedWidgets.length,
-                        onAction: () => setExportDialog(true),
-                    } as ToolbarItem],
+                    [
+                        {
+                            type: 'icon-button',
+                            Icon: BiImport,
+                            name: 'Import widgets',
+                            size: 'normal',
+                            disabled: !props.editMode,
+                            onAction: () => setImportDialog(true),
+                        } as ToolbarItem,
+                    ],
+                    [
+                        {
+                            type: 'icon-button',
+                            Icon: BiExport,
+                            name: 'Export widgets',
+                            size: 'normal',
+                            disabled: !props.selectedWidgets.length,
+                            onAction: () => setExportDialog(true),
+                        } as ToolbarItem,
+                    ],
                 ],
             ],
         } as ToolbarGroup;
@@ -408,35 +432,43 @@ const Widgets: React.FC<WidgetsProps> = props => {
         return null;
     }
 
-    return <>
-        <ToolbarItems
-            theme={props.theme}
-            group={toolbar}
-            changeProject={props.changeProject}
-            selectedView={props.selectedView}
-            setSelectedWidgets={props.setSelectedWidgets}
-            themeType={props.themeType}
-            toolbarHeight={props.toolbarHeight}
-        />
-        {importDialog ? <WidgetImportDialog
-            onClose={() => setImportDialog(false)}
-            changeProject={props.changeProject}
-            selectedView={props.selectedView}
-            selectedGroup={props.selectedGroup}
-            themeType={props.themeType}
-        /> : null}
-        {exportDialog ? <WidgetExportDialog
-            onClose={() => setExportDialog(false)}
-            widgets={store.getState().visProject[props.selectedView].widgets}
-            selectedWidgets={props.selectedWidgets}
-            themeType={props.themeType}
-        /> : null}
-        {filterDialog ? <WidgetFilterDialog
-            onClose={() => setFilterDialog(false)}
-            changeProject={props.changeProject}
-            selectedView={props.selectedView}
-        /> : null}
-    </>;
+    return (
+        <>
+            <ToolbarItems
+                theme={props.theme}
+                group={toolbar}
+                changeProject={props.changeProject}
+                selectedView={props.selectedView}
+                setSelectedWidgets={props.setSelectedWidgets}
+                themeType={props.themeType}
+                toolbarHeight={props.toolbarHeight}
+            />
+            {importDialog ? (
+                <WidgetImportDialog
+                    onClose={() => setImportDialog(false)}
+                    changeProject={props.changeProject}
+                    selectedView={props.selectedView}
+                    selectedGroup={props.selectedGroup}
+                    themeType={props.themeType}
+                />
+            ) : null}
+            {exportDialog ? (
+                <WidgetExportDialog
+                    onClose={() => setExportDialog(false)}
+                    widgets={store.getState().visProject[props.selectedView].widgets}
+                    selectedWidgets={props.selectedWidgets}
+                    themeType={props.themeType}
+                />
+            ) : null}
+            {filterDialog ? (
+                <WidgetFilterDialog
+                    onClose={() => setFilterDialog(false)}
+                    changeProject={props.changeProject}
+                    selectedView={props.selectedView}
+                />
+            ) : null}
+        </>
+    );
 };
 
 export default Widgets;

@@ -1,5 +1,4 @@
 import React from 'react';
-import type { LegacyConnection, Connection, ThemeType } from '@iobroker/adapter-react-v5';
 
 import {
     Button,
@@ -15,26 +14,27 @@ import {
     TableCell,
     MenuItem,
     DialogActions,
-    Popper, Fade,
-    Paper, ButtonGroup,
-    Fab, Slider,
+    Popper,
+    Fade,
+    Paper,
+    ButtonGroup,
+    Fab,
+    Slider,
     FormControlLabel,
     Checkbox,
     Radio,
 } from '@mui/material';
 
-import {
-    Clear,
-    Close,
-    Check,
-    Delete, Clear as ClearIcon,
-    Add, Edit,
-} from '@mui/icons-material';
+import { Clear, Close, Check, Delete, Clear as ClearIcon, Add, Edit } from '@mui/icons-material';
 
 import {
     ColorPicker,
     I18n,
-    Icon, SelectFile as SelectFileDialog,
+    Icon,
+    SelectFile as SelectFileDialog,
+    type LegacyConnection,
+    type Connection,
+    type ThemeType,
 } from '@iobroker/adapter-react-v5';
 
 import MaterialIconSelector from '@/Components/MaterialIconSelector';
@@ -103,7 +103,7 @@ interface BulkEditorState {
     values: (string | number)[];
     colors: string[];
     activeColors: string[];
-    icons: (string|null)[];
+    icons: (string | null)[];
     images: string[];
     tooltips: string[];
     iconDialog: null | number;
@@ -146,9 +146,8 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
     static iconPromise: Promise<Record<string, any>>;
 
     static getIcon(icon: string): Promise<string | null> {
-        if (!BulkEditor.iconPromise) {
-            BulkEditor.iconPromise = fetch('./material-icons/baseline.json')
-                .then(res => res.json());
+        if (!(BulkEditor.iconPromise instanceof Promise)) {
+            BulkEditor.iconPromise = fetch('./material-icons/baseline.json').then(res => res.json());
         }
 
         return BulkEditor.iconPromise
@@ -158,13 +157,13 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
                 }
                 return null;
             })
-            .catch(e => {
+            .catch((e: any): null => {
                 console.error(e);
                 return null;
             });
     }
 
-    static async generateFields(data: BulkEditorData, socket: LegacyConnection) {
+    static async generateFields(data: BulkEditorData, socket: LegacyConnection): Promise<BulkEditorData | false> {
         const oid = data.oid;
         if (!oid || oid === 'nothing_selected') {
             return false;
@@ -177,7 +176,7 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
                 let states = obj.common.states;
                 if (Array.isArray(states)) {
                     states = {};
-                    Object.keys(obj.common.states).forEach(key => states[key] = key);
+                    Object.keys(obj.common.states).forEach(key => (states[key] = key));
                 }
                 const keys = Object.keys(obj.common.states);
                 for (let i = 0; i < keys.length; i++) {
@@ -253,7 +252,7 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
         return false;
     }
 
-    async calculateFirst(useStates?: boolean | undefined): Promise<void> {
+    async calculateFirst(useStates?: boolean): Promise<void> {
         const newState: Pick<BulkEditorState, keyof BulkEditorState> = {
             ...this.state,
             dialog: true,
@@ -272,7 +271,7 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
                     let states = obj.common.states;
                     if (Array.isArray(states)) {
                         states = {};
-                        Object.keys(obj.common.states).forEach(key => states[key] = key);
+                        Object.keys(obj.common.states).forEach(key => (states[key] = key));
                     }
                     newState.states = states;
                     const keys = Object.keys(states);
@@ -309,7 +308,7 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
             newState.activeColors = [];
             newState.tooltips = [];
             for (let i = 0; i < this.props.data.count; i++) {
-                newState.texts[i] = this.props.data[`text${i + 1}`] as string || '';
+                newState.texts[i] = this.props.data[`text${i + 1}`] || '';
                 newState.values[i] = this.props.data[`value${i + 1}`] || '';
                 newState.icons[i] = this.props.data[`icon${i + 1}`] || '';
                 newState.images[i] = this.props.data[`image${i + 1}`] || '';
@@ -322,87 +321,89 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
         this.setState(newState);
     }
 
-    renderDeleteDialog() {
+    renderDeleteDialog(): React.JSX.Element | null {
         if (this.state.dialogDelete === null) {
             return null;
         }
-        return <Dialog
-            key="deleteDialog"
-            open={!0}
-            onClose={() => this.setState({ dialogDelete: null })}
-        >
-            <DialogContent>
-                {I18n.t('jqui_Are you sure?')}
-            </DialogContent>
-            <DialogActions>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    startIcon={<Delete />}
-                    onClick={() => {
-                        const values = [...this.state.values];
-                        const texts = [...this.state.texts];
-                        const icons = [...this.state.icons];
-                        const images = [...this.state.images];
-                        const colors = [...this.state.colors];
-                        const activeColors = [...this.state.activeColors];
-                        const tooltips = [...this.state.tooltips];
-                        if (typeof this.state.dialogDelete === 'number') {
-                            values.splice(this.state.dialogDelete, 1);
-                            texts.splice(this.state.dialogDelete, 1);
-                            icons.splice(this.state.dialogDelete, 1);
-                            images.splice(this.state.dialogDelete, 1);
-                            colors.splice(this.state.dialogDelete, 1);
-                            tooltips.splice(this.state.dialogDelete, 1);
-                            activeColors.splice(this.state.dialogDelete, 1);
-                        }
+        return (
+            <Dialog
+                key="deleteDialog"
+                open={!0}
+                onClose={() => this.setState({ dialogDelete: null })}
+            >
+                <DialogContent>{I18n.t('jqui_Are you sure?')}</DialogContent>
+                <DialogActions>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        startIcon={<Delete />}
+                        onClick={() => {
+                            const values = [...this.state.values];
+                            const texts = [...this.state.texts];
+                            const icons = [...this.state.icons];
+                            const images = [...this.state.images];
+                            const colors = [...this.state.colors];
+                            const activeColors = [...this.state.activeColors];
+                            const tooltips = [...this.state.tooltips];
+                            if (typeof this.state.dialogDelete === 'number') {
+                                values.splice(this.state.dialogDelete, 1);
+                                texts.splice(this.state.dialogDelete, 1);
+                                icons.splice(this.state.dialogDelete, 1);
+                                images.splice(this.state.dialogDelete, 1);
+                                colors.splice(this.state.dialogDelete, 1);
+                                tooltips.splice(this.state.dialogDelete, 1);
+                                activeColors.splice(this.state.dialogDelete, 1);
+                            }
 
-                        this.setState({
-                            values,
-                            texts,
-                            icons,
-                            images,
-                            colors,
-                            activeColors,
-                            tooltips,
-                            dialogDelete: null,
-                        });
-                    }}
-                >
-                    {I18n.t('Delete')}
-                </Button>
-                <Button
-                    variant="contained"
-                    color="grey"
-                    startIcon={<Close />}
-                    onClick={() => this.setState({ dialogDelete: null })}
-                >
-                    {I18n.t('Cancel')}
-                </Button>
-            </DialogActions>
-        </Dialog>;
+                            this.setState({
+                                values,
+                                texts,
+                                icons,
+                                images,
+                                colors,
+                                activeColors,
+                                tooltips,
+                                dialogDelete: null,
+                            });
+                        }}
+                    >
+                        {I18n.t('Delete')}
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="grey"
+                        startIcon={<Close />}
+                        onClick={() => this.setState({ dialogDelete: null })}
+                    >
+                        {I18n.t('Cancel')}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        );
     }
 
-    renderMaterialDialog() {
+    renderMaterialDialog(): React.JSX.Element | null {
         if (this.state.iconDialog === null) {
             return null;
         }
-        return <MaterialIconSelector
-            theme={this.props.theme}
-            key="iconDialog"
-            themeType={this.props.themeType}
-            value={this.state.icons[this.state.iconDialog]}
-            onClose={(icon: string) => {
-                this.setState({ iconDialog: null });
-                if (icon !== null) {
-                    const icons = [...this.state.icons];
-                    if (typeof this.state.iconDialog === 'number') {
-                        icons[this.state.iconDialog] = icon;
+        return (
+            <MaterialIconSelector
+                theme={this.props.theme}
+                key="iconDialog"
+                themeType={this.props.themeType}
+                value={this.state.icons[this.state.iconDialog]}
+                onClose={(icon: string) => {
+                    this.setState({ iconDialog: null });
+                    if (icon !== null) {
+                        const icons = [...this.state.icons];
+                        if (typeof this.state.iconDialog === 'number') {
+                            icons[this.state.iconDialog] = icon;
+                        }
+                        this.setState({ icons, iconDialog: null });
                     }
-                    this.setState({ icons, iconDialog: null });
-                }
-            }}
-        />;
+                }}
+            />
+        );
     }
 
     renderImageDialog(): React.JSX.Element | null {
@@ -413,10 +414,13 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
         if (value.startsWith('../')) {
             value = value.substring(3);
         } else if (value.startsWith('_PRJ_NAME/')) {
-            value = value.replace('_PRJ_NAME/', `../${this.props.adapterName}.${this.props.instance}/${this.props.projectName}/`);
+            value = value.replace(
+                '_PRJ_NAME/',
+                `../${this.props.adapterName}.${this.props.instance}/${this.props.projectName}/`,
+            );
         }
 
-        const onChange = (selected: string | undefined, isClose: boolean) => {
+        const onChange = (selected: string | undefined, isClose: boolean): void => {
             const projectPrefix = `${this.props.adapterName}.${this.props.instance}/${this.props.projectName}/`;
             if (selected?.startsWith(projectPrefix)) {
                 selected = `_PRJ_NAME/${selected.substring(projectPrefix.length)}`;
@@ -434,32 +438,35 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
             isClose && this.setState({ imageDialog: null });
         };
 
-        return <SelectFileDialog
-            theme={this.props.theme}
-            key="imageDialog"
-            title={I18n.t('jqui_Select file')}
-            onClose={() => this.setState({ imageDialog: null })}
-            restrictToFolder={`${this.props.adapterName}.${this.props.instance}/${this.props.projectName}`}
-            allowNonRestricted
-            allowUpload
-            allowDownload
-            allowCreateFolder
-            allowDelete
-            allowView
-            showToolbar
-            imagePrefix="../"
-            selected={value}
-            filterByType="images"
-            onOk={(selectedOrArray: string | string[] | undefined) =>
-                onChange(Array.isArray(selectedOrArray) ? selectedOrArray[0] : selectedOrArray, true)}
-            socket={this.props.socket as any as Connection}
-        />;
+        return (
+            <SelectFileDialog
+                theme={this.props.theme}
+                key="imageDialog"
+                title={I18n.t('jqui_Select file')}
+                onClose={() => this.setState({ imageDialog: null })}
+                restrictToFolder={`${this.props.adapterName}.${this.props.instance}/${this.props.projectName}`}
+                allowNonRestricted
+                allowUpload
+                allowDownload
+                allowCreateFolder
+                allowDelete
+                allowView
+                showToolbar
+                imagePrefix="../"
+                selected={value}
+                filterByType="images"
+                onOk={(selectedOrArray: string | string[] | undefined) =>
+                    onChange(Array.isArray(selectedOrArray) ? selectedOrArray[0] : selectedOrArray, true)
+                }
+                socket={this.props.socket as any as Connection}
+            />
+        );
     }
 
     /**
      * Called when Bulk Editor data is submitted
      */
-    onEnter() {
+    onEnter(): void {
         const values = [...this.state.values];
 
         if (this.state.editDialog?.add) {
@@ -505,56 +512,60 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
         if (!this.state.editDialog) {
             return null;
         }
-        const isUnique = !this.state.values.map(v => (typeof v === 'string' ? v.trim() : v)).includes(this.state.editDialog.value);
+        const isUnique = !this.state.values
+            .map(v => (typeof v === 'string' ? v.trim() : v))
+            .includes(this.state.editDialog.value);
 
-        return <Dialog
-            key="editDialog"
-            maxWidth="sm"
-            open={!0}
-            onClose={() => this.setState({ editDialog: null })}
-        >
-            <DialogTitle>{this.state.editDialog.add ? I18n.t('jqui_Add new value') : I18n.t('Edit')}</DialogTitle>
-            <DialogContent>
-                <TextField
-                    onKeyDown={e => e.key === 'Enter' && isUnique && this.state.editDialog?.value && this.onEnter()}
-                    fullWidth
-                    autoFocus
-                    variant="standard"
-                    label={I18n.t('Value')}
-                    value={this.state.editDialog.value}
-                    onChange={e => {
-                        if (this.state.editDialog) {
-                            this.setState({
-                                editDialog: {
-                                    value: e.target.value,
-                                    add: this.state.editDialog.add,
-                                    index: this.state.editDialog.index,
-                                },
-                            });
-                        }
-                    }}
-                />
-            </DialogContent>
-            <DialogActions>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    disabled={!isUnique || !this.state.editDialog.value}
-                    startIcon={this.state.editDialog.add ? <Add /> : <Check />}
-                    onClick={() => this.onEnter()}
-                >
-                    {this.state.editDialog.add ? I18n.t('Add') : I18n.t('Apply')}
-                </Button>
-                <Button
-                    variant="contained"
-                    color="grey"
-                    startIcon={<Close />}
-                    onClick={() => this.setState({ editDialog: null })}
-                >
-                    {I18n.t('Cancel')}
-                </Button>
-            </DialogActions>
-        </Dialog>;
+        return (
+            <Dialog
+                key="editDialog"
+                maxWidth="sm"
+                open={!0}
+                onClose={() => this.setState({ editDialog: null })}
+            >
+                <DialogTitle>{this.state.editDialog.add ? I18n.t('jqui_Add new value') : I18n.t('Edit')}</DialogTitle>
+                <DialogContent>
+                    <TextField
+                        onKeyDown={e => e.key === 'Enter' && isUnique && this.state.editDialog?.value && this.onEnter()}
+                        fullWidth
+                        autoFocus
+                        variant="standard"
+                        label={I18n.t('Value')}
+                        value={this.state.editDialog.value}
+                        onChange={e => {
+                            if (this.state.editDialog) {
+                                this.setState({
+                                    editDialog: {
+                                        value: e.target.value,
+                                        add: this.state.editDialog.add,
+                                        index: this.state.editDialog.index,
+                                    },
+                                });
+                            }
+                        }}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        disabled={!isUnique || !this.state.editDialog.value}
+                        startIcon={this.state.editDialog.add ? <Add /> : <Check />}
+                        onClick={() => this.onEnter()}
+                    >
+                        {this.state.editDialog.add ? I18n.t('Add') : I18n.t('Apply')}
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="grey"
+                        startIcon={<Close />}
+                        onClick={() => this.setState({ editDialog: null })}
+                    >
+                        {I18n.t('Cancel')}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        );
     }
 
     renderLine(i: number): React.JSX.Element {
@@ -563,39 +574,46 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
         if (!this.state.icons[i]) {
             const value = this.state.images[i];
 
-            const urlPopper = <Popper
-                key="popper"
-                open={!!(this.state.textDialogFocused[i] && value?.toString().startsWith(window.location.origin))}
-                anchorEl={this.textRef[i]?.current}
-                placement="bottom"
-                transition
-            >
-                {({ TransitionProps }) => <Fade {...TransitionProps} timeout={350}>
-                    <Paper>
-                        <Button
-                            style={{ textTransform: 'none' }}
-                            onClick={() => {
-                                const images = [...this.state.images];
-                                images[i] = `.${images[i].toString().slice(window.location.origin.length)}`;
-                                this.setState({ images });
-                            }}
+            const urlPopper = (
+                <Popper
+                    key="popper"
+                    open={!!(this.state.textDialogFocused[i] && value?.toString().startsWith(window.location.origin))}
+                    anchorEl={this.textRef[i]?.current}
+                    placement="bottom"
+                    transition
+                >
+                    {({ TransitionProps }) => (
+                        <Fade
+                            {...TransitionProps}
+                            timeout={350}
                         >
-                            {I18n.t('jqui_Replace to')}
-                            {` .${value.toString().slice(window.location.origin.length)}`}
-                        </Button>
-                        <IconButton
-                            size="small"
-                            onClick={() => {
-                                const textDialogFocused = [...this.state.textDialogFocused];
-                                textDialogFocused[i] = false;
-                                this.setState({ textDialogFocused });
-                            }}
-                        >
-                            <ClearIcon fontSize="small" />
-                        </IconButton>
-                    </Paper>
-                </Fade>}
-            </Popper>;
+                            <Paper>
+                                <Button
+                                    style={{ textTransform: 'none' }}
+                                    onClick={() => {
+                                        const images = [...this.state.images];
+                                        images[i] = `.${images[i].toString().slice(window.location.origin.length)}`;
+                                        this.setState({ images });
+                                    }}
+                                >
+                                    {I18n.t('jqui_Replace to')}
+                                    {` .${value.toString().slice(window.location.origin.length)}`}
+                                </Button>
+                                <IconButton
+                                    size="small"
+                                    onClick={() => {
+                                        const textDialogFocused = [...this.state.textDialogFocused];
+                                        textDialogFocused[i] = false;
+                                        this.setState({ textDialogFocused });
+                                    }}
+                                >
+                                    <ClearIcon fontSize="small" />
+                                </IconButton>
+                            </Paper>
+                        </Fade>
+                    )}
+                </Popper>
+            );
             image = [
                 <TextField
                     key="image"
@@ -603,7 +621,14 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
                     fullWidth
                     InputProps={{
                         sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
-                        endAdornment: <Button size="small" onClick={() => this.setState({ imageDialog: i })}>...</Button>,
+                        endAdornment: (
+                            <Button
+                                size="small"
+                                onClick={() => this.setState({ imageDialog: i })}
+                            >
+                                ...
+                            </Button>
+                        ),
                     }}
                     ref={this.textRef[i]}
                     value={this.state.images[i] || ''}
@@ -630,153 +655,199 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
         let button;
         let iconSrc = this.state.images[i] || this.state.icons[i] || '';
         if (iconSrc.startsWith('_PRJ_NAME/')) {
-            iconSrc = iconSrc.replace('_PRJ_NAME/', `../${this.props.adapterName}.${this.props.instance}/${this.props.projectName}/`);
+            iconSrc = iconSrc.replace(
+                '_PRJ_NAME/',
+                `../${this.props.adapterName}.${this.props.instance}/${this.props.projectName}/`,
+            );
         }
 
         if (this.props.data.type === 'radio') {
-            const icon = <Icon src={iconSrc} style={{ width: 24, height: 24 }} />;
-            const text = <div style={{ display: 'flex', gap: 4 }}>
-                {icon}
-                {this.state.texts[i]}
-            </div>;
-            button = <FormControlLabel
-                control={<Radio
-                    onClick={() => this.setState({ activeLine: i })}
-                    checked={this.state.activeLine === i}
-                />}
-                labelPlacement="end"
-                label={text}
-            />;
+            const icon = (
+                <Icon
+                    src={iconSrc}
+                    style={{ width: 24, height: 24 }}
+                />
+            );
+            const text = (
+                <div style={{ display: 'flex', gap: 4 }}>
+                    {icon}
+                    {this.state.texts[i]}
+                </div>
+            );
+            button = (
+                <FormControlLabel
+                    control={
+                        <Radio
+                            onClick={() => this.setState({ activeLine: i })}
+                            checked={this.state.activeLine === i}
+                        />
+                    }
+                    labelPlacement="end"
+                    label={text}
+                />
+            );
         } else if (this.props.data.type === 'select') {
-            const icon = <Icon src={iconSrc} style={{ width: 24, height: 24 }} />;
-            const text = <div style={{ display: 'flex', gap: 4 }}>
-                {icon}
-                {this.state.texts[i]}
-            </div>;
-            button = <MenuItem
-                onClick={() => this.setState({ activeLine: i })}
-                selected={this.state.activeLine === i}
-            >
-                {text}
-            </MenuItem>;
+            const icon = (
+                <Icon
+                    src={iconSrc}
+                    style={{ width: 24, height: 24 }}
+                />
+            );
+            const text = (
+                <div style={{ display: 'flex', gap: 4 }}>
+                    {icon}
+                    {this.state.texts[i]}
+                </div>
+            );
+            button = (
+                <MenuItem
+                    onClick={() => this.setState({ activeLine: i })}
+                    selected={this.state.activeLine === i}
+                >
+                    {text}
+                </MenuItem>
+            );
         } else {
-            button = <Button
-                style={{ color: this.state.activeLine === i ? (this.state.activeColors[i] || this.state.colors[i]) : this.state.colors[i] || undefined }}
-                color={this.state.activeLine === i ? 'primary' : 'grey'}
-                variant={this.props.data.variant === undefined ? 'contained' : this.props.data.variant}
-                onClick={() => this.setState({ activeLine: i })}
-                startIcon={<Icon src={iconSrc} style={{ width: 24, height: 24 }} />}
-            >
-                {this.state.texts[i]}
-            </Button>;
+            button = (
+                <Button
+                    style={{
+                        color:
+                            this.state.activeLine === i
+                                ? this.state.activeColors[i] || this.state.colors[i]
+                                : this.state.colors[i] || undefined,
+                    }}
+                    color={this.state.activeLine === i ? 'primary' : 'grey'}
+                    variant={this.props.data.variant === undefined ? 'contained' : this.props.data.variant}
+                    onClick={() => this.setState({ activeLine: i })}
+                    startIcon={
+                        <Icon
+                            src={iconSrc}
+                            style={{ width: 24, height: 24 }}
+                        />
+                    }
+                >
+                    {this.state.texts[i]}
+                </Button>
+            );
         }
 
-        return <TableRow key={`${this.state.values[i]}_${i}`}>
-            <TableCell style={{ display: 'flex', alignItems: 'center' }}>
-                {this.state.values[i]}
-                <IconButton
-                    size="small"
-                    onClick={() => this.setState({ editDialog: { add: false, index: i, value: this.state.values[i] } })}
-                >
-                    <Edit />
-                </IconButton>
-            </TableCell>
-            <TableCell>
-                <TextField
-                    size="small"
-                    fullWidth
-                    variant="standard"
-                    value={this.state.texts[i] || ''}
-                    onChange={e => {
-                        const texts = [...this.state.texts];
-                        texts[i] = e.target.value;
-                        this.setState({ texts });
-                    }}
-                />
-            </TableCell>
-            <TableCell>
-                {this.state.images[i] ? null : <div style={{ display: 'flex', width: '100%', alignItems: 'center' }}>
-                    <TextField
-                        fullWidth
+        return (
+            <TableRow key={`${this.state.values[i]}_${i}`}>
+                <TableCell style={{ display: 'flex', alignItems: 'center' }}>
+                    {this.state.values[i]}
+                    <IconButton
                         size="small"
+                        onClick={() =>
+                            this.setState({ editDialog: { add: false, index: i, value: this.state.values[i] } })
+                        }
+                    >
+                        <Edit />
+                    </IconButton>
+                </TableCell>
+                <TableCell>
+                    <TextField
+                        size="small"
+                        fullWidth
                         variant="standard"
-                        value={this.state.icons[i] || ''}
+                        value={this.state.texts[i] || ''}
                         onChange={e => {
-                            const icons = [...this.state.icons];
-                            icons[i] = e.target.value;
-                            this.setState({ icons });
-                        }}
-                        InputProps={{
-                            endAdornment: this.state.icons[i] ? <IconButton
-                                size="small"
-                                onClick={() => {
-                                    const icons = [...this.state.icons];
-                                    icons[i] = '';
-                                    this.setState({ icons });
-                                }}
-                            >
-                                <Clear />
-                            </IconButton> : null,
-                            sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
+                            const texts = [...this.state.texts];
+                            texts[i] = e.target.value;
+                            this.setState({ texts });
                         }}
                     />
-                    <Button
-                        variant={this.state.icons[i] ? 'outlined' : undefined}
-                        color={this.state.icons[i] ? 'grey' : undefined}
-                        onClick={() => this.setState({ iconDialog: i })}
-                    >
-                        {this.state.icons[i] ? <Icon src={this.state.icons[i]} style={{ width: 36, height: 36 }} /> : '...'}
-                    </Button>
-                </div>}
-            </TableCell>
-            <TableCell>
-                {image}
-            </TableCell>
-            <TableCell>
-                <ColorPicker
-                    value={this.state.colors[i]}
-                    onChange={color => {
-                        const colors = [...this.state.colors];
-                        colors[i] = color;
-                        this.setState({ colors });
-                    }}
-                />
-            </TableCell>
-            <TableCell>
-                <ColorPicker
-                    value={this.state.activeColors[i]}
-                    onChange={color => {
-                        const activeColors = [...this.state.activeColors];
-                        activeColors[i] = color;
-                        this.setState({ activeColors });
-                    }}
-                />
-            </TableCell>
-            <TableCell>
-                <TextField
-                    size="small"
-                    fullWidth
-                    variant="standard"
-                    value={this.state.tooltips[i] || ''}
-                    onChange={e => {
-                        const tooltips = [...this.state.tooltips];
-                        tooltips[i] = e.target.value;
-                        this.setState({ tooltips });
-                    }}
-                />
-            </TableCell>
-            <TableCell>
-                <IconButton onClick={() => this.setState({ dialogDelete: i })}>
-                    <Delete />
-                </IconButton>
-            </TableCell>
-            <TableCell>
-                {button}
-            </TableCell>
-        </TableRow>;
+                </TableCell>
+                <TableCell>
+                    {this.state.images[i] ? null : (
+                        <div style={{ display: 'flex', width: '100%', alignItems: 'center' }}>
+                            <TextField
+                                fullWidth
+                                size="small"
+                                variant="standard"
+                                value={this.state.icons[i] || ''}
+                                onChange={e => {
+                                    const icons = [...this.state.icons];
+                                    icons[i] = e.target.value;
+                                    this.setState({ icons });
+                                }}
+                                InputProps={{
+                                    endAdornment: this.state.icons[i] ? (
+                                        <IconButton
+                                            size="small"
+                                            onClick={() => {
+                                                const icons = [...this.state.icons];
+                                                icons[i] = '';
+                                                this.setState({ icons });
+                                            }}
+                                        >
+                                            <Clear />
+                                        </IconButton>
+                                    ) : null,
+                                    sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
+                                }}
+                            />
+                            <Button
+                                variant={this.state.icons[i] ? 'outlined' : undefined}
+                                color={this.state.icons[i] ? 'grey' : undefined}
+                                onClick={() => this.setState({ iconDialog: i })}
+                            >
+                                {this.state.icons[i] ? (
+                                    <Icon
+                                        src={this.state.icons[i]}
+                                        style={{ width: 36, height: 36 }}
+                                    />
+                                ) : (
+                                    '...'
+                                )}
+                            </Button>
+                        </div>
+                    )}
+                </TableCell>
+                <TableCell>{image}</TableCell>
+                <TableCell>
+                    <ColorPicker
+                        value={this.state.colors[i]}
+                        onChange={color => {
+                            const colors = [...this.state.colors];
+                            colors[i] = color;
+                            this.setState({ colors });
+                        }}
+                    />
+                </TableCell>
+                <TableCell>
+                    <ColorPicker
+                        value={this.state.activeColors[i]}
+                        onChange={color => {
+                            const activeColors = [...this.state.activeColors];
+                            activeColors[i] = color;
+                            this.setState({ activeColors });
+                        }}
+                    />
+                </TableCell>
+                <TableCell>
+                    <TextField
+                        size="small"
+                        fullWidth
+                        variant="standard"
+                        value={this.state.tooltips[i] || ''}
+                        onChange={e => {
+                            const tooltips = [...this.state.tooltips];
+                            tooltips[i] = e.target.value;
+                            this.setState({ tooltips });
+                        }}
+                    />
+                </TableCell>
+                <TableCell>
+                    <IconButton onClick={() => this.setState({ dialogDelete: i })}>
+                        <Delete />
+                    </IconButton>
+                </TableCell>
+                <TableCell>{button}</TableCell>
+            </TableRow>
+        );
     }
 
-    renderMinMaxDialog() {
+    renderMinMaxDialog(): React.JSX.Element | null {
         if (!this.state.minMaxDialog) {
             return null;
         }
@@ -787,290 +858,298 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
             if (this.state.usePercents) {
                 value = Math.round(((i - this.state.min) / (this.state.max - this.state.min)) * 100);
             }
-            buttons.push(<Button
-                key={i}
+            buttons.push(
+                <Button
+                    key={i}
+                    variant="contained"
+                    disabled
+                >
+                    {Math.round(value).toString() + this.state.unit}
+                </Button>,
+            );
+        }
+        buttons.push(
+            <Button
+                key={1000}
                 variant="contained"
                 disabled
             >
-                {Math.round(value).toString() + this.state.unit}
-            </Button>);
-        }
-        buttons.push(<Button
-            key={1000}
-            variant="contained"
-            disabled
-        >
-            {(this.state.usePercents ? 100 : this.state.max).toString() + this.state.unit}
-        </Button>);
+                {(this.state.usePercents ? 100 : this.state.max).toString() + this.state.unit}
+            </Button>,
+        );
 
-        return <Dialog
-            key="minMaxDialog"
-            fullWidth
-            maxWidth="md"
-            open={!0}
-            onClose={() => this.setState({ minMaxDialog: false })}
-        >
-            <DialogTitle>{I18n.t('jqui_Number settings')}</DialogTitle>
-            <DialogContent>
-                {this.state.min !== 0 || this.state.max !== 100 ? <div style={{ width: '100%' }}>
-                    <FormControlLabel
-                        control={<Checkbox
-                            checked={this.state.usePercents}
-                            onChange={e => {
-                                let unit = this.state.unit;
-                                if (e.target.checked) {
-                                    unit = unit || '%';
-                                } else if (unit === '%') {
-                                    unit = this.state.originalUnit || '';
+        return (
+            <Dialog
+                key="minMaxDialog"
+                fullWidth
+                maxWidth="md"
+                open={!0}
+                onClose={() => this.setState({ minMaxDialog: false })}
+            >
+                <DialogTitle>{I18n.t('jqui_Number settings')}</DialogTitle>
+                <DialogContent>
+                    {this.state.min !== 0 || this.state.max !== 100 ? (
+                        <div style={{ width: '100%' }}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={this.state.usePercents}
+                                        onChange={e => {
+                                            let unit = this.state.unit;
+                                            if (e.target.checked) {
+                                                unit = unit || '%';
+                                            } else if (unit === '%') {
+                                                unit = this.state.originalUnit || '';
+                                            }
+                                            this.setState({ usePercents: e.target.checked, unit });
+                                        }}
+                                    />
                                 }
-                                this.setState({ usePercents: e.target.checked, unit });
-                            }}
-                        />}
-                        label={I18n.t('jqui_Percents')}
+                                label={I18n.t('jqui_Percents')}
+                            />
+                        </div>
+                    ) : null}
+                    <TextField
+                        fullWidth
+                        type="number"
+                        variant="standard"
+                        label={I18n.t('jqui_Minimum value')}
+                        value={this.state.min}
+                        onChange={e => this.setState({ min: Number(e.target.value) })}
                     />
-                </div> : null}
-                <TextField
-                    fullWidth
-                    type="number"
-                    variant="standard"
-                    label={I18n.t('jqui_Minimum value')}
-                    value={this.state.min}
-                    onChange={e => this.setState({ min: Number(e.target.value) })}
-                />
-                <TextField
-                    fullWidth
-                    type="number"
-                    variant="standard"
-                    label={I18n.t('jqui_Maximum value')}
-                    value={this.state.max}
-                    onChange={e => this.setState({ max: Number(e.target.value) })}
-                />
-                <div style={{ width: '100%' }}>
+                    <TextField
+                        fullWidth
+                        type="number"
+                        variant="standard"
+                        label={I18n.t('jqui_Maximum value')}
+                        value={this.state.max}
+                        onChange={e => this.setState({ max: Number(e.target.value) })}
+                    />
                     <div style={{ width: '100%' }}>
-                        {I18n.t('Steps')}
+                        <div style={{ width: '100%' }}>{I18n.t('Steps')}</div>
+                        <div style={{ width: '100%' }}>
+                            <Slider
+                                value={this.state.steps}
+                                step={1}
+                                valueLabelDisplay="auto"
+                                min={2}
+                                max={20}
+                                marks={[
+                                    {
+                                        value: 0,
+                                        label: '0',
+                                    },
+                                    {
+                                        value: 20,
+                                        label: '20',
+                                    },
+                                ]}
+                                onChange={(_e, value) => this.setState({ steps: value as number })}
+                            />
+                        </div>
                     </div>
-                    <div style={{ width: '100%' }}>
-                        <Slider
-                            value={this.state.steps}
-                            step={1}
-                            valueLabelDisplay="auto"
-                            min={2}
-                            max={20}
-                            marks={[
-                                {
-                                    value: 0,
-                                    label: '0',
-                                },
-                                {
-                                    value: 20,
-                                    label: '20',
-                                },
-                            ]}
-                            onChange={(_e, value) => this.setState({ steps: value as number })}
-                        />
-                    </div>
-                </div>
-                <TextField
-                    fullWidth
-                    variant="standard"
-                    label={I18n.t('Unit')}
-                    value={this.state.unit}
-                    onChange={e => this.setState({ unit: e.target.value })}
-                />
-                <ButtonGroup
-                    style={{ marginTop: 20 }}
-                    variant={this.props.data.variant === undefined ? 'contained' : this.props.data.variant}
-                >
-                    {buttons}
-                </ButtonGroup>
-            </DialogContent>
-            <DialogActions>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    startIcon={<Check />}
-                    onClick={() => {
-                        const newState: BulkEditorState = {
-                            ...this.state,
-                            minMaxDialog: false,
-                            values: [],
-                            texts: [...this.state.texts],
-                            icons: [...this.state.icons],
-                            images: [...this.state.images],
-                            colors: [...this.state.colors],
-                            activeColors: [...this.state.activeColors],
-                            tooltips: [...this.state.tooltips],
-                        };
+                    <TextField
+                        fullWidth
+                        variant="standard"
+                        label={I18n.t('Unit')}
+                        value={this.state.unit}
+                        onChange={e => this.setState({ unit: e.target.value })}
+                    />
+                    <ButtonGroup
+                        style={{ marginTop: 20 }}
+                        variant={this.props.data.variant === undefined ? 'contained' : this.props.data.variant}
+                    >
+                        {buttons}
+                    </ButtonGroup>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        startIcon={<Check />}
+                        onClick={() => {
+                            const newState: BulkEditorState = {
+                                ...this.state,
+                                minMaxDialog: false,
+                                values: [],
+                                texts: [...this.state.texts],
+                                icons: [...this.state.icons],
+                                images: [...this.state.images],
+                                colors: [...this.state.colors],
+                                activeColors: [...this.state.activeColors],
+                                tooltips: [...this.state.tooltips],
+                            };
 
-                        const _step = Math.round((this.state.max - this.state.min) / this.state.steps);
-                        let index = 0;
-                        for (let i = this.state.min; i < this.state.max; i += _step) {
-                            if (this.state.usePercents) {
-                                newState.texts[index] = Math.round(((i - this.state.min) / (this.state.max - this.state.min)) * 100) + this.state.unit;
-                            } else {
-                                newState.texts[index] = i + this.state.unit;
+                            const _step = Math.round((this.state.max - this.state.min) / this.state.steps);
+                            let index = 0;
+                            for (let i = this.state.min; i < this.state.max; i += _step) {
+                                if (this.state.usePercents) {
+                                    newState.texts[index] =
+                                        Math.round(((i - this.state.min) / (this.state.max - this.state.min)) * 100) +
+                                        this.state.unit;
+                                } else {
+                                    newState.texts[index] = i + this.state.unit;
+                                }
+                                newState.values[index] = i.toString();
+                                newState.icons[index] = newState.icons[index] || '';
+                                newState.images[index] = newState.images[index] || '';
+                                newState.colors[index] = newState.colors[index] || '';
+                                newState.activeColors[index] = newState.activeColors[index] || '';
+                                newState.tooltips[index] = newState.tooltips[index] || '';
+                                index++;
                             }
-                            newState.values[index] = i.toString();
-                            newState.icons[index] = newState.icons[index] || '';
-                            newState.images[index] = newState.images[index] || '';
-                            newState.colors[index] = newState.colors[index] || '';
-                            newState.activeColors[index] = newState.activeColors[index] || '';
-                            newState.tooltips[index] = newState.tooltips[index] || '';
-                            index++;
-                        }
-                        newState.values[index] = this.state.max.toString();
-                        newState.texts[index] = 100 + this.state.unit;
-                        this.setState(newState);
-                    }}
-                >
-                    {I18n.t('Apply')}
-                </Button>
-                <Button
-                    variant="contained"
-                    color="grey"
-                    startIcon={<Close />}
-                    onClick={() => this.setState({ minMaxDialog: false })}
-                >
-                    {I18n.t('Cancel')}
-                </Button>
-            </DialogActions>
-        </Dialog>;
+                            newState.values[index] = this.state.max.toString();
+                            newState.texts[index] = 100 + this.state.unit;
+                            this.setState(newState);
+                        }}
+                    >
+                        {I18n.t('Apply')}
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="grey"
+                        startIcon={<Close />}
+                        onClick={() => this.setState({ minMaxDialog: false })}
+                    >
+                        {I18n.t('Cancel')}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        );
     }
 
-    renderDialog() {
+    renderDialog(): React.JSX.Element | null {
         if (!this.state.dialog) {
             return null;
         }
 
-        return <Dialog
-            key="dialog"
-            fullWidth
-            maxWidth="lg"
-            open={!0}
-            onClose={() => this.setState({ dialog: false })}
-        >
-            <DialogTitle>{I18n.t('jqui_Bulk edit')}</DialogTitle>
-            <DialogContent>
-                <Button
-                    variant="contained"
-                    onClick={async () => {
-                        const oid = this.props.data.oid;
-                        const newState: BulkEditorState = {
-                            ...this.state,
-                            minMaxDialog: true,
-                            usePercents: true,
-                            min: this.state.min,
-                            max: this.state.max || 100,
-                            steps: 4,
-                            unit: '%',
-                        };
+        return (
+            <Dialog
+                key="dialog"
+                fullWidth
+                maxWidth="lg"
+                open={!0}
+                onClose={() => this.setState({ dialog: false })}
+            >
+                <DialogTitle>{I18n.t('jqui_Bulk edit')}</DialogTitle>
+                <DialogContent>
+                    <Button
+                        variant="contained"
+                        onClick={async () => {
+                            const oid = this.props.data.oid;
+                            const newState: BulkEditorState = {
+                                ...this.state,
+                                minMaxDialog: true,
+                                usePercents: true,
+                                min: this.state.min,
+                                max: this.state.max || 100,
+                                steps: 4,
+                                unit: '%',
+                            };
 
-                        if (oid && oid !== 'nothing_selected') {
-                            const obj = await this.props.socket.getObject(oid);
-                            newState.min = obj?.common?.min;
-                            if (newState.min === undefined || newState.min === null) {
-                                newState.min = 0;
+                            if (oid && oid !== 'nothing_selected') {
+                                const obj = await this.props.socket.getObject(oid);
+                                newState.min = obj?.common?.min;
+                                if (newState.min === undefined || newState.min === null) {
+                                    newState.min = 0;
+                                }
+                                newState.max = obj?.common?.max;
+                                if (newState.max === undefined || newState.max === null) {
+                                    newState.max = 100;
+                                }
+                                newState.originalUnit = obj?.common?.unit || '';
                             }
-                            newState.max = obj?.common?.max;
-                            if (newState.max === undefined || newState.max === null) {
-                                newState.max = 100;
+                            this.setState(newState);
+                        }}
+                    >
+                        {I18n.t('jqui_Generate steps')}
+                    </Button>
+                    {this.state.states ? (
+                        <Button
+                            variant="contained"
+                            onClick={() => this.calculateFirst(true)}
+                        >
+                            {I18n.t('jqui_Generate states')}
+                        </Button>
+                    ) : null}
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>{I18n.t('Value')}</TableCell>
+                                <TableCell>{I18n.t('Text')}</TableCell>
+                                <TableCell>{I18n.t('Icon')}</TableCell>
+                                <TableCell>{I18n.t('Image')}</TableCell>
+                                <TableCell>{I18n.t('color')}</TableCell>
+                                <TableCell>{I18n.t('jqui_active_color')}</TableCell>
+                                <TableCell>{I18n.t('jqui_tooltip')}</TableCell>
+                                <TableCell>
+                                    <Fab
+                                        size="small"
+                                        style={{ marginRight: 8 }}
+                                        onClick={() => this.setState({ editDialog: { add: true, value: '' } })}
+                                    >
+                                        <Add />
+                                    </Fab>
+                                </TableCell>
+                                <TableCell>{I18n.t('jqui_Example')}</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>{this.state.values.map((_, i) => this.renderLine(i))}</TableBody>
+                    </Table>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        startIcon={<Check />}
+                        onClick={() => {
+                            // apply changes
+                            const data = { ...this.props.data };
+                            for (let i = 0; i < this.state.values.length; i++) {
+                                data[`text${i + 1}`] = this.state.texts[i];
+                                data[`value${i + 1}`] = this.state.values[i];
+                                data[`icon${i + 1}`] = this.state.icons[i];
+                                data[`image${i + 1}`] = this.state.images[i];
+                                data[`color${i + 1}`] = this.state.colors[i];
+                                data[`tooltip${i + 1}`] = this.state.tooltips[i];
+                                data[`activeColor${i + 1}`] = this.state.activeColors[i];
+                                data[`g_states-${i + 1}`] = true;
                             }
-                            newState.originalUnit = obj?.common?.unit || '';
-                        }
-                        this.setState(newState);
-                    }}
-                >
-                    {I18n.t('jqui_Generate steps')}
-                </Button>
-                {this.state.states ? <Button
-                    variant="contained"
-                    onClick={() => this.calculateFirst(true)}
-                >
-                    {I18n.t('jqui_Generate states')}
-                </Button> : null}
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>
-                                {I18n.t('Value')}
-                            </TableCell>
-                            <TableCell>{I18n.t('Text')}</TableCell>
-                            <TableCell>{I18n.t('Icon')}</TableCell>
-                            <TableCell>{I18n.t('Image')}</TableCell>
-                            <TableCell>{I18n.t('color')}</TableCell>
-                            <TableCell>{I18n.t('jqui_active_color')}</TableCell>
-                            <TableCell>{I18n.t('jqui_tooltip')}</TableCell>
-                            <TableCell>
-                                <Fab
-                                    size="small"
-                                    style={{ marginRight: 8 }}
-                                    onClick={() => this.setState({ editDialog: { add: true, value: '' } })}
-                                >
-                                    <Add />
-                                </Fab>
-                            </TableCell>
-                            <TableCell>
-                                {I18n.t('jqui_Example')}
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {this.state.values.map((_, i) => this.renderLine(i))}
-                    </TableBody>
-                </Table>
-            </DialogContent>
-            <DialogActions>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    startIcon={<Check />}
-                    onClick={() => {
-                        // apply changes
-                        const data = { ...this.props.data };
-                        for (let i = 0; i < this.state.values.length; i++) {
-                            data[`text${i + 1}`] = this.state.texts[i];
-                            data[`value${i + 1}`] = this.state.values[i];
-                            data[`icon${i + 1}`] = this.state.icons[i];
-                            data[`image${i + 1}`] = this.state.images[i];
-                            data[`color${i + 1}`] = this.state.colors[i];
-                            data[`tooltip${i + 1}`] = this.state.tooltips[i];
-                            data[`activeColor${i + 1}`] = this.state.activeColors[i];
-                            data[`g_states-${i + 1}`] = true;
-                        }
-                        // delete all others
-                        for (let i = this.state.values.length + 1; i < 30; i++) {
-                            delete data[`text${i}`];
-                            delete data[`value${i}`];
-                            delete data[`icon${i}`];
-                            delete data[`image${i}`];
-                            delete data[`color${i}`];
-                            delete data[`tooltip${i}`];
-                            delete data[`activeColor${i}`];
-                            delete data[`g_states-${i}`];
-                        }
+                            // delete all others
+                            for (let i = this.state.values.length + 1; i < 30; i++) {
+                                delete data[`text${i}`];
+                                delete data[`value${i}`];
+                                delete data[`icon${i}`];
+                                delete data[`image${i}`];
+                                delete data[`color${i}`];
+                                delete data[`tooltip${i}`];
+                                delete data[`activeColor${i}`];
+                                delete data[`g_states-${i}`];
+                            }
 
-                        data.count = this.state.values.length;
+                            data.count = this.state.values.length;
 
-                        this.props.onDataChange(data);
+                            this.props.onDataChange(data);
 
-                        this.setState({ dialog: false });
-                    }}
-                >
-                    {I18n.t('Apply')}
-                </Button>
-                <Button
-                    variant="contained"
-                    color="grey"
-                    startIcon={<Close />}
-                    onClick={() => this.setState({ dialog: false })}
-                >
-                    {I18n.t('Cancel')}
-                </Button>
-            </DialogActions>
-        </Dialog>;
+                            this.setState({ dialog: false });
+                        }}
+                    >
+                        {I18n.t('Apply')}
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="grey"
+                        startIcon={<Close />}
+                        onClick={() => this.setState({ dialog: false })}
+                    >
+                        {I18n.t('Cancel')}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        );
     }
 
-    render() {
+    render(): React.JSX.Element[] {
         return [
             <Button
                 fullWidth

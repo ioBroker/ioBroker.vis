@@ -17,11 +17,7 @@ import { BiImport } from 'react-icons/bi';
 import { I18n, type ThemeName, type ThemeType } from '@iobroker/adapter-react-v5';
 
 import type Editor from '@/Editor';
-import type {
-    View as ViewType,
-    AnyWidgetId, VisTheme,
-} from '@iobroker/types-vis-2';
-import commonStyles from '@/Utils/styles';
+import type { View as ViewType, AnyWidgetId, VisTheme } from '@iobroker/types-vis-2';
 import IODialog from '../../Components/IODialog';
 import Folder from './Folder';
 import Root from './Root';
@@ -31,11 +27,7 @@ import ImportDialog from './ImportDialog';
 import FolderDialog from './FolderDialog';
 import { DndPreview, isTouchDevice } from '../../Utils';
 import { store } from '../../Store';
-import {
-    deepClone, getNewWidgetId,
-    hasViewAccess, isGroup,
-    pasteGroup,
-} from '../../Utils/utils';
+import { deepClone, getNewWidgetId, hasViewAccess, isGroup, pasteGroup } from '../../Utils/utils';
 
 const styles: Record<string, any> = {
     dialog: {
@@ -106,19 +98,19 @@ const ViewsManager: React.FC<ViewsManagerProps> = props => {
 
     const { visProject, activeUser } = store.getState();
 
-    const moveFolder = (id: string, parentId: string) => {
+    const moveFolder = (id: string, parentId: string): void => {
         const project = deepClone(visProject);
         project.___settings.folders.find(folder => folder.id === id).parentId = parentId;
-        props.changeProject(project);
+        void props.changeProject(project);
     };
 
-    const moveView = (name: string, parentId: string) => {
+    const moveView = (name: string, parentId: string): void => {
         const project = deepClone(visProject);
         project[name].parentId = parentId;
-        props.changeProject(project);
+        void props.changeProject(project);
     };
 
-    const importViewAction = (view: string, data: string) => {
+    const importViewAction = (view: string, data: string): void => {
         const project = deepClone(visProject);
         const viewObject: ViewType = JSON.parse(data);
 
@@ -127,18 +119,23 @@ const ViewsManager: React.FC<ViewsManagerProps> = props => {
         }
 
         if (!viewObject || !viewObject.settings || !viewObject.widgets) {
-            console.warn('Cannot import view: view is non-existing or missing one of the required properties "settings, widgets"');
+            console.warn(
+                'Cannot import view: view is non-existing or missing one of the required properties "settings, widgets"',
+            );
             return;
         }
 
         const originalWidgets = deepClone(viewObject.widgets);
 
-        project[view] =  { ...viewObject, widgets: {}, activeWidgets: [] };
+        project[view] = { ...viewObject, widgets: {}, activeWidgets: [] };
 
         for (const [wid, widget] of Object.entries(originalWidgets)) {
             if (isGroup(widget)) {
                 pasteGroup({
-                    group: widget, widgets: project[view].widgets, groupMembers: originalWidgets, project,
+                    group: widget,
+                    widgets: project[view].widgets,
+                    groupMembers: originalWidgets,
+                    project,
                 });
             } else if (!widget.groupid) {
                 const newWid = getNewWidgetId(project);
@@ -147,173 +144,228 @@ const ViewsManager: React.FC<ViewsManagerProps> = props => {
         }
 
         viewObject.name = view;
-        props.changeProject(project);
+        void props.changeProject(project);
     };
 
-    const renderViews = (parentId?: string) => Object.keys(visProject)
-        .filter(name => !name.startsWith('___'))
-        .filter(name => (parentId ? visProject[name].parentId === parentId : !visProject[name].parentId))
-        .sort((name1, name2) => (name1.toLowerCase().localeCompare(name2.toLowerCase())))
-        .map((name, key) => <div key={key} style={styles.viewContainer}>
-            <View
-                name={name}
-                setIsDragging={setIsDragging}
-                isDragging={isDragging}
-                moveView={moveView}
-                setExportDialog={setExportDialog}
-                setImportDialog={setImportDialog}
-                selectedView={props.selectedView}
-                theme={props.theme}
-                openedViews={store.getState().visProject.___settings.openedViews}
-                {...props}
-                hasPermissions={hasViewAccess({
-                    view: name, user: activeUser, project: visProject, editMode: props.editMode,
-                })}
-            />
-        </div>);
+    const renderViews = (parentId?: string): React.JSX.Element[] =>
+        Object.keys(visProject)
+            .filter(name => !name.startsWith('___'))
+            .filter(name => (parentId ? visProject[name].parentId === parentId : !visProject[name].parentId))
+            .sort((name1, name2) => name1.toLowerCase().localeCompare(name2.toLowerCase()))
+            .map((name, key) => (
+                <div
+                    key={key}
+                    style={styles.viewContainer}
+                >
+                    <View
+                        name={name}
+                        setIsDragging={setIsDragging}
+                        isDragging={isDragging}
+                        moveView={moveView}
+                        setExportDialog={setExportDialog}
+                        setImportDialog={setImportDialog}
+                        selectedView={props.selectedView}
+                        theme={props.theme}
+                        openedViews={store.getState().visProject.___settings.openedViews}
+                        {...props}
+                        hasPermissions={hasViewAccess({
+                            view: name,
+                            user: activeUser,
+                            project: visProject,
+                            editMode: props.editMode,
+                        })}
+                    />
+                </div>
+            ));
 
-    const renderFolders = (parentId?: string) => {
+    const renderFolders = (parentId?: string): React.JSX.Element[] => {
         const folders = visProject.___settings.folders
             .filter(folder => (parentId ? folder.parentId === parentId : !folder.parentId))
             .sort((folder1, folder2) => folder1.name.toLowerCase().localeCompare(folder2.name.toLowerCase()));
 
-        return folders.map((folder, key) => <div key={key}>
-            <div style={styles.folderContainer}>
-                <Folder
-                    setIsDragging={setIsDragging}
-                    isDragging={isDragging}
-                    folder={folder}
-                    theme={props.theme}
-                    editMode={props.editMode}
-                    setFolderDialog={setFolderDialog}
-                    setFolderDialogName={setFolderDialogName}
-                    setFolderDialogId={setFolderDialogId}
-                    setFolderDialogParentId={setFolderDialogParentId}
-                    moveFolder={moveFolder}
-                    foldersCollapsed={foldersCollapsed}
-                    setFoldersCollapsed={setFoldersCollapsed}
-                    showDialog={props.showDialog}
-                />
-            </div>
-            {foldersCollapsed.includes(folder.id) ? null : <div style={{ paddingLeft: 10 }}>
-                {renderFolders(folder.id)}
-                {renderViews(folder.id)}
-            </div>}
-        </div>);
-    };
-
-    return <IODialog
-        open={props.open}
-        onClose={props.onClose}
-        title="Manage views"
-        closeTitle="Close"
-    >
-        <div style={styles.dialog}>
-            <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>
-                <DndPreview />
-                {props.editMode ? <AppBar position="static" style={styles.topBar}>
-                    {props.editMode ? <Tooltip title={I18n.t('Add view')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
-                        <IconButton
-                            size="small"
-                            onClick={() => props.showDialog('add', props.name, null, (newView: string) => {
-                                newView && props.onClose();
-                            })}
-                        >
-                            <AddIcon />
-                        </IconButton>
-                    </Tooltip> : null}
-                    {props.editMode ? <Tooltip title={I18n.t('Import')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
-                        <IconButton onClick={() => setImportDialog('')} size="small">
-                            <BiImport />
-                        </IconButton>
-                    </Tooltip> : null}
-                    {props.editMode ? <Tooltip title={I18n.t('Add folder')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
-                        <IconButton
-                            size="small"
-                            onClick={() => {
-                                setFolderDialog('add');
-                                setFolderDialogName('');
-                                setFolderDialogParentId(null);
-                            }}
-                        >
-                            <CreateNewFolderIcon />
-                        </IconButton>
-                    </Tooltip> : null}
-                    {props.editMode ? <Tooltip title={I18n.t('Show all views')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
-                        <IconButton
-                            size="small"
-                            onClick={async () => {
-                                const proj = deepClone(store.getState().visProject);
-
-                                const views = Object.keys(proj).filter(name => !name.startsWith('___'));
-
-                                for (const view of views) {
-                                    proj.___settings.openedViews.push(view);
-                                }
-
-                                await props.changeProject(proj, false);
-                            }}
-                        >
-                            <VisibilityIcon />
-                        </IconButton>
-                    </Tooltip> : null}
-                    {props.editMode ? <Tooltip title={I18n.t('Hide all views')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
-                        <IconButton
-                            size="small"
-                            onClick={async () => {
-                                const proj = deepClone(store.getState().visProject);
-                                proj.___settings.openedViews = [];
-
-                                await props.changeProject(proj, false);
-                            }}
-                        >
-                            <VisibilityOffIcon />
-                        </IconButton>
-                    </Tooltip> : null}
-                </AppBar> : null}
-                <div style={{
-                    width: '100%',
-                    borderStyle: 'dashed',
-                    borderRadius: 4,
-                    borderWidth: 1,
-                    borderColor: isOverRoot ? 'rgba(200, 200, 200, 1)' : 'rgba(128, 128, 128, 0)',
-                    lineHeight: '32px',
-                    verticalAlign: 'middle',
-                }}
-                >
-                    {renderFolders()}
-                    {renderViews()}
-                    <Root
+        return folders.map((folder, key) => (
+            <div key={key}>
+                <div style={styles.folderContainer}>
+                    <Folder
+                        setIsDragging={setIsDragging}
                         isDragging={isDragging}
-                        setIsOverRoot={setIsOverRoot}
+                        folder={folder}
+                        theme={props.theme}
+                        editMode={props.editMode}
+                        setFolderDialog={setFolderDialog}
+                        setFolderDialogName={setFolderDialogName}
+                        setFolderDialogId={setFolderDialogId}
+                        setFolderDialogParentId={setFolderDialogParentId}
+                        moveFolder={moveFolder}
+                        foldersCollapsed={foldersCollapsed}
+                        setFoldersCollapsed={setFoldersCollapsed}
+                        showDialog={props.showDialog}
                     />
                 </div>
-            </DndProvider>
-        </div>
-        <FolderDialog
-            dialog={folderDialog}
-            dialogFolder={folderDialogId}
-            dialogName={folderDialogName}
-            dialogParentId={folderDialogParentId}
-            setDialog={setFolderDialog}
-            setDialogFolder={setFolderDialogId}
-            setDialogName={setFolderDialogName}
-            changeProject={props.changeProject}
-        />
-        {importDialog !== false ? <ImportDialog
-            open
-            onClose={() => setImportDialog(false)}
-            view={importDialog || ''}
-            importViewAction={importViewAction}
-            themeType={props.themeType}
-        /> : null}
-        {exportDialog !== false ? <ExportDialog
-            open
-            onClose={() => setExportDialog(false)}
-            view={exportDialog || ''}
-            themeType={props.themeType}
-        /> : null}
-    </IODialog>;
+                {foldersCollapsed.includes(folder.id) ? null : (
+                    <div style={{ paddingLeft: 10 }}>
+                        {renderFolders(folder.id)}
+                        {renderViews(folder.id)}
+                    </div>
+                )}
+            </div>
+        ));
+    };
+
+    return (
+        <IODialog
+            open={props.open}
+            onClose={props.onClose}
+            title="Manage views"
+            closeTitle="Close"
+        >
+            <div style={styles.dialog}>
+                <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>
+                    <DndPreview />
+                    {props.editMode ? (
+                        <AppBar
+                            position="static"
+                            style={styles.topBar}
+                        >
+                            {props.editMode ? (
+                                <Tooltip
+                                    title={I18n.t('Add view')}
+                                    slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+                                >
+                                    <IconButton
+                                        size="small"
+                                        onClick={() =>
+                                            props.showDialog('add', props.name, null, (newView: string) => {
+                                                newView && props.onClose();
+                                            })
+                                        }
+                                    >
+                                        <AddIcon />
+                                    </IconButton>
+                                </Tooltip>
+                            ) : null}
+                            {props.editMode ? (
+                                <Tooltip
+                                    title={I18n.t('Import')}
+                                    slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+                                >
+                                    <IconButton
+                                        onClick={() => setImportDialog('')}
+                                        size="small"
+                                    >
+                                        <BiImport />
+                                    </IconButton>
+                                </Tooltip>
+                            ) : null}
+                            {props.editMode ? (
+                                <Tooltip
+                                    title={I18n.t('Add folder')}
+                                    slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+                                >
+                                    <IconButton
+                                        size="small"
+                                        onClick={() => {
+                                            setFolderDialog('add');
+                                            setFolderDialogName('');
+                                            setFolderDialogParentId(null);
+                                        }}
+                                    >
+                                        <CreateNewFolderIcon />
+                                    </IconButton>
+                                </Tooltip>
+                            ) : null}
+                            {props.editMode ? (
+                                <Tooltip
+                                    title={I18n.t('Show all views')}
+                                    slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+                                >
+                                    <IconButton
+                                        size="small"
+                                        onClick={async () => {
+                                            const proj = deepClone(store.getState().visProject);
+
+                                            const views = Object.keys(proj).filter(name => !name.startsWith('___'));
+
+                                            for (const view of views) {
+                                                proj.___settings.openedViews.push(view);
+                                            }
+
+                                            await props.changeProject(proj, false);
+                                        }}
+                                    >
+                                        <VisibilityIcon />
+                                    </IconButton>
+                                </Tooltip>
+                            ) : null}
+                            {props.editMode ? (
+                                <Tooltip
+                                    title={I18n.t('Hide all views')}
+                                    slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+                                >
+                                    <IconButton
+                                        size="small"
+                                        onClick={async () => {
+                                            const proj = deepClone(store.getState().visProject);
+                                            proj.___settings.openedViews = [];
+
+                                            await props.changeProject(proj, false);
+                                        }}
+                                    >
+                                        <VisibilityOffIcon />
+                                    </IconButton>
+                                </Tooltip>
+                            ) : null}
+                        </AppBar>
+                    ) : null}
+                    <div
+                        style={{
+                            width: '100%',
+                            borderStyle: 'dashed',
+                            borderRadius: 4,
+                            borderWidth: 1,
+                            borderColor: isOverRoot ? 'rgba(200, 200, 200, 1)' : 'rgba(128, 128, 128, 0)',
+                            lineHeight: '32px',
+                            verticalAlign: 'middle',
+                        }}
+                    >
+                        {renderFolders()}
+                        {renderViews()}
+                        <Root
+                            isDragging={isDragging}
+                            setIsOverRoot={setIsOverRoot}
+                        />
+                    </div>
+                </DndProvider>
+            </div>
+            <FolderDialog
+                dialog={folderDialog}
+                dialogFolder={folderDialogId}
+                dialogName={folderDialogName}
+                dialogParentId={folderDialogParentId}
+                setDialog={setFolderDialog}
+                setDialogFolder={setFolderDialogId}
+                setDialogName={setFolderDialogName}
+                changeProject={props.changeProject}
+            />
+            {importDialog !== false ? (
+                <ImportDialog
+                    open
+                    onClose={() => setImportDialog(false)}
+                    view={importDialog || ''}
+                    importViewAction={importViewAction}
+                    themeType={props.themeType}
+                />
+            ) : null}
+            {exportDialog !== false ? (
+                <ExportDialog
+                    open
+                    onClose={() => setExportDialog(false)}
+                    view={exportDialog || ''}
+                    themeType={props.themeType}
+                />
+            ) : null}
+        </IODialog>
+    );
 };
 
-export default ViewsManager as React.FC<ViewsManagerProps>;
+export default ViewsManager;

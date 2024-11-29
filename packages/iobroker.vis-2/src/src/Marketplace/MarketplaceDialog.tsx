@@ -1,8 +1,6 @@
 import React from 'react';
 
-import {
-    Button, Dialog, DialogActions, DialogContent, DialogTitle,
-} from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import { Close } from '@mui/icons-material';
 
 import { I18n, type ThemeName } from '@iobroker/adapter-react-v5';
@@ -32,7 +30,7 @@ export interface MarketplaceDialogProps {
     themeName: ThemeName;
 }
 
-const MarketplaceDialog = (props: MarketplaceDialogProps) => {
+const MarketplaceDialog = (props: MarketplaceDialogProps): React.JSX.Element => {
     const VisMarketplace = window.VisMarketplace?.default;
 
     let installWidget: (marketplace: MarketplaceWidgetRevision) => void;
@@ -50,7 +48,8 @@ const MarketplaceDialog = (props: MarketplaceDialogProps) => {
                     };
                     Object.keys(project[view].widgets).forEach((wid: GroupWidgetId | SingleWidgetId) => {
                         const widget: Widget = project[view].widgets[wid];
-                        if (widget.marketplace?.widget_id === marketplace.widget_id &&
+                        if (
+                            widget.marketplace?.widget_id === marketplace.widget_id &&
                             widget.marketplace?.version !== marketplace.version
                         ) {
                             viewWidgets.widgets.push(wid);
@@ -70,37 +69,42 @@ const MarketplaceDialog = (props: MarketplaceDialogProps) => {
         };
     }
 
-    return <Dialog
-        open={!0}
-        fullScreen
-        onClose={props.onClose}
-        PaperProps={{ color: 'primary' }}
-    >
-        <DialogTitle>{props.addPage ? I18n.t('Add new or update existing widget') : I18n.t('Browse the widgeteria')}</DialogTitle>
-        <DialogContent>
-            {VisMarketplace &&
-                // @ts-expect-error how to fix it?
-                <VisMarketplace
-                    language={I18n.getLanguage()}
-                    addPage={props.addPage}
-                    widget={props.widget}
-                    onClose={props.onClose}
-                    installWidget={installWidget}
-                    installedWidgets={props.installedWidgets}
-                    themeName={props.themeName}
-                    onAdded={() => props.onClose()}
-                />}
-        </DialogContent>
-        <DialogActions>
-            <Button
-                onClick={props.onClose}
-                variant="contained"
-                startIcon={<Close />}
-            >
-                {I18n.t('Close')}
-            </Button>
-        </DialogActions>
-    </Dialog>;
+    return (
+        <Dialog
+            open={!0}
+            fullScreen
+            onClose={props.onClose}
+            PaperProps={{ color: 'primary' }}
+        >
+            <DialogTitle>
+                {props.addPage ? I18n.t('Add new or update existing widget') : I18n.t('Browse the widgeteria')}
+            </DialogTitle>
+            <DialogContent>
+                {VisMarketplace && (
+                    // @ts-expect-error how to fix it?
+                    <VisMarketplace
+                        language={I18n.getLanguage()}
+                        addPage={props.addPage}
+                        widget={props.widget}
+                        onClose={props.onClose}
+                        installWidget={installWidget}
+                        installedWidgets={props.installedWidgets}
+                        themeName={props.themeName}
+                        onAdded={() => props.onClose()}
+                    />
+                )}
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    onClick={props.onClose}
+                    variant="contained"
+                    startIcon={<Close />}
+                >
+                    {I18n.t('Close')}
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
 };
 
 export default MarketplaceDialog;

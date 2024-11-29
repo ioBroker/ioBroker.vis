@@ -22,7 +22,7 @@ import type {
 import JQuiButton from './JQuiButton';
 
 class JQuiContainerButtonDialog extends JQuiButton {
-    static getWidgetInfo() {
+    static getWidgetInfo(): RxWidgetInfo {
         const widgetInfo = JQuiButton.getWidgetInfo() as unknown as RxWidgetInfoWriteable;
 
         const newWidgetInfo = {
@@ -45,7 +45,10 @@ class JQuiContainerButtonDialog extends JQuiButton {
         const buttonText = JQuiButton.findField<RxWidgetInfoAttributesFieldText>(newWidgetInfo, 'buttontext');
         buttonText.default = 'Container Dialog';
 
-        const containsView = JQuiButton.findField<RxWidgetInfoAttributesFieldSelectSimple>(newWidgetInfo, 'contains_view');
+        const containsView = JQuiButton.findField<RxWidgetInfoAttributesFieldSelectSimple>(
+            newWidgetInfo,
+            'contains_view',
+        );
         containsView.default = '';
 
         return newWidgetInfo as RxWidgetInfo;

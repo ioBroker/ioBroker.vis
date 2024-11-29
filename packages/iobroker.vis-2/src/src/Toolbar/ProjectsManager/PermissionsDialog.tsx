@@ -1,12 +1,7 @@
 import React from 'react';
 
-import {
-    Check as SaveIcon,
-    Info as InfoIcon,
-} from '@mui/icons-material';
-import {
-    Checkbox,
-} from '@mui/material';
+import { Check as SaveIcon, Info as InfoIcon } from '@mui/icons-material';
+import { Checkbox } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import IconButton from '@mui/material/IconButton';
@@ -15,9 +10,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import Collapse from '@mui/material/Collapse';
 import { type LegacyConnection, I18n } from '@iobroker/adapter-react-v5';
-import type {
-    AnyWidgetId, Permissions, Project, Widget,
-} from '@iobroker/types-vis-2';
+import type { AnyWidgetId, Permissions, Project, Widget } from '@iobroker/types-vis-2';
 import { store } from '@/Store';
 import { deepClone, DEFAULT_PERMISSIONS } from '@/Utils/utils';
 import IODialog from '../../Components/IODialog';
@@ -32,7 +25,7 @@ interface PermissionsDialogProps {
 }
 
 /** Permissions assignment to username */
-type PermissionsMap = Map<string, Permissions>
+type PermissionsMap = Map<string, Permissions>;
 
 interface PermissionsDialogState {
     /** Contains all existing users */
@@ -43,7 +36,7 @@ interface PermissionsDialogState {
     viewPermissions: Record<string, PermissionsMap>;
     /** The permissions assignment to users for each widget */
     widgetPermissions: Record<string, PermissionsMap>;
-    /** Id for each card and open status */
+    /** ID for each card and open status */
     cardOpen: Record<string, boolean>;
 }
 
@@ -85,7 +78,12 @@ export default class PermissionsDialog extends React.Component<PermissionsDialog
      * Lifecycle hook called when component is mounted
      */
     async componentDidMount(): Promise<void> {
-        const userView: Record<string, ioBroker.UserObject> = await this.props.socket.getObjectViewSystem('user', 'system.user.', 'system.user.\u9999') as Record<string, ioBroker.UserObject>;
+        const userView: Record<string, ioBroker.UserObject> =
+            await this.props.socket.getObjectViewSystem<ioBroker.UserObject>(
+                'user',
+                'system.user.',
+                'system.user.\u9999',
+            );
         const { visProject } = store.getState();
         const projectPermissions = new Map<string, Permissions>();
         const viewPermissions: Record<string, PermissionsMap> = {};
@@ -119,7 +117,10 @@ export default class PermissionsDialog extends React.Component<PermissionsDialog
         }
 
         this.setState({
-            users: Object.keys(userView), projectPermissions, viewPermissions, widgetPermissions,
+            users: Object.keys(userView),
+            projectPermissions,
+            viewPermissions,
+            widgetPermissions,
         });
     }
 
@@ -173,21 +174,28 @@ export default class PermissionsDialog extends React.Component<PermissionsDialog
      * Render the info dialog
      */
     static renderInfoDialog(): React.JSX.Element {
-        return <div style={{
-            display: 'inline-flex', alignItems: 'center', border: '1px solid', borderRadius: '5px', width: '100%',
-        }}
-        >
-            <InfoIcon sx={{ margin: '4px' }} />
-            <div style={{ margin: '6px', fontSize: '12px' }}>
-                <p style={{ margin: 0 }}>
-                    {I18n.t('Only the admin user can change permissions')}
-                    <br />
-                    {I18n.t('Read = Runtime access')}
-                    <br />
-                    {I18n.t('Write = Edit mode access')}
-                </p>
+        return (
+            <div
+                style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    border: '1px solid',
+                    borderRadius: '5px',
+                    width: '100%',
+                }}
+            >
+                <InfoIcon sx={{ margin: '4px' }} />
+                <div style={{ margin: '6px', fontSize: '12px' }}>
+                    <p style={{ margin: 0 }}>
+                        {I18n.t('Only the admin user can change permissions')}
+                        <br />
+                        {I18n.t('Read = Runtime access')}
+                        <br />
+                        {I18n.t('Write = Edit mode access')}
+                    </p>
+                </div>
             </div>
-        </div>;
+        );
     }
 
     /**
@@ -196,52 +204,68 @@ export default class PermissionsDialog extends React.Component<PermissionsDialog
      * @param options project, wid, user and view info
      */
     renderWidgetPermissions(options: RenderWidgetPermissionsOptions): React.JSX.Element {
-        const {
-            view, user, activeUser, wid, widget,
-        } = options;
+        const { view, user, activeUser, wid, widget } = options;
 
-        return <div style={{ display: 'flex' }} key={`${user}-${view}-${wid}`}>
-            <p style={{ margin: 'auto', fontSize: 12 }}>{`${widget.data.name ? `${widget.data.name} (${wid})` : wid}:`}</p>
-            <div style={{
-                width: '100%',
-                alignSelf: 'center',
-                display: 'flex',
-                justifyContent: 'flex-end',
-                alignItems: 'center',
-            }}
+        return (
+            <div
+                style={{ display: 'flex' }}
+                key={`${user}-${view}-${wid}`}
             >
-                <Checkbox
-                    disabled={user === this.adminUser || activeUser !== this.adminUser || !this.state.projectPermissions.get(user)?.read || !this.state.viewPermissions[view].get(user)?.read}
-                    checked={this.state.widgetPermissions[wid]?.get(user)?.read}
-                    onClick={() => {
-                        const newState = this.state;
-                        const currVal = this.state.widgetPermissions[wid].get(user);
-
-                        newState.widgetPermissions[wid].set(user, {
-                            read: !currVal?.read,
-                            write: !!currVal?.write,
-                        });
-                        this.setState(newState);
+                <p
+                    style={{ margin: 'auto', fontSize: 12 }}
+                >{`${widget.data.name ? `${widget.data.name} (${wid})` : wid}:`}</p>
+                <div
+                    style={{
+                        width: '100%',
+                        alignSelf: 'center',
+                        display: 'flex',
+                        justifyContent: 'flex-end',
+                        alignItems: 'center',
                     }}
-                />
-                {I18n.t('Read')}
-                <Checkbox
-                    disabled={user === this.adminUser || activeUser !== this.adminUser || !this.state.projectPermissions.get(user)?.write || !this.state.viewPermissions[view].get(user)?.write}
-                    checked={this.state.widgetPermissions[wid]?.get(user)?.write}
-                    onClick={() => {
-                        const newState = this.state;
-                        const currVal = this.state.widgetPermissions[wid].get(user);
+                >
+                    <Checkbox
+                        disabled={
+                            user === this.adminUser ||
+                            activeUser !== this.adminUser ||
+                            !this.state.projectPermissions.get(user)?.read ||
+                            !this.state.viewPermissions[view].get(user)?.read
+                        }
+                        checked={this.state.widgetPermissions[wid]?.get(user)?.read}
+                        onClick={() => {
+                            const newState = this.state;
+                            const currVal = this.state.widgetPermissions[wid].get(user);
 
-                        newState.widgetPermissions[wid].set(user, {
-                            read: !!currVal?.read,
-                            write: !currVal?.write,
-                        });
-                        this.setState(newState);
-                    }}
-                />
-                {I18n.t('Write')}
+                            newState.widgetPermissions[wid].set(user, {
+                                read: !currVal?.read,
+                                write: !!currVal?.write,
+                            });
+                            this.setState(newState);
+                        }}
+                    />
+                    {I18n.t('Read')}
+                    <Checkbox
+                        disabled={
+                            user === this.adminUser ||
+                            activeUser !== this.adminUser ||
+                            !this.state.projectPermissions.get(user)?.write ||
+                            !this.state.viewPermissions[view].get(user)?.write
+                        }
+                        checked={this.state.widgetPermissions[wid]?.get(user)?.write}
+                        onClick={() => {
+                            const newState = this.state;
+                            const currVal = this.state.widgetPermissions[wid].get(user);
+
+                            newState.widgetPermissions[wid].set(user, {
+                                read: !!currVal?.read,
+                                write: !currVal?.write,
+                            });
+                            this.setState(newState);
+                        }}
+                    />
+                    {I18n.t('Write')}
+                </div>
             </div>
-        </div>;
+        );
     }
 
     /**
@@ -250,86 +274,101 @@ export default class PermissionsDialog extends React.Component<PermissionsDialog
      * @param options information about view and user
      */
     renderViewPermissions(options: RenderViewPermissionsOptions): React.JSX.Element {
-        const {
-            view, user, activeUser, visProject,
-        } = options;
+        const { view, user, activeUser, visProject } = options;
 
         const viewId = `${user}-${view}`;
 
-        return <Card sx={{ border: '1px solid rgba(211,211,211,0.6)', marginTop: '5px' }}>
-            <CardHeader
-                title={view}
-                titleTypographyProps={{ fontWeight: 'bold', fontSize: 12 }}
-                action={<div
-                    style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-                    key={viewId}
-                >
-                    <div style={{ display: 'flex' }}>
-                        <div style={{
-                            width: '100%',
-                            alignSelf: 'center',
-                            display: 'flex',
-                            justifyContent: 'flex-end',
-                            alignItems: 'center',
-                        }}
+        return (
+            <Card sx={{ border: '1px solid rgba(211,211,211,0.6)', marginTop: '5px' }}>
+                <CardHeader
+                    title={view}
+                    titleTypographyProps={{ fontWeight: 'bold', fontSize: 12 }}
+                    action={
+                        <div
+                            style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                            key={viewId}
                         >
-                            <Checkbox
-                                disabled={user === this.adminUser || activeUser !== this.adminUser || !this.state.projectPermissions.get(user)?.read}
-                                checked={this.state.viewPermissions[view]?.get(user)?.read}
-                                onClick={() => {
-                                    const newState = this.state;
-                                    const currVal = this.state.viewPermissions[view].get(user);
+                            <div style={{ display: 'flex' }}>
+                                <div
+                                    style={{
+                                        width: '100%',
+                                        alignSelf: 'center',
+                                        display: 'flex',
+                                        justifyContent: 'flex-end',
+                                        alignItems: 'center',
+                                    }}
+                                >
+                                    <Checkbox
+                                        disabled={
+                                            user === this.adminUser ||
+                                            activeUser !== this.adminUser ||
+                                            !this.state.projectPermissions.get(user)?.read
+                                        }
+                                        checked={this.state.viewPermissions[view]?.get(user)?.read}
+                                        onClick={() => {
+                                            const newState = this.state;
+                                            const currVal = this.state.viewPermissions[view].get(user);
 
-                                    newState.viewPermissions[view].set(user, {
-                                        read: !currVal?.read,
-                                        write: !!currVal?.write,
-                                    });
-                                    this.setState(newState);
-                                }}
-                            />
-                            {I18n.t('Read')}
-                            <Checkbox
-                                disabled={user === this.adminUser || activeUser !== this.adminUser || !this.state.projectPermissions.get(user)?.write}
-                                checked={this.state.viewPermissions[view]?.get(user)?.write}
-                                onClick={() => {
-                                    const newState = this.state;
-                                    const currVal = this.state.viewPermissions[view].get(user);
+                                            newState.viewPermissions[view].set(user, {
+                                                read: !currVal?.read,
+                                                write: !!currVal?.write,
+                                            });
+                                            this.setState(newState);
+                                        }}
+                                    />
+                                    {I18n.t('Read')}
+                                    <Checkbox
+                                        disabled={
+                                            user === this.adminUser ||
+                                            activeUser !== this.adminUser ||
+                                            !this.state.projectPermissions.get(user)?.write
+                                        }
+                                        checked={this.state.viewPermissions[view]?.get(user)?.write}
+                                        onClick={() => {
+                                            const newState = this.state;
+                                            const currVal = this.state.viewPermissions[view].get(user);
 
-                                    newState.viewPermissions[view].set(user, {
-                                        read: !!currVal?.read,
-                                        write: !currVal?.write,
-                                    });
-                                    this.setState(newState);
-                                }}
-                            />
-                            {I18n.t('Write')}
+                                            newState.viewPermissions[view].set(user, {
+                                                read: !!currVal?.read,
+                                                write: !currVal?.write,
+                                            });
+                                            this.setState(newState);
+                                        }}
+                                    />
+                                    {I18n.t('Write')}
+                                </div>
+                                <IconButton
+                                    onClick={() => {
+                                        this.setState({
+                                            cardOpen: {
+                                                ...this.state.cardOpen,
+                                                [viewId]: !this.state.cardOpen[viewId],
+                                            },
+                                        });
+                                    }}
+                                    aria-label="expand"
+                                    size="small"
+                                >
+                                    {this.state.cardOpen[viewId] ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                                </IconButton>
+                            </div>
                         </div>
-                        <IconButton
-                            onClick={() => {
-                                this.setState({
-                                    cardOpen: {
-                                        ...this.state.cardOpen,
-                                        [viewId]: !this.state.cardOpen[viewId],
-                                    },
-                                });
-                            }}
-                            aria-label="expand"
-                            size="small"
-                        >
-                            {this.state.cardOpen[viewId] ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-                        </IconButton>
-                    </div>
-                </div>}
-            />
-            <Collapse
-                in={this.state.cardOpen[viewId]}
-                sx={{ borderTop: '1px solid rgba(211,211,211,0.6)' }}
-            >
-                <CardContent>
-                    {this.state.cardOpen[viewId] ? Object.entries(visProject[view].widgets).map(([wid, widget]) => this.renderWidgetPermissions({ ...options, wid: wid as AnyWidgetId, widget })) : null}
-                </CardContent>
-            </Collapse>
-        </Card>;
+                    }
+                />
+                <Collapse
+                    in={this.state.cardOpen[viewId]}
+                    sx={{ borderTop: '1px solid rgba(211,211,211,0.6)' }}
+                >
+                    <CardContent>
+                        {this.state.cardOpen[viewId]
+                            ? Object.entries(visProject[view].widgets).map(([wid, widget]) =>
+                                  this.renderWidgetPermissions({ ...options, wid: wid as AnyWidgetId, widget }),
+                              )
+                            : null}
+                    </CardContent>
+                </Collapse>
+            </Card>
+        );
     }
 
     /**
@@ -338,89 +377,109 @@ export default class PermissionsDialog extends React.Component<PermissionsDialog
     render(): React.JSX.Element {
         const { activeUser, visProject } = store.getState();
 
-        return <IODialog
-            title="Permissions"
-            open={!0}
-            onClose={() => this.props.onClose()}
-            actionNoClose
-            action={() => this.onSave()}
-            actionTitle="Save"
-            ActionIcon={SaveIcon}
-            actionDisabled={false}
-            closeDisabled={false}
-            minWidth="600px"
-        >
-            {PermissionsDialog.renderInfoDialog()}
-            {this.state.users.map(user =>
-                <Card sx={{ border: '1px solid rgba(211,211,211,0.6)', marginTop: '5px' }}>
-                    <CardHeader
-                        title={user}
-                        titleTypographyProps={{ fontWeight: 'bold', fontSize: 12 }}
-                        action={<div
-                            style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-                            key={user}
-                        >
-                            <div>
-                                <Checkbox
-                                    disabled={user === this.adminUser || activeUser !== this.adminUser}
-                                    checked={this.state.projectPermissions.get(user)?.read}
-                                    onClick={() => {
-                                        const newState = this.state;
-                                        const currVal = this.state.projectPermissions.get(user);
-
-                                        newState.projectPermissions.set(user, {
-                                            read: !currVal?.read,
-                                            write: !!currVal?.write,
-                                        });
-                                        this.setState(newState);
-                                    }}
-                                />
-                                {I18n.t('Read')}
-                                <Checkbox
-                                    disabled={user === this.adminUser || activeUser !== this.adminUser}
-                                    checked={this.state.projectPermissions.get(user)?.write}
-                                    onClick={() => {
-                                        const newState = this.state;
-                                        const currVal = this.state.projectPermissions.get(user);
-
-                                        newState.projectPermissions.set(user, {
-                                            read: !!currVal?.read,
-                                            write: !currVal?.write,
-                                        });
-                                        this.setState(newState);
-                                    }}
-                                />
-                                {I18n.t('Write')}
-
-                                <IconButton
-                                    onClick={() => {
-                                        this.setState({
-                                            cardOpen: {
-                                                ...this.state.cardOpen,
-                                                [user]: !this.state.cardOpen[user],
-                                            },
-                                        });
-                                    }}
-                                    aria-label="expand"
-                                    size="small"
+        return (
+            <IODialog
+                title="Permissions"
+                open={!0}
+                onClose={() => this.props.onClose()}
+                actionNoClose
+                action={() => this.onSave()}
+                actionTitle="Save"
+                ActionIcon={SaveIcon}
+                actionDisabled={false}
+                closeDisabled={false}
+                minWidth="600px"
+            >
+                {PermissionsDialog.renderInfoDialog()}
+                {this.state.users.map(user => (
+                    <Card
+                        key={user}
+                        sx={{ border: '1px solid rgba(211,211,211,0.6)', marginTop: '5px' }}
+                    >
+                        <CardHeader
+                            title={user}
+                            titleTypographyProps={{ fontWeight: 'bold', fontSize: 12 }}
+                            action={
+                                <div
+                                    style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                                    key={user}
                                 >
-                                    {this.state.cardOpen[user] ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-                                </IconButton>
-                            </div>
-                        </div>}
-                    >
-                    </CardHeader>
-                    <Collapse
-                        in={this.state.cardOpen[user]}
-                        sx={{ borderTop: '1px solid rgba(211,211,211,0.6)' }}
-                    >
-                        <CardContent>
-                            {this.state.cardOpen[user] ? Object.keys(visProject).map(view => (view === '___settings' ? null : this.renderViewPermissions({
-                                visProject, view, user, activeUser,
-                            }))) : null}
-                        </CardContent>
-                    </Collapse>
-                </Card>)}
-        </IODialog>;
+                                    <div>
+                                        <Checkbox
+                                            disabled={user === this.adminUser || activeUser !== this.adminUser}
+                                            checked={this.state.projectPermissions.get(user)?.read}
+                                            onClick={() => {
+                                                const newState = this.state;
+                                                const currVal = this.state.projectPermissions.get(user);
+
+                                                newState.projectPermissions.set(user, {
+                                                    read: !currVal?.read,
+                                                    write: !!currVal?.write,
+                                                });
+                                                this.setState(newState);
+                                            }}
+                                        />
+                                        {I18n.t('Read')}
+                                        <Checkbox
+                                            disabled={user === this.adminUser || activeUser !== this.adminUser}
+                                            checked={this.state.projectPermissions.get(user)?.write}
+                                            onClick={() => {
+                                                const newState = this.state;
+                                                const currVal = this.state.projectPermissions.get(user);
+
+                                                newState.projectPermissions.set(user, {
+                                                    read: !!currVal?.read,
+                                                    write: !currVal?.write,
+                                                });
+                                                this.setState(newState);
+                                            }}
+                                        />
+                                        {I18n.t('Write')}
+
+                                        <IconButton
+                                            onClick={() => {
+                                                this.setState({
+                                                    cardOpen: {
+                                                        ...this.state.cardOpen,
+                                                        [user]: !this.state.cardOpen[user],
+                                                    },
+                                                });
+                                            }}
+                                            aria-label="expand"
+                                            size="small"
+                                        >
+                                            {this.state.cardOpen[user] ? (
+                                                <KeyboardArrowUpIcon />
+                                            ) : (
+                                                <KeyboardArrowDownIcon />
+                                            )}
+                                        </IconButton>
+                                    </div>
+                                </div>
+                            }
+                        ></CardHeader>
+                        <Collapse
+                            in={this.state.cardOpen[user]}
+                            sx={{ borderTop: '1px solid rgba(211,211,211,0.6)' }}
+                        >
+                            <CardContent>
+                                {this.state.cardOpen[user]
+                                    ? Object.keys(visProject).map(view =>
+                                          view === '___settings'
+                                              ? null
+                                              : this.renderViewPermissions({
+                                                    visProject,
+                                                    view,
+                                                    user,
+                                                    activeUser,
+                                                }),
+                                      )
+                                    : null}
+                            </CardContent>
+                        </Collapse>
+                    </Card>
+                ))}
+            </IODialog>
+        );
     }
 }

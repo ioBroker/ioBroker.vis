@@ -1,9 +1,15 @@
 import React, { Component } from 'react';
 
 import {
-    Accordion, AccordionDetails, AccordionSummary,
-    Checkbox, Divider, Button, IconButton,
-    Tooltip, Box,
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
+    Checkbox,
+    Divider,
+    Button,
+    IconButton,
+    Tooltip,
+    Box,
 } from '@mui/material';
 
 import {
@@ -18,32 +24,31 @@ import {
     Delete,
     Add,
     LinkOff,
-    Link as LinkIcon, ContentCopy,
+    Link as LinkIcon,
+    ContentCopy,
 } from '@mui/icons-material';
 
-import { I18n, Icon, Utils } from '@iobroker/adapter-react-v5';
-import type {
-    LegacyConnection,
-    ThemeType,
-} from '@iobroker/adapter-react-v5';
+import { I18n, Icon, Utils, type LegacyConnection, type ThemeType } from '@iobroker/adapter-react-v5';
+
+import { store, recalculateFields, updateWidget, selectWidget } from '@/Store';
 
 import {
-    store, recalculateFields, updateWidget, selectWidget,
-} from '@/Store';
-
-import type {
-    WidgetAttributeInfoStored, WidgetAttributeIterable,
-    WidgetAttributesGroupInfoStored, WidgetType,
-} from '@/Vis/visWidgetsCatalog';
-import {
-    getWidgetTypes, parseAttributes,
+    type WidgetAttributeInfoStored,
+    type WidgetAttributeIterable,
+    type WidgetAttributesGroupInfoStored,
+    type WidgetType,
+    getWidgetTypes,
+    parseAttributes,
 } from '@/Vis/visWidgetsCatalog';
 import { deepClone } from '@/Utils/utils';
 import type {
     AnyWidgetId,
     Project,
     Widget as SingleGroupWidget,
-    VisTheme, WidgetData, WidgetStyle, GroupData,
+    VisTheme,
+    WidgetData,
+    WidgetStyle,
+    GroupData,
     RxWidgetInfoGroup,
 } from '@iobroker/types-vis-2';
 
@@ -298,13 +303,13 @@ class Widget extends Component<WidgetProps, WidgetState> {
                 accordionOpen = JSON.parse(accordionOpenStr) as Record<string, 0 | 1 | 2>;
                 // convert from old
                 Object.keys(accordionOpen).forEach(key => {
-                    if (accordionOpen[key] as any === true || accordionOpen[key] === 1) {
+                    if ((accordionOpen[key] as any) === true || accordionOpen[key] === 1) {
                         accordionOpen[key] = 1;
                     } else {
                         accordionOpen[key] = 0;
                     }
                 });
-            } catch (e) {
+            } catch {
                 accordionOpen = {};
             }
         } else {
@@ -354,15 +359,23 @@ class Widget extends Component<WidgetProps, WidgetState> {
             },
             {
                 name: 'visibility',
-                fields: [{ name: 'visibility-oid', type: 'id' },
+                fields: [
+                    { name: 'visibility-oid', type: 'id' },
                     {
-                        name: 'visibility-cond', type: 'select', options: ['==', '!=', '<=', '>=', '<', '>', 'consist', 'not consist', 'exist', 'not exist'], default: '==',
+                        name: 'visibility-cond',
+                        type: 'select',
+                        options: ['==', '!=', '<=', '>=', '<', '>', 'consist', 'not consist', 'exist', 'not exist'],
+                        default: '==',
                     },
                     { name: 'visibility-val', default: 1 },
                     { name: 'visibility-groups', type: 'groups' },
                     {
-                        name: 'visibility-groups-action', type: 'select', options: ['hide', 'disabled'], default: 'hide',
-                    }],
+                        name: 'visibility-groups-action',
+                        type: 'select',
+                        options: ['hide', 'disabled'],
+                        default: 'hide',
+                    },
+                ],
             },
         ];
     }
@@ -396,16 +409,31 @@ class Widget extends Component<WidgetProps, WidgetState> {
                 },
                 { name: `signals-val-${i}`, default: true },
                 {
-                    name: `signals-icon-${i}`, type: 'image', default: '', hidden: `!!data["signals-smallIcon-${i}"]`, // `${adapterName}/signals/lowbattery.png` },
+                    name: `signals-icon-${i}`,
+                    type: 'image',
+                    default: '',
+                    hidden: `!!data["signals-smallIcon-${i}"]`, // `${adapterName}/signals/lowbattery.png` },
                 },
                 {
-                    name: `signals-smallIcon-${i}`, type: 'icon64', default: '', label: `signals-smallIcon-${i}`, hidden: `!!data["signals-icon-${i}"]`,
+                    name: `signals-smallIcon-${i}`,
+                    type: 'icon64',
+                    default: '',
+                    label: `signals-smallIcon-${i}`,
+                    hidden: `!!data["signals-icon-${i}"]`,
                 },
                 {
-                    name: `signals-color-${i}`, type: 'color', default: '', hidden: `!data["signals-smallIcon-${i}"] && !data["signals-text-${i}"]`,
+                    name: `signals-color-${i}`,
+                    type: 'color',
+                    default: '',
+                    hidden: `!data["signals-smallIcon-${i}"] && !data["signals-text-${i}"]`,
                 }, // `${adapterName}/signals/lowbattery.png` },
                 {
-                    name: `signals-icon-size-${i}`, type: 'slider', min: 1, max: 120, step: 1, default: 0,
+                    name: `signals-icon-size-${i}`,
+                    type: 'slider',
+                    min: 1,
+                    max: 120,
+                    step: 1,
+                    default: 0,
                 },
                 { name: `signals-icon-style-${i}` },
                 { name: `signals-text-${i}` },
@@ -413,10 +441,20 @@ class Widget extends Component<WidgetProps, WidgetState> {
                 { name: `signals-text-class-${i}` },
                 { name: `signals-blink-${i}`, type: 'checkbox', default: false },
                 {
-                    name: `signals-horz-${i}`, type: 'slider', min: -20, max: 120, step: 1, default: 0,
+                    name: `signals-horz-${i}`,
+                    type: 'slider',
+                    min: -20,
+                    max: 120,
+                    step: 1,
+                    default: 0,
                 },
                 {
-                    name: `signals-vert-${i}`, type: 'slider', min: -20, max: 120, step: 1, default: 0,
+                    name: `signals-vert-${i}`,
+                    type: 'slider',
+                    min: -20,
+                    max: 120,
+                    step: 1,
+                    default: 0,
                 },
                 { name: `signals-hide-edit-${i}`, type: 'checkbox', default: false },
             ];
@@ -440,46 +478,152 @@ class Widget extends Component<WidgetProps, WidgetState> {
                     { name: 'width', type: 'dimension' },
                     { name: 'height', type: 'dimension' },
                     {
-                        name: 'z-index', type: 'number', min: -200, max: 200,
+                        name: 'z-index',
+                        type: 'number',
+                        min: -200,
+                        max: 200,
                     },
-                    { name: 'overflow-x', type: 'nselect', options: ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'] },
-                    { name: 'overflow-y', type: 'nselect', options: ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'] },
+                    {
+                        name: 'overflow-x',
+                        type: 'nselect',
+                        options: ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'],
+                    },
+                    {
+                        name: 'overflow-y',
+                        type: 'nselect',
+                        options: ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'],
+                    },
                     { name: 'opacity', type: 'text' },
-                    { name: 'cursor', type: 'auto', options: ['alias', 'all-scroll', 'auto', 'cell', 'col-resize', 'context-menu', 'copy', 'crosshair', 'default', 'e-resize', 'ew-resize', 'grab', 'grabbing', 'help', 'move', 'n-resize', 'ne-resize', 'nesw-resize', 'ns-resize', 'nw-resize', 'nwse-resize', 'no-drop', 'none', 'not-allowed', 'pointer', 'progress', 'row-resize', 's-resize', 'se-resize', 'sw-resize', 'text', 'vertical-text', 'w-resize', 'wait', 'zoom-in', 'zoom-out', 'initial', 'inherit'] },
+                    {
+                        name: 'cursor',
+                        type: 'auto',
+                        options: [
+                            'alias',
+                            'all-scroll',
+                            'auto',
+                            'cell',
+                            'col-resize',
+                            'context-menu',
+                            'copy',
+                            'crosshair',
+                            'default',
+                            'e-resize',
+                            'ew-resize',
+                            'grab',
+                            'grabbing',
+                            'help',
+                            'move',
+                            'n-resize',
+                            'ne-resize',
+                            'nesw-resize',
+                            'ns-resize',
+                            'nw-resize',
+                            'nwse-resize',
+                            'no-drop',
+                            'none',
+                            'not-allowed',
+                            'pointer',
+                            'progress',
+                            'row-resize',
+                            's-resize',
+                            'se-resize',
+                            'sw-resize',
+                            'text',
+                            'vertical-text',
+                            'w-resize',
+                            'wait',
+                            'zoom-in',
+                            'zoom-out',
+                            'initial',
+                            'inherit',
+                        ],
+                    },
                     { name: 'transform' },
                 ],
             },
             {
                 name: 'css_font_text',
                 isStyle: true,
-                fields: [{ name: 'color', type: 'color' },
-                    { name: 'text-align', type: 'nselect', options: ['', 'left', 'right', 'center', 'justify', 'initial', 'inherit'] },
+                fields: [
+                    { name: 'color', type: 'color' },
+                    {
+                        name: 'text-align',
+                        type: 'nselect',
+                        options: ['', 'left', 'right', 'center', 'justify', 'initial', 'inherit'],
+                    },
                     { name: 'text-shadow' },
                     {
                         name: 'font-family',
                         type: 'auto',
                         options: fonts,
                     },
-                    { name: 'font-style', type: 'nselect', options: ['', 'normal', 'italic', 'oblique', 'initial', 'inherit'] },
-                    { name: 'font-variant', type: 'nselect', options: ['', 'normal', 'small-caps', 'initial', 'inherit'] },
-                    { name: 'font-weight', type: 'auto', options: ['normal', 'bold', 'bolder', 'lighter', 'initial', 'inherit'] },
-                    { name: 'font-size', type: 'auto', options: ['medium', 'xx-small', 'x-small', 'small', 'large', 'x-large', 'xx-large', 'smaller', 'larger', 'initial', 'inherit'] },
+                    {
+                        name: 'font-style',
+                        type: 'nselect',
+                        options: ['', 'normal', 'italic', 'oblique', 'initial', 'inherit'],
+                    },
+                    {
+                        name: 'font-variant',
+                        type: 'nselect',
+                        options: ['', 'normal', 'small-caps', 'initial', 'inherit'],
+                    },
+                    {
+                        name: 'font-weight',
+                        type: 'auto',
+                        options: ['normal', 'bold', 'bolder', 'lighter', 'initial', 'inherit'],
+                    },
+                    {
+                        name: 'font-size',
+                        type: 'auto',
+                        options: [
+                            'medium',
+                            'xx-small',
+                            'x-small',
+                            'small',
+                            'large',
+                            'x-large',
+                            'xx-large',
+                            'smaller',
+                            'larger',
+                            'initial',
+                            'inherit',
+                        ],
+                    },
                     { name: 'line-height' },
                     { name: 'letter-spacing' },
-                    { name: 'word-spacing' }],
+                    { name: 'word-spacing' },
+                ],
             },
             {
                 name: 'css_background',
                 isStyle: true,
-                fields: [{ name: 'background' },
+                fields: [
+                    { name: 'background' },
                     { name: 'background-color', type: 'color' },
                     { name: 'background-image' },
-                    { name: 'background-repeat', type: 'nselect', options: ['', 'repeat', 'repeat-x', 'repeat-y', 'no-repeat', 'initial', 'inherit'] },
-                    { name: 'background-attachment', type: 'nselect', options: ['', 'scroll', 'fixed', 'local', 'initial', 'inherit'] },
+                    {
+                        name: 'background-repeat',
+                        type: 'nselect',
+                        options: ['', 'repeat', 'repeat-x', 'repeat-y', 'no-repeat', 'initial', 'inherit'],
+                    },
+                    {
+                        name: 'background-attachment',
+                        type: 'nselect',
+                        options: ['', 'scroll', 'fixed', 'local', 'initial', 'inherit'],
+                    },
                     { name: 'background-position' },
                     { name: 'background-size' },
-                    { name: 'background-clip', type: 'nselect', options: ['', 'border-box', 'padding-box', 'content-box', 'initial', 'inherit'] },
-                    { name: 'background-origin', type: 'nselect', options: ['', 'padding-box', 'border-box', 'content-box', 'initial', 'inherit'] }],
+                    {
+                        name: 'background-clip',
+                        type: 'nselect',
+                        options: ['', 'border-box', 'padding-box', 'content-box', 'initial', 'inherit'],
+                    },
+                    {
+                        name: 'background-origin',
+                        type: 'nselect',
+                        options: ['', 'padding-box', 'border-box', 'content-box', 'initial', 'inherit'],
+                    },
+                ],
             },
             {
                 name: 'css_border',
@@ -487,14 +631,31 @@ class Widget extends Component<WidgetProps, WidgetState> {
                 fields: [
                     // { name: 'box-sizing', type: 'nselect', options: ['', 'border-box', 'content-box']  },
                     { name: 'border-width' },
-                    { name: 'border-style', type: 'nselect', options: ['', 'dotted', 'dashed', 'solid', 'double', 'groove', 'ridge', 'inset', 'outset', 'hidden'] },
+                    {
+                        name: 'border-style',
+                        type: 'nselect',
+                        options: [
+                            '',
+                            'dotted',
+                            'dashed',
+                            'solid',
+                            'double',
+                            'groove',
+                            'ridge',
+                            'inset',
+                            'outset',
+                            'hidden',
+                        ],
+                    },
                     { name: 'border-color', type: 'color' },
-                    { name: 'border-radius' }],
+                    { name: 'border-radius' },
+                ],
             },
             {
                 name: 'css_shadow_padding',
                 isStyle: true,
-                fields: [{ name: 'padding' },
+                fields: [
+                    { name: 'padding' },
                     { name: 'padding-left' },
                     { name: 'padding-top' },
                     { name: 'padding-right' },
@@ -503,56 +664,141 @@ class Widget extends Component<WidgetProps, WidgetState> {
                     { name: 'margin-left' },
                     { name: 'margin-top' },
                     { name: 'margin-right' },
-                    { name: 'margin-bottom' }],
+                    { name: 'margin-bottom' },
+                ],
             },
             {
                 name: 'last_change',
                 fields: [
                     { name: 'lc-oid', type: 'id' },
                     {
-                        name: 'lc-type', type: 'select', options: ['last-change', 'timestamp'], default: 'last-change',
+                        name: 'lc-type',
+                        type: 'select',
+                        options: ['last-change', 'timestamp'],
+                        default: 'last-change',
                     },
                     { name: 'lc-is-interval', type: 'checkbox', default: true },
                     { name: 'lc-is-moment', type: 'checkbox', default: false },
                     {
-                        name: 'lc-format', type: 'auto', options: ['YYYY.MM.DD hh:mm:ss', 'DD.MM.YYYY hh:mm:ss', 'YYYY.MM.DD', 'DD.MM.YYYY', 'YYYY/MM/DD hh:mm:ss', 'YYYY/MM/DD', 'hh:mm:ss'], default: '',
+                        name: 'lc-format',
+                        type: 'auto',
+                        options: [
+                            'YYYY.MM.DD hh:mm:ss',
+                            'DD.MM.YYYY hh:mm:ss',
+                            'YYYY.MM.DD',
+                            'DD.MM.YYYY',
+                            'YYYY/MM/DD hh:mm:ss',
+                            'YYYY/MM/DD',
+                            'hh:mm:ss',
+                        ],
+                        default: '',
                     },
                     {
-                        name: 'lc-position-vert', type: 'select', options: ['top', 'middle', 'bottom'], default: 'top',
+                        name: 'lc-position-vert',
+                        type: 'select',
+                        options: ['top', 'middle', 'bottom'],
+                        default: 'top',
                     },
                     {
-                        name: 'lc-position-horz', type: 'select', options: ['left', /* 'middle', */'right'], default: 'right',
+                        name: 'lc-position-horz',
+                        type: 'select',
+                        options: ['left', /* 'middle', */ 'right'],
+                        default: 'right',
                     },
                     {
-                        name: 'lc-offset-vert', type: 'slider', min: -120, max: 120, step: 1, default: 0,
+                        name: 'lc-offset-vert',
+                        type: 'slider',
+                        min: -120,
+                        max: 120,
+                        step: 1,
+                        default: 0,
                     },
                     {
-                        name: 'lc-offset-horz', type: 'slider', min: -120, max: 120, step: 1, default: 0,
+                        name: 'lc-offset-horz',
+                        type: 'slider',
+                        min: -120,
+                        max: 120,
+                        step: 1,
+                        default: 0,
                     },
                     {
-                        name: 'lc-font-size', type: 'auto', options: ['', 'medium', 'xx-small', 'x-small', 'small', 'large', 'x-large', 'xx-large', 'smaller', 'larger', 'initial', 'inherit'], default: '12px',
+                        name: 'lc-font-size',
+                        type: 'auto',
+                        options: [
+                            '',
+                            'medium',
+                            'xx-small',
+                            'x-small',
+                            'small',
+                            'large',
+                            'x-large',
+                            'xx-large',
+                            'smaller',
+                            'larger',
+                            'initial',
+                            'inherit',
+                        ],
+                        default: '12px',
                     },
                     {
-                        name: 'lc-font-family', type: 'auto', default: '', options: fonts,
+                        name: 'lc-font-family',
+                        type: 'auto',
+                        default: '',
+                        options: fonts,
                     },
                     {
-                        name: 'lc-font-style', type: 'auto', options: ['', 'normal', 'italic', 'oblique', 'initial', 'inherit'], default: '',
+                        name: 'lc-font-style',
+                        type: 'auto',
+                        options: ['', 'normal', 'italic', 'oblique', 'initial', 'inherit'],
+                        default: '',
                     },
                     { name: 'lc-bkg-color', type: 'color', default: '' },
                     { name: 'lc-color', type: 'color', default: '' },
                     { name: 'lc-border-width', default: '0' },
                     {
-                        name: 'lc-border-style', type: 'auto', options: ['', 'none', 'hidden', 'dotted', 'dashed', 'solid', 'double', 'groove', 'ridge', 'inset', 'outset', 'initial', 'inherit'], default: '',
+                        name: 'lc-border-style',
+                        type: 'auto',
+                        options: [
+                            '',
+                            'none',
+                            'hidden',
+                            'dotted',
+                            'dashed',
+                            'solid',
+                            'double',
+                            'groove',
+                            'ridge',
+                            'inset',
+                            'outset',
+                            'initial',
+                            'inherit',
+                        ],
+                        default: '',
                     },
                     { name: 'lc-border-color', type: 'color', default: '' },
                     {
-                        name: 'lc-border-radius', type: 'slider', min: 0, max: 20, step: 1, default: 10,
+                        name: 'lc-border-radius',
+                        type: 'slider',
+                        min: 0,
+                        max: 20,
+                        step: 1,
+                        default: 10,
                     },
                     {
-                        name: 'lc-padding', type: 'slider', min: 0, max: 20, step: 1, default: 3,
+                        name: 'lc-padding',
+                        type: 'slider',
+                        min: 0,
+                        max: 20,
+                        step: 1,
+                        default: 3,
                     },
                     {
-                        name: 'lc-zindex', type: 'slider', min: -10, max: 20, step: 1, default: 0,
+                        name: 'lc-zindex',
+                        type: 'slider',
+                        min: -10,
+                        max: 20,
+                        step: 1,
+                        default: 0,
                     },
                 ],
             },
@@ -568,7 +814,7 @@ class Widget extends Component<WidgetProps, WidgetState> {
         funcText: string | ((data: Record<string, any>, index: number, style: React.CSSProperties) => boolean),
         project: Project,
         selectedView: string,
-        selectedWidgets: (AnyWidgetId)[],
+        selectedWidgets: AnyWidgetId[],
         index: number,
     ): boolean {
         try {
@@ -604,14 +850,14 @@ class Widget extends Component<WidgetProps, WidgetState> {
         return false;
     }
 
-    componentDidMount() {
+    componentDidMount(): void {
         if (this.state.widgetsLoaded) {
             this.setState({ widgetTypes: getWidgetTypes() }, () => this.recalculateFields());
         }
         this.setAccordionState();
     }
 
-    static getDerivedStateFromProps(props: WidgetProps, state: WidgetState) {
+    static getDerivedStateFromProps(props: WidgetProps, state: WidgetState): Partial<WidgetState> | null {
         let newState: Partial<WidgetState> | null = null;
         if (props.widgetsLoaded && !state.widgetsLoaded) {
             newState = {};
@@ -623,7 +869,7 @@ class Widget extends Component<WidgetProps, WidgetState> {
         return newState;
     }
 
-    recalculateFields() {
+    recalculateFields(): void {
         if (!this.state.widgetTypes) {
             return;
         }
@@ -633,41 +879,51 @@ class Widget extends Component<WidgetProps, WidgetState> {
         let widget: SingleGroupWidget;
         let widgetType: WidgetType | undefined;
         const commonFields: Record<string, number> = {};
-        const commonGroups: { common: number; [groupName: string]: number } = { common: this.props.selectedWidgets.length };
+        const commonGroups: { common: number; [groupName: string]: number } = {
+            common: this.props.selectedWidgets.length,
+        };
         const selectedWidgetsFields: WidgetAttributesGroupInfoStored[][] = [];
 
-        widgets && this.props.selectedWidgets.forEach((wid, widgetIndex) => {
-            widget = widgets[wid];
-            if (!widget) {
-                return;
-            }
+        widgets &&
+            this.props.selectedWidgets.forEach((wid, widgetIndex) => {
+                widget = widgets[wid];
+                if (!widget) {
+                    return;
+                }
 
-            widgetType = this.state.widgetTypes.find(type => type.name === widget.tpl);
-            if (!widgetType) {
-                return;
-            }
+                widgetType = this.state.widgetTypes.find(type => type.name === widget.tpl);
+                if (!widgetType) {
+                    return;
+                }
 
-            let params: string | RxWidgetInfoGroup[];
-            if (typeof widgetType.params === 'function') {
-                params = widgetType.params(widget.data, null, {
-                    views: store.getState().visProject,
-                    view: this.props.selectedView,
-                    socket: this.props.socket,
-                    themeType: this.props.themeType,
-                    projectName: this.props.projectName,
-                    adapterName: this.props.adapterName,
-                    instance: this.props.instance,
-                    id: wid,
-                    widget,
-                });
-            } else {
-                params = widgetType.params as string | RxWidgetInfoGroup[];
-            }
+                let params: string | RxWidgetInfoGroup[];
+                if (typeof widgetType.params === 'function') {
+                    params = widgetType.params(widget.data, null, {
+                        views: store.getState().visProject,
+                        view: this.props.selectedView,
+                        socket: this.props.socket,
+                        themeType: this.props.themeType,
+                        projectName: this.props.projectName,
+                        adapterName: this.props.adapterName,
+                        instance: this.props.instance,
+                        id: wid,
+                        widget,
+                    });
+                } else {
+                    params = widgetType.params as string | RxWidgetInfoGroup[];
+                }
 
-            const fields: null | WidgetAttributesGroupInfoStored[] = parseAttributes(params, widgetIndex, commonGroups, commonFields, widgetType.set, widget.data);
+                const fields: null | WidgetAttributesGroupInfoStored[] = parseAttributes(
+                    params,
+                    widgetIndex,
+                    commonGroups,
+                    commonFields,
+                    widgetType.set,
+                    widget.data,
+                );
 
-            fields && selectedWidgetsFields.push(fields);
-        });
+                fields && selectedWidgetsFields.push(fields);
+            });
 
         let fields: WidgetAttributesGroupInfoStored[];
         const bindFields: string[] = [];
@@ -676,14 +932,16 @@ class Widget extends Component<WidgetProps, WidgetState> {
         const newState: Partial<WidgetState> = {};
 
         if (this.props.selectedWidgets.length > 1) {
-            fields = selectedWidgetsFields[0]?.filter(group => {
-                if (commonGroups[group.name] < this.props.selectedWidgets.length) {
-                    return false;
-                }
-                group.fields = group.fields.filter(field =>
-                    commonFields[`${group.name}.${field.name}`] === this.props.selectedWidgets.length);
-                return true;
-            }) || [];
+            fields =
+                selectedWidgetsFields[0]?.filter(group => {
+                    if (commonGroups[group.name] < this.props.selectedWidgets.length) {
+                        return false;
+                    }
+                    group.fields = group.fields.filter(
+                        field => commonFields[`${group.name}.${field.name}`] === this.props.selectedWidgets.length,
+                    );
+                    return true;
+                }) || [];
 
             this.props.selectedWidgets.forEach((wid, widgetIndex) => {
                 const currentWidget = widgets[wid];
@@ -700,23 +958,35 @@ class Widget extends Component<WidgetProps, WidgetState> {
                             isDifferent[field] = true;
                         }
                     });
-                    const anyStyle: Record<string, number | string | boolean | null | undefined> = commonValues.style as Record<string, number | string | boolean | null | undefined>;
+                    const anyStyle: Record<string, number | string | boolean | null | undefined> =
+                        commonValues.style as Record<string, number | string | boolean | null | undefined>;
                     Object.keys(anyStyle).forEach(field => {
-                        if (anyStyle[field] !== (currentWidget.style as Record<string, number | string | boolean | null | undefined>)[field]) {
+                        if (
+                            anyStyle[field] !==
+                            (currentWidget.style as Record<string, number | string | boolean | null | undefined>)[field]
+                        ) {
                             anyStyle[field] = null;
                             isDifferent[field] = true;
                         }
                     });
 
-                    currentWidget.data.bindings?.forEach(attr => !bindFields.includes(`data_${attr}`) && bindFields.push(`data_${attr}`));
-                    currentWidget.style.bindings?.forEach(attr => !bindFields.includes(`style_${attr}`) && bindFields.push(`style_${attr}`));
+                    currentWidget.data.bindings?.forEach(
+                        attr => !bindFields.includes(`data_${attr}`) && bindFields.push(`data_${attr}`),
+                    );
+                    currentWidget.style.bindings?.forEach(
+                        attr => !bindFields.includes(`style_${attr}`) && bindFields.push(`style_${attr}`),
+                    );
                 }
             });
         } else {
             fields = selectedWidgetsFields[0];
 
-            widgets[this.props.selectedWidgets[0]].data.bindings?.forEach(attr => !bindFields.includes(`data_${attr}`) && bindFields.push(`data_${attr}`));
-            widgets[this.props.selectedWidgets[0]].style.bindings?.forEach(attr => !bindFields.includes(`style_${attr}`) && bindFields.push(`style_${attr}`));
+            widgets[this.props.selectedWidgets[0]].data.bindings?.forEach(
+                attr => !bindFields.includes(`data_${attr}`) && bindFields.push(`data_${attr}`),
+            );
+            widgets[this.props.selectedWidgets[0]].style.bindings?.forEach(
+                attr => !bindFields.includes(`style_${attr}`) && bindFields.push(`style_${attr}`),
+            );
         }
 
         newState.bindFields = bindFields.sort();
@@ -738,7 +1008,13 @@ class Widget extends Component<WidgetProps, WidgetState> {
                 }
                 signalsCount = i + 1;
                 if (signalsCount > 1) {
-                    store.dispatch(updateWidget({ widgetId: this.props.selectedWidgets[0], viewId: this.props.selectedView, data: { ...widget, data: { ...widget.data, 'signals-count': signalsCount } } }));
+                    store.dispatch(
+                        updateWidget({
+                            widgetId: this.props.selectedWidgets[0],
+                            viewId: this.props.selectedView,
+                            data: { ...widget, data: { ...widget.data, 'signals-count': signalsCount } },
+                        }),
+                    );
                 }
             } else {
                 signalsCount = parseInt(widgetData['signals-count'], 10);
@@ -761,25 +1037,23 @@ class Widget extends Component<WidgetProps, WidgetState> {
                 singleName: group.singleName,
             }));
 
-            newState.fields = [
-                ...this.fieldsBefore,
-                ...customGroups,
-                ...fieldsAfter,
-                ...[fieldsSignals],
-            ];
+            newState.fields = [...this.fieldsBefore, ...customGroups, ...fieldsAfter, ...[fieldsSignals]];
         }
 
-        widgets && newState.fields?.forEach((group: PaletteGroup) => {
-            const type = group.isStyle ? 'style' : 'data';
-            const found = this.props.selectedWidgets.find(selectedWidget => {
-                const fieldFound = group.fields.find(field => {
-                    const fieldValue: string | number | boolean | null | undefined = (widgets[selectedWidget][type] as Record<string, string | number | boolean | null>)[field.name];
-                    return fieldValue !== undefined;
+        widgets &&
+            newState.fields?.forEach((group: PaletteGroup) => {
+                const type = group.isStyle ? 'style' : 'data';
+                const found = this.props.selectedWidgets.find(selectedWidget => {
+                    const fieldFound = group.fields.find(field => {
+                        const fieldValue: string | number | boolean | null | undefined = (
+                            widgets[selectedWidget][type] as Record<string, string | number | boolean | null>
+                        )[field.name];
+                        return fieldValue !== undefined;
+                    });
+                    return fieldFound !== undefined;
                 });
-                return fieldFound !== undefined;
+                group.hasValues = found !== undefined;
             });
-            group.hasValues = found !== undefined;
-        });
 
         newState.transitionTime = 0;
 
@@ -787,7 +1061,7 @@ class Widget extends Component<WidgetProps, WidgetState> {
         store.dispatch(recalculateFields(false));
     }
 
-    componentWillUnmount() {
+    componentWillUnmount(): void {
         this.recalculateTimer && clearTimeout(this.recalculateTimer);
         this.recalculateTimer = null;
 
@@ -795,7 +1069,7 @@ class Widget extends Component<WidgetProps, WidgetState> {
         this.triggerTimer = null;
     }
 
-    renderHeader(widgets: Record<string, SingleGroupWidget>) {
+    renderHeader(widgets: Record<string, SingleGroupWidget>): React.JSX.Element {
         let list;
         // If selected only one widget, show its icon
         if (this.props.selectedWidgets.length === 1) {
@@ -834,21 +1108,36 @@ class Widget extends Component<WidgetProps, WidgetState> {
             if (_widgetType?.preview?.startsWith('<img')) {
                 const m = _widgetType?.preview.match(/src="([^"]+)"/) || _widgetType?.preview.match(/src='([^']+)'/);
                 if (m) {
-                    img = <img src={m[1]} style={styles.icon} alt={this.props.selectedWidgets[0]} />;
+                    img = (
+                        <img
+                            src={m[1]}
+                            style={styles.icon}
+                            alt={this.props.selectedWidgets[0]}
+                        />
+                    );
                 }
-            } else if (_widgetType?.preview && IMAGE_TYPES.find(ext => _widgetType.preview.toLowerCase().endsWith(ext))) {
-                img = <img src={_widgetType?.preview} style={styles.icon} alt={this.props.selectedWidgets[0]} />;
+            } else if (
+                _widgetType?.preview &&
+                IMAGE_TYPES.find(ext => _widgetType.preview.toLowerCase().endsWith(ext))
+            ) {
+                img = (
+                    <img
+                        src={_widgetType?.preview}
+                        style={styles.icon}
+                        alt={this.props.selectedWidgets[0]}
+                    />
+                );
             }
 
             if (!img) {
-                img = <span
-                    style={styles.widgetImage}
-                    ref={this.imageRef}
-                    // eslint-disable-next-line react/no-danger
-                    dangerouslySetInnerHTML={
-                        { __html: _widgetType?.preview }
-                    }
-                />;
+                img = (
+                    <span
+                        style={styles.widgetImage}
+                        ref={this.imageRef}
+                        // eslint-disable-next-line react/no-danger
+                        dangerouslySetInnerHTML={{ __html: _widgetType?.preview }}
+                    />
+                );
             }
 
             let widgetBackColor;
@@ -867,65 +1156,86 @@ class Widget extends Component<WidgetProps, WidgetState> {
                 setLabel = `${widgets[this.props.selectedWidgets[0]].marketplace.name}`;
                 widgetLabel = `${I18n.t('version')} ${widgets[this.props.selectedWidgets[0]].marketplace.version}`;
             }
-            list = <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                {widgetIcon ? <div style={styles.widgetIcon}>{img}</div> : null}
-                <div style={styles.widgetName}>{this.props.selectedWidgets[0]}</div>
-                <div style={styles.widgetType}>
-                    <div
-                        style={{
-                            ...styles.widgetNameText,
-                            ...(widgetBackColor ? styles.coloredWidgetSet : undefined),
-                            fontWeight: 'bold',
-                            color: widgetColor,
-                            backgroundColor: widgetBackColor,
-                        }}
-                    >
-                        {setLabel}
+            list = (
+                <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                    {widgetIcon ? <div style={styles.widgetIcon}>{img}</div> : null}
+                    <div style={styles.widgetName}>{this.props.selectedWidgets[0]}</div>
+                    <div style={styles.widgetType}>
+                        <div
+                            style={{
+                                ...styles.widgetNameText,
+                                ...(widgetBackColor ? styles.coloredWidgetSet : undefined),
+                                fontWeight: 'bold',
+                                color: widgetColor,
+                                backgroundColor: widgetBackColor,
+                            }}
+                        >
+                            {setLabel}
+                        </div>
+                        <div style={styles.widgetNameText}>{widgetLabel}</div>
                     </div>
-                    <div style={styles.widgetNameText}>{widgetLabel}</div>
+                    {!widgets[this.props.selectedWidgets[0]].marketplace && (
+                        <>
+                            {window.location.port === '3000' ? (
+                                <Button onClick={() => this.setState({ cssDialogOpened: true })}>CSS</Button>
+                            ) : null}
+                            {window.location.port === '3000' ? (
+                                <Button onClick={() => this.setState({ jsDialogOpened: true })}>JS</Button>
+                            ) : null}
+                            {this.state.cssDialogOpened ? (
+                                <WidgetCSS
+                                    onClose={() => this.setState({ cssDialogOpened: false })}
+                                    widget={widgets[this.props.selectedWidgets[0]]}
+                                    onChange={value => {
+                                        const project = deepClone(store.getState().visProject);
+                                        project[this.props.selectedView].widgets[this.props.selectedWidgets[0]].css =
+                                            value;
+                                        this.props.changeProject(project);
+                                    }}
+                                    themeType={this.props.themeType}
+                                    editMode={this.props.editMode}
+                                />
+                            ) : null}
+                            {this.state.jsDialogOpened ? (
+                                <WidgetJS
+                                    onClose={() => this.setState({ jsDialogOpened: false })}
+                                    widget={widgets[this.props.selectedWidgets[0]]}
+                                    onChange={value => {
+                                        const project = deepClone(store.getState().visProject);
+                                        project[this.props.selectedView].widgets[this.props.selectedWidgets[0]].js =
+                                            value;
+                                        this.props.changeProject(project);
+                                    }}
+                                    themeType={this.props.themeType}
+                                    editMode={this.props.editMode}
+                                />
+                            ) : null}
+                        </>
+                    )}
                 </div>
-                {!widgets[this.props.selectedWidgets[0]].marketplace && <>
-                    {window.location.port === '3000' ? <Button onClick={() => this.setState({ cssDialogOpened: true })}>CSS</Button> : null}
-                    {window.location.port === '3000' ? <Button onClick={() => this.setState({ jsDialogOpened: true })}>JS</Button> : null}
-                    {this.state.cssDialogOpened ? <WidgetCSS
-                        onClose={() => this.setState({ cssDialogOpened: false })}
-                        widget={widgets[this.props.selectedWidgets[0]]}
-                        onChange={value => {
-                            const project = deepClone(store.getState().visProject);
-                            project[this.props.selectedView].widgets[this.props.selectedWidgets[0]].css = value;
-                            this.props.changeProject(project);
-                        }}
-                        themeType={this.props.themeType}
-                        editMode={this.props.editMode}
-                    /> : null}
-                    {this.state.jsDialogOpened ? <WidgetJS
-                        onClose={() => this.setState({ jsDialogOpened: false })}
-                        widget={widgets[this.props.selectedWidgets[0]]}
-                        onChange={value => {
-                            const project = deepClone(store.getState().visProject);
-                            project[this.props.selectedView].widgets[this.props.selectedWidgets[0]].js = value;
-                            this.props.changeProject(project);
-                        }}
-                        themeType={this.props.themeType}
-                        editMode={this.props.editMode}
-                    /> : null}
-                </>}
-            </div>;
+            );
         } else {
             list = this.props.selectedWidgets.join(', ');
         }
-        return <div key="header" style={{ width: '100%', overflow: 'hidden' }}>
-            {list}
-        </div>;
+        return (
+            <div
+                key="header"
+                style={{ width: '100%', overflow: 'hidden' }}
+            >
+                {list}
+            </div>
+        );
     }
 
-    setAccordionState(accordionOpen?: { [groupName: string]: 0 | 1 | 2 }, cb?: () => void) {
+    setAccordionState(accordionOpen?: { [groupName: string]: 0 | 1 | 2 }, cb?: () => void): void {
         if (!this.state.fields) {
             return;
         }
 
         const _accordionOpen = accordionOpen || this.state.accordionOpen;
-        const allOpened = !this.state.fields.find(group => _accordionOpen[group.name] === 0 || _accordionOpen[group.name] === 2);
+        const allOpened = !this.state.fields.find(
+            group => _accordionOpen[group.name] === 0 || _accordionOpen[group.name] === 2,
+        );
         const allClosed = !this.state.fields.find(group => _accordionOpen[group.name] === 1);
 
         if (this.props.isAllClosed !== allClosed) {
@@ -944,7 +1254,7 @@ class Widget extends Component<WidgetProps, WidgetState> {
         setTimeout(() => this.setState({ transitionTime: 200 }), 500);
     }
 
-    componentDidUpdate() {
+    componentDidUpdate(): void {
         // scale the old style HTML widget icon
         if (this.imageRef.current?.children[0]) {
             const height = this.imageRef.current.children[0].clientHeight;
@@ -954,12 +1264,7 @@ class Widget extends Component<WidgetProps, WidgetState> {
         }
     }
 
-    onGroupMove(
-        e: React.MouseEvent,
-        index: number,
-        iterable: WidgetAttributeIterable,
-        direction: GroupAction,
-    ) {
+    onGroupMove(e: React.MouseEvent, index: number, iterable: WidgetAttributeIterable, direction: GroupAction): void {
         e.stopPropagation();
         const project = deepClone(store.getState().visProject);
         const oldGroup = this.state.fields.find(f => f.name === `${iterable.group}-${index}`);
@@ -969,7 +1274,7 @@ class Widget extends Component<WidgetProps, WidgetState> {
         // if deletion
         if (direction === 'delete') {
             if (iterable.indexTo) {
-                const lastGroup = this.state.fields.find(f => f.singleName  === iterable.group && f.iterable?.isLast);
+                const lastGroup = this.state.fields.find(f => f.singleName === iterable.group && f.iterable?.isLast);
                 for (let idx = index; idx < lastGroup.index; idx++) {
                     const idxGroup = this.state.fields.find(f => f.name === `${iterable.group}-${idx}`);
                     const idxGroupPlus = this.state.fields.find(f => f.name === `${iterable.group}-${idx + 1}`);
@@ -977,8 +1282,10 @@ class Widget extends Component<WidgetProps, WidgetState> {
                     this.props.selectedWidgets.forEach(wid => {
                         const widgetData = _widgets[wid].data;
                         // move all fields of the group to -1
-                        idxGroup.fields.forEach((_attr, i) =>
-                            widgetData[idxGroup.fields[i].name] = widgetData[idxGroupPlus.fields[i].name]);
+                        idxGroup.fields.forEach(
+                            (_attr, i) =>
+                                (widgetData[idxGroup.fields[i].name] = widgetData[idxGroupPlus.fields[i].name]),
+                        );
 
                         // move the group-used flag
                         widgetData[`g_${iterable.group}-${idx}`] = widgetData[`g_${iterable.group}-${idx + 1}`];
@@ -1087,7 +1394,9 @@ class Widget extends Component<WidgetProps, WidgetState> {
                 // order all attributes for better readability
                 const oldWidgetData = _widgets[wid].data;
                 const widgetData: GroupData | WidgetData = {};
-                Object.keys(oldWidgetData).sort().forEach(key => widgetData[key] = oldWidgetData[key]);
+                Object.keys(oldWidgetData)
+                    .sort()
+                    .forEach(key => (widgetData[key] = oldWidgetData[key]));
                 _widgets[wid].data = widgetData;
 
                 // switch all fields of the group
@@ -1118,143 +1427,192 @@ class Widget extends Component<WidgetProps, WidgetState> {
         }
     }
 
-    renderGroupHeader(group: PaletteGroup) {
-        return <AccordionSummary
-            sx={{
-                '&.MuiAccordionSummary-root': Utils.getStyle(
-                    this.props.theme,
-                    commonStyles.clearPadding,
-                    this.state.accordionOpen[group.name] === 1 && group.hasValues ? styles.groupSummaryExpanded : styles.groupSummary,
-                    styles.lightedPanel,
-                ),
-                '& .MuiAccordionSummary-content':  Utils.getStyle(
-                    this.props.theme,
-                    commonStyles.clearPadding,
-                    this.state.accordionOpen[group.name] === 1 && group.hasValues && styles.accordionOpenedSummary,
-                ),
-                '& .Mui-expanded': commonStyles.clearPadding,
-                // expandIcon: classes.clearPadding,
-            }}
-            expandIcon={group.hasValues ? <ExpandMoreIcon /> : <div style={styles.emptyMoreIcon} />}
-        >
-            <div
-                style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    width: '100%',
-                    alignItems: 'center',
+    renderGroupHeader(group: PaletteGroup): React.JSX.Element {
+        return (
+            <AccordionSummary
+                sx={{
+                    '&.MuiAccordionSummary-root': Utils.getStyle(
+                        this.props.theme,
+                        commonStyles.clearPadding,
+                        this.state.accordionOpen[group.name] === 1 && group.hasValues
+                            ? styles.groupSummaryExpanded
+                            : styles.groupSummary,
+                        styles.lightedPanel,
+                    ),
+                    '& .MuiAccordionSummary-content': Utils.getStyle(
+                        this.props.theme,
+                        commonStyles.clearPadding,
+                        this.state.accordionOpen[group.name] === 1 && group.hasValues && styles.accordionOpenedSummary,
+                    ),
+                    '& .Mui-expanded': commonStyles.clearPadding,
+                    // expandIcon: classes.clearPadding,
                 }}
+                expandIcon={group.hasValues ? <ExpandMoreIcon /> : <div style={styles.emptyMoreIcon} />}
             >
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                    {ICONS[`group.${group.singleName || group.name}`] ? ICONS[`group.${group.singleName || group.name}`] : null}
-                    {group.label ?
-                        I18n.t(group.label) + (group.index !== undefined ? ` [${group.index}]` : '')
-                        :
-                        (window.vis._(`group_${group.singleName || group.name}`) + (group.index !== undefined ? ` [${group.index}]` : ''))}
-                </div>
-                {group.iterable ? <>
-                    <div style={styles.grow} />
-                    {group.iterable.indexTo ? <Tooltip title={I18n.t('Clone')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
-                        <IconButton
-                            style={styles.groupButton}
-                            size="small"
-                            onClick={e => this.onGroupMove(e, group.index, group.iterable, 'clone')}
-                        >
-                            <ContentCopy />
-                        </IconButton>
-                    </Tooltip> : null}
-                    {group.iterable.indexTo ? <Tooltip title={I18n.t('Delete')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
-                        <IconButton
-                            style={styles.groupButton}
-                            size="small"
-                            onClick={e => this.onGroupMove(e, group.index, group.iterable, 'delete')}
-                        >
-                            <Delete />
-                        </IconButton>
-                    </Tooltip> : null}
-                    {group.iterable.isFirst ?
-                        <div style={styles.groupButton} /> :
-                        <Tooltip title={I18n.t('Move up')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
-                            <IconButton
-                                style={styles.groupButton}
-                                size="small"
-                                onClick={e => this.onGroupMove(e, group.index, group.iterable, 'up')}
-                            >
-                                <ArrowUpward />
-                            </IconButton>
-                        </Tooltip>}
-                    {group.iterable.isLast ?
-                        (group.iterable.indexTo ? <Tooltip title={I18n.t('Add')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
-                            <IconButton
-                                style={styles.groupButton}
-                                size="small"
-                                onClick={e => this.onGroupMove(e, group.index, group.iterable, 'add')}
-                            >
-                                <Add />
-                            </IconButton>
-                        </Tooltip> : <div style={styles.groupButton} />)
-                        :
-                        <Tooltip title={I18n.t('Move down')}>
-                            <IconButton
-                                style={styles.groupButton}
-                                size="small"
-                                onClick={e => this.onGroupMove(e, group.index, group.iterable, 'down')}
-                            >
-                                <ArrowDownward />
-                            </IconButton>
-                        </Tooltip>}
-                </> : null}
-                <div>
-                    <Checkbox
-                        checked={group.hasValues}
-                        onClick={e => {
-                            if (group.hasValues) {
-                                const type = group.isStyle ? 'style' : 'data';
-                                // check is any attribute from this group is used
-                                let found = false;
-                                for (const selectedWidget of this.props.selectedWidgets) {
-                                    for (const groupField of group.fields) {
-                                        const value: number | string | boolean | null | undefined = (store.getState().visProject[this.props.selectedView].widgets[selectedWidget][type] as Record<string, number | string | boolean | null>)[groupField.name];
-                                        if (value !== null && value !== undefined) {
-                                            found = true;
-                                            break;
+                <div
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        width: '100%',
+                        alignItems: 'center',
+                    }}
+                >
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                        {ICONS[`group.${group.singleName || group.name}`]
+                            ? ICONS[`group.${group.singleName || group.name}`]
+                            : null}
+                        {group.label
+                            ? I18n.t(group.label) + (group.index !== undefined ? ` [${group.index}]` : '')
+                            : window.vis._(`group_${group.singleName || group.name}`) +
+                              (group.index !== undefined ? ` [${group.index}]` : '')}
+                    </div>
+                    {group.iterable ? (
+                        <>
+                            <div style={styles.grow} />
+                            {group.iterable.indexTo ? (
+                                <Tooltip
+                                    title={I18n.t('Clone')}
+                                    slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+                                >
+                                    <IconButton
+                                        style={styles.groupButton}
+                                        size="small"
+                                        onClick={e => this.onGroupMove(e, group.index, group.iterable, 'clone')}
+                                    >
+                                        <ContentCopy />
+                                    </IconButton>
+                                </Tooltip>
+                            ) : null}
+                            {group.iterable.indexTo ? (
+                                <Tooltip
+                                    title={I18n.t('Delete')}
+                                    slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+                                >
+                                    <IconButton
+                                        style={styles.groupButton}
+                                        size="small"
+                                        onClick={e => this.onGroupMove(e, group.index, group.iterable, 'delete')}
+                                    >
+                                        <Delete />
+                                    </IconButton>
+                                </Tooltip>
+                            ) : null}
+                            {group.iterable.isFirst ? (
+                                <div style={styles.groupButton} />
+                            ) : (
+                                <Tooltip
+                                    title={I18n.t('Move up')}
+                                    slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+                                >
+                                    <IconButton
+                                        style={styles.groupButton}
+                                        size="small"
+                                        onClick={e => this.onGroupMove(e, group.index, group.iterable, 'up')}
+                                    >
+                                        <ArrowUpward />
+                                    </IconButton>
+                                </Tooltip>
+                            )}
+                            {group.iterable.isLast ? (
+                                group.iterable.indexTo ? (
+                                    <Tooltip
+                                        title={I18n.t('Add')}
+                                        slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+                                    >
+                                        <IconButton
+                                            style={styles.groupButton}
+                                            size="small"
+                                            onClick={e => this.onGroupMove(e, group.index, group.iterable, 'add')}
+                                        >
+                                            <Add />
+                                        </IconButton>
+                                    </Tooltip>
+                                ) : (
+                                    <div style={styles.groupButton} />
+                                )
+                            ) : (
+                                <Tooltip
+                                    title={I18n.t('Move down')}
+                                    slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+                                >
+                                    <IconButton
+                                        style={styles.groupButton}
+                                        size="small"
+                                        onClick={e => this.onGroupMove(e, group.index, group.iterable, 'down')}
+                                    >
+                                        <ArrowDownward />
+                                    </IconButton>
+                                </Tooltip>
+                            )}
+                        </>
+                    ) : null}
+                    <div>
+                        <Checkbox
+                            checked={group.hasValues}
+                            onClick={e => {
+                                if (group.hasValues) {
+                                    const type = group.isStyle ? 'style' : 'data';
+                                    // check is any attribute from this group is used
+                                    let found = false;
+                                    for (const selectedWidget of this.props.selectedWidgets) {
+                                        for (const groupField of group.fields) {
+                                            const value: number | string | boolean | null | undefined = (
+                                                store.getState().visProject[this.props.selectedView].widgets[
+                                                    selectedWidget
+                                                ][type] as Record<string, number | string | boolean | null>
+                                            )[groupField.name];
+                                            if (value !== null && value !== undefined) {
+                                                found = true;
+                                                break;
+                                            }
                                         }
                                     }
-                                }
 
-                                if (found) {
-                                    this.setState({ clearGroup: group });
+                                    if (found) {
+                                        this.setState({ clearGroup: group });
+                                    } else {
+                                        this.onGroupDelete(group);
+                                    }
                                 } else {
-                                    this.onGroupDelete(group);
-                                }
-                            } else {
-                                const project = deepClone(store.getState().visProject);
-                                const type = group.isStyle ? 'style' : 'data';
-                                this.props.selectedWidgets.forEach(wid => {
-                                    group.fields.forEach(field => {
-                                        const styleOrData: Record<string, number | string | boolean | null | undefined> = project[this.props.selectedView].widgets[wid][type] as Record<string, number | string | boolean | null | undefined>;
-                                        if (styleOrData[field.name] === undefined) {
-                                            styleOrData[field.name] = field.default || null;
-                                        }
+                                    const project = deepClone(store.getState().visProject);
+                                    const type = group.isStyle ? 'style' : 'data';
+                                    this.props.selectedWidgets.forEach(wid => {
+                                        group.fields.forEach(field => {
+                                            const styleOrData: Record<
+                                                string,
+                                                number | string | boolean | null | undefined
+                                            > = project[this.props.selectedView].widgets[wid][type] as Record<
+                                                string,
+                                                number | string | boolean | null | undefined
+                                            >;
+                                            if (styleOrData[field.name] === undefined) {
+                                                styleOrData[field.name] = field.default || null;
+                                            }
+                                        });
+                                        project[this.props.selectedView].widgets[wid].data[`g_${group.name}`] = true;
                                     });
-                                    project[this.props.selectedView].widgets[wid].data[`g_${group.name}`] = true;
-                                });
-                                const accordionOpen = { ...this.state.accordionOpen };
-                                accordionOpen[group.name] = 1;
-                                this.setAccordionState(accordionOpen, () => this.props.changeProject(project));
-                            }
-                            e.stopPropagation();
-                            store.dispatch(recalculateFields(true));
-                        }}
-                        size="small"
-                        sx={Utils.getStyle(this.props.theme, commonStyles.fieldContent, commonStyles.clearPadding, styles.checkBox)}
-                    />
+                                    const accordionOpen = { ...this.state.accordionOpen };
+                                    accordionOpen[group.name] = 1;
+                                    this.setAccordionState(accordionOpen, () => this.props.changeProject(project));
+                                }
+                                e.stopPropagation();
+                                store.dispatch(recalculateFields(true));
+                            }}
+                            size="small"
+                            sx={Utils.getStyle(
+                                this.props.theme,
+                                commonStyles.fieldContent,
+                                commonStyles.clearPadding,
+                                styles.checkBox,
+                            )}
+                        />
+                    </div>
                 </div>
-            </div>
-        </AccordionSummary>;
+            </AccordionSummary>
+        );
     }
 
-    changeBinding(isStyle: boolean, attr: string) {
+    changeBinding(isStyle: boolean, attr: string): void {
         const project = deepClone(store.getState().visProject);
         const type = isStyle ? 'style' : 'data';
         for (const wid of this.props.selectedWidgets) {
@@ -1270,7 +1628,11 @@ class Widget extends Component<WidgetProps, WidgetState> {
         store.dispatch(recalculateFields(true));
     }
 
-    renderFieldRow(group: PaletteGroup, field: WidgetAttributeInfoStored, fieldIndex: number) {
+    renderFieldRow(
+        group: PaletteGroup,
+        field: WidgetAttributeInfoStored,
+        fieldIndex: number,
+    ): React.JSX.Element | null {
         if (!field) {
             return null;
         }
@@ -1283,45 +1645,85 @@ class Widget extends Component<WidgetProps, WidgetState> {
             if (field.hidden === true) {
                 return null;
             }
-            if (Widget.checkFunction(field.hidden, store.getState().visProject, this.props.selectedView, this.props.selectedWidgets, field.index)) {
+            if (
+                Widget.checkFunction(
+                    field.hidden,
+                    store.getState().visProject,
+                    this.props.selectedView,
+                    this.props.selectedWidgets,
+                    field.index,
+                )
+            ) {
                 return null;
             }
         }
         if (field.type === 'help') {
-            return <Box component="tr" key={fieldIndex} sx={styles.fieldRow}>
-                <Box component="td" colSpan={2} sx={styles.fieldHelp} style={field.style}>
-                    {field.noTranslation ? field.text : I18n.t(field.text)}
+            return (
+                <Box
+                    component="tr"
+                    key={fieldIndex}
+                    sx={styles.fieldRow}
+                >
+                    <Box
+                        component="td"
+                        colSpan={2}
+                        sx={styles.fieldHelp}
+                        style={field.style}
+                    >
+                        {field.noTranslation ? field.text : I18n.t(field.text)}
+                    </Box>
                 </Box>
-            </Box>;
+            );
         }
         if (field.type === 'delimiter') {
-            return <Box component="tr" key={fieldIndex} sx={styles.fieldRow}>
-                {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-                <td colSpan={2} style={{ ...styles.fieldDivider, ...field.style }} />
-            </Box>;
+            return (
+                <Box
+                    component="tr"
+                    key={fieldIndex}
+                    sx={styles.fieldRow}
+                >
+                    <td
+                        colSpan={2}
+                        style={{ ...styles.fieldDivider, ...field.style }}
+                    />
+                </Box>
+            );
         }
 
         if (field.error) {
-            error = Widget.checkFunction(field.error, store.getState().visProject, this.props.selectedView, this.props.selectedWidgets, field.index);
+            error = Widget.checkFunction(
+                field.error,
+                store.getState().visProject,
+                this.props.selectedView,
+                this.props.selectedWidgets,
+                field.index,
+            );
         }
         if (field.disabled) {
             if (field.disabled === true) {
                 disabled = true;
             } else {
-                disabled = !!Widget.checkFunction(field.disabled, store.getState().visProject, this.props.selectedView, this.props.selectedWidgets, field.index);
+                disabled = !!Widget.checkFunction(
+                    field.disabled,
+                    store.getState().visProject,
+                    this.props.selectedView,
+                    this.props.selectedWidgets,
+                    field.index,
+                );
             }
         }
         let label;
         if (field.label === '') {
             label = '';
-        // @ts-expect-error deprecated
+            // @ts-expect-error deprecated
         } else if (field.title) {
             // @ts-expect-error deprecated
             label = field.title;
         } else if (field.label) {
             label = I18n.t(field.label);
         } else {
-            label = window.vis._(field.singleName || field.name) + (field.index !== undefined ? ` [${field.index}]` : '');
+            label =
+                window.vis._(field.singleName || field.name) + (field.index !== undefined ? ` [${field.index}]` : '');
         }
 
         const labelStyle: React.CSSProperties = {};
@@ -1336,171 +1738,223 @@ class Widget extends Component<WidgetProps, WidgetState> {
             labelStyle.fontStyle = 'italic';
         }
 
-        const isBoundField = this.state.bindFields.includes(group.isStyle ? `style_${field.name}` : `data_${field.name}`);
+        const isBoundField = this.state.bindFields.includes(
+            group.isStyle ? `style_${field.name}` : `data_${field.name}`,
+        );
 
         // @ts-expect-error fix later
         if (field.type === 'delimiter') {
-            return <Box component="tr" key={fieldIndex} sx={styles.fieldRow}>
-                {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-                <td colSpan={2}>
-                    <Divider style={{ borderBottomWidth: 'thick' }} />
-                </td>
-            </Box>;
+            return (
+                <Box
+                    component="tr"
+                    key={fieldIndex}
+                    sx={styles.fieldRow}
+                >
+                    <td colSpan={2}>
+                        <Divider style={{ borderBottomWidth: 'thick' }} />
+                    </td>
+                </Box>
+            );
         }
 
-        return <Box component="tr" key={fieldIndex} sx={styles.fieldRow}>
+        return (
             <Box
-                component="td"
-                sx={Utils.getStyle(this.props.theme, styles.fieldTitle, disabled && styles.fieldTitleDisabled, error && styles.fieldTitleError)}
-                title={field.tooltip ? I18n.t(field.tooltip) : null}
-                style={labelStyle}
+                component="tr"
+                key={fieldIndex}
+                sx={styles.fieldRow}
             >
-                {ICONS[field.singleName || field.name] ? ICONS[field.singleName || field.name] : null}
-                {label}
-                {field.type === 'image' && !this.state.isDifferent[field.name] && selectedWidget?.data[field.name] ?
-                    <div style={styles.smallImageDiv}>
-                        <Icon
-                            src={selectedWidget.data[field.name].startsWith('_PRJ_NAME/') ?
-                                selectedWidget.data[field.name].replace('_PRJ_NAME/', `../${this.props.adapterName}.${this.props.instance}/${this.props.projectName}/`)
-                                :
-                                selectedWidget.data[field.name]}
-                            style={styles.smallImage}
-                            onError={e => {
-                                (e.target as HTMLImageElement).onerror = null;
-                                (e.target as HTMLImageElement).style.display = 'none';
-                            }}
-                            alt={field.name}
-                        />
-                    </div> : null}
-                {(field.type !== 'custom' || field.label) && !field.noBinding ? (isBoundField ?
-                    <span
-                        style={styles.bindIconSpan}
-                        title={I18n.t('Deactivate binding and use field as standard input')}
-                    >
-                        <LinkOff
-                            onClick={() => this.props.editMode && this.changeBinding(group.isStyle, field.name)}
-                            style={{ ...styles.bindIcon, cursor: disabled ? 'default' : undefined }}
-                        />
-                    </span> :
-                    <span
-                        style={styles.bindIconSpan}
-                        title={I18n.t('Use field as binding')}
-                    >
-                        <LinkIcon
-                            style={{ ...styles.bindIcon, cursor: disabled ? 'default' : undefined }}
-                            onClick={() => this.props.editMode && this.changeBinding(group.isStyle, field.name)}
-                        />
-                    </span>) : null}
-                {group.isStyle ? <Box component="span" sx={styles.colorizeDiv}>
-                    <ColorizeIcon
-                        fontSize="small"
-                        style={styles.colorize}
-                        onClick={() => this.props.cssClone(field.name, newValue => {
-                            if (newValue !== null && newValue !== undefined) {
-                                const project = deepClone(store.getState().visProject);
-                                this.props.selectedWidgets.forEach(wid => {
-                                    if (project[this.props.selectedView].widgets[wid]) {
-                                        project[this.props.selectedView].widgets[wid].style = project[this.props.selectedView].widgets[wid].style || {};
-                                        (project[this.props.selectedView].widgets[wid].style as Record<string, string | number | boolean | null>)[field.name] = newValue;
-                                    }
-                                });
-                                this.props.changeProject(project);
-                            }
-                        })}
-                    />
-                </Box> : null}
-                {field.tooltip ? <InfoIcon style={styles.infoIcon} /> : null}
+                <Box
+                    component="td"
+                    sx={Utils.getStyle(
+                        this.props.theme,
+                        styles.fieldTitle,
+                        disabled && styles.fieldTitleDisabled,
+                        error && styles.fieldTitleError,
+                    )}
+                    title={field.tooltip ? I18n.t(field.tooltip) : null}
+                    style={labelStyle}
+                >
+                    {ICONS[field.singleName || field.name] ? ICONS[field.singleName || field.name] : null}
+                    {label}
+                    {field.type === 'image' &&
+                    !this.state.isDifferent[field.name] &&
+                    selectedWidget?.data[field.name] ? (
+                        <div style={styles.smallImageDiv}>
+                            <Icon
+                                src={
+                                    selectedWidget.data[field.name].startsWith('_PRJ_NAME/')
+                                        ? selectedWidget.data[field.name].replace(
+                                              '_PRJ_NAME/',
+                                              `../${this.props.adapterName}.${this.props.instance}/${this.props.projectName}/`,
+                                          )
+                                        : selectedWidget.data[field.name]
+                                }
+                                style={styles.smallImage}
+                                onError={e => {
+                                    (e.target as HTMLImageElement).onerror = null;
+                                    (e.target as HTMLImageElement).style.display = 'none';
+                                }}
+                                alt={field.name}
+                            />
+                        </div>
+                    ) : null}
+                    {(field.type !== 'custom' || field.label) && !field.noBinding ? (
+                        isBoundField ? (
+                            <span
+                                style={styles.bindIconSpan}
+                                title={I18n.t('Deactivate binding and use field as standard input')}
+                            >
+                                <LinkOff
+                                    onClick={() => this.props.editMode && this.changeBinding(group.isStyle, field.name)}
+                                    style={{ ...styles.bindIcon, cursor: disabled ? 'default' : undefined }}
+                                />
+                            </span>
+                        ) : (
+                            <span
+                                style={styles.bindIconSpan}
+                                title={I18n.t('Use field as binding')}
+                            >
+                                <LinkIcon
+                                    style={{ ...styles.bindIcon, cursor: disabled ? 'default' : undefined }}
+                                    onClick={() => this.props.editMode && this.changeBinding(group.isStyle, field.name)}
+                                />
+                            </span>
+                        )
+                    ) : null}
+                    {group.isStyle ? (
+                        <Box
+                            component="span"
+                            sx={styles.colorizeDiv}
+                        >
+                            <ColorizeIcon
+                                fontSize="small"
+                                style={styles.colorize}
+                                onClick={() =>
+                                    this.props.cssClone(field.name, newValue => {
+                                        if (newValue !== null && newValue !== undefined) {
+                                            const project = deepClone(store.getState().visProject);
+                                            this.props.selectedWidgets.forEach(wid => {
+                                                if (project[this.props.selectedView].widgets[wid]) {
+                                                    project[this.props.selectedView].widgets[wid].style =
+                                                        project[this.props.selectedView].widgets[wid].style || {};
+                                                    (
+                                                        project[this.props.selectedView].widgets[wid].style as Record<
+                                                            string,
+                                                            string | number | boolean | null
+                                                        >
+                                                    )[field.name] = newValue;
+                                                }
+                                            });
+                                            this.props.changeProject(project);
+                                        }
+                                    })
+                                }
+                            />
+                        </Box>
+                    ) : null}
+                    {field.tooltip ? <InfoIcon style={styles.infoIcon} /> : null}
+                </Box>
+                <Box component="td">
+                    <div style={styles.fieldInput}>
+                        {isBoundField ? (
+                            <WidgetBindingField
+                                theme={this.props.theme}
+                                disabled={disabled}
+                                field={field}
+                                label={label}
+                                widget={
+                                    this.props.selectedWidgets.length > 1 ? this.state.commonValues : selectedWidget
+                                }
+                                isStyle={group.isStyle}
+                                selectedView={this.props.selectedView}
+                                selectedWidgets={this.props.selectedWidgets}
+                                isDifferent={this.state.isDifferent[field.name]}
+                                socket={this.props.socket}
+                                changeProject={this.props.changeProject}
+                            />
+                        ) : (
+                            <WidgetField
+                                widgetType={this.state.widgetType}
+                                themeType={this.props.themeType}
+                                theme={this.props.theme}
+                                disabled={disabled}
+                                field={field}
+                                widget={
+                                    this.props.selectedWidgets.length > 1
+                                        ? (this.state.commonValues as SingleGroupWidget)
+                                        : selectedWidget
+                                }
+                                widgetId={this.props.selectedWidgets.length > 1 ? null : this.props.selectedWidgets[0]}
+                                isStyle={group.isStyle}
+                                index={group.index}
+                                isDifferent={this.state.isDifferent[field.name]}
+                                selectedView={this.props.selectedView}
+                                socket={this.props.socket}
+                                changeProject={this.props.changeProject}
+                                fonts={this.props.fonts}
+                                adapterName={this.props.adapterName}
+                                instance={this.props.instance}
+                                projectName={this.props.projectName}
+                                onPxToPercent={this.props.onPxToPercent}
+                                onPercentToPx={this.props.onPercentToPx}
+                                userGroups={this.props.userGroups}
+                                error={error}
+                                selectedWidgets={this.props.selectedWidgets}
+                            />
+                        )}
+                    </div>
+                </Box>
             </Box>
-            <Box component="td">
-                <div style={styles.fieldInput}>
-                    {isBoundField ?
-                        <WidgetBindingField
-                            theme={this.props.theme}
-                            disabled={disabled}
-                            field={field}
-                            label={label}
-                            widget={this.props.selectedWidgets.length > 1 ? this.state.commonValues : selectedWidget}
-                            isStyle={group.isStyle}
-                            selectedView={this.props.selectedView}
-                            selectedWidgets={this.props.selectedWidgets}
-                            isDifferent={this.state.isDifferent[field.name]}
-                            socket={this.props.socket}
-                            changeProject={this.props.changeProject}
-                        />
-                        : <WidgetField
-                            widgetType={this.state.widgetType}
-                            themeType={this.props.themeType}
-                            theme={this.props.theme}
-                            disabled={disabled}
-                            field={field}
-                            widget={this.props.selectedWidgets.length > 1 ? this.state.commonValues as SingleGroupWidget : selectedWidget}
-                            widgetId={this.props.selectedWidgets.length > 1 ? null : this.props.selectedWidgets[0]}
-                            isStyle={group.isStyle}
-                            index={group.index}
-                            isDifferent={this.state.isDifferent[field.name]}
-                            selectedView={this.props.selectedView}
-                            socket={this.props.socket}
-                            changeProject={this.props.changeProject}
-                            fonts={this.props.fonts}
-                            adapterName={this.props.adapterName}
-                            instance={this.props.instance}
-                            projectName={this.props.projectName}
-                            onPxToPercent={this.props.onPxToPercent}
-                            onPercentToPx={this.props.onPercentToPx}
-                            userGroups={this.props.userGroups}
-                            error={error}
-                            selectedWidgets={this.props.selectedWidgets}
-                        />}
-                </div>
-            </Box>
-        </Box>;
+        );
     }
 
-    renderGroupBody(group: PaletteGroup) {
+    renderGroupBody(group: PaletteGroup): React.JSX.Element {
         if (this.state.accordionOpen[group.name] === 0 || !group.hasValues) {
             return null;
         }
-        return <AccordionDetails
-            sx={styles.accordionDetails}
-        >
-            <table style={{ width: '100%' }}>
-                <tbody>
-                    {group.fields.map((field, fieldIndex) => this.renderFieldRow(group, field, fieldIndex))}
-                </tbody>
-            </table>
-        </AccordionDetails>;
+        return (
+            <AccordionDetails sx={styles.accordionDetails}>
+                <table style={{ width: '100%' }}>
+                    <tbody>
+                        {group.fields.map((field, fieldIndex) => this.renderFieldRow(group, field, fieldIndex))}
+                    </tbody>
+                </table>
+            </AccordionDetails>
+        );
     }
 
-    renderGroup(group: PaletteGroup) {
-        return <Accordion
-            sx={{
-                '&.MuiAccordion-root': styles.accordionRoot,
-                '& .Mui-expanded': commonStyles.clearPadding,
-            }}
-            square
-            key={group.name}
-            elevation={0}
-            expanded={this.state.accordionOpen[group.name] === 1 && group.hasValues}
-            onChange={(_e, expanded) => {
-                const accordionOpen = { ...this.state.accordionOpen };
-                accordionOpen[group.name] = expanded ? 1 : 2;
-                this.setAccordionState(accordionOpen, () => {
-                    if (!expanded) {
-                        setTimeout(() => {
-                            const _accordionOpen = { ...this.state.accordionOpen };
-                            _accordionOpen[group.name] = 0;
-                        }, 200);
-                    }
-                });
-            }}
-            TransitionProps={{ timeout: this.state.transitionTime }}
-        >
-            {this.renderGroupHeader(group)}
-            {this.renderGroupBody(group)}
-        </Accordion>;
+    renderGroup(group: PaletteGroup): React.JSX.Element {
+        return (
+            <Accordion
+                sx={{
+                    '&.MuiAccordion-root': styles.accordionRoot,
+                    '& .Mui-expanded': commonStyles.clearPadding,
+                }}
+                square
+                key={group.name}
+                elevation={0}
+                expanded={this.state.accordionOpen[group.name] === 1 && group.hasValues}
+                onChange={(_e, expanded) => {
+                    const accordionOpen = { ...this.state.accordionOpen };
+                    accordionOpen[group.name] = expanded ? 1 : 2;
+                    this.setAccordionState(accordionOpen, () => {
+                        if (!expanded) {
+                            setTimeout(() => {
+                                const _accordionOpen = { ...this.state.accordionOpen };
+                                _accordionOpen[group.name] = 0;
+                            }, 200);
+                        }
+                    });
+                }}
+                TransitionProps={{ timeout: this.state.transitionTime }}
+            >
+                {this.renderGroupHeader(group)}
+                {this.renderGroupBody(group)}
+            </Accordion>
+        );
     }
 
-    onGroupDelete(group: PaletteGroup) {
+    onGroupDelete(group: PaletteGroup): void {
         const project = deepClone(store.getState().visProject);
         const type = group.isStyle ? 'style' : 'data';
         this.props.selectedWidgets.forEach(wid => {
@@ -1514,7 +1968,7 @@ class Widget extends Component<WidgetProps, WidgetState> {
         store.dispatch(recalculateFields(true));
     }
 
-    render() {
+    render(): React.JSX.Element | React.JSX.Element[] | null {
         if (store.getState().recalculateFields && !this.recalculateTimer) {
             this.recalculateTimer = setTimeout(() => {
                 this.recalculateTimer = null;
@@ -1529,85 +1983,118 @@ class Widget extends Component<WidgetProps, WidgetState> {
         // check that for all selected widgets the widget type loaded and exists
         const widgets = store.getState().visProject[this.props.selectedView]?.widgets;
         let widgetsExist = 0;
-        widgets && this.props.selectedWidgets.forEach(selectedWidget => {
-            if (widgets[selectedWidget] && this.state.widgetTypes.find(type => type.name === widgets[selectedWidget].tpl)) {
-                widgetsExist++;
-            }
-        });
+        widgets &&
+            this.props.selectedWidgets.forEach(selectedWidget => {
+                if (
+                    widgets[selectedWidget] &&
+                    this.state.widgetTypes.find(type => type.name === widgets[selectedWidget].tpl)
+                ) {
+                    widgetsExist++;
+                }
+            });
         if (!widgets || this.props.selectedWidgets.length !== widgetsExist) {
             return null;
         }
 
         // detect triggers from parent to open all groups
         if (this.props.triggerAllOpened !== this.state.triggerAllOpened) {
-            this.triggerTimer = this.triggerTimer || setTimeout(() => {
-                this.triggerTimer = null;
-                const accordionOpen: { [groupName: string]: 0 | 1 | 2 }  = {};
-                this.state.fields?.forEach(group => accordionOpen[group.name] = 1);
-                this.setState({ triggerAllOpened: this.props.triggerAllOpened }, () => this.setAccordionState(accordionOpen));
-            }, 50);
+            this.triggerTimer =
+                this.triggerTimer ||
+                setTimeout(() => {
+                    this.triggerTimer = null;
+                    const accordionOpen: { [groupName: string]: 0 | 1 | 2 } = {};
+                    this.state.fields?.forEach(group => (accordionOpen[group.name] = 1));
+                    this.setState({ triggerAllOpened: this.props.triggerAllOpened }, () =>
+                        this.setAccordionState(accordionOpen),
+                    );
+                }, 50);
         }
         // detect triggers from parent to close all groups
         if (this.props.triggerAllClosed !== this.state.triggerAllClosed) {
-            this.triggerTimer = this.triggerTimer || setTimeout(() => {
-                this.triggerTimer = null;
-                const accordionOpen: { [groupName: string]: 0 | 1 | 2 }  = {};
-                this.state.fields?.forEach(group => accordionOpen[group.name] = 0);
-                this.setState({ triggerAllClosed: this.props.triggerAllClosed }, () => this.setAccordionState(accordionOpen));
-            }, 50);
+            this.triggerTimer =
+                this.triggerTimer ||
+                setTimeout(() => {
+                    this.triggerTimer = null;
+                    const accordionOpen: { [groupName: string]: 0 | 1 | 2 } = {};
+                    this.state.fields?.forEach(group => (accordionOpen[group.name] = 0));
+                    this.setState({ triggerAllClosed: this.props.triggerAllClosed }, () =>
+                        this.setAccordionState(accordionOpen),
+                    );
+                }, 50);
         }
 
         let jsonCustomFields = null;
         if (this.state.showWidgetCode) {
             try {
                 jsonCustomFields = JSON.stringify(this.state.customFields, null, 2);
-            } catch (e) {
+            } catch {
                 // ignore
             }
         }
 
         return [
             this.renderHeader(widgets),
-            this.state.fields ? <div key="groups" style={{ height: 'calc(100% - 34px)', overflowY: 'auto' }}>
-                {this.state.fields.map(group => {
-                    if (group.hidden) {
-                        if (group.hidden === true) {
-                            return null;
-                        }
-                        if (Widget.checkFunction(group.hidden, store.getState().visProject, this.props.selectedView, this.props.selectedWidgets, group.index)) {
-                            return null;
-                        }
-                    }
-
-                    return this.renderGroup(group);
-                })}
-
-                {this.state.clearGroup ? <IODialog
-                    title="Are you sure"
-                    onClose={() => this.setState({ clearGroup: null })}
-                    open={!0}
-                    action={() => this.onGroupDelete(this.state.clearGroup)}
-                    actionTitle="Clear"
+            this.state.fields ? (
+                <div
+                    key="groups"
+                    style={{ height: 'calc(100% - 34px)', overflowY: 'auto' }}
                 >
-                    {I18n.t('Fields of group will be cleaned')}
-                </IODialog> : null}
+                    {this.state.fields.map(group => {
+                        if (group.hidden) {
+                            if (group.hidden === true) {
+                                return null;
+                            }
+                            if (
+                                Widget.checkFunction(
+                                    group.hidden,
+                                    store.getState().visProject,
+                                    this.props.selectedView,
+                                    this.props.selectedWidgets,
+                                    group.index,
+                                )
+                            ) {
+                                return null;
+                            }
+                        }
 
-                <Button
-                    style={{ opacity: this.state.showWidgetCode ? 1 : 0 }}
-                    onClick={() => {
-                        window.localStorage.setItem('showWidgetCode', this.state.showWidgetCode ? 'false' : 'true');
-                        this.setState({ showWidgetCode: !this.state.showWidgetCode });
-                    }}
-                    startIcon={<CodeIcon />}
-                >
-                    {this.state.showWidgetCode ? I18n.t('hide code') : I18n.t('show code')}
-                </Button>
+                        return this.renderGroup(group);
+                    })}
 
-                {this.state.showWidgetCode ? <pre>
-                    {JSON.stringify(selectWidget(store.getState(), this.props.selectedView, this.props.selectedWidgets[0]), null, 2)}
-                    {jsonCustomFields}
-                </pre> : null}
-            </div> : null,
+                    {this.state.clearGroup ? (
+                        <IODialog
+                            title="Are you sure"
+                            onClose={() => this.setState({ clearGroup: null })}
+                            open={!0}
+                            action={() => this.onGroupDelete(this.state.clearGroup)}
+                            actionTitle="Clear"
+                        >
+                            {I18n.t('Fields of group will be cleaned')}
+                        </IODialog>
+                    ) : null}
+
+                    <Button
+                        style={{ opacity: this.state.showWidgetCode ? 1 : 0 }}
+                        onClick={() => {
+                            window.localStorage.setItem('showWidgetCode', this.state.showWidgetCode ? 'false' : 'true');
+                            this.setState({ showWidgetCode: !this.state.showWidgetCode });
+                        }}
+                        startIcon={<CodeIcon />}
+                    >
+                        {this.state.showWidgetCode ? I18n.t('hide code') : I18n.t('show code')}
+                    </Button>
+
+                    {this.state.showWidgetCode ? (
+                        <pre>
+                            {JSON.stringify(
+                                selectWidget(store.getState(), this.props.selectedView, this.props.selectedWidgets[0]),
+                                null,
+                                2,
+                            )}
+                            {jsonCustomFields}
+                        </pre>
+                    ) : null}
+                </div>
+            ) : null,
         ];
     }
 }

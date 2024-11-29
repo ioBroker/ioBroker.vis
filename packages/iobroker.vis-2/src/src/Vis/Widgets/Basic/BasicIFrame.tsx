@@ -1,9 +1,6 @@
 import React from 'react';
 
-import type {
-    RxRenderWidgetProps,
-    VisBaseWidgetProps,
-} from '@iobroker/types-vis-2';
+import type { RxRenderWidgetProps, RxWidgetInfo, VisBaseWidgetProps } from '@iobroker/types-vis-2';
 import VisRxWidget from '@/Vis/visRxWidget';
 
 type RxData = {
@@ -37,59 +34,61 @@ export default class BasicIFrame extends VisRxWidget<RxData> {
     /**
      * Returns the widget info which is rendered in the edit mode
      */
-    static getWidgetInfo() {
+    static getWidgetInfo(): RxWidgetInfo {
         return {
             id: 'tplIFrame',
             visSet: 'basic',
             visName: 'iFrame',
             visPrev: 'widgets/basic/img/Prev_iFrame.png',
-            visAttrs: [{
-                name: 'common',
-                fields: [
-                    {
-                        name: 'src',
-                        type: 'url',
-                    },
-                    {
-                        name: 'refreshInterval',
-                        tooltip: 'basic_refreshInterval_tooltip',
-                        type: 'slider',
-                        min: 0,
-                        max: 180000,
-                        step: 100,
-                        default: 0,
-                    },
-                    {
-                        name: 'noSandbox',
-                        type: 'checkbox',
-                    },
-                    {
-                        name: 'refreshOnWakeUp',
-                        type: 'checkbox',
-                    },
-                    {
-                        name: 'refreshOnViewChange',
-                        type: 'checkbox',
-                    },
-                    {
-                        name: 'refreshWithNoQuery',
-                        type: 'checkbox',
-                    },
-                    {
-                        name: 'scrollX',
-                        type: 'checkbox',
-                    },
-                    {
-                        name: 'scrollY',
-                        type: 'checkbox',
-                    },
-                    {
-                        name: 'seamless',
-                        type: 'checkbox',
-                        default: true,
-                    },
-                ],
-            }],
+            visAttrs: [
+                {
+                    name: 'common',
+                    fields: [
+                        {
+                            name: 'src',
+                            type: 'url',
+                        },
+                        {
+                            name: 'refreshInterval',
+                            tooltip: 'basic_refreshInterval_tooltip',
+                            type: 'slider',
+                            min: 0,
+                            max: 180000,
+                            step: 100,
+                            default: 0,
+                        },
+                        {
+                            name: 'noSandbox',
+                            type: 'checkbox',
+                        },
+                        {
+                            name: 'refreshOnWakeUp',
+                            type: 'checkbox',
+                        },
+                        {
+                            name: 'refreshOnViewChange',
+                            type: 'checkbox',
+                        },
+                        {
+                            name: 'refreshWithNoQuery',
+                            type: 'checkbox',
+                        },
+                        {
+                            name: 'scrollX',
+                            type: 'checkbox',
+                        },
+                        {
+                            name: 'scrollY',
+                            type: 'checkbox',
+                        },
+                        {
+                            name: 'seamless',
+                            type: 'checkbox',
+                            default: true,
+                        },
+                    ],
+                },
+            ],
             // visWidgetLabel: 'value_string',  // Label of widget
             visDefaultStyle: {
                 width: 600,
@@ -98,14 +97,17 @@ export default class BasicIFrame extends VisRxWidget<RxData> {
         } as const;
     }
 
-    async componentDidMount(): Promise<void> {
+    componentDidMount(): void {
         super.componentDidMount();
         this.onPropertyUpdate();
     }
 
-    async componentWillUnmount(): Promise<void> {
+    componentWillUnmount(): void {
         super.componentWillUnmount();
-        this.refreshInterval && clearInterval(this.refreshInterval);
+        if (this.refreshInterval) {
+            clearInterval(this.refreshInterval);
+            this.refreshInterval = null;
+        }
         if (this.hashInstalled) {
             this.hashInstalled = false;
             window.removeEventListener('hashchange', this.onHashChange);
@@ -116,17 +118,17 @@ export default class BasicIFrame extends VisRxWidget<RxData> {
      * Enables calling widget info on the class instance itself
      */
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo() {
+    getWidgetInfo(): RxWidgetInfo {
         return BasicIFrame.getWidgetInfo();
     }
 
-    onHashChange = () => {
+    onHashChange = (): void => {
         if (this.props.context.activeView === this.props.view) {
             this.refreshIFrame();
         }
     };
 
-    refreshIFrame() {
+    refreshIFrame(): void {
         if (this.state.rxData.refreshWithNoQuery === true) {
             this.frameRef.current?.contentWindow?.location.reload();
         } else if (this.frameRef.current) {
@@ -134,7 +136,7 @@ export default class BasicIFrame extends VisRxWidget<RxData> {
         }
     }
 
-    static isHidden(el: HTMLElement) {
+    static isHidden(el: HTMLElement): boolean {
         return el.offsetParent === null;
     }
 
@@ -149,8 +151,8 @@ export default class BasicIFrame extends VisRxWidget<RxData> {
         return els;
     }
 
-    onPropertyUpdate() {
-        const src     = this.state.rxData.src || '';
+    onPropertyUpdate(): void {
+        const src = this.state.rxData.src || '';
         const refreshInterval = Number(this.state.rxData.refreshInterval) || 0;
         const refreshOnViewChange = this.state.rxData.refreshOnViewChange === true;
         const refreshOnWakeUp = this.state.rxData.refreshOnWakeUp === true;
@@ -174,14 +176,22 @@ export default class BasicIFrame extends VisRxWidget<RxData> {
                     this.refreshInterval = null;
                 }
                 // install refresh handler
-                this.refreshInterval = this.refreshInterval || setInterval(() => {
-                    if (this.frameRef.current && !BasicIFrame.isHidden(this.frameRef.current as HTMLElement)) {
-                        const parents = BasicIFrame.getParents(this.frameRef.current).filter(el => BasicIFrame.isHidden(el));
-                        if (!parents.length || parents[0].tagName === 'BODY' || parents[0].id === 'materialdesign-vuetify-container') {
-                            this.refreshIFrame();
+                this.refreshInterval =
+                    this.refreshInterval ||
+                    setInterval(() => {
+                        if (this.frameRef.current && !BasicIFrame.isHidden(this.frameRef.current as HTMLElement)) {
+                            const parents = BasicIFrame.getParents(this.frameRef.current).filter(el =>
+                                BasicIFrame.isHidden(el),
+                            );
+                            if (
+                                !parents.length ||
+                                parents[0].tagName === 'BODY' ||
+                                parents[0].id === 'materialdesign-vuetify-container'
+                            ) {
+                                this.refreshIFrame();
+                            }
                         }
-                    }
-                }, refreshInterval);
+                    }, refreshInterval);
             } else if (this.refreshInterval) {
                 this.startedInterval = 0;
                 clearInterval(this.refreshInterval);
@@ -201,7 +211,7 @@ export default class BasicIFrame extends VisRxWidget<RxData> {
         }
     }
 
-    onRxDataChanged() {
+    onRxDataChanged(): void {
         this.onPropertyUpdate();
     }
 
@@ -230,15 +240,21 @@ export default class BasicIFrame extends VisRxWidget<RxData> {
         };
         const src = this.state.rxData.src || '';
 
-        return src ? <div className="vis-widget-body">
-            <iframe
-                style={style}
-                ref={this.frameRef}
-                title={this.props.id}
-                src={this.state.rxData.src}
-                sandbox={this.state.rxData.noSandbox ? 'allow-modals allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts' : undefined}
-                seamless={this.state.rxData.seamless}
-            />
-        </div> : null;
+        return src ? (
+            <div className="vis-widget-body">
+                <iframe
+                    style={style}
+                    ref={this.frameRef}
+                    title={this.props.id}
+                    src={this.state.rxData.src}
+                    sandbox={
+                        this.state.rxData.noSandbox
+                            ? 'allow-modals allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts'
+                            : undefined
+                    }
+                    seamless={this.state.rxData.seamless}
+                />
+            </div>
+        ) : null;
     }
 }

@@ -4,7 +4,9 @@ import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
-    IconButton, InputAdornment, LinearProgress,
+    IconButton,
+    InputAdornment,
+    LinearProgress,
     TextField,
     Tooltip,
     Typography,
@@ -19,18 +21,12 @@ import {
     Palette as IconPalette,
 } from '@mui/icons-material';
 
-import {
-    I18n, Utils,
-    Icon,
-    type LegacyConnection,
-    type ThemeType,
-} from '@iobroker/adapter-react-v5';
+import { I18n, Utils, Icon, type LegacyConnection, type ThemeType } from '@iobroker/adapter-react-v5';
 
 import type { Marketplace, MarketplaceWidgetRevision, VisTheme } from '@iobroker/types-vis-2';
 import { store } from '@/Store';
 
-import type { WidgetType } from '@/Vis/visWidgetsCatalog';
-import { getWidgetTypes } from '@/Vis/visWidgetsCatalog';
+import { getWidgetTypes, type WidgetType } from '@/Vis/visWidgetsCatalog';
 import { loadComponent } from '@/Vis/visLoadWidgets';
 import commonStyles from '@/Utils/styles';
 import type Editor from '../Editor';
@@ -172,13 +168,15 @@ class Palette extends Component<PaletteProps, PaletteState> {
 
     private marketplaceLoadingStarted = false;
 
+    private readonly lang: ioBroker.Languages = I18n.getLanguage();
+
     constructor(props: PaletteProps) {
         super(props);
         const accordionOpenStr = window.localStorage.getItem('widgets');
         let accordionOpen;
         try {
             accordionOpen = accordionOpenStr ? JSON.parse(accordionOpenStr) : {};
-        } catch (e) {
+        } catch {
             accordionOpen = {};
         }
 
@@ -193,13 +191,13 @@ class Palette extends Component<PaletteProps, PaletteState> {
         };
     }
 
-    componentDidMount() {
+    componentDidMount(): void {
         if (this.state.accordionOpen.__marketplace) {
             this.loadMarketplace();
         }
     }
 
-    loadMarketplace() {
+    loadMarketplace(): void {
         if (
             this.state.accordionOpen.__marketplace &&
             window.marketplaceClient &&
@@ -210,13 +208,21 @@ class Palette extends Component<PaletteProps, PaletteState> {
             this.marketplaceLoadingStarted = true;
             // load marketplace
             this.setState({ marketplaceLoading: true }, () => {
-                // @ts-expect-error solve later
-                const tPromise = loadComponent('__marketplace', 'default', './translations', `${window.marketplaceClient}/customWidgets.js`)()
-                    .then((translations: any) => I18n.extendTranslations(translations.default));
+                const tPromise = loadComponent(
+                    // @ts-expect-error solve later
+                    '__marketplace',
+                    'default',
+                    './translations',
+                    `${window.marketplaceClient}/customWidgets.js`,
+                )().then((translations: any) => I18n.extendTranslations(translations.default));
 
-                // @ts-expect-error solve later
-                const mPromise = loadComponent('__marketplace', 'default', './VisMarketplace', `${window.marketplaceClient}/customWidgets.js`)()
-                    .then(marketplace => window.VisMarketplace = marketplace as any as Marketplace);
+                const mPromise = loadComponent(
+                    // @ts-expect-error solve later
+                    '__marketplace',
+                    'default',
+                    './VisMarketplace',
+                    `${window.marketplaceClient}/customWidgets.js`,
+                )().then(marketplace => (window.VisMarketplace = marketplace as any as Marketplace));
 
                 Promise.all([tPromise, mPromise])
                     .then(async () => {
@@ -252,7 +258,7 @@ class Palette extends Component<PaletteProps, PaletteState> {
         }
     }
 
-    buildWidgetList() {
+    buildWidgetList(): void {
         if (!this.props.widgetsLoaded) {
             if (this.state.widgetsList !== null || this.state.widgetSetProps !== null) {
                 this.setState({ widgetsList: null, widgetSetProps: null });
@@ -300,7 +306,10 @@ class Palette extends Component<PaletteProps, PaletteState> {
             }
 
             const title = widgetType.label ? I18n.t(widgetType.label) : window.vis._(widgetType.title) || '';
-            if (widgetType.hidden || (this.state.filter && !title.toLowerCase().includes(this.state.filter.toLowerCase()))) {
+            if (
+                widgetType.hidden ||
+                (this.state.filter && !title.toLowerCase().includes(this.state.filter.toLowerCase()))
+            ) {
                 return;
             }
 
@@ -330,7 +339,7 @@ class Palette extends Component<PaletteProps, PaletteState> {
             resultSet.unshift('basic');
         }
         const sorted: Record<string, Record<string, WidgetType>> = {};
-        resultSet.forEach(key => sorted[key] = _widgetsList[key]);
+        resultSet.forEach(key => (sorted[key] = _widgetsList[key]));
         _widgetsList = sorted;
 
         if (this.state.filter) {
@@ -355,76 +364,87 @@ class Palette extends Component<PaletteProps, PaletteState> {
         });
     }
 
-    renderMarketplace() {
+    renderMarketplace(): React.JSX.Element {
         const opened = this.state.accordionOpen.__marketplace;
 
-        return <Accordion
-            sx={{
-                ...styles.accordionRoot,
-                '& .MuiAccordion-expanded': commonStyles.clearPadding,
-            }}
-            elevation={0}
-            expanded={opened || false}
-            onChange={(_e, expanded) => {
-                const accordionOpen = JSON.parse(JSON.stringify(this.state.accordionOpen));
-                accordionOpen.__marketplace = expanded;
-                window.localStorage.setItem('widgets', JSON.stringify(accordionOpen));
-                this.setState({ accordionOpen }, () =>
-                    expanded && this.loadMarketplace());
-            }}
-        >
-            <AccordionSummary
-                id="summary___marketplace"
-                expandIcon={<ExpandMoreIcon />}
-                className={Utils.clsx('vis-palette-widget-set', opened && 'vis-palette-summary-expanded')}
+        return (
+            <Accordion
                 sx={{
-                    ...Utils.getStyle(
-                        this.props.theme,
-                        commonStyles.clearPadding,
-                        opened ? styles.groupSummaryExpanded : styles.groupSummary,
-                        styles.lightedPanel,
-                        { minHeight: 0 },
-                    ),
-                    '&.Mui-expanded': { minHeight: 0 },
-                    '& .MuiAccordionSummary-content': { ...commonStyles.clearPadding, ...(opened ? styles.accordionOpenedSummary : undefined) },
-                    // '& .MuiAccordionSummary-expandIcon': commonStyles.clearPadding,
+                    ...styles.accordionRoot,
+                    '& .MuiAccordion-expanded': commonStyles.clearPadding,
+                }}
+                elevation={0}
+                expanded={opened || false}
+                onChange={(_e, expanded) => {
+                    const accordionOpen = JSON.parse(JSON.stringify(this.state.accordionOpen));
+                    accordionOpen.__marketplace = expanded;
+                    window.localStorage.setItem('widgets', JSON.stringify(accordionOpen));
+                    this.setState({ accordionOpen }, () => expanded && this.loadMarketplace());
                 }}
             >
-                <Icon style={styles.groupIcon} src="img/marketplace.png" />
-                {I18n.t('__marketplace')}
-            </AccordionSummary>
-            <AccordionDetails sx={styles.accordionDetails}>
-                {opened && this.state.marketplaceLoading ? <LinearProgress /> : null}
-                {opened && this.state.marketplaceUpdates && <div>
-                    <MarketplacePalette setMarketplaceDialog={this.props.setMarketplaceDialog} />
-                    {store.getState().visProject.___settings.marketplace?.map(item => <div key={item.id}>
-                        <Widget
-                            editMode={this.props.editMode}
-                            key={item.id}
-                            themeType={this.props.themeType}
-                            selectedView={this.props.selectedView}
-                            marketplace={item}
-                            marketplaceDeleted={this.state.marketplaceDeleted}
-                            marketplaceUpdates={this.state.marketplaceUpdates}
-                            uninstallWidget={this.props.uninstallWidget}
-                            updateWidgets={this.props.updateWidgets}
-                            widgetSet="__marketplace"
-                            widgetType={{
-                                name: item.id,
-                                label: item.name,
-                                preview: `${window.apiUrl + window.webPrefix}/images/${item.image_id}`,
-                                params: 'simulated',
-                            }}
-                            widgetMarketplaceId={item.widget_id}
-                            widgetTypeName={item.name}
-                        />
-                    </div>)}
-                </div>}
-            </AccordionDetails>
-        </Accordion>;
+                <AccordionSummary
+                    id="summary___marketplace"
+                    expandIcon={<ExpandMoreIcon />}
+                    className={Utils.clsx('vis-palette-widget-set', opened && 'vis-palette-summary-expanded')}
+                    sx={{
+                        ...Utils.getStyle(
+                            this.props.theme,
+                            commonStyles.clearPadding,
+                            opened ? styles.groupSummaryExpanded : styles.groupSummary,
+                            styles.lightedPanel,
+                            { minHeight: 0 },
+                        ),
+                        '&.Mui-expanded': { minHeight: 0 },
+                        '& .MuiAccordionSummary-content': {
+                            ...commonStyles.clearPadding,
+                            ...(opened ? styles.accordionOpenedSummary : undefined),
+                        },
+                        // '& .MuiAccordionSummary-expandIcon': commonStyles.clearPadding,
+                    }}
+                >
+                    <Icon
+                        style={styles.groupIcon}
+                        src="img/marketplace.png"
+                    />
+                    {I18n.t('__marketplace')}
+                </AccordionSummary>
+                <AccordionDetails sx={styles.accordionDetails}>
+                    {opened && this.state.marketplaceLoading ? <LinearProgress /> : null}
+                    {opened && this.state.marketplaceUpdates && (
+                        <div>
+                            <MarketplacePalette setMarketplaceDialog={this.props.setMarketplaceDialog} />
+                            {store.getState().visProject.___settings.marketplace?.map(item => (
+                                <div key={item.id}>
+                                    <Widget
+                                        editMode={this.props.editMode}
+                                        key={item.id}
+                                        themeType={this.props.themeType}
+                                        selectedView={this.props.selectedView}
+                                        marketplace={item}
+                                        marketplaceDeleted={this.state.marketplaceDeleted}
+                                        marketplaceUpdates={this.state.marketplaceUpdates}
+                                        uninstallWidget={this.props.uninstallWidget}
+                                        updateWidgets={this.props.updateWidgets}
+                                        widgetSet="__marketplace"
+                                        widgetType={{
+                                            name: item.id,
+                                            label: item.name,
+                                            preview: `${window.apiUrl + window.webPrefix}/images/${item.image_id}`,
+                                            params: 'simulated',
+                                        }}
+                                        widgetMarketplaceId={item.widget_id}
+                                        widgetTypeName={item.name}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </AccordionDetails>
+            </Accordion>
+        );
     }
 
-    async toggleDebugVersion(category: string) {
+    async toggleDebugVersion(category: string): Promise<void> {
         const objects = await this.props.socket.getObjectViewSystem(
             'instance',
             'system.adapter.',
@@ -438,8 +458,19 @@ class Palette extends Component<PaletteProps, PaletteState> {
         if (this.state.widgetSetProps[category].developerMode) {
             if (wSetObj) {
                 // find any set with http://localhost:4173/customWidgets.js
-                if (Object.keys(wSetObj.common.visWidgets).find(key => wSetObj.common.visWidgets[key].url?.startsWith('http'))) {
-                    Object.keys(wSetObj.common.visWidgets).forEach(key => wSetObj.common.visWidgets[key].url = `${wSetObj.common.name}/customWidgets.js`);
+                if (
+                    Object.keys(wSetObj.common.visWidgets).find(key =>
+                        wSetObj.common.visWidgets[key].url?.startsWith('http'),
+                    )
+                ) {
+                    Object.keys(wSetObj.common.visWidgets).forEach(key => {
+                        if (typeof wSetObj.common.name === 'object') {
+                            wSetObj.common.visWidgets[key].url =
+                                `${wSetObj.common.name[this.lang] || wSetObj.common.name.en}/customWidgets.js`;
+                        } else {
+                            wSetObj.common.visWidgets[key].url = `${wSetObj.common.name}/customWidgets.js`;
+                        }
+                    });
                     await this.props.socket.setObject(wSetObj._id, wSetObj);
                     reload = true;
                 }
@@ -453,7 +484,14 @@ class Palette extends Component<PaletteProps, PaletteState> {
                     // find any set with http://localhost:4173/customWidgets.js
                     if (Object.keys(visWidgets).find(key => visWidgets[key].url?.startsWith('http'))) {
                         // disable the load over http
-                        Object.keys(visWidgets).forEach(key => visWidgets[key].url = `${dynamicWidgetInstances[i].common.name}/customWidgets.js`);
+                        Object.keys(visWidgets).forEach(key => {
+                            const name: ioBroker.StringOrTranslated = dynamicWidgetInstances[i].common.name;
+                            if (typeof name === 'object') {
+                                visWidgets[key].url = `${name[this.lang] || name.en}/customWidgets.js`;
+                            } else {
+                                visWidgets[key].url = `${name}/customWidgets.js`;
+                            }
+                        });
                         await this.props.socket.setObject(dynamicWidgetInstances[i]._id, dynamicWidgetInstances[i]);
                         reload = true;
                     }
@@ -461,10 +499,12 @@ class Palette extends Component<PaletteProps, PaletteState> {
                     // check if http://localhost:4173/customWidgets.js available
                     try {
                         await fetch('http://localhost:4173/customWidgets.js');
-                        Object.keys(visWidgets).forEach(key => visWidgets[key].url = 'http://localhost:4173/customWidgets.js');
+                        Object.keys(visWidgets).forEach(
+                            key => (visWidgets[key].url = 'http://localhost:4173/customWidgets.js'),
+                        );
                         await this.props.socket.setObject(wSetObj._id, wSetObj);
                         reload = true;
-                    } catch (e) {
+                    } catch {
                         window.alert(`Please start the widget development of ${wSetObj._id.split('.')[2]} first`);
                     }
                 }
@@ -473,18 +513,23 @@ class Palette extends Component<PaletteProps, PaletteState> {
         reload && setTimeout(() => window.location.reload(), 1000);
     }
 
-    buildListTrigger(immediate?: boolean) {
+    buildListTrigger(immediate?: boolean): void {
         if (this.buildWidgetListTimeout) {
             clearTimeout(this.buildWidgetListTimeout);
             this.buildWidgetListTimeout = null;
         }
-        this.buildWidgetListTimeout = this.buildWidgetListTimeout || setTimeout(() => {
-            this.buildWidgetListTimeout = null;
-            this.buildWidgetList();
-        }, immediate ? 0 : 100);
+        this.buildWidgetListTimeout =
+            this.buildWidgetListTimeout ||
+            setTimeout(
+                () => {
+                    this.buildWidgetListTimeout = null;
+                    this.buildWidgetList();
+                },
+                immediate ? 0 : 100,
+            );
     }
 
-    render() {
+    render(): React.JSX.Element | null {
         if (!this.props.widgetsLoaded) {
             return null;
         }
@@ -496,155 +541,221 @@ class Palette extends Component<PaletteProps, PaletteState> {
         const allOpened = !Object.keys(this.state.widgetsList).find(group => !this.state.accordionOpen[group]);
         const allClosed = !Object.keys(this.state.widgetsList).find(group => this.state.accordionOpen[group]);
 
-        return <>
-            <Typography
-                variant="h6"
-                gutterBottom
-                sx={Utils.getStyle(this.props.theme, styles.blockHeader, styles.lightedPanel)}
-                style={{ display: 'flex', lineHeight: '34px' }}
-            >
-                <IconPalette style={{ marginTop: 4, marginRight: 4 }} />
-                <span style={{ verticalAlign: 'middle' }}>{I18n.t('Palette')}</span>
-                <div style={{ flex: 1 }} />
-                {!allOpened ? <Tooltip title={I18n.t('Expand all')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
-                    <IconButton
-                        size="small"
-                        onClick={() => {
-                            // save the state of marketplace and do not open it if it is not opened
-                            const __marketplace = this.state.accordionOpen.__marketplace;
-                            const accordionOpen: Record<string, boolean> = {};
-                            Object.keys(this.state.widgetsList).forEach(group => accordionOpen[group] = true);
-                            this.state.accordionOpen.__marketplace = __marketplace;
-                            window.localStorage.setItem('widgets', JSON.stringify(accordionOpen));
-                            this.setState({ accordionOpen });
-                        }}
-                    >
-                        <UnfoldMoreIcon />
-                    </IconButton>
-                </Tooltip> : <IconButton size="small" disabled><UnfoldMoreIcon /></IconButton>}
-                {!allClosed ? <Tooltip title={I18n.t('Collapse all')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
-                    <IconButton onClick={() => {
-                        const accordionOpen: Record<string, boolean> = {};
-                        Object.keys(this.state.widgetsList).forEach(group => accordionOpen[group] = false);
-                        this.state.accordionOpen.__marketplace = false;
-                        window.localStorage.setItem('widgets', JSON.stringify(accordionOpen));
-                        this.setState({ accordionOpen });
-                    }}
-                    >
-                        <UnfoldLessIcon />
-                    </IconButton>
-                </Tooltip> : <IconButton size="small" disabled><UnfoldLessIcon /></IconButton> }
-                <Tooltip title={I18n.t('Hide palette')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
-                    <IconButton
-                        size="small"
-                        onClick={() => this.props.onHide(true)}
-                    >
-                        <ClearIcon />
-                    </IconButton>
-                </Tooltip>
-            </Typography>
-            <TextField
-                variant="standard"
-                fullWidth
-                value={this.state.filter}
-                onChange={e => this.setState({ filter: e.target.value }, () => this.buildListTrigger())}
-                placeholder={I18n.t('Search')}
-                sx={styles.searchLabel}
-                InputProps={{
-                    sx: styles.clearPadding,
-                    endAdornment: this.state.filter ? <IconButton size="small" onClick={() => this.setState({ filter: '' }, () => this.buildListTrigger())}>
-                        <ClearIcon style={{ width: 22, height: 22 }} />
-                    </IconButton> : null,
-                    startAdornment: <InputAdornment position="start">
-                        <Search />
-                    </InputAdornment>,
-                }}
-            />
-            <div style={{ ...styles.widgets, opacity: !this.props.editMode ? 0.3 : undefined }}>
-                {this.renderMarketplace()}
-                {Object.keys(this.state.widgetsList).map((category, categoryKey) => {
-                    let version = null;
-                    if (this.state.widgetSetProps[category]?.version) {
-                        if (DEVELOPER_MODE) {
-                            version = <div
-                                style={{
-                                    ...styles.version,
-                                    cursor: 'pointer',
-                                    color: this.state.widgetSetProps[category].developerMode ? '#ff4242' : 'inherit',
-                                    fontWeight: this.state.widgetSetProps[category].developerMode ? 'bold' : 'inherit',
-                                }}
-                                onClick={() => this.toggleDebugVersion(category)}
-                            >
-                                {this.state.widgetSetProps[category]?.version}
-                            </div>;
-                        } else {
-                            version = <div style={styles.version}>{this.state.widgetSetProps[category]?.version}</div>;
-                        }
-                    }
-
-                    return <Accordion
-                        sx={{
-                            ...styles.accordionRoot,
-                            '& .MuiAccordion-expanded': styles.clearPadding,
-                        }}
-                        key={categoryKey}
-                        elevation={0}
-                        expanded={this.state.accordionOpen[category] || false}
-                        onChange={(_e, expanded) => {
-                            const accordionOpen = JSON.parse(JSON.stringify(this.state.accordionOpen));
-                            accordionOpen[category] = expanded;
-                            window.localStorage.setItem('widgets', JSON.stringify(accordionOpen));
-                            this.setState({ accordionOpen });
-                        }}
-                    >
-                        <AccordionSummary
-                            id={`summary_${category}`}
-                            expandIcon={<ExpandMoreIcon />}
-                            className={Utils.clsx('vis-palette-widget-set', this.state.accordionOpen[category] && 'vis-palette-summary-expanded')}
-                            sx={{
-                                ...Utils.getStyle(
-                                    this.props.theme,
-                                    commonStyles.clearPadding,
-                                    this.state.accordionOpen[category] ? styles.groupSummaryExpanded : styles.groupSummary,
-                                    styles.lightedPanel,
-                                ),
-                                '&.Mui-expanded': { minHeight: 0 },
-                                '& .MuiAccordionSummary-content': { ...commonStyles.clearPadding, ...(this.state.accordionOpen[category] ? styles.accordionOpenedSummary : undefined) },
-                            }}
+        return (
+            <>
+                <Typography
+                    variant="h6"
+                    gutterBottom
+                    sx={Utils.getStyle(this.props.theme, styles.blockHeader, styles.lightedPanel)}
+                    style={{ display: 'flex', lineHeight: '34px' }}
+                >
+                    <IconPalette style={{ marginTop: 4, marginRight: 4 }} />
+                    <span style={{ verticalAlign: 'middle' }}>{I18n.t('Palette')}</span>
+                    <div style={{ flex: 1 }} />
+                    {!allOpened ? (
+                        <Tooltip
+                            title={I18n.t('Expand all')}
+                            slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
                         >
-                            {this.state.widgetSetProps[category]?.icon ?
-                                <Icon style={styles.groupIcon} src={this.state.widgetSetProps[category].icon} />
-                                :
-                                null}
-                            {this.state.widgetSetProps[category]?.label ?
-                                (this.state.widgetSetProps[category].label.startsWith('Vis 2 - ') ?
-                                    this.state.widgetSetProps[category].label.substring(8) : this.state.widgetSetProps[category].label)
-                                :
-                                I18n.t(category)}
-                        </AccordionSummary>
-                        <AccordionDetails sx={styles.accordionDetails}>
-                            {version}
-                            <div>
-                                {this.state.accordionOpen[category] ? this.state.widgetsList[category].map(widgetItem =>
-                                    (widgetItem.name === '_tplGroup' ? null : <Widget
-                                        changeProject={this.props.changeProject}
-                                        changeView={this.props.changeView}
-                                        editMode={this.props.editMode}
-                                        key={widgetItem.name}
-                                        selectedView={this.props.selectedView}
-                                        socket={this.props.socket}
-                                        themeType={this.props.themeType}
-                                        widgetSet={category}
-                                        widgetSetProps={this.state.widgetSetProps[category]}
-                                        widgetType={widgetItem}
-                                        widgetTypeName={widgetItem.name}
-                                    />)) : null}
-                            </div>
-                        </AccordionDetails>
-                    </Accordion>;
-                })}
-            </div>
-        </>;
+                            <IconButton
+                                size="small"
+                                onClick={() => {
+                                    // save the state of marketplace and do not open it if it is not opened
+                                    const __marketplace = this.state.accordionOpen.__marketplace;
+                                    const accordionOpen: Record<string, boolean> = {};
+                                    Object.keys(this.state.widgetsList).forEach(group => (accordionOpen[group] = true));
+                                    Object.assign(this.state.accordionOpen, { __marketplace });
+                                    window.localStorage.setItem('widgets', JSON.stringify(accordionOpen));
+                                    this.setState({ accordionOpen });
+                                }}
+                            >
+                                <UnfoldMoreIcon />
+                            </IconButton>
+                        </Tooltip>
+                    ) : (
+                        <IconButton
+                            size="small"
+                            disabled
+                        >
+                            <UnfoldMoreIcon />
+                        </IconButton>
+                    )}
+                    {!allClosed ? (
+                        <Tooltip
+                            title={I18n.t('Collapse all')}
+                            slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+                        >
+                            <IconButton
+                                onClick={() => {
+                                    const accordionOpen: Record<string, boolean> = {};
+                                    Object.keys(this.state.widgetsList).forEach(
+                                        group => (accordionOpen[group] = false),
+                                    );
+                                    Object.assign(this.state.accordionOpen, { __marketplace: false });
+                                    window.localStorage.setItem('widgets', JSON.stringify(accordionOpen));
+                                    this.setState({ accordionOpen });
+                                }}
+                            >
+                                <UnfoldLessIcon />
+                            </IconButton>
+                        </Tooltip>
+                    ) : (
+                        <IconButton
+                            size="small"
+                            disabled
+                        >
+                            <UnfoldLessIcon />
+                        </IconButton>
+                    )}
+                    <Tooltip
+                        title={I18n.t('Hide palette')}
+                        slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+                    >
+                        <IconButton
+                            size="small"
+                            onClick={() => this.props.onHide(true)}
+                        >
+                            <ClearIcon />
+                        </IconButton>
+                    </Tooltip>
+                </Typography>
+                <TextField
+                    variant="standard"
+                    fullWidth
+                    value={this.state.filter}
+                    onChange={e => this.setState({ filter: e.target.value }, () => this.buildListTrigger())}
+                    placeholder={I18n.t('Search')}
+                    sx={styles.searchLabel}
+                    InputProps={{
+                        sx: styles.clearPadding,
+                        endAdornment: this.state.filter ? (
+                            <IconButton
+                                size="small"
+                                onClick={() => this.setState({ filter: '' }, () => this.buildListTrigger())}
+                            >
+                                <ClearIcon style={{ width: 22, height: 22 }} />
+                            </IconButton>
+                        ) : null,
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <Search />
+                            </InputAdornment>
+                        ),
+                    }}
+                />
+                <div style={{ ...styles.widgets, opacity: !this.props.editMode ? 0.3 : undefined }}>
+                    {this.renderMarketplace()}
+                    {Object.keys(this.state.widgetsList).map((category, categoryKey) => {
+                        let version = null;
+                        if (this.state.widgetSetProps[category]?.version) {
+                            if (DEVELOPER_MODE) {
+                                version = (
+                                    <div
+                                        style={{
+                                            ...styles.version,
+                                            cursor: 'pointer',
+                                            color: this.state.widgetSetProps[category].developerMode
+                                                ? '#ff4242'
+                                                : 'inherit',
+                                            fontWeight: this.state.widgetSetProps[category].developerMode
+                                                ? 'bold'
+                                                : 'inherit',
+                                        }}
+                                        onClick={() => this.toggleDebugVersion(category)}
+                                    >
+                                        {this.state.widgetSetProps[category]?.version}
+                                    </div>
+                                );
+                            } else {
+                                version = (
+                                    <div style={styles.version}>{this.state.widgetSetProps[category]?.version}</div>
+                                );
+                            }
+                        }
+
+                        return (
+                            <Accordion
+                                sx={{
+                                    ...styles.accordionRoot,
+                                    '& .MuiAccordion-expanded': styles.clearPadding,
+                                }}
+                                key={categoryKey}
+                                elevation={0}
+                                expanded={this.state.accordionOpen[category] || false}
+                                onChange={(_e, expanded) => {
+                                    const accordionOpen = JSON.parse(JSON.stringify(this.state.accordionOpen));
+                                    accordionOpen[category] = expanded;
+                                    window.localStorage.setItem('widgets', JSON.stringify(accordionOpen));
+                                    this.setState({ accordionOpen });
+                                }}
+                            >
+                                <AccordionSummary
+                                    id={`summary_${category}`}
+                                    expandIcon={<ExpandMoreIcon />}
+                                    className={Utils.clsx(
+                                        'vis-palette-widget-set',
+                                        this.state.accordionOpen[category] && 'vis-palette-summary-expanded',
+                                    )}
+                                    sx={{
+                                        ...Utils.getStyle(
+                                            this.props.theme,
+                                            commonStyles.clearPadding,
+                                            this.state.accordionOpen[category]
+                                                ? styles.groupSummaryExpanded
+                                                : styles.groupSummary,
+                                            styles.lightedPanel,
+                                        ),
+                                        '&.Mui-expanded': { minHeight: 0 },
+                                        '& .MuiAccordionSummary-content': {
+                                            ...commonStyles.clearPadding,
+                                            ...(this.state.accordionOpen[category]
+                                                ? styles.accordionOpenedSummary
+                                                : undefined),
+                                        },
+                                    }}
+                                >
+                                    {this.state.widgetSetProps[category]?.icon ? (
+                                        <Icon
+                                            style={styles.groupIcon}
+                                            src={this.state.widgetSetProps[category].icon}
+                                        />
+                                    ) : null}
+                                    {this.state.widgetSetProps[category]?.label
+                                        ? this.state.widgetSetProps[category].label.startsWith('Vis 2 - ')
+                                            ? this.state.widgetSetProps[category].label.substring(8)
+                                            : this.state.widgetSetProps[category].label
+                                        : I18n.t(category)}
+                                </AccordionSummary>
+                                <AccordionDetails sx={styles.accordionDetails}>
+                                    {version}
+                                    <div>
+                                        {this.state.accordionOpen[category]
+                                            ? this.state.widgetsList[category].map(widgetItem =>
+                                                  widgetItem.name === '_tplGroup' ? null : (
+                                                      <Widget
+                                                          changeProject={this.props.changeProject}
+                                                          changeView={this.props.changeView}
+                                                          editMode={this.props.editMode}
+                                                          key={widgetItem.name}
+                                                          selectedView={this.props.selectedView}
+                                                          socket={this.props.socket}
+                                                          themeType={this.props.themeType}
+                                                          widgetSet={category}
+                                                          widgetSetProps={this.state.widgetSetProps[category]}
+                                                          widgetType={widgetItem}
+                                                          widgetTypeName={widgetItem.name}
+                                                      />
+                                                  ),
+                                              )
+                                            : null}
+                                    </div>
+                                </AccordionDetails>
+                            </Accordion>
+                        );
+                    })}
+                </div>
+            </>
+        );
     }
 }
 

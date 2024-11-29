@@ -16,8 +16,7 @@
 import React from 'react';
 
 import { I18n } from '@iobroker/adapter-react-v5';
-import type { RxRenderWidgetProps } from '@iobroker/types-vis-2';
-// eslint-disable-next-line import/no-cycle
+import type { RxRenderWidgetProps, RxWidgetInfo } from '@iobroker/types-vis-2';
 import VisRxWidget from '../../visRxWidget';
 import InstallSwipe from './InstallSwipe';
 
@@ -31,15 +30,15 @@ interface RxData {
 class Swipe extends VisRxWidget<RxData> {
     private swipeable: InstallSwipe | null = null;
 
-    static getWidgetInfo() {
+    static getWidgetInfo(): RxWidgetInfo {
         return {
             id: 'tplSwipe',
             visSet: 'swipe',
             visName: 'Swipe Navigation',
             visSetLabel: 'vis_2_widgets_widgets_swipe_label', // label of the widget set
             visPrev: 'widgets/swipe/img/Prev_Swipe.png',
-            visWidgetLabel: 'vis_2_widgets_widgets_swipe_label',  // Label of widget
-            visSetIcon: 'widgets/swipe/img/Prev_Swipe.png',  // Icon of a widget set
+            visWidgetLabel: 'vis_2_widgets_widgets_swipe_label', // Label of widget
+            visSetIcon: 'widgets/swipe/img/Prev_Swipe.png', // Icon of a widget set
             visAttrs: [
                 {
                     name: 'common',
@@ -75,25 +74,27 @@ class Swipe extends VisRxWidget<RxData> {
         } as const;
     }
 
-    async componentDidMount() {
+    componentDidMount(): void {
         super.componentDidMount();
 
-        this.swipeable = this.swipeable || new InstallSwipe({
-            onSwipeLeft: () => {
-                if (this.state.rxData.left_nav_view) {
-                    this.props.context.changeView(this.state.rxData.left_nav_view);
-                }
-            },
-            onSwipeRight: () => {
-                if (this.state.rxData.right_nav_view) {
-                    this.props.context.changeView(this.state.rxData.right_nav_view);
-                }
-            },
-        });
+        this.swipeable =
+            this.swipeable ||
+            new InstallSwipe({
+                onSwipeLeft: () => {
+                    if (this.state.rxData.left_nav_view) {
+                        this.props.context.changeView(this.state.rxData.left_nav_view);
+                    }
+                },
+                onSwipeRight: () => {
+                    if (this.state.rxData.right_nav_view) {
+                        this.props.context.changeView(this.state.rxData.right_nav_view);
+                    }
+                },
+            });
     }
 
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo() {
+    getWidgetInfo(): RxWidgetInfo {
         return Swipe.getWidgetInfo();
     }
 
@@ -103,35 +104,38 @@ class Swipe extends VisRxWidget<RxData> {
         if (this.props.editMode) {
             this.swipeable?.destroy();
 
-            return <div className="vis-widget-body">
-                <div style={{ fontWeight: 'bold' }}>{I18n.t('Swipe Navigation')}</div>
-                <table>
-                    <tbody>
-                        <tr>
-                            <td style={{ width: 40 }}>{I18n.t('left')}</td>
-                            <td style={{ width: 20 }}>&gt;</td>
-                            <td>
-                                {this.state.rxData.left_nav_view}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style={{ width: 40 }}>{I18n.t('right')}</td>
-                            <td style={{ width: 20 }}>&lt;</td>
-                            <td>
-                                {this.state.rxData.right_nav_view}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>;
+            return (
+                <div className="vis-widget-body">
+                    <div style={{ fontWeight: 'bold' }}>{I18n.t('Swipe Navigation')}</div>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td style={{ width: 40 }}>{I18n.t('left')}</td>
+                                <td style={{ width: 20 }}>&gt;</td>
+                                <td>{this.state.rxData.left_nav_view}</td>
+                            </tr>
+                            <tr>
+                                <td style={{ width: 40 }}>{I18n.t('right')}</td>
+                                <td style={{ width: 20 }}>&lt;</td>
+                                <td>{this.state.rxData.right_nav_view}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            );
         }
 
         const viewEl = this.props.refParent?.current;
         if (this.swipeable && viewEl) {
             this.swipeable.install(viewEl, {
                 hideIndication: this.state.rxData.hideIndication,
-                indicationRight: this.state.rxData.right_nav_view ? this.props.context.views[this.state.rxData.right_nav_view]?.name || this.state.rxData.right_nav_view : '',
-                indicationLeft: this.state.rxData.left_nav_view ? this.props.context.views[this.state.rxData.left_nav_view]?.name || this.state.rxData.left_nav_view : '',
+                indicationRight: this.state.rxData.right_nav_view
+                    ? this.props.context.views[this.state.rxData.right_nav_view]?.name ||
+                      this.state.rxData.right_nav_view
+                    : '',
+                indicationLeft: this.state.rxData.left_nav_view
+                    ? this.props.context.views[this.state.rxData.left_nav_view]?.name || this.state.rxData.left_nav_view
+                    : '',
                 swipeThreshold: this.state.rxData.threshold || 30,
             });
         }

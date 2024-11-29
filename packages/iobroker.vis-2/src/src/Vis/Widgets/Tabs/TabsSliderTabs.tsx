@@ -18,8 +18,7 @@ import React from 'react';
 import { Tab, Tabs } from '@mui/material';
 import { Icon } from '@iobroker/adapter-react-v5';
 
-import type { RxRenderWidgetProps } from '@iobroker/types-vis-2';
-// eslint-disable-next-line import/no-cycle
+import type { RxRenderWidgetProps, RxWidgetInfo } from '@iobroker/types-vis-2';
 import VisRxWidget, { type VisRxWidgetState } from '../../visRxWidget';
 
 interface RxData {
@@ -42,15 +41,15 @@ interface TabsSliderTabsState extends VisRxWidgetState {
 }
 
 class TabsSliderTabs extends VisRxWidget<RxData, TabsSliderTabsState> {
-    static getWidgetInfo() {
+    static getWidgetInfo(): RxWidgetInfo {
         return {
             id: 'tplSTab',
             visSet: 'tabs',
             visName: 'SliderTabs',
             visSetLabel: 'Tabs',
             visPrev: 'widgets/tabs/img/Prev_SliderTabs.png',
-            visWidgetLabel: 'vis_2_widgets_widgets_tabs_label',  // Label of widget
-            visSetIcon: 'widgets/tabs/img/Prev_SliderTabs.png',  // Icon of a widget set
+            visWidgetLabel: 'vis_2_widgets_widgets_tabs_label', // Label of widget
+            visSetIcon: 'widgets/tabs/img/Prev_SliderTabs.png', // Icon of a widget set
             visAttrs: [
                 {
                     name: 'common',
@@ -87,7 +86,6 @@ class TabsSliderTabs extends VisRxWidget<RxData, TabsSliderTabsState> {
                     ],
                 },
                 {
-
                     name: 'node',
                     label: 'vis_2_widgets_widgets_tabs_group_tab',
                     indexFrom: 1,
@@ -153,7 +151,7 @@ class TabsSliderTabs extends VisRxWidget<RxData, TabsSliderTabsState> {
         } as const;
     }
 
-    async componentDidMount() {
+    componentDidMount(): void {
         super.componentDidMount();
         const tabIndexStr = window.localStorage.getItem(`${this.props.id}-tabIndex`);
         let tabIndex = 0;
@@ -164,11 +162,11 @@ class TabsSliderTabs extends VisRxWidget<RxData, TabsSliderTabsState> {
     }
 
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo() {
+    getWidgetInfo(): RxWidgetInfo {
         return TabsSliderTabs.getWidgetInfo();
     }
 
-    getWidgetView() {
+    getWidgetView(): React.JSX.Element {
         const view = this.state.rxData[`contains_view_${this.state.tabIndex + 1}`];
         const style: React.CSSProperties = {
             flex: 1,
@@ -192,13 +190,15 @@ class TabsSliderTabs extends VisRxWidget<RxData, TabsSliderTabsState> {
             style.overflow = 'hidden';
         }
 
-        return <div
-            className="vis-widget-body"
-            style={style}
-        >
-            {this.state.editMode ? <div className="vis-editmode-helper" /> : null}
-            {view ? super.getWidgetView(view) : null}
-        </div>;
+        return (
+            <div
+                className="vis-widget-body"
+                style={style}
+            >
+                {this.state.editMode ? <div className="vis-editmode-helper" /> : null}
+                {view ? super.getWidgetView(view) : null}
+            </div>
+        );
     }
 
     renderWidgetBody(props: RxRenderWidgetProps): React.JSX.Element {
@@ -220,50 +220,74 @@ class TabsSliderTabs extends VisRxWidget<RxData, TabsSliderTabsState> {
             const size = this.state.rxData[`icon_size_${t + 1}`];
             const title = this.state.rxData[`title_tab_${t + 1}`];
             if (image && image.startsWith('_PRJ_NAME/')) {
-                image = image.replace('_PRJ_NAME/', `../${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}/`);
+                image = image.replace(
+                    '_PRJ_NAME/',
+                    `../${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}/`,
+                );
             }
 
-            tabs.push(<Tab
-                label={title || (icon || image ? '' : `Tab ${t + 1}`)}
-                icon={icon ? <Icon src={icon} style={{ color, width: size, height: size }} /> :
-                    (image ? <Icon src={image} style={{ width: size, height: size }} /> : null)}
-                iconPosition="start"
-                value={t}
-                key={t.toString()}
-                style={{ color: this.state.rxData.color, textTransform: 'none' }}
-                wrapped
-            />);
+            tabs.push(
+                <Tab
+                    label={title || (icon || image ? '' : `Tab ${t + 1}`)}
+                    icon={
+                        icon ? (
+                            <Icon
+                                src={icon}
+                                style={{ color, width: size, height: size }}
+                            />
+                        ) : image ? (
+                            <Icon
+                                src={image}
+                                style={{ width: size, height: size }}
+                            />
+                        ) : null
+                    }
+                    iconPosition="start"
+                    value={t}
+                    key={t.toString()}
+                    style={{ color: this.state.rxData.color, textTransform: 'none' }}
+                    wrapped
+                />,
+            );
         }
 
-        return <div
-            className="vis-widget-body"
-            style={{
-                display: 'flex',
-                flexDirection: this.state.rxData.vertical ? 'row' : 'column',
-            }}
-        >
-            <div style={{ width: '100%', overflow: 'hidden' }}>
-                <Tabs
-                    TabIndicatorProps={{
-                        style: {
-                            backgroundColor: this.state.rxData.color,
-                        },
-                    }}
-                    value={this.state.tabIndex || 0}
-                    onChange={(e, tabIndex) => {
-                        window.localStorage.setItem(`${this.props.id}-tabIndex`, tabIndex.toString());
-                        this.setState({ tabIndex });
-                    }}
-                    scrollButtons="auto"
-                    centered={this.state.rxData.variant === 'centered'}
-                    variant={this.state.rxData.variant === 'fullWidth' ? 'fullWidth' : (this.state.rxData.variant === 'centered' ? undefined : 'scrollable')}
-                    orientation={this.state.rxData.vertical ? 'vertical' : undefined}
-                >
-                    {tabs}
-                </Tabs>
+        return (
+            <div
+                className="vis-widget-body"
+                style={{
+                    display: 'flex',
+                    flexDirection: this.state.rxData.vertical ? 'row' : 'column',
+                }}
+            >
+                <div style={{ width: '100%', overflow: 'hidden' }}>
+                    <Tabs
+                        TabIndicatorProps={{
+                            style: {
+                                backgroundColor: this.state.rxData.color,
+                            },
+                        }}
+                        value={this.state.tabIndex || 0}
+                        onChange={(_e, tabIndex) => {
+                            window.localStorage.setItem(`${this.props.id}-tabIndex`, tabIndex.toString());
+                            this.setState({ tabIndex });
+                        }}
+                        scrollButtons="auto"
+                        centered={this.state.rxData.variant === 'centered'}
+                        variant={
+                            this.state.rxData.variant === 'fullWidth'
+                                ? 'fullWidth'
+                                : this.state.rxData.variant === 'centered'
+                                  ? undefined
+                                  : 'scrollable'
+                        }
+                        orientation={this.state.rxData.vertical ? 'vertical' : undefined}
+                    >
+                        {tabs}
+                    </Tabs>
+                </div>
+                {this.getWidgetView()}
             </div>
-            {this.getWidgetView()}
-        </div>;
+        );
     }
 }
 

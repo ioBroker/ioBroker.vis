@@ -15,7 +15,7 @@
 
 import React from 'react';
 
-import type { RxRenderWidgetProps } from '@iobroker/types-vis-2';
+import type { RxRenderWidgetProps, RxWidgetInfo } from '@iobroker/types-vis-2';
 import VisRxWidget from '@/Vis/visRxWidget';
 
 import DangerousHtmlWithScript from '../Utils/DangerousHtmlWithScript';
@@ -23,36 +23,39 @@ import DangerousHtmlWithScript from '../Utils/DangerousHtmlWithScript';
 type RxData = {
     html: string;
     href: string;
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     target: 'auto' | '_blank' | '_self' | '_parent' | '_top' | string;
 };
 
 class BasicLink extends VisRxWidget<RxData> {
-    static getWidgetInfo() {
+    static getWidgetInfo(): RxWidgetInfo {
         return {
             id: 'tplLink',
             visSet: 'basic',
             visName: 'link',
             visPrev: 'widgets/basic/img/Prev_tplLink.png',
-            visAttrs: [{
-                name: 'common',
-                fields: [
-                    {
-                        name: 'html',
-                        type: 'html',
-                    },
-                    {
-                        name: 'href',
-                        type: 'url',
-                    },
-                    {
-                        name: 'target',
-                        label: 'target',
-                        type: 'auto',
-                        options: ['auto', '_blank', '_self', '_parent', '_top'],
-                        hidden: '!data.href',
-                    },
-                ],
-            }],
+            visAttrs: [
+                {
+                    name: 'common',
+                    fields: [
+                        {
+                            name: 'html',
+                            type: 'html',
+                        },
+                        {
+                            name: 'href',
+                            type: 'url',
+                        },
+                        {
+                            name: 'target',
+                            label: 'target',
+                            type: 'auto',
+                            options: ['auto', '_blank', '_self', '_parent', '_top'],
+                            hidden: '!data.href',
+                        },
+                    ],
+                },
+            ],
             // visWidgetLabel: 'value_string',  // Label of widget
             visDefaultStyle: {
                 width: 200,
@@ -62,7 +65,7 @@ class BasicLink extends VisRxWidget<RxData> {
     }
 
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo() {
+    getWidgetInfo(): RxWidgetInfo {
         return BasicLink.getWidgetInfo();
     }
 
@@ -80,23 +83,24 @@ class BasicLink extends VisRxWidget<RxData> {
             props.style.height = 130;
         }
 
-        // eslint-disable-next-line jsx-a11y/control-has-associated-label
-        return <a
-            href={this.state.rxData.href}
-            target={this.state.rxData.target}
-            style={{
-                textDecoration: 'none',
-                width: '100%',
-                height: '100%',
-            }}
-        >
-            <DangerousHtmlWithScript
-                className="vis-widget-body"
-                html={this.state.rxData.html}
-                isDiv
-                wid={this.props.id}
-            />
-        </a>;
+        return (
+            <a
+                href={this.state.rxData.href}
+                target={this.state.rxData.target}
+                style={{
+                    textDecoration: 'none',
+                    width: '100%',
+                    height: '100%',
+                }}
+            >
+                <DangerousHtmlWithScript
+                    className="vis-widget-body"
+                    html={this.state.rxData.html}
+                    isDiv
+                    wid={this.props.id}
+                />
+            </a>
+        );
     }
 }
 

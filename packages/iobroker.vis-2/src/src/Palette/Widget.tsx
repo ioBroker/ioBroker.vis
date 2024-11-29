@@ -3,25 +3,13 @@ import { useDrag } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 
 import { Box, IconButton, Tooltip } from '@mui/material';
-import {
-    Delete as DeleteIcon,
-    Update as UpdateIcon,
-    Block as DeletedIcon,
-} from '@mui/icons-material';
+import { Delete as DeleteIcon, Update as UpdateIcon, Block as DeletedIcon } from '@mui/icons-material';
 
-import {
-    I18n,
-    Utils,
-} from '@iobroker/adapter-react-v5';
-import type {
-    LegacyConnection,
-    ThemeType,
-} from '@iobroker/adapter-react-v5';
+import { I18n, Utils, type LegacyConnection, type ThemeType } from '@iobroker/adapter-react-v5';
 
 import type { MarketplaceWidgetRevision, Project } from '@iobroker/types-vis-2';
 
 import { store } from '@/Store';
-import commonStyles from '@/Utils/styles';
 import type { WidgetType } from '@/Vis/visWidgetsCatalog';
 import helpers from '../Components/WizardHelpers';
 
@@ -75,7 +63,7 @@ const styles: Record<string, any> = {
         alignItems: 'center',
         overflow: 'hidden',
     },
-    widgetMarketplace:{
+    widgetMarketplace: {
         fontSize: '80%',
         fontStyle: 'italic',
     },
@@ -108,7 +96,7 @@ interface WidgetProps {
     marketplaceDeleted?: string[];
 }
 
-const Widget = (props: WidgetProps) => {
+const Widget = (props: WidgetProps): React.JSX.Element => {
     const imageRef = useRef<HTMLSpanElement>();
     const style: React.CSSProperties = {};
 
@@ -142,35 +130,44 @@ const Widget = (props: WidgetProps) => {
     if (props.widgetType.preview?.startsWith('<img')) {
         const m = props.widgetType.preview.match(/src="([^"]+)"/) || props.widgetType.preview.match(/src='([^']+)'/);
         if (m) {
-            img = <img src={m[1]} style={styles.widgetImageWithSrc} alt={props.widgetType.name} />;
+            img = (
+                <img
+                    src={m[1]}
+                    style={styles.widgetImageWithSrc}
+                    alt={props.widgetType.name}
+                />
+            );
         }
-    } else if (props.widgetType.preview &&
-        (
-            IMAGE_TYPES.find(ext => props.widgetType.preview.toLowerCase().endsWith(ext)) ||
-            props.widgetSet === '__marketplace'
-        )
+    } else if (
+        props.widgetType.preview &&
+        (IMAGE_TYPES.find(ext => props.widgetType.preview.toLowerCase().endsWith(ext)) ||
+            props.widgetSet === '__marketplace')
     ) {
-        img = <img
-            src={props.widgetType.preview}
-            style={styles.widgetImageWithSrc}
-            alt={props.widgetType.name}
-            onError={e => {
-                if (e.target) {
-                    (e.target as HTMLImageElement).onerror = null;
-                    (e.target as HTMLImageElement).src = './img/no-image.svg';
-                    (e.target as HTMLImageElement).style.height = '24px';
-                }
-            }}
-        />;
+        img = (
+            <img
+                src={props.widgetType.preview}
+                style={styles.widgetImageWithSrc}
+                alt={props.widgetType.name}
+                onError={e => {
+                    if (e.target) {
+                        (e.target as HTMLImageElement).onerror = null;
+                        (e.target as HTMLImageElement).src = './img/no-image.svg';
+                        (e.target as HTMLImageElement).style.height = '24px';
+                    }
+                }}
+            />
+        );
     }
 
     if (!img) {
-        img = <span
-            style={styles.widgetImage}
-            ref={imageRef}
-            // eslint-disable-next-line react/no-danger
-            dangerouslySetInnerHTML={{ __html: props.widgetType.preview }}
-        />;
+        img = (
+            <span
+                style={styles.widgetImage}
+                ref={imageRef}
+                // eslint-disable-next-line react/no-danger
+                dangerouslySetInnerHTML={{ __html: props.widgetType.preview }}
+            />
+        );
     }
 
     let label = props.widgetType.label ? I18n.t(props.widgetType.label) : window.vis._(props.widgetType.title);
@@ -186,61 +183,81 @@ const Widget = (props: WidgetProps) => {
         marketplaceDeleted = props.marketplaceDeleted?.includes(props.widgetMarketplaceId);
     }
 
-    const result = <Tooltip
-        title={<Box component="div" sx={styles.widgetTooltip}>
-            <div>{img}</div>
-            {props.widgetType.help ? <div>{props.widgetType.help}</div> : null}
-        </Box>}
-        componentsProps={{ popper: { sx: commonStyles.tooltip } }}
-        placement="right-end"
-    >
-        <div style={{ ...styles.widget, ...style }}>
-            <span style={{ display: 'none' }}>{props.widgetTypeName}</span>
-            <div style={{ ...styles.widgetTitle, ...titleStyle }}>
-                <div>{label}</div>
-                {props.widgetSet === '__marketplace' && props.marketplace && <div style={styles.widgetMarketplace}>
-                    {`${I18n.t('version')} ${props.marketplace.version}`}
-                </div>}
+    const result = (
+        <Tooltip
+            title={
+                <Box
+                    component="div"
+                    sx={styles.widgetTooltip}
+                >
+                    <div>{img}</div>
+                    {props.widgetType.help ? <div>{props.widgetType.help}</div> : null}
+                </Box>
+            }
+            slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+            placement="right-end"
+        >
+            <div style={{ ...styles.widget, ...style }}>
+                <span style={{ display: 'none' }}>{props.widgetTypeName}</span>
+                <div style={{ ...styles.widgetTitle, ...titleStyle }}>
+                    <div>{label}</div>
+                    {props.widgetSet === '__marketplace' && props.marketplace && (
+                        <div style={styles.widgetMarketplace}>
+                            {`${I18n.t('version')} ${props.marketplace.version}`}
+                        </div>
+                    )}
+                </div>
+                {props.widgetSet === '__marketplace' && (
+                    <>
+                        <Tooltip
+                            title={I18n.t('Uninstall')}
+                            slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+                        >
+                            <IconButton onClick={() => props.uninstallWidget(props.widgetType.name)}>
+                                <DeleteIcon />
+                            </IconButton>
+                        </Tooltip>
+                        {marketplaceUpdate && (
+                            <Tooltip
+                                title={`${I18n.t('Update to version')} ${marketplaceUpdate.version}`}
+                                slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+                            >
+                                <IconButton onClick={() => props.updateWidgets(marketplaceUpdate)}>
+                                    <UpdateIcon />
+                                </IconButton>
+                            </Tooltip>
+                        )}
+                        {marketplaceDeleted && (
+                            <Tooltip
+                                title={I18n.t('Widget was deleted in widgeteria')}
+                                slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+                            >
+                                <DeletedIcon style={styles.widgetDeleted} />
+                            </Tooltip>
+                        )}
+                    </>
+                )}
+                <span style={styles.widgetImageContainer}>{img}</span>
             </div>
-            {props.widgetSet === '__marketplace' && <>
-                <Tooltip title={I18n.t('Uninstall')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
-                    <IconButton onClick={() => props.uninstallWidget(props.widgetType.name)}>
-                        <DeleteIcon />
-                    </IconButton>
-                </Tooltip>
-                {marketplaceUpdate && <Tooltip title={`${I18n.t('Update to version')} ${marketplaceUpdate.version}`} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
-                    <IconButton onClick={async () => {
-                        await props.updateWidgets(marketplaceUpdate);
-                    }}
-                    >
-                        <UpdateIcon />
-                    </IconButton>
-                </Tooltip>}
-                {marketplaceDeleted && <Tooltip title={I18n.t('Widget was deleted in widgeteria')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
-                    <DeletedIcon style={styles.widgetDeleted} />
-                </Tooltip>}
-            </>}
-            <span style={styles.widgetImageContainer}>
-                {img}
-            </span>
-        </div>
-    </Tooltip>;
+        </Tooltip>
+    );
 
     const widthRef = useRef<HTMLSpanElement>();
-    const [, dragRef, preview] = useDrag({
-        type: 'widget',
-        item: () => ({
-            widgetType: props.widgetType,
-            widgetSet: props.widgetSet,
-            preview: <div style={{ width: widthRef.current?.offsetWidth || 100 }}>
-                {result}
-            </div>,
-        }),
-        collect: monitor => ({
-            isDragging: monitor.isDragging(),
-            handlerId: monitor.getHandlerId(),
-        }),
-    }, [props.widgetType]);
+    const [, dragRef, preview] = useDrag(
+        {
+            type: 'widget',
+            item: () => ({
+                widgetType: props.widgetType,
+                widgetSet: props.widgetSet,
+                preview: <div style={{ width: widthRef.current?.offsetWidth || 100 }}>{result}</div>,
+            }),
+            collect: monitor => ({
+                isDragging: monitor.isDragging(),
+                handlerId: monitor.getHandlerId(),
+            }),
+        },
+        [props.widgetType],
+    );
 
     useEffect(() => {
         preview(getEmptyImage(), { captureDraggingState: true });
@@ -261,11 +278,15 @@ const Widget = (props: WidgetProps) => {
         });
     }
 
-    return <span ref={props.editMode ? dragRef : null} id={`widget_${props.widgetTypeName}`} className={`widget-${props.widgetSet}`}>
-        <span ref={widthRef}>
-            {result}
+    return (
+        <span
+            ref={props.editMode ? dragRef : null}
+            id={`widget_${props.widgetTypeName}`}
+            className={`widget-${props.widgetSet}`}
+        >
+            <span ref={widthRef}>{result}</span>
         </span>
-    </span>;
+    );
 };
 
 export default Widget;

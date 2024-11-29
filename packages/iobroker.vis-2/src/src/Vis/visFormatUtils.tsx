@@ -15,8 +15,13 @@
 import { type Moment } from 'moment';
 import { deepClone } from '@/Utils/utils';
 import type {
-    VisLegacy, AnyWidgetId, WidgetData,
-    Widget, VisRxWidgetStateValues, VisBinding, VisBindingOperationArgument,
+    VisLegacy,
+    AnyWidgetId,
+    WidgetData,
+    Widget,
+    VisRxWidgetStateValues,
+    VisBinding,
+    VisBindingOperationArgument,
 } from '@iobroker/types-vis-2';
 
 import { extractBinding } from './visUtils';
@@ -45,7 +50,7 @@ class VisFormatUtils {
     }
 
     // get value of Obj property PropPath. PropPath is string like "Prop1" or "Prop1.Prop2" ...
-    private static getObjPropValue(obj: ioBroker.Object, propPath: string) {
+    private static getObjPropValue(obj: ioBroker.Object, propPath: string): any {
         if (!obj) {
             return undefined;
         }
@@ -60,7 +65,12 @@ class VisFormatUtils {
         return _obj;
     }
 
-    private getSpecialValues(name: string, view: string, wid: AnyWidgetId, widgetData: WidgetData) {
+    private getSpecialValues(
+        name: string,
+        view: string,
+        wid: AnyWidgetId,
+        widgetData: WidgetData,
+    ): string | number | undefined | boolean {
         switch (name) {
             case 'username.val':
                 return this.vis.user;
@@ -95,10 +105,20 @@ class VisFormatUtils {
         if (typeof value !== 'number') {
             value = parseFloat(value);
         }
-        return Number.isNaN(value) ? '' : value.toFixed(decimals || 0).replace(format[0], format[1]).replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
+        return Number.isNaN(value)
+            ? ''
+            : value
+                  .toFixed(decimals || 0)
+                  .replace(format[0], format[1])
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
     }
 
-    private formatMomentDate(dateObj: string | number | Date, _format?: string, useTodayOrYesterday?: boolean, moment?: any) {
+    private formatMomentDate(
+        dateObj: string | number | Date,
+        _format?: string,
+        useTodayOrYesterday?: boolean,
+        moment?: any,
+    ): string {
         useTodayOrYesterday = typeof useTodayOrYesterday !== 'undefined' ? useTodayOrYesterday : false;
 
         if (!dateObj) {
@@ -129,10 +149,17 @@ class VisFormatUtils {
         if (useTodayOrYesterday && momentObject && moment) {
             if (momentObject.isSame(moment(), 'day')) {
                 const todayStr = this.vis._('Today');
-                result = moment(momentObject).format(format.replace('dddd', todayStr).replace('ddd', todayStr).replace('dd', todayStr)) || '';
-            } if (momentObject.isSame(moment().subtract(1, 'day'), 'day')) {
+                result =
+                    moment(momentObject).format(
+                        format.replace('dddd', todayStr).replace('ddd', todayStr).replace('dd', todayStr),
+                    ) || '';
+            }
+            if (momentObject.isSame(moment().subtract(1, 'day'), 'day')) {
                 const yesterdayStr = this.vis._('Yesterday');
-                result = moment(momentObject).format(format.replace('dddd', yesterdayStr).replace('ddd', yesterdayStr).replace('dd', yesterdayStr)) || '';
+                result =
+                    moment(momentObject).format(
+                        format.replace('dddd', yesterdayStr).replace('ddd', yesterdayStr).replace('dd', yesterdayStr),
+                    ) || '';
             }
         } else {
             result = moment(momentObject).format(format) || '';
@@ -141,7 +168,7 @@ class VisFormatUtils {
         return result;
     }
 
-    private static _put(token: string, dateObj: Date, result: string) {
+    private static _put(token: string, dateObj: Date, result: string): string {
         let v: string | number = '';
 
         switch (token) {
@@ -161,7 +188,7 @@ class VisFormatUtils {
             case 'ММ':
             case 'М':
                 v = dateObj.getMonth() + 1;
-                if ((v < 10) && (token.length === 2)) {
+                if (v < 10 && token.length === 2) {
                     v = `0${v}`;
                 }
                 break;
@@ -250,7 +277,7 @@ class VisFormatUtils {
                     realDateObj = new Date(dateObj);
                 } else {
                     // if less 2000.01.01 00:00:00
-                    realDateObj = (j < 946681200000) ? new Date(j * 1000) : new Date(j);
+                    realDateObj = j < 946681200000 ? new Date(j * 1000) : new Date(j);
                 }
             } else {
                 realDateObj = new Date(dateObj);
@@ -260,7 +287,10 @@ class VisFormatUtils {
         if (realDateObj) {
             const format = _format || this.vis.dateFormat || 'DD.MM.YYYY';
 
-            isDuration && realDateObj.setMilliseconds(realDateObj.getMilliseconds() + realDateObj.getTimezoneOffset() * 60 * 1000);
+            isDuration &&
+                realDateObj.setMilliseconds(
+                    realDateObj.getMilliseconds() + realDateObj.getTimezoneOffset() * 60 * 1000,
+                );
 
             const validFormatChars = 'YJГMМDTДhSчmмsс';
             let s = '';
@@ -311,9 +341,7 @@ class VisFormatUtils {
         values?: VisRxWidgetStateValues;
         moment: any;
     }): string {
-        const {
-            view, wid, widget, widgetData, moment,
-        } = options;
+        const { view, wid, widget, widgetData, moment } = options;
 
         let { format } = options;
 
@@ -342,9 +370,11 @@ class VisFormatUtils {
                             value = this.getSpecialValues(evalArgs[a].visOid, view, wid, widgetData);
 
                             if (value === undefined || value === null) {
-                                value = evalArgs[a].visOid.startsWith('widgetOid.') ?
-                                    (_values as Record<string, any>)[evalArgs[a].visOid.replace(/^widgetOid\./g, `${widget.data.oid}.`)] :
-                                    (_values as Record<string, any>)[evalArgs[a].visOid];
+                                value = evalArgs[a].visOid.startsWith('widgetOid.')
+                                    ? (_values as Record<string, any>)[
+                                          evalArgs[a].visOid.replace(/^widgetOid\./g, `${widget.data.oid}.`)
+                                      ]
+                                    : (_values as Record<string, any>)[evalArgs[a].visOid];
                             }
                             if (value === null) {
                                 string += `const ${evalArgs[a].name} = null;`;
@@ -361,7 +391,7 @@ class VisFormatUtils {
                                         } else {
                                             string += `const ${evalArgs[a].name} = "${value}";`;
                                         }
-                                    } catch (e) {
+                                    } catch {
                                         string += `const ${evalArgs[a].name} = "${value}";`;
                                     }
                                 } else if (type === 'object') {
@@ -400,7 +430,12 @@ class VisFormatUtils {
                             value = 0;
                         }
                     } else {
-                        const operationArg: string | number | undefined | null | string[] = operation.arg as string | number | undefined | null | string[];
+                        const operationArg: string | number | undefined | null | string[] = operation.arg as
+                            | string
+                            | number
+                            | undefined
+                            | null
+                            | string[];
 
                         switch (operation.op) {
                             case '*':
@@ -433,7 +468,7 @@ class VisFormatUtils {
                                 if (operationArg === undefined) {
                                     value = Math.round(parseFloat(value));
                                 } else {
-                                    value = parseFloat(value).toFixed((operationArg as number));
+                                    value = parseFloat(value).toFixed(operationArg as number);
                                 }
                                 break;
                             case 'pow':
@@ -474,8 +509,12 @@ class VisFormatUtils {
                                 value = this.formatDate(value, operationArg as string);
                                 break;
                             case 'momentDate':
-                                if (operationArg !== undefined && operationArg !== null && typeof operationArg === 'string') {
-                                    const params = (operationArg as string).split(',');
+                                if (
+                                    operationArg !== undefined &&
+                                    operationArg !== null &&
+                                    typeof operationArg === 'string'
+                                ) {
+                                    const params = operationArg.split(',');
 
                                     if (params.length === 1) {
                                         value = this.formatMomentDate(value, params[0], false, moment);
@@ -488,11 +527,11 @@ class VisFormatUtils {
                                 break;
                             case 'min':
                                 value = parseFloat(value);
-                                value = (value < operationArg) ? operationArg : value;
+                                value = value < operationArg ? operationArg : value;
                                 break;
                             case 'max':
                                 value = parseFloat(value);
-                                value = (value > operationArg) ? operationArg : value;
+                                value = value > operationArg ? operationArg : value;
                                 break;
                             case 'random':
                                 if (operationArg === undefined) {
@@ -511,7 +550,7 @@ class VisFormatUtils {
                                 if (value && typeof value === 'string') {
                                     try {
                                         value = JSON.parse(value);
-                                    } catch (e) {
+                                    } catch {
                                         console.warn(`Cannot parse JSON string: ${value}`);
                                     }
                                 }

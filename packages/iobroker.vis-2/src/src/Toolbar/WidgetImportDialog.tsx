@@ -1,22 +1,15 @@
 import React, { useRef, useState } from 'react';
 
-import {
-    Button, Dialog, DialogActions, DialogContent, DialogTitle,
-} from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 
 import { Close as CloseIcon, ImportExport } from '@mui/icons-material';
 
 import { I18n, type ThemeType } from '@iobroker/adapter-react-v5';
-import {
-    isGroup, getNewGroupId, getNewWidgetId, deepClone,
-} from '@/Utils/utils';
+import { isGroup, getNewGroupId, getNewWidgetId, deepClone } from '@/Utils/utils';
 
 import { useFocus } from '@/Utils';
 import { store } from '@/Store';
-import type {
-    AnyWidgetId,
-    GroupWidget, GroupWidgetId, Project, Widget,
-} from '@iobroker/types-vis-2';
+import type { AnyWidgetId, GroupWidget, GroupWidgetId, Project, Widget } from '@iobroker/types-vis-2';
 import CustomAceEditor from '../Components/CustomAceEditor';
 
 interface WidgetImportDialogProps {
@@ -27,7 +20,7 @@ interface WidgetImportDialogProps {
     selectedGroup?: GroupWidgetId;
 }
 
-const WidgetImportDialog = (props: WidgetImportDialogProps) => {
+const WidgetImportDialog = (props: WidgetImportDialogProps): React.JSX.Element => {
     const [data, setData] = useState('');
     const [error, setError] = useState(false);
 
@@ -35,7 +28,7 @@ const WidgetImportDialog = (props: WidgetImportDialogProps) => {
 
     const editor = useRef(null);
 
-    const importWidgets = () => {
+    const importWidgets = (): void => {
         const { visProject } = store.getState();
         const project = deepClone(visProject);
         const widgets: Widget[] = JSON.parse(data);
@@ -60,7 +53,9 @@ const WidgetImportDialog = (props: WidgetImportDialogProps) => {
                 newWidgets[newKey] = widget;
                 if (widget.grouped && widget.groupid && newWidgets[widget.groupid]?.data?.members) {
                     // find group
-                    const pos = (newWidgets[widget.groupid] as GroupWidget).data.members.indexOf(widget._id as AnyWidgetId);
+                    const pos = (newWidgets[widget.groupid] as GroupWidget).data.members.indexOf(
+                        widget._id as AnyWidgetId,
+                    );
                     if (pos !== -1) {
                         (newWidgets[widget.groupid] as GroupWidget).data.members[pos] = newKey;
                     }
@@ -74,7 +69,7 @@ const WidgetImportDialog = (props: WidgetImportDialogProps) => {
             if (!isGroup(newWidgets[wid]) && props.selectedGroup !== undefined) {
                 newWidgets[wid].grouped = true;
                 newWidgets[wid].groupid = props.selectedGroup;
-                (project[props.selectedView].widgets[props.selectedGroup] as GroupWidget).data.members.push(wid as AnyWidgetId);
+                project[props.selectedView].widgets[props.selectedGroup].data.members.push(wid as AnyWidgetId);
             }
         });
 
@@ -83,58 +78,60 @@ const WidgetImportDialog = (props: WidgetImportDialogProps) => {
         props.changeProject(project);
     };
 
-    return <Dialog
-        onClose={props.onClose}
-        fullWidth
-        open={!0}
-        maxWidth="lg"
-    >
-        <DialogTitle>{I18n.t('Import widgets')}</DialogTitle>
-        <DialogContent>
-            <CustomAceEditor
-                type="json"
-                error={error}
-                themeType={props.themeType}
-                refEditor={node => {
-                    editor.current = node;
-                    inputField.current = node;
-                }}
-                value={data}
-                onChange={newValue => {
-                    try {
-                        newValue && JSON.parse(newValue);
-                        setError(false);
-                    } catch (e) {
-                        setError(true);
-                    }
-                    setData(newValue);
-                }}
-                height={300}
-            />
-        </DialogContent>
-        <DialogActions>
-            <Button
-                variant="contained"
-                onClick={() => {
-                    importWidgets();
-                    props.onClose();
-                }}
-                color="primary"
-                disabled={!data || error}
-                startIcon={<ImportExport />}
-            >
-                {I18n.t('Import')}
-            </Button>
-            <Button
-                variant="contained"
-                color="grey"
-                onClick={props.onClose}
-                startIcon={<CloseIcon />}
-            >
-                {I18n.t('Close')}
-            </Button>
-        </DialogActions>
-    </Dialog>;
+    return (
+        <Dialog
+            onClose={props.onClose}
+            fullWidth
+            open={!0}
+            maxWidth="lg"
+        >
+            <DialogTitle>{I18n.t('Import widgets')}</DialogTitle>
+            <DialogContent>
+                <CustomAceEditor
+                    type="json"
+                    error={error}
+                    themeType={props.themeType}
+                    refEditor={node => {
+                        editor.current = node;
+                        inputField.current = node;
+                    }}
+                    value={data}
+                    onChange={newValue => {
+                        try {
+                            newValue && JSON.parse(newValue);
+                            setError(false);
+                        } catch {
+                            setError(true);
+                        }
+                        setData(newValue);
+                    }}
+                    height={300}
+                />
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    variant="contained"
+                    onClick={() => {
+                        importWidgets();
+                        props.onClose();
+                    }}
+                    color="primary"
+                    disabled={!data || error}
+                    startIcon={<ImportExport />}
+                >
+                    {I18n.t('Import')}
+                </Button>
+                <Button
+                    variant="contained"
+                    color="grey"
+                    onClick={props.onClose}
+                    startIcon={<CloseIcon />}
+                >
+                    {I18n.t('Close')}
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
 };
 
 export default WidgetImportDialog;

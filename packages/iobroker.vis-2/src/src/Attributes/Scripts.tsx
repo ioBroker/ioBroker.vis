@@ -11,16 +11,18 @@ interface ScriptsProps {
     editMode: boolean;
 }
 
-const Scripts = (props: ScriptsProps) => <CustomAceEditor
-    type="javascript"
-    themeType={props.themeType}
-    readOnly={!props.editMode}
-    value={store.getState().visProject.___settings.scripts as string}
-    onChange={newValue => {
-        const project = JSON.parse(JSON.stringify(store.getState().visProject));
-        project.___settings.scripts = newValue;
-        props.changeProject(project);
-    }}
-/>;
+const Scripts = (props: ScriptsProps): React.JSX.Element => (
+    <CustomAceEditor
+        type="javascript"
+        themeType={props.themeType}
+        readOnly={!props.editMode}
+        value={store.getState().visProject.___settings.scripts as string}
+        onChange={newValue => {
+            const project = JSON.parse(JSON.stringify(store.getState().visProject));
+            project.___settings.scripts = newValue;
+            props.changeProject(project);
+        }}
+    />
+);
 
 export default Scripts;

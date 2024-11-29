@@ -17,16 +17,16 @@ import {
     ListItemIcon,
 } from '@mui/material';
 
-import {
-    Add as IconAdd,
-    Close as IconClose,
-    FileCopy as IconDocument,
-} from '@mui/icons-material';
+import { Add as IconAdd, Close as IconClose, FileCopy as IconDocument } from '@mui/icons-material';
 import { BiImport } from 'react-icons/bi';
 
 import {
-    I18n, Loader, LegacyConnection,
-    LoaderMV, LoaderPT, LoaderVendor,
+    I18n,
+    Loader,
+    LegacyConnection,
+    LoaderMV,
+    LoaderPT,
+    LoaderVendor,
     GenericApp,
     type GenericAppProps,
     type GenericAppState,
@@ -35,17 +35,17 @@ import {
 } from '@iobroker/adapter-react-v5';
 
 import type {
-    AnyWidgetId, GroupWidgetId,
-    Project, SingleWidgetId,
-    ViewSettings, VisTheme,
-    WidgetData, WidgetStyle,
+    AnyWidgetId,
+    GroupWidgetId,
+    Project,
+    SingleWidgetId,
+    ViewSettings,
+    VisTheme,
+    WidgetData,
+    WidgetStyle,
 } from '@iobroker/types-vis-2';
 import VisEngine from './Vis/visEngine';
-import {
-    extractBinding,
-    findWidgetUsages,
-    readFile,
-} from './Vis/visUtils';
+import { extractBinding, findWidgetUsages, readFile } from './Vis/visUtils';
 import { registerWidgetsLoadIndicator } from './Vis/visLoadWidgets';
 import VisWidgetsCatalog from './Vis/visWidgetsCatalog';
 
@@ -163,16 +163,24 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
 
     renderImportProjectDialog?(): React.JSX.Element;
 
-    setSelectedWidgets: (selectedWidgets: AnyWidgetId[], selectedView?: string | (() => void), cb?: () => void) => Promise<void>;
+    setSelectedWidgets: (
+        selectedWidgets: AnyWidgetId[],
+        selectedView?: string | (() => void),
+        cb?: () => void,
+    ) => Promise<void>;
 
     setSelectedGroup: (selectedGroup: GroupWidgetId) => void;
 
-    onWidgetsChanged: (changedData: {
-        wid: AnyWidgetId;
-        view: string;
-        style: WidgetStyle;
-        data: WidgetData;
-    }[], view: string, viewSettings: ViewSettings) => void;
+    onWidgetsChanged: (
+        changedData: {
+            wid: AnyWidgetId;
+            view: string;
+            style: WidgetStyle;
+            data: WidgetData;
+        }[],
+        view: string,
+        viewSettings: ViewSettings,
+    ) => void;
 
     onFontsUpdate?(fonts: string[]): void;
 
@@ -189,21 +197,17 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         icon: string;
         width: number;
         callback: (isYes: boolean) => void;
-     }): void;
+    }): void;
 
-    showCodeDialog?(dialog: {
-        code: string;
-        title: string;
-        mode: string;
-     }): void;
+    showCodeDialog?(dialog: { code: string; title: string; mode: string }): void;
 
     showLegacyFileSelector: (
-        callback: (data: { path: string; file: string}, userArg: any) => void,
+        callback: (data: { path: string; file: string }, userArg: any) => void,
         options: {
             path?: string;
             userArg?: any;
-        }
-     ) => void;
+        },
+    ) => void;
 
     initState: (newState: Partial<S | RuntimeState>) => void;
 
@@ -276,8 +280,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
 
     setStateAsync(newState: Partial<RuntimeState | S>): Promise<void> {
         return new Promise(resolve => {
-            this.setState(newState as RuntimeState, () =>
-                resolve());
+            this.setState(newState as RuntimeState, () => resolve());
         });
     }
 
@@ -339,8 +342,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
 
     onHashChange = () => {
         const currentPath = VisEngine.getCurrentPath();
-        this.changeView(currentPath.view)
-            .catch(e => console.error(`Cannot change view: ${e}`));
+        this.changeView(currentPath.view).catch(e => console.error(`Cannot change view: ${e}`));
     };
 
     onProjectChange = (id: string, fileName: string) => {
@@ -357,24 +359,23 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
                 this.checkTimeout = setTimeout(() => {
                     this.checkTimeout = null;
                     // compare last executed file with new one
-                    readFile(this.socket as unknown as LegacyConnection, this.adapterId, fileName)
-                        .then(file => {
-                            try {
-                                const ts = (JSON.parse((file as any).file || file) as Project).___settings.ts;
-                                if (ts === store.getState().visProject.___settings.ts) {
-                                    return;
-                                }
-                                const tsInt = parseInt(ts.split('.')[0], 10);
-                                if (tsInt < parseInt(store.getState().visProject.___settings.ts.split('.')[0], 10)) {
-                                    // ignore older files
-                                    return;
-                                }
-                            } catch (e) {
-                                console.warn(`Cannot parse project file "${fileName}": ${e}`);
+                    readFile(this.socket as unknown as LegacyConnection, this.adapterId, fileName).then(file => {
+                        try {
+                            const ts = (JSON.parse((file as any).file || file) as Project).___settings.ts;
+                            if (ts === store.getState().visProject.___settings.ts) {
+                                return;
                             }
+                            const tsInt = parseInt(ts.split('.')[0], 10);
+                            if (tsInt < parseInt(store.getState().visProject.___settings.ts.split('.')[0], 10)) {
+                                // ignore older files
+                                return;
+                            }
+                        } catch (e) {
+                            console.warn(`Cannot parse project file "${fileName}": ${e}`);
+                        }
 
-                            this.setState({ showProjectUpdateDialog: true });
-                        });
+                        this.setState({ showProjectUpdateDialog: true });
+                    });
                 }, 500);
             }
         }
@@ -428,7 +429,8 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
                     if (!widget.data.bindings && !Array.isArray(widget.data.bindings)) {
                         widget.data.bindings = [];
                         Object.keys(widget.data).forEach(attr => {
-                            if (attr === 'bindings' ||
+                            if (
+                                attr === 'bindings' ||
                                 !widget.data[attr] ||
                                 attr.startsWith('g_') ||
                                 typeof widget.data[attr] !== 'string'
@@ -446,7 +448,8 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
                     if (!widget.style.bindings && !Array.isArray(widget.style.bindings)) {
                         widget.style.bindings = [];
                         Object.keys(widget.style).forEach((attr: keyof typeof widget.style) => {
-                            if (attr === 'bindings' ||
+                            if (
+                                attr === 'bindings' ||
                                 !widget.style[attr] ||
                                 attr.startsWith('g_') ||
                                 typeof widget.data[attr] !== 'string'
@@ -463,20 +466,24 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
                     }
 
                     if (widget.data.members) {
-                        widget.data.members.forEach((_wid, i) =>
-                            widget.data.members[i] = (_wid.replace(/\s/g, '_')) as AnyWidgetId);
+                        widget.data.members.forEach(
+                            (_wid, i) => (widget.data.members[i] = _wid.replace(/\s/g, '_') as AnyWidgetId),
+                        );
                     }
 
                     if (wid.includes(' ')) {
-                        const newWid: SingleWidgetId = (wid.replace(/\s/g, '_') as SingleWidgetId);
+                        const newWid: SingleWidgetId = wid.replace(/\s/g, '_') as SingleWidgetId;
                         delete project[view].widgets[wid];
                         project[view].widgets[newWid] = widget;
                     }
 
                     if (!this.state.runtime && this.getNewWidgetId) {
                         // If the widget is not unique, change its name (only in editor mode)
-                        if (Object.keys(project).find(v => v !== view && project[v].widgets && project[v].widgets[wid])) {
-                            const _newWid: AnyWidgetId = wid[0] === 'g' ? this.getNewGroupId(project) : this.getNewWidgetId(project);
+                        if (
+                            Object.keys(project).find(v => v !== view && project[v].widgets && project[v].widgets[wid])
+                        ) {
+                            const _newWid: AnyWidgetId =
+                                wid[0] === 'g' ? this.getNewGroupId(project) : this.getNewWidgetId(project);
                             console.log(`Rename widget ${wid} to ${_newWid}`);
                             delete project[view].widgets[wid];
                             project[view].widgets[_newWid as SingleWidgetId] = widget;
@@ -519,14 +526,18 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
                     views.forEach(viewId => {
                         if (viewId !== view && project[viewId]) {
                             // copy all widgets, that must be shown in this view too
-                            project[viewId].widgets[`${view}_${widgetId}` as AnyWidgetId] = JSON.parse(JSON.stringify(oWidget));
+                            project[viewId].widgets[`${view}_${widgetId}` as AnyWidgetId] = JSON.parse(
+                                JSON.stringify(oWidget),
+                            );
                             delete project[viewId].widgets[`${view}_${widgetId}` as AnyWidgetId].data['multi-views'];
                             if (oWidget.tpl === '_tplGroup' && oWidget.data.members?.length) {
                                 // copy all group widgets too
                                 const newWidget = project[viewId].widgets[`${view}_${widgetId}` as AnyWidgetId];
                                 newWidget.data.members.forEach((memberId, i) => {
                                     const newId: AnyWidgetId = `${view}_${memberId}` as AnyWidgetId;
-                                    project[viewId].widgets[newId] = JSON.parse(JSON.stringify(oView.widgets[memberId]));
+                                    project[viewId].widgets[newId] = JSON.parse(
+                                        JSON.stringify(oView.widgets[memberId]),
+                                    );
                                     delete project[viewId].widgets[newId].data['multi-views']; // do not allow multi-multi-views
                                     newWidget.data.members[i] = newId;
                                     // do not copy members of multi-group
@@ -558,17 +569,19 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         let difference = 10000;
 
         // First, find all with the best fitting width
-        project && Object.keys(project).forEach(view => {
-            if (view === '___settings') {
-                return;
-            }
-            if (project[view].settings?.useAsDefault
-                // If difference less than 20%
-                && Math.abs(project[view].settings.sizex - w) / project[view].settings.sizex < 0.2
-            ) {
-                views.push(view);
-            }
-        });
+        project &&
+            Object.keys(project).forEach(view => {
+                if (view === '___settings') {
+                    return;
+                }
+                if (
+                    project[view].settings?.useAsDefault &&
+                    // If difference less than 20%
+                    Math.abs(project[view].settings.sizex - w) / project[view].settings.sizex < 0.2
+                ) {
+                    views.push(view);
+                }
+            });
 
         for (let i = 0; i < views.length; i++) {
             if (Math.abs(project[views[i]].settings.sizey - h) < difference) {
@@ -582,22 +595,34 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
             const ratio = w / h;
             difference = 10000;
 
-            project && Object.keys(project).forEach(view => {
-                if (view === '___settings') {
-                    return;
-                }
-                if (project[view].settings?.useAsDefault &&
-                    // If difference less than 20%
-                    parseInt(project[view].settings.sizey.toString(), 10) &&
-                    Math.abs(ratio - (parseInt(project[view].settings.sizex.toString(), 10) / parseInt(project[view].settings.sizey.toString(), 10))) < difference
-                ) {
-                    result = view;
-                    difference = Math.abs(ratio - (parseInt(project[view].settings.sizex.toString(), 10) / parseInt(project[view].settings.sizey.toString(), 10)));
-                }
-            });
+            project &&
+                Object.keys(project).forEach(view => {
+                    if (view === '___settings') {
+                        return;
+                    }
+                    if (
+                        project[view].settings?.useAsDefault &&
+                        // If difference less than 20%
+                        parseInt(project[view].settings.sizey.toString(), 10) &&
+                        Math.abs(
+                            ratio -
+                                parseInt(project[view].settings.sizex.toString(), 10) /
+                                    parseInt(project[view].settings.sizey.toString(), 10),
+                        ) < difference
+                    ) {
+                        result = view;
+                        difference = Math.abs(
+                            ratio -
+                                parseInt(project[view].settings.sizex.toString(), 10) /
+                                    parseInt(project[view].settings.sizey.toString(), 10),
+                        );
+                    }
+                });
         }
         if (!result && resultRequired) {
-            result = project && Object.keys(project).find(view => !view.startsWith('__') && project[view].settings?.useAsDefault);
+            result =
+                project &&
+                Object.keys(project).find(view => !view.startsWith('__') && project[view].settings?.useAsDefault);
         }
         if (!result && resultRequired) {
             return (project && Object.keys(project).find(view => !view.startsWith('__'))) || '';
@@ -610,7 +635,11 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         if (!file) {
             this.setLoadingText && this.setLoadingText('Load project file...');
             try {
-                file = await readFile(this.socket as unknown as LegacyConnection, this.adapterId, `${projectName}/vis-views.json`);
+                file = await readFile(
+                    this.socket as unknown as LegacyConnection,
+                    this.adapterId,
+                    `${projectName}/vis-views.json`,
+                );
             } catch (err) {
                 console.warn(`Cannot read project file "${projectName}/vis-views.json": ${err}`);
                 file = '{}';
@@ -643,11 +672,11 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
             project = JSON.parse(file);
         } catch (e) {
             window.alert('Cannot parse project file!');
-            project = ({
+            project = {
                 'Cannot parse project file!': {
                     widgets: {},
                 },
-            } as unknown as Project);
+            } as unknown as Project;
         }
 
         this.fixProject(project);
@@ -689,14 +718,21 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         if (!project[selectedView]) {
             selectedView = project.___settings.openedViews[0] || '';
             window.localStorage.setItem('selectedView', selectedView);
-        } else if (project.___settings.openedViews && !project.___settings.openedViews.includes(selectedView) && !this.state.runtime) {
+        } else if (
+            project.___settings.openedViews &&
+            !project.___settings.openedViews.includes(selectedView) &&
+            !this.state.runtime
+        ) {
             selectedView = project.___settings.openedViews[0];
             window.localStorage.setItem('selectedView', selectedView);
         }
 
         window.localStorage.setItem('projectName', projectName);
 
-        if (this.subscribedProject && (this.subscribedProject !== projectName || project.___settings.reloadOnEdit === false)) {
+        if (
+            this.subscribedProject &&
+            (this.subscribedProject !== projectName || project.___settings.reloadOnEdit === false)
+        ) {
             this.subscribedProject = null;
             this.socket.unsubscribeFiles(this.adapterId, `${this.subscribedProject}/*`, this.onProjectChange);
         }
@@ -778,8 +814,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
                     if (!this.state.runtime && this.changeTimer) {
                         this.needRestart = true;
                     } else {
-                        setTimeout(() =>
-                            window.location.reload(), 2000);
+                        setTimeout(() => window.location.reload(), 2000);
                     }
                 },
             },
@@ -787,8 +822,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         if (!this.state.runtime && this.changeTimer) {
             this.needRestart = true;
         } else {
-            setTimeout(() =>
-                window.location.reload(), 2000);
+            setTimeout(() => window.location.reload(), 2000);
         }
     }
 
@@ -802,7 +836,11 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
     async onConnectionReady() {
         // preload all widgets first
         if (this.state.widgetsLoaded === Runtime.WIDGETS_LOADING_STEP_HTML_LOADED) {
-            await VisWidgetsCatalog.collectRxInformation(this.socket as unknown as LegacyConnection, store.getState().visProject, this.changeProject);
+            await VisWidgetsCatalog.collectRxInformation(
+                this.socket as unknown as LegacyConnection,
+                store.getState().visProject,
+                this.changeProject,
+            );
             await this.setStateAsync({ widgetsLoaded: Runtime.WIDGETS_LOADING_STEP_ALL_LOADED });
         }
 
@@ -814,7 +852,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
 
         const groups = await this.socket.getGroups();
         const userGroups: Record<ioBroker.ObjectIDs.Group, ioBroker.GroupObject> = {};
-        groups.forEach(group => userGroups[group._id] = group);
+        groups.forEach(group => (userGroups[group._id] = group));
 
         await this.setStateAsync({
             currentUser,
@@ -856,7 +894,9 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
             await this.loadProject(projectName);
         } else {
             // read if show projects dialog allowed
-            const obj = this.state.runtime && (await this.socket.getObject(`system.adapter.${this.adapterName}.${this.instance}`));
+            const obj =
+                this.state.runtime &&
+                (await this.socket.getObject(`system.adapter.${this.adapterName}.${this.instance}`));
             if (this.state.runtime && obj.native.doNotShowProjectDialog) {
                 this.setState({ projectDoesNotExist: true });
             } else {
@@ -873,9 +913,9 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
             if (this.state.runtime || !this.state.editMode) {
                 const currentPath = VisEngine.getCurrentPath();
                 const newHash = VisEngine.buildPath(currentPath.view, currentPath.path);
-                window.vis.lastChangedView = this.state.projectName ?
-                    `${this.state.projectName}/${newHash.replace(/^#/, '')}` :
-                    newHash.replace(/^#/, '');
+                window.vis.lastChangedView = this.state.projectName
+                    ? `${this.state.projectName}/${newHash.replace(/^#/, '')}`
+                    : newHash.replace(/^#/, '');
                 window.vis.conn.sendCommand(window.vis.instance, 'changedView', window.vis.lastChangedView);
             }
             return;
@@ -884,13 +924,16 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
             selectedView,
         };
 
-        let selectedWidgets: AnyWidgetId[] = JSON.parse(window.localStorage.getItem(
-            `${this.state.projectName}.${selectedView}.widgets`,
-        ) || '[]') || [];
+        let selectedWidgets: AnyWidgetId[] =
+            JSON.parse(window.localStorage.getItem(`${this.state.projectName}.${selectedView}.widgets`) || '[]') || [];
 
         // Check that all selectedWidgets exist
         for (let i = selectedWidgets.length - 1; i >= 0; i--) {
-            if (!store.getState().visProject[selectedView] || !store.getState().visProject[selectedView].widgets || !store.getState().visProject[selectedView].widgets[selectedWidgets[i] as AnyWidgetId]) {
+            if (
+                !store.getState().visProject[selectedView] ||
+                !store.getState().visProject[selectedView].widgets ||
+                !store.getState().visProject[selectedView].widgets[selectedWidgets[i] as AnyWidgetId]
+            ) {
                 selectedWidgets = selectedWidgets.splice(i, 1);
             }
         }
@@ -917,9 +960,9 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
             const currentPath = VisEngine.getCurrentPath();
             const newHash = VisEngine.buildPath(currentPath.view, currentPath.path);
 
-            window.vis.lastChangedView = this.state.projectName ?
-                `${this.state.projectName}/${newHash.replace(/^#/, '')}` :
-                newHash.replace(/^#/, '');
+            window.vis.lastChangedView = this.state.projectName
+                ? `${this.state.projectName}/${newHash.replace(/^#/, '')}`
+                : newHash.replace(/^#/, '');
             window.vis.conn.sendCommand(window.vis.instance, 'changedView', window.vis.lastChangedView);
 
             // inform the legacy widgets
@@ -955,28 +998,37 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         });
     }
 
-    renderAlertDialog = () => <Snackbar
-        key="__snackbar_134__"
-        style={this.state.alertType === 'error' ?
-            { backgroundColor: '#f44336' } :
-            (this.state.alertType === 'success' ?
-                { backgroundColor: '#4caf50' } : undefined)}
-        open={this.state.alert}
-        autoHideDuration={6000}
-        onClick={() => this.setState({ alert: false })}
-        onClose={(e, reason) => {
-            if (reason === 'clickaway') {
-                return;
+    renderAlertDialog = () => (
+        <Snackbar
+            key="__snackbar_134__"
+            style={
+                this.state.alertType === 'error'
+                    ? { backgroundColor: '#f44336' }
+                    : this.state.alertType === 'success'
+                      ? { backgroundColor: '#4caf50' }
+                      : undefined
             }
-            this.setState({ alert: false });
-        }}
-        message={this.state.alertMessage}
-    />;
+            open={this.state.alert}
+            autoHideDuration={6000}
+            onClick={() => this.setState({ alert: false })}
+            onClose={(e, reason) => {
+                if (reason === 'clickaway') {
+                    return;
+                }
+                this.setState({ alert: false });
+            }}
+            message={this.state.alertMessage}
+        />
+    );
 
     async onWidgetsLoaded() {
         let widgetsLoaded = Runtime.WIDGETS_LOADING_STEP_HTML_LOADED;
         if (this.socket.isConnected()) {
-            await VisWidgetsCatalog.collectRxInformation(this.socket as unknown as LegacyConnection, store.getState().visProject, this.changeProject);
+            await VisWidgetsCatalog.collectRxInformation(
+                this.socket as unknown as LegacyConnection,
+                store.getState().visProject,
+                this.changeProject,
+            );
             widgetsLoaded = Runtime.WIDGETS_LOADING_STEP_ALL_LOADED;
         }
         this.setState({ widgetsLoaded });
@@ -984,7 +1036,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
 
     addProject = async (projectName: string, doNotLoad?: boolean) => {
         try {
-            const project: Project = ({
+            const project: Project = {
                 ___settings: {
                     folders: [],
                     openedViews: [],
@@ -997,7 +1049,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
                     widgets: {},
                     activeWidgets: {},
                 },
-            } as unknown as Project);
+            } as unknown as Project;
             await this.socket.writeFile64(this.adapterId, `${projectName}/vis-views.json`, JSON.stringify(project));
             await this.socket.writeFile64(this.adapterId, `${projectName}/vis-user.css`, '');
             if (!doNotLoad) {
@@ -1015,131 +1067,159 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         if (!this.state.showNewProjectDialog) {
             return null;
         }
-        return <Dialog
-            open={!0}
-            onClose={() => this.setState({ showNewProjectDialog: false })}
-        >
-            <DialogTitle>{I18n.t('Create new project')}</DialogTitle>
-            <DialogContent>
-                <TextField
-                    variant="standard"
-                    label={I18n.t('Project name')}
-                    autoFocus
-                    fullWidth
-                    onKeyDown={async e => {
-                        if (e.key === 'Enter' && this.state.newProjectName && !this.state.projects.includes(this.state.newProjectName)) {
-                            await this.addProject(this.state.newProjectName);
+        return (
+            <Dialog
+                open={!0}
+                onClose={() => this.setState({ showNewProjectDialog: false })}
+            >
+                <DialogTitle>{I18n.t('Create new project')}</DialogTitle>
+                <DialogContent>
+                    <TextField
+                        variant="standard"
+                        label={I18n.t('Project name')}
+                        autoFocus
+                        fullWidth
+                        onKeyDown={async e => {
+                            if (
+                                e.key === 'Enter' &&
+                                this.state.newProjectName &&
+                                !this.state.projects.includes(this.state.newProjectName)
+                            ) {
+                                await this.addProject(this.state.newProjectName);
+                                window.location.href = `edit.html?${this.state.newProjectName}`;
+                            }
+                        }}
+                        value={this.state.newProjectName}
+                        onChange={e => this.setState({ newProjectName: e.target.value })}
+                        margin="dense"
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        id="create_new_project_ok_buton"
+                        variant="contained"
+                        // default
+                        color="primary"
+                        disabled={!this.state.newProjectName || this.state.projects.includes(this.state.newProjectName)}
+                        onClick={async () => {
+                            await this.addProject(this.state.newProjectName, true);
                             window.location.href = `edit.html?${this.state.newProjectName}`;
-                        }
-                    }}
-                    value={this.state.newProjectName}
-                    onChange={e => this.setState({ newProjectName: e.target.value })}
-                    margin="dense"
-                />
-            </DialogContent>
-            <DialogActions>
-                <Button
-                    id="create_new_project_ok_buton"
-                    variant="contained"
-                    // default
-                    color="primary"
-                    disabled={!this.state.newProjectName || this.state.projects.includes(this.state.newProjectName)}
-                    onClick={async () => {
-                        await this.addProject(this.state.newProjectName, true);
-                        window.location.href = `edit.html?${this.state.newProjectName}`;
-                    }}
-                    startIcon={<IconAdd />}
-                >
-                    {I18n.t('Create')}
-                </Button>
-                <Button
-                    variant="contained"
-                    // default
-                    color="grey"
-                    onClick={() => this.setState({ showNewProjectDialog: false })}
-                    startIcon={<IconClose />}
-                >
-                    {I18n.t('Cancel')}
-                </Button>
-            </DialogActions>
-        </Dialog>;
+                        }}
+                        startIcon={<IconAdd />}
+                    >
+                        {I18n.t('Create')}
+                    </Button>
+                    <Button
+                        variant="contained"
+                        // default
+                        color="grey"
+                        onClick={() => this.setState({ showNewProjectDialog: false })}
+                        startIcon={<IconClose />}
+                    >
+                        {I18n.t('Cancel')}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        );
     }
 
     showSmallProjectsDialog() {
-        return <Dialog
-            open={!0}
-            maxWidth="sm"
-            onClose={() => {
-                /* do nothing */
-            }}
-        >
-            <DialogTitle>
-                <img
-                    src={this.props.runtime ? './favicon.ico' : './faviconEdit.ico'}
-                    alt="vis-2"
-                    style={{ width: 24, marginRight: 10, marginTop: 4 }}
-                />
-                {!this.state.projects.length ? I18n.t('Create or import new "vis-2" project') : I18n.t('Select vis-2 project')}
-            </DialogTitle>
-            <DialogContent>
-                {!this.state.projects ? <LinearProgress /> : <Paper>
-                    {!this.state.projects.length ? <div style={{ width: '100%', fontSize: 20, padding: 10 }}>
-                        {I18n.t('welcome_message')}
-                    </div> : null}
-                    <MenuList>
-                        {this.state.projects.map(project =>
-                            <ListItemButton
-                                key={project}
-                                onClick={() => window.location.href = `?${project}`}
-                            >
-                                <ListItemIcon>
-                                    <IconDocument />
-                                </ListItemIcon>
-                                <ListItemText>{project}</ListItemText>
-                            </ListItemButton>)}
-                        <ListItemButton
-                            id="create_new_project"
-                            onClick={() => this.setState({ showNewProjectDialog: true, newProjectName: this.state.projects.length ? '' : 'main' })}
-                            style={{ backgroundColor: '#112233', color: '#ffffff' }}
-                        >
-                            <ListItemIcon>
-                                <IconAdd />
-                            </ListItemIcon>
-                            <ListItemText>{I18n.t('Create new project')}</ListItemText>
-                        </ListItemButton>
-                        {this.renderImportProjectDialog ? <ListItemButton
-                            onClick={() => this.setState({ showImportDialog: true })}
-                            style={{ backgroundColor: '#112233', color: '#4b9ed3' }}
-                        >
-                            <ListItemIcon><BiImport fontSize="small" /></ListItemIcon>
-                            <ListItemText>{I18n.t('Import project')}</ListItemText>
-                        </ListItemButton> : null}
-                    </MenuList>
-                </Paper>}
-            </DialogContent>
-            {this.showCreateNewProjectDialog()}
-            {this.renderImportProjectDialog ? this.renderImportProjectDialog() : null}
-            {this.renderAlertDialog()}
-        </Dialog>;
+        return (
+            <Dialog
+                open={!0}
+                maxWidth="sm"
+                onClose={() => {
+                    /* do nothing */
+                }}
+            >
+                <DialogTitle>
+                    <img
+                        src={this.props.runtime ? './favicon.ico' : './faviconEdit.ico'}
+                        alt="vis-2"
+                        style={{ width: 24, marginRight: 10, marginTop: 4 }}
+                    />
+                    {!this.state.projects.length
+                        ? I18n.t('Create or import new "vis-2" project')
+                        : I18n.t('Select vis-2 project')}
+                </DialogTitle>
+                <DialogContent>
+                    {!this.state.projects ? (
+                        <LinearProgress />
+                    ) : (
+                        <Paper>
+                            {!this.state.projects.length ? (
+                                <div style={{ width: '100%', fontSize: 20, padding: 10 }}>
+                                    {I18n.t('welcome_message')}
+                                </div>
+                            ) : null}
+                            <MenuList>
+                                {this.state.projects.map(project => (
+                                    <ListItemButton
+                                        key={project}
+                                        onClick={() => (window.location.href = `?${project}`)}
+                                    >
+                                        <ListItemIcon>
+                                            <IconDocument />
+                                        </ListItemIcon>
+                                        <ListItemText>{project}</ListItemText>
+                                    </ListItemButton>
+                                ))}
+                                <ListItemButton
+                                    id="create_new_project"
+                                    onClick={() =>
+                                        this.setState({
+                                            showNewProjectDialog: true,
+                                            newProjectName: this.state.projects.length ? '' : 'main',
+                                        })
+                                    }
+                                    style={{ backgroundColor: '#112233', color: '#ffffff' }}
+                                >
+                                    <ListItemIcon>
+                                        <IconAdd />
+                                    </ListItemIcon>
+                                    <ListItemText>{I18n.t('Create new project')}</ListItemText>
+                                </ListItemButton>
+                                {this.renderImportProjectDialog ? (
+                                    <ListItemButton
+                                        onClick={() => this.setState({ showImportDialog: true })}
+                                        style={{ backgroundColor: '#112233', color: '#4b9ed3' }}
+                                    >
+                                        <ListItemIcon>
+                                            <BiImport fontSize="small" />
+                                        </ListItemIcon>
+                                        <ListItemText>{I18n.t('Import project')}</ListItemText>
+                                    </ListItemButton>
+                                ) : null}
+                            </MenuList>
+                        </Paper>
+                    )}
+                </DialogContent>
+                {this.showCreateNewProjectDialog()}
+                {this.renderImportProjectDialog ? this.renderImportProjectDialog() : null}
+                {this.renderAlertDialog()}
+            </Dialog>
+        );
     }
 
     renderProjectDoesNotExist() {
-        return <div
-            style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 36,
-                color: '#982828',
-            }}
-        >
-            {I18n.t('Project "%s" does not exist', this.state.projectName)}
-        </div>;
+        return (
+            <div
+                style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 36,
+                    color: '#982828',
+                }}
+            >
+                {I18n.t('Project "%s" does not exist', this.state.projectName)}
+            </div>
+        );
     }
 
     getVisEngine() {
@@ -1166,7 +1246,9 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
                 view: this.state.selectedView,
             })
         ) {
-            console.warn(`User "${activeUser}" has no permissions for ${this.state.editMode ? 'edit mode' : 'runtime'} of project "${this.state.projectName}" with view "${this.state.selectedView}"`);
+            console.warn(
+                `User "${activeUser}" has no permissions for ${this.state.editMode ? 'edit mode' : 'runtime'} of project "${this.state.projectName}" with view "${this.state.selectedView}"`,
+            );
             if (this.state.projects) {
                 return this.showSmallProjectsDialog();
             }
@@ -1177,53 +1259,66 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
             return null;
         }
 
-        return <VisEngine
-            key={this.state.projectName}
-            widgetsLoaded={this.state.widgetsLoaded}
-            activeView={this.state.selectedView || ''}
-            editMode={!this.state.runtime && this.state.editMode}
-            runtime={this.state.runtime}
-            socket={this.socket as unknown as LegacyConnection}
-            visCommonCss={this.state.visCommonCss}
-            visUserCss={this.state.visUserCss}
-            lang={this.socket.systemLang}
-            adapterName={this.adapterName}
-            instance={this.instance}
-            selectedWidgets={this.state.selectedWidgets}
-            setSelectedWidgets={this.setSelectedWidgets}
-            onLoaded={() => this.onWidgetsLoaded()}
-            selectedGroup={this.state.selectedGroup}
-            setSelectedGroup={this.setSelectedGroup}
-            onWidgetsChanged={this.onWidgetsChanged}
-            projectName={this.state.projectName}
-            lockDragging={this.state.lockDragging}
-            disableInteraction={this.state.disableInteraction}
-            widgetHint={this.state.widgetHint}
-            onFontsUpdate={this.state.runtime ? null : (fonts: string[]) => this.onFontsUpdate(fonts)}
-            registerEditorCallback={this.state.runtime ? null : this.registerCallback}
-            themeType={this.state.themeType}
-            themeName={this.state.themeName}
-            theme={this.state.theme as VisTheme}
-            adapterId={this.adapterId}
-            editModeComponentStyle={styles.editModeComponentStyle}
-            onIgnoreMouseEvents={this.onIgnoreMouseEvents}
-            setLoadingText={this.setLoadingText}
-            onConfirmDialog={(message: string, title: string, icon: string, width: number, callback: (isYes: boolean) => void) => this.showConfirmDialog && this.showConfirmDialog({
-                message,
-                title,
-                icon,
-                width,
-                callback,
-            })}
-            onShowCode={(code: string, title: string, mode: string) => this.showCodeDialog && this.showCodeDialog({ code, title, mode })}
-            currentUser={this.state.currentUser}
-            userGroups={this.state.userGroups}
-            renderAlertDialog={this.renderAlertDialog}
-            showLegacyFileSelector={this.showLegacyFileSelector}
-            toggleTheme={(newThemeName: ThemeName) => this.toggleTheme(newThemeName)}
-            askAboutInclude={this.askAboutInclude}
-            changeProject={this.changeProject}
-        />;
+        return (
+            <VisEngine
+                key={this.state.projectName}
+                widgetsLoaded={this.state.widgetsLoaded}
+                activeView={this.state.selectedView || ''}
+                editMode={!this.state.runtime && this.state.editMode}
+                runtime={this.state.runtime}
+                socket={this.socket as unknown as LegacyConnection}
+                visCommonCss={this.state.visCommonCss}
+                visUserCss={this.state.visUserCss}
+                lang={this.socket.systemLang}
+                adapterName={this.adapterName}
+                instance={this.instance}
+                selectedWidgets={this.state.selectedWidgets}
+                setSelectedWidgets={this.setSelectedWidgets}
+                onLoaded={() => this.onWidgetsLoaded()}
+                selectedGroup={this.state.selectedGroup}
+                setSelectedGroup={this.setSelectedGroup}
+                onWidgetsChanged={this.onWidgetsChanged}
+                projectName={this.state.projectName}
+                lockDragging={this.state.lockDragging}
+                disableInteraction={this.state.disableInteraction}
+                widgetHint={this.state.widgetHint}
+                onFontsUpdate={this.state.runtime ? null : (fonts: string[]) => this.onFontsUpdate(fonts)}
+                registerEditorCallback={this.state.runtime ? null : this.registerCallback}
+                themeType={this.state.themeType}
+                themeName={this.state.themeName}
+                theme={this.state.theme as VisTheme}
+                adapterId={this.adapterId}
+                editModeComponentStyle={styles.editModeComponentStyle}
+                onIgnoreMouseEvents={this.onIgnoreMouseEvents}
+                setLoadingText={this.setLoadingText}
+                onConfirmDialog={(
+                    message: string,
+                    title: string,
+                    icon: string,
+                    width: number,
+                    callback: (isYes: boolean) => void,
+                ) =>
+                    this.showConfirmDialog &&
+                    this.showConfirmDialog({
+                        message,
+                        title,
+                        icon,
+                        width,
+                        callback,
+                    })
+                }
+                onShowCode={(code: string, title: string, mode: string) =>
+                    this.showCodeDialog && this.showCodeDialog({ code, title, mode })
+                }
+                currentUser={this.state.currentUser}
+                userGroups={this.state.userGroups}
+                renderAlertDialog={this.renderAlertDialog}
+                showLegacyFileSelector={this.showLegacyFileSelector}
+                toggleTheme={(newThemeName: ThemeName) => this.toggleTheme(newThemeName)}
+                askAboutInclude={this.askAboutInclude}
+                changeProject={this.changeProject}
+            />
+        );
     }
 
     renderLoader() {
@@ -1231,26 +1326,53 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
             return null;
         }
         if (window.vendorPrefix === 'MV') {
-            return <LoaderMV themeType={this.state.themeType} backgroundColor={window.loadingBackgroundColor} backgroundImage={window.loadingBackgroundImage} />;
+            return (
+                <LoaderMV
+                    themeType={this.state.themeType}
+                    backgroundColor={window.loadingBackgroundColor}
+                    backgroundImage={window.loadingBackgroundImage}
+                />
+            );
         }
         if (window.vendorPrefix === 'PT') {
-            return <LoaderPT themeType={this.state.themeType} backgroundColor={window.loadingBackgroundColor} backgroundImage={window.loadingBackgroundImage} />;
+            return (
+                <LoaderPT
+                    themeType={this.state.themeType}
+                    backgroundColor={window.loadingBackgroundColor}
+                    backgroundImage={window.loadingBackgroundImage}
+                />
+            );
         }
         if (window.vendorPrefix && window.vendorPrefix !== '@@vendorPrefix@@') {
-            return <LoaderVendor themeType={this.state.themeType} backgroundColor={window.loadingBackgroundColor} backgroundImage={window.loadingBackgroundImage} />;
+            return (
+                <LoaderVendor
+                    themeType={this.state.themeType}
+                    backgroundColor={window.loadingBackgroundColor}
+                    backgroundImage={window.loadingBackgroundImage}
+                />
+            );
         }
-        return <Loader themeType={this.state.themeType} backgroundColor={window.loadingBackgroundColor} backgroundImage={window.loadingBackgroundImage} />;
+        return (
+            <Loader
+                themeType={this.state.themeType}
+                backgroundColor={window.loadingBackgroundColor}
+                backgroundImage={window.loadingBackgroundImage}
+            />
+        );
     }
 
     render() {
-        return <StyledEngineProvider injectFirst>
-            <ThemeProvider theme={this.state.theme}>
-                {!this.state.loaded || !store.getState().visProject.___settings ?
-                    this.renderLoader() : this.getVisEngine()}
-                {this.state.projectDoesNotExist ? this.renderProjectDoesNotExist() : null}
-                {this.state.showProjectsDialog ? this.showSmallProjectsDialog() : null}
-            </ThemeProvider>
-        </StyledEngineProvider>;
+        return (
+            <StyledEngineProvider injectFirst>
+                <ThemeProvider theme={this.state.theme}>
+                    {!this.state.loaded || !store.getState().visProject.___settings
+                        ? this.renderLoader()
+                        : this.getVisEngine()}
+                    {this.state.projectDoesNotExist ? this.renderProjectDoesNotExist() : null}
+                    {this.state.showProjectsDialog ? this.showSmallProjectsDialog() : null}
+                </ThemeProvider>
+            </StyledEngineProvider>
+        );
     }
 }
 

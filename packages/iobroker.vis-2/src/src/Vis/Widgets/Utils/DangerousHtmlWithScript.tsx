@@ -48,11 +48,21 @@ class DangerousHtmlWithScript extends React.Component<DangerousHtmlWithScriptPro
 
         if (isDiv) {
             // eslint-disable-next-line react/no-danger
-            return <div dangerouslySetInnerHTML={{ __html: html }} {...otherProps}></div>;
+            return (
+                <div
+                    dangerouslySetInnerHTML={{ __html: html }}
+                    {...otherProps}
+                ></div>
+            );
         }
 
         // eslint-disable-next-line react/no-danger
-        return <span dangerouslySetInnerHTML={{ __html: html }} {...otherProps}></span>;
+        return (
+            <span
+                dangerouslySetInnerHTML={{ __html: html }}
+                {...otherProps}
+            ></span>
+        );
     }
 }
 

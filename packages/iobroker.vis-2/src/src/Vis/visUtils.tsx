@@ -19,8 +19,13 @@ import type {
     GroupWidgetId,
     VisStateUsage,
     VisLinkContextBinding,
-    StateID, VisBindingOperation, VisBindingOperationArgument,
-    GroupData, WidgetData, VisBinding, VisBindingOperationType,
+    StateID,
+    VisBindingOperation,
+    VisBindingOperationArgument,
+    GroupData,
+    WidgetData,
+    VisBinding,
+    VisBindingOperationType,
     RxWidgetInfoAttributesFieldID,
 } from '@iobroker/types-vis-2';
 import { deepClone } from '@/Utils/utils';
@@ -128,7 +133,9 @@ function extractBinding(format: string): VisBinding[] | null {
                 systemOid = systemOid.substring(0, systemOid.length - 3);
             }
             let operations: VisBindingOperation[] | null = null;
-            const isEval = visOid.match(/^[\d\w_]+:\s?[-._/ :!#$%&()+=@^{}|~\p{Ll}\p{Lu}\p{Nd}]+$/u) || (!visOid.length && parts.length > 0); // (visOid.indexOf(':') !== -1) && (visOid.indexOf('::') === -1);
+            const isEval =
+                visOid.match(/^[\d\w_]+:\s?[-._/ :!#$%&()+=@^{}|~\p{Ll}\p{Lu}\p{Nd}]+$/u) ||
+                (!visOid.length && parts.length > 0); // (visOid.indexOf(':') !== -1) && (visOid.indexOf('::') === -1);
 
             if (isEval) {
                 const xx = visOid.split(':', 2);
@@ -138,17 +145,20 @@ function extractBinding(format: string): VisBinding[] | null {
                 operations = [];
                 operations.push({
                     op: 'eval',
-                    arg: [{
-                        name: xx[0],
-                        visOid,
-                        systemOid,
-                    }],
+                    arg: [
+                        {
+                            name: xx[0],
+                            visOid,
+                            systemOid,
+                        },
+                    ],
                 });
 
                 for (let u = 1; u < parts.length; u++) {
                     // eval construction
                     const trimmed = parts[u].trim();
-                    if (isIdBinding(trimmed)) { // parts[u].indexOf(':') !== -1 && parts[u].indexOf('::') === -1) {
+                    if (isIdBinding(trimmed)) {
+                        // parts[u].indexOf(':') !== -1 && parts[u].indexOf('::') === -1) {
                         const argParts = trimmed.split(':', 2);
                         let _visOid = argParts[1].trim();
                         let _systemOid = _visOid;
@@ -193,7 +203,8 @@ function extractBinding(format: string): VisBinding[] | null {
                     if (parse && parse[1]) {
                         const op = parse[1].trim();
                         // operators requires parameter
-                        if (op === '*' ||
+                        if (
+                            op === '*' ||
                             op === '+' ||
                             op === '-' ||
                             op === '/' ||
@@ -232,7 +243,7 @@ function extractBinding(format: string): VisBinding[] | null {
                         } else if (op === 'value') {
                             // value formatting
                             operations = operations || [];
-                            let arg: string = parse[2] === undefined ? '(2)' : (parse[2] || '');
+                            let arg: string = parse[2] === undefined ? '(2)' : parse[2] || '';
                             arg = arg.trim();
                             arg = arg.substring(1, arg.length - 1);
                             operations.push({ op, arg });
@@ -291,12 +302,7 @@ function extractBinding(format: string): VisBinding[] | null {
 //    visibility: {} //
 //    signals: {}    //
 // }
-function getUsedObjectIDsInWidget(
-    views: Project,
-    view: string,
-    wid: AnyWidgetId,
-    linkContext: VisStateUsage,
-) {
+function getUsedObjectIDsInWidget(views: Project, view: string, wid: AnyWidgetId, linkContext: VisStateUsage): void {
     // Check all attributes
     const widget = deepClone(views[view].widgets[wid]);
 
@@ -388,16 +394,24 @@ function getUsedObjectIDsInWidget(
     if (widget.grouped) {
         // if groupid is not defined => fix it and find it
         if (!widget.groupid) {
-            store.dispatch(updateWidget({
-                viewId: view,
-                widgetId: wid,
-                data: { ...widget, groupid: getWidgetGroup(views, view, wid) },
-            }));
+            store.dispatch(
+                updateWidget({
+                    viewId: view,
+                    widgetId: wid,
+                    data: { ...widget, groupid: getWidgetGroup(views, view, wid) },
+                }),
+            );
         }
 
         // If the group, to which the widget belongs to does not exist, fix it
         if (widget.groupid && !store.getState().visProject[view].widgets[widget.groupid]) {
-            store.dispatch(updateWidget({ viewId: view, widgetId: wid, data: { ...widget, groupid: getWidgetGroup(views, view, wid) } }));
+            store.dispatch(
+                updateWidget({
+                    viewId: view,
+                    widgetId: wid,
+                    data: { ...widget, groupid: getWidgetGroup(views, view, wid) },
+                }),
+            );
 
             if (!widget.groupid) {
                 // create a fictive group
@@ -504,7 +518,12 @@ function getUsedObjectIDsInWidget(
                         }
                     }
                 });
-            } else if (attr !== 'oidTrueValue' && attr !== 'oidFalseValue' && data[attr] && data[attr] !== 'nothing_selected') {
+            } else if (
+                attr !== 'oidTrueValue' &&
+                attr !== 'oidFalseValue' &&
+                data[attr] &&
+                data[attr] !== 'nothing_selected'
+            ) {
                 let isID = !!attr.match(/oid\d{0,2}$/);
                 if (attr.startsWith('oid')) {
                     isID = true;
@@ -512,7 +531,10 @@ function getUsedObjectIDsInWidget(
                     isID = true;
                 } else if (linkContext.widgetAttrInfo) {
                     const _attr = attr.replace(/\d{0,2}$/, '');
-                    if ((linkContext.widgetAttrInfo[_attr] as RxWidgetInfoAttributesFieldID)?.type === 'id' && (linkContext.widgetAttrInfo[_attr] as RxWidgetInfoAttributesFieldID).noSubscribe !== true) {
+                    if (
+                        (linkContext.widgetAttrInfo[_attr] as RxWidgetInfoAttributesFieldID)?.type === 'id' &&
+                        (linkContext.widgetAttrInfo[_attr] as RxWidgetInfoAttributesFieldID).noSubscribe !== true
+                    ) {
                         isID = true;
                     }
                 }
@@ -630,7 +652,9 @@ function getUsedObjectIDsInWidget(
 
                         if (operation0 && Array.isArray(operation0.arg)) {
                             for (let w = 0; w < operation0.arg.length; w++) {
-                                const arg: VisBindingOperationArgument = operation0.arg[w] as VisBindingOperationArgument;
+                                const arg: VisBindingOperationArgument = operation0.arg[
+                                    w
+                                ] as VisBindingOperationArgument;
                                 const _systemOid = arg.systemOid;
                                 if (!_systemOid) {
                                     continue;
@@ -684,7 +708,9 @@ function getUsedObjectIDs(views: Project, isByViews?: boolean): VisStateUsage | 
             linkContext.byViews[view] = [];
         }
 
-        Object.keys(views[view].widgets).forEach(wid => getUsedObjectIDsInWidget(views, view, wid as AnyWidgetId, linkContext));
+        Object.keys(views[view].widgets).forEach(wid =>
+            getUsedObjectIDsInWidget(views, view, wid as AnyWidgetId, linkContext),
+        );
     });
 
     if (isByViews) {
@@ -735,14 +761,19 @@ function getUrlParameter(attr: string): string | true {
     return '';
 }
 
-async function readFile(socket: LegacyConnection, id: string, fileName: string, withType?: boolean): Promise<string | { file: string; mimeType: string }> {
+async function readFile(
+    socket: LegacyConnection,
+    id: string,
+    fileName: string,
+    withType?: boolean,
+): Promise<string | { file: string; mimeType: string }> {
     const file = await socket.readFile(id, fileName);
     let mimeType = '';
     let data = '';
     if (typeof file === 'object') {
         if (withType) {
             // @ts-expect-error LegacyConnection delivers file.mimeType
-            mimeType = file.mimeType ? file.mimeType : (file.type ? file.type : '');
+            mimeType = file.mimeType ? file.mimeType : file.type ? file.type : '';
         }
         // @ts-expect-error LegacyConnection delivers file.data
         data = file.file || file.data;
@@ -757,7 +788,10 @@ async function readFile(socket: LegacyConnection, id: string, fileName: string, 
 
 function addClass(actualClass: string, toAdd: string | undefined): string {
     if (actualClass) {
-        const parts = actualClass.split(' ').map(cl => cl.trim()).filter(cl => cl);
+        const parts = actualClass
+            .split(' ')
+            .map(cl => cl.trim())
+            .filter(cl => cl);
         if (toAdd && !parts.includes(toAdd)) {
             parts.push(toAdd);
         }
@@ -769,7 +803,10 @@ function addClass(actualClass: string, toAdd: string | undefined): string {
 
 function removeClass(actualClass: string, toRemove: string): string {
     if (actualClass) {
-        const parts = actualClass.split(' ').map(cl => cl.trim()).filter(cl => cl);
+        const parts = actualClass
+            .split(' ')
+            .map(cl => cl.trim())
+            .filter(cl => cl);
         const pos = parts.indexOf(toRemove);
         if (pos !== -1) {
             parts.splice(pos, 1);

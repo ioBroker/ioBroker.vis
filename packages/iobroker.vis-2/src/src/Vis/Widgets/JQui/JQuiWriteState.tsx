@@ -80,7 +80,7 @@ class JQuiWriteState extends VisRxWidget<RxData, JQuiWriteStateState> {
         });
     }
 
-    static getWidgetInfo() {
+    static getWidgetInfo(): RxWidgetInfo {
         return {
             id: 'tplIconState',
             visSet: 'jqui',

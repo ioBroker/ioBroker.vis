@@ -19,12 +19,19 @@ import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 import { Utils } from '@iobroker/adapter-react-v5';
 
 import type VisRxWidget from '@/Vis/visRxWidget';
-import createTheme from  '@/theme';
+import createTheme from '@/theme';
 import type {
-    AnyWidgetId, GroupWidgetId,
-    Widget, ViewSettings, VisContext,
-    WidgetStyle, VisViewProps, SingleWidget,
-    GroupWidget, AskViewCommand, WidgetReference,
+    AnyWidgetId,
+    GroupWidgetId,
+    Widget,
+    ViewSettings,
+    VisContext,
+    WidgetStyle,
+    VisViewProps,
+    SingleWidget,
+    GroupWidget,
+    AskViewCommand,
+    WidgetReference,
 } from '@iobroker/types-vis-2';
 import { hasWidgetAccess, isVarFinite } from '@/Utils/utils';
 import { recalculateFields, selectView, store } from '@/Store';
@@ -72,7 +79,9 @@ interface CreateWidgetOptions {
     editMode: boolean;
     id: AnyWidgetId;
     isRelative: boolean;
-    mouseDownOnView: null | ((e: MouseEvent, wid: AnyWidgetId, isRelative: boolean, isResize: boolean, isDoubleClick: boolean) => void);
+    mouseDownOnView:
+        | null
+        | ((e: MouseEvent, wid: AnyWidgetId, isRelative: boolean, isResize: boolean, isDoubleClick: boolean) => void);
     moveAllowed: boolean;
     ignoreMouseEvents?: boolean | undefined;
     onIgnoreMouseEvents?: (ignore: boolean) => void;
@@ -144,7 +153,11 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
 
     constructor(props: VisViewProps) {
         super(props);
-        this.promiseToCollect = VisWidgetsCatalog.collectRxInformation(props.context.socket, store.getState().visProject, props.context.changeProject);
+        this.promiseToCollect = VisWidgetsCatalog.collectRxInformation(
+            props.context.socket,
+            store.getState().visProject,
+            props.context.changeProject,
+        );
 
         this.state = {
             mounted: false,
@@ -171,18 +184,17 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         this.oldFilter = JSON.stringify((props.viewsActiveFilter && props.viewsActiveFilter[this.props.view]) || []);
     }
 
-    async componentDidMount() {
+    async componentDidMount(): Promise<void> {
         this.updateViewWidth();
 
         await this.promiseToCollect;
         this.props.context.linkContext.registerViewRef(this.props.view, this.refView, this.onCommand);
 
         await this.loadJqueryTheme(this.getJQueryThemeName());
-        this.setState({ mounted: true }, () =>
-            this.registerEditorHandlers());
+        this.setState({ mounted: true }, () => this.registerEditorHandlers());
     }
 
-    componentWillUnmount() {
+    componentWillUnmount(): void {
         this.props.context.linkContext.unregisterViewRef(this.props.view, this.refView);
 
         if (this.refView.current?._originalParent) {
@@ -199,7 +211,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         this.uninstallKeyHandlers();
     }
 
-    onCommand = (command: ViewCommand, options?: ViewCommandOptions) => {
+    onCommand = (command: ViewCommand, options?: ViewCommandOptions): string[] | null => {
         if (command === 'updateContainers') {
             // send to all widgets the command
             Object.keys(this.widgetsRefs).forEach(wid => {
@@ -237,7 +249,10 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
                 }
                 if (filterValues) {
                     if (filterValues && typeof filterValues === 'string') {
-                        filterValues = filterValues.split(',').map((f: string) => f.trim()).filter(f => f);
+                        filterValues = filterValues
+                            .split(',')
+                            .map((f: string) => f.trim())
+                            .filter(f => f);
                     }
                     (filterValues as string[]).forEach((f: string) => !filterList.includes(f) && filterList.push(f));
                 }
@@ -303,7 +318,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         return null;
     };
 
-    onMouseWindowDown = (e: MouseEvent) => {
+    onMouseWindowDown = (e: MouseEvent): void => {
         if (!this.refView.current?.contains(e.target as Node)) {
             // Clicked outside the box
             this.cancelStealMode(null);
@@ -329,7 +344,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         window.document.addEventListener('mousedown', this.onMouseWindowDown);
     };
 
-    cancelStealMode(result: string | number | boolean | null) {
+    cancelStealMode(result: string | number | boolean | null): void {
         if (this.nextClickIsSteal) {
             window.document.removeEventListener('mousedown', this.onMouseWindowDown);
             this.nextClickIsSteal.cb(result);
@@ -343,46 +358,49 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         }
     }
 
-    mouseDownLocal = this.props.context.runtime ? null : (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        if (this.ignoreMouseEvents) {
-            return;
-        }
-        if (e.button === 2) {
-            return;
-        }
+    mouseDownLocal = this.props.context.runtime
+        ? null
+        : (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+              if (this.ignoreMouseEvents) {
+                  return;
+              }
+              if (e.button === 2) {
+                  return;
+              }
 
-        if (this.nextClickIsSteal) {
-            // click canceled
-            this.cancelStealMode(null);
-            return;
-        }
+              if (this.nextClickIsSteal) {
+                  // click canceled
+                  this.cancelStealMode(null);
+                  return;
+              }
 
-        this.props.context.setSelectedWidgets([]);
+              this.props.context.setSelectedWidgets([]);
 
-        this.onMouseViewMove && window.document.addEventListener('mousemove', this.onMouseViewMove);
-        this.onMouseViewUp && window.document.addEventListener('mouseup', this.onMouseViewUp);
+              this.onMouseViewMove && window.document.addEventListener('mousemove', this.onMouseViewMove);
+              this.onMouseViewUp && window.document.addEventListener('mouseup', this.onMouseViewUp);
 
-        const rect = this.refView.current?.getBoundingClientRect();
+              const rect = this.refView.current?.getBoundingClientRect();
 
-        if (!rect) {
-            return;
-        }
+              if (!rect) {
+                  return;
+              }
 
-        this.movement = {
-            moved: false,
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top,
-            startX: e.pageX,
-            startY: e.pageY,
-            w: 0,
-            h: 0,
-            selectedWidgetsWithRectangle: [],
-            simpleMode: e.shiftKey || e.ctrlKey,
-        };
-    };
+              this.movement = {
+                  moved: false,
+                  x: e.clientX - rect.left,
+                  y: e.clientY - rect.top,
+                  startX: e.pageX,
+                  startY: e.pageY,
+                  w: 0,
+                  h: 0,
+                  selectedWidgetsWithRectangle: [],
+                  simpleMode: e.shiftKey || e.ctrlKey,
+              };
+          };
 
-    doubleClickOnView = () => {
-        if (this.props.editMode &&
+    doubleClickOnView = (): void => {
+        if (
+            this.props.editMode &&
             this.props.selectedWidgets?.length === 1 &&
             store.getState().visProject[this.props.view].widgets[this.props.selectedWidgets[0]].tpl === '_tplGroup'
         ) {
@@ -390,7 +408,10 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         }
     };
 
-    getWidgetsInRect(rect: { top: number; left: number; bottom: number; right: number }, simpleMode: boolean): AnyWidgetId[] {
+    getWidgetsInRect(
+        rect: { top: number; left: number; bottom: number; right: number },
+        simpleMode: boolean,
+    ): AnyWidgetId[] {
         // take actual position
         const widgets: (string | null)[] = Object.keys(this.widgetsRefs).filter(id => {
             if (!store.getState().visProject[this.props.view].widgets[id as AnyWidgetId]) {
@@ -399,33 +420,62 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
                 return null;
             }
 
-            if (store.getState().visProject[this.props.view].widgets[id as AnyWidgetId].groupid && !this.props.selectedGroup) {
+            if (
+                store.getState().visProject[this.props.view].widgets[id as AnyWidgetId].groupid &&
+                !this.props.selectedGroup
+            ) {
                 return null;
             }
-            const widDiv = this.widgetsRefs[id as AnyWidgetId].widDiv || this.widgetsRefs[id as AnyWidgetId].refService?.current;
+            const widDiv =
+                this.widgetsRefs[id as AnyWidgetId].widDiv || this.widgetsRefs[id as AnyWidgetId].refService?.current;
             if (widDiv) {
                 const wRect = widDiv.getBoundingClientRect();
                 if (simpleMode) {
                     // top left corner
-                    if (wRect.top >= rect.top && wRect.top <= rect.bottom && wRect.left >= rect.left && wRect.left <= rect.right) {
+                    if (
+                        wRect.top >= rect.top &&
+                        wRect.top <= rect.bottom &&
+                        wRect.left >= rect.left &&
+                        wRect.left <= rect.right
+                    ) {
                         return true;
                     }
                     // bottom right corner
-                    if (wRect.bottom >= rect.top && wRect.bottom <= rect.bottom && wRect.right >= rect.left && wRect.right <= rect.right) {
+                    if (
+                        wRect.bottom >= rect.top &&
+                        wRect.bottom <= rect.bottom &&
+                        wRect.right >= rect.left &&
+                        wRect.right <= rect.right
+                    ) {
                         return true;
                     }
                     // top right corner
-                    if (wRect.top >= rect.top && wRect.top <= rect.bottom && wRect.right >= rect.left && wRect.right <= rect.right) {
+                    if (
+                        wRect.top >= rect.top &&
+                        wRect.top <= rect.bottom &&
+                        wRect.right >= rect.left &&
+                        wRect.right <= rect.right
+                    ) {
                         return true;
                     }
                     // bottom left corner
-                    if (wRect.bottom >= rect.top && wRect.bottom <= rect.bottom && wRect.left >= rect.left && wRect.left <= rect.right) {
+                    if (
+                        wRect.bottom >= rect.top &&
+                        wRect.bottom <= rect.bottom &&
+                        wRect.left >= rect.left &&
+                        wRect.left <= rect.right
+                    ) {
                         return true;
                     }
-                } else if (wRect.top >= rect.top && wRect.top <= rect.bottom &&
-                    wRect.left >= rect.left && wRect.left <= rect.right &&
-                    wRect.bottom >= rect.top && wRect.bottom <= rect.bottom &&
-                    wRect.right >= rect.left && wRect.right <= rect.right
+                } else if (
+                    wRect.top >= rect.top &&
+                    wRect.top <= rect.bottom &&
+                    wRect.left >= rect.left &&
+                    wRect.left <= rect.right &&
+                    wRect.bottom >= rect.top &&
+                    wRect.bottom <= rect.bottom &&
+                    wRect.right >= rect.left &&
+                    wRect.right <= rect.right
                 ) {
                     return true;
                 }
@@ -438,288 +488,355 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         return widgets as AnyWidgetId[];
     }
 
-    onMouseViewMove = !this.props.context.runtime ? (e: MouseEvent) => {
-        if (this.ignoreMouseEvents || !this.movement) {
-            return;
-        }
-        if (!this.selectDiv && this.refView.current) {
-            // create selectDiv
-            this.selectDiv = window.document.createElement('div');
-            this.selectDiv.style.position = 'absolute';
-            this.selectDiv.style.zIndex = VisView.Z_INDEXES.VIEW_SELECT_RECTANGLE.toString();
-            this.selectDiv.className = 'vis-editmode-select-rect';
-            this.refView.current.appendChild(this.selectDiv);
-        }
+    onMouseViewMove = !this.props.context.runtime
+        ? (e: MouseEvent) => {
+              if (this.ignoreMouseEvents || !this.movement) {
+                  return;
+              }
+              if (!this.selectDiv && this.refView.current) {
+                  // create selectDiv
+                  this.selectDiv = window.document.createElement('div');
+                  this.selectDiv.style.position = 'absolute';
+                  this.selectDiv.style.zIndex = VisView.Z_INDEXES.VIEW_SELECT_RECTANGLE.toString();
+                  this.selectDiv.className = 'vis-editmode-select-rect';
+                  this.refView.current.appendChild(this.selectDiv);
+              }
 
-        this.movement.moved = true;
-        this.movement.w = e.pageX - (this.movement.startX || 0);
-        this.movement.h = e.pageY - (this.movement.startY || 0);
+              this.movement.moved = true;
+              this.movement.w = e.pageX - (this.movement.startX || 0);
+              this.movement.h = e.pageY - (this.movement.startY || 0);
 
-        if (this.selectDiv) {
-            if (this.movement.w >= 0) {
-                this.selectDiv.style.left = `${this.movement.x}px`;
-                this.selectDiv.style.width = `${this.movement.w}px`;
-            } else {
-                this.selectDiv.style.left = `${this.movement.x + this.movement.w}px`;
-                this.selectDiv.style.width = `${-this.movement.w}px`;
-            }
-            if (this.movement.h >= 0) {
-                this.selectDiv.style.top = `${this.movement.y}px`;
-                this.selectDiv.style.height = `${this.movement.h}px`;
-            } else {
-                this.selectDiv.style.top = `${this.movement.y + this.movement.h}px`;
-                this.selectDiv.style.height = `${-this.movement.h}px`;
-            }
-            // get selected widgets
-            const widgets: AnyWidgetId[] = this.getWidgetsInRect(this.selectDiv.getBoundingClientRect(), this.movement.simpleMode || false);
-            if (this.movement.selectedWidgetsWithRectangle && JSON.stringify(widgets) !== JSON.stringify(this.movement.selectedWidgetsWithRectangle)) {
-                // select
-                widgets.forEach(id => {
-                    if (
-                        !this.movement?.selectedWidgetsWithRectangle?.includes(id) &&
-                        this.widgetsRefs[id as AnyWidgetId] &&
-                        !store.getState().visProject[this.props.view].widgets[id as AnyWidgetId].data.locked &&
-                        this.props.selectedGroup !== id
-                    ) {
-                        if (this.widgetsRefs[id as AnyWidgetId]?.onTempSelect) {
-                            this.widgetsRefs[id as AnyWidgetId].onTempSelect(true);
-                        }
-                    }
-                });
-                // deselect
-                this.movement.selectedWidgetsWithRectangle.forEach(id => {
-                    if (!widgets.includes(id) && this.widgetsRefs[id]?.onTempSelect) {
-                        this.widgetsRefs[id].onTempSelect(false);
-                    }
-                });
-                this.movement.selectedWidgetsWithRectangle = widgets.filter(widget => !store.getState().visProject[this.props.view].widgets[widget].data.locked);
-            }
-        }
-    } : null;
+              if (this.selectDiv) {
+                  if (this.movement.w >= 0) {
+                      this.selectDiv.style.left = `${this.movement.x}px`;
+                      this.selectDiv.style.width = `${this.movement.w}px`;
+                  } else {
+                      this.selectDiv.style.left = `${this.movement.x + this.movement.w}px`;
+                      this.selectDiv.style.width = `${-this.movement.w}px`;
+                  }
+                  if (this.movement.h >= 0) {
+                      this.selectDiv.style.top = `${this.movement.y}px`;
+                      this.selectDiv.style.height = `${this.movement.h}px`;
+                  } else {
+                      this.selectDiv.style.top = `${this.movement.y + this.movement.h}px`;
+                      this.selectDiv.style.height = `${-this.movement.h}px`;
+                  }
+                  // get selected widgets
+                  const widgets: AnyWidgetId[] = this.getWidgetsInRect(
+                      this.selectDiv.getBoundingClientRect(),
+                      this.movement.simpleMode || false,
+                  );
+                  if (
+                      this.movement.selectedWidgetsWithRectangle &&
+                      JSON.stringify(widgets) !== JSON.stringify(this.movement.selectedWidgetsWithRectangle)
+                  ) {
+                      // select
+                      widgets.forEach(id => {
+                          if (
+                              !this.movement?.selectedWidgetsWithRectangle?.includes(id) &&
+                              this.widgetsRefs[id] &&
+                              !store.getState().visProject[this.props.view].widgets[id].data.locked &&
+                              this.props.selectedGroup !== id
+                          ) {
+                              if (this.widgetsRefs[id]?.onTempSelect) {
+                                  this.widgetsRefs[id].onTempSelect(true);
+                              }
+                          }
+                      });
+                      // deselect
+                      this.movement.selectedWidgetsWithRectangle.forEach(id => {
+                          if (!widgets.includes(id) && this.widgetsRefs[id]?.onTempSelect) {
+                              this.widgetsRefs[id].onTempSelect(false);
+                          }
+                      });
+                      this.movement.selectedWidgetsWithRectangle = widgets.filter(
+                          widget => !store.getState().visProject[this.props.view].widgets[widget].data.locked,
+                      );
+                  }
+              }
+          }
+        : null;
 
-    onMouseViewUp = !this.props.context.runtime ? (e: MouseEvent) => {
-        if (this.ignoreMouseEvents) {
-            return;
-        }
-        e && e.stopPropagation();
-        this.onMouseViewMove && window.document.removeEventListener('mousemove', this.onMouseViewMove);
-        this.onMouseViewUp && window.document.removeEventListener('mouseup', this.onMouseViewUp);
-        if (this.selectDiv) {
-            this.selectDiv.remove();
-            this.selectDiv = null;
-        }
+    onMouseViewUp = !this.props.context.runtime
+        ? (e: MouseEvent) => {
+              if (this.ignoreMouseEvents) {
+                  return;
+              }
+              e && e.stopPropagation();
+              this.onMouseViewMove && window.document.removeEventListener('mousemove', this.onMouseViewMove);
+              this.onMouseViewUp && window.document.removeEventListener('mouseup', this.onMouseViewUp);
+              if (this.selectDiv) {
+                  this.selectDiv.remove();
+                  this.selectDiv = null;
+              }
 
-        // deselect widgets
-        this.movement?.selectedWidgetsWithRectangle && this.props.context.setSelectedWidgets(this.movement.selectedWidgetsWithRectangle);
+              // deselect widgets
+              this.movement?.selectedWidgetsWithRectangle &&
+                  this.props.context.setSelectedWidgets(this.movement.selectedWidgetsWithRectangle);
 
-        this.movement = null;
-    } : null;
+              this.movement = null;
+          }
+        : null;
 
     // Called from Widget
-    mouseDownOnView = this.props.context.runtime ? null : (e: MouseEvent, wid: AnyWidgetId, isRelative: boolean, isResize: boolean, isDoubleClick: boolean) => {
-        if (this.ignoreMouseEvents) {
-            return;
-        }
-        if (this.nextClickIsSteal) {
-            // send to App.js the stolen attribute
+    mouseDownOnView = this.props.context.runtime
+        ? null
+        : (e: MouseEvent, wid: AnyWidgetId, _isRelative: boolean, isResize: boolean, isDoubleClick: boolean) => {
+              if (this.ignoreMouseEvents) {
+                  return;
+              }
+              if (this.nextClickIsSteal) {
+                  // send to App.js the stolen attribute
 
-            if (this.widgetsRefs[wid]) {
-                const ref = this.widgetsRefs[wid].widDiv || this.widgetsRefs[wid].refService?.current;
-                this.cancelStealMode(ref ? (ref.style as Record<string, any>)[this.nextClickIsSteal.attr] : null);
-            } else {
-                this.cancelStealMode(null);
-            }
-            return;
-        }
+                  if (this.widgetsRefs[wid]) {
+                      const ref = this.widgetsRefs[wid].widDiv || this.widgetsRefs[wid].refService?.current;
+                      this.cancelStealMode(ref ? (ref.style as Record<string, any>)[this.nextClickIsSteal.attr] : null);
+                  } else {
+                      this.cancelStealMode(null);
+                  }
+                  return;
+              }
 
-        if (this.props.context.disableInteraction || this.props.context.lockDragging ||
-            this.props.selectedWidgets
-                .map((selectedWidget: AnyWidgetId) => store.getState().visProject[this.props.view].widgets[selectedWidget])
-                .find((widget: GroupWidget | SingleWidget) => widget.data.locked)
-        ) {
-            return;
-        }
+              if (
+                  this.props.context.disableInteraction ||
+                  this.props.context.lockDragging ||
+                  this.props.selectedWidgets
+                      .map(
+                          (selectedWidget: AnyWidgetId) =>
+                              store.getState().visProject[this.props.view].widgets[selectedWidget],
+                      )
+                      .find((widget: GroupWidget | SingleWidget) => widget.data.locked)
+              ) {
+                  return;
+              }
 
-        // detect double click
-        if ((this.lastClick && Date.now() - this.lastClick < 250) || isDoubleClick) {
-            this.lastClick = Date.now();
-            if (this.props.selectedWidgets.length === 1 &&
-                store.getState().visProject[this.props.view].widgets[this.props.selectedWidgets[0]].tpl === '_tplGroup'
-            ) {
-                this.props.context.setSelectedGroup(this.props.selectedWidgets[0]);
-            }
-            return;
-        }
+              // detect double click
+              if ((this.lastClick && Date.now() - this.lastClick < 250) || isDoubleClick) {
+                  this.lastClick = Date.now();
+                  if (
+                      this.props.selectedWidgets.length === 1 &&
+                      store.getState().visProject[this.props.view].widgets[this.props.selectedWidgets[0]].tpl ===
+                          '_tplGroup'
+                  ) {
+                      this.props.context.setSelectedGroup(this.props.selectedWidgets[0]);
+                  }
+                  return;
+              }
 
-        this.lastClick = Date.now();
+              this.lastClick = Date.now();
 
-        if (this.props.selectedWidgets.includes(this.props.selectedGroup) && !isResize) {
-            return;
-        }
+              if (this.props.selectedWidgets.includes(this.props.selectedGroup) && !isResize) {
+                  return;
+              }
 
-        this.onMouseWidgetMove && this.refView.current?.addEventListener('mousemove', this.onMouseWidgetMove);
-        this.onMouseWidgetUp && window.document.addEventListener('mouseup', this.onMouseWidgetUp);
+              this.onMouseWidgetMove && this.refView.current?.addEventListener('mousemove', this.onMouseWidgetMove);
+              this.onMouseWidgetUp && window.document.addEventListener('mouseup', this.onMouseWidgetUp);
 
-        this.movement = {
-            moved: false,
-            startX: e.pageX,
-            startY: e.pageY,
-            isResize,
-            x: 0,
-            y: 0,
-        };
+              this.movement = {
+                  moved: false,
+                  startX: e.pageX,
+                  startY: e.pageY,
+                  isResize,
+                  x: 0,
+                  y: 0,
+              };
 
-        const widgetsRefs = this.widgetsRefs;
+              const widgetsRefs = this.widgetsRefs;
 
-        this.props.selectedWidgets.forEach((selectedWidget: AnyWidgetId) => {
-            const widgetRect = widgetsRefs[selectedWidget].refService?.current?.getBoundingClientRect();
-            if (this.movement && widgetRect && e.pageX <= widgetRect.right && e.pageX >= widgetRect.left && e.pageY <= widgetRect.bottom && e.pageY >= widgetRect.top) {
-                this.movement.startWidget = widgetsRefs[selectedWidget].refService?.current?.getBoundingClientRect();
-            }
-        });
+              this.props.selectedWidgets.forEach((selectedWidget: AnyWidgetId) => {
+                  const widgetRect = widgetsRefs[selectedWidget].refService?.current?.getBoundingClientRect();
+                  if (
+                      this.movement &&
+                      widgetRect &&
+                      e.pageX <= widgetRect.right &&
+                      e.pageX >= widgetRect.left &&
+                      e.pageY <= widgetRect.bottom &&
+                      e.pageY >= widgetRect.top
+                  ) {
+                      this.movement.startWidget =
+                          widgetsRefs[selectedWidget].refService?.current?.getBoundingClientRect();
+                  }
+              });
 
-        this.props.selectedWidgets.forEach((_wid: AnyWidgetId) => {
-            if (widgetsRefs[_wid]?.onMove) {
-                widgetsRefs[_wid].onMove(); // indicate the start of movement
-            }
-        });
+              this.props.selectedWidgets.forEach((_wid: AnyWidgetId) => {
+                  if (widgetsRefs[_wid]?.onMove) {
+                      widgetsRefs[_wid].onMove(); // indicate the start of movement
+                  }
+              });
 
-        // Indicate about movement start
-        Object.keys(widgetsRefs).forEach(_wid => {
-            if (widgetsRefs[_wid as AnyWidgetId]?.onCommand) {
-                widgetsRefs[_wid as AnyWidgetId].onCommand('startMove');
-            }
-        });
-    };
+              // Indicate about movement start
+              Object.keys(widgetsRefs).forEach(_wid => {
+                  if (widgetsRefs[_wid as AnyWidgetId]?.onCommand) {
+                      widgetsRefs[_wid as AnyWidgetId].onCommand('startMove');
+                  }
+              });
+          };
 
-    onIgnoreMouseEvents = (ignore: boolean) => {
+    onIgnoreMouseEvents = (ignore: boolean): void => {
         if (this.props.editMode) {
             this.ignoreMouseEvents = ignore;
 
             this.props.context.onIgnoreMouseEvents(ignore);
 
             if (ignore && this.movement) {
-                this.onMouseWidgetMove && this.refView.current?.removeEventListener('mousemove', this.onMouseWidgetMove);
+                this.onMouseWidgetMove &&
+                    this.refView.current?.removeEventListener('mousemove', this.onMouseWidgetMove);
                 this.onMouseWidgetUp && window.document.removeEventListener('mouseup', this.onMouseWidgetUp);
                 this.movement = null;
             }
         }
     };
 
-    onMouseWidgetMove = !this.props.context.runtime ? (e: MouseEvent) => {
-        if (!this.movement || !this.refView.current || (this.props.selectedWidgets.includes(this.props.selectedGroup) && !this.movement.isResize)) {
-            return;
-        }
-        const widgetsRefs = this.widgetsRefs;
-        this.movement.moved = true;
-        this.movement.x = e.pageX - (this.movement.startX || 0);
-        this.movement.y = e.pageY - (this.movement.startY || 0);
+    onMouseWidgetMove = !this.props.context.runtime
+        ? (e: MouseEvent) => {
+              if (
+                  !this.movement ||
+                  !this.refView.current ||
+                  (this.props.selectedWidgets.includes(this.props.selectedGroup) && !this.movement.isResize)
+              ) {
+                  return;
+              }
+              const widgetsRefs = this.widgetsRefs;
+              this.movement.moved = true;
+              this.movement.x = e.pageX - (this.movement.startX || 0);
+              this.movement.y = e.pageY - (this.movement.startY || 0);
 
-        const viewRect = this.refView.current.getBoundingClientRect();
+              const viewRect = this.refView.current.getBoundingClientRect();
 
-        if (!this.movement.isResize && store.getState().visProject[this.props.view].settings?.snapType === 2) {
-            const gridSize = parseInt((store.getState().visProject[this.props.view].settings?.gridSize || 0) as unknown as string, 10) || 10;
-            this.movement.x -= Math.ceil(((this.movement.startWidget?.left || 0) - viewRect.left + this.movement.x) % gridSize);
-            this.movement.y -= Math.ceil(((this.movement.startWidget?.top || 0) - viewRect.top + this.movement.y) % gridSize);
-        }
+              if (!this.movement.isResize && store.getState().visProject[this.props.view].settings?.snapType === 2) {
+                  const gridSize =
+                      parseInt(
+                          (store.getState().visProject[this.props.view].settings?.gridSize || 0) as unknown as string,
+                          10,
+                      ) || 10;
+                  this.movement.x -= Math.ceil(
+                      ((this.movement.startWidget?.left || 0) - viewRect.left + this.movement.x) % gridSize,
+                  );
+                  this.movement.y -= Math.ceil(
+                      ((this.movement.startWidget?.top || 0) - viewRect.top + this.movement.y) % gridSize,
+                  );
+              }
 
-        if (!this.movement.isResize && store.getState().visProject[this.props.view].settings?.snapType === 1) {
-            const left = (this.movement.startWidget?.left || 0) + this.movement.x;
-            const right = (this.movement.startWidget?.right || 0) + this.movement.x;
-            const top = (this.movement.startWidget?.top || 0) + this.movement.y;
-            const bottom = (this.movement.startWidget?.bottom || 0) + this.movement.y;
-            for (const wid in widgetsRefs) {
-                const widgetId = wid as AnyWidgetId;
-                // do not snap to itself
-                if (this.props.selectedWidgets.includes(widgetId)) {
-                    continue;
-                }
-                const widgetRect = widgetsRefs[widgetId].refService?.current?.getBoundingClientRect();
+              if (!this.movement.isResize && store.getState().visProject[this.props.view].settings?.snapType === 1) {
+                  const left = (this.movement.startWidget?.left || 0) + this.movement.x;
+                  const right = (this.movement.startWidget?.right || 0) + this.movement.x;
+                  const top = (this.movement.startWidget?.top || 0) + this.movement.y;
+                  const bottom = (this.movement.startWidget?.bottom || 0) + this.movement.y;
+                  for (const wid in widgetsRefs) {
+                      const widgetId = wid as AnyWidgetId;
+                      // do not snap to itself
+                      if (this.props.selectedWidgets.includes(widgetId)) {
+                          continue;
+                      }
+                      const widgetRect = widgetsRefs[widgetId].refService?.current?.getBoundingClientRect();
 
-                if (widgetRect) {
-                    if (Math.abs(widgetRect.top - bottom) <= 10 && left <= widgetRect.right && right >= widgetRect.left) {
-                        this.movement.y += Math.round(widgetRect.top - bottom);
-                        break;
-                    }
-                    if (Math.abs(widgetRect.bottom - top) <= 10 && left <= widgetRect.right && right >= widgetRect.left) {
-                        this.movement.y += Math.round(widgetRect.bottom - top);
-                        break;
-                    }
-                    if (Math.abs(widgetRect.left - right) <= 10 && top <= widgetRect.bottom && bottom >= widgetRect.top) {
-                        this.movement.x += Math.round(widgetRect.left - right);
-                        break;
-                    }
-                    if (Math.abs(widgetRect.right - left) <= 10 && top <= widgetRect.bottom && bottom >= widgetRect.top) {
-                        this.movement.x += Math.round(widgetRect.right - left);
-                        break;
-                    }
-                }
-            }
-        }
+                      if (widgetRect) {
+                          if (
+                              Math.abs(widgetRect.top - bottom) <= 10 &&
+                              left <= widgetRect.right &&
+                              right >= widgetRect.left
+                          ) {
+                              this.movement.y += Math.round(widgetRect.top - bottom);
+                              break;
+                          }
+                          if (
+                              Math.abs(widgetRect.bottom - top) <= 10 &&
+                              left <= widgetRect.right &&
+                              right >= widgetRect.left
+                          ) {
+                              this.movement.y += Math.round(widgetRect.bottom - top);
+                              break;
+                          }
+                          if (
+                              Math.abs(widgetRect.left - right) <= 10 &&
+                              top <= widgetRect.bottom &&
+                              bottom >= widgetRect.top
+                          ) {
+                              this.movement.x += Math.round(widgetRect.left - right);
+                              break;
+                          }
+                          if (
+                              Math.abs(widgetRect.right - left) <= 10 &&
+                              top <= widgetRect.bottom &&
+                              bottom >= widgetRect.top
+                          ) {
+                              this.movement.x += Math.round(widgetRect.right - left);
+                              break;
+                          }
+                      }
+                  }
+              }
 
-        this.showRulers();
+              this.showRulers();
 
-        this.props.selectedWidgets.forEach((wid: AnyWidgetId) => {
-            const onMove = widgetsRefs[wid]?.onMove;
-            if (onMove && this.movement) {
-                onMove(this.movement.x, this.movement.y, false, this.calculateRelativeWidgetPosition);
-            }
+              this.props.selectedWidgets.forEach((wid: AnyWidgetId) => {
+                  const onMove = widgetsRefs[wid]?.onMove;
+                  if (onMove && this.movement) {
+                      onMove(this.movement.x, this.movement.y, false, this.calculateRelativeWidgetPosition);
+                  }
 
-            // If widget has included widgets => inform them about the new size or position.
-            // This code could be disabled; as in the end, the widgets will be informed anyway.
-            const oWidget = store.getState().visProject[this.props.view].widgets[wid];
-            const attrs = Object.keys(oWidget.data);
-            attrs.forEach(attr => {
-                if (attr.startsWith('widget') && oWidget.data[attr]) {
-                    const onCommand =  widgetsRefs[oWidget.data[attr]]?.onCommand;
-                    if (onCommand) {
-                        onCommand('updatePosition');
-                    }
-                }
-            });
-        });
+                  // If widget has included widgets => inform them about the new size or position.
+                  // This code could be disabled; as in the end, the widgets will be informed anyway.
+                  const oWidget = store.getState().visProject[this.props.view].widgets[wid];
+                  const attrs = Object.keys(oWidget.data);
+                  attrs.forEach(attr => {
+                      if (attr.startsWith('widget') && oWidget.data[attr]) {
+                          const onCommand = widgetsRefs[oWidget.data[attr]]?.onCommand;
+                          if (onCommand) {
+                              onCommand('updatePosition');
+                          }
+                      }
+                  });
+              });
 
-        // if only one widget selected => check if it can be added to the other widget
-        if (this.props.selectedWidgets.length === 1 && widgetsRefs[this.props.selectedWidgets[0]]?.refService?.current) {
-            let found = false;
-            for (const wid in widgetsRefs) {
-                const widgetId = wid as AnyWidgetId;
-                // do not snap to itself
-                if (this.props.selectedWidgets.includes(widgetId) ||
-                    !widgetsRefs[widgetId] ||
-                    !widgetsRefs[widgetId].canHaveWidgets ||
-                    widgetsRefs[widgetId].doNotWantIncludeWidgets ||
-                    !widgetsRefs[widgetId].onCommand ||
-                    !widgetsRefs[widgetId].refService?.current
-                ) {
-                    continue;
-                }
-                const baseRect = widgetsRefs[this.props.selectedWidgets[0]].refService?.current?.getBoundingClientRect();
-                const rect = widgetsRefs[widgetId].refService?.current?.getBoundingClientRect();
-                const onCommand = widgetsRefs[widgetId]?.onCommand;
-                // check if widget can have other widgets inside
-                if (!found &&
-                    baseRect &&
-                    rect &&
-                    baseRect.top >= rect.top &&
-                    baseRect.left >= rect.left &&
-                    baseRect.right <= rect.right &&
-                    baseRect.bottom <= rect.bottom
-                ) {
-                    found = true;
-                    // we can add only to one widget
-                    if (onCommand) {
-                        onCommand('includePossible');
-                    }
-                } else if (onCommand) {
-                    // inform all other widgets that they do not have inclusion
-                    onCommand('includePossibleNOT');
-                }
-            }
-        }
-    } : null;
+              // if only one widget selected => check if it can be added to the other widget
+              if (
+                  this.props.selectedWidgets.length === 1 &&
+                  widgetsRefs[this.props.selectedWidgets[0]]?.refService?.current
+              ) {
+                  let found = false;
+                  for (const wid in widgetsRefs) {
+                      const widgetId = wid as AnyWidgetId;
+                      // do not snap to itself
+                      if (
+                          this.props.selectedWidgets.includes(widgetId) ||
+                          !widgetsRefs[widgetId] ||
+                          !widgetsRefs[widgetId].canHaveWidgets ||
+                          widgetsRefs[widgetId].doNotWantIncludeWidgets ||
+                          !widgetsRefs[widgetId].onCommand ||
+                          !widgetsRefs[widgetId].refService?.current
+                      ) {
+                          continue;
+                      }
+                      const baseRect =
+                          widgetsRefs[this.props.selectedWidgets[0]].refService?.current?.getBoundingClientRect();
+                      const rect = widgetsRefs[widgetId].refService?.current?.getBoundingClientRect();
+                      const onCommand = widgetsRefs[widgetId]?.onCommand;
+                      // check if widget can have other widgets inside
+                      if (
+                          !found &&
+                          baseRect &&
+                          rect &&
+                          baseRect.top >= rect.top &&
+                          baseRect.left >= rect.left &&
+                          baseRect.right <= rect.right &&
+                          baseRect.bottom <= rect.bottom
+                      ) {
+                          found = true;
+                          // we can add only to one widget
+                          if (onCommand) {
+                              onCommand('includePossible');
+                          }
+                      } else if (onCommand) {
+                          // inform all other widgets that they do not have inclusion
+                          onCommand('includePossibleNOT');
+                      }
+                  }
+              }
+          }
+        : null;
 
-    showRulers = (hide?: boolean) => {
+    showRulers = (hide?: boolean): void => {
         const rulers: { type: 'horizontal' | 'vertical'; value: number }[] = [];
         if (hide) {
             this.setState({ rulers });
@@ -738,9 +855,11 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         for (const wid of Object.keys(this.widgetsRefs)) {
             const widgetId = wid as AnyWidgetId;
             const { widgets } = selectView(store.getState(), this.props.view);
-            if (!this.props.selectedWidgets.includes(widgetId) &&
+            if (
+                !this.props.selectedWidgets.includes(widgetId) &&
                 widgets[widgetId] &&
-                ((this.props.selectedGroup && widgets[this.props.selectedGroup].data.members.includes(widgetId)) || !this.props.selectedGroup) &&
+                ((this.props.selectedGroup && widgets[this.props.selectedGroup].data.members.includes(widgetId)) ||
+                    !this.props.selectedGroup) &&
                 (!widgets[widgetId].grouped || this.props.selectedGroup)
             ) {
                 if (!this.widgetsRefs[widgetId].refService?.current) {
@@ -773,81 +892,98 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
             }
         }
 
-        horizontals.forEach(horizontal => selectedHorizontals.forEach(selectedHorizontal => {
-            if (Math.abs(horizontal - selectedHorizontal) <= 0.3) {
-                rulers.push({ type: 'horizontal', value: horizontal - viewRect.top });
-            }
-        }));
+        horizontals.forEach(horizontal =>
+            selectedHorizontals.forEach(selectedHorizontal => {
+                if (Math.abs(horizontal - selectedHorizontal) <= 0.3) {
+                    rulers.push({ type: 'horizontal', value: horizontal - viewRect.top });
+                }
+            }),
+        );
 
-        verticals.forEach(vertical => selectedVerticals.forEach(selectedVertical => {
-            if (Math.abs(vertical - selectedVertical) <= 0.3) {
-                rulers.push({ type: 'vertical', value: vertical - viewRect.left });
-            }
-        }));
+        verticals.forEach(vertical =>
+            selectedVerticals.forEach(selectedVertical => {
+                if (Math.abs(vertical - selectedVertical) <= 0.3) {
+                    rulers.push({ type: 'vertical', value: vertical - viewRect.left });
+                }
+            }),
+        );
 
         this.setState({ rulers });
     };
 
-    onMouseWidgetUp = !this.props.context.runtime ? (e: MouseEvent) => {
-        const widgetsRefs = this.widgetsRefs;
-        e && e.stopPropagation();
-        this.onMouseWidgetMove && this.refView.current?.removeEventListener('mousemove', this.onMouseWidgetMove);
-        this.onMouseWidgetUp && window.document.removeEventListener('mouseup', this.onMouseWidgetUp);
+    onMouseWidgetUp = !this.props.context.runtime
+        ? (e: MouseEvent) => {
+              const widgetsRefs = this.widgetsRefs;
+              e && e.stopPropagation();
+              this.onMouseWidgetMove && this.refView.current?.removeEventListener('mousemove', this.onMouseWidgetMove);
+              this.onMouseWidgetUp && window.document.removeEventListener('mouseup', this.onMouseWidgetUp);
 
-        if (this.movement?.moved) {
-            this.props.selectedWidgets.forEach((wid: AnyWidgetId) => {
-                const onMove = widgetsRefs[wid]?.onMove;
-                if (onMove && this.movement) {
-                    onMove(this.movement.x, this.movement.y, true); // indicate end of movement
-                }
-            });
+              if (this.movement?.moved) {
+                  this.props.selectedWidgets.forEach((wid: AnyWidgetId) => {
+                      const onMove = widgetsRefs[wid]?.onMove;
+                      if (onMove && this.movement) {
+                          onMove(this.movement.x, this.movement.y, true); // indicate end of movement
+                      }
+                  });
 
-            store.dispatch(recalculateFields(true));
-        }
+                  store.dispatch(recalculateFields(true));
+              }
 
-        // Indicate every widget about movement stop
-        Object.keys(widgetsRefs).forEach(_wid => {
-            const onCommand = widgetsRefs[_wid as AnyWidgetId]?.onCommand;
-            if (onCommand) {
-                onCommand('stopMove');
-            }
-        });
+              // Indicate every widget about movement stop
+              Object.keys(widgetsRefs).forEach(_wid => {
+                  const onCommand = widgetsRefs[_wid as AnyWidgetId]?.onCommand;
+                  if (onCommand) {
+                      onCommand('stopMove');
+                  }
+              });
 
-        // if only one widget selected => check if it can be added to another widget
-        if (this.props.selectedWidgets.length === 1 && widgetsRefs[this.props.selectedWidgets[0]]?.refService?.current) {
-            for (const wid in widgetsRefs) {
-                const widgetId = wid as AnyWidgetId;
-                // do not add to itself
-                if (this.props.selectedWidgets.includes(widgetId) ||
-                    !widgetsRefs[widgetId] ||
-                    !widgetsRefs[widgetId].canHaveWidgets ||
-                    widgetsRefs[widgetId].doNotWantIncludeWidgets ||
-                    !widgetsRefs[widgetId].onCommand ||
-                    !widgetsRefs[widgetId].refService?.current
-                ) {
-                    continue;
-                }
-                const baseRect = widgetsRefs[this.props.selectedWidgets[0]].refService?.current?.getBoundingClientRect();
-                const rect = widgetsRefs[widgetId].refService?.current?.getBoundingClientRect();
-                // check if widget can have other widgets inside
-                if (rect && baseRect &&
-                    baseRect.top >= rect.top &&
-                    baseRect.left >= rect.left &&
-                    baseRect.right <= rect.right &&
-                    baseRect.bottom <= rect.bottom
-                ) {
-                    this.props.context.askAboutInclude(this.props.selectedWidgets[0], widgetId, (_wid: AnyWidgetId, toWid: AnyWidgetId) => {
-                        const onCommand = widgetsRefs[toWid]?.onCommand;
-                        if (onCommand) {
-                            onCommand('include', _wid);
-                        }
-                    });
-                }
-            }
-        }
+              // if only one widget selected => check if it can be added to another widget
+              if (
+                  this.props.selectedWidgets.length === 1 &&
+                  widgetsRefs[this.props.selectedWidgets[0]]?.refService?.current
+              ) {
+                  for (const wid in widgetsRefs) {
+                      const widgetId = wid as AnyWidgetId;
+                      // do not add to itself
+                      if (
+                          this.props.selectedWidgets.includes(widgetId) ||
+                          !widgetsRefs[widgetId] ||
+                          !widgetsRefs[widgetId].canHaveWidgets ||
+                          widgetsRefs[widgetId].doNotWantIncludeWidgets ||
+                          !widgetsRefs[widgetId].onCommand ||
+                          !widgetsRefs[widgetId].refService?.current
+                      ) {
+                          continue;
+                      }
+                      const baseRect =
+                          widgetsRefs[this.props.selectedWidgets[0]].refService?.current?.getBoundingClientRect();
+                      const rect = widgetsRefs[widgetId].refService?.current?.getBoundingClientRect();
+                      // check if widget can have other widgets inside
+                      if (
+                          rect &&
+                          baseRect &&
+                          baseRect.top >= rect.top &&
+                          baseRect.left >= rect.left &&
+                          baseRect.right <= rect.right &&
+                          baseRect.bottom <= rect.bottom
+                      ) {
+                          this.props.context.askAboutInclude(
+                              this.props.selectedWidgets[0],
+                              widgetId,
+                              (_wid: AnyWidgetId, toWid: AnyWidgetId) => {
+                                  const onCommand = widgetsRefs[toWid]?.onCommand;
+                                  if (onCommand) {
+                                      onCommand('include', _wid);
+                                  }
+                              },
+                          );
+                      }
+                  }
+              }
 
-        this.showRulers(true);
-    } : null;
+              this.showRulers(true);
+          }
+        : null;
 
     editWidgetsRect(widget: AnyWidgetId): { top: number; left: number; width: number; height: number } | null {
         if (!this.refView.current) {
@@ -857,26 +993,27 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         const viewTop = this.refView.current.offsetTop;
 
         // find common coordinates
-        const ref: HTMLElement | null | undefined = this.widgetsRefs[widget].widDiv || this.widgetsRefs[widget].refService?.current;
+        const ref: HTMLElement | null | undefined =
+            this.widgetsRefs[widget].widDiv || this.widgetsRefs[widget].refService?.current;
 
         if (!ref) {
             return null;
         }
-        let top  = ref.offsetTop - viewTop;
+        let top = ref.offsetTop - viewTop;
         let left = ref.offsetLeft - viewLeft;
         // Maybe bug?
         if (!left && !top) {
             const style = store.getState().visProject[this.props.view].widgets[widget].style;
             left = parseInt((style?.left as string) || '0', 10) + parseInt(ref.offsetLeft as unknown as string, 10);
-            top  = parseInt((style?.top as string)  || '0', 10) + parseInt(ref.offsetTop as unknown as string, 10);
+            top = parseInt((style?.top as string) || '0', 10) + parseInt(ref.offsetTop as unknown as string, 10);
             left = left || 0;
-            top  = top || 0;
+            top = top || 0;
         }
 
         return {
             top,
             left,
-            width:  ref.clientWidth,
+            width: ref.clientWidth,
             height: ref.clientHeight,
         };
     }
@@ -904,19 +1041,35 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         }
 
         const resultStyle = { ...newStyle };
-        if (newStyle.top && parseDimension(oldStyle.top).dimension === '%' && parseDimension(newStyle.top).dimension !== '%') {
-            resultStyle.top    = (parseDimension(newStyle.top).value  * 100) / pRect.height;
-            resultStyle.top    = `${Math.round(resultStyle.top * 100) / 100}%`;
+        if (
+            newStyle.top &&
+            parseDimension(oldStyle.top).dimension === '%' &&
+            parseDimension(newStyle.top).dimension !== '%'
+        ) {
+            resultStyle.top = (parseDimension(newStyle.top).value * 100) / pRect.height;
+            resultStyle.top = `${Math.round(resultStyle.top * 100) / 100}%`;
         }
-        if (newStyle.left && parseDimension(oldStyle.left).dimension === '%' && parseDimension(newStyle.left).dimension !== '%') {
-            resultStyle.left   = (parseDimension(newStyle.left).value * 100) / pRect.width;
-            resultStyle.left   = `${Math.round(resultStyle.left * 100) / 100}%`;
+        if (
+            newStyle.left &&
+            parseDimension(oldStyle.left).dimension === '%' &&
+            parseDimension(newStyle.left).dimension !== '%'
+        ) {
+            resultStyle.left = (parseDimension(newStyle.left).value * 100) / pRect.width;
+            resultStyle.left = `${Math.round(resultStyle.left * 100) / 100}%`;
         }
-        if (newStyle.width && parseDimension(oldStyle.width).dimension === '%' && parseDimension(newStyle.width).dimension !== '%') {
-            resultStyle.width  = (parseDimension(newStyle.width).value  / pRect.width)  * 100;
-            resultStyle.width  = `${Math.round(resultStyle.width * 100) / 100}%`;
+        if (
+            newStyle.width &&
+            parseDimension(oldStyle.width).dimension === '%' &&
+            parseDimension(newStyle.width).dimension !== '%'
+        ) {
+            resultStyle.width = (parseDimension(newStyle.width).value / pRect.width) * 100;
+            resultStyle.width = `${Math.round(resultStyle.width * 100) / 100}%`;
         }
-        if (newStyle.height && parseDimension(oldStyle.height).dimension === '%' && parseDimension(newStyle.height).dimension !== '%') {
+        if (
+            newStyle.height &&
+            parseDimension(oldStyle.height).dimension === '%' &&
+            parseDimension(newStyle.height).dimension !== '%'
+        ) {
             resultStyle.height = (parseDimension(newStyle.height).value / pRect.height) * 100;
             resultStyle.height = `${Math.round(resultStyle.height * 100) / 100}%`;
         }
@@ -955,8 +1108,9 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
             } else if (attr === 'left') {
                 value = (wRect.left * 100) / pRect.width;
             } else if (attr === 'width') {
-                value = (wRect.width  / pRect.width) * 100;
-            } else { // height
+                value = (wRect.width / pRect.width) * 100;
+            } else {
+                // height
                 value = (wRect.height / pRect.height) * 100;
             }
 
@@ -987,7 +1141,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         return results;
     };
 
-    registerEditorHandlers(unregister?: boolean) {
+    registerEditorHandlers(unregister?: boolean): void {
         if (this.props.context.registerEditorCallback) {
             if (!unregister && this.props.activeView === this.props.view) {
                 if (!this.registerDone) {
@@ -1007,7 +1161,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         }
     }
 
-    updateViewWidth() {
+    updateViewWidth(): void {
         if (this.refRelativeView.current) {
             if (this.refRelativeView.current.offsetWidth !== this.state.width) {
                 this.setState({ width: this.refRelativeView.current.offsetWidth });
@@ -1015,12 +1169,14 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         }
     }
 
-    componentDidUpdate() {
+    componentDidUpdate(): void {
         this.registerEditorHandlers();
         this.updateViewWidth();
         // detect filter changes
         if (!this.props.editMode) {
-            const newFilter = JSON.stringify((this.props.viewsActiveFilter && this.props.viewsActiveFilter[this.props.view]) || []);
+            const newFilter = JSON.stringify(
+                (this.props.viewsActiveFilter && this.props.viewsActiveFilter[this.props.view]) || [],
+            );
             if (this.oldFilter !== newFilter) {
                 this.oldFilter = newFilter;
                 this.changeFilter({ filter: JSON.parse(newFilter) });
@@ -1028,7 +1184,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         }
     }
 
-    static renderGitter(step: number, color: string) {
+    static renderGitter(step: number, color: string): React.JSX.Element {
         color = color || '#D0D0D0';
         step = step || 10;
         const bigWidth = step * 5;
@@ -1045,25 +1201,23 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
 </svg>`);
         const backgroundImage = `url(data:image/svg+xml;base64,${gitterPattern})`;
 
-        return <div
-            style={{
-                opacity: 0.2,
-                zIndex: -1,
-                userSelect: 'none',
-                pointerEvents: 'none',
-                width: '100%',
-                height: '100%',
-                backgroundImage,
-                backgroundPosition: '-1px -1px',
-            }}
-        />;
+        return (
+            <div
+                style={{
+                    opacity: 0.2,
+                    zIndex: -1,
+                    userSelect: 'none',
+                    pointerEvents: 'none',
+                    width: '100%',
+                    height: '100%',
+                    backgroundImage,
+                    backgroundPosition: '-1px -1px',
+                }}
+            />
+        );
     }
 
-    static getOneWidget(
-        index: number,
-        widget: Widget,
-        options: CreateWidgetOptions,
-    ): React.JSX.Element | null {
+    static getOneWidget(index: number, widget: Widget, options: CreateWidgetOptions): React.JSX.Element | null {
         if (!VisWidgetsCatalog.rxWidgets) {
             return null;
         }
@@ -1071,18 +1225,20 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         // relativeWidgetOrder, moveAllowed, editMode, multiView, ignoreMouseEvents, selectedGroup
         // viewsActiveFilter, customSettings, onIgnoreMouseEvents
         const WidgetEl =
-            (VisWidgetsCatalog.rxWidgets[widget.tpl] ||
-                (VisWidgetsCatalog.allWidgetsList?.includes(widget.tpl) ? VisCanWidget : VisBaseWidget));
+            VisWidgetsCatalog.rxWidgets[widget.tpl] ||
+            (VisWidgetsCatalog.allWidgetsList?.includes(widget.tpl) ? VisCanWidget : VisBaseWidget);
 
-        // @ts-expect-error fix later
-        return <WidgetEl
-            key={`${index}_${options.id}`}
-            tpl={widget.tpl}
-            {...options}
-        />;
+        return (
+            // @ts-expect-error fix later
+            <WidgetEl
+                key={`${index}_${options.id}`}
+                tpl={widget.tpl}
+                {...options}
+            />
+        );
     }
 
-    async loadJqueryTheme(jQueryTheme: string) {
+    async loadJqueryTheme(jQueryTheme: string): Promise<void> {
         if (VisView.themeCache[jQueryTheme] && this.props.view) {
             let data = VisView.themeCache[jQueryTheme];
             const _view = `visview_${this.props.view.replace(/\s/g, '_')}`;
@@ -1113,20 +1269,20 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         this.loadingTheme = false;
     }
 
-    getJQueryThemeName() {
+    getJQueryThemeName(): string {
         const settings = this.props.view && store.getState().visProject[this.props.view]?.settings;
 
-        return (settings as ViewSettings)?.theme || 'redmond';
+        return settings?.theme || 'redmond';
     }
 
-    installKeyHandlers() {
+    installKeyHandlers(): void {
         if (!this.keysHandlerInstalled) {
             this.keysHandlerInstalled = true;
             window.addEventListener('keydown', this.onKeyDown, false);
         }
     }
 
-    uninstallKeyHandlers() {
+    uninstallKeyHandlers(): void {
         if (this.keysHandlerInstalled) {
             this.keysHandlerInstalled = false;
             window.removeEventListener('keydown', this.onKeyDown, false);
@@ -1134,7 +1290,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
     }
 
     // eslint-disable-next-line react/no-unused-class-component-methods
-    moveWidgets = async (leftShift: number, topShift: number) => {
+    moveWidgets = (leftShift: number, topShift: number): void => {
         if (!this.moveTimer) {
             this.movement = {
                 x: 0,
@@ -1197,7 +1353,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
     };
 
     // eslint-disable-next-line react/no-unused-class-component-methods
-    resizeWidgets = async (widthShift: number, heightShift: number) => {
+    resizeWidgets = (widthShift: number, heightShift: number): void => {
         if (!this.moveTimer) {
             this.movement = {
                 x: 0,
@@ -1260,7 +1416,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         }, 800);
     };
 
-    onKeyDown = async (e: KeyboardEvent) => {
+    onKeyDown = (e: KeyboardEvent): void => {
         if (!this.props.editMode) {
             return;
         }
@@ -1268,27 +1424,33 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
             if (this.props.selectedWidgets.length) {
                 if (e.key === 'ArrowLeft') {
                     e.preventDefault();
-                    await this[e.shiftKey ? 'resizeWidgets' : 'moveWidgets'](e.ctrlKey ? -10 : -1, 0);
+                    this[e.shiftKey ? 'resizeWidgets' : 'moveWidgets'](e.ctrlKey ? -10 : -1, 0);
                 }
                 if (e.key === 'ArrowRight') {
                     e.preventDefault();
-                    await this[e.shiftKey ? 'resizeWidgets' : 'moveWidgets'](e.ctrlKey ? 10 : 1, 0);
+                    this[e.shiftKey ? 'resizeWidgets' : 'moveWidgets'](e.ctrlKey ? 10 : 1, 0);
                 }
                 if (e.key === 'ArrowUp') {
                     e.preventDefault();
-                    await this[e.shiftKey ? 'resizeWidgets' : 'moveWidgets'](0, e.ctrlKey ? -10 : -1);
+                    this[e.shiftKey ? 'resizeWidgets' : 'moveWidgets'](0, e.ctrlKey ? -10 : -1);
                 }
                 if (e.key === 'ArrowDown') {
                     e.preventDefault();
-                    await this[e.shiftKey ? 'resizeWidgets' : 'moveWidgets'](0, e.ctrlKey ? 10 : 1);
+                    this[e.shiftKey ? 'resizeWidgets' : 'moveWidgets'](0, e.ctrlKey ? 10 : 1);
                 }
             }
         }
     };
 
-    renderScreenSize() {
-        const ww = parseInt((store.getState().visProject[this.props.view].settings?.sizex || 0) as unknown as string, 10);
-        const hh = parseInt((store.getState().visProject[this.props.view].settings?.sizey || 0) as unknown as string, 10);
+    renderScreenSize(): React.JSX.Element[] | null {
+        const ww = parseInt(
+            (store.getState().visProject[this.props.view].settings?.sizex || 0) as unknown as string,
+            10,
+        );
+        const hh = parseInt(
+            (store.getState().visProject[this.props.view].settings?.sizey || 0) as unknown as string,
+            10,
+        );
 
         if (!this.props.editMode || !this.props.view || !ww || !hh) {
             return null;
@@ -1314,7 +1476,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
                     userSelect: 'none',
                     opacity: 0.7,
                 }}
-            ></div>,
+            />,
             <div
                 key="white"
                 style={{
@@ -1335,11 +1497,11 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
                     userSelect: 'none',
                     opacity: 0.7,
                 }}
-            ></div>,
+            />,
         ];
     }
 
-    getRelativeStyle(settings: ViewSettings, groupId: GroupWidgetId, limitScreenSize?: boolean) {
+    getRelativeStyle(settings: ViewSettings, groupId: GroupWidgetId, limitScreenSize?: boolean): React.CSSProperties {
         const relativeStyle: React.CSSProperties = {};
         if (groupId) {
             const groupWidgetStyle = store.getState().visProject[this.props.view].widgets[groupId].style;
@@ -1388,7 +1550,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         return relativeStyle;
     }
 
-    getCountOfRelativeColumns(settings: ViewSettings, relativeWidgetsCount: number) {
+    getCountOfRelativeColumns(settings: ViewSettings, relativeWidgetsCount: number): number {
         // number of columns
         const width = this.state.width;
         if (width) {
@@ -1422,32 +1584,34 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         return 1;
     }
 
-    renderNavigation(content: React.JSX.Element) {
-        return <VisNavigation
-            context={this.props.context}
-            activeView={this.props.activeView}
-            view={this.props.view}
-            editMode={this.props.editMode}
-            menuWidth={this.state.menuWidth}
-            theme={this.props.context.theme}
-            setMenuWidth={(menuWidth: 'hidden' | 'narrow' | 'full'): Promise<void> => {
-                window.localStorage.setItem('vis.menuWidth', menuWidth);
-                this.setState({ menuWidth });
+    renderNavigation(content: React.JSX.Element): React.JSX.Element {
+        return (
+            <VisNavigation
+                context={this.props.context}
+                activeView={this.props.activeView}
+                view={this.props.view}
+                editMode={this.props.editMode}
+                menuWidth={this.state.menuWidth}
+                theme={this.props.context.theme}
+                setMenuWidth={(menuWidth: 'hidden' | 'narrow' | 'full'): Promise<void> => {
+                    window.localStorage.setItem('vis.menuWidth', menuWidth);
+                    this.setState({ menuWidth });
 
-                return new Promise(resolve => {
-                    // re-calculate the width of the view
-                    setTimeout(() => {
-                        this.updateViewWidth();
-                        resolve(null);
-                    }, 400);
-                });
-            }}
-        >
-            {content}
-        </VisNavigation>;
+                    return new Promise(resolve => {
+                        // re-calculate the width of the view
+                        setTimeout(() => {
+                            this.updateViewWidth();
+                            resolve(null);
+                        }, 400);
+                    });
+                }}
+            >
+                {content}
+            </VisNavigation>
+        );
     }
 
-    render() {
+    render(): React.JSX.Element {
         let rxAbsoluteWidgets: (React.JSX.Element | null)[] = [];
         let rxRelativeWidgets: React.JSX.Element[] | null = [];
         let rxGroupWidget;
@@ -1480,7 +1644,6 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
             const widgets = contextView.widgets;
             let moveAllowed = true;
             if (widgets) {
-                /** @type {string[]} */
                 let relativeWidgetOrder: AnyWidgetId[] = [];
 
                 if (this.props.selectedGroup) {
@@ -1494,16 +1657,16 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
                     relativeWidgetOrder.sort((a, b) => {
                         const widgetA = widgets[a];
                         const widgetB = widgets[b];
-                        const isRelativeA = widgetA.style && (
-                            widgetA.style.position === 'relative' ||
-                            widgetA.style.position === 'static'   ||
-                            widgetA.style.position === 'sticky'
-                        );
-                        const isRelativeB = widgetB.style && (
-                            widgetB.style.position === 'relative' ||
-                            widgetB.style.position === 'static'   ||
-                            widgetB.style.position === 'sticky'
-                        );
+                        const isRelativeA =
+                            widgetA.style &&
+                            (widgetA.style.position === 'relative' ||
+                                widgetA.style.position === 'static' ||
+                                widgetA.style.position === 'sticky');
+                        const isRelativeB =
+                            widgetB.style &&
+                            (widgetB.style.position === 'relative' ||
+                                widgetB.style.position === 'static' ||
+                                widgetB.style.position === 'sticky');
                         if (isRelativeA && isRelativeB) {
                             return 0;
                         }
@@ -1564,23 +1727,27 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
                         return;
                     }
 
-                    if (!this.props.selectedGroup && widget.usedInWidget) { // do not show built in widgets on view directly
+                    if (!this.props.selectedGroup && widget.usedInWidget) {
+                        // do not show built in widgets on view directly
                         return;
                     }
 
-                    if (!hasWidgetAccess({
-                        view: this.props.view,
-                        editMode: this.props.editMode,
-                        project: store.getState().visProject,
-                        user: store.getState().activeUser,
-                        wid: id as AnyWidgetId,
-                    })) {
+                    if (
+                        !hasWidgetAccess({
+                            view: this.props.view,
+                            editMode: this.props.editMode,
+                            project: store.getState().visProject,
+                            user: store.getState().activeUser,
+                            wid: id as AnyWidgetId,
+                        })
+                    ) {
                         // do not show widget because user has no access
                         return;
                     }
 
                     // if group edition, ignore all widgets from other groups
-                    if (this.props.selectedGroup &&
+                    if (
+                        this.props.selectedGroup &&
                         id !== this.props.selectedGroup &&
                         widget.groupid !== this.props.selectedGroup
                     ) {
@@ -1592,7 +1759,10 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
                         if (widget.data?.filterkey) {
                             let filterValues: string[] | string = widget.data.filterkey;
                             if (filterValues && typeof filterValues === 'string') {
-                                filterValues = filterValues.split(',').map(f => f.trim()).filter(f => f);
+                                filterValues = filterValues
+                                    .split(',')
+                                    .map(f => f.trim())
+                                    .filter(f => f);
                             }
                             // if filterInvert, then show only widgets with filterkey
                             if (filterInvert) {
@@ -1608,11 +1778,11 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
                         }
                     }
 
-                    const isRelative = widget.style && (
-                        widget.style.position === 'relative' ||
-                        widget.style.position === 'static' ||
-                        widget.style.position === 'sticky'
-                    );
+                    const isRelative =
+                        widget.style &&
+                        (widget.style.position === 'relative' ||
+                            widget.style.position === 'static' ||
+                            widget.style.position === 'sticky');
                     if (isRelative && id !== this.props.selectedGroup) {
                         if (!listRelativeWidgetsOrder.includes(id as AnyWidgetId)) {
                             listRelativeWidgetsOrder.push(id as AnyWidgetId);
@@ -1652,7 +1822,10 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
                     return posA - posB;
                 });
 
-                const columns = this.props.selectedGroup || !settings ? 1 : this.getCountOfRelativeColumns(settings, listRelativeWidgetsOrder.length);
+                const columns =
+                    this.props.selectedGroup || !settings
+                        ? 1
+                        : this.getCountOfRelativeColumns(settings, listRelativeWidgetsOrder.length);
                 const wColumns = new Array(columns);
                 for (let w = 0; w < wColumns.length; w++) {
                     wColumns[w] = [];
@@ -1678,7 +1851,8 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
                         view,
                         viewsActiveFilter: this.props.viewsActiveFilter,
                         customSettings: this.props.customSettings,
-                    }));
+                    }),
+                );
 
                 if (listRelativeWidgetsOrder.length) {
                     let columnIndex = 0;
@@ -1700,9 +1874,13 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
                             moveAllowed,
                             ignoreMouseEvents: this.ignoreMouseEvents,
                             onIgnoreMouseEvents: this.onIgnoreMouseEvents,
-                            refParent: this.props.selectedGroup ? this.refRelativeView : this.refRelativeColumnsView[columnIndex],
+                            refParent: this.props.selectedGroup
+                                ? this.refRelativeView
+                                : this.refRelativeColumnsView[columnIndex],
                             askView: this.askView,
-                            relativeWidgetOrder: this.props.selectedGroup ? relativeWidgetOrder : listRelativeWidgetsOrder,
+                            relativeWidgetOrder: this.props.selectedGroup
+                                ? relativeWidgetOrder
+                                : listRelativeWidgetsOrder,
                             selectedWidgets: this.movement?.selectedWidgetsWithRectangle || this.props.selectedWidgets,
                             selectedGroup: this.props.selectedGroup,
                             view,
@@ -1723,14 +1901,16 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
                         if (settings?.columnWidth && isVarFinite(settings.columnWidth)) {
                             style.maxWidth = parseFloat(settings.columnWidth as unknown as string);
                         }
-                        rxRelativeWidgets = wColumns.map((column, i) => <div
-                            ref={this.refRelativeColumnsView[i]}
-                            key={i}
-                            style={style}
-                            className={Utils.clsx('vis-view-column', this.props.editMode && 'vis-view-column-edit')}
-                        >
-                            {column}
-                        </div>);
+                        rxRelativeWidgets = wColumns.map((column, i) => (
+                            <div
+                                ref={this.refRelativeColumnsView[i]}
+                                key={i}
+                                style={style}
+                                className={Utils.clsx('vis-view-column', this.props.editMode && 'vis-view-column-edit')}
+                            >
+                                {column}
+                            </div>
+                        ));
                     }
                 } else {
                     rxRelativeWidgets = null;
@@ -1769,28 +1949,32 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         if (this.state.loadedjQueryTheme !== this.getJQueryThemeName() && this.props.view) {
             if (!this.loadingTheme) {
                 this.loadingTheme = true;
-                setTimeout(() => this.loadJqueryTheme(this.getJQueryThemeName()), this.state.loadedjQueryTheme ? 50 : 0);
+                setTimeout(
+                    () => this.loadJqueryTheme(this.getJQueryThemeName()),
+                    this.state.loadedjQueryTheme ? 50 : 0,
+                );
             }
         }
         const backgroundStyle: React.CSSProperties = {};
         const backgroundClass: string = settings?.style?.background_class || '';
 
-        settings?.style && Object.keys(settings.style).forEach(attr => {
-            if (attr === 'background_class') {
-                className = addClass(className, settings.style?.background_class);
-            } else {
-                const isBg = attr.startsWith('background');
-                if (!settings['bg-image'] || !isBg) {
-                    const value: string = (settings.style as Record<string, string>)[attr] as string;
-                    // convert background-color => backgroundColor
-                    attr = attr.replace(/(-\w)/g, text => text[1].toUpperCase());
-                    (style as Record<string, string>)[attr] = value;
-                    if (isBg) {
-                        (backgroundStyle as Record<string, string>)[attr] = value;
+        settings?.style &&
+            Object.keys(settings.style).forEach(attr => {
+                if (attr === 'background_class') {
+                    className = addClass(className, settings.style?.background_class);
+                } else {
+                    const isBg = attr.startsWith('background');
+                    if (!settings['bg-image'] || !isBg) {
+                        const value: string = (settings.style as Record<string, string>)[attr];
+                        // convert background-color => backgroundColor
+                        attr = attr.replace(/(-\w)/g, text => text[1].toUpperCase());
+                        (style as Record<string, string>)[attr] = value;
+                        if (isBg) {
+                            (backgroundStyle as Record<string, string>)[attr] = value;
+                        }
                     }
                 }
-            }
-        });
+            });
 
         // Check if custom theme should be used
         let theme = this.props.context.theme;
@@ -1798,7 +1982,10 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
         // if custom theme differs from the current one => create new theme
         if (this.props.customSettings?.viewStyle?.overrides) {
             // override the theme with custom settings
-            theme = createTheme(customThemeType || this.props.context.theme.palette.mode, this.props.customSettings.viewStyle.overrides);
+            theme = createTheme(
+                customThemeType || this.props.context.theme.palette.mode,
+                this.props.customSettings.viewStyle.overrides,
+            );
         } else if (customThemeType && customThemeType !== theme.palette.mode) {
             if (!this.theme[customThemeType]) {
                 // cache theme
@@ -1843,7 +2030,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
 
         let gridDiv = null;
         if (store.getState().visProject[this.props.view].settings?.snapType === 2 && this.props.editMode) {
-            gridDiv = VisView.renderGitter(contextView.settings?.gridSize as number, contextView.settings?.snapColor as string);
+            gridDiv = VisView.renderGitter(contextView.settings?.gridSize, contextView.settings?.snapColor);
         }
 
         if (this.props.style) {
@@ -1852,7 +2039,7 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
 
         // apply image
         if (settings && settings['bg-image']) {
-            backgroundStyle.backgroundImage = `url("../${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}${settings['bg-image'].substring(9)}")`;  // "_PRJ_NAME".length = 9
+            backgroundStyle.backgroundImage = `url("../${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}${settings['bg-image'].substring(9)}")`; // "_PRJ_NAME".length = 9
             backgroundStyle.backgroundRepeat = 'no-repeat';
             backgroundStyle.backgroundPosition = 'top left';
             if (settings['bg-color']) {
@@ -1860,11 +2047,15 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
             }
             if (settings['bg-position-x']) {
                 // eslint-disable-next-line no-restricted-properties
-                backgroundStyle.backgroundPositionX = isVarFinite(settings['bg-position-x']) ? `${settings['bg-position-x']}px` : settings['bg-position-x'];
+                backgroundStyle.backgroundPositionX = isVarFinite(settings['bg-position-x'])
+                    ? `${settings['bg-position-x']}px`
+                    : settings['bg-position-x'];
             }
             if (settings['bg-position-y']) {
                 // eslint-disable-next-line no-restricted-properties
-                backgroundStyle.backgroundPositionY = isVarFinite(settings['bg-position-y']) ? `${settings['bg-position-y']}px` : settings['bg-position-y'];
+                backgroundStyle.backgroundPositionY = isVarFinite(settings['bg-position-y'])
+                    ? `${settings['bg-position-y']}px`
+                    : settings['bg-position-y'];
             }
             if (settings['bg-width'] && settings['bg-height']) {
                 // eslint-disable-next-line no-restricted-properties
@@ -1887,12 +2078,18 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
 
         let limitScreenStyle: React.CSSProperties | null = null;
         // limit screen size of desired
-        if (settings?.limitScreen && ((window.screen.width >= 800 && window.screen.height >= 800) || !settings.limitScreenDesktop)) {
+        if (
+            settings?.limitScreen &&
+            ((window.screen.width >= 800 && window.screen.height >= 800) || !settings.limitScreenDesktop)
+        ) {
             let ignore = false;
             if (settings.limitForInstances) {
                 const visInstance = window.localStorage.getItem('visInstance');
                 if (visInstance) {
-                    const instances = settings.limitForInstances.split(',').map(i => i.trim()).filter(i => i);
+                    const instances = settings.limitForInstances
+                        .split(',')
+                        .map(i => i.trim())
+                        .filter(i => i);
                     if (instances.length && !instances.includes(visInstance)) {
                         ignore = true;
                     }
@@ -1934,59 +2131,76 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
             // draw all widgets in div, that has exact size of the group
             renderedWidgets = rxGroupWidget;
         } else if (settings) {
-            renderedWidgets = <>
-                {rxRelativeWidgets ? <div
-                    ref={this.refRelativeView}
-                    style={this.getRelativeStyle(settings, this.props.selectedGroup, !!limitScreenStyle)}
-                    className="vis-relative-view"
-                >
-                    {rxRelativeWidgets}
-                </div> : null}
-                {rxAbsoluteWidgets}
-            </>;
+            renderedWidgets = (
+                <>
+                    {rxRelativeWidgets ? (
+                        <div
+                            ref={this.refRelativeView}
+                            style={this.getRelativeStyle(settings, this.props.selectedGroup, !!limitScreenStyle)}
+                            className="vis-relative-view"
+                        >
+                            {rxRelativeWidgets}
+                        </div>
+                    ) : null}
+                    {rxAbsoluteWidgets}
+                </>
+            );
         }
 
         if (limitScreenStyle) {
-            renderedWidgets = <div
-                style={limitScreenStyle}
-                className="vis-limit-screen"
-            >
-                {renderedWidgets}
-            </div>;
+            renderedWidgets = (
+                <div
+                    style={limitScreenStyle}
+                    className="vis-limit-screen"
+                >
+                    {renderedWidgets}
+                </div>
+            );
         }
 
-        let renderedView = <div
-            className={`${className} visview_${this.props.view.replace(/\s/g, '_')}`}
-            ref={this.refView}
-            id={`visview_${this.props.view.replace(/\s/g, '_')}`}
-            onMouseDown={!this.props.context.runtime ? e => this.props.editMode && this.mouseDownLocal && this.mouseDownLocal(e) : undefined}
-            onDoubleClick={this.props.context.runtime ? () => this.props.editMode && this.doubleClickOnView && this.doubleClickOnView() : undefined}
-            style={style}
-        >
-            <style>{this.state.themeCode}</style>
-            {gridDiv}
-            {limitScreenStyle ? null : this.renderScreenSize()}
-            {this.state.rulers.map((ruler, key) =>
-                <div
-                    key={key}
-                    style={{
-                        pointerEvents: 'none',
-                        userSelect: 'none',
-                        position: 'absolute',
-                        width: ruler.type === 'horizontal' ? '100%' : 10,
-                        height: ruler.type === 'horizontal' ? 10 : '100%',
-                        borderStyle: 'solid',
-                        borderColor: 'red',
-                        borderWidth: 0,
-                        borderLeftWidth: ruler.type === 'horizontal' ? 0 : 1,
-                        borderTopWidth: ruler.type === 'horizontal' ? 1 : 0,
-                        left: ruler.type === 'horizontal' ? 0 : ruler.value,
-                        top: ruler.type === 'horizontal' ? ruler.value : 0,
-                        zIndex: 1000,
-                    }}
-                />)}
-            {renderedWidgets}
-        </div>;
+        let renderedView = (
+            <div
+                className={`${className} visview_${this.props.view.replace(/\s/g, '_')}`}
+                ref={this.refView}
+                id={`visview_${this.props.view.replace(/\s/g, '_')}`}
+                onMouseDown={
+                    !this.props.context.runtime
+                        ? e => this.props.editMode && this.mouseDownLocal && this.mouseDownLocal(e)
+                        : undefined
+                }
+                onDoubleClick={
+                    this.props.context.runtime
+                        ? () => this.props.editMode && this.doubleClickOnView && this.doubleClickOnView()
+                        : undefined
+                }
+                style={style}
+            >
+                <style>{this.state.themeCode}</style>
+                {gridDiv}
+                {limitScreenStyle ? null : this.renderScreenSize()}
+                {this.state.rulers.map((ruler, key) => (
+                    <div
+                        key={key}
+                        style={{
+                            pointerEvents: 'none',
+                            userSelect: 'none',
+                            position: 'absolute',
+                            width: ruler.type === 'horizontal' ? '100%' : 10,
+                            height: ruler.type === 'horizontal' ? 10 : '100%',
+                            borderStyle: 'solid',
+                            borderColor: 'red',
+                            borderWidth: 0,
+                            borderLeftWidth: ruler.type === 'horizontal' ? 0 : 1,
+                            borderTopWidth: ruler.type === 'horizontal' ? 1 : 0,
+                            left: ruler.type === 'horizontal' ? 0 : ruler.value,
+                            top: ruler.type === 'horizontal' ? ruler.value : 0,
+                            zIndex: 1000,
+                        }}
+                    />
+                ))}
+                {renderedWidgets}
+            </div>
+        );
 
         // render the menu if enabled and not in widget;
         // only if the view is now active (not alwaysRender)
@@ -2001,17 +2215,21 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
                 window._lastAppliedStyle = bgStyle;
                 window.document.documentElement.removeAttribute('style');
                 // apply background style to html
-                Object.keys(backgroundStyle).forEach(attr =>
-                    (window.document.documentElement.style as Record<string, any>)[attr] = (backgroundStyle as Record<string, any>)[attr]);
+                Object.keys(backgroundStyle).forEach(
+                    attr =>
+                        ((window.document.documentElement.style as Record<string, any>)[attr] = (
+                            backgroundStyle as Record<string, any>
+                        )[attr]),
+                );
             }
             window.document.documentElement.className = backgroundClass;
         }
 
-        return <StyledEngineProvider injectFirst>
-            <ThemeProvider theme={theme}>
-                {renderedView}
-            </ThemeProvider>
-        </StyledEngineProvider>;
+        return (
+            <StyledEngineProvider injectFirst>
+                <ThemeProvider theme={theme}>{renderedView}</ThemeProvider>
+            </StyledEngineProvider>
+        );
     }
 }
 

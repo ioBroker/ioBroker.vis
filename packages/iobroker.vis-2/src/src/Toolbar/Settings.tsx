@@ -10,7 +10,8 @@ import {
     Select,
     Switch,
     TextField,
-    FormHelperText, IconButton,
+    FormHelperText,
+    IconButton,
 } from '@mui/material';
 
 import { ContentCopy, Save as SaveIcon, Refresh } from '@mui/icons-material';
@@ -64,7 +65,12 @@ interface SettingsFieldNumber extends SettingsFieldBase {
     type: 'number';
 }
 
-type SettingsField = SettingsFieldSelect | SettingsFieldRaw | SettingsFieldCheckbox | SettingsFieldSwitchMode | SettingsFieldNumber;
+type SettingsField =
+    | SettingsFieldSelect
+    | SettingsFieldRaw
+    | SettingsFieldCheckbox
+    | SettingsFieldSwitchMode
+    | SettingsFieldNumber;
 
 interface SettingsProps {
     changeProject: Editor['changeProject'];
@@ -91,13 +97,12 @@ const Settings: React.FC<SettingsProps> = props => {
         setInstance(_instance);
 
         // read project settings
-        props.socket.readDir(`${props.adapterName}.${props.instance}`, props.projectName)
-            .then(files => {
-                const file = files.find(f => f.file === 'vis-views.json');
-                if ((file as any)?.mode || file?.acl?.permissions) {
-                    setProjectMode((file as any).mode || file.acl.permissions);
-                }
-            });
+        void props.socket.readDir(`${props.adapterName}.${props.instance}`, props.projectName).then(files => {
+            const file = files.find(f => f.file === 'vis-views.json');
+            if ((file as any)?.mode || file?.acl?.permissions) {
+                setProjectMode((file as any).mode || file.acl.permissions);
+            }
+        });
 
         setSettings(_settings);
     }, []);
@@ -172,48 +177,50 @@ const Settings: React.FC<SettingsProps> = props => {
         { name: 'States Debounce Time (millis)', field: 'statesDebounceTime', type: 'number' },
         {
             type: 'raw',
-            Node: <div
-                style={{
-                    width: '100%',
-                    display: 'flex',
-                    gap: 8,
-                    alignItems: 'baseline',
-                }}
-            >
-                <TextField
-                    variant="standard"
-                    style={{ flexGrow: 1 }}
-                    label={I18n.t('Browser instance ID')}
-                    value={instance || ''}
-                    onChange={e => setInstance(e.target.value)}
-                    InputProps={{
-                        endAdornment: instance ? <IconButton
-                            onClick={() => Utils.copyToClipboard(instance)}
-                        >
-                            <ContentCopy />
-                        </IconButton> : null,
-                        sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
-                    }}
-                />
-                <Button
-                    variant="contained"
-                    color="grey"
+            Node: (
+                <div
                     style={{
-                        whiteSpace: 'nowrap',
+                        width: '100%',
+                        display: 'flex',
+                        gap: 8,
+                        alignItems: 'baseline',
                     }}
-                    onClick={() => {
-                        let newInstance = (Math.random() * 4294967296).toString(16);
-                        newInstance = `0000000${newInstance}`;
-                        newInstance = newInstance.substring(newInstance.length - 8);
-                        window.localStorage.setItem('visInstance', newInstance);
-                        window.vis.instance = newInstance;
-                        setInstance(newInstance);
-                    }}
-                    startIcon={<Refresh />}
                 >
-                    {I18n.t('Create instance')}
-                </Button>
-            </div>,
+                    <TextField
+                        variant="standard"
+                        style={{ flexGrow: 1 }}
+                        label={I18n.t('Browser instance ID')}
+                        value={instance || ''}
+                        onChange={e => setInstance(e.target.value)}
+                        InputProps={{
+                            endAdornment: instance ? (
+                                <IconButton onClick={() => Utils.copyToClipboard(instance)}>
+                                    <ContentCopy />
+                                </IconButton>
+                            ) : null,
+                            sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
+                        }}
+                    />
+                    <Button
+                        variant="contained"
+                        color="grey"
+                        style={{
+                            whiteSpace: 'nowrap',
+                        }}
+                        onClick={() => {
+                            let newInstance = (Math.random() * 4294967296).toString(16);
+                            newInstance = `0000000${newInstance}`;
+                            newInstance = newInstance.substring(newInstance.length - 8);
+                            window.localStorage.setItem('visInstance', newInstance);
+                            window.vis.instance = newInstance;
+                            setInstance(newInstance);
+                        }}
+                        startIcon={<Refresh />}
+                    >
+                        {I18n.t('Create instance')}
+                    </Button>
+                </div>
+            ),
         },
         { type: 'switchMode' }, // very specific control
         {
@@ -231,136 +238,180 @@ const Settings: React.FC<SettingsProps> = props => {
         },
     ];
 
-    const save = () => {
+    const save = (): void => {
         const project = deepClone(store.getState().visProject);
         project.___settings = settings;
-        props.changeProject(project);
+        void props.changeProject(project);
         props.onClose();
     };
 
-    return <IODialog
-        open={!0}
-        onClose={props.onClose}
-        title="Settings"
-        ActionIcon={SaveIcon}
-        action={save}
-        actionTitle="Save"
-        actionDisabled={JSON.stringify(store.getState().visProject.___settings) === JSON.stringify(settings)}
-    >
-        <div style={styles.dialog}>
-            {fields.map((field, key) => {
-                const value = settings[field.field as keyof ProjectSettings];
+    return (
+        <IODialog
+            open={!0}
+            onClose={props.onClose}
+            title="Settings"
+            ActionIcon={SaveIcon}
+            action={save}
+            actionTitle="Save"
+            actionDisabled={JSON.stringify(store.getState().visProject.___settings) === JSON.stringify(settings)}
+        >
+            <div style={styles.dialog}>
+                {fields.map((field, key) => {
+                    const value = settings[field.field as keyof ProjectSettings];
 
-                const change = (changeValue: any) => {
-                    const newSettings = deepClone(settings);
-                    (newSettings[field.field as keyof ProjectSettings] as any) = changeValue;
-                    setSettings(newSettings);
-                };
+                    const change = (changeValue: any): void => {
+                        const newSettings = deepClone(settings);
+                        (newSettings[field.field as keyof ProjectSettings] as any) = changeValue;
+                        setSettings(newSettings);
+                    };
 
-                let result;
+                    let result;
 
-                if (field.type === 'checkbox') {
-                    result = <FormControlLabel
-                        control={<Checkbox checked={!!value} onChange={e => change(e.target.checked)} />}
-                        label={I18n.t(field.name)}
-                    />;
-                } else if (field.type === 'select') {
-                    result = <FormControl
-                        variant="standard"
-                        fullWidth
-                    >
-                        <InputLabel>{I18n.t(field.name)}</InputLabel>
-                        <Select variant="standard" value={value || ''} onChange={e => change(e.target.value)}>
-                            {field.items.map(selectItem => <MenuItem
-                                value={selectItem.value as any}
-                                key={selectItem as any}
-                            >
-                                {field.noTranslate ? selectItem.name : I18n.t(selectItem.name)}
-                            </MenuItem>)}
-                        </Select>
-                        {field.help ? <FormHelperText>{I18n.t(field.help)}</FormHelperText> : null}
-                    </FormControl>;
-                } else if (field.type === 'raw') {
-                    result = field.Node;
-                } else if (field.type === 'switchMode') {
-                    result = <FormControlLabel
-                        label={I18n.t('Available for all')}
-                        control={<Switch
-                            // eslint-disable-next-line no-bitwise
-                            checked={!!(projectMode & 0x60)}
-                            onChange={e => {
-                                // eslint-disable-next-line no-bitwise
-                                props.socket.getRawSocket().emit(
-                                    'chmodFile',
-                                    `${props.adapterName}.${props.instance}`,
-                                    `${props.projectName}/*`,
-                                    { mode: e.target.checked ? 0x644 : 0x600 },
-                                    (err: string, files: {
-                                        file: string;
-                                        mode: number;
-                                        acl: { owner: string; ownerGroup: string; permissions: number };
-                                    }[]) => {
-                                        if (err) {
-                                            window.alert(err);
-                                        } else {
-                                            const file = files.find(f => f.file === 'vis-views.json');
-                                            if (file?.mode || file?.acl?.permissions) {
-                                                setProjectMode(file.mode || file.acl.permissions);
-                                            }
-                                        }
-                                    },
-                                );
-                            }}
-                        />}
-                    />;
-                } else {
-                    result = <TextField
-                        variant="standard"
-                        fullWidth
-                        value={value || ''}
-                        onChange={e => change(e.target.value)}
-                        label={I18n.t(field.name)}
-                        helperText={field.help ? I18n.t(field.help) : null}
-                        type={field.type}
-                    />;
-                }
-
-                return <div key={key} style={styles.field}>{result}</div>;
-            })}
-            <Button
-                style={{
-                    marginTop: 10,
-                    opacity: window.localStorage.getItem('developerMode') === 'true' ? 1 : 0,
-                }}
-                variant="contained"
-                onClick={async () => {
-                    if (window.localStorage.getItem('developerMode') === 'true') {
-                        window.localStorage.removeItem('developerMode');
-                        // disable all development URL
-                        const objects = await props.socket.getObjectViewSystem(
-                            'instance',
-                            'system.adapter.',
-                            'system.adapter.\u9999',
+                    if (field.type === 'checkbox') {
+                        result = (
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={!!value}
+                                        onChange={e => change(e.target.checked)}
+                                    />
+                                }
+                                label={I18n.t(field.name)}
+                            />
                         );
-                        const instances = Object.values(objects);
-                        for (let i = 0; i < instances.length; i++) {
-                            if (instances[i].common?.visWidgets) {
-                                if (Object.keys(instances[i].common.visWidgets).find(key => instances[i].common.visWidgets[key].url?.startsWith('http'))) {
-                                    Object.keys(instances[i].common.visWidgets).forEach(key => instances[i].common.visWidgets[key].url = `${instances[i].common.name}/customWidgets.js`);
-                                    await props.socket.setObject(instances[i]._id, instances[i]);
+                    } else if (field.type === 'select') {
+                        result = (
+                            <FormControl
+                                variant="standard"
+                                fullWidth
+                            >
+                                <InputLabel>{I18n.t(field.name)}</InputLabel>
+                                <Select
+                                    variant="standard"
+                                    value={value || ''}
+                                    onChange={e => change(e.target.value)}
+                                >
+                                    {field.items.map(selectItem => (
+                                        <MenuItem
+                                            value={selectItem.value as any}
+                                            key={selectItem as any}
+                                        >
+                                            {field.noTranslate ? selectItem.name : I18n.t(selectItem.name)}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                                {field.help ? <FormHelperText>{I18n.t(field.help)}</FormHelperText> : null}
+                            </FormControl>
+                        );
+                    } else if (field.type === 'raw') {
+                        result = field.Node;
+                    } else if (field.type === 'switchMode') {
+                        result = (
+                            <FormControlLabel
+                                label={I18n.t('Available for all')}
+                                control={
+                                    <Switch
+                                        // eslint-disable-next-line no-bitwise
+                                        checked={!!(projectMode & 0x60)}
+                                        onChange={e => {
+                                            // eslint-disable-next-line no-bitwise
+                                            props.socket.getRawSocket().emit(
+                                                'chmodFile',
+                                                `${props.adapterName}.${props.instance}`,
+                                                `${props.projectName}/*`,
+                                                { mode: e.target.checked ? 0x644 : 0x600 },
+                                                (
+                                                    err: string,
+                                                    files: {
+                                                        file: string;
+                                                        mode: number;
+                                                        acl: { owner: string; ownerGroup: string; permissions: number };
+                                                    }[],
+                                                ) => {
+                                                    if (err) {
+                                                        window.alert(err);
+                                                    } else {
+                                                        const file = files.find(f => f.file === 'vis-views.json');
+                                                        if (file?.mode || file?.acl?.permissions) {
+                                                            setProjectMode(file.mode || file.acl.permissions);
+                                                        }
+                                                    }
+                                                },
+                                            );
+                                        }}
+                                    />
+                                }
+                            />
+                        );
+                    } else {
+                        result = (
+                            <TextField
+                                variant="standard"
+                                fullWidth
+                                value={value || ''}
+                                onChange={e => change(e.target.value)}
+                                label={I18n.t(field.name)}
+                                helperText={field.help ? I18n.t(field.help) : null}
+                                type={field.type}
+                            />
+                        );
+                    }
+
+                    return (
+                        <div
+                            key={key}
+                            style={styles.field}
+                        >
+                            {result}
+                        </div>
+                    );
+                })}
+                <Button
+                    style={{
+                        marginTop: 10,
+                        opacity: window.localStorage.getItem('developerMode') === 'true' ? 1 : 0,
+                    }}
+                    variant="contained"
+                    onClick={async () => {
+                        if (window.localStorage.getItem('developerMode') === 'true') {
+                            window.localStorage.removeItem('developerMode');
+                            // disable all development URL
+                            const objects = await props.socket.getObjectViewSystem(
+                                'instance',
+                                'system.adapter.',
+                                'system.adapter.\u9999',
+                            );
+                            const instances = Object.values(objects);
+                            for (let i = 0; i < instances.length; i++) {
+                                if (instances[i].common?.visWidgets) {
+                                    if (
+                                        Object.keys(instances[i].common.visWidgets).find(key =>
+                                            instances[i].common.visWidgets[key].url?.startsWith('http'),
+                                        )
+                                    ) {
+                                        Object.keys(instances[i].common.visWidgets).forEach(key => {
+                                            const name: ioBroker.StringOrTranslated = instances[i].common.name;
+                                            if (typeof name === 'object') {
+                                                instances[i].common.visWidgets[key].url = `${name.en}/customWidgets.js`;
+                                            } else {
+                                                instances[i].common.visWidgets[key].url = `${name}/customWidgets.js`;
+                                            }
+                                        });
+                                        await props.socket.setObject(instances[i]._id, instances[i]);
+                                    }
                                 }
                             }
+                        } else {
+                            window.localStorage.setItem('developerMode', 'true');
                         }
-                    } else {
-                        window.localStorage.setItem('developerMode', 'true');
-                    }
-                    window.location.reload();
-                }}
-            >
-                Development mode
-            </Button>
-        </div>
-    </IODialog>;
+                        window.location.reload();
+                    }}
+                >
+                    Development mode
+                </Button>
+            </div>
+        </IODialog>
+    );
 };
 
 export default Settings;

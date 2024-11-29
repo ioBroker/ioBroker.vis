@@ -1,31 +1,24 @@
 {
-  "compilerOptions": {
-    "skipLibCheck": true,
-    "moduleResolution": "Bundler",
-    "module": "esnext",
-    "target": "esnext",
-    "baseUrl": ".",
-    "checkJs": false,
-    "allowJs": true,
-    "noEmit": false,
-    "outDir": "./build",
-    "sourceMap": true,
-    "sourceRoot": "./src",
-    "noImplicitAny": true,
-    "lib": [
-      "es2018",
-      "DOM"
-    ],
-    "jsx": "react",
-    "types": [
-      "@iobroker/types"
-    ],
-    "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@iobroker/types-vis-2": ["./packages/types-vis-2"]
-    }
-  },
-  "include": ["./**/*"]
+    "compilerOptions": {
+        "skipLibCheck": true,
+        "moduleResolution": "Bundler",
+        "module": "esnext",
+        "target": "esnext",
+        "baseUrl": ".",
+        "checkJs": false,
+        "allowJs": true,
+        "noEmit": false,
+        "outDir": "./build",
+        "sourceMap": true,
+        "sourceRoot": "./src",
+        "noImplicitAny": true,
+        "lib": ["es2018", "DOM"],
+        "jsx": "react",
+        "types": ["@iobroker/types"],
+        "paths": {
+            "@/*": ["./src/*"],
+            "@iobroker/types-vis-2": ["./packages/types-vis-2"]
+        }
+    },
+    "include": ["./**/*"]
 }

@@ -2,10 +2,7 @@ import type React from 'react';
 import { Theme, type ThemeName } from '@iobroker/adapter-react-v5';
 import type { VisTheme } from '@iobroker/types-vis-2';
 
-export default function createTheme(
-    themeName: ThemeName,
-    overrides?: Record<string, any>,
-): VisTheme {
+export default function createTheme(themeName: ThemeName, overrides?: Record<string, any>): VisTheme {
     const danger = '#dd5325';
     const success = '#73b6a8';
     const theme: VisTheme = Theme(themeName, overrides) as VisTheme;

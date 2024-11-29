@@ -15,8 +15,7 @@
 
 import React from 'react';
 
-// eslint-disable-next-line import/no-cycle
-import type { GetRxDataFromWidget, RxRenderWidgetProps } from '@iobroker/types-vis-2';
+import type { GetRxDataFromWidget, RxRenderWidgetProps, RxWidgetInfo } from '@iobroker/types-vis-2';
 import VisRxWidget from '../../visRxWidget';
 import DangerousHtmlWithScript from '../Utils/DangerousHtmlWithScript';
 
@@ -26,28 +25,30 @@ type RxData = GetRxDataFromWidget<typeof BasicHtml>;
 class BasicHtml extends VisRxWidget<RxData> {
     interval: ReturnType<typeof setInterval> | null = null;
 
-    static getWidgetInfo() {
+    static getWidgetInfo(): RxWidgetInfo {
         return {
             id: 'tplHtml',
             visSet: 'basic',
             visName: 'HTML',
             visPrev: 'widgets/basic/img/Prev_HTML.png',
-            visAttrs: [{
-                name: 'common',
-                fields: [
-                    {
-                        name: 'html',
-                        type: 'html',
-                    },
-                    {
-                        name: 'refreshInterval',
-                        type: 'slider',
-                        min: 0,
-                        max: 180000,
-                        step: 100,
-                    },
-                ],
-            }],
+            visAttrs: [
+                {
+                    name: 'common',
+                    fields: [
+                        {
+                            name: 'html',
+                            type: 'html',
+                        },
+                        {
+                            name: 'refreshInterval',
+                            type: 'slider',
+                            min: 0,
+                            max: 180000,
+                            step: 100,
+                        },
+                    ],
+                },
+            ],
             // visWidgetLabel: 'value_string',  // Label of widget
             visDefaultStyle: {
                 width: 200,
@@ -57,43 +58,56 @@ class BasicHtml extends VisRxWidget<RxData> {
     }
 
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo() {
+    getWidgetInfo(): RxWidgetInfo {
         return BasicHtml.getWidgetInfo();
     }
 
-    async componentWillUnmount() {
-        this.interval && clearInterval(this.interval);
-        this.interval = null;
+    componentWillUnmount(): void {
+        if (this.interval) {
+            clearInterval(this.interval);
+            this.interval = null;
+        }
         super.componentWillUnmount();
     }
 
-    async componentDidMount() {
+    componentDidMount(): void {
         super.componentDidMount();
         if (parseInt(this.state.rxData.refreshInterval as unknown as string, 10)) {
-            this.interval = setInterval(() => this.forceUpdate(), parseInt(this.state.rxData.refreshInterval as unknown as string, 10));
+            this.interval = setInterval(
+                () => this.forceUpdate(),
+                parseInt(this.state.rxData.refreshInterval as unknown as string, 10),
+            );
         }
     }
 
-    onRxDataChanged(prevRxData: typeof this.state.rxData) {
+    onRxDataChanged(prevRxData: typeof this.state.rxData): void {
         super.onRxDataChanged(prevRxData);
         if (this.interval) {
             clearInterval(this.interval);
             this.interval = null;
         }
         if (parseInt(this.state.rxData.refreshInterval as unknown as string, 10)) {
-            this.interval = setInterval(() => this.forceUpdate(), parseInt(this.state.rxData.refreshInterval as unknown as string, 10));
+            this.interval = setInterval(
+                () => this.forceUpdate(),
+                parseInt(this.state.rxData.refreshInterval as unknown as string, 10),
+            );
         }
     }
 
     /**
      * Renders the widget
-     *
-     * @return {Element}
      */
-    renderWidgetBody(props: RxRenderWidgetProps) {
+    renderWidgetBody(props: RxRenderWidgetProps): React.JSX.Element {
         super.renderWidgetBody(props);
 
-        return <DangerousHtmlWithScript className="vis-widget-body" html={this.state.rxData.html} isDiv wid={this.props.id} />;
+        return (
+            <DangerousHtmlWithScript
+                className="vis-widget-body"
+                html={(this.state.rxData.html || '').toString()}
+                isDiv
+                wid={this.props.id}
+            />
+        );
     }
 }
 

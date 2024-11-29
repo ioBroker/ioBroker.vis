@@ -36,7 +36,7 @@ class JQuiSlider extends VisRxWidget {
         this.state.valueMax = '';
     }
 
-    static getWidgetInfo() {
+    static getWidgetInfo(): RxWidgetInfo {
         return {
             id: 'tplJquiSlider',
             visSet: 'jqui',

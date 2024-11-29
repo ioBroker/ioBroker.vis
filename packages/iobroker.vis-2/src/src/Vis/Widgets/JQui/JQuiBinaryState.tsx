@@ -13,35 +13,61 @@
  * (Free for non-commercial use).
  */
 
-import type { CSSProperties } from 'react';
-import React from 'react';
+import React, { type CSSProperties } from 'react';
 
-import {
-    Button,
-    Fab, FormControlLabel,
-    Tooltip,
-    Checkbox, Switch, ButtonGroup,
-} from '@mui/material';
+import { Button, Fab, FormControlLabel, Tooltip, Checkbox, Switch, ButtonGroup } from '@mui/material';
 
-import {
-    I18n, Icon,
-} from '@iobroker/adapter-react-v5';
+import { I18n, Icon } from '@iobroker/adapter-react-v5';
 
 import VisBaseWidget from '@/Vis/visBaseWidget';
-// eslint-disable-next-line import/no-cycle
 import type {
-    GetRxDataFromWidget, RxRenderWidgetProps,
-    RxWidgetInfo, VisBaseWidgetProps,
+    RxRenderWidgetProps,
+    RxWidgetInfo,
+    RxWidgetInfoAttributesField,
+    VisBaseWidgetProps,
+    Writeable,
 } from '@iobroker/types-vis-2';
-import commonStyles from '@/Utils/styles';
 import type { VisRxWidgetState } from '../../visRxWidget';
+// eslint-disable-next-line no-duplicate-imports
 import VisRxWidget from '../../visRxWidget';
 
 // eslint-disable-next-line no-use-before-define
-type RxData = Omit<GetRxDataFromWidget<typeof JQuiBinaryState>, 'test'> & {
-    test: string | boolean;
-    on_text: string;
+type RxData = {
+    type: 'button' | 'round-button' | 'html' | 'radio' | 'checkbox' | 'image' | 'switch';
+    oid: string;
+    readOnly: boolean;
+    pushMode: boolean;
+    invert: boolean;
+    test: '' | boolean;
+    click_id: string;
+    text_false: string;
+    text_true: string;
+    color_false: string;
+    color_true: string;
+    html_true: string;
+    html_false: string;
+    alt_false: string;
+    alt_true: string;
+    equal_text_length: boolean;
+    jquery_style: boolean;
+    padding: number;
+    variant: 'contained' | 'outlined' | 'standard' | 'text';
+    orientation: 'horizontal' | 'vertical';
+    notEqualLength: boolean;
+    html_prepend: string;
+    html_append: string;
+    src_false: string;
+    icon_false: string;
+    icon_color_false: string;
+    invert_icon_false: boolean;
+    imageHeight_false: number;
+    src_true: string;
+    icon_true: string;
+    icon_color_true: string;
+    invert_icon_true: boolean;
+    imageHeight_true: number;
     off_text: string;
+    on_text: string;
 };
 
 interface JQuiBinaryStateState extends VisRxWidgetState {
@@ -60,7 +86,7 @@ class JQuiBinaryState extends VisRxWidget<RxData, JQuiBinaryStateState> {
         (this.state as JQuiBinaryStateState).width = 0;
     }
 
-    static getWidgetInfo() {
+    static getWidgetInfo(): RxWidgetInfo {
         return {
             id: 'tplJquiBool',
             visSet: 'jqui',
@@ -93,7 +119,8 @@ class JQuiBinaryState extends VisRxWidget<RxData, JQuiBinaryStateState> {
                             type: 'checkbox',
                             label: 'jqui_push_mode',
                             tooltip: 'jqui_push_mode_tooltip',
-                            hidden: (data: any) => data.type !== 'button' && data.type !== 'round-button' && data.type !== 'image',
+                            hidden: (data: any) =>
+                                data.type !== 'button' && data.type !== 'round-button' && data.type !== 'image',
                         },
                         {
                             name: 'click_id',
@@ -151,7 +178,8 @@ class JQuiBinaryState extends VisRxWidget<RxData, JQuiBinaryStateState> {
                             type: 'text',
                             label: 'text_true',
                             default: I18n.t('jqui_on').replace('jqui_', ''),
-                            hidden: (data: any) => data.type === 'image' || data.type === 'html' || data.type === 'round-button',
+                            hidden: (data: any) =>
+                                data.type === 'image' || data.type === 'html' || data.type === 'round-button',
                         },
                         {
                             name: 'color_false',
@@ -310,11 +338,14 @@ class JQuiBinaryState extends VisRxWidget<RxData, JQuiBinaryStateState> {
         } as const;
     }
 
-    async componentDidMount() {
-        await super.componentDidMount();
+    async componentDidMount(): Promise<void> {
+        super.componentDidMount();
 
         // convert old tplIconStateBool data to JquiBinaryState data
-        if ((this.props.tpl === 'tplIconStateBool' || this.props.tpl === 'tplIconStatePushButton') && (this.state.data.false_text || this.state.data.true_text)) {
+        if (
+            (this.props.tpl === 'tplIconStateBool' || this.props.tpl === 'tplIconStatePushButton') &&
+            (this.state.data.false_text || this.state.data.true_text)
+        ) {
             const data = JSON.parse(JSON.stringify(this.state.data));
             data.text_false = data.false_text;
             data.text_true = data.true_text;
@@ -331,11 +362,17 @@ class JQuiBinaryState extends VisRxWidget<RxData, JQuiBinaryStateState> {
             data.false_text = null;
             data.true_text = null;
 
-            setTimeout(() => this.props.context.onWidgetsChanged([{
-                wid: this.props.id,
-                view: this.props.view,
-                data,
-            }]), 100);
+            setTimeout(
+                () =>
+                    this.props.context.onWidgetsChanged([
+                        {
+                            wid: this.props.id,
+                            view: this.props.view,
+                            data,
+                        },
+                    ]),
+                100,
+            );
         }
 
         if (this.state.rxData.oid && this.state.rxData.oid !== 'nothing_selected') {
@@ -348,25 +385,32 @@ class JQuiBinaryState extends VisRxWidget<RxData, JQuiBinaryStateState> {
         }
     }
 
-    static findField(widgetInfo: RxWidgetInfo, name: string) {
+    static findField(widgetInfo: RxWidgetInfo, name: string): Writeable<RxWidgetInfoAttributesField> | null {
         return VisRxWidget.findField(widgetInfo, name);
     }
 
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo() {
+    getWidgetInfo(): RxWidgetInfo {
         return JQuiBinaryState.getWidgetInfo();
     }
 
-    onStateUpdated(id: string, state: ioBroker.State) {
+    onStateUpdated(id: string, state: ioBroker.State): void {
         if (id === this.state.rxData.oid && state) {
-            const isOn = state.val === true || state.val === 'true' || state.val === 1 || state.val === '1' || state.val === 'on' || state.val === 'ON' || state.val === 'On';
+            const isOn =
+                state.val === true ||
+                state.val === 'true' ||
+                state.val === 1 ||
+                state.val === '1' ||
+                state.val === 'on' ||
+                state.val === 'ON' ||
+                state.val === 'On';
             if (this.state.isOn !== isOn) {
                 this.setState({ isOn });
             }
         }
     }
 
-    getControlOid() {
+    getControlOid(): string {
         if (this.state.rxData.click_id && this.state.rxData.click_id !== 'nothing_selected') {
             return this.state.rxData.click_id;
         }
@@ -376,7 +420,7 @@ class JQuiBinaryState extends VisRxWidget<RxData, JQuiBinaryStateState> {
         return '';
     }
 
-    onClick(isOn?: boolean) {
+    onClick(isOn?: boolean): void {
         if (this.state.rxData.readOnly || this.props.editMode) {
             return;
         }
@@ -393,7 +437,7 @@ class JQuiBinaryState extends VisRxWidget<RxData, JQuiBinaryStateState> {
     }
 
     // "My" is used to avoid conflicts with parent class
-    onMyMouseDown() {
+    onMyMouseDown(): void {
         const oid = this.getControlOid();
         if (oid) {
             this.props.context.setValue(oid, !this.state.rxData.invert);
@@ -403,7 +447,7 @@ class JQuiBinaryState extends VisRxWidget<RxData, JQuiBinaryStateState> {
     }
 
     // "My" is used to avoid conflicts with parent class
-    onMyMouseUp() {
+    onMyMouseUp(): void {
         const oid = this.getControlOid();
         if (oid) {
             this.props.context.setValue(oid, !!this.state.rxData.invert);
@@ -412,7 +456,7 @@ class JQuiBinaryState extends VisRxWidget<RxData, JQuiBinaryStateState> {
         this.setState({ isOn: false });
     }
 
-    isOn() {
+    isOn(): boolean {
         let value;
         if (this.props.editMode && (this.state.rxData.test === true || this.state.rxData.test === false)) {
             value = this.state.rxData.test;
@@ -429,7 +473,7 @@ class JQuiBinaryState extends VisRxWidget<RxData, JQuiBinaryStateState> {
         return value;
     }
 
-    renderIcon(isOn: boolean, doNotFallback?: boolean) {
+    renderIcon(isOn: boolean, doNotFallback?: boolean): React.JSX.Element | null {
         let icon;
         let invert;
         let height;
@@ -496,19 +540,24 @@ class JQuiBinaryState extends VisRxWidget<RxData, JQuiBinaryStateState> {
 
         if (icon) {
             if (icon.startsWith('_PRJ_NAME/')) {
-                icon = icon.replace('_PRJ_NAME/', `../${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}/`);
+                icon = icon.replace(
+                    '_PRJ_NAME/',
+                    `../${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}/`,
+                );
             }
 
-            return <Icon
-                key="icon"
-                style={style}
-                src={icon}
-            />;
+            return (
+                <Icon
+                    key="icon"
+                    style={style}
+                    src={icon}
+                />
+            );
         }
         return null;
     }
 
-    getTextWidth(text: string) {
+    getTextWidth(text: string): number {
         if (!this.refService.current) {
             return (text as unknown as number) * 14;
         }
@@ -529,7 +578,7 @@ class JQuiBinaryState extends VisRxWidget<RxData, JQuiBinaryStateState> {
         return width;
     }
 
-    renderText(isOn: boolean) {
+    renderText(isOn: boolean): { text: React.ReactNode; color?: string } {
         let text;
         let color;
 
@@ -538,7 +587,9 @@ class JQuiBinaryState extends VisRxWidget<RxData, JQuiBinaryStateState> {
             color = this.state.rxData.color_true;
         }
 
-        text = text || (this.state.rxData.text_false !== undefined ? this.state.rxData.text_false : this.state.rxData.off_text); // back compatibility with radio on/off
+        text =
+            text ||
+            (this.state.rxData.text_false !== undefined ? this.state.rxData.text_false : this.state.rxData.off_text); // back compatibility with radio on/off
         color = color || this.state.rxData.color_false;
 
         if (this.state.rxData.equal_text_length && this.state.rxData.text_false && this.state.rxData.text_true) {
@@ -555,44 +606,72 @@ class JQuiBinaryState extends VisRxWidget<RxData, JQuiBinaryStateState> {
         return { text, color };
     }
 
-    renderButton(isOn: boolean, style: CSSProperties) {
+    renderButton(isOn: boolean, style: CSSProperties): React.JSX.Element {
         const icon = this.renderIcon(isOn);
         const text = this.renderText(isOn);
 
         style.color = text.color || undefined;
 
         // Button
-        return <Button
-            variant={this.state.rxData.variant === undefined ? 'contained' : this.state.rxData.variant as any}
-            color={isOn ? 'primary' : 'grey'}
-            onMouseDown={this.state.rxData.pushMode && !this.state.rxData.readOnly && !this.props.editMode ? () => this.onMyMouseDown() : undefined}
-            onMouseUp={this.state.rxData.pushMode && !this.state.rxData.readOnly && !this.props.editMode ? () => this.onMyMouseUp() : undefined}
-            onClick={!this.state.rxData.pushMode && !this.state.rxData.readOnly && !this.props.editMode ? () => this.onClick() : undefined}
-            style={style}
-        >
-            {icon}
-            {text.text}
-        </Button>;
+        return (
+            <Button
+                variant={this.state.rxData.variant === undefined ? 'contained' : (this.state.rxData.variant as any)}
+                color={isOn ? 'primary' : 'grey'}
+                onMouseDown={
+                    this.state.rxData.pushMode && !this.state.rxData.readOnly && !this.props.editMode
+                        ? () => this.onMyMouseDown()
+                        : undefined
+                }
+                onMouseUp={
+                    this.state.rxData.pushMode && !this.state.rxData.readOnly && !this.props.editMode
+                        ? () => this.onMyMouseUp()
+                        : undefined
+                }
+                onClick={
+                    !this.state.rxData.pushMode && !this.state.rxData.readOnly && !this.props.editMode
+                        ? () => this.onClick()
+                        : undefined
+                }
+                style={style}
+            >
+                {icon}
+                {text.text}
+            </Button>
+        );
     }
 
-    renderFab(isOn: boolean, style: CSSProperties) {
+    renderFab(isOn: boolean, style: CSSProperties): React.JSX.Element {
         const icon = this.renderIcon(isOn);
         const text = this.renderText(isOn);
 
         style.zIndex = this.props.editMode ? 0 : undefined;
         // Fab
-        return <Fab
-            style={style}
-            color={isOn ? 'primary' : 'grey' as any}
-            onMouseDown={this.state.rxData.pushMode && !this.state.rxData.readOnly && !this.props.editMode ? () => this.onMyMouseDown() : undefined}
-            onMouseUp={this.state.rxData.pushMode && !this.state.rxData.readOnly && !this.props.editMode ? () => this.onMyMouseUp() : undefined}
-            onClick={!this.state.rxData.pushMode && !this.state.rxData.readOnly && !this.props.editMode ? () => this.onClick() : undefined}
-        >
-            {icon || text.text}
-        </Fab>;
+        return (
+            <Fab
+                style={style}
+                color={isOn ? 'primary' : ('grey' as any)}
+                onMouseDown={
+                    this.state.rxData.pushMode && !this.state.rxData.readOnly && !this.props.editMode
+                        ? () => this.onMyMouseDown()
+                        : undefined
+                }
+                onMouseUp={
+                    this.state.rxData.pushMode && !this.state.rxData.readOnly && !this.props.editMode
+                        ? () => this.onMyMouseUp()
+                        : undefined
+                }
+                onClick={
+                    !this.state.rxData.pushMode && !this.state.rxData.readOnly && !this.props.editMode
+                        ? () => this.onClick()
+                        : undefined
+                }
+            >
+                {icon || text.text}
+            </Fab>
+        );
     }
 
-    renderHtml(isOn: boolean) {
+    renderHtml(isOn: boolean): React.JSX.Element[] {
         let html;
         if (isOn) {
             html = this.state.rxData.html_true;
@@ -604,29 +683,36 @@ class JQuiBinaryState extends VisRxWidget<RxData, JQuiBinaryStateState> {
         const icon = this.renderIcon(isOn);
 
         return [
-            this.state.rxData.html_prepend ? <span
-                key="prepend"
-                // eslint-disable-next-line react/no-danger
-                dangerouslySetInnerHTML={{ __html: this.state.rxData.html_prepend }}
-            /> : null,
+            this.state.rxData.html_prepend ? (
+                <span
+                    key="prepend"
+                    // eslint-disable-next-line react/no-danger
+                    dangerouslySetInnerHTML={{ __html: this.state.rxData.html_prepend }}
+                />
+            ) : null,
             icon,
-            html ? <span
-                key="content"
-                // eslint-disable-next-line react/no-danger
-                dangerouslySetInnerHTML={{ __html: html }}
-            /> : null,
-            this.state.rxData.html_append ? <span
-                key="append"
-                // eslint-disable-next-line react/no-danger
-                dangerouslySetInnerHTML={{ __html: this.state.rxData.html_append }}
-            /> : null,
+            html ? (
+                <span
+                    key="content"
+                    // eslint-disable-next-line react/no-danger
+                    dangerouslySetInnerHTML={{ __html: html }}
+                />
+            ) : null,
+            this.state.rxData.html_append ? (
+                <span
+                    key="append"
+                    // eslint-disable-next-line react/no-danger
+                    dangerouslySetInnerHTML={{ __html: this.state.rxData.html_append }}
+                />
+            ) : null,
         ];
     }
 
-    renderSwitch(isOn: boolean, style: CSSProperties) {
+    renderSwitch(isOn: boolean, style: CSSProperties): React.JSX.Element {
         const on = this.state.rxData.text_true !== undefined ? this.state.rxData.text_true : this.state.rxData.on_text; // back compatibility with radio on/off
         const textColorOn = this.state.rxData.color_true;
-        const off = this.state.rxData.text_false !== undefined ? this.state.rxData.text_false : this.state.rxData.off_text; // back compatibility with radio on/off
+        const off =
+            this.state.rxData.text_false !== undefined ? this.state.rxData.text_false : this.state.rxData.off_text; // back compatibility with radio on/off
         const textColorOff = this.state.rxData.color_false;
 
         const onIcon = this.renderIcon(true, true);
@@ -636,80 +722,104 @@ class JQuiBinaryState extends VisRxWidget<RxData, JQuiBinaryStateState> {
             style.display = 'flex';
             style.alignItems = 'center';
 
-            return <div style={style}>
-                <div style={{ marginTop: -2, color: textColorOff }}>{off}</div>
-                <div>{offIcon}</div>
-                <Switch
-                    checked={isOn}
-                    onChange={() => this.onClick()}
-                />
-                <div>{onIcon}</div>
-                <div style={{ marginTop: -2, color: textColorOn }}>{on}</div>
-            </div>;
+            return (
+                <div style={style}>
+                    <div style={{ marginTop: -2, color: textColorOff }}>{off}</div>
+                    <div>{offIcon}</div>
+                    <Switch
+                        checked={isOn}
+                        onChange={() => this.onClick()}
+                    />
+                    <div>{onIcon}</div>
+                    <div style={{ marginTop: -2, color: textColorOn }}>{on}</div>
+                </div>
+            );
         }
         if (off || offIcon) {
             let text;
             if (offIcon && off) {
-                text = <div style={{ display: 'flex', alignItems: 'center', color: textColorOff }}>
-                    {offIcon}
-                    {off}
-                </div>;
+                text = (
+                    <div style={{ display: 'flex', alignItems: 'center', color: textColorOff }}>
+                        {offIcon}
+                        {off}
+                    </div>
+                );
             } else {
                 text = off || offIcon;
             }
             style.marginLeft = 5;
-            return <FormControlLabel
-                style={style}
-                control={<Switch
-                    checked={isOn}
-                    onChange={() => this.onClick()}
-                />}
-                label={text}
-            />;
+            return (
+                <FormControlLabel
+                    style={style}
+                    control={
+                        <Switch
+                            checked={isOn}
+                            onChange={() => this.onClick()}
+                        />
+                    }
+                    label={text}
+                />
+            );
         }
 
-        return <div style={style}>
-            <Switch
-                checked={false}
-                onChange={() => this.onClick()}
-            />
-        </div>;
+        return (
+            <div style={style}>
+                <Switch
+                    checked={false}
+                    onChange={() => this.onClick()}
+                />
+            </div>
+        );
     }
 
-    renderCheckbox(isOn: boolean, style: CSSProperties) {
-        let text = isOn ?
-            (this.state.rxData.text_true !== undefined ? this.state.rxData.text_true : this.state.rxData.on_text) // back compatibility with radio on/off
-            : (this.state.rxData.text_false !== undefined ? this.state.rxData.text_false : this.state.rxData.off_text); // back compatibility with radio on/off
+    renderCheckbox(isOn: boolean, style: CSSProperties): React.JSX.Element {
+        let text = isOn
+            ? this.state.rxData.text_true !== undefined
+                ? this.state.rxData.text_true
+                : this.state.rxData.on_text // back compatibility with radio on/off
+            : this.state.rxData.text_false !== undefined
+              ? this.state.rxData.text_false
+              : this.state.rxData.off_text; // back compatibility with radio on/off
         if (!text) {
-            text = this.state.rxData.text_false !== undefined ? this.state.rxData.text_false : this.state.rxData.off_text; // back compatibility with radio on/off
+            text =
+                this.state.rxData.text_false !== undefined ? this.state.rxData.text_false : this.state.rxData.off_text; // back compatibility with radio on/off
         }
         const icon = isOn ? this.renderIcon(true) : this.renderIcon(false);
         style.marginLeft = 5;
 
         if (text || icon) {
-            return <FormControlLabel
-                style={style}
-                control={<Checkbox
-                    checked={isOn}
-                    onChange={() => this.onClick()}
-                />}
-                label={<div style={{ display: 'flex', alignItems: 'center' }}>
-                    {icon}
-                    {text}
-                </div>}
-            />;
+            return (
+                <FormControlLabel
+                    style={style}
+                    control={
+                        <Checkbox
+                            checked={isOn}
+                            onChange={() => this.onClick()}
+                        />
+                    }
+                    label={
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                            {icon}
+                            {text}
+                        </div>
+                    }
+                />
+            );
         }
 
-        return <Checkbox
-            style={style}
-            checked={isOn}
-            onChange={() => this.onClick()}
-        />;
+        return (
+            <Checkbox
+                style={style}
+                checked={isOn}
+                onChange={() => this.onClick()}
+            />
+        );
     }
 
-    renderRadio(isOn: boolean, style: CSSProperties) {
+    renderRadio(isOn: boolean, style: CSSProperties): React.JSX.Element {
         const on = this.state.rxData.text_true !== undefined ? this.state.rxData.text_true : this.state.rxData.on_text; // back compatibility with radio on/off
-        const off = this.state.rxData.text_false !== undefined ? this.state.rxData.text_false : this.state.rxData.off_text; // back compatibility with radio on/off
+        const off =
+            this.state.rxData.text_false !== undefined ? this.state.rxData.text_false : this.state.rxData.off_text; // back compatibility with radio on/off
         const onIcon = this.renderIcon(true);
         const offIcon = this.renderIcon(false);
 
@@ -718,37 +828,45 @@ class JQuiBinaryState extends VisRxWidget<RxData, JQuiBinaryStateState> {
             variant = 'text';
         }
 
-        const buttonStyle = this.state.rxData.orientation === 'vertical' ? { height: '50%' } : (this.state.rxData.notEqualLength ? undefined : { width: '50%' });
+        const buttonStyle =
+            this.state.rxData.orientation === 'vertical'
+                ? { height: '50%' }
+                : this.state.rxData.notEqualLength
+                  ? undefined
+                  : { width: '50%' };
 
-        return <ButtonGroup
-            style={style}
-            variant={variant as any}
-            orientation={this.state.rxData.orientation as any || 'horizontal'}
-        >
-            <Button
-                style={buttonStyle}
-                startIcon={offIcon}
-                color={isOn ? 'grey' : 'primary'}
-                onClick={() => this.onClick(false)}
+        return (
+            <ButtonGroup
+                style={style}
+                variant={variant as any}
+                orientation={(this.state.rxData.orientation as any) || 'horizontal'}
             >
-                {off || I18n.t('off')}
-            </Button>
-            <Button
-                style={buttonStyle}
-                color={isOn ? 'primary' : 'grey'}
-                startIcon={onIcon}
-                onClick={() => this.onClick(true)}
-            >
-                {on || I18n.t('on')}
-            </Button>
-        </ButtonGroup>;
+                <Button
+                    style={buttonStyle}
+                    startIcon={offIcon}
+                    color={isOn ? 'grey' : 'primary'}
+                    onClick={() => this.onClick(false)}
+                >
+                    {off || I18n.t('off')}
+                </Button>
+                <Button
+                    style={buttonStyle}
+                    color={isOn ? 'primary' : 'grey'}
+                    startIcon={onIcon}
+                    onClick={() => this.onClick(true)}
+                >
+                    {on || I18n.t('on')}
+                </Button>
+            </ButtonGroup>
+        );
     }
 
-    componentDidUpdate(/* prevProps, prevState */) {
+    componentDidUpdate(/* prevProps, prevState */): void {
         if (!this.refService.current) {
             return;
         }
-        if (this.state.rxData.type === 'image' ||
+        if (
+            this.state.rxData.type === 'image' ||
             this.state.rxData.type === 'html' ||
             (this.state.rxData.type === 'button' && this.state.rxData.jquery_style)
         ) {
@@ -765,7 +883,8 @@ class JQuiBinaryState extends VisRxWidget<RxData, JQuiBinaryStateState> {
                 }
             }
 
-            if (this.refService.current.clientWidth !== this.state.width ||
+            if (
+                this.refService.current.clientWidth !== this.state.width ||
                 this.refService.current.clientHeight !== this.state.height
             ) {
                 this.setState({
@@ -776,7 +895,7 @@ class JQuiBinaryState extends VisRxWidget<RxData, JQuiBinaryStateState> {
         }
     }
 
-    renderWidgetBody(props: RxRenderWidgetProps) {
+    renderWidgetBody(props: RxRenderWidgetProps): React.JSX.Element {
         super.renderWidgetBody(props);
         const isOn = this.isOn();
 
@@ -784,14 +903,8 @@ class JQuiBinaryState extends VisRxWidget<RxData, JQuiBinaryStateState> {
         // apply style from the element
         Object.keys(this.state.rxStyle).forEach(attr => {
             const value = this.state.rxStyle[attr as keyof typeof this.state.rxStyle];
-            if (value !== null &&
-                value !== undefined &&
-                VisRxWidget.POSSIBLE_MUI_STYLES.includes(attr)
-            ) {
-                attr = attr.replace(
-                    /(-\w)/g,
-                    text => text[1].toUpperCase(),
-                );
+            if (value !== null && value !== undefined && VisRxWidget.POSSIBLE_MUI_STYLES.includes(attr)) {
+                attr = attr.replace(/(-\w)/g, text => text[1].toUpperCase());
                 (buttonStyle as any)[attr] = value;
             }
         });
@@ -836,18 +949,34 @@ class JQuiBinaryState extends VisRxWidget<RxData, JQuiBinaryStateState> {
             content = this.renderButton(isOn, buttonStyle);
         }
 
-        const result = <div
-            className="vis-widget-body"
-            style={bodyStyle}
-            onClick={type === 'image' || type === 'html' ? () => this.onClick() : undefined}
-        >
-            {content}
-        </div>;
+        const result = (
+            <div
+                className="vis-widget-body"
+                style={bodyStyle}
+                onClick={type === 'image' || type === 'html' ? () => this.onClick() : undefined}
+            >
+                {content}
+            </div>
+        );
         if (isOn && this.state.rxData.alt_true) {
-            return <Tooltip title={this.state.rxData.alt_true} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>{result}</Tooltip>;
+            return (
+                <Tooltip
+                    title={this.state.rxData.alt_true}
+                    slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+                >
+                    {result}
+                </Tooltip>
+            );
         }
         if (!isOn && this.state.rxData.alt_false) {
-            return <Tooltip title={this.state.rxData.alt_false} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>{result}</Tooltip>;
+            return (
+                <Tooltip
+                    title={this.state.rxData.alt_false}
+                    slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+                >
+                    {result}
+                </Tooltip>
+            );
         }
         return result;
     }

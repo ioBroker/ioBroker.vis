@@ -19,7 +19,7 @@ import PropTypes from 'prop-types';
 import JQuiState from './JQuiState';
 
 class JQuiRadioSteps extends JQuiState {
-    static getWidgetInfo() {
+    static getWidgetInfo(): RxWidgetInfo {
         const widgetInfo = JQuiState.getWidgetInfo();
         const newWidgetInfo = {
             id: 'tplJquiRadioSteps',

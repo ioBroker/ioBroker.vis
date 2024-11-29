@@ -23,21 +23,24 @@ import {
     DialogTitle,
     IconButton,
     Popper,
-    Paper, TextField, DialogActions,
+    Paper,
+    TextField,
+    DialogActions,
 } from '@mui/material';
 
 import { Close, Check } from '@mui/icons-material';
 
-import {
-    I18n, Icon,
-    Utils, IconCopy,
-} from '@iobroker/adapter-react-v5';
+import { I18n, Icon, Utils, IconCopy } from '@iobroker/adapter-react-v5';
 
 import VisBaseWidget from '@/Vis/visBaseWidget';
 import type {
-    RxRenderWidgetProps, RxWidgetInfo, RxWidgetInfoAttributesField,
+    RxRenderWidgetProps,
+    RxWidgetInfo,
+    RxWidgetInfoAttributesField,
     RxWidgetInfoWriteable,
-    Writeable, VisBaseWidgetProps, VisWidgetCommand,
+    Writeable,
+    VisBaseWidgetProps,
+    VisWidgetCommand,
 } from '@iobroker/types-vis-2';
 import { isVarFinite } from '../../../Utils/utils';
 import VisRxWidget, { type VisRxWidgetState } from '../../visRxWidget';
@@ -97,7 +100,10 @@ export interface JQuiButtonState extends VisRxWidgetState {
     passwordError: boolean;
 }
 
-class JQuiButton<P extends JQuiButtonDataProps = JQuiButtonDataProps, S extends JQuiButtonState = JQuiButtonState> extends VisRxWidget<P, S> {
+class JQuiButton<
+    P extends JQuiButtonDataProps = JQuiButtonDataProps,
+    S extends JQuiButtonState = JQuiButtonState,
+> extends VisRxWidget<P, S> {
     refButton: React.RefObject<HTMLButtonElement>;
 
     refDialog: React.RefObject<HTMLDivElement>;
@@ -134,21 +140,24 @@ class JQuiButton<P extends JQuiButtonDataProps = JQuiButtonDataProps, S extends 
                             name: 'buttontext',
                             type: 'text',
                             default: 'URL',
-                            hidden: (data: any) => !!data.html || !!(data.buttontext_view && data.nav_view) || !!data.externalDialog,
+                            hidden: (data: any) =>
+                                !!data.html || !!(data.buttontext_view && data.nav_view) || !!data.externalDialog,
                         },
                         {
                             name: 'html',
                             type: 'html',
                             default: '',
                             tooltip: 'jqui_html_tooltip',
-                            disabled: (data: any) => !!data.buttontext || !!data.icon || !!data.src || !!data.externalDialog,
+                            disabled: (data: any) =>
+                                !!data.buttontext || !!data.icon || !!data.src || !!data.externalDialog,
                         },
                         {
                             name: 'Password',
                             type: 'password',
                             label: 'password',
                             tooltip: 'jqui_password_tooltip',
-                            disabled: (data: any) => !data.nav_view && !data.url && !data.href && !data.html_dialog && !data.contains_view,
+                            disabled: (data: any) =>
+                                !data.nav_view && !data.url && !data.href && !data.html_dialog && !data.contains_view,
                         },
                     ],
                 },
@@ -272,7 +281,7 @@ class JQuiButton<P extends JQuiButtonDataProps = JQuiButtonDataProps, S extends 
                         {
                             name: 'invert_icon',
                             type: 'checkbox',
-                            hidden: (data: any) => (!data.icon && !data.src),
+                            hidden: (data: any) => !data.icon && !data.src,
                         },
                         {
                             name: 'imageHeight',
@@ -422,7 +431,10 @@ class JQuiButton<P extends JQuiButtonDataProps = JQuiButtonDataProps, S extends 
         } as const;
     }
 
-    static findField<Field extends { [x: string]: any } = RxWidgetInfoAttributesField>(widgetInfo: RxWidgetInfo | RxWidgetInfoWriteable, name: string): Writeable<Field> {
+    static findField<Field extends { [x: string]: any } = RxWidgetInfoAttributesField>(
+        widgetInfo: RxWidgetInfo | RxWidgetInfoWriteable,
+        name: string,
+    ): Writeable<Field> {
         return VisRxWidget.findField(widgetInfo as RxWidgetInfo, name) as unknown as Writeable<Field>;
     }
 
@@ -448,12 +460,22 @@ class JQuiButton<P extends JQuiButtonDataProps = JQuiButtonDataProps, S extends 
                 (this.refButton.current as any)._jQueryDone = true;
                 (window.jQuery as any)(this.refButton.current).button();
             }
-            if (this.refButton.current.clientWidth !== this.state.width || this.refButton.current.clientHeight !== this.state.height) {
-                this.setState({ width: this.refButton.current.clientWidth, height: this.refButton.current.clientHeight });
+            if (
+                this.refButton.current.clientWidth !== this.state.width ||
+                this.refButton.current.clientHeight !== this.state.height
+            ) {
+                this.setState({
+                    width: this.refButton.current.clientWidth,
+                    height: this.refButton.current.clientHeight,
+                });
             }
         }
         // from base class
-        if (this.refService.current && (this.state.rxData.html_dialog || this.state.rxData.contains_view) && !(this.refService.current as any)._showDialog) {
+        if (
+            this.refService.current &&
+            (this.state.rxData.html_dialog || this.state.rxData.contains_view) &&
+            !(this.refService.current as any)._showDialog
+        ) {
             (this.refService.current as any)._showDialog = this.showDialog;
         }
         if (this.refService.current) {
@@ -514,53 +536,55 @@ class JQuiButton<P extends JQuiButtonDataProps = JQuiButtonDataProps, S extends 
         if (!this.state.showPassword) {
             return null;
         }
-        return <Dialog
-            open={!0}
-            onClose={() => this.setState({ showPassword: false })}
-        >
-            <DialogTitle>{I18n.t('Enter password')}</DialogTitle>
-            <DialogContent>
-                <TextField
-                    label={I18n.t('Password')}
-                    error={this.state.passwordError}
-                    helperText={this.state.passwordError ? I18n.t('Wrong password') : null}
-                    type="password"
-                    autoFocus
-                    fullWidth
-                    variant="standard"
-                    value={this.state.password || ''}
-                    onChange={e => this.setState({ password: e.target.value })}
-                    onKeyUp={e => e.key === 'Enter' && this.onPasswordEnter()}
-                />
-            </DialogContent>
-            <DialogActions>
-                <Button
-                    disabled={!this.state.password}
-                    startIcon={<Check />}
-                    onClick={e => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        this.onPasswordEnter();
-                    }}
-                    color="primary"
-                    variant="contained"
-                >
-                    {I18n.t('Enter')}
-                </Button>
-                <Button
-                    startIcon={<Close />}
-                    onClick={e => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        this.setState({ showPassword: false });
-                    }}
-                    color="grey"
-                    variant="contained"
-                >
-                    {I18n.t('Cancel')}
-                </Button>
-            </DialogActions>
-        </Dialog>;
+        return (
+            <Dialog
+                open={!0}
+                onClose={() => this.setState({ showPassword: false })}
+            >
+                <DialogTitle>{I18n.t('Enter password')}</DialogTitle>
+                <DialogContent>
+                    <TextField
+                        label={I18n.t('Password')}
+                        error={this.state.passwordError}
+                        helperText={this.state.passwordError ? I18n.t('Wrong password') : null}
+                        type="password"
+                        autoFocus
+                        fullWidth
+                        variant="standard"
+                        value={this.state.password || ''}
+                        onChange={e => this.setState({ password: e.target.value })}
+                        onKeyUp={e => e.key === 'Enter' && this.onPasswordEnter()}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        disabled={!this.state.password}
+                        startIcon={<Check />}
+                        onClick={e => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            this.onPasswordEnter();
+                        }}
+                        color="primary"
+                        variant="contained"
+                    >
+                        {I18n.t('Enter')}
+                    </Button>
+                    <Button
+                        startIcon={<Close />}
+                        onClick={e => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            this.setState({ showPassword: false });
+                        }}
+                        color="grey"
+                        variant="contained"
+                    >
+                        {I18n.t('Cancel')}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        );
     }
 
     async setObjectWithState(oid: string, value: ioBroker.State['val']) {
@@ -575,7 +599,8 @@ class JQuiButton<P extends JQuiButtonDataProps = JQuiButtonDataProps, S extends 
             return;
         }
         if (this.setObjectType === 'boolean') {
-            value = value === 'true' || value === true || value === '1' || value === 1 || value === 'on' || value === 'ON';
+            value =
+                value === 'true' || value === true || value === '1' || value === 1 || value === 'on' || value === 'ON';
         } else if (this.setObjectType === 'number') {
             value = parseFloat(value as string);
         } else if (value !== null && value !== undefined) {
@@ -615,7 +640,8 @@ class JQuiButton<P extends JQuiButtonDataProps = JQuiButtonDataProps, S extends 
         if (this.state.rxData.nav_view) {
             this.props.context.changeView(this.state.rxData.nav_view);
         } else if (!this.props.editMode && this.state.rxData.href) {
-            if (this.state.rxData.target ||
+            if (
+                this.state.rxData.target ||
                 (this.props.tpl === 'tplJquiButtonLinkBlank' && this.state.rxData.target === undefined)
             ) {
                 window.open(this.state.rxData.href, this.state.rxData.target);
@@ -623,14 +649,18 @@ class JQuiButton<P extends JQuiButtonDataProps = JQuiButtonDataProps, S extends 
                 window.location.href = this.state.rxData.href;
             }
         } else if (this.state.rxData.url) {
-            this.props.context.socket.getRawSocket().emit('httpGet', this.state.rxData.url, (data: any) =>
-                console.log('httpGet', this.state.rxData.url, data));
+            this.props.context.socket
+                .getRawSocket()
+                .emit('httpGet', this.state.rxData.url, (data: any) =>
+                    console.log('httpGet', this.state.rxData.url, data),
+                );
         }
 
         if (this.state.rxData.html_dialog || this.state.rxData.contains_view) {
             if (this.state.rxData.setId) {
-                this.setObjectWithState(this.state.rxData.setId, this.state.rxData.setValue)
-                    .catch(error => console.warn(`Cannot set state: ${error}`));
+                this.setObjectWithState(this.state.rxData.setId, this.state.rxData.setValue).catch(error =>
+                    console.warn(`Cannot set state: ${error}`),
+                );
             }
             // show dialog
             this.showDialog(true);
@@ -641,35 +671,43 @@ class JQuiButton<P extends JQuiButtonDataProps = JQuiButtonDataProps, S extends 
         console.log('test');
         if (this.state.rxData.modal) {
             console.log('in');
-            return <Dialog
-                // fullWidth
-                maxWidth="xl"
-                id={`${this.props.id}_dialog`}
-                ref={this.refDialog}
-                open={this.state.dialogVisible}
-                onClick={() => {
-                    if (this.state.rxData.closeOnClick) {
-                        this.showDialog(false);
-                    }
-                }}
-            >
-                <div style={{ backgroundColor: this.state.rxData.dialogBackgroundColor }}>
-                    {this.state.rxData.title ? <DialogTitle sx={{ color: this.state.rxData.dialogTitleColor }}>{this.state.rxData.title}</DialogTitle> : null}
-                    {!this.state.rxData.hideCloseButton || !this.state.rxData.closeOnClick ? <IconButton
-                        sx={{ color: this.state.rxData.dialogTitleColor }}
-                        style={{
-                            position: 'absolute',
-                            top: 0,
-                            right: 0,
-                            zIndex: 800,
-                        }}
-                        onClick={() => this.showDialog(false)}
-                    >
-                        <Close />
-                    </IconButton> : null}
-                    <DialogContent>{content}</DialogContent>
-                </div>
-            </Dialog>;
+            return (
+                <Dialog
+                    // fullWidth
+                    maxWidth="xl"
+                    id={`${this.props.id}_dialog`}
+                    ref={this.refDialog}
+                    open={this.state.dialogVisible}
+                    onClick={() => {
+                        if (this.state.rxData.closeOnClick) {
+                            this.showDialog(false);
+                        }
+                    }}
+                >
+                    <div style={{ backgroundColor: this.state.rxData.dialogBackgroundColor }}>
+                        {this.state.rxData.title ? (
+                            <DialogTitle sx={{ color: this.state.rxData.dialogTitleColor }}>
+                                {this.state.rxData.title}
+                            </DialogTitle>
+                        ) : null}
+                        {!this.state.rxData.hideCloseButton || !this.state.rxData.closeOnClick ? (
+                            <IconButton
+                                sx={{ color: this.state.rxData.dialogTitleColor }}
+                                style={{
+                                    position: 'absolute',
+                                    top: 0,
+                                    right: 0,
+                                    zIndex: 800,
+                                }}
+                                onClick={() => this.showDialog(false)}
+                            >
+                                <Close />
+                            </IconButton>
+                        ) : null}
+                        <DialogContent>{content}</DialogContent>
+                    </div>
+                </Dialog>
+            );
         }
 
         if (!this.state.dialogVisible) {
@@ -689,57 +727,59 @@ class JQuiButton<P extends JQuiButtonDataProps = JQuiButtonDataProps, S extends 
         delete paperStyle.left;
         paperStyle.padding = this.state.rxData.title ? '0 24px 24px 24px' : '26px 24px 24px 24px';
 
-        return <Popper
-            open={this.state.dialogVisible}
-            id={`${this.props.id}_dialog`}
-            ref={this.refDialog}
-            anchorEl={this.refButton.current}
-            style={dialogStyle}
-            onClick={() => {
-                if (this.state.rxData.closeOnClick) {
-                    this.showDialog(false);
-                }
-            }}
-        >
-            <Paper
-                style={{ ...paperStyle, background: 'red !important' }}
+        return (
+            <Popper
+                open={this.state.dialogVisible}
+                id={`${this.props.id}_dialog`}
+                ref={this.refDialog}
+                anchorEl={this.refButton.current}
+                style={dialogStyle}
+                onClick={() => {
+                    if (this.state.rxData.closeOnClick) {
+                        this.showDialog(false);
+                    }
+                }}
             >
-                {this.state.rxData.title ?
-                    <DialogTitle style={{ padding: '16px 0 0 0' }}>
-                        <div>{this.state.rxData.title}</div>
-                    </DialogTitle>
-                    :
-                    null}
-                <IconButton
-                    style={{
-                        position: 'absolute',
-                        top: 0,
-                        right: 0,
-                        zIndex: 800,
-                    }}
-                    onClick={() => this.showDialog(false)}
-                >
-                    <Close />
-                </IconButton>
-                <DialogContent>{content}</DialogContent>
-            </Paper>
-        </Popper>;
+                <Paper style={{ ...paperStyle, background: 'red !important' }}>
+                    {this.state.rxData.title ? (
+                        <DialogTitle style={{ padding: '16px 0 0 0' }}>
+                            <div>{this.state.rxData.title}</div>
+                        </DialogTitle>
+                    ) : null}
+                    <IconButton
+                        style={{
+                            position: 'absolute',
+                            top: 0,
+                            right: 0,
+                            zIndex: 800,
+                        }}
+                        onClick={() => this.showDialog(false)}
+                    >
+                        <Close />
+                    </IconButton>
+                    <DialogContent>{content}</DialogContent>
+                </Paper>
+            </Popper>
+        );
     }
 
     renderJQueryDialog(dialogStyle: CSSProperties, content: React.JSX.Element) {
-        return <div
-            id={`${this.props.id}_dialog`}
-            className="vis-widget-dialog"
-            title={this.state.rxData.title}
-            style={dialogStyle}
-            ref={this.refDialog}
-        >
-            {this.state.rxData.preload ? content : null}
-        </div>;
+        return (
+            <div
+                id={`${this.props.id}_dialog`}
+                className="vis-widget-dialog"
+                title={this.state.rxData.title}
+                style={dialogStyle}
+                ref={this.refDialog}
+            >
+                {this.state.rxData.preload ? content : null}
+            </div>
+        );
     }
 
     renderDialog() {
-        if (this.props.editMode ||
+        if (
+            this.props.editMode ||
             (!this.state.dialogVisible && !this.state.rxData.persistent && !this.state.rxData.externalDialog) ||
             (!this.state.rxData.html_dialog && !this.state.rxData.contains_view)
         ) {
@@ -751,13 +791,17 @@ class JQuiButton<P extends JQuiButtonDataProps = JQuiButtonDataProps, S extends 
         // eslint-disable-next-line no-restricted-properties
         // const left = isVarFinite(this.state.rxData.dialog_left) ? parseFloat(this.state.rxData.dialog_left) : this.state.rxData.dialog_left;
         // eslint-disable-next-line no-restricted-properties
-        const width = isVarFinite(this.state.rxData.dialog_width) ? parseFloat(this.state.rxData.dialog_width) : this.state.rxData.dialog_width;
+        const width = isVarFinite(this.state.rxData.dialog_width)
+            ? parseFloat(this.state.rxData.dialog_width)
+            : this.state.rxData.dialog_width;
         // eslint-disable-next-line no-restricted-properties
-        const height = isVarFinite(this.state.rxData.dialog_height) ? parseFloat(this.state.rxData.dialog_height) : this.state.rxData.dialog_height;
+        const height = isVarFinite(this.state.rxData.dialog_height)
+            ? parseFloat(this.state.rxData.dialog_height)
+            : this.state.rxData.dialog_height;
 
         const dialogStyle: CSSProperties = {
-            minWidth: width || (window.innerWidth - 50),
-            minHeight: height || (window.innerHeight - 50),
+            minWidth: width || window.innerWidth - 50,
+            minHeight: height || window.innerHeight - 50,
             // top: top || top === 0 ? top : undefined,
             // left: left || left === 0 ? left : undefined,
             overflowX: this.state.rxData.overflowX as any,
@@ -766,19 +810,23 @@ class JQuiButton<P extends JQuiButtonDataProps = JQuiButtonDataProps, S extends 
 
         let content;
         if (this.state.rxData.contains_view) {
-            content = <div
-                style={dialogStyle}
-                className={this.state.rxData.dialog_class}
-            >
-                {super.getWidgetView(this.state.rxData.contains_view, undefined)}
-            </div>;
+            content = (
+                <div
+                    style={dialogStyle}
+                    className={this.state.rxData.dialog_class}
+                >
+                    {super.getWidgetView(this.state.rxData.contains_view, undefined)}
+                </div>
+            );
         } else {
-            content = <div
-                style={dialogStyle}
-                className={this.state.rxData.dialog_class}
-                // eslint-disable-next-line react/no-danger
-                dangerouslySetInnerHTML={{ __html: this.state.rxData.html_dialog }}
-            />;
+            content = (
+                <div
+                    style={dialogStyle}
+                    className={this.state.rxData.dialog_class}
+                    // eslint-disable-next-line react/no-danger
+                    dangerouslySetInnerHTML={{ __html: this.state.rxData.html_dialog }}
+                />
+            );
         }
 
         if (this.state.rxData.jquery_style) {
@@ -808,25 +856,24 @@ class JQuiButton<P extends JQuiButtonDataProps = JQuiButtonDataProps, S extends 
         let iconSrc = !this.state.rxData.jquery_style && (this.state.rxData.src || this.state.rxData.icon);
 
         if (iconSrc && iconSrc.startsWith('_PRJ_NAME/')) {
-            iconSrc = iconSrc.replace('_PRJ_NAME/', `../${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}/`);
+            iconSrc = iconSrc.replace(
+                '_PRJ_NAME/',
+                `../${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}/`,
+            );
         }
-        const icon = iconSrc ? <Icon
-            src={iconSrc}
-            style={iconStyle}
-        /> : null;
+        const icon = iconSrc ? (
+            <Icon
+                src={iconSrc}
+                style={iconStyle}
+            />
+        ) : null;
 
         const buttonStyle: CSSProperties = { textTransform: 'none' };
         // apply style from the element
         Object.keys(this.state.rxStyle).forEach(attr => {
             const value = (this.state.rxStyle as any)[attr];
-            if (value !== null &&
-                value !== undefined &&
-                VisRxWidget.POSSIBLE_MUI_STYLES.includes(attr)
-            ) {
-                attr = attr.replace(
-                    /(-\w)/g,
-                    text => text[1].toUpperCase(),
-                );
+            if (value !== null && value !== undefined && VisRxWidget.POSSIBLE_MUI_STYLES.includes(attr)) {
+                attr = attr.replace(/(-\w)/g, text => text[1].toUpperCase());
                 (buttonStyle as any)[attr] = value;
             }
         });
@@ -840,7 +887,8 @@ class JQuiButton<P extends JQuiButtonDataProps = JQuiButtonDataProps, S extends 
         // the following widgets are resizable by default
         let visResizable = this.state.data.visResizable;
         if (visResizable === undefined || visResizable === null) {
-            if (this.props.tpl === 'tplJquiButtonNav' ||
+            if (
+                this.props.tpl === 'tplJquiButtonNav' ||
                 this.props.tpl === 'tplJquiNavPw' ||
                 this.props.tpl === 'tplContainerDialog' ||
                 this.props.tpl === 'tplContainerIconDialog' ||
@@ -867,7 +915,9 @@ class JQuiButton<P extends JQuiButtonDataProps = JQuiButtonDataProps, S extends 
         if (this.state.rxData.html) {
             // ignore
         } else if (this.state.rxData.nav_view && this.state.rxData.buttontext_view) {
-            buttonText = this.props.context.views[this.state.rxData.nav_view]?.settings?.navigationTitle || this.state.rxData.nav_view;
+            buttonText =
+                this.props.context.views[this.state.rxData.nav_view]?.settings?.navigationTitle ||
+                this.state.rxData.nav_view;
         } else if (this.state.rxData.buttontext === undefined) {
             buttonText = this.state.rxData.text || ''; // back compatibility
         } else {
@@ -876,96 +926,116 @@ class JQuiButton<P extends JQuiButtonDataProps = JQuiButtonDataProps, S extends 
 
         let content;
         if (this.state.rxData.externalDialog) {
-            content = this.props.editMode ? <div
-                style={{
-                    width: '100%',
-                    height: '100%',
-                    border: '2px dashed red',
-                    backgroundColor: 'grey',
-                    color: 'white',
-                    boxSizing: 'border-box',
-                }}
-            >
-                <IconButton
+            content = this.props.editMode ? (
+                <div
                     style={{
-                        ...this.props.context.editModeComponentStyle,
-                        position: 'absolute',
-                        bottom: 0,
-                        right: 0,
-                        opacity: 0.4,
-                    }}
-                    onClick={e => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        const text = `setState('${this.props.context.adapterName}.${this.props.context.instance}.control.command', '${JSON.stringify({ command: 'dialog', instance: window.localStorage.getItem('visInstance'), data: this.state.rxData.dialogName || this.props.id })}')`;
-                        window.alert(I18n.t('Copied %s', text));
-                        Utils.copyToClipboard(text);
+                        width: '100%',
+                        height: '100%',
+                        border: '2px dashed red',
+                        backgroundColor: 'grey',
+                        color: 'white',
+                        boxSizing: 'border-box',
                     }}
                 >
-                    <IconCopy />
-                </IconButton>
-                <div>{I18n.t('External dialog')}</div>
-                <div>{this.state.rxData.html_dialog ? 'HTML' : `View: ${this.state.rxData.contains_view}`}</div>
-                <div>{`Name: ${this.state.rxData.dialogName ? `${this.state.rxData.dialogName} (${this.props.id})` : this.props.id}`}</div>
-                <div style={{ fontSize: 10 }}>{I18n.t('You can open dialog with following script:')}</div>
-                <div style={{ fontSize: 10 }}>{`setState('${this.props.context.adapterName}.${this.props.context.instance}.control.command', '${JSON.stringify({ command: 'dialog', instance: window.localStorage.getItem('visInstance'), data: this.state.rxData.dialogName || this.props.id })}')`}</div>
-            </div> : null;
+                    <IconButton
+                        style={{
+                            ...this.props.context.editModeComponentStyle,
+                            position: 'absolute',
+                            bottom: 0,
+                            right: 0,
+                            opacity: 0.4,
+                        }}
+                        onClick={e => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            const text = `setState('${this.props.context.adapterName}.${this.props.context.instance}.control.command', '${JSON.stringify({ command: 'dialog', instance: window.localStorage.getItem('visInstance'), data: this.state.rxData.dialogName || this.props.id })}')`;
+                            window.alert(I18n.t('Copied %s', text));
+                            Utils.copyToClipboard(text);
+                        }}
+                    >
+                        <IconCopy />
+                    </IconButton>
+                    <div>{I18n.t('External dialog')}</div>
+                    <div>{this.state.rxData.html_dialog ? 'HTML' : `View: ${this.state.rxData.contains_view}`}</div>
+                    <div>{`Name: ${this.state.rxData.dialogName ? `${this.state.rxData.dialogName} (${this.props.id})` : this.props.id}`}</div>
+                    <div style={{ fontSize: 10 }}>{I18n.t('You can open dialog with following script:')}</div>
+                    <div
+                        style={{ fontSize: 10 }}
+                    >{`setState('${this.props.context.adapterName}.${this.props.context.instance}.control.command', '${JSON.stringify({ command: 'dialog', instance: window.localStorage.getItem('visInstance'), data: this.state.rxData.dialogName || this.props.id })}')`}</div>
+                </div>
+            ) : null;
         } else {
             content = [
-                this.state.rxData.html_prepend ? <span
-                    key="prepend"
-                    // eslint-disable-next-line react/no-danger
-                    dangerouslySetInnerHTML={{ __html: this.state.rxData.html_prepend }}
-                /> : null,
-                this.state.rxData.html ?
+                this.state.rxData.html_prepend ? (
+                    <span
+                        key="prepend"
+                        // eslint-disable-next-line react/no-danger
+                        dangerouslySetInnerHTML={{ __html: this.state.rxData.html_prepend }}
+                    />
+                ) : null,
+                this.state.rxData.html ? (
                     <span
                         key="content"
                         // eslint-disable-next-line react/no-danger
                         dangerouslySetInnerHTML={{ __html: this.state.rxData.html }}
                     />
-                    :
-                    (this.state.rxData.no_style || this.state.rxData.jquery_style ?
-                        <button
-                            key="content"
-                            className={this.state.rxData.nav_view && this.state.rxData.nav_view === window.location.hash.slice(1) ? 'ui-state-active' : undefined}
-                            ref={this.refButton}
-                            type="button"
-                            style={buttonStyle}
-                            onClick={() => this.onClick()}
-                        >
-                            {icon}
-                            {buttonText}
-                        </button>
-                        :
-                        <Button
-                            key="content"
-                            ref={this.refButton}
-                            style={buttonStyle}
-                            color={this.state.rxData.nav_view && this.state.rxData.nav_view === window.location.hash.slice(1) ?
-                                (this.state.rxData.color === 'primary' ? 'secondary' : 'primary') :
-                                (this.state.rxData.color || 'grey') as any}
-                            variant={this.state.rxData.variant === undefined ? 'contained' : this.state.rxData.variant as any}
-                            onClick={() => this.onClick()}
-                        >
-                            {icon}
-                            {buttonText}
-                        </Button>),
-                this.state.rxData.html_append ? <span
-                    key="append"
-                    // eslint-disable-next-line react/no-danger
-                    dangerouslySetInnerHTML={{ __html: this.state.rxData.html_append }}
-                /> : null,
+                ) : this.state.rxData.no_style || this.state.rxData.jquery_style ? (
+                    <button
+                        key="content"
+                        className={
+                            this.state.rxData.nav_view && this.state.rxData.nav_view === window.location.hash.slice(1)
+                                ? 'ui-state-active'
+                                : undefined
+                        }
+                        ref={this.refButton}
+                        type="button"
+                        style={buttonStyle}
+                        onClick={() => this.onClick()}
+                    >
+                        {icon}
+                        {buttonText}
+                    </button>
+                ) : (
+                    <Button
+                        key="content"
+                        ref={this.refButton}
+                        style={buttonStyle}
+                        color={
+                            this.state.rxData.nav_view && this.state.rxData.nav_view === window.location.hash.slice(1)
+                                ? this.state.rxData.color === 'primary'
+                                    ? 'secondary'
+                                    : 'primary'
+                                : ((this.state.rxData.color || 'grey') as any)
+                        }
+                        variant={
+                            this.state.rxData.variant === undefined ? 'contained' : (this.state.rxData.variant as any)
+                        }
+                        onClick={() => this.onClick()}
+                    >
+                        {icon}
+                        {buttonText}
+                    </Button>
+                ),
+                this.state.rxData.html_append ? (
+                    <span
+                        key="append"
+                        // eslint-disable-next-line react/no-danger
+                        dangerouslySetInnerHTML={{ __html: this.state.rxData.html_append }}
+                    />
+                ) : null,
             ];
         }
 
-        return <div
-            className="vis-widget-body"
-            onClick={this.state.rxData.html ? () => this.onClick() : undefined}
-        >
-            {content}
-            {this.renderDialog()}
-            {this.renderPasswordDialog()}
-        </div>;
+        return (
+            <div
+                className="vis-widget-body"
+                onClick={this.state.rxData.html ? () => this.onClick() : undefined}
+            >
+                {content}
+                {this.renderDialog()}
+                {this.renderPasswordDialog()}
+            </div>
+        );
     }
 }
 

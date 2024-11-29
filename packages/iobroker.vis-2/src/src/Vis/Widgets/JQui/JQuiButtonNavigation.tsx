@@ -14,14 +14,16 @@
  */
 
 import type {
-    RxWidgetInfo, RxWidgetInfoAttributesFieldCheckbox,
-    RxWidgetInfoAttributesFieldDefault, RxWidgetInfoAttributesFieldText,
+    RxWidgetInfo,
+    RxWidgetInfoAttributesFieldCheckbox,
+    RxWidgetInfoAttributesFieldDefault,
+    RxWidgetInfoAttributesFieldText,
     RxWidgetInfoWriteable,
 } from '@iobroker/types-vis-2';
 import JQuiButton from './JQuiButton';
 
 class JQuiButtonNavigation extends JQuiButton {
-    static getWidgetInfo() {
+    static getWidgetInfo(): RxWidgetInfo {
         const widgetInfo = JQuiButton.getWidgetInfo() as unknown as RxWidgetInfoWriteable;
 
         const newWidgetInfo = {

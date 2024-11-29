@@ -21,9 +21,10 @@ import {
 } from '@mui/icons-material';
 
 import { TbVacuumCleaner } from 'react-icons/tb';
-import type { DetectOptions } from '@iobroker/type-detector';
-import ChannelDetector, { Types } from '@iobroker/type-detector';
+
+import ChannelDetector, { Types, type DetectOptions } from '@iobroker/type-detector';
 import type { LegacyConnection } from '@iobroker/adapter-react-v5';
+
 import { getNewWidgetIdNumber, getNewWidgetId } from '@/Utils/utils';
 
 const deviceIcons = {
@@ -55,20 +56,22 @@ const deviceIcons = {
     unknown: <QuestionMark />,
 };
 
-const allObjects = async (socket: LegacyConnection) => {
+const allObjects = async (socket: LegacyConnection): Promise<Record<string, ioBroker.Object>> => {
     const states = await socket.getObjectViewSystem('state', '', '\u9999');
     const channels = await socket.getObjectViewSystem('channel', '', '\u9999');
     const devices = await socket.getObjectViewSystem('device', '', '\u9999');
     const folders = await socket.getObjectViewSystem('folder', '', '\u9999');
     const enums = await socket.getObjectViewSystem('enum', '', '\u9999');
 
-    return Object.values(states)
-        .concat(Object.values(channels))
-        .concat(Object.values(devices))
-        .concat(Object.values(folders))
-        .concat(Object.values(enums))
-        // eslint-disable-next-line
-        .reduce((obj: Record<string, ioBroker.Object>, item: ioBroker.Object) => (obj[item._id] = item, obj), {});
+    return (
+        Object.values(states)
+            .concat(Object.values(channels))
+            .concat(Object.values(devices))
+            .concat(Object.values(folders))
+            .concat(Object.values(enums))
+            // eslint-disable-next-line
+            .reduce((obj: Record<string, ioBroker.Object>, item: ioBroker.Object) => ((obj[item._id] = item), obj), {})
+    );
 };
 
 function getObjectIcon(obj: ioBroker.Object, id: string, imagePrefix?: string): string {
@@ -83,7 +86,11 @@ function getObjectIcon(obj: ioBroker.Object, id: string, imagePrefix?: string): 
                 if (cIcon.includes('.')) {
                     let instance;
                     if (obj.type === 'instance' || obj.type === 'adapter') {
-                        src = `${imagePrefix}/adapter/${common.name}/${cIcon}`;
+                        if (typeof common.name === 'object') {
+                            src = `${imagePrefix}/adapter/${common.name.en}/${cIcon}`;
+                        } else {
+                            src = `${imagePrefix}/adapter/${common.name}/${cIcon}`;
+                        }
                     } else if (id && id.startsWith('system.adapter.')) {
                         instance = id.split('.', 3);
                         if (cIcon[0] === '/') {
@@ -136,13 +143,16 @@ interface DetectorResult {
     devices: ObjectForDetector[];
 }
 
-const detectDevices = async (socket: LegacyConnection) => {
-    const devicesObject: Record<string, ObjectForDetector> = await allObjects(socket) as Record<string, ObjectForDetector>;
+const detectDevices = async (socket: LegacyConnection): Promise<DetectorResult[]> => {
+    const devicesObject: Record<string, ObjectForDetector> = (await allObjects(socket)) as Record<
+        string,
+        ObjectForDetector
+    >;
     const keys = Object.keys(devicesObject).sort();
     const detector = new ChannelDetector();
 
     const usedIds: string[] = [];
-    const ignoreIndicators = ['UNREACH_STICKY'];    // Ignore indicators by name
+    const ignoreIndicators = ['UNREACH_STICKY']; // Ignore indicators by name
     const excludedTypes: Types[] = [Types.info];
     const enums: string[] = [];
     const rooms: string[] = [];
@@ -217,10 +227,16 @@ const detectDevices = async (socket: LegacyConnection) => {
                 if (devicesObject[stateId].type === 'channel' || devicesObject[stateId].type === 'state') {
                     parts.pop();
                     channelId = parts.join('.');
-                    if (devicesObject[channelId] && (devicesObject[channelId].type === 'channel' || devicesObject[channelId].type === 'folder')) {
+                    if (
+                        devicesObject[channelId] &&
+                        (devicesObject[channelId].type === 'channel' || devicesObject[channelId].type === 'folder')
+                    ) {
                         parts.pop();
                         deviceId = parts.join('.');
-                        if (!devicesObject[deviceId] || (devicesObject[deviceId].type !== 'device' && devicesObject[deviceId].type !== 'folder')) {
+                        if (
+                            !devicesObject[deviceId] ||
+                            (devicesObject[deviceId].type !== 'device' && devicesObject[deviceId].type !== 'folder')
+                        ) {
                             deviceId = null;
                         }
                     } else {
@@ -232,7 +248,10 @@ const detectDevices = async (socket: LegacyConnection) => {
                     if ((devicesObject[roomId].common as ioBroker.EnumCommon).members.includes(stateId)) {
                         return true;
                     }
-                    if (channelId && (devicesObject[roomId].common as ioBroker.EnumCommon).members.includes(channelId)) {
+                    if (
+                        channelId &&
+                        (devicesObject[roomId].common as ioBroker.EnumCommon).members.includes(channelId)
+                    ) {
                         return true;
                     }
                     return deviceId && (devicesObject[roomId].common as ioBroker.EnumCommon).members.includes(deviceId);
@@ -278,22 +297,39 @@ const detectDevices = async (socket: LegacyConnection) => {
 
                 // read channel
                 const parentObject = devicesObject[idArray.join('.')];
-                if (parentObject && (parentObject.type === 'channel' || parentObject.type === 'device' || parentObject.type === 'folder')) {
+                if (
+                    parentObject &&
+                    (parentObject.type === 'channel' ||
+                        parentObject.type === 'device' ||
+                        parentObject.type === 'folder')
+                ) {
                     deviceObj.common.name = parentObject.common?.name || deviceObj.common.name;
                     if (parentObject.common.icon) {
-                        deviceObj.common.icon = getObjectIcon(parentObject as ioBroker.Object, parentObject._id, '../..');
+                        deviceObj.common.icon = getObjectIcon(
+                            parentObject as ioBroker.Object,
+                            parentObject._id,
+                            '../..',
+                        );
                     }
                     idArray.pop();
                     // read device
                     const grandParentObject = devicesObject[idArray.join('.')];
                     if (grandParentObject?.type === 'device' && grandParentObject.common?.icon) {
                         deviceObj.common.name = grandParentObject.common.name || deviceObj.common.name;
-                        deviceObj.common.icon = getObjectIcon(grandParentObject as ioBroker.Object, grandParentObject._id, '../..');
+                        deviceObj.common.icon = getObjectIcon(
+                            grandParentObject as ioBroker.Object,
+                            grandParentObject._id,
+                            '../..',
+                        );
                     }
                 } else {
                     deviceObj.common.name = parentObject?.common?.name || deviceObj.common.name;
                     if (parentObject?.common?.icon) {
-                        deviceObj.common.icon = getObjectIcon(parentObject as ioBroker.Object, parentObject._id, '../..');
+                        deviceObj.common.icon = getObjectIcon(
+                            parentObject as ioBroker.Object,
+                            parentObject._id,
+                            '../..',
+                        );
                     }
                 }
             } else {

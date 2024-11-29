@@ -1,6 +1,6 @@
 import React from 'react';
 import VisRxWidget from '@/Vis/visRxWidget';
-import type { RxRenderWidgetProps } from '@iobroker/types-vis-2';
+import type { RxRenderWidgetProps, RxWidgetInfo } from '@iobroker/types-vis-2';
 import { NOTHING_SELECTED } from '@/Utils/utils';
 
 type RxData = {
@@ -23,73 +23,75 @@ export default class BasicBulb extends VisRxWidget<RxData> {
      * Enables calling widget info on the class instance itself
      */
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo() {
+    getWidgetInfo(): RxWidgetInfo {
         return BasicBulb.getWidgetInfo();
     }
 
     /**
      * Returns the widget info which is rendered in the edit mode
      */
-    static getWidgetInfo() {
+    static getWidgetInfo(): RxWidgetInfo {
         return {
             id: 'tplBulbOnOffCtrl',
             visSet: 'basic',
             visName: 'Bulb on/off',
             visPrev: 'widgets/basic/img/Prev_BulbOnOffCtrl.png',
-            visAttrs: [{
-                name: 'common',
-                fields: [
-                    {
-                        name: 'oid',
-                        type: 'id',
-                    },
-                    {
-                        name: 'min',
-                    },
-                    {
-                        name: 'max',
-                    },
-                    {
-                        name: 'icon_off',
-                        type: 'image',
-                        default: 'img/bulb_off.png',
-                    },
-                    {
-                        name: 'icon_on',
-                        type: 'image',
-                        default: 'img/bulb_on.png',
-                    },
-                    {
-                        name: 'readOnly',
-                        type: 'checkbox',
-                    },
-                ],
-            },
-            {
-                name: 'ccontrol',
-                fields: [
-                    {
-                        name: 'urlTrue',
-                    },
-                    {
-                        name: 'urlFalse',
-                    },
-                    {
-                        name: 'oidTrue',
-                        type: 'id',
-                    },
-                    {
-                        name: 'oidFalse',
-                        type: 'id',
-                    },
-                    {
-                        name: 'oidTrueValue',
-                    },
-                    {
-                        name: 'oidFalseValue',
-                    },
-                ],
-            }],
+            visAttrs: [
+                {
+                    name: 'common',
+                    fields: [
+                        {
+                            name: 'oid',
+                            type: 'id',
+                        },
+                        {
+                            name: 'min',
+                        },
+                        {
+                            name: 'max',
+                        },
+                        {
+                            name: 'icon_off',
+                            type: 'image',
+                            default: 'img/bulb_off.png',
+                        },
+                        {
+                            name: 'icon_on',
+                            type: 'image',
+                            default: 'img/bulb_on.png',
+                        },
+                        {
+                            name: 'readOnly',
+                            type: 'checkbox',
+                        },
+                    ],
+                },
+                {
+                    name: 'ccontrol',
+                    fields: [
+                        {
+                            name: 'urlTrue',
+                        },
+                        {
+                            name: 'urlFalse',
+                        },
+                        {
+                            name: 'oidTrue',
+                            type: 'id',
+                        },
+                        {
+                            name: 'oidFalse',
+                            type: 'id',
+                        },
+                        {
+                            name: 'oidTrueValue',
+                        },
+                        {
+                            name: 'oidFalseValue',
+                        },
+                    ],
+                },
+            ],
         };
     }
 
@@ -103,13 +105,8 @@ export default class BasicBulb extends VisRxWidget<RxData> {
 
         let val = this.state.values[`${this.state.rxData.oid}.val`];
 
-        const {
-            oidTrue, urlTrue, oid, min,
-            max, oidTrueValue, oidFalseValue,
-        } = this.state.rxData;
-        let {
-            urlFalse, oidFalse,
-        } = this.state.rxData;
+        const { oidTrue, urlTrue, oid, min, max, oidTrueValue, oidFalseValue } = this.state.rxData;
+        let { urlFalse, oidFalse } = this.state.rxData;
 
         let finalMin: string | boolean = min ?? '';
         let finalMax: string | boolean = max ?? '';
@@ -143,7 +140,7 @@ export default class BasicBulb extends VisRxWidget<RxData> {
 
             if (finalMin === '' || finalMin === 'false' || finalMin === null) {
                 finalMin = false;
-            } else if (finalMax === '' || finalMax === 'true'  || finalMax === null) {
+            } else if (finalMax === '' || finalMax === 'true' || finalMax === null) {
                 finalMax = true;
             }
 
@@ -174,7 +171,9 @@ export default class BasicBulb extends VisRxWidget<RxData> {
                     }
                     if (typeof oidFalseValueFinal === 'string') {
                         const f = parseFloat(oidFalseValueFinal);
-                        if (f.toString() === oidFalseValueFinal) oidFalseValueFinal = f;
+                        if (f.toString() === oidFalseValueFinal) {
+                            oidFalseValueFinal = f;
+                        }
                     }
                     this.props.context.setValue(oidFalse, oidFalseValueFinal);
                 }
@@ -187,33 +186,35 @@ export default class BasicBulb extends VisRxWidget<RxData> {
                     this.props.context.socket.getRawSocket().emit('httpGet', urlFalse);
                 }
             }
-        } else if ((finalMin === '' &&
+        } else if (
+            (finalMin === '' &&
                 (val === null || val === '' || val === undefined || val === false || val === 'false')) ||
-                        (finalMin !== '' && finalMin === val)) {
+            (finalMin !== '' && finalMin === val)
+        ) {
             typeof oid === 'string' && this.props.context.setValue(oid, finalMax !== '' ? finalMax : true);
-        } else
-            if ((finalMax === '' && (val === true || val === 'true')) || (finalMax !== '' && val === finalMax)) {
-                typeof oid === 'string' && this.props.context.setValue(oid,  finalMin !== '' ? finalMin : false);
-            } else if (typeof oid === 'string') {
-                val = parseFloat(val);
-                if (finalMin !== '' &&
-                    finalMax !== '' &&
-                    (typeof finalMax === 'number' || typeof finalMax === 'string') &&
-                    (typeof finalMin === 'number' || typeof finalMin === 'string')
-                ) {
-                    if (val >= (parseFloat(finalMax) - parseFloat(finalMin)) / 2) {
-                        val = finalMin;
-                    } else {
-                        val = finalMax;
-                    }
-                } else if (val >= 0.5) {
-                    val = 0;
+        } else if ((finalMax === '' && (val === true || val === 'true')) || (finalMax !== '' && val === finalMax)) {
+            typeof oid === 'string' && this.props.context.setValue(oid, finalMin !== '' ? finalMin : false);
+        } else if (typeof oid === 'string') {
+            val = parseFloat(val);
+            if (
+                finalMin !== '' &&
+                finalMax !== '' &&
+                (typeof finalMax === 'number' || typeof finalMax === 'string') &&
+                (typeof finalMin === 'number' || typeof finalMin === 'string')
+            ) {
+                if (val >= (parseFloat(finalMax) - parseFloat(finalMin)) / 2) {
+                    val = finalMin;
                 } else {
-                    val = 1;
+                    val = finalMax;
                 }
-
-                this.props.context.setValue(oid,  val);
+            } else if (val >= 0.5) {
+                val = 0;
+            } else {
+                val = 1;
             }
+
+            this.props.context.setValue(oid, val);
+        }
     }
 
     /**
@@ -237,7 +238,18 @@ export default class BasicBulb extends VisRxWidget<RxData> {
             return val === min;
         }
 
-        if (val === undefined || val === null || val === false || val === 'false' || val === 'FALSE' || val === 'False' || val === 'OFF' || val === 'Off' || val === 'off' || val === '') {
+        if (
+            val === undefined ||
+            val === null ||
+            val === false ||
+            val === 'false' ||
+            val === 'FALSE' ||
+            val === 'False' ||
+            val === 'OFF' ||
+            val === 'Off' ||
+            val === 'off' ||
+            val === ''
+        ) {
             return true;
         }
         if (val === '0' || val === 0) {
@@ -259,7 +271,7 @@ export default class BasicBulb extends VisRxWidget<RxData> {
         super.renderWidgetBody(props);
 
         const val = this.state.values[`${this.state.rxData.oid}.val`];
-        const isOff = this.isFalse(val, this.state.rxData.min as string, this.state.rxData.max as string);
+        const isOff = this.isFalse(val, this.state.rxData.min, this.state.rxData.max);
 
         let src;
 
@@ -269,8 +281,17 @@ export default class BasicBulb extends VisRxWidget<RxData> {
             src = this.state.rxData.icon_on || 'img/bulb_on.png';
         }
 
-        return <div className="vis-widget-body" onClick={() => this.toggle()}>
-            <img src={src.toString()} alt="tplBulbOnOffCtrl" width="100%" />
-        </div>;
+        return (
+            <div
+                className="vis-widget-body"
+                onClick={() => this.toggle()}
+            >
+                <img
+                    src={src.toString()}
+                    alt="tplBulbOnOffCtrl"
+                    width="100%"
+                />
+            </div>
+        );
     }
 }

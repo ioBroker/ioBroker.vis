@@ -15,11 +15,15 @@
 (window as any).systemDictionary = {};
 (window as any).systemLang = 'en';
 
-function translateWord(text: string, lang?: ioBroker.Languages, dictionary?: Record<string, Record<ioBroker.Languages, string>>): string {
+function translateWord(
+    text: string,
+    lang?: ioBroker.Languages,
+    dictionary?: Record<string, Record<ioBroker.Languages, string>>,
+): string {
     if (!text) {
         return '';
     }
-    lang = lang || (window as any).systemLang as ioBroker.Languages || 'en';
+    lang = lang || ((window as any).systemLang as ioBroker.Languages) || 'en';
     dictionary = dictionary || (window as any).systemDictionary || {};
 
     if (dictionary && dictionary[text]) {
@@ -43,7 +47,12 @@ function translateWord(text: string, lang?: ioBroker.Languages, dictionary?: Rec
 }
 
 // make possible _('words to translate')
-(window as any)._ = (text: string, arg1?: boolean | number | string, arg2?: boolean | number | string, arg3?: boolean | number | string) => {
+(window as any)._ = (
+    text: string,
+    arg1?: boolean | number | string,
+    arg2?: boolean | number | string,
+    arg3?: boolean | number | string,
+) => {
     text = translateWord(text);
 
     let pos = text.indexOf('%s');
@@ -68,7 +77,8 @@ function translateWord(text: string, lang?: ioBroker.Languages, dictionary?: Rec
     return text;
 };
 
-(window as any).addWords = (words: Record<string, Record<string, string>>) => Object.assign((window as any).systemDictionary || {}, words);
+(window as any).addWords = (words: Record<string, Record<string, string>>) =>
+    Object.assign((window as any).systemDictionary || {}, words);
 
 (window as any).addWords({
     'No connection to Server': {
@@ -81,7 +91,7 @@ function translateWord(text: string, lang?: ioBroker.Languages, dictionary?: Rec
         it: 'Nessuna connessione al server',
         es: 'Sin conexión al servidor',
         pl: 'Brak połączenia z serwerem',
-        uk: 'Немає з\'єднання з сервером',
+        uk: "Немає з'єднання з сервером",
         'zh-cn': '没有与服务器的连接',
     },
     'Loading Views...': {
@@ -89,7 +99,7 @@ function translateWord(text: string, lang?: ioBroker.Languages, dictionary?: Rec
         de: 'Lade Views...',
         ru: 'Загрузка пользовательских страниц...',
         pt: 'Carregando páginas ...',
-        nl: 'Pagina\'s laden ...',
+        nl: "Pagina's laden ...",
         fr: 'Chargement des pages ...',
         it: 'Caricamento pagine ...',
         es: 'Cargando páginas ...',
@@ -107,7 +117,7 @@ function translateWord(text: string, lang?: ioBroker.Languages, dictionary?: Rec
         it: 'Connessione al server...',
         es: 'Conectando al servidor...',
         pl: 'Łączenie z serwerem...',
-        uk: 'З\'єднання з сервером...',
+        uk: "З'єднання з сервером...",
         'zh-cn': '连接到服务器...',
     },
     'Loading data objects...': {
@@ -136,13 +146,13 @@ function translateWord(text: string, lang?: ioBroker.Languages, dictionary?: Rec
         uk: 'Завантаження значень ...',
         'zh-cn': '载入值...',
     },
-    'error - View doesn\'t exist': {
-        en: 'View doesn\'t exist!',
+    "error - View doesn't exist": {
+        en: "View doesn't exist!",
         de: 'View existiert nicht!',
         ru: 'Страница не существует!',
         pt: 'erro - a página não existe',
         nl: 'error - Page bestaat niet',
-        fr: 'error - La page n\'existe pas',
+        fr: "error - La page n'existe pas",
         it: 'errore - La pagina non esiste',
         es: 'error - la página no existe',
         pl: 'błąd - strona nie istnieje',
@@ -154,7 +164,7 @@ function translateWord(text: string, lang?: ioBroker.Languages, dictionary?: Rec
         de: 'Keine Views gefunden!',
         ru: 'Не найдено страниц!',
         pt: 'Nenhuma página encontrada!',
-        nl: 'Geen pagina\'s gevonden!',
+        nl: "Geen pagina's gevonden!",
         fr: 'Aucune page trouvée!',
         it: 'Nessuna pagina trovata!',
         es: 'No se encontraron páginas!',
@@ -180,7 +190,7 @@ function translateWord(text: string, lang?: ioBroker.Languages, dictionary?: Rec
         de: 'Keine Views am Server gefunden.',
         ru: 'На сервере не найдено никаких страниц.',
         pt: 'Nenhuma página encontrada no servidor',
-        nl: 'Geen pagina\'s gevonden op server',
+        nl: "Geen pagina's gevonden op server",
         fr: 'Aucune page trouvée sur le serveur',
         it: 'Nessuna pagina trovata sul server',
         es: 'No se encontraron páginas en el servidor',
@@ -281,11 +291,11 @@ function translateWord(text: string, lang?: ioBroker.Languages, dictionary?: Rec
     },
     'Cannot execute %s for %s, because of insufficient permissions': {
         en: 'Cannot execute %s for %s, because of insufficient permissions.',
-        de: 'Kann das Kommando \'%s\' für %s nicht ausführen, weil nicht genügend Zugriffsrechte vorhanden sind.',
-        ru: 'Не могу выполнить \'%s\' для %s, так как недостаточно прав.',
+        de: "Kann das Kommando '%s' für %s nicht ausführen, weil nicht genügend Zugriffsrechte vorhanden sind.",
+        ru: "Не могу выполнить '%s' для %s, так как недостаточно прав.",
         pt: 'Não é possível executar %s para %s, devido a permissões insuficientes.',
         nl: 'Kan %s niet uitvoeren voor %s, vanwege onvoldoende machtigingen.',
-        fr: 'Impossible d\'exécuter %s pour %s en raison d\'autorisations insuffisantes.',
+        fr: "Impossible d'exécuter %s pour %s en raison d'autorisations insuffisantes.",
         it: 'Impossibile eseguire %s per %s, a causa di autorizzazioni insufficienti.',
         es: 'No se puede ejecutar %s para %s, debido a permisos insuficientes.',
         pl: 'Nie można wykonać %s dla %s, z powodu niewystarczających uprawnień.',
@@ -311,8 +321,8 @@ function translateWord(text: string, lang?: ioBroker.Languages, dictionary?: Rec
         ru: 'Страница недоступна для пользователя <b>%s</b>',
         pt: 'Visualização desativada para o usuário <b>%s</b>',
         nl: 'Weergave uitgeschakeld voor gebruiker <b>%s</b>',
-        fr: 'Affichage désactivé pour l\'utilisateur <b>%s</b>',
-        it: 'Visualizza disabilitato per l\'utente <b>%s</b>',
+        fr: "Affichage désactivé pour l'utilisateur <b>%s</b>",
+        it: "Visualizza disabilitato per l'utente <b>%s</b>",
         es: 'Vista deshabilitada para el usuario <b>%s</b>',
         pl: 'Widok wyłączony dla użytkownika <b>%s</b>',
         uk: 'Відображення вимкнено для користувача <b>%s</b>',
@@ -324,7 +334,7 @@ function translateWord(text: string, lang?: ioBroker.Languages, dictionary?: Rec
         ru: 'Cегодня',
         pt: 'Hoje',
         nl: 'Vandaag',
-        fr: 'Aujourd\'hui',
+        fr: "Aujourd'hui",
         it: 'Oggi',
         es: 'Hoy',
         pl: 'Dzisiaj',

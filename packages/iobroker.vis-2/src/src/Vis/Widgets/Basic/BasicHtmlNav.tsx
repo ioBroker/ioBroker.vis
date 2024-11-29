@@ -15,7 +15,7 @@
 
 import React from 'react';
 
-import type { GetRxDataFromWidget, RxRenderWidgetProps } from '@iobroker/types-vis-2';
+import type { GetRxDataFromWidget, RxRenderWidgetProps, RxWidgetInfo } from '@iobroker/types-vis-2';
 import VisRxWidget from '@/Vis/visRxWidget';
 
 import DangerousHtmlWithScript from '../Utils/DangerousHtmlWithScript';
@@ -24,32 +24,34 @@ import DangerousHtmlWithScript from '../Utils/DangerousHtmlWithScript';
 type RxData = GetRxDataFromWidget<typeof BasicHtmlNav>;
 
 class BasicHtmlNav extends VisRxWidget<RxData> {
-    static getWidgetInfo() {
+    static getWidgetInfo(): RxWidgetInfo {
         return {
             id: 'tplHtmlNav',
             visSet: 'basic',
             visName: 'HTML navigation',
             visPrev: 'widgets/basic/img/Prev_HTMLnavigation.png',
-            visAttrs: [{
-                name: 'common',
-                fields: [
-                    {
-                        name: 'html',
-                        type: 'html',
-                    },
-                    {
-                        name: 'nav_view',
-                        type: 'views',
-                    },
-                    {
-                        name: 'sub_view',
-                        label: 'basic_sub_view',
-                        type: 'text',
-                        tooltip: 'sub_view_tooltip',
-                        hidden: '!data.nav_view',
-                    },
-                ],
-            }],
+            visAttrs: [
+                {
+                    name: 'common',
+                    fields: [
+                        {
+                            name: 'html',
+                            type: 'html',
+                        },
+                        {
+                            name: 'nav_view',
+                            type: 'views',
+                        },
+                        {
+                            name: 'sub_view',
+                            label: 'basic_sub_view',
+                            type: 'text',
+                            tooltip: 'sub_view_tooltip',
+                            hidden: '!data.nav_view',
+                        },
+                    ],
+                },
+            ],
             // visWidgetLabel: 'value_string',  // Label of widget
             visDefaultStyle: {
                 width: 200,
@@ -59,20 +61,21 @@ class BasicHtmlNav extends VisRxWidget<RxData> {
     }
 
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo() {
+    getWidgetInfo(): RxWidgetInfo {
         return BasicHtmlNav.getWidgetInfo();
     }
 
-    onNavigate = () => {
+    onNavigate = (): void => {
         if (this.state.rxData.nav_view) {
-            this.props.context.changeView(this.state.rxData.nav_view, this.state.rxData.sub_view || undefined);
+            this.props.context.changeView(
+                (this.state.rxData.nav_view || '').toString(),
+                this.state.rxData.sub_view ? this.state.rxData.sub_view.toString() : undefined,
+            );
         }
     };
 
     /**
      * Renders the widget
-     *
-     * @return {Element}
      */
     renderWidgetBody(props: RxRenderWidgetProps): React.JSX.Element {
         super.renderWidgetBody(props);
@@ -83,13 +86,15 @@ class BasicHtmlNav extends VisRxWidget<RxData> {
             props.style.height = 130;
         }
 
-        return <DangerousHtmlWithScript
-            className="vis-widget-body"
-            html={this.state.rxData.html}
-            isDiv
-            wid={this.props.id}
-            onClick={this.props.editMode ? null : this.onNavigate}
-        />;
+        return (
+            <DangerousHtmlWithScript
+                className="vis-widget-body"
+                html={(this.state.rxData.html || '').toString()}
+                isDiv
+                wid={this.props.id}
+                onClick={this.props.editMode ? null : this.onNavigate}
+            />
+        );
     }
 }
 

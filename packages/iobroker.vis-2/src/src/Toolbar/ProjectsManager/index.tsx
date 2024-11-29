@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
-import type { PopoverProps } from '@mui/material';
 import {
-    AppBar, Button, IconButton, Tooltip, Menu, MenuItem, CircularProgress,
+    AppBar,
+    Button,
+    IconButton,
+    Tooltip,
+    Menu,
+    MenuItem,
+    CircularProgress,
+    type PopoverProps,
 } from '@mui/material';
 
 import type JQuery from 'jquery';
@@ -19,7 +25,6 @@ import { I18n, type ThemeType, type LegacyConnection } from '@iobroker/adapter-r
 
 import type Editor from '@/Editor';
 import type { VisTheme } from '@iobroker/types-vis-2';
-import commonStyles from '@/Utils/styles';
 import IODialog from '../../Components/IODialog';
 import ImportProjectDialog, { getLiveHost } from './ImportProjectDialog';
 import ProjectDialog from './ProjectDialog';
@@ -95,7 +100,7 @@ const ProjectsManage: React.FC<ProjectsManageProps> = props => {
         return null;
     }
 
-    const showDialog = (type: 'add' | 'rename' | 'delete', project?: string) => {
+    const showDialog = (type: 'add' | 'rename' | 'delete', project?: string): void => {
         project = project || props.selectedView;
 
         const dialogDefaultName = {
@@ -109,7 +114,7 @@ const ProjectsManage: React.FC<ProjectsManageProps> = props => {
         setDialogName(dialogDefaultName[type]);
     };
 
-    const exportProject = async (projectName: string | false, isAnonymize?: boolean) => {
+    const exportProject = async (projectName: string | false, isAnonymize?: boolean): Promise<void> => {
         setWorking(projectName);
         const host = await getLiveHost(props.socket);
 
@@ -120,75 +125,83 @@ const ProjectsManage: React.FC<ProjectsManageProps> = props => {
         }
 
         // to do find active host
-        props.socket.getRawSocket().emit('sendToHost', host, 'readDirAsZip', {
-            id: `${props.adapterName}.${props.instance}`,
-            name: projectName || 'main',
-            options: {
-                settings: isAnonymize,
+        props.socket.getRawSocket().emit(
+            'sendToHost',
+            host,
+            'readDirAsZip',
+            {
+                id: `${props.adapterName}.${props.instance}`,
+                name: projectName || 'main',
+                options: {
+                    settings: isAnonymize,
+                },
             },
-        }, (data: {
-            error?: string;
-            data?: string;
-        }) => {
-            if (data.error) {
-                setWorking(false);
-                window.alert(data.error);
-            } else {
-                const d = new Date();
-                let date = d.getFullYear().toString();
-                let m = d.getMonth() + 1;
-                let mString = m.toString();
-                if (m < 10) {
-                    mString = `0${m}`;
+            (data: { error?: string; data?: string }) => {
+                if (data.error) {
+                    setWorking(false);
+                    window.alert(data.error);
+                } else {
+                    const d = new Date();
+                    let date = d.getFullYear().toString();
+                    let m = d.getMonth() + 1;
+                    let mString = m.toString();
+                    if (m < 10) {
+                        mString = `0${m}`;
+                    }
+                    date += `-${mString}`;
+                    m = d.getDate();
+                    if (m < 10) {
+                        mString = `0${m}`;
+                    }
+                    date += `-${mString}-`;
+                    setWorking(false);
+                    (window.$ as any)('body').append(
+                        `<a id="zip_download" href="data: application/zip;base64,${data.data}" download="${date}${projectName}.zip"></a>`,
+                    );
+                    document.getElementById('zip_download').click();
+                    document.getElementById('zip_download').remove();
                 }
-                date += `-${mString}`;
-                m = d.getDate();
-                if (m < 10) {
-                    mString = `0${m}`;
-                }
-                date += `-${mString}-`;
-                setWorking(false);
-                (window.$ as any)('body').append(`<a id="zip_download" href="data: application/zip;base64,${data.data}" download="${date}${projectName}.zip"></a>`);
-                document.getElementById('zip_download').click();
-                document.getElementById('zip_download').remove();
-            }
-        });
+            },
+        );
     };
 
-    const exportDialog = <Menu
-        onClose={() => setShowExportDialog(false)}
-        open={!!showExportDialog}
-        anchorEl={anchorEl}
-    >
-        <MenuItem
-            onClick={async () => {
-                setAnchorEl(null);
-                setShowExportDialog(null);
-                await exportProject(showExportDialog);
-            }}
+    const exportDialog = (
+        <Menu
+            onClose={() => setShowExportDialog(false)}
+            open={!!showExportDialog}
+            anchorEl={anchorEl}
         >
-            {I18n.t('normal')}
-        </MenuItem>
-        <MenuItem
-            onClick={async () => {
-                setAnchorEl(null);
-                setShowExportDialog(null);
-                await exportProject(showExportDialog, true);
-            }}
-        >
-            {I18n.t('anonymize')}
-        </MenuItem>
-    </Menu>;
+            <MenuItem
+                onClick={async () => {
+                    setAnchorEl(null);
+                    setShowExportDialog(null);
+                    await exportProject(showExportDialog);
+                }}
+            >
+                {I18n.t('normal')}
+            </MenuItem>
+            <MenuItem
+                onClick={async () => {
+                    setAnchorEl(null);
+                    setShowExportDialog(null);
+                    await exportProject(showExportDialog, true);
+                }}
+            >
+                {I18n.t('anonymize')}
+            </MenuItem>
+        </Menu>
+    );
 
-    return props.open ? <IODialog
-        open={!0}
-        onClose={props.onClose}
-        title="Manage projects"
-        closeTitle="Close"
-        closeDisabled={!props.projects.length || !!working}
-    >
-        <style>
-            {` 
+    return props.open ? (
+        <IODialog
+            open={!0}
+            onClose={props.onClose}
+            title="Manage projects"
+            closeTitle="Close"
+            closeDisabled={!props.projects.length || !!working}
+        >
+            <style>
+                {` 
 @keyframes my-vis-blink {
     0% {
         background-color: ${props.theme.palette.primary.light};
@@ -198,127 +211,173 @@ const ProjectsManage: React.FC<ProjectsManageProps> = props => {
     }
 }         
             `}
-        </style>
-        <div style={styles.dialog}>
-            <AppBar position="static" style={styles.topBar}>
-                <Tooltip
-                    title={I18n.t('Add')}
-                    // size="small"
-                    componentsProps={{ popper: { sx: commonStyles.tooltip } }}
+            </style>
+            <div style={styles.dialog}>
+                <AppBar
+                    position="static"
+                    style={styles.topBar}
                 >
-                    <IconButton
-                        onClick={() => showDialog('add')}
-                        size="small"
-                        style={{ ...styles.button, ...(!props.projects.length ? styles.blink : undefined) }}
+                    <Tooltip
+                        title={I18n.t('Add')}
+                        // size="small"
+                        slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
                     >
-                        <AddIcon />
-                    </IconButton>
-                </Tooltip>
-                <Tooltip title={I18n.t('Import')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
-                    <IconButton onClick={() => setImportDialog(true)} size="small" style={{ ...styles.button, width: 34 }}>
-                        <BiImport fontSize="medium" />
-                    </IconButton>
-                </Tooltip>
-            </AppBar>
-            {props.projects.sort((projName1, projName2) => projName1.toLowerCase().localeCompare(projName2)).map((projectName, key) => <div key={key} style={styles.projectBlock}>
-                <Button
-                    fullWidth
-                    style={styles.projectButton}
-                    color={projectName === props.projectName ? 'primary' : 'grey'}
-                    onClick={() => window.location.href = `?${projectName}`}
-                    startIcon={<IconDocument />}
-                >
-                    {projectName}
-                </Button>
-                <span style={styles.viewManageButtonActions}>
-                    <Tooltip title={I18n.t('Permissions')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
-                        {working === projectName ? <CircularProgress size={22} /> :
-                            <IconButton
-                                onClick={event => {
-                                    setAnchorEl(event.currentTarget);
-                                    // TODO ensure correct project is opened
-                                    if (props.projectName !== projectName) {
-                                        props.loadProject(projectName);
-                                    }
-                                    setShowPermissionsDialog(!!projectName);
-                                }}
-                                size="small"
+                        <IconButton
+                            onClick={() => showDialog('add')}
+                            size="small"
+                            style={{ ...styles.button, ...(!props.projects.length ? styles.blink : undefined) }}
+                        >
+                            <AddIcon />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip
+                        title={I18n.t('Import')}
+                        slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+                    >
+                        <IconButton
+                            onClick={() => setImportDialog(true)}
+                            size="small"
+                            style={{ ...styles.button, width: 34 }}
+                        >
+                            <BiImport fontSize="medium" />
+                        </IconButton>
+                    </Tooltip>
+                </AppBar>
+                {props.projects
+                    .sort((projName1, projName2) => projName1.toLowerCase().localeCompare(projName2))
+                    .map((projectName, key) => (
+                        <div
+                            key={key}
+                            style={styles.projectBlock}
+                        >
+                            <Button
+                                fullWidth
+                                style={styles.projectButton}
+                                color={projectName === props.projectName ? 'primary' : 'grey'}
+                                onClick={() => (window.location.href = `?${projectName}`)}
+                                startIcon={<IconDocument />}
                             >
-                                <PermissionsIcon fontSize="medium" />
-                            </IconButton>}
-                    </Tooltip>
-                    <Tooltip title={I18n.t('Export')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
-                        {working === projectName ? <CircularProgress size={22} /> :
-                            <IconButton
-                                onClick={event => {
-                                    setAnchorEl(event.currentTarget);
-                                    setShowExportDialog(projectName);
-                                }}
-                                size="small"
-                            >
-                                <BiExport fontSize="medium" />
-                            </IconButton>}
-                    </Tooltip>
-                    <Tooltip title={I18n.t('Edit')} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
-                        <span>
-                            <IconButton
-                                size="small"
-                                onClick={() => showDialog('rename', projectName)}
-                                disabled={!!working}
-                            >
-                                <EditIcon />
-                            </IconButton>
-                        </span>
-                    </Tooltip>
-                    <Tooltip title={I18n.t('Delete')} onClick={() => showDialog('delete', projectName)} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
-                        <span>
-                            <IconButton size="small" disabled={!!working}>
-                                <DeleteIcon />
-                            </IconButton>
-                        </span>
-                    </Tooltip>
-                </span>
-            </div>)}
-        </div>
-        {exportDialog}
-        {dialog ? <ProjectDialog
-            dialog={dialog}
-            dialogProject={dialogProject}
-            dialogName={dialogName}
-            setDialog={setDialog}
-            setDialogProject={setDialogProject}
-            setDialogName={setDialogName}
-            addProject={props.addProject}
-            deleteProject={props.deleteProject}
-            projects={props.projects}
-            renameProject={props.renameProject}
-        /> : null}
-        {showPermissionsDialog ? <PermissionsDialog
-            socket={props.socket}
-            changeProject={props.changeProject}
-            onClose={() => setShowPermissionsDialog(false)}
-            // loadProject={props.loadProject}
-        /> : null}
-        {importDialog ? <ImportProjectDialog
-            projects={props.projects}
-            themeType={props.themeType}
-            onClose={(created, newProjectName) => {
-                setImportDialog(false);
-                if (created && props.projectName !== newProjectName) {
-                    window.location.href = `?${newProjectName}`;
-                } else if (created) {
-                    props.onClose();
-                }
-            }}
-            projectName={props.projectName}
-            socket={props.socket}
-            refreshProjects={props.refreshProjects}
-            loadProject={props.loadProject}
-            adapterName={props.adapterName}
-            instance={props.instance}
-            openNewProjectOnCreate
-        /> : null}
-    </IODialog> : null;
+                                {projectName}
+                            </Button>
+                            <span style={styles.viewManageButtonActions}>
+                                <Tooltip
+                                    title={I18n.t('Permissions')}
+                                    slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+                                >
+                                    {working === projectName ? (
+                                        <CircularProgress size={22} />
+                                    ) : (
+                                        <IconButton
+                                            onClick={event => {
+                                                setAnchorEl(event.currentTarget);
+                                                // TODO ensure correct project is opened
+                                                if (props.projectName !== projectName) {
+                                                    props.loadProject(projectName);
+                                                }
+                                                setShowPermissionsDialog(!!projectName);
+                                            }}
+                                            size="small"
+                                        >
+                                            <PermissionsIcon fontSize="medium" />
+                                        </IconButton>
+                                    )}
+                                </Tooltip>
+                                <Tooltip
+                                    title={I18n.t('Export')}
+                                    slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+                                >
+                                    {working === projectName ? (
+                                        <CircularProgress size={22} />
+                                    ) : (
+                                        <IconButton
+                                            onClick={event => {
+                                                setAnchorEl(event.currentTarget);
+                                                setShowExportDialog(projectName);
+                                            }}
+                                            size="small"
+                                        >
+                                            <BiExport fontSize="medium" />
+                                        </IconButton>
+                                    )}
+                                </Tooltip>
+                                <Tooltip
+                                    title={I18n.t('Edit')}
+                                    slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+                                >
+                                    <span>
+                                        <IconButton
+                                            size="small"
+                                            onClick={() => showDialog('rename', projectName)}
+                                            disabled={!!working}
+                                        >
+                                            <EditIcon />
+                                        </IconButton>
+                                    </span>
+                                </Tooltip>
+                                <Tooltip
+                                    title={I18n.t('Delete')}
+                                    onClick={() => showDialog('delete', projectName)}
+                                    slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+                                >
+                                    <span>
+                                        <IconButton
+                                            size="small"
+                                            disabled={!!working}
+                                        >
+                                            <DeleteIcon />
+                                        </IconButton>
+                                    </span>
+                                </Tooltip>
+                            </span>
+                        </div>
+                    ))}
+            </div>
+            {exportDialog}
+            {dialog ? (
+                <ProjectDialog
+                    dialog={dialog}
+                    dialogProject={dialogProject}
+                    dialogName={dialogName}
+                    setDialog={setDialog}
+                    setDialogProject={setDialogProject}
+                    setDialogName={setDialogName}
+                    addProject={props.addProject}
+                    deleteProject={props.deleteProject}
+                    projects={props.projects}
+                    renameProject={props.renameProject}
+                />
+            ) : null}
+            {showPermissionsDialog ? (
+                <PermissionsDialog
+                    socket={props.socket}
+                    changeProject={props.changeProject}
+                    onClose={() => setShowPermissionsDialog(false)}
+                    // loadProject={props.loadProject}
+                />
+            ) : null}
+            {importDialog ? (
+                <ImportProjectDialog
+                    projects={props.projects}
+                    themeType={props.themeType}
+                    onClose={(created, newProjectName) => {
+                        setImportDialog(false);
+                        if (created && props.projectName !== newProjectName) {
+                            window.location.href = `?${newProjectName}`;
+                        } else if (created) {
+                            props.onClose();
+                        }
+                    }}
+                    projectName={props.projectName}
+                    socket={props.socket}
+                    refreshProjects={props.refreshProjects}
+                    loadProject={props.loadProject}
+                    adapterName={props.adapterName}
+                    instance={props.instance}
+                    openNewProjectOnCreate
+                />
+            ) : null}
+        </IODialog>
+    ) : null;
 };
 
 export default ProjectsManage;

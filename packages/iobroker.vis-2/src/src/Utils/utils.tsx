@@ -4,8 +4,13 @@
 import type React from 'react';
 import { store } from '@/Store';
 import type {
-    GroupWidget, Widget, Project, SingleWidget,
-    SingleWidgetId, GroupWidgetId, AnyWidgetId,
+    GroupWidget,
+    Widget,
+    Project,
+    SingleWidget,
+    SingleWidgetId,
+    GroupWidgetId,
+    AnyWidgetId,
     Permissions,
 } from '@iobroker/types-vis-2';
 
@@ -64,12 +69,12 @@ export function deepClone<T extends Record<string, any>>(object: T): T {
  * @param project current project
  * @param offset offset if multiple widgets are created and not yet in project
  */
-export function getNewWidgetIdNumber(isWidgetGroup: boolean, project: Project, offset = 0): number  {
+export function getNewWidgetIdNumber(isWidgetGroup: boolean, project: Project, offset = 0): number {
     const widgets: string[] = [];
     project = project || store.getState().visProject;
-    Object.keys(project).forEach(view =>
-        project[view].widgets && Object.keys(project[view].widgets).forEach(widget =>
-            widgets.push(widget)));
+    Object.keys(project).forEach(
+        view => project[view].widgets && Object.keys(project[view].widgets).forEach(widget => widgets.push(widget)),
+    );
     let newKey = 1;
     widgets.forEach(name => {
         const matches = isWidgetGroup ? name.match(/^g([0-9]+)$/) : name.match(/^w([0-9]+)$/);
@@ -86,17 +91,19 @@ export function getNewWidgetIdNumber(isWidgetGroup: boolean, project: Project, o
 
 /**
  * Get new widget id from the project
+ *
  * @param project project to determine next widget id for
  * @param offset offset, if multiple widgets are created and not yet in the project
  */
 export function getNewWidgetId(project: Project, offset = 0): SingleWidgetId {
     const newKey = getNewWidgetIdNumber(false, project, offset);
 
-    return `w${(newKey).toString().padStart(6, '0')}`;
+    return `w${newKey.toString().padStart(6, '0')}`;
 }
 
 /**
  * Get new group id from the project
+ *
  * @param project project to determine next group id for
  * @param offset offset, if multiple groups are created and not yet in the project
  */
@@ -136,16 +143,14 @@ interface CopyGroupOptions extends CopyWidgetOptions {
  * @param options selected group, widgets and offset information
  */
 export function pasteSingleWidget(options: CopySingleWidgetOptions): SingleWidgetId {
-    const  {
-        widgets, offset, project, widget, selectedGroup,
-    } = options;
+    const { widgets, offset, project, widget, selectedGroup } = options;
 
     const newKey = getNewWidgetId(project, offset);
 
     if (selectedGroup && isGroup(widgets[selectedGroup])) {
         widget.grouped = true;
         widget.groupid = selectedGroup;
-        (widgets[selectedGroup] as GroupWidget).data.members.push(newKey);
+        widgets[selectedGroup].data.members.push(newKey);
     }
 
     widgets[newKey] = widget;
@@ -160,9 +165,7 @@ export function pasteSingleWidget(options: CopySingleWidgetOptions): SingleWidge
  * @param options group, widgets and offset information
  */
 export function pasteGroup(options: CopyGroupOptions): GroupWidgetId {
-    const  {
-        widgets, group, groupMembers, offset, project,
-    } = options;
+    const { widgets, group, groupMembers, offset, project } = options;
     const newGroupId = getNewGroupId(project, offset ?? 0);
 
     for (let i = 0; i < group.data.members.length; i++) {
@@ -188,7 +191,7 @@ export function pasteGroup(options: CopyGroupOptions): GroupWidgetId {
  */
 export function unsyncMultipleWidgets(project: Project): Project {
     project = deepClone(project || store.getState().visProject);
-    for (const  [viewName, view] of Object.entries(project)) {
+    for (const [viewName, view] of Object.entries(project)) {
         if (viewName === '___settings') {
             continue;
         }
@@ -232,7 +235,7 @@ export function hasProjectAccess(options: CheckAccessOptions): boolean {
     return !editMode && permissions.read;
 }
 
-interface CheckViewAccessOptions extends CheckAccessOptions{
+interface CheckViewAccessOptions extends CheckAccessOptions {
     /** Name of the view */
     view: string;
 }
@@ -248,9 +251,7 @@ interface CheckWidgetAccessOptions extends CheckViewAccessOptions {
  * @param options project, view, user and mode information
  */
 export function hasViewAccess(options: CheckViewAccessOptions): boolean {
-    const {
-        project, user, editMode, view,
-    } = options;
+    const { project, user, editMode, view } = options;
 
     const permissions = project[view]?.settings?.permissions?.[user] ?? DEFAULT_PERMISSIONS;
 
@@ -267,9 +268,7 @@ export function hasViewAccess(options: CheckViewAccessOptions): boolean {
  * @param options project, view, widget, user and mode information
  */
 export function hasWidgetAccess(options: CheckWidgetAccessOptions): boolean {
-    const {
-        project, user, editMode, view, wid,
-    } = options;
+    const { project, user, editMode, view, wid } = options;
 
     const permissions = project[view]?.widgets[wid]?.permissions?.[user] ?? DEFAULT_PERMISSIONS;
 

@@ -14,7 +14,8 @@
  */
 
 /* Reset all fonts settings */
-body, html {
+body,
+html {
     font-style: normal;
     font-stretch: normal;
     text-shadow: none;
@@ -54,16 +55,16 @@ body, html {
     position: relative;
 }
 
-.vis-editmode-helper, .editmode-helper {
+.vis-editmode-helper,
+.editmode-helper {
     width: 100%;
     height: 100%;
     z-index: 600;
     opacity: 0.1;
     background-image: /* tint image */
-            linear-gradient(to right, rgba(192, 192, 192, 0.75), rgba(192, 192, 192, 0.75)),
-                /* checkered effect */
-            linear-gradient(to right, black 50%, white 50%),
-            linear-gradient(to bottom, black 50%, white 50%);
+        linear-gradient(to right, rgba(192, 192, 192, 0.75), rgba(192, 192, 192, 0.75)),
+        /* checkered effect */ linear-gradient(to right, black 50%, white 50%),
+        linear-gradient(to bottom, black 50%, white 50%);
     background-blend-mode: normal, difference, normal;
     background-size: 1em 1em;
 }
@@ -78,7 +79,7 @@ body, html {
     left: 0;
 }
 .vis-editmode-overlay-not-selected:hover {
-    background: #ada400A0;
+    background: #ada400a0;
     box-shadow: 0 0 15px 4px #ada400;
 }
 
@@ -155,7 +156,7 @@ body, html {
 
 .vis-editmode-select-rect {
     border: 1px dashed white;
-    background-color: #F00;
+    background-color: #f00;
     opacity: 0.1;
 }
 
@@ -176,11 +177,11 @@ body, html {
 }
 .vis-anchor:hover {
     transform: scale(2);
-    color: #F00;
+    color: #f00;
 }
 .vis-anchor:active {
     transform: scale(1.7);
-    color: #F00;
+    color: #f00;
 }
 .vis-anchor-enabled {
     color: #0b9512;
@@ -201,11 +202,11 @@ body, html {
 }
 .vis-expand:hover {
     transform: scale(2) rotate(90deg);
-    color: #F00;
+    color: #f00;
 }
 .vis-expand:active {
     transform: scale(1.7) rotate(90deg);
-    color: #F00;
+    color: #f00;
 }
 .vis-expand-enabled {
     color: #0b9512;
@@ -226,7 +227,7 @@ body, html {
 }
 .vis-new-line:hover {
     transform: scale(2);
-    color: #F00;
+    color: #f00;
 }
 .vis-new-line:active {
     transform: scale(1.7);
@@ -294,11 +295,11 @@ body, html {
 }
 .vis-editmode-move-button:hover {
     transform: scale(2);
-    color: #F00;
+    color: #f00;
 }
 .vis-editmode-move-button:active {
     transform: scale(1.7);
-    color: #F00;
+    color: #f00;
 }
 .vis-editmode-widget-number {
     position: absolute;

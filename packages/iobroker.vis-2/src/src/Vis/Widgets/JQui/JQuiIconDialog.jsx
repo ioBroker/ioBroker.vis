@@ -18,7 +18,7 @@ import PropTypes from 'prop-types';
 import JQuiButton from './JQuiButton';
 
 class JQuiIconDialog extends JQuiButton {
-    static getWidgetInfo() {
+    static getWidgetInfo(): RxWidgetInfo {
         const widgetInfo = JQuiButton.getWidgetInfo();
 
         const newWidgetInfo = {

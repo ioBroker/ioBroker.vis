@@ -5,10 +5,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Menu, MenuItem } from '@mui/material';
 
 import { I18n, type ThemeType, Utils } from '@iobroker/adapter-react-v5';
-import type {
-    AnyWidgetId, GroupWidget,
-    Project, SingleWidget,
-} from '@iobroker/types-vis-2';
+import type { AnyWidgetId, GroupWidget, Project, SingleWidget } from '@iobroker/types-vis-2';
 
 import { getWidgetTypes, type WidgetType } from './visWidgetsCatalog';
 
@@ -72,14 +69,7 @@ interface Item {
     index: number;
 }
 
-const Widget = ({
-    id,
-    children,
-    index,
-    moveCard,
-    onDropped,
-    selected,
-}: WidgetProps) => {
+const Widget = ({ id, children, index, moveCard, onDropped, selected }: WidgetProps): React.JSX.Element => {
     const ref = useRef(null);
     const [{ handlerId }, drop] = useDrop({
         accept: 'widget',
@@ -104,8 +94,7 @@ const Widget = ({
             // Determine rectangle on screen
             const hoverBoundingRect = (ref.current as HTMLElement)?.getBoundingClientRect();
             // Get vertical middle
-            const hoverMiddleY =
-                (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+            const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
             // Determine mouse position
             const clientOffset = monitor.getClientOffset();
             // Get pixels to the top
@@ -139,15 +128,17 @@ const Widget = ({
     const opacity = isDragging ? 0 : 1;
     drag(drop(ref));
 
-    return <MenuItem
-        ref={ref}
-        selected={selected}
-        style={{ opacity }}
-        data-handler-id={handlerId}
-        onClick={() => onDropped(index)}
-    >
-        {children}
-    </MenuItem>;
+    return (
+        <MenuItem
+            ref={ref}
+            selected={selected}
+            style={{ opacity }}
+            data-handler-id={handlerId}
+            onClick={() => onDropped(index)}
+        >
+            {children}
+        </MenuItem>
+    );
 };
 
 interface VisOrderMenuProps {
@@ -182,7 +173,7 @@ class VisOrderMenu extends React.Component<VisOrderMenuProps, VisOrderMenuState>
         };
     }
 
-    componentDidUpdate(/* prevProps, prevState, snapshot */) {
+    componentDidUpdate(/* prevProps, prevState, snapshot */): void {
         for (let i = 0; i < this.state.order.length; i++) {
             if (this.imageRef[i].current?.children[0]) {
                 const height = (this.imageRef[i].current as HTMLElement).children[0].clientHeight;
@@ -193,7 +184,7 @@ class VisOrderMenu extends React.Component<VisOrderMenuProps, VisOrderMenuState>
         }
     }
 
-    moveCard = (dragIndex: number, hoverIndex: number) => {
+    moveCard = (dragIndex: number, hoverIndex: number): void => {
         const order = [...this.state.order];
         const dragCard = order[dragIndex];
         order.splice(dragIndex, 1);
@@ -201,7 +192,7 @@ class VisOrderMenu extends React.Component<VisOrderMenuProps, VisOrderMenuState>
         this.setState({ order });
     };
 
-    getWidgetDiv(id: AnyWidgetId, index: number) {
+    getWidgetDiv(id: AnyWidgetId, index: number): React.JSX.Element {
         const widget: GroupWidget | SingleWidget = this.props.views[this.props.view].widgets[id];
         const tpl = widget.tpl;
         const _widgetType = this.widgetTypes.find(foundWidgetType => foundWidgetType.name === tpl);
@@ -240,22 +231,36 @@ class VisOrderMenu extends React.Component<VisOrderMenuProps, VisOrderMenuState>
         if (_widgetType?.preview?.startsWith('<img')) {
             const m = _widgetType?.preview.match(/src="([^"]+)"/) || _widgetType?.preview.match(/src='([^']+)'/);
             if (m) {
-                img = <img src={m[1]} style={styles.icon} alt={id} />;
+                img = (
+                    <img
+                        src={m[1]}
+                        style={styles.icon}
+                        alt={id}
+                    />
+                );
             }
         } else if (_widgetType?.preview) {
             const preview = _widgetType.preview.toLowerCase();
             if (IMAGE_TYPES.find(ext => preview.endsWith(ext))) {
-                img = <img src={_widgetType?.preview} style={styles.icon} alt={id} />;
+                img = (
+                    <img
+                        src={_widgetType?.preview}
+                        style={styles.icon}
+                        alt={id}
+                    />
+                );
             }
         }
 
         if (!img && _widgetType?.preview) {
-            img = <span
-                style={styles.widgetImage}
-                ref={this.imageRef[index]}
-                // eslint-disable-next-line react/no-danger
-                dangerouslySetInnerHTML={{ __html: _widgetType.preview }}
-            />;
+            img = (
+                <span
+                    style={styles.widgetImage}
+                    ref={this.imageRef[index]}
+                    // eslint-disable-next-line react/no-danger
+                    dangerouslySetInnerHTML={{ __html: _widgetType.preview }}
+                />
+            );
         }
 
         let widgetBackColor;
@@ -275,33 +280,35 @@ class VisOrderMenu extends React.Component<VisOrderMenuProps, VisOrderMenuState>
             widgetLabel = `${I18n.t('version')} ${widget.marketplace.version}`;
         }
 
-        return <Widget
-            key={id}
-            id={id}
-            index={index}
-            selected={this.props.wid === id}
-            moveCard={this.moveCard}
-            onDropped={i => this.onMove(i)}
-        >
-            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                {widgetIcon ? <div style={styles.widgetIcon}>{img}</div> : null}
-                <div style={styles.widgetName}>{id}</div>
-                <div style={styles.widgetType}>
-                    <div
-                        style={{
-                            ...styles.widgetNameText,
-                            ...(widgetBackColor ? styles.coloredWidgetSet : undefined),
-                            fontWeight: 'bold',
-                            color: widgetColor,
-                            backgroundColor: widgetBackColor,
-                        }}
-                    >
-                        {setLabel}
+        return (
+            <Widget
+                key={id}
+                id={id}
+                index={index}
+                selected={this.props.wid === id}
+                moveCard={this.moveCard}
+                onDropped={i => this.onMove(i)}
+            >
+                <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                    {widgetIcon ? <div style={styles.widgetIcon}>{img}</div> : null}
+                    <div style={styles.widgetName}>{id}</div>
+                    <div style={styles.widgetType}>
+                        <div
+                            style={{
+                                ...styles.widgetNameText,
+                                ...(widgetBackColor ? styles.coloredWidgetSet : undefined),
+                                fontWeight: 'bold',
+                                color: widgetColor,
+                                backgroundColor: widgetBackColor,
+                            }}
+                        >
+                            {setLabel}
+                        </div>
+                        <div style={styles.widgetNameText}>{widgetLabel}</div>
                     </div>
-                    <div style={styles.widgetNameText}>{widgetLabel}</div>
                 </div>
-            </div>
-        </Widget>;
+            </Widget>
+        );
     }
 
     onMove(index?: number): void {
@@ -324,28 +331,30 @@ class VisOrderMenu extends React.Component<VisOrderMenuProps, VisOrderMenuState>
         }
     }
 
-    render() {
-        return <Menu
-            anchorEl={this.props.anchorEl}
-            open={!0}
-            onClose={() => this.props.onClose()}
-        >
-            <div
-                style={{
-                    padding: 21,
-                    fontWeight: 'normal',
-                    width: 250,
-                    fontSize: 12,
-                    fontStyle: 'italic',
-                    textAlign: 'center',
-                }}
+    render(): React.JSX.Element {
+        return (
+            <Menu
+                anchorEl={this.props.anchorEl}
+                open={!0}
+                onClose={() => this.props.onClose()}
             >
-                {I18n.t('order_help')}
-            </div>
-            <DndProvider backend={HTML5Backend}>
-                {this.state.order.map((id, i) => this.getWidgetDiv(id, i))}
-            </DndProvider>
-        </Menu>;
+                <div
+                    style={{
+                        padding: 21,
+                        fontWeight: 'normal',
+                        width: 250,
+                        fontSize: 12,
+                        fontStyle: 'italic',
+                        textAlign: 'center',
+                    }}
+                >
+                    {I18n.t('order_help')}
+                </div>
+                <DndProvider backend={HTML5Backend}>
+                    {this.state.order.map((id, i) => this.getWidgetDiv(id, i))}
+                </DndProvider>
+            </Menu>
+        );
     }
 }
 

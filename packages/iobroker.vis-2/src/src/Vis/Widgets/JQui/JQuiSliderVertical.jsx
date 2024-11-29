@@ -19,7 +19,7 @@ import PropTypes from 'prop-types';
 import JQuiSlider from './JQuiSlider';
 
 class JQuiSliderVertical extends JQuiSlider {
-    static getWidgetInfo() {
+    static getWidgetInfo(): RxWidgetInfo {
         const widgetInfo = JQuiSlider.getWidgetInfo();
         const newWidgetInfo = {
             id: 'tplJquiSliderVertical',

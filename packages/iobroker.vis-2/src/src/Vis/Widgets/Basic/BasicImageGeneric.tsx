@@ -1,10 +1,7 @@
 import React from 'react';
 
 import { Icon } from '@iobroker/adapter-react-v5';
-import type {
-    RxRenderWidgetProps,
-    VisBaseWidgetProps,
-} from '@iobroker/types-vis-2';
+import type { RxRenderWidgetProps, VisBaseWidgetProps } from '@iobroker/types-vis-2';
 import VisRxWidget from '@/Vis/visRxWidget';
 
 export interface RxDataBasicImageGeneric {
@@ -32,12 +29,12 @@ export default abstract class BasicImageGeneric<T extends RxDataBasicImageGeneri
         this.imageRef = React.createRef<HTMLImageElement>();
     }
 
-    async componentDidMount(): Promise<void> {
+    componentDidMount(): void {
         super.componentDidMount();
         this.onPropertyUpdate();
     }
 
-    async componentWillUnmount(): Promise<void> {
+    componentWillUnmount(): void {
         super.componentWillUnmount();
         this.refreshInterval && clearInterval(this.refreshInterval);
         if (this.hashInstalled) {
@@ -46,7 +43,7 @@ export default abstract class BasicImageGeneric<T extends RxDataBasicImageGeneri
         }
     }
 
-    onHashChange = () => {
+    onHashChange = (): void => {
         if (this.props.context.activeView === this.props.view) {
             this.refreshImage();
         }
@@ -54,7 +51,7 @@ export default abstract class BasicImageGeneric<T extends RxDataBasicImageGeneri
 
     abstract getImage(): string;
 
-    refreshImage() {
+    refreshImage(): void {
         if (this.imageRef.current) {
             const str = this.getImage();
             if (this.state.rxData.refreshWithNoQuery === true) {
@@ -65,7 +62,7 @@ export default abstract class BasicImageGeneric<T extends RxDataBasicImageGeneri
         }
     }
 
-    static isHidden(el: HTMLElement) {
+    static isHidden(el: HTMLElement): boolean {
         return el.offsetParent === null;
     }
 
@@ -80,8 +77,8 @@ export default abstract class BasicImageGeneric<T extends RxDataBasicImageGeneri
         return els;
     }
 
-    onPropertyUpdate() {
-        const src     = this.getImage();
+    onPropertyUpdate(): void {
+        const src = this.getImage();
         const refreshInterval = Number(this.state.rxData.refreshInterval) || 0;
         const refreshOnViewChange = this.state.rxData.refreshOnViewChange === true;
         const refreshOnWakeUp = this.state.rxData.refreshOnWakeUp === true;
@@ -105,14 +102,25 @@ export default abstract class BasicImageGeneric<T extends RxDataBasicImageGeneri
                     this.refreshInterval = null;
                 }
                 // install refresh handler
-                this.refreshInterval = this.refreshInterval || setInterval(() => {
-                    if (this.imageRef.current && !BasicImageGeneric.isHidden(this.imageRef.current as HTMLElement)) {
-                        const parents = BasicImageGeneric.getParents(this.imageRef.current).filter(el => BasicImageGeneric.isHidden(el));
-                        if (!parents.length || parents[0].tagName === 'BODY' || parents[0].id === 'materialdesign-vuetify-container') {
-                            this.refreshImage();
+                this.refreshInterval =
+                    this.refreshInterval ||
+                    setInterval(() => {
+                        if (
+                            this.imageRef.current &&
+                            !BasicImageGeneric.isHidden(this.imageRef.current as HTMLElement)
+                        ) {
+                            const parents = BasicImageGeneric.getParents(this.imageRef.current).filter(el =>
+                                BasicImageGeneric.isHidden(el),
+                            );
+                            if (
+                                !parents.length ||
+                                parents[0].tagName === 'BODY' ||
+                                parents[0].id === 'materialdesign-vuetify-container'
+                            ) {
+                                this.refreshImage();
+                            }
                         }
-                    }
-                }, refreshInterval);
+                    }, refreshInterval);
             } else if (this.refreshInterval) {
                 this.startedInterval = 0;
                 clearInterval(this.refreshInterval);
@@ -132,7 +140,7 @@ export default abstract class BasicImageGeneric<T extends RxDataBasicImageGeneri
         }
     }
 
-    onRxDataChanged() {
+    onRxDataChanged(): void {
         this.onPropertyUpdate();
     }
 
@@ -171,21 +179,23 @@ export default abstract class BasicImageGeneric<T extends RxDataBasicImageGeneri
 
         const src = this.getImage();
 
-        return src ? <div
-            className="vis-widget-body"
-            style={{
-                overflow: 'hidden',
-                pointerEvents: this.state.rxData.allowUserInteractions ? undefined : 'none',
-                touchAction: this.state.rxData.allowUserInteractions ? undefined : 'none',
-                userSelect: this.state.rxData.allowUserInteractions ? undefined : 'none',
-            }}
-        >
-            <Icon
-                style={style}
-                ref={this.imageRef}
-                src={src}
-                alt={this.props.id}
-            />
-        </div> : null;
+        return src ? (
+            <div
+                className="vis-widget-body"
+                style={{
+                    overflow: 'hidden',
+                    pointerEvents: this.state.rxData.allowUserInteractions ? undefined : 'none',
+                    touchAction: this.state.rxData.allowUserInteractions ? undefined : 'none',
+                    userSelect: this.state.rxData.allowUserInteractions ? undefined : 'none',
+                }}
+            >
+                <Icon
+                    style={style}
+                    ref={this.imageRef}
+                    src={src}
+                    alt={this.props.id}
+                />
+            </div>
+        ) : null;
     }
 }

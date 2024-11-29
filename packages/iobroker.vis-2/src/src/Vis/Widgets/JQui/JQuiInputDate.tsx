@@ -61,7 +61,7 @@ class JQuiInputDate extends VisRxWidget<RxData> {
     /** If a user does not want to use full date */
     private readonly EASY_DATE_FORMAT = 'DD.MM.YYYY';
 
-    static getWidgetInfo() {
+    static getWidgetInfo(): RxWidgetInfo {
         return {
             id: 'tplJquiInputDate',
             visSet: 'jqui',
@@ -148,41 +148,53 @@ class JQuiInputDate extends VisRxWidget<RxData> {
         super.renderWidgetBody(props);
         props.style.overflow = 'visible';
 
-        return <div
-            className="vis-widget-body"
-        >
-            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={this.props.context.lang}>
-                <DatePicker
-                    // @ts-expect-error fix later
-                    value={this.state.rxData.asFullDate ? dayjs(this.state.values[`${this.state.rxData.oid}.val`]) || '' : dayjs(this.state.values[`${this.state.rxData.oid}.val`], this.EASY_DATE_FORMAT)}
-                    label={this.state.rxData.widgetTitle || null}
-                    autoFocus={this.state.rxData.autoFocus || false}
-                    onChange={newValue => {
-                        if (!newValue) {
-                            return;
+        return (
+            <div className="vis-widget-body">
+                <LocalizationProvider
+                    dateAdapter={AdapterDayjs}
+                    adapterLocale={this.props.context.lang}
+                >
+                    <DatePicker
+                        // @ts-expect-error fix later
+                        value={
+                            this.state.rxData.asFullDate
+                                ? dayjs(this.state.values[`${this.state.rxData.oid}.val`]) || ''
+                                : dayjs(this.state.values[`${this.state.rxData.oid}.val`], this.EASY_DATE_FORMAT)
                         }
+                        label={this.state.rxData.widgetTitle || null}
+                        autoFocus={this.state.rxData.autoFocus || false}
+                        onChange={newValue => {
+                            if (!newValue) {
+                                return;
+                            }
 
-                        const val = this.state.rxData.asFullDate ? newValue.toDate().toString() : newValue.format(this.EASY_DATE_FORMAT);
-                        this.props.context.setValue(this.state.rxData.oid, val);
-                    }}
-                    formatDensity={this.state.rxData.wideFormat ? 'spacious' : 'dense'}
-                    slotProps={{
-                        textField: {
-                            variant: this.state.rxData.variant as TextFieldVariants || 'standard',
-                            style: {
-                                width: '100%',
-                                height: '100%',
+                            const val = this.state.rxData.asFullDate
+                                ? newValue.toDate().toString()
+                                : newValue.format(this.EASY_DATE_FORMAT);
+                            this.props.context.setValue(this.state.rxData.oid, val);
+                        }}
+                        formatDensity={this.state.rxData.wideFormat ? 'spacious' : 'dense'}
+                        slotProps={{
+                            textField: {
+                                variant: (this.state.rxData.variant as TextFieldVariants) || 'standard',
+                                style: {
+                                    width: '100%',
+                                    height: '100%',
+                                },
+                                sx: styles.textRoot,
                             },
-                            sx: styles.textRoot,
-                        },
-                        field: { clearable: this.state.rxData.clearable, onClear: () => this.props.context.setValue(this.state.rxData.oid, '') },
-                    }}
-                    disableFuture={this.state.rxData.disableFuture || false}
-                    disablePast={this.state.rxData.disablePast || false}
-                    displayWeekNumber={this.state.rxData.displayWeekNumber || false}
-                />
-            </LocalizationProvider>
-        </div>;
+                            field: {
+                                clearable: this.state.rxData.clearable,
+                                onClear: () => this.props.context.setValue(this.state.rxData.oid, ''),
+                            },
+                        }}
+                        disableFuture={this.state.rxData.disableFuture || false}
+                        disablePast={this.state.rxData.disablePast || false}
+                        displayWeekNumber={this.state.rxData.displayWeekNumber || false}
+                    />
+                </LocalizationProvider>
+            </div>
+        );
     }
 }
 

@@ -3,9 +3,14 @@ import React from 'react';
 import { I18n } from '@iobroker/adapter-react-v5';
 
 import type {
-    RxRenderWidgetProps, VisLegacy, RxWidgetProps, GetRxDataFromWidget,
+    RxRenderWidgetProps,
+    VisLegacy,
+    RxWidgetProps,
+    GetRxDataFromWidget,
+    RxWidgetInfo,
 } from '@iobroker/types-vis-2';
 import type { VisRxWidgetState } from '@/Vis/visRxWidget';
+// eslint-disable-next-line no-duplicate-imports
 import VisRxWidget from '@/Vis/visRxWidget';
 
 declare global {
@@ -22,7 +27,7 @@ interface BasicScreenResolutionState extends VisRxWidgetState {
 }
 
 // eslint-disable-next-line no-use-before-define
-type RxData = GetRxDataFromWidget<typeof BasicScreenResolution>
+type RxData = GetRxDataFromWidget<typeof BasicScreenResolution>;
 
 export default class BasicScreenResolution extends VisRxWidget<RxData, BasicScreenResolutionState> {
     private essentialData: string;
@@ -38,7 +43,7 @@ export default class BasicScreenResolution extends VisRxWidget<RxData, BasicScre
         this.essentialData = JSON.stringify(this.buildEssentialProjectData());
     }
 
-    buildEssentialProjectData() {
+    buildEssentialProjectData(): { id: string; sizex: number; sizey: number; useAsDefault: boolean }[] {
         return Object.keys(this.props.context.views)
             .sort()
             .filter(f => f !== '___settings')
@@ -53,7 +58,7 @@ export default class BasicScreenResolution extends VisRxWidget<RxData, BasicScre
     /**
      * Returns the widget info which is rendered in the edit mode
      */
-    static getWidgetInfo() {
+    static getWidgetInfo(): RxWidgetInfo {
         return {
             id: 'tplScreenResolution',
             visSet: 'basic',
@@ -68,14 +73,14 @@ export default class BasicScreenResolution extends VisRxWidget<RxData, BasicScre
         } as const;
     }
 
-    async componentDidMount(): Promise<void> {
-        await super.componentDidMount();
+    componentDidMount(): void {
+        super.componentDidMount();
         window.addEventListener('resize', this.onResize);
         window.addEventListener('hashchange', this.onResize);
         this.onResize();
     }
 
-    async componentWillUnmount(): Promise<void> {
+    componentWillUnmount(): void {
         super.componentWillUnmount();
         window.removeEventListener('resize', this.onResize);
         window.removeEventListener('hashchange', this.onResize);
@@ -85,39 +90,45 @@ export default class BasicScreenResolution extends VisRxWidget<RxData, BasicScre
      * Enables calling widget info on the class instance itself
      */
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo() {
+    getWidgetInfo(): RxWidgetInfo {
         return BasicScreenResolution.getWidgetInfo();
     }
 
-    createScreenText() {
-        return <span
-            style={{
-                fontWeight: 'bold',
-                cursor: 'pointer',
-            }}
-            onClick={() => {
-                if (!window.vis.instance) {
-                    window.vis.generateInstance();
-                    if (window.vis.instance) {
-                        this.forceUpdate();
-                    } else {
-                        window.alert('Cannot generate!');
+    createScreenText(): React.JSX.Element {
+        return (
+            <span
+                style={{
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                }}
+                onClick={() => {
+                    if (!window.vis.instance) {
+                        window.vis.generateInstance();
+                        if (window.vis.instance) {
+                            this.forceUpdate();
+                        } else {
+                            window.alert('Cannot generate!');
+                        }
                     }
-                }
-            }}
-        >
-            {I18n.t('click to create')}
-        </span>;
+                }}
+            >
+                {I18n.t('click to create')}
+            </span>
+        );
     }
 
-    onResize = () => {
+    onResize = (): void => {
         let width: number;
         let height: number;
         let defaultView: string;
         if (this.props.editMode) {
-            width = this.props.context.views[this.props.context.activeView]?.settings?.sizex || window.document.documentElement.clientWidth;
-            height = this.props.context.views[this.props.context.activeView]?.settings?.sizey || window.document.documentElement.clientHeight;
-            defaultView = window.vis.findNearestResolution(width as number, height as number);
+            width =
+                this.props.context.views[this.props.context.activeView]?.settings?.sizex ||
+                window.document.documentElement.clientWidth;
+            height =
+                this.props.context.views[this.props.context.activeView]?.settings?.sizey ||
+                window.document.documentElement.clientHeight;
+            defaultView = window.vis.findNearestResolution(width, height);
         } else {
             width = document.documentElement.clientWidth || 0;
             height = document.documentElement.clientHeight;
@@ -163,33 +174,33 @@ export default class BasicScreenResolution extends VisRxWidget<RxData, BasicScre
             fontWeight: 'bold',
         };
 
-        return <div className="vis-widget-body" style={style}>
-            <div>
-                {I18n.t('Default view')}
-                :
-                <span style={valueStyle}>{state.defaultView}</span>
+        return (
+            <div
+                className="vis-widget-body"
+                style={style}
+            >
+                <div>
+                    {I18n.t('Default view')}:<span style={valueStyle}>{state.defaultView}</span>
+                </div>
+                <div>
+                    {I18n.t('Width')}:
+                    <span style={valueStyle}>
+                        {state.width}
+                        px
+                    </span>
+                </div>
+                <div>
+                    {I18n.t('Height')}:
+                    <span style={valueStyle}>
+                        {state.height}
+                        px
+                    </span>
+                </div>
+                <div>
+                    {I18n.t('Instance')}:
+                    <span style={valueStyle}>{window.vis.instance || this.createScreenText()}</span>
+                </div>
             </div>
-            <div>
-                {I18n.t('Width')}
-                :
-                <span style={valueStyle}>
-                    {state.width}
-                    px
-                </span>
-            </div>
-            <div>
-                {I18n.t('Height')}
-                :
-                <span style={valueStyle}>
-                    {state.height}
-                    px
-                </span>
-            </div>
-            <div>
-                {I18n.t('Instance')}
-                :
-                <span style={valueStyle}>{window.vis.instance || this.createScreenText()}</span>
-            </div>
-        </div>;
+        );
     }
 }

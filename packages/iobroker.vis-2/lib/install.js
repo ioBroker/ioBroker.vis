@@ -1,14 +1,10 @@
-const fs   = require('node:fs');
+const fs = require('node:fs');
 const path = require('node:path');
 let mime;
-import('mime').then(m => mime = m.default);
+import('mime').then(m => (mime = m.default));
 const crypto = require('node:crypto');
 
-const TEXT_TYPES = [
-    'application/json',
-    'application/javascript',
-    'image/svg+xml',
-];
+const TEXT_TYPES = ['application/json', 'application/javascript', 'image/svg+xml'];
 
 function copyFileSync(source, target, forceBuild) {
     let targetFile = target;
@@ -84,14 +80,13 @@ function copyFolderRecursiveSync(source, target, forceBuild) {
 
         // Delete all old files
         if (target !== path.normalize(`${__dirname}/../www/`)) {
-            oldFiles
-                .forEach(file => {
-                    const pathName = path.join(targetFolder, file);
-                    if (!files.includes(file) && !fs.lstatSync(pathName).isDirectory()) {
-                        fs.unlinkSync(pathName);
-                        changed = true;
-                    }
-                });
+            oldFiles.forEach(file => {
+                const pathName = path.join(targetFolder, file);
+                if (!files.includes(file) && !fs.lstatSync(pathName).isDirectory()) {
+                    fs.unlinkSync(pathName);
+                    changed = true;
+                }
+            });
         }
     }
 
@@ -104,9 +99,11 @@ function deleteFolderRecursive(dirPath) {
         files = fs.readdirSync(dirPath);
         files.forEach((file, index) => {
             const curPath = `${dirPath}/${file}`;
-            if (fs.lstatSync(curPath).isDirectory()) { // recurse
+            if (fs.lstatSync(curPath).isDirectory()) {
+                // recurse
                 deleteFolderRecursive(curPath);
-            } else { // delete file
+            } else {
+                // delete file
                 fs.unlinkSync(curPath);
             }
         });
@@ -114,16 +111,10 @@ function deleteFolderRecursive(dirPath) {
     }
 }
 
-const generic = [
-    'basic',
-    'jqplot',
-    'jqui',
-    'swipe',
-    'tabs',
-];
+const generic = ['basic', 'jqplot', 'jqui', 'swipe', 'tabs'];
 
 const widgetSetsDependencies = {
-    jqui: ['basic']
+    jqui: ['basic'],
 };
 
 function syncWidgetSets(enabledList, forceBuild) {
@@ -133,11 +124,16 @@ function syncWidgetSets(enabledList, forceBuild) {
 
     // Now we have the list of widgets => copy them all to widgets directory
     for (let d = 0; d < enabledList.length; d++) {
-        let _changed = copyFolderRecursiveSync(`${enabledList[d].path}/widgets/`, path.normalize(`${__dirname}/../www/`, forceBuild));
+        let _changed = copyFolderRecursiveSync(
+            `${enabledList[d].path}/widgets/`,
+            path.normalize(`${__dirname}/../www/`, forceBuild),
+        );
         if (_changed) {
             filesChanged = true;
         }
-        console.log(`Check ${enabledList[d].path.replace(/\\/g, '/').split('/').pop()}... ${_changed ? 'COPIED.' : 'no changes.'}`);
+        console.log(
+            `Check ${enabledList[d].path.replace(/\\/g, '/').split('/').pop()}... ${_changed ? 'COPIED.' : 'no changes.'}`,
+        );
     }
 
     const widgetSets = [];
@@ -151,7 +147,9 @@ function syncWidgetSets(enabledList, forceBuild) {
             found = isGeneric;
 
             if (!found) {
-                found = enabledList.find(w => w.name.toLowerCase() === `iobroker.vis-${name}` || w.name.toLowerCase() === `iobroker.${name}`);
+                found = enabledList.find(
+                    w => w.name.toLowerCase() === `iobroker.vis-${name}` || w.name.toLowerCase() === `iobroker.${name}`,
+                );
             }
 
             if (!found) {
@@ -164,15 +162,20 @@ function syncWidgetSets(enabledList, forceBuild) {
             } else {
                 if (isGeneric) {
                     if (widgetSetsDependencies[name] && widgetSetsDependencies[name].length) {
-                        widgetSets.push({name, depends: widgetSetsDependencies[name]});
+                        widgetSets.push({ name, depends: widgetSetsDependencies[name] });
                     } else {
                         widgetSets.push(name);
                     }
                 } else {
                     if (found.pack && found.pack.native && found.pack.native.always) {
-                        widgetSets.push({name, always: true});
-                    } else if (found.pack && found.pack.native && found.pack.native.dependencies && found.pack.native.dependencies.length) {
-                        widgetSets.push({name, depends: found.pack.native.dependencies});
+                        widgetSets.push({ name, always: true });
+                    } else if (
+                        found.pack &&
+                        found.pack.native &&
+                        found.pack.native.dependencies &&
+                        found.pack.native.dependencies.length
+                    ) {
+                        widgetSets.push({ name, depends: found.pack.native.dependencies });
                     } else {
                         widgetSets.push(name);
                     }

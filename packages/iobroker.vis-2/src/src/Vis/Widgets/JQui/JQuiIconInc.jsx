@@ -18,7 +18,7 @@ import PropTypes from 'prop-types';
 import JQuiWriteState from './JQuiWriteState';
 
 class JQuiIconInc extends JQuiWriteState {
-    static getWidgetInfo() {
+    static getWidgetInfo(): RxWidgetInfo {
         const widgetInfo = JQuiWriteState.getWidgetInfo();
 
         const newWidgetInfo = {

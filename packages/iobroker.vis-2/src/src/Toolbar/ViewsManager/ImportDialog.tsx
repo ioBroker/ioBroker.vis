@@ -52,30 +52,38 @@ const ImportDialog: React.FC<ImportDialogProps> = props => {
         }
     }, [editor.current]);
 
-    return <IODialog
-        open={props.open}
-        onClose={props.onClose}
-        title="Import view"
-        closeTitle="Close"
-        actionTitle="Import"
-        action={() => props.importViewAction(view, data)}
-        actionDisabled={!view.length || !!errors.length}
-    >
-        <CustomAceEditor
-            type="json"
-            themeType={props.themeType}
-            refEditor={node => {
-                editor.current = node;
-                inputField.current = node;
-            }}
-            value={data}
-            onChange={newValue => setData(newValue)}
-            height={200}
-        />
-        <div>
-            <TextField variant="standard" fullWidth label={I18n.t('View name')} value={view} onChange={e => setView(e.target.value)} />
-        </div>
-    </IODialog>;
+    return (
+        <IODialog
+            open={props.open}
+            onClose={props.onClose}
+            title="Import view"
+            closeTitle="Close"
+            actionTitle="Import"
+            action={() => props.importViewAction(view, data)}
+            actionDisabled={!view.length || !!errors.length}
+        >
+            <CustomAceEditor
+                type="json"
+                themeType={props.themeType}
+                refEditor={node => {
+                    editor.current = node;
+                    inputField.current = node;
+                }}
+                value={data}
+                onChange={newValue => setData(newValue)}
+                height={200}
+            />
+            <div>
+                <TextField
+                    variant="standard"
+                    fullWidth
+                    label={I18n.t('View name')}
+                    value={view}
+                    onChange={e => setView(e.target.value)}
+                />
+            </div>
+        </IODialog>
+    );
 };
 
 export default ImportDialog;

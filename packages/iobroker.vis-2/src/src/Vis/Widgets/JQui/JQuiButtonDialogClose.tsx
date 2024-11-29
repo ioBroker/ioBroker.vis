@@ -16,21 +16,21 @@
 import type { CSSProperties } from 'react';
 import React from 'react';
 
-import {
-    Autocomplete,
-    Button, Fab, TextField,
-} from '@mui/material';
+import { Autocomplete, Button, Fab, TextField } from '@mui/material';
 
-import {
-    I18n, Icon,
-} from '@iobroker/adapter-react-v5';
+import { I18n, Icon } from '@iobroker/adapter-react-v5';
 
 import type { WidgetStyleState } from '@/Vis/visBaseWidget';
 import VisBaseWidget from '@/Vis/visBaseWidget';
 import type {
-    AnyWidgetId, GetRxDataFromWidget, RxRenderWidgetProps,
-    RxWidgetInfoAttributesField, RxWidgetInfoCustomComponentProperties,
-    ViewCommand, WidgetData, VisBaseWidgetProps,
+    AnyWidgetId,
+    GetRxDataFromWidget,
+    RxRenderWidgetProps,
+    RxWidgetInfoAttributesField,
+    RxWidgetInfoCustomComponentProperties,
+    ViewCommand,
+    WidgetData,
+    VisBaseWidgetProps,
 } from '@iobroker/types-vis-2';
 import type { VisRxWidgetState } from '../../visRxWidget';
 import VisRxWidget from '../../visRxWidget';
@@ -50,7 +50,7 @@ class JQuiButtonDialogClose extends VisRxWidget<RxData, JQuiButtonDialogCloseSta
         (this.state as JQuiButtonDialogCloseState).height = 0;
     }
 
-    static getWidgetInfo() {
+    static getWidgetInfo(): RxWidgetInfo {
         return {
             id: 'tplJquiButtonDialogClose',
             visSet: 'jqui',
@@ -74,45 +74,60 @@ class JQuiButtonDialogClose extends VisRxWidget<RxData, JQuiButtonDialogCloseSta
                                 options: RxWidgetInfoCustomComponentProperties,
                             ): React.JSX.Element | React.JSX.Element[] => {
                                 // find all possible dialogs
-                                const names: {label: string; value: string}[] = [];
+                                const names: { label: string; value: string }[] = [];
                                 Object.keys(options.context.views).forEach(id => {
                                     const widgets = options.context.views[id].widgets;
-                                    widgets && Object.keys(widgets).forEach((widget: AnyWidgetId) => {
-                                        if (widgets[widget].data?.html_dialog || widgets[widget].data?.contains_view || widgets[widget].data?.externalDialog) {
-                                            if (widgets[widget].data.dialogName) {
-                                                names.push({ label: `${widgets[widget].data.dialogName} (${widget})`, value: widgets[widget].data.dialogName });
-                                            } else {
-                                                names.push({ label: widget, value: widget });
+                                    widgets &&
+                                        Object.keys(widgets).forEach((widget: AnyWidgetId) => {
+                                            if (
+                                                widgets[widget].data?.html_dialog ||
+                                                widgets[widget].data?.contains_view ||
+                                                widgets[widget].data?.externalDialog
+                                            ) {
+                                                if (widgets[widget].data.dialogName) {
+                                                    names.push({
+                                                        label: `${widgets[widget].data.dialogName} (${widget})`,
+                                                        value: widgets[widget].data.dialogName,
+                                                    });
+                                                } else {
+                                                    names.push({ label: widget, value: widget });
+                                                }
                                             }
-                                        }
-                                    });
+                                        });
                                 });
-                                return <Autocomplete<{label: string; value: string}, false, false, true>
-                                    freeSolo
-                                    options={names}
-                                    // variant="standard"
-                                    value={data[field.name] || ''}
-                                    sx={{ width: '100%' }}
-                                    onInputChange={(e, inputValue) => {
-                                        if (typeof inputValue === 'object' && inputValue !== null) {
-                                            inputValue = (inputValue as {label: string; value: string}).value;
-                                        }
-                                        onDataChange({ [field.name]: inputValue });
-                                    }}
-                                    onChange={(e, inputValue) => {
-                                        if (typeof inputValue === 'object' && inputValue !== null) {
-                                            inputValue = inputValue.value;
-                                        }
-                                        onDataChange({ [field.name]: inputValue });
-                                    }}
-                                    getOptionLabel={option => {
-                                        if (typeof option === 'string') {
-                                            return option;
-                                        }
-                                        return option.label;
-                                    }}
-                                    renderInput={params => <TextField variant="standard" {...params} />}
-                                />;
+                                return (
+                                    <Autocomplete<{ label: string; value: string }, false, false, true>
+                                        freeSolo
+                                        options={names}
+                                        // variant="standard"
+                                        value={data[field.name] || ''}
+                                        sx={{ width: '100%' }}
+                                        onInputChange={(e, inputValue) => {
+                                            if (typeof inputValue === 'object' && inputValue !== null) {
+                                                inputValue = (inputValue as { label: string; value: string }).value;
+                                            }
+                                            onDataChange({ [field.name]: inputValue });
+                                        }}
+                                        onChange={(e, inputValue) => {
+                                            if (typeof inputValue === 'object' && inputValue !== null) {
+                                                inputValue = inputValue.value;
+                                            }
+                                            onDataChange({ [field.name]: inputValue });
+                                        }}
+                                        getOptionLabel={option => {
+                                            if (typeof option === 'string') {
+                                                return option;
+                                            }
+                                            return option.label;
+                                        }}
+                                        renderInput={params => (
+                                            <TextField
+                                                variant="standard"
+                                                {...params}
+                                            />
+                                        )}
+                                    />
+                                );
                             },
                         },
                         {
@@ -192,7 +207,8 @@ class JQuiButtonDialogClose extends VisRxWidget<RxData, JQuiButtonDialogCloseSta
                             name: 'icon',
                             label: 'jqui_icon',
                             type: 'icon64',
-                            default: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSJjdXJyZW50Q29sb3IiIGQ9Ik0xOSA2LjQxTDE3LjU5IDVMMTIgMTAuNTlMNi40MSA1TDUgNi40MUwxMC41OSAxMkw1IDE3LjU5TDYuNDEgMTlMMTIgMTMuNDFMMTcuNTkgMTlMMTkgMTcuNTlMMTMuNDEgMTJ6Ii8+PC9zdmc+',
+                            default:
+                                'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSJjdXJyZW50Q29sb3IiIGQ9Ik0xOSA2LjQxTDE3LjU5IDVMMTIgMTAuNTlMNi40MSA1TDUgNi40MUwxMC41OSAxMkw1IDE3LjU5TDYuNDEgMTlMMTIgMTMuNDFMMTcuNTkgMTlMMTkgMTcuNTlMMTMuNDEgMTJ6Ii8+PC9zdmc+',
                             hidden: (data: any) => data.src || data.jquery_style,
                         },
                         {
@@ -241,10 +257,18 @@ class JQuiButtonDialogClose extends VisRxWidget<RxData, JQuiButtonDialogCloseSta
             }
         }
         if (dlgName) {
-            const el = window.document.getElementById(dlgName) || window.document.querySelector(`[data-dialog-name="${dlgName}"]`);
+            const el =
+                window.document.getElementById(dlgName) ||
+                window.document.querySelector(`[data-dialog-name="${dlgName}"]`);
 
-            const viewName = Object.keys(this.props.context.views).find(view => this.props.context.views[view].widgets[dlgName]);
-            this.props.context.onCommand('closeDialog', viewName as ViewCommand, dlgName as unknown as Record<string, string>);
+            const viewName = Object.keys(this.props.context.views).find(
+                view => this.props.context.views[view].widgets[dlgName],
+            );
+            this.props.context.onCommand(
+                'closeDialog',
+                viewName as ViewCommand,
+                dlgName as unknown as Record<string, string>,
+            );
 
             if ((el as any)?._showDialog) {
                 (el as any)._showDialog(false);
@@ -276,26 +300,25 @@ class JQuiButtonDialogClose extends VisRxWidget<RxData, JQuiButtonDialogCloseSta
         let iconSrc = !this.state.rxData.jquery_style && (this.state.rxData.src || this.state.rxData.icon);
 
         if (iconSrc && iconSrc.startsWith('_PRJ_NAME/')) {
-            iconSrc = iconSrc.replace('_PRJ_NAME/', `../${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}/`);
+            iconSrc = iconSrc.replace(
+                '_PRJ_NAME/',
+                `../${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}/`,
+            );
         }
 
-        const icon = iconSrc ? <Icon
-            src={iconSrc}
-            style={iconStyle}
-        /> : null;
+        const icon = iconSrc ? (
+            <Icon
+                src={iconSrc}
+                style={iconStyle}
+            />
+        ) : null;
 
         const buttonStyle: CSSProperties = {};
         // apply style from the element
         Object.keys(this.state.rxStyle).forEach((attr: keyof WidgetStyleState) => {
             const value = this.state.rxStyle[attr];
-            if (value !== null &&
-                value !== undefined &&
-                VisRxWidget.POSSIBLE_MUI_STYLES.includes(attr)
-            ) {
-                (attr as string) = attr.replace(
-                    /(-\w)/g,
-                    text => text[1].toUpperCase(),
-                );
+            if (value !== null && value !== undefined && VisRxWidget.POSSIBLE_MUI_STYLES.includes(attr)) {
+                (attr as string) = attr.replace(/(-\w)/g, text => text[1].toUpperCase());
                 (buttonStyle as any)[attr] = value;
             }
         });
@@ -323,64 +346,70 @@ class JQuiButtonDialogClose extends VisRxWidget<RxData, JQuiButtonDialogCloseSta
         }
 
         const content = [
-            this.state.rxData.html_prepend ? <span
-                key="prepend"
-                // eslint-disable-next-line react/no-danger
-                dangerouslySetInnerHTML={{ __html: this.state.rxData.html_prepend }}
-            /> : null,
-            this.state.rxData.html ?
+            this.state.rxData.html_prepend ? (
+                <span
+                    key="prepend"
+                    // eslint-disable-next-line react/no-danger
+                    dangerouslySetInnerHTML={{ __html: this.state.rxData.html_prepend }}
+                />
+            ) : null,
+            this.state.rxData.html ? (
                 <span
                     key="content"
                     // eslint-disable-next-line react/no-danger
                     dangerouslySetInnerHTML={{ __html: this.state.rxData.html }}
                 />
-                :
-                (this.state.rxData.no_style || this.state.rxData.jquery_style ?
-                    <button
-                        key="content"
-                        type="button"
-                        style={buttonStyle}
-                        onClick={() => this.onClick()}
-                    >
-                        {icon}
-                        {buttonText}
-                    </button>
-                    :
-                    (!buttonText ?
-                        <Fab
-                            style={{
-                                zIndex: this.props.editMode ? 0 : undefined,
-                            }}
-                            key="content"
-                            color={this.state.rxData.color || 'grey' as any}
-                            onClick={() => this.onClick()}
-                            size="small"
-                        >
-                            {icon}
-                        </Fab> :
-                        <Button
-                            key="content"
-                            style={buttonStyle}
-                            color={this.state.rxData.color || 'grey' as any}
-                            variant={this.state.rxData.variant === undefined ? 'contained' : this.state.rxData.variant as any}
-                            onClick={() => this.onClick()}
-                            startIcon={icon}
-                        >
-                            {buttonText}
-                        </Button>)),
-            this.state.rxData.html_append ? <span
-                key="append"
-                // eslint-disable-next-line react/no-danger
-                dangerouslySetInnerHTML={{ __html: this.state.rxData.html_append }}
-            /> : null,
+            ) : this.state.rxData.no_style || this.state.rxData.jquery_style ? (
+                <button
+                    key="content"
+                    type="button"
+                    style={buttonStyle}
+                    onClick={() => this.onClick()}
+                >
+                    {icon}
+                    {buttonText}
+                </button>
+            ) : !buttonText ? (
+                <Fab
+                    style={{
+                        zIndex: this.props.editMode ? 0 : undefined,
+                    }}
+                    key="content"
+                    color={this.state.rxData.color || ('grey' as any)}
+                    onClick={() => this.onClick()}
+                    size="small"
+                >
+                    {icon}
+                </Fab>
+            ) : (
+                <Button
+                    key="content"
+                    style={buttonStyle}
+                    color={this.state.rxData.color || ('grey' as any)}
+                    variant={this.state.rxData.variant === undefined ? 'contained' : (this.state.rxData.variant as any)}
+                    onClick={() => this.onClick()}
+                    startIcon={icon}
+                >
+                    {buttonText}
+                </Button>
+            ),
+            this.state.rxData.html_append ? (
+                <span
+                    key="append"
+                    // eslint-disable-next-line react/no-danger
+                    dangerouslySetInnerHTML={{ __html: this.state.rxData.html_append }}
+                />
+            ) : null,
         ];
 
-        return <div
-            className="vis-widget-body"
-            onClick={this.state.rxData.html ? () => this.onClick() : undefined}
-        >
-            {content}
-        </div>;
+        return (
+            <div
+                className="vis-widget-body"
+                onClick={this.state.rxData.html ? () => this.onClick() : undefined}
+            >
+                {content}
+            </div>
+        );
     }
 }
 

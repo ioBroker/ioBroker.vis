@@ -1,14 +1,8 @@
 import React from 'react';
 
-import {
-    TextField,
-} from '@mui/material';
+import { TextField } from '@mui/material';
 
-import {
-    Add as AddIcon,
-    Edit as EditIcon,
-    Delete as DeleteIcon,
-} from '@mui/icons-material';
+import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 
 import { I18n } from '@iobroker/adapter-react-v5';
 
@@ -47,11 +41,11 @@ const ProjectDialog: React.FC<ProjectDialogProps> = props => {
         add: I18n.t('Add'),
     };
 
-    const addProject = () => props.addProject(props.dialogName);
+    const addProject = (): void => props.addProject(props.dialogName);
 
-    const deleteProject = () => props.deleteProject(props.dialogProject);
+    const deleteProject = (): void => props.deleteProject(props.dialogProject);
 
-    const renameProject = () => props.renameProject(props.dialogProject, props.dialogName);
+    const renameProject = (): void => props.renameProject(props.dialogProject, props.dialogName);
 
     const dialogActions = {
         delete: deleteProject,
@@ -77,30 +71,33 @@ const ProjectDialog: React.FC<ProjectDialogProps> = props => {
         dialogDisabled = props.dialogName === '' || props.projects.includes(props.dialogName);
     }
 
-    return <IODialog
-        title={dialogTitles[props.dialog]}
-        actionTitle={dialogButtons[props.dialog]}
-        noTranslation
-        open={!!props.dialog}
-        onClose={() => {
-            props.setDialog(null);
-            props.setDialogProject(null);
-        }}
-        ActionIcon={DialogIcon || null}
-        action={dialogActions[props.dialog]}
-        actionColor={props.dialog === 'delete' ? 'secondary' : 'primary'}
-        actionDisabled={dialogDisabled}
-    >
-        {props.dialog === 'delete' ? null
-            : <TextField
-                variant="standard"
-                label={dialogInputs[props.dialog]}
-                inputRef={inputField}
-                fullWidth
-                value={props.dialogName}
-                onChange={e => props.setDialogName(e.target.value)}
-            /> }
-    </IODialog>;
+    return (
+        <IODialog
+            title={dialogTitles[props.dialog]}
+            actionTitle={dialogButtons[props.dialog]}
+            noTranslation
+            open={!!props.dialog}
+            onClose={() => {
+                props.setDialog(null);
+                props.setDialogProject(null);
+            }}
+            ActionIcon={DialogIcon || null}
+            action={dialogActions[props.dialog]}
+            actionColor={props.dialog === 'delete' ? 'secondary' : 'primary'}
+            actionDisabled={dialogDisabled}
+        >
+            {props.dialog === 'delete' ? null : (
+                <TextField
+                    variant="standard"
+                    label={dialogInputs[props.dialog]}
+                    inputRef={inputField}
+                    fullWidth
+                    value={props.dialogName}
+                    onChange={e => props.setDialogName(e.target.value)}
+                />
+            )}
+        </IODialog>
+    );
 };
 
 export default ProjectDialog;

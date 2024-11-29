@@ -1,7 +1,6 @@
 import { FileCopy as FileCopyIcon } from '@mui/icons-material';
 
-import type { ThemeType } from '@iobroker/adapter-react-v5';
-import { Utils, I18n } from '@iobroker/adapter-react-v5';
+import { Utils, I18n, type ThemeType } from '@iobroker/adapter-react-v5';
 
 import type { AnyWidgetId, GroupWidgetId, Widget } from '@iobroker/types-vis-2';
 import React from 'react';
@@ -65,27 +64,29 @@ const WidgetExportDialog: React.FC<WidgetExportDialogProps> = props => {
         }
     }
 
-    return <IODialog
-        open={!0}
-        onClose={props.onClose}
-        title="Export widgets"
-        closeTitle="Close"
-        action={() => {
-            Utils.copyToClipboard(JSON.stringify(widgets, null, 2));
-            props.onClose();
-            window.alert(I18n.t('Copied to clipboard'));
-        }}
-        actionTitle="Copy to clipboard"
-        actionNoClose
-        ActionIcon={FileCopyIcon}
-    >
-        <CustomAceEditor
-            type="json"
-            themeType={props.themeType}
-            value={JSON.stringify(widgets, null, 2)}
-            height={200}
-        />
-    </IODialog>;
+    return (
+        <IODialog
+            open={!0}
+            onClose={props.onClose}
+            title="Export widgets"
+            closeTitle="Close"
+            action={() => {
+                Utils.copyToClipboard(JSON.stringify(widgets, null, 2));
+                props.onClose();
+                window.alert(I18n.t('Copied to clipboard'));
+            }}
+            actionTitle="Copy to clipboard"
+            actionNoClose
+            ActionIcon={FileCopyIcon}
+        >
+            <CustomAceEditor
+                type="json"
+                themeType={props.themeType}
+                value={JSON.stringify(widgets, null, 2)}
+                height={200}
+            />
+        </IODialog>
+    );
 };
 
 export default WidgetExportDialog;

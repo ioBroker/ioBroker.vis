@@ -19,20 +19,20 @@ import PropTypes from 'prop-types';
 import {
     Button,
     Tooltip,
-    ButtonGroup, Radio,
+    ButtonGroup,
+    Radio,
     RadioGroup,
-    FormControlLabel, MenuItem,
+    FormControlLabel,
+    MenuItem,
     Select,
     FormControl,
     InputLabel,
-    FormLabel, Slider,
+    FormLabel,
+    Slider,
     List,
 } from '@mui/material';
 
-import {
-    I18n,
-    Icon,
-} from '@iobroker/adapter-react-v5';
+import { I18n, Icon } from '@iobroker/adapter-react-v5';
 
 import VisBaseWidget from '@/Vis/visBaseWidget';
 import commonStyles from '@/Utils/styles';
@@ -43,7 +43,7 @@ import VisRxWidget from '../../visRxWidget';
 import BulkEditor from './BulkEditor';
 
 class JQuiState extends VisRxWidget {
-    static getWidgetInfo() {
+    static getWidgetInfo(): RxWidgetInfo {
         return {
             id: 'tplJquiButtonState',
             visSet: 'jqui',
@@ -99,17 +99,19 @@ class JQuiState extends VisRxWidget {
                                 data,
                                 onDataChange,
                                 props, // {context: {views, view, socket, themeType, projectName, adapterName, instance, id, widget}, selectedView, selectedWidget, selectedWidgets}
-                            ) => <BulkEditor
-                                // TODO: if multiple widgets of this type selected data will get undefined, check why
-                                theme={props.context.theme}
-                                data={data || {}}
-                                onDataChange={onDataChange}
-                                socket={props.context.socket}
-                                themeType={props.context.themeType}
-                                adapterName={props.context.adapterName}
-                                instance={props.context.instance}
-                                projectName={props.context.projectName}
-                            />,
+                            ) => (
+                                <BulkEditor
+                                    // TODO: if multiple widgets of this type selected data will get undefined, check why
+                                    theme={props.context.theme}
+                                    data={data || {}}
+                                    onDataChange={onDataChange}
+                                    socket={props.context.socket}
+                                    themeType={props.context.themeType}
+                                    adapterName={props.context.adapterName}
+                                    instance={props.context.instance}
+                                    projectName={props.context.projectName}
+                                />
+                            ),
                         },
                         {
                             name: 'variant',
@@ -179,7 +181,11 @@ class JQuiState extends VisRxWidget {
                                     changed && changeData(data);
                                 }
                             },
-                            hidden: (data, index) => data.type === 'slider' || data[`value${index}`] === '' || data[`value${index}`] === null || data[`value${index}`] === undefined,
+                            hidden: (data, index) =>
+                                data.type === 'slider' ||
+                                data[`value${index}`] === '' ||
+                                data[`value${index}`] === null ||
+                                data[`value${index}`] === undefined,
                         },
                         {
                             name: 'onlyIcon',
@@ -191,37 +197,63 @@ class JQuiState extends VisRxWidget {
                             default: I18n.t('Value'),
                             type: 'text',
                             label: 'jqui_text',
-                            hidden: (data, index) => !!data[`onlyIcon${index}`] || data[`value${index}`] === '' || data[`value${index}`] === null || data[`value${index}`] === undefined,
+                            hidden: (data, index) =>
+                                !!data[`onlyIcon${index}`] ||
+                                data[`value${index}`] === '' ||
+                                data[`value${index}`] === null ||
+                                data[`value${index}`] === undefined,
                         },
                         {
                             name: 'color',
                             type: 'color',
                             label: 'color',
-                            hidden: (data, index) => data.type === 'slider' || data[`value${index}`] === '' || data[`value${index}`] === null || data[`value${index}`] === undefined,
+                            hidden: (data, index) =>
+                                data.type === 'slider' ||
+                                data[`value${index}`] === '' ||
+                                data[`value${index}`] === null ||
+                                data[`value${index}`] === undefined,
                         },
                         {
                             name: 'activeColor',
                             type: 'color',
                             label: 'jqui_active_color',
-                            hidden: (data, index) => data.type === 'slider' || data[`value${index}`] === '' || data[`value${index}`] === null || data[`value${index}`] === undefined,
+                            hidden: (data, index) =>
+                                data.type === 'slider' ||
+                                data[`value${index}`] === '' ||
+                                data[`value${index}`] === null ||
+                                data[`value${index}`] === undefined,
                         },
                         {
                             name: 'image',
                             label: 'jqui_image',
                             type: 'image',
-                            hidden: (data, index) => data.type === 'slider' || !!data.icon || data[`value${index}`] === '' || data[`value${index}`] === null || data[`value${index}`] === undefined,
+                            hidden: (data, index) =>
+                                data.type === 'slider' ||
+                                !!data.icon ||
+                                data[`value${index}`] === '' ||
+                                data[`value${index}`] === null ||
+                                data[`value${index}`] === undefined,
                         },
                         {
                             name: 'icon',
                             label: 'jqui_icon',
                             type: 'icon64',
-                            hidden: (data, index) => data.type === 'slider' || !!data.image || data[`value${index}`] === '' || data[`value${index}`] === null || data[`value${index}`] === undefined,
+                            hidden: (data, index) =>
+                                data.type === 'slider' ||
+                                !!data.image ||
+                                data[`value${index}`] === '' ||
+                                data[`value${index}`] === null ||
+                                data[`value${index}`] === undefined,
                         },
                         {
                             name: 'tooltip',
                             label: 'jqui_tooltip',
                             type: 'text',
-                            hidden: (data, index) => data.type === 'slider' || data[`value${index}`] === '' || data[`value${index}`] === null || data[`value${index}`] === undefined,
+                            hidden: (data, index) =>
+                                data.type === 'slider' ||
+                                data[`value${index}`] === '' ||
+                                data[`value${index}`] === null ||
+                                data[`value${index}`] === undefined,
                         },
                     ],
                 },
@@ -237,7 +269,12 @@ class JQuiState extends VisRxWidget {
         await super.componentDidMount();
 
         // convert old tplJquiRadioSteps data to JquiState data
-        if (this.props.tpl === 'tplJquiRadioSteps' && this.state.data && this.props.context.onWidgetsChanged && this.state.data.count === undefined) {
+        if (
+            this.props.tpl === 'tplJquiRadioSteps' &&
+            this.state.data &&
+            this.props.context.onWidgetsChanged &&
+            this.state.data.count === undefined
+        ) {
             const data = deepClone(this.state.data);
 
             data.count = 5;
@@ -267,15 +304,27 @@ class JQuiState extends VisRxWidget {
             data.min = null;
             data.max = null;
 
-            setTimeout(() => this.props.context.onWidgetsChanged([{
-                wid: this.props.id,
-                view: this.props.view,
-                data,
-            }]), 100);
+            setTimeout(
+                () =>
+                    this.props.context.onWidgetsChanged([
+                        {
+                            wid: this.props.id,
+                            view: this.props.view,
+                            data,
+                        },
+                    ]),
+                100,
+            );
         }
 
         // convert old tplJquiRadioList data to JquiState data
-        if ((this.props.tpl === 'tplJquiRadioList' || this.props.tpl === 'tplJquiSelectList') && this.state.data && this.state.data.values && this.state.data.texts && this.props.context.onWidgetsChanged) {
+        if (
+            (this.props.tpl === 'tplJquiRadioList' || this.props.tpl === 'tplJquiSelectList') &&
+            this.state.data &&
+            this.state.data.values &&
+            this.state.data.texts &&
+            this.props.context.onWidgetsChanged
+        ) {
             // convert
             const values = this.state.data.values.split(';');
             const texts = this.state.data.texts.split(';');
@@ -289,11 +338,17 @@ class JQuiState extends VisRxWidget {
                 data[`g_states-${i}`] = true;
             }
             data.type = this.props.tpl === 'tplJquiRadioList' ? 'radio' : 'select';
-            setTimeout(() => this.props.context.onWidgetsChanged([{
-                wid: this.props.id,
-                view: this.props.view,
-                data,
-            }]), 100);
+            setTimeout(
+                () =>
+                    this.props.context.onWidgetsChanged([
+                        {
+                            wid: this.props.id,
+                            view: this.props.view,
+                            data,
+                        },
+                    ]),
+                100,
+            );
         }
 
         if (this.state.rxData.oid && this.state.rxData.oid !== 'nothing_selected') {
@@ -348,13 +403,16 @@ class JQuiState extends VisRxWidget {
 
         if (this.state.rxData.type === 'slider') {
             this.controlTimeout && clearTimeout(this.controlTimeout);
-            this.controlTimeout = setTimeout(() => {
-                this.controlTimeout = null;
-                const oid = this.getControlOid();
-                if (oid) {
-                    this.props.context.setValue(oid, parseFloat(indexOrValue));
-                }
-            }, immediately ? 0 : parseInt(this.state.rxData.timeout, 10) || 300);
+            this.controlTimeout = setTimeout(
+                () => {
+                    this.controlTimeout = null;
+                    const oid = this.getControlOid();
+                    if (oid) {
+                        this.props.context.setValue(oid, parseFloat(indexOrValue));
+                    }
+                },
+                immediately ? 0 : parseInt(this.state.rxData.timeout, 10) || 300,
+            );
             this.setState({ value: indexOrValue });
         } else {
             const oid = this.getControlOid();
@@ -401,17 +459,22 @@ class JQuiState extends VisRxWidget {
 
         if (icon) {
             if (icon.startsWith('_PRJ_NAME/')) {
-                icon = icon.replace('_PRJ_NAME/', `../${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}/`);
+                icon = icon.replace(
+                    '_PRJ_NAME/',
+                    `../${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}/`,
+                );
             }
             const style = { color };
             style.width = 'auto';
             style.height = 24;
 
-            return <Icon
-                key="icon"
-                style={style}
-                src={icon}
-            />;
+            return (
+                <Icon
+                    key="icon"
+                    style={style}
+                    src={icon}
+                />
+            );
         }
         return null;
     }
@@ -436,21 +499,29 @@ class JQuiState extends VisRxWidget {
         const text = this.renderText(i, selectedIndex);
 
         // Button
-        const button = <Button
-            disabled={this.props.editMode}
-            key={i}
-            style={{ ...buttonStyle, flexGrow: 1 }}
-            startIcon={text ? icon : undefined}
-            color={selectedIndex === i ? 'primary' : 'grey'}
-            onClick={() => this.onClick(i)}
-        >
-            {text || icon}
-        </Button>;
+        const button = (
+            <Button
+                disabled={this.props.editMode}
+                key={i}
+                style={{ ...buttonStyle, flexGrow: 1 }}
+                startIcon={text ? icon : undefined}
+                color={selectedIndex === i ? 'primary' : 'grey'}
+                onClick={() => this.onClick(i)}
+            >
+                {text || icon}
+            </Button>
+        );
 
         if (this.state.rxData[`tooltip${i}`]) {
-            return <Tooltip key={i} title={this.state.rxData[`tooltip${i}`]} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
-                {button}
-            </Tooltip>;
+            return (
+                <Tooltip
+                    key={i}
+                    title={this.state.rxData[`tooltip${i}`]}
+                    slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+                >
+                    {button}
+                </Tooltip>
+            );
         }
 
         return button;
@@ -461,29 +532,41 @@ class JQuiState extends VisRxWidget {
         let text = this.renderText(i, selectedIndex);
 
         if (icon && text) {
-            text = <div style={{ display: 'flex', gap: 4 }}>
-                {icon}
-                {text}
-            </div>;
+            text = (
+                <div style={{ display: 'flex', gap: 4 }}>
+                    {icon}
+                    {text}
+                </div>
+            );
         }
 
         // Button
-        const button = <FormControlLabel
-            key={i}
-            style={buttonStyle}
-            control={<Radio
-                disabled={this.props.editMode}
-                onClick={() => this.onClick(i)}
-                checked={selectedIndex === i}
-            />}
-            labelPlacement="end"
-            label={text || icon}
-        />;
+        const button = (
+            <FormControlLabel
+                key={i}
+                style={buttonStyle}
+                control={
+                    <Radio
+                        disabled={this.props.editMode}
+                        onClick={() => this.onClick(i)}
+                        checked={selectedIndex === i}
+                    />
+                }
+                labelPlacement="end"
+                label={text || icon}
+            />
+        );
 
         if (this.state.rxData[`tooltip${i}`]) {
-            return <Tooltip key={i} title={this.state.rxData[`tooltip${i}`]} componentsProps={{ popper: { sx: commonStyles.tooltip } }}>
-                {button}
-            </Tooltip>;
+            return (
+                <Tooltip
+                    key={i}
+                    title={this.state.rxData[`tooltip${i}`]}
+                    slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+                >
+                    {button}
+                </Tooltip>
+            );
         }
         return button;
     }
@@ -493,24 +576,28 @@ class JQuiState extends VisRxWidget {
         let text = this.renderText(i, selectedIndex);
 
         if (icon && text) {
-            text = <div style={{ display: 'flex', gap: 4 }}>
-                {icon}
-                {text}
-            </div>;
+            text = (
+                <div style={{ display: 'flex', gap: 4 }}>
+                    {icon}
+                    {text}
+                </div>
+            );
         }
 
         // Button
-        return <MenuItem
-            title={this.state.rxData[`tooltip${i}`]}
-            disabled={this.props.editMode}
-            key={i}
-            selected={selectedIndex === i}
-            style={buttonStyle}
-            value={this.state.rxData[`value${i}`]}
-            onClick={this.state.rxData.open ? () => this.onClick(i) : undefined}
-        >
-            {text || icon}
-        </MenuItem>;
+        return (
+            <MenuItem
+                title={this.state.rxData[`tooltip${i}`]}
+                disabled={this.props.editMode}
+                key={i}
+                selected={selectedIndex === i}
+                style={buttonStyle}
+                value={this.state.rxData[`value${i}`]}
+                onClick={this.state.rxData.open ? () => this.onClick(i) : undefined}
+            >
+                {text || icon}
+            </MenuItem>
+        );
     }
 
     renderWidgetBody(props) {
@@ -535,14 +622,8 @@ class JQuiState extends VisRxWidget {
         // apply style from the element
         Object.keys(this.state.rxStyle).forEach(attr => {
             const value = this.state.rxStyle[attr];
-            if (value !== null &&
-                value !== undefined &&
-                VisRxWidget.POSSIBLE_MUI_STYLES.includes(attr)
-            ) {
-                attr = attr.replace(
-                    /(-\w)/g,
-                    text => text[1].toUpperCase(),
-                );
+            if (value !== null && value !== undefined && VisRxWidget.POSSIBLE_MUI_STYLES.includes(attr)) {
+                attr = attr.replace(/(-\w)/g, text => text[1].toUpperCase());
                 buttonStyle[attr] = value;
             }
         });
@@ -557,34 +638,43 @@ class JQuiState extends VisRxWidget {
         let content;
         if (
             (!this.state.rxData.count ||
-                (this.state.rxData.count === 1 && !this.state.rxData.text0 && !this.state.rxData.icon0 && !this.state.rxData.image0)) &&
+                (this.state.rxData.count === 1 &&
+                    !this.state.rxData.text0 &&
+                    !this.state.rxData.icon0 &&
+                    !this.state.rxData.image0)) &&
             (!this.state.rxData.oid || this.state.rxData.oid === 'nothing_selected')
         ) {
-            content = <Button
-                variant="outlined"
-                style={{ width: '100%', height: '100%' }}
-            >
-                {I18n.t('Select object ID')}
-            </Button>;
+            content = (
+                <Button
+                    variant="outlined"
+                    style={{ width: '100%', height: '100%' }}
+                >
+                    {I18n.t('Select object ID')}
+                </Button>
+            );
         } else if (!this.state.rxData.count) {
-            content = <Button
-                variant="outlined"
-                style={{ width: '100%', height: '100%' }}
-            >
-                {I18n.t('Please define states')}
-            </Button>;
-        }  else if (this.state.rxData.type === 'radio') {
+            content = (
+                <Button
+                    variant="outlined"
+                    style={{ width: '100%', height: '100%' }}
+                >
+                    {I18n.t('Please define states')}
+                </Button>
+            );
+        } else if (this.state.rxData.type === 'radio') {
             const buttons = [];
             for (let i = 1; i <= this.state.rxData.count; i++) {
                 buttons.push(this.renderRadio(i, selectedIndex, buttonStyle));
             }
 
-            content = <RadioGroup
-                style={{ width: '100%', height: '100%' }}
-                variant={this.state.rxData.variant === undefined ? 'contained' : this.state.rxData.variant}
-            >
-                {buttons}
-            </RadioGroup>;
+            content = (
+                <RadioGroup
+                    style={{ width: '100%', height: '100%' }}
+                    variant={this.state.rxData.variant === undefined ? 'contained' : this.state.rxData.variant}
+                >
+                    {buttons}
+                </RadioGroup>
+            );
         } else if (this.state.rxData.type === 'select') {
             const buttons = [];
             for (let i = 1; i <= this.state.rxData.count; i++) {
@@ -599,29 +689,36 @@ class JQuiState extends VisRxWidget {
             }
 
             if (this.state.rxData.open) {
-                content = <List
-                    style={{ width: '100%', height: '100%' }}
-                    value={this.state.value}
-                    onChange={e => this.onClick(this.getSelectedIndex(e.target.value))}
-                    variant={variant}
-                >
-                    {buttons}
-                </List>;
+                content = (
+                    <List
+                        style={{ width: '100%', height: '100%' }}
+                        value={this.state.value}
+                        onChange={e => this.onClick(this.getSelectedIndex(e.target.value))}
+                        variant={variant}
+                    >
+                        {buttons}
+                    </List>
+                );
             } else {
-                content = <Select
-                    disabled={this.props.editMode}
-                    style={{ width: '100%', height: '100%' }}
-                    value={this.state.value === undefined ? '' : this.state.value}
-                    onChange={e => this.onClick(this.getSelectedIndex(e.target.value))}
-                    variant={variant}
-                    sx={{
-                        '& .MuiSelect-select': variant === 'filled' ? {
-                            mb: '10px',
-                        } : undefined,
-                    }}
-                >
-                    {buttons}
-                </Select>;
+                content = (
+                    <Select
+                        disabled={this.props.editMode}
+                        style={{ width: '100%', height: '100%' }}
+                        value={this.state.value === undefined ? '' : this.state.value}
+                        onChange={e => this.onClick(this.getSelectedIndex(e.target.value))}
+                        variant={variant}
+                        sx={{
+                            '& .MuiSelect-select':
+                                variant === 'filled'
+                                    ? {
+                                          mb: '10px',
+                                      }
+                                    : undefined,
+                        }}
+                    >
+                        {buttons}
+                    </Select>
+                );
             }
         } else if (this.state.rxData.type === 'slider') {
             props.style.overflow = 'visible';
@@ -633,56 +730,72 @@ class JQuiState extends VisRxWidget {
                 });
             }
 
-            content = <Slider
-                disabled={this.props.editMode}
-                style={!this.state.rxData.orientation || this.state.rxData.orientation === 'horizontal' ?
-                    { marginLeft: 20, marginRight: 20, width: 'calc(100% - 40px)' } :
-                    { marginTop: 10, marginBottom: 10 }}
-                value={parseFloat(this.state.value) || 0}
-                valueLabelDisplay="auto"
-                min={marks[0].value}
-                max={marks[marks.length - 1].value}
-                orientation={this.state.rxData.orientation || 'horizontal'}
-                marks={marks}
-                onChangeCommitted={(e, value) => this.onClick(value, true)}
-                onChange={(e, value) => this.onClick(value)}
-            />;
+            content = (
+                <Slider
+                    disabled={this.props.editMode}
+                    style={
+                        !this.state.rxData.orientation || this.state.rxData.orientation === 'horizontal'
+                            ? { marginLeft: 20, marginRight: 20, width: 'calc(100% - 40px)' }
+                            : { marginTop: 10, marginBottom: 10 }
+                    }
+                    value={parseFloat(this.state.value) || 0}
+                    valueLabelDisplay="auto"
+                    min={marks[0].value}
+                    max={marks[marks.length - 1].value}
+                    orientation={this.state.rxData.orientation || 'horizontal'}
+                    marks={marks}
+                    onChangeCommitted={(e, value) => this.onClick(value, true)}
+                    onChange={(e, value) => this.onClick(value)}
+                />
+            );
         } else {
             const buttons = [];
             for (let i = 1; i <= this.state.rxData.count; i++) {
                 buttons.push(this.renderButton(i, selectedIndex, buttonStyle));
             }
 
-            content = <ButtonGroup
-                disabled={this.props.editMode}
-                style={{ width: '100%', height: '100%' }}
-                orientation={this.state.rxData.orientation || 'horizontal'}
-                variant={this.state.rxData.variant === undefined ? 'contained' : this.state.rxData.variant}
-            >
-                {buttons}
-            </ButtonGroup>;
+            content = (
+                <ButtonGroup
+                    disabled={this.props.editMode}
+                    style={{ width: '100%', height: '100%' }}
+                    orientation={this.state.rxData.orientation || 'horizontal'}
+                    variant={this.state.rxData.variant === undefined ? 'contained' : this.state.rxData.variant}
+                >
+                    {buttons}
+                </ButtonGroup>
+            );
         }
 
         if (this.state.rxData.widgetTitle) {
-            content = <FormControl
-                fullWidth
-                variant={this.state.rxData.variant === undefined ? 'contained' : this.state.rxData.variant}
-                style={{
-                    marginTop: this.state.rxData.type === 'select' && this.state.rxData.variant === 'outlined' ? 5 : undefined,
-                    width: '100%',
-                    height: this.state.rxData.type === 'select' && this.state.rxData.variant === 'outlined' ? 'calc(100% - 5px)' : '100%',
-                }}
-            >
-                {this.state.rxData.type === 'select' ?
-                    <InputLabel>{this.state.rxData.widgetTitle}</InputLabel> :
-                    <FormLabel style={this.state.rxData.type === 'slider' ? { marginLeft: 10 } : undefined}>{this.state.rxData.widgetTitle}</FormLabel>}
-                {content}
-            </FormControl>;
+            content = (
+                <FormControl
+                    fullWidth
+                    variant={this.state.rxData.variant === undefined ? 'contained' : this.state.rxData.variant}
+                    style={{
+                        marginTop:
+                            this.state.rxData.type === 'select' && this.state.rxData.variant === 'outlined'
+                                ? 5
+                                : undefined,
+                        width: '100%',
+                        height:
+                            this.state.rxData.type === 'select' && this.state.rxData.variant === 'outlined'
+                                ? 'calc(100% - 5px)'
+                                : '100%',
+                    }}
+                >
+                    {this.state.rxData.type === 'select' ? (
+                        <InputLabel>{this.state.rxData.widgetTitle}</InputLabel>
+                    ) : (
+                        <FormLabel style={this.state.rxData.type === 'slider' ? { marginLeft: 10 } : undefined}>
+                            {this.state.rxData.widgetTitle}
+                        </FormLabel>
+                    )}
+                    {content}
+                </FormControl>
+            );
         }
 
-        return <div className="vis-widget-body">
-            {content}
-        </div>;
+        return <div className="vis-widget-body">{content}</div>;
     }
 }
 

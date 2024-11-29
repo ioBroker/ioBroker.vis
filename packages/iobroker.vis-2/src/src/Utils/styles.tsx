@@ -15,7 +15,6 @@ const commonStyles: {
     iconFolder: React.CSSProperties;
     fieldContentSliderClear: React.CSSProperties;
     fieldHelpText: React.CSSProperties;
-    tooltip: React.CSSProperties;
     iconPreview: React.CSSProperties;
 } = {
     backgroundClass: {
@@ -82,12 +81,7 @@ const commonStyles: {
         float: 'right',
         fontSize: 16,
     },
-    tooltip: {
-        pointerEvents: 'none',
-    },
-    iconPreview: {
-
-    },
+    iconPreview: {},
 };
 
 export default commonStyles;

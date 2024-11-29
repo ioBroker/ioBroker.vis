@@ -1,6 +1,6 @@
 import type React from 'react';
 
-import { type LegacyConnection, type ThemeType } from '@iobroker/adapter-react-v5';
+import type { LegacyConnection, ThemeType, ObjectBrowserCustomFilter } from '@iobroker/adapter-react-v5';
 import type {
     GroupWidgetId,
     Project,
@@ -10,13 +10,12 @@ import type {
     RxWidgetInfoAttributesField,
     WidgetData,
     RxWidgetInfoCustomComponentProperties,
-    RxWidgetAttributeType, Widget,
+    RxWidgetAttributeType,
+    Widget,
 } from '@iobroker/types-vis-2';
 import type VisRxWidget from '@/Vis/visRxWidget';
-import type { ObjectBrowserCustomFilter, ObjectBrowserType } from '@iobroker/adapter-react-v5/Components/types';
 
 import { getRemoteWidgets } from './visLoadWidgets';
-// eslint-disable-next-line import/no-cycle
 import WIDGETS from './Widgets';
 
 const DEFAULT_SET_COLORS: Record<string, string> = {
@@ -62,7 +61,8 @@ export type RxWidgetInfoAttributesFieldAll = {
     readonly noInit?: boolean;
     /** Do not subscribe on changes of the object */
     readonly noSubscribe?: boolean;
-    /** Filter of objects (not JSON string, it is an object), like:
+    /**
+     * Filter of objects (not JSON string, it is an object), like:
      - `{common: {custom: true}}` - show only objects with some custom settings
      - `{common: {custom: 'sql.0'}}` - show only objects with sql.0 custom settings (only of the specific instance)
      - `{common: {custom: '_dataSources'}}` - show only objects of adapters `influxdb' or 'sql' or 'history'
@@ -74,7 +74,12 @@ export type RxWidgetInfoAttributesFieldAll = {
      - `{common: {role: 'switch'}` - show only states with roles starting from switch
      - `{common: {role: ['switch', 'button']}` - show only states with roles starting from `switch` and `button`
      */
-    filter?: ObjectBrowserCustomFilter | ObjectBrowserType | ((data: WidgetData, index: number) => Record<string, any>) | string;
+    filter?:
+        | ObjectBrowserCustomFilter
+        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+        | ioBroker.ObjectType
+        | ((data: WidgetData, index: number) => Record<string, any>)
+        | string;
     /** Additionally, you can provide `adapter` to filter the instances of specific adapter. With special adapter name `_dataSources` you can get all adapters with flag `common.getHistory`. */
     readonly adapter?: string;
     /** Additionally, you can provide `adapters` to filter the instances of specific adapters. */
@@ -143,7 +148,7 @@ export type RxWidgetInfoAttributesFieldAll = {
         socket: LegacyConnection,
         index?: number,
     ) => Promise<void> | string;
-}
+};
 
 export interface WidgetAttributeInfoStored extends RxWidgetInfoAttributesFieldAll {
     onChangeFunc?: string;
@@ -197,17 +202,24 @@ export interface WidgetType {
     resizable?: boolean;
     resizeLocked?: boolean;
     draggable?: boolean;
-    params: string | readonly RxWidgetInfoGroup[] | ((data: WidgetData, ignore: null, context: {
-        views: Project;
-        view: string;
-        socket: LegacyConnection;
-        themeType: ThemeType;
-        projectName: string;
-        adapterName: string;
-        instance: number;
-        id: string;
-        widget: Widget;
-    }) => RxWidgetInfoGroup[]);
+    params:
+        | string
+        | readonly RxWidgetInfoGroup[]
+        | ((
+              data: WidgetData,
+              ignore: null,
+              context: {
+                  views: Project;
+                  view: string;
+                  socket: LegacyConnection;
+                  themeType: ThemeType;
+                  projectName: string;
+                  adapterName: string;
+                  instance: number;
+                  id: string;
+                  widget: Widget;
+              },
+          ) => RxWidgetInfoGroup[]);
 
     setLabel?: string;
     setColor?: string;
@@ -232,6 +244,158 @@ interface VisRxWidgetLoaded extends VisRxWidget<any> {
     readonly visHidden?: boolean;
     readonly url?: string;
 }
+
+export const getWidgetTypes: (_usedWidgetSets?: string[]) => WidgetType[] = (usedWidgetSets?: string[]) => {
+    if (!window.visWidgetTypes) {
+        window.visSets = {};
+        VisWidgetsCatalog.allWidgetsList = [];
+
+        if (!VisWidgetsCatalog.rxWidgets) {
+            return [];
+        }
+
+        // Old CanJS widgets
+        window.visWidgetTypes = Array.from(document.querySelectorAll('script[type="text/ejs"]'))
+            .map(script => {
+                const name: string | null = script.getAttribute('id');
+                if (!name || !VisWidgetsCatalog.rxWidgets) {
+                    return null;
+                }
+                // only if RX widget with the same name not found
+                let info;
+                if (VisWidgetsCatalog.rxWidgets[name]?.getWidgetInfo) {
+                    info = VisWidgetsCatalog.rxWidgets[name].getWidgetInfo();
+                    if (info?.visAttrs && typeof info.visAttrs !== 'string') {
+                        return null;
+                    }
+                }
+
+                const widgetSet = script.getAttribute('data-vis-set') || 'basic';
+                if (usedWidgetSets && !usedWidgetSets.includes(widgetSet)) {
+                    console.log(`Ignored ${widgetSet}/${name} because not used in project`);
+                    return null;
+                }
+
+                const color = script.getAttribute('data-vis-color');
+                window.visSets[widgetSet] = window.visSets[widgetSet] || {};
+                if (color) {
+                    window.visSets[widgetSet].color = color;
+                } else if (!window.visSets[widgetSet].color && DEFAULT_SET_COLORS[widgetSet]) {
+                    window.visSets[widgetSet].color = DEFAULT_SET_COLORS[widgetSet];
+                }
+                const widgetObj: WidgetType = {
+                    name,
+                    title: info?.visName || script.getAttribute('data-vis-name') || undefined,
+                    label: info?.visWidgetLabel || info?.visWidgetLabel === '' ? info.visWidgetLabel : undefined, // new style with translation
+                    preview: info?.visPrev || script.getAttribute('data-vis-prev') || undefined,
+                    help: script.getAttribute('data-vis-help') || undefined,
+                    set: info?.visSet || widgetSet,
+                    imageHTML: script.getAttribute('data-vis-prev') || '',
+                    init: script.getAttribute('data-vis-init') || undefined,
+                    color: info?.visWidgetColor || undefined,
+                    params:
+                        info?.visAttrs ||
+                        Object.values(script.attributes)
+                            .filter(attribute => attribute.name.startsWith('data-vis-attrs'))
+                            .map(attribute => attribute.value)
+                            .join(''),
+                    setLabel: info?.visSetLabel || undefined,
+                    setColor: info?.visSetColor || undefined,
+                    order:
+                        info?.visOrder === undefined || info?.visOrder === null
+                            ? 1000
+                            : typeof info.visOrder === 'string'
+                              ? parseInt(info.visOrder, 10)
+                              : info.visOrder,
+                    hidden: script.getAttribute('data-vis-no-palette') === 'true',
+                };
+
+                VisWidgetsCatalog.allWidgetsList?.push(widgetObj.name);
+
+                return widgetObj;
+            })
+            .filter(w => w);
+
+        // React widgets
+        // We have here two types of widgets: native (from this repository - function) and loaded via getRemoteWidgets (objects)
+        const widgets: VisRxWidgetLoaded[] = Object.values(VisWidgetsCatalog.rxWidgets);
+        widgets.forEach(widget => {
+            const widgetInfo = widget.getWidgetInfo();
+            const i18nPrefix = widget.i18nPrefix || '';
+
+            const widgetObj: WidgetType = {
+                name: widgetInfo.id,
+                preview: widgetInfo.visPrev,
+                title: widgetInfo.visName, // old style without translation
+                params: widgetInfo.visAttrs,
+                set: widgetInfo.visSet,
+                style: widgetInfo.visDefaultStyle,
+                label: widgetInfo.visWidgetLabel
+                    ? i18nPrefix + widgetInfo.visWidgetLabel
+                    : widgetInfo.visWidgetLabel === ''
+                      ? ''
+                      : undefined, // new style with translation
+                setLabel: widgetInfo.visSetLabel ? i18nPrefix + widgetInfo.visSetLabel : undefined, // new style with translation
+                setColor: widgetInfo.visSetColor,
+                setIcon: widgetInfo.visSetIcon,
+                color: widgetInfo.visWidgetColor,
+                resizable: widgetInfo.visResizable,
+                resizeLocked: widgetInfo.visResizeLocked,
+                draggable: widgetInfo.visDraggable,
+                adapter: widget.adapter || undefined,
+                version: widget.version || undefined,
+                hidden: widget.visHidden,
+                order: widgetInfo.visOrder === undefined ? 1000 : widgetInfo.visOrder,
+                // custom: widgetInfo.custom, not used
+                customPalette: widgetInfo.customPalette,
+                rx: true,
+                developerMode: widget.url?.startsWith('http://'),
+                i18nPrefix,
+            };
+            VisWidgetsCatalog.allWidgetsList &&
+                !VisWidgetsCatalog.allWidgetsList.includes(widgetObj.name) &&
+                VisWidgetsCatalog.allWidgetsList.push(widgetObj.name);
+
+            const index = (window as any).visWidgetTypes.findIndex((item: WidgetType) => item.name === widgetObj.name);
+            if (index > -1) {
+                (window as any).visWidgetTypes[index] = widgetObj; // replace old widget with RX widget
+            } else {
+                (window as any).visWidgetTypes.push(widgetObj);
+            }
+
+            if (i18nPrefix && typeof widgetInfo.visAttrs === 'object') {
+                widgetInfo.visAttrs.forEach(group => {
+                    if (group.label && !group.label.startsWith(i18nPrefix)) {
+                        (group as WidgetAttributesGroupInfoStored).label = i18nPrefix + group.label;
+                    }
+                    if (group.fields) {
+                        group.fields.forEach(field => {
+                            const _field = field as unknown as WidgetAttributeInfoStored;
+                            if (_field.label && !_field.label.startsWith(i18nPrefix)) {
+                                _field.label = i18nPrefix + _field.label;
+                            }
+                            if (_field.tooltip && !_field.tooltip.startsWith(i18nPrefix)) {
+                                _field.tooltip = i18nPrefix + _field.tooltip;
+                            }
+                            if (_field.options && !_field.noTranslation && Array.isArray(_field.options)) {
+                                _field.options.forEach(option => {
+                                    if (typeof option === 'object') {
+                                        if (option.label && !option.label.startsWith(i18nPrefix)) {
+                                            // @ts-expect-error we must add prefix to the label
+                                            option.label = i18nPrefix + option.label;
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    return (window as any).visWidgetTypes;
+};
 
 class VisWidgetsCatalog {
     static rxWidgets: Record<string, VisRxWidgetLoaded> | null = null;
@@ -270,9 +434,9 @@ class VisWidgetsCatalog {
         return anyWithoutSet ? false : widgetSets;
     }
 
-    static setUsedWidgetSets(project: Project) {
+    static setUsedWidgetSets(project: Project): Project {
         // provide for all widgets the widget set and set
-        let views;
+        let views: Project;
         const widgetTypes = window.visWidgetTypes; // getWidgetTypes();
         const viewKeys = Object.keys(project);
 
@@ -327,51 +491,60 @@ class VisWidgetsCatalog {
             }
 
             return new Promise(resolve => {
-                setTimeout(() =>
-                    getRemoteWidgets(socket, !changeProject && usedWidgetSets ? usedWidgetSets : false)
-                        .then((widgetSets: void | VisRxWidget<any>[]) => {
-                            const collectedWidgets: VisRxWidget<any>[] = [...WIDGETS, ...(widgetSets || [])] as VisRxWidget<any>[];
+                setTimeout(
+                    () =>
+                        getRemoteWidgets(socket, !changeProject && usedWidgetSets ? usedWidgetSets : false).then(
+                            (widgetSets: void | VisRxWidget<any>[]) => {
+                                const collectedWidgets: VisRxWidget<any>[] = [
+                                    ...WIDGETS,
+                                    ...(widgetSets || []),
+                                ] as VisRxWidget<any>[];
 
-                            collectedWidgets.forEach((WidgetEl: VisRxWidget<any>) => {
-                                if (!WidgetEl?.getWidgetInfo) {
-                                    console.error(`Invalid widget without getWidgetInfo: ${WidgetEl.constructor.name}`);
+                                collectedWidgets.forEach((WidgetEl: VisRxWidget<any>) => {
+                                    if (!WidgetEl?.getWidgetInfo) {
+                                        console.error(
+                                            `Invalid widget without getWidgetInfo: ${WidgetEl.constructor.name}`,
+                                        );
+                                    } else {
+                                        const info = WidgetEl.getWidgetInfo();
+                                        if (!info.visSet) {
+                                            console.error(`No visSet in info for "${WidgetEl.constructor.name}"`);
+                                        }
+
+                                        if (!info.id) {
+                                            console.error(`No id in info for "${WidgetEl.constructor.name}"`);
+                                        } else if (VisWidgetsCatalog.rxWidgets) {
+                                            VisWidgetsCatalog.rxWidgets[info.id] = WidgetEl;
+                                        }
+                                    }
+                                });
+
+                                // init all widgets
+                                if (changeProject) {
+                                    // eslint-disable-next-line no-use-before-define
+                                    getWidgetTypes();
+                                } else if (usedWidgetSets) {
+                                    // eslint-disable-next-line no-use-before-define
+                                    getWidgetTypes(usedWidgetSets);
                                 } else {
-                                    const info = WidgetEl.getWidgetInfo();
-                                    if (!info.visSet) {
-                                        console.error(`No visSet in info for "${WidgetEl.constructor.name}"`);
-                                    }
+                                    // eslint-disable-next-line no-use-before-define
+                                    getWidgetTypes();
+                                }
 
-                                    if (!info.id) {
-                                        console.error(`No id in info for "${WidgetEl.constructor.name}"`);
-                                    } else if (VisWidgetsCatalog.rxWidgets) {
-                                        VisWidgetsCatalog.rxWidgets[info.id] = WidgetEl;
+                                if (usedWidgetSets === false && changeProject) {
+                                    // some widgets without set found
+                                    const newProject = VisWidgetsCatalog.setUsedWidgetSets(project);
+                                    if (newProject) {
+                                        console.warn('Found widgets without widget set. Project updated');
+                                        changeProject(newProject);
                                     }
                                 }
-                            });
 
-                            // init all widgets
-                            if (changeProject) {
-                                // eslint-disable-next-line no-use-before-define
-                                getWidgetTypes();
-                            } else if (usedWidgetSets) {
-                                // eslint-disable-next-line no-use-before-define
-                                getWidgetTypes(usedWidgetSets);
-                            } else {
-                                // eslint-disable-next-line no-use-before-define
-                                getWidgetTypes();
-                            }
-
-                            if (usedWidgetSets === false && changeProject) {
-                                // some widgets without set found
-                                const newProject = VisWidgetsCatalog.setUsedWidgetSets(project);
-                                if (newProject) {
-                                    console.warn('Found widgets without widget set. Project updated');
-                                    changeProject(newProject);
-                                }
-                            }
-
-                            resolve(VisWidgetsCatalog.rxWidgets as Record<string, VisRxWidget<any>>);
-                        }), 0);
+                                resolve(VisWidgetsCatalog.rxWidgets as Record<string, VisRxWidget<any>>);
+                            },
+                        ),
+                    0,
+                );
             });
         }
 
@@ -379,148 +552,10 @@ class VisWidgetsCatalog {
     }
 }
 
-export const getWidgetTypes: (_usedWidgetSets?: string[]) => WidgetType[] = (usedWidgetSets?: string[]) => {
-    if (!window.visWidgetTypes) {
-        window.visSets = {};
-        VisWidgetsCatalog.allWidgetsList = [];
-
-        if (!VisWidgetsCatalog.rxWidgets) {
-            return [];
-        }
-
-        // Old CanJS widgets
-        window.visWidgetTypes = Array.from(document.querySelectorAll('script[type="text/ejs"]'))
-            .map(script => {
-                const name: string | null = script.getAttribute('id');
-                if (!name || !VisWidgetsCatalog.rxWidgets) {
-                    return null;
-                }
-                // only if RX widget with the same name not found
-                let info;
-                if (VisWidgetsCatalog.rxWidgets[name]?.getWidgetInfo) {
-                    info = VisWidgetsCatalog.rxWidgets[name].getWidgetInfo();
-                    if (info?.visAttrs && typeof info.visAttrs !== 'string') {
-                        return null;
-                    }
-                }
-
-                const widgetSet = script.getAttribute('data-vis-set') || 'basic';
-                if (usedWidgetSets && !usedWidgetSets.includes(widgetSet)) {
-                    console.log(`Ignored ${widgetSet}/${name} because not used in project`);
-                    return null;
-                }
-
-                const color = script.getAttribute('data-vis-color');
-                window.visSets[widgetSet] = window.visSets[widgetSet] || {};
-                if (color) {
-                    window.visSets[widgetSet].color = color;
-                } else if (!window.visSets[widgetSet].color && DEFAULT_SET_COLORS[widgetSet]) {
-                    window.visSets[widgetSet].color = DEFAULT_SET_COLORS[widgetSet];
-                }
-                const widgetObj: WidgetType = {
-                    name,
-                    title: info?.visName || script.getAttribute('data-vis-name') || undefined,
-                    label: info?.visWidgetLabel || info?.visWidgetLabel === '' ? info.visWidgetLabel : undefined, // new style with translation
-                    preview: info?.visPrev || script.getAttribute('data-vis-prev') || undefined,
-                    help: script.getAttribute('data-vis-help') || undefined,
-                    set: info?.visSet || widgetSet,
-                    imageHTML: script.getAttribute('data-vis-prev') || '',
-                    init: script.getAttribute('data-vis-init') || undefined,
-                    color: info?.visWidgetColor || undefined,
-                    params: info?.visAttrs || Object.values(script.attributes)
-                        .filter(attribute => attribute.name.startsWith('data-vis-attrs'))
-                        .map(attribute => attribute.value)
-                        .join(''),
-                    setLabel: info?.visSetLabel || undefined,
-                    setColor: info?.visSetColor || undefined,
-                    order: info?.visOrder === undefined || info?.visOrder === null ? 1000 : (typeof info.visOrder === 'string' ? parseInt(info.visOrder, 10) : info.visOrder),
-                    hidden: script.getAttribute('data-vis-no-palette') === 'true',
-                };
-
-                VisWidgetsCatalog.allWidgetsList?.push(widgetObj.name);
-
-                return widgetObj;
-            }).filter(w => w);
-
-        // React widgets
-        // We have here two types of widgets: native (from this repository - function) and loaded via getRemoteWidgets (objects)
-        const widgets = Object.values(VisWidgetsCatalog.rxWidgets) as VisRxWidgetLoaded[];
-        widgets.forEach(widget => {
-            const widgetInfo = widget.getWidgetInfo();
-            const i18nPrefix = widget.i18nPrefix || '';
-
-            const widgetObj: WidgetType = {
-                name: widgetInfo.id,
-                preview: widgetInfo.visPrev,
-                title: widgetInfo.visName, // old style without translation
-                params: widgetInfo.visAttrs,
-                set: widgetInfo.visSet,
-                style: widgetInfo.visDefaultStyle,
-                label: widgetInfo.visWidgetLabel ? i18nPrefix + widgetInfo.visWidgetLabel : (widgetInfo.visWidgetLabel === '' ? '' : undefined), // new style with translation
-                setLabel: widgetInfo.visSetLabel ? i18nPrefix + widgetInfo.visSetLabel : undefined, // new style with translation
-                setColor: widgetInfo.visSetColor,
-                setIcon: widgetInfo.visSetIcon,
-                color: widgetInfo.visWidgetColor,
-                resizable: widgetInfo.visResizable,
-                resizeLocked: widgetInfo.visResizeLocked,
-                draggable: widgetInfo.visDraggable,
-                adapter: widget.adapter || undefined,
-                version: widget.version || undefined,
-                hidden: widget.visHidden,
-                order: widgetInfo.visOrder === undefined ? 1000 : widgetInfo.visOrder,
-                // custom: widgetInfo.custom, not used
-                customPalette: widgetInfo.customPalette,
-                rx: true,
-                developerMode: widget.url?.startsWith('http://'),
-                i18nPrefix,
-            };
-            VisWidgetsCatalog.allWidgetsList && !VisWidgetsCatalog.allWidgetsList.includes(widgetObj.name) && VisWidgetsCatalog.allWidgetsList.push(widgetObj.name);
-
-            const index = (window as any).visWidgetTypes.findIndex((item: WidgetType) => item.name === widgetObj.name);
-            if (index > -1) {
-                (window as any).visWidgetTypes[index] = widgetObj; // replace old widget with RX widget
-            } else {
-                (window as any).visWidgetTypes.push(widgetObj);
-            }
-
-            if (i18nPrefix && typeof widgetInfo.visAttrs === 'object') {
-                widgetInfo.visAttrs.forEach(group => {
-                    if (group.label && !group.label.startsWith(i18nPrefix)) {
-                        (group as WidgetAttributesGroupInfoStored).label = i18nPrefix + group.label;
-                    }
-                    if (group.fields) {
-                        group.fields.forEach(field => {
-                            const _field = field as unknown as WidgetAttributeInfoStored;
-                            if (_field.label && !_field.label.startsWith(i18nPrefix)) {
-                                _field.label = i18nPrefix + _field.label;
-                            }
-                            if (_field.tooltip && !_field.tooltip.startsWith(i18nPrefix)) {
-                                _field.tooltip = i18nPrefix + _field.tooltip;
-                            }
-                            if (_field.options && !_field.noTranslation && Array.isArray(_field.options)) {
-                                _field.options.forEach(option => {
-                                    if (typeof option === 'object') {
-                                        if (option.label && !option.label.startsWith(i18nPrefix)) {
-                                            // @ts-expect-error we must add prefix to the label
-                                            option.label = i18nPrefix + option.label;
-                                        }
-                                    }
-                                });
-                            }
-                        });
-                    }
-                });
-            }
-        });
-    }
-
-    return (window as any).visWidgetTypes;
-};
-
-const deepCloneRx = (obj: any[] | Record<string, any>) => {
+function deepCloneRx(obj: any[] | Record<string, any>): any[] | Record<string, any> {
     if (Array.isArray(obj)) {
         const newObj: any[] = [];
-        for (const key in obj as any[]) {
+        for (const key in obj) {
             if (obj[key] !== undefined) {
                 if (Array.isArray(obj[key]) || typeof obj[key] === 'object') {
                     // If it is ReactJS object
@@ -538,7 +573,7 @@ const deepCloneRx = (obj: any[] | Record<string, any>) => {
     }
 
     const newObj: Record<string, any> = {};
-    for (const key in obj as Record<string, any>) {
+    for (const key in obj) {
         if (obj[key] !== undefined) {
             if (Array.isArray(obj[key]) || typeof obj[key] === 'object') {
                 // If it is ReactJS object
@@ -553,7 +588,7 @@ const deepCloneRx = (obj: any[] | Record<string, any>) => {
         }
     }
     return newObj;
-};
+}
 
 export interface CommonGroups {
     common: number;
@@ -574,11 +609,13 @@ export const parseAttributes = (
         let isIndexedGroup = false;
         commonGroups = commonGroups || { common: 1 };
         commonFields = commonFields || {};
-        const fields: WidgetAttributesGroupInfoStored[] = [{
-            name: 'common',
-            singleName: 'common',
-            fields: [],
-        }];
+        const fields: WidgetAttributesGroupInfoStored[] = [
+            {
+                name: 'common',
+                singleName: 'common',
+                fields: [],
+            },
+        ];
         let currentGroup: WidgetAttributesGroupInfoStored | undefined = fields[0];
         widgetIndex = widgetIndex || 0;
 
@@ -597,13 +634,11 @@ export const parseAttributes = (
                 if (pparts[1] !== 'byindex') {
                     currentGroup = fields.find(group => group.name === groupName);
                     if (!currentGroup) {
-                        fields.push(
-                            {
-                                name: groupName,
-                                singleName: groupName,
-                                fields: [],
-                            },
-                        );
+                        fields.push({
+                            name: groupName,
+                            singleName: groupName,
+                            fields: [],
+                        });
                         currentGroup = fields[fields.length - 1];
                     }
                     if (commonGroups) {
@@ -617,7 +652,9 @@ export const parseAttributes = (
                     isIndexedGroup = true;
                 }
             } else {
-                const match = fieldString.match(/([a-zA-Z0-9._-]+)(\([a-zA-Z.0-9-_]*\))?(\[.*])?(\/[-_,^§~\s:/.a-zA-Z0-9]+)?/);
+                const match = fieldString.match(
+                    /([a-zA-Z0-9._-]+)(\([a-zA-Z.0-9-_]*\))?(\[.*])?(\/[-_,^§~\s:/.a-zA-Z0-9]+)?/,
+                );
                 if (!match) {
                     console.warn(`Invalid attribute ${fieldString}`);
                     return;
@@ -661,7 +698,13 @@ export const parseAttributes = (
                     delete field.onChangeFunc;
                 }
 
-                if (widgetIndex && widgetIndex > 0 && !repeats && commonFields && !commonFields[`${groupName}.${field.name}`]) {
+                if (
+                    widgetIndex &&
+                    widgetIndex > 0 &&
+                    !repeats &&
+                    commonFields &&
+                    !commonFields[`${groupName}.${field.name}`]
+                ) {
                     return;
                 }
 
@@ -684,12 +727,17 @@ export const parseAttributes = (
                     field.type = 'text';
                 }
 
-                if (field.type && (field.type.startsWith('id,'))) {
+                if (field.type && field.type.startsWith('id,')) {
                     const options = field.type.split(',');
                     field.type = options[0] as RxWidgetAttributeType;
                     field.filter = options[1];
                 }
-                if (field.type && (field.type.startsWith('select,') || field.type.startsWith('nselect,') || field.type.startsWith('auto,'))) {
+                if (
+                    field.type &&
+                    (field.type.startsWith('select,') ||
+                        field.type.startsWith('nselect,') ||
+                        field.type.startsWith('auto,'))
+                ) {
                     const options = field.type.split(',');
                     field.type = options[0] as RxWidgetAttributeType;
                     field.options = options.slice(1);
@@ -701,7 +749,7 @@ export const parseAttributes = (
                     field.max = parseInt(options[2]);
                     field.step = parseInt(options[3]);
                     if (!field.step) {
-                        field.step = (field.max - field.min / 100);
+                        field.step = field.max - field.min / 100;
                     }
                 }
                 if (field.type && field.type.startsWith('style,')) {
@@ -712,7 +760,7 @@ export const parseAttributes = (
                     field.filterAttrs = options[3];
                     field.removeName = options[4];
                     if (!field.step && field.max !== undefined && field.min !== undefined) {
-                        field.step = (field.max - field.min / 100);
+                        field.step = field.max - field.min / 100;
                     }
                 }
                 // remove comma from type
@@ -737,10 +785,20 @@ export const parseAttributes = (
                         }
                         for (let i = from; i <= to; i++) {
                             if (isIndexedGroup) {
-                                if (commonGroups && widgetIndex && widgetIndex > 0 && !commonGroups[`${groupName}-${i}`]) {
+                                if (
+                                    commonGroups &&
+                                    widgetIndex &&
+                                    widgetIndex > 0 &&
+                                    !commonGroups[`${groupName}-${i}`]
+                                ) {
                                     return;
                                 }
-                                if (commonFields && widgetIndex && widgetIndex > 0 && !commonFields[`${groupName}-${i}.${field.name}`]) {
+                                if (
+                                    commonFields &&
+                                    widgetIndex &&
+                                    widgetIndex > 0 &&
+                                    !commonFields[`${groupName}-${i}.${field.name}`]
+                                ) {
                                     return;
                                 }
                                 if (!indexedGroups[i]) {
@@ -804,7 +862,7 @@ export const parseAttributes = (
 
         // if enumerable
         while (groupIndex > -1) {
-            const group = fields[groupIndex] as WidgetAttributesGroupInfoStored;
+            const group = fields[groupIndex];
             group.singleName = group.name;
             let from: number;
             let indexFrom;

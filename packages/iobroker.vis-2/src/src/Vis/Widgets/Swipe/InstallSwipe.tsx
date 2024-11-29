@@ -23,20 +23,20 @@ export default class InstallSwipe {
 
     private indicatorNode: null | HTMLElement = null;
 
-    constructor(options: {
-        onSwipeLeft?: null | (() => void);
-        onSwipeRight?: null | (() => void);
-    }) {
+    constructor(options: { onSwipeLeft?: null | (() => void); onSwipeRight?: null | (() => void) }) {
         this.onSwipeRight = options.onSwipeRight;
         this.onSwipeLeft = options.onSwipeLeft;
     }
 
-    install(el?: HTMLElement, options?: {
-        hideIndication?: boolean;
-        indicationLeft?: string;
-        indicationRight?: string;
-        swipeThreshold?: number;
-    }) {
+    install(
+        el?: HTMLElement,
+        options?: {
+            hideIndication?: boolean;
+            indicationLeft?: string;
+            indicationRight?: string;
+            swipeThreshold?: number;
+        },
+    ): void {
         if (el) {
             this.el = el as SwipeElement;
         }
@@ -58,7 +58,7 @@ export default class InstallSwipe {
         this.init();
     }
 
-    destroy() {
+    destroy(): void {
         if (this.el?._swipe) {
             this.el.removeEventListener('mousedown', this.moveStart, false);
             this.el.removeEventListener('touchstart', this.moveStart, false);
@@ -68,17 +68,19 @@ export default class InstallSwipe {
     }
 
     static unify(e: MouseEvent | TouchEvent): MouseEvent {
-        return (e as TouchEvent).changedTouches ? (e as TouchEvent).changedTouches[0] as unknown as MouseEvent : e as MouseEvent;
+        return (e as TouchEvent).changedTouches
+            ? ((e as TouchEvent).changedTouches[0] as unknown as MouseEvent)
+            : (e as MouseEvent);
     }
 
-    private move = (e: MouseEvent | TouchEvent) => {
+    private move = (e: MouseEvent | TouchEvent): void => {
         e.preventDefault();
 
         if (this.locked) {
             const dx = InstallSwipe.unify(e).clientX - this.x0;
-            if ((dx > 0 && this.onSwipeRight && this.indicationRight)) {
+            if (dx > 0 && this.onSwipeRight && this.indicationRight) {
                 this.el.style.transform = `translateX(${dx}px)`;
-            } else if ((dx < 0 && this.onSwipeLeft && this.indicationLeft)) {
+            } else if (dx < 0 && this.onSwipeLeft && this.indicationLeft) {
                 this.el.style.transform = `translateX(${dx}px)`;
             }
             if (Math.abs(dx) > this.swipeThreshold) {
@@ -90,7 +92,7 @@ export default class InstallSwipe {
         }
     };
 
-    private removeIndicator() {
+    private removeIndicator(): void {
         if (this.indicatorNode) {
             this.indicatorNode.remove();
             this.indicatorNode = null;
@@ -110,7 +112,7 @@ export default class InstallSwipe {
         }
     }
 
-    private moveEnd = (e: MouseEvent | TouchEvent) => {
+    private moveEnd = (e: MouseEvent | TouchEvent): void => {
         if (this.locked) {
             // calculate X distance
             const dx = InstallSwipe.unify(e).clientX - this.x0;
@@ -125,7 +127,7 @@ export default class InstallSwipe {
         }
     };
 
-    private moveStart = (e: MouseEvent | TouchEvent) => {
+    private moveStart = (e: MouseEvent | TouchEvent): void => {
         if (!this.locked) {
             this.locked = true;
             // remember start point
@@ -139,7 +141,7 @@ export default class InstallSwipe {
         }
     };
 
-    private init() {
+    private init(): void {
         if (!this.el._swipe) {
             this.el.addEventListener('mousedown', this.moveStart, false);
             this.el.addEventListener('touchstart', this.moveStart, false);
@@ -147,7 +149,7 @@ export default class InstallSwipe {
         }
     }
 
-    private showIndication(dx: number) {
+    private showIndication(dx: number): void {
         if (this.hideIndication) {
             return;
         }

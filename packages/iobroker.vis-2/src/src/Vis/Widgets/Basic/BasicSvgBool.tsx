@@ -15,51 +15,60 @@
 
 import React from 'react';
 
-// eslint-disable-next-line import/no-cycle
-import type { GetRxDataFromWidget, RxRenderWidgetProps } from '@iobroker/types-vis-2';
+import type { RxRenderWidgetProps, RxWidgetInfo } from '@iobroker/types-vis-2';
 import VisRxWidget from '../../visRxWidget';
 
 // eslint-disable-next-line no-use-before-define
-type RxData = GetRxDataFromWidget<typeof BasicSvgBool>;
+type RxData = {
+    oid: string;
+    no_control: boolean;
+    svg_false: string;
+    svg_true: string;
+    svg_opacity: number;
+};
 
 class BasicSvgBool extends VisRxWidget<RxData> {
-    static getWidgetInfo() {
+    static getWidgetInfo(): RxWidgetInfo {
         return {
             id: 'tplValueBoolCtrlSvg',
             visSet: 'basic',
             visName: 'Bool SVG',
             visWidgetLabel: 'qui_Bool SVG',
             visPrev: 'widgets/basic/img/Prev_ValueBoolCtrlSvg.png',
-            visAttrs: [{
-                name: 'common',
-                fields: [
-                    {
-                        name: 'oid',
-                        type: 'id',
-                    },
-                    {
-                        name: 'no_control',
-                        type: 'checkbox',
-                    },
-                    {
-                        name: 'svg_false',
-                        type: 'html',
-                        default: '<polygon points=\'100,10 40,198 190,78 10,78 160,198\' style=\'fill:lime; stroke:purple; stroke-width:5; fill-rule:nonzero\' transform=\'scale(0.4)\' />',
-                    },
-                    {
-                        name: 'svg_true',
-                        type: 'html',
-                        default: '<polygon points=\'100,10 40,198 190,78 10,78 160,198\' style=\'fill:yellow; stroke:red; stroke-width:5; fill-rule:nonzero\' transform=\'scale(0.4)\' />',
-                    },
-                    {
-                        name: 'svg_opacity',
-                        type: 'slider',
-                        min: 0,
-                        max: 1,
-                        step: 0.05,
-                    },
-                ],
-            }],
+            visAttrs: [
+                {
+                    name: 'common',
+                    fields: [
+                        {
+                            name: 'oid',
+                            type: 'id',
+                        },
+                        {
+                            name: 'no_control',
+                            type: 'checkbox',
+                        },
+                        {
+                            name: 'svg_false',
+                            type: 'html',
+                            default:
+                                "<polygon points='100,10 40,198 190,78 10,78 160,198' style='fill:lime; stroke:purple; stroke-width:5; fill-rule:nonzero' transform='scale(0.4)' />",
+                        },
+                        {
+                            name: 'svg_true',
+                            type: 'html',
+                            default:
+                                "<polygon points='100,10 40,198 190,78 10,78 160,198' style='fill:yellow; stroke:red; stroke-width:5; fill-rule:nonzero' transform='scale(0.4)' />",
+                        },
+                        {
+                            name: 'svg_opacity',
+                            type: 'slider',
+                            min: 0,
+                            max: 1,
+                            step: 0.05,
+                        },
+                    ],
+                },
+            ],
             // visWidgetLabel: 'value_string',  // Label of widget
             visDefaultStyle: {
                 width: 85,
@@ -69,12 +78,12 @@ class BasicSvgBool extends VisRxWidget<RxData> {
     }
 
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo() {
+    getWidgetInfo(): RxWidgetInfo {
         return BasicSvgBool.getWidgetInfo();
     }
 
-    onSvgClick() {
-        const oid = this.state.rxData.oid;
+    onSvgClick(): void {
+        const oid: string = this.state.rxData.oid;
         let val = this.state.values[`${this.state.rxData.oid}.val`];
         if (val === null || val === '' || val === undefined || val === false || val === 'false') {
             this.props.context.setValue(oid, true);
@@ -91,7 +100,7 @@ class BasicSvgBool extends VisRxWidget<RxData> {
         }
     }
 
-    renderSvg() {
+    renderSvg(): React.JSX.Element {
         let str = this.state.values[`${this.state.rxData.oid}.val`];
         if (typeof str === 'string') {
             str = str.toLowerCase();
@@ -108,32 +117,44 @@ class BasicSvgBool extends VisRxWidget<RxData> {
             }
         }
         let svg;
-        if (val === 0 || str === 'false' || str === '0' || str === 'off' || str === false || str === null || str === undefined) {
+        if (
+            val === 0 ||
+            str === 'false' ||
+            str === '0' ||
+            str === 'off' ||
+            str === false ||
+            str === null ||
+            str === undefined
+        ) {
             svg = this.state.rxData.svg_false;
         } else {
             svg = this.state.rxData.svg_true;
         }
 
-        return <svg
-            style={{
-                width: '100%',
-                height: '100%',
-                opacity,
-            }}
-            // eslint-disable-next-line react/no-danger
-            dangerouslySetInnerHTML={{ __html: svg }}
-        />;
+        return (
+            <svg
+                style={{
+                    width: '100%',
+                    height: '100%',
+                    opacity: opacity,
+                }}
+                // eslint-disable-next-line react/no-danger
+                dangerouslySetInnerHTML={{ __html: svg }}
+            />
+        );
     }
 
-    renderWidgetBody(props: RxRenderWidgetProps) {
+    renderWidgetBody(props: RxRenderWidgetProps): React.JSX.Element {
         super.renderWidgetBody(props);
 
-        return <div
-            onClick={this.props.editMode ? null : () => this.onSvgClick()}
-            className="vis-widget-body"
-        >
-            {this.renderSvg()}
-        </div>;
+        return (
+            <div
+                onClick={this.props.editMode ? null : () => this.onSvgClick()}
+                className="vis-widget-body"
+            >
+                {this.renderSvg()}
+            </div>
+        );
     }
 }
 

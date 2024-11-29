@@ -19,7 +19,7 @@ import PropTypes from 'prop-types';
 import JQuiInput from './JQuiInput';
 
 class JQuiInputSet extends JQuiInput {
-    static getWidgetInfo() {
+    static getWidgetInfo(): RxWidgetInfo {
         const widgetInfo = JQuiInput.getWidgetInfo();
         const newWidgetInfo = {
             id: 'tplJquiInputSet',

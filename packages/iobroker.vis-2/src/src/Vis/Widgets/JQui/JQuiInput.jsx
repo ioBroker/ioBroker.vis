@@ -37,7 +37,7 @@ class JQuiInput extends VisRxWidget {
         this.inputRef = React.createRef();
     }
 
-    static getWidgetInfo() {
+    static getWidgetInfo(): RxWidgetInfo {
         return {
             id: 'tplJquiInput',
             visSet: 'jqui',

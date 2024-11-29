@@ -19,7 +19,7 @@ import PropTypes from 'prop-types';
 import JQuiBinaryState from './JQuiBinaryState';
 
 class JQuiIconStateBool extends JQuiBinaryState {
-    static getWidgetInfo() {
+    static getWidgetInfo(): RxWidgetInfo {
         const widgetInfo = JQuiBinaryState.getWidgetInfo();
         const newWidgetInfo = {
             id: 'tplIconStateBool',

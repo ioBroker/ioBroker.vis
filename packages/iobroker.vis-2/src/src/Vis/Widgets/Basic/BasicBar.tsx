@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type { RxRenderWidgetProps } from '@iobroker/types-vis-2';
+import type { RxRenderWidgetProps, RxWidgetInfo } from '@iobroker/types-vis-2';
 import VisRxWidget from '@/Vis/visRxWidget';
 
 type RxData = {
@@ -18,57 +18,59 @@ export default class BasicBar extends VisRxWidget<RxData> {
     /**
      * Returns the widget info which is rendered in the edit mode
      */
-    static getWidgetInfo() {
+    static getWidgetInfo(): RxWidgetInfo {
         return {
             id: 'tplValueFloatBar',
             visSet: 'basic',
             visName: 'Bar',
             visPrev: 'widgets/basic/img/Prev_ValueFloatBar.png',
-            visAttrs: [{
-                name: 'common',
-                fields: [
-                    {
-                        name: 'oid',
-                        type: 'id',
-                    },
-                    {
-                        name: 'min',
-                        type: 'number',
-                        default: 0,
-                    },
-                    {
-                        name: 'max',
-                        type: 'number',
-                        default: 100,
-                    },
-                    {
-                        name: 'orientation',
-                        type: 'select',
-                        default: 'horizontal',
-                        options: [
-                            { value: 'horizontal', label: 'horizontal' },
-                            { value: 'vertical', label: 'vertical' },
-                        ],
-                    },
-                    {
-                        name: 'color',
-                        type: 'color',
-                        default: 'blue',
-                    },
-                    {
-                        name: 'border',
-                        type: 'text',
-                    },
-                    {
-                        name: 'shadow',
-                        type: 'text',
-                    },
-                    {
-                        name: 'reverse',
-                        type: 'checkbox',
-                    },
-                ],
-            }],
+            visAttrs: [
+                {
+                    name: 'common',
+                    fields: [
+                        {
+                            name: 'oid',
+                            type: 'id',
+                        },
+                        {
+                            name: 'min',
+                            type: 'number',
+                            default: 0,
+                        },
+                        {
+                            name: 'max',
+                            type: 'number',
+                            default: 100,
+                        },
+                        {
+                            name: 'orientation',
+                            type: 'select',
+                            default: 'horizontal',
+                            options: [
+                                { value: 'horizontal', label: 'horizontal' },
+                                { value: 'vertical', label: 'vertical' },
+                            ],
+                        },
+                        {
+                            name: 'color',
+                            type: 'color',
+                            default: 'blue',
+                        },
+                        {
+                            name: 'border',
+                            type: 'text',
+                        },
+                        {
+                            name: 'shadow',
+                            type: 'text',
+                        },
+                        {
+                            name: 'reverse',
+                            type: 'checkbox',
+                        },
+                    ],
+                },
+            ],
             visDefaultStyle: {
                 width: 200,
                 height: 130,
@@ -80,7 +82,7 @@ export default class BasicBar extends VisRxWidget<RxData> {
      * Enables calling widget info on the class instance itself
      */
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo() {
+    getWidgetInfo(): RxWidgetInfo {
         return BasicBar.getWidgetInfo();
     }
 
@@ -112,7 +114,9 @@ export default class BasicBar extends VisRxWidget<RxData> {
         const max = this.state.rxData.max || this.state.rxData.max === 0 ? Number(this.state.rxData.max) : 100;
         let val = parseFloat(this.state.values[`${this.state.rxData.oid}.val`]) || 0;
         val = (val - min) / (max - min);
-        return (this.state.rxData.border) ? (`calc(${Math.round(val * 100)}% - ${this.extractWidth(this.state.rxData.border as string, 2)})`) : (`${Math.round(val * 100)}%`);
+        return this.state.rxData.border
+            ? `calc(${Math.round(val * 100)}% - ${this.extractWidth(this.state.rxData.border, 2)})`
+            : `${Math.round(val * 100)}%`;
     }
 
     /**
@@ -129,23 +133,35 @@ export default class BasicBar extends VisRxWidget<RxData> {
             style = { height: this.getCalc() };
             if (this.state.rxData.reverse) {
                 style = {
-                    ...style, left: 0, position: 'absolute', bottom: '0',
+                    ...style,
+                    left: 0,
+                    position: 'absolute',
+                    bottom: '0',
                 };
             }
 
             if (this.state.rxData.border) {
-                style = { ...style, border: this.state.rxData.border, width: `calc(100% - ${this.extractWidth(this.state.rxData.border, 2)}` };
+                style = {
+                    ...style,
+                    border: this.state.rxData.border,
+                    width: `calc(100% - ${this.extractWidth(this.state.rxData.border, 2)}`,
+                };
             }
         } else {
             style = { width: this.getCalc() };
             if (this.state.rxData.reverse) {
                 style = {
-                    ...style, float: 'right',
+                    ...style,
+                    float: 'right',
                 };
             }
 
             if (this.state.rxData.border) {
-                style = { ...style, border: this.state.rxData.border, height: `calc(100% - ${this.extractWidth(this.state.rxData.border, 2)}` };
+                style = {
+                    ...style,
+                    border: this.state.rxData.border,
+                    height: `calc(100% - ${this.extractWidth(this.state.rxData.border, 2)}`,
+                };
             }
         }
 
@@ -157,9 +173,14 @@ export default class BasicBar extends VisRxWidget<RxData> {
             style = { ...style, backgroundColor: this.state.rxData.color };
         }
 
-        return <div className="vis-widget-body">
-            <div data-oid={this.state.rxData.oid} className="vis-widget-body" style={style}>
+        return (
+            <div className="vis-widget-body">
+                <div
+                    data-oid={this.state.rxData.oid}
+                    className="vis-widget-body"
+                    style={style}
+                ></div>
             </div>
-        </div>;
+        );
     }
 }

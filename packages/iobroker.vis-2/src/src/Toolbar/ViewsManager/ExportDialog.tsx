@@ -14,22 +14,24 @@ interface ExportDialogProps {
     view: string;
 }
 
-const ExportDialog: React.FC<ExportDialogProps> = props => <IODialog
-    open={props.open}
-    onClose={props.onClose}
-    title={I18n.t('Export "%s"', props.view)}
-    closeTitle="Close"
-    action={() => Utils.copyToClipboard(JSON.stringify(store.getState().visProject[props.view], null, 2))}
-    actionTitle="Copy to clipboard"
-    actionNoClose
-    ActionIcon={FileCopyIcon}
->
-    <CustomAceEditor
-        type="json"
-        themeType={props.themeType}
-        value={JSON.stringify(store.getState().visProject[props.view], null, 2)}
-        height={200}
-    />
-</IODialog>;
+const ExportDialog: React.FC<ExportDialogProps> = props => (
+    <IODialog
+        open={props.open}
+        onClose={props.onClose}
+        title={I18n.t('Export "%s"', props.view)}
+        closeTitle="Close"
+        action={() => Utils.copyToClipboard(JSON.stringify(store.getState().visProject[props.view], null, 2))}
+        actionTitle="Copy to clipboard"
+        actionNoClose
+        ActionIcon={FileCopyIcon}
+    >
+        <CustomAceEditor
+            type="json"
+            themeType={props.themeType}
+            value={JSON.stringify(store.getState().visProject[props.view], null, 2)}
+            height={200}
+        />
+    </IODialog>
+);
 
 export default ExportDialog;

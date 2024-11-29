@@ -1,22 +1,12 @@
 import React from 'react';
-import {
-    Add as AddIcon,
-    Edit as EditIcon,
-    Delete as DeleteIcon,
-    FileCopy as FileCopyIcon,
-} from '@mui/icons-material';
+import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, FileCopy as FileCopyIcon } from '@mui/icons-material';
 
-import {
-    TextField,
-} from '@mui/material';
+import { TextField } from '@mui/material';
 
 import { I18n } from '@iobroker/adapter-react-v5';
 
 import { store } from '@/Store';
-import {
-    deepClone, getNewWidgetId,
-    isGroup, pasteGroup,
-} from '@/Utils/utils';
+import { deepClone, getNewWidgetId, isGroup, pasteGroup } from '@/Utils/utils';
 import { useFocus } from '@/Utils';
 import IODialog from '@/Components/IODialog';
 import type { Project, SingleWidgetId, View } from '@iobroker/types-vis-2';
@@ -38,10 +28,10 @@ interface ViewDialogProps {
     setDialogParentId: (action: null) => void;
 }
 
-const ViewDialog = (props: ViewDialogProps) => {
+const ViewDialog = (props: ViewDialogProps): React.JSX.Element => {
     const inputField = useFocus(!!props.dialog && props.dialog !== 'delete', props.dialog === 'add');
 
-    const deleteView = async () => {
+    const deleteView = async (): Promise<void> => {
         const view = props.dialogView || props.selectedView;
         const project = deepClone(store.getState().visProject);
         delete project[view];
@@ -50,7 +40,7 @@ const ViewDialog = (props: ViewDialogProps) => {
         props.setDialog(null); // close dialog
     };
 
-    const addView = async () => {
+    const addView = async (): Promise<void> => {
         const project: Project = deepClone(store.getState().visProject);
         project[props.dialogName.trim()] = {
             name: props.dialogName,
@@ -80,11 +70,11 @@ const ViewDialog = (props: ViewDialogProps) => {
      *
      * @param options the project to rename the references in and the old view name
      */
-    const renameReferences = (options: RenameReferencesOptions) => {
+    const renameReferences = (options: RenameReferencesOptions): void => {
         const { project, oldViewName } = options;
 
         for (const [viewName, view] of Object.entries(project)) {
-            if (viewName === '___settings')  {
+            if (viewName === '___settings') {
                 continue;
             }
 
@@ -106,7 +96,7 @@ const ViewDialog = (props: ViewDialogProps) => {
         }
     };
 
-    const renameView = async () => {
+    const renameView = async (): Promise<void> => {
         const oldViewName = props.dialogView || props.selectedView;
         const newViewName = props.dialogName.trim();
         const project = deepClone(store.getState().visProject);
@@ -122,7 +112,7 @@ const ViewDialog = (props: ViewDialogProps) => {
         props.dialogCallback?.cb(newViewName);
     };
 
-    const copyView = async () => {
+    const copyView = async (): Promise<void> => {
         const view = props.dialogView || props.selectedView;
         const project = deepClone(store.getState().visProject);
         project[props.dialogName] = { ...project[view], widgets: {}, activeWidgets: [] } as View;
@@ -131,7 +121,10 @@ const ViewDialog = (props: ViewDialogProps) => {
         for (const [wid, widget] of Object.entries(originalWidgets)) {
             if (isGroup(widget)) {
                 pasteGroup({
-                    group: widget, widgets: project[props.dialogName].widgets, groupMembers: originalWidgets, project,
+                    group: widget,
+                    widgets: project[props.dialogName].widgets,
+                    groupMembers: originalWidgets,
+                    project,
                 });
             } else if (!widget.groupid) {
                 const newWid = getNewWidgetId(project);
@@ -192,30 +185,34 @@ const ViewDialog = (props: ViewDialogProps) => {
         return null;
     }
 
-    return <IODialog
-        title={dialogTitles[props.dialog]}
-        noTranslation={props.noTranslation}
-        actionTitle={dialogButtons[props.dialog]}
-        open={!!props.dialog}
-        onClose={() => {
-            props.setDialog(null);
-            props.setDialogView(null);
-            props.setDialogParentId(null);
-        }}
-        ActionIcon={DialogIcon || null}
-        action={dialogActions[props.dialog]}
-        actionColor={props.dialog === 'delete' ? 'secondary' : 'primary'}
-        actionDisabled={dialogDisabled}
-    >
-        {props.dialog === 'delete' ? null : <TextField
-            inputRef={inputField}
-            variant="standard"
-            label={dialogInputs[props.dialog]}
-            fullWidth
-            value={props.dialogName}
-            onChange={e => props.setDialogName(e.target.value)}
-        />}
-    </IODialog>;
+    return (
+        <IODialog
+            title={dialogTitles[props.dialog]}
+            noTranslation={props.noTranslation}
+            actionTitle={dialogButtons[props.dialog]}
+            open={!!props.dialog}
+            onClose={() => {
+                props.setDialog(null);
+                props.setDialogView(null);
+                props.setDialogParentId(null);
+            }}
+            ActionIcon={DialogIcon || null}
+            action={dialogActions[props.dialog]}
+            actionColor={props.dialog === 'delete' ? 'secondary' : 'primary'}
+            actionDisabled={dialogDisabled}
+        >
+            {props.dialog === 'delete' ? null : (
+                <TextField
+                    inputRef={inputField}
+                    variant="standard"
+                    label={dialogInputs[props.dialog]}
+                    fullWidth
+                    value={props.dialogName}
+                    onChange={e => props.setDialogName(e.target.value)}
+                />
+            )}
+        </IODialog>
+    );
 };
 
 export default ViewDialog;

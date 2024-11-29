@@ -5,7 +5,7 @@ import type * as SpeechRecognition from 'dom-speech-recognition';
 import { I18n, Icon } from '@iobroker/adapter-react-v5';
 
 import VisRxWidget from '@/Vis/visRxWidget';
-import type { RxRenderWidgetProps } from '@iobroker/types-vis-2';
+import type { RxRenderWidgetProps, RxWidgetInfo } from '@iobroker/types-vis-2';
 import type { VisBaseWidgetState } from '@/Vis/visBaseWidget';
 
 type RxData = {
@@ -25,7 +25,7 @@ type RxData = {
     noResults: boolean;
     keyWordColor: string;
     textSentColor: string;
-}
+};
 
 interface BasicSpeechToTextState extends VisBaseWidgetState {
     /** Current shown module text */
@@ -48,8 +48,8 @@ export default class BasicSpeechToText extends VisRxWidget<RxData, BasicSpeechTo
     /**
      * Lifecycle hook called when component is mounted
      */
-    async componentDidMount(): Promise<void> {
-        await super.componentDidMount();
+    componentDidMount(): void {
+        super.componentDidMount();
         this.setState({
             text: !window.webkitSpeechRecognition ? I18n.t('basic_speech2text_info_upgrade') : '',
             image: this.state.rxData.imageInactive,
@@ -72,139 +72,142 @@ export default class BasicSpeechToText extends VisRxWidget<RxData, BasicSpeechTo
      * Enables calling widget info on the class instance itself
      */
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo() {
+    getWidgetInfo(): RxWidgetInfo {
         return BasicSpeechToText.getWidgetInfo();
     }
 
     /**
      * Returns the widget info which is rendered in the edit mode
      */
-    static getWidgetInfo() {
+    static getWidgetInfo(): RxWidgetInfo {
         return {
             id: 'tplSpeech2Text',
             visSet: 'basic',
             visName: 'Speech to Text',
             visPrev: 'widgets/basic/img/Prev_Speech2Text.png',
-            visAttrs: [{
-                name: 'common',
-                fields: [
-                    {
-                        name: 'oid',
-                        type: 'id',
-                    },
-                    {
-                        name: 'speechMode',
-                        type: 'select',
-                        default: 'single',
-                        options: [
-                            { value: 'single', label: 'basic_speech2text_single' },
-                            { value: 'startstop', label: 'basic_speech2text_start_stop' },
-                            { value: 'continuous', label: 'basic_speech2text_continuous' },
-                        ],
-                    },
-                    {
-                        name: 'language',
-                        type: 'select',
-                        options: [
-                            { value: '', label: '' },
-                            { value: 'en-US', label: 'basic_speech2text_en_us' },
-                            { value: 'de', label: 'de' },
-                            { value: 'ru-RU', label: 'basic_speech2text_ru_ru' },
-                        ],
-                    },
-                    {
-                        name: 'keywords',
-                    },
-                ],
-            },
-            {
-                name: 'image',
-                label: 'Image',
-                fields: [
-                    {
-                        name: 'noImage',
-                        type: 'checkbox',
-                        label: 'basic_speech2text_no_image',
-                    },
-                    {
-                        name: 'imageInactive',
-                        default: 'widgets/basic/img/micInactive.svg',
-                        type: 'image',
-                        label: 'basic_speech2text_image_inactive',
-                    },
-                    {
-                        name: 'imageActive',
-                        default: 'widgets/basic/img/micActive.svg',
-                        type: 'image',
-                        label: 'basic_speech2text_image_active',
-                    },
-                    {
-                        name: 'imageStarted',
-                        default: 'widgets/basic/img/micStarted.svg',
-                        type: 'image',
-                        label: 'basic_speech2text_started',
-                    },
-                    {
-                        name: 'imageDetected',
-                        default: 'widgets/basic/img/micDetected.svg',
-                        type: 'image',
-                        label: 'basic_speech2text_detected',
-                    },
-                    {
-                        name: 'imageSent',
-                        default: 'widgets/basic/img/micSent.svg',
-                        type: 'image',
-                        label: 'basic_speech2text_sent',
-                    },
-                    {
-                        name: 'imageHeightPx',
-                        default: '70',
-                        type: 'slider',
-                        min: 0,
-                        max: 200,
-                        step: 1,
-                        label: 'basic_speech2text_height',
-                    },
-                    {
-                        name: 'imageWidthPx',
-                        default: '70',
-                        type: 'slider',
-                        min: 0,
-                        max: 200,
-                        step: 1,
-                        label: 'basic_speech2text_width',
-                    },
-                ],
-            },
-            {
-                name: 'text',
-                label: 'Text',
-                fields: [
-                    {
-                        name: 'noText',
-                        type: 'checkbox',
-                        label: 'basic_speech2text_no_text',
-                    },
-                    {
-                        name: 'noResults',
-                        type: 'checkbox',
-                        label: 'basic_speech2text_no_results',
-                    },
-                    {
-                        name: 'keyWordColor',
-                        type: 'color',
-                        default: '#FFB051',
-                        label: 'basic_speech2text_key_word_color',
-                        tooltip: 'basic_speech2text_key_word_color_tooltip',
-                    },
-                    {
-                        name: 'textSentColor',
-                        type: 'color',
-                        default: '#7E88D3',
-                        label: 'basic_speech2text_text_sent_color',
-                        tooltip: 'basic_speech2text_text_sent_color_tooltip',
-                    }],
-            }],
+            visAttrs: [
+                {
+                    name: 'common',
+                    fields: [
+                        {
+                            name: 'oid',
+                            type: 'id',
+                        },
+                        {
+                            name: 'speechMode',
+                            type: 'select',
+                            default: 'single',
+                            options: [
+                                { value: 'single', label: 'basic_speech2text_single' },
+                                { value: 'startstop', label: 'basic_speech2text_start_stop' },
+                                { value: 'continuous', label: 'basic_speech2text_continuous' },
+                            ],
+                        },
+                        {
+                            name: 'language',
+                            type: 'select',
+                            options: [
+                                { value: '', label: '' },
+                                { value: 'en-US', label: 'basic_speech2text_en_us' },
+                                { value: 'de', label: 'de' },
+                                { value: 'ru-RU', label: 'basic_speech2text_ru_ru' },
+                            ],
+                        },
+                        {
+                            name: 'keywords',
+                        },
+                    ],
+                },
+                {
+                    name: 'image',
+                    label: 'Image',
+                    fields: [
+                        {
+                            name: 'noImage',
+                            type: 'checkbox',
+                            label: 'basic_speech2text_no_image',
+                        },
+                        {
+                            name: 'imageInactive',
+                            default: 'widgets/basic/img/micInactive.svg',
+                            type: 'image',
+                            label: 'basic_speech2text_image_inactive',
+                        },
+                        {
+                            name: 'imageActive',
+                            default: 'widgets/basic/img/micActive.svg',
+                            type: 'image',
+                            label: 'basic_speech2text_image_active',
+                        },
+                        {
+                            name: 'imageStarted',
+                            default: 'widgets/basic/img/micStarted.svg',
+                            type: 'image',
+                            label: 'basic_speech2text_started',
+                        },
+                        {
+                            name: 'imageDetected',
+                            default: 'widgets/basic/img/micDetected.svg',
+                            type: 'image',
+                            label: 'basic_speech2text_detected',
+                        },
+                        {
+                            name: 'imageSent',
+                            default: 'widgets/basic/img/micSent.svg',
+                            type: 'image',
+                            label: 'basic_speech2text_sent',
+                        },
+                        {
+                            name: 'imageHeightPx',
+                            default: 70,
+                            type: 'slider',
+                            min: 0,
+                            max: 200,
+                            step: 1,
+                            label: 'basic_speech2text_height',
+                        },
+                        {
+                            name: 'imageWidthPx',
+                            default: 70,
+                            type: 'slider',
+                            min: 0,
+                            max: 200,
+                            step: 1,
+                            label: 'basic_speech2text_width',
+                        },
+                    ],
+                },
+                {
+                    name: 'text',
+                    label: 'Text',
+                    fields: [
+                        {
+                            name: 'noText',
+                            type: 'checkbox',
+                            label: 'basic_speech2text_no_text',
+                        },
+                        {
+                            name: 'noResults',
+                            type: 'checkbox',
+                            label: 'basic_speech2text_no_results',
+                        },
+                        {
+                            name: 'keyWordColor',
+                            type: 'color',
+                            default: '#FFB051',
+                            label: 'basic_speech2text_key_word_color',
+                            tooltip: 'basic_speech2text_key_word_color_tooltip',
+                        },
+                        {
+                            name: 'textSentColor',
+                            type: 'color',
+                            default: '#7E88D3',
+                            label: 'basic_speech2text_text_sent_color',
+                            tooltip: 'basic_speech2text_text_sent_color_tooltip',
+                        },
+                    ],
+                },
+            ],
             visDefaultStyle: {
                 width: 500,
                 height: 77,
@@ -245,7 +248,7 @@ export default class BasicSpeechToText extends VisRxWidget<RxData, BasicSpeechTo
     /**
      * Start speech recognition
      */
-    startRecognition() {
+    startRecognition(): void {
         if (this.recognition) {
             if (this.state.rxData.speechMode === 'startstop') {
                 this.recognition.onend = null;
@@ -258,7 +261,8 @@ export default class BasicSpeechToText extends VisRxWidget<RxData, BasicSpeechTo
 
         // eslint-disable-next-line new-cap
         this.recognition = new window.webkitSpeechRecognition();
-        this.recognition.continuous = this.state.rxData.speechMode === 'continuous' || this.state.rxData.speechMode === 'startstop';
+        this.recognition.continuous =
+            this.state.rxData.speechMode === 'continuous' || this.state.rxData.speechMode === 'startstop';
         this.recognition.interimResults = true;
         this.recognition.maxAlternatives = 1;
 
@@ -276,7 +280,7 @@ export default class BasicSpeechToText extends VisRxWidget<RxData, BasicSpeechTo
             });
         };
 
-        this.recognition.onerror  = (event: SpeechRecognition.SpeechRecognitionErrorEvent) => {
+        this.recognition.onerror = (event: SpeechRecognition.SpeechRecognitionErrorEvent) => {
             this.setState({
                 result: '',
                 image: this.state.rxData.imageInactive,
@@ -294,7 +298,7 @@ export default class BasicSpeechToText extends VisRxWidget<RxData, BasicSpeechTo
                 this.ignoreOnEnd = true;
             }
             if (event.error === 'not-allowed') {
-                if ((event.timeStamp - startTimestamp) < 100) {
+                if (event.timeStamp - startTimestamp < 100) {
                     this.setState({
                         text: I18n.t('basic_speech2text_info_blocked'),
                     });
@@ -307,7 +311,7 @@ export default class BasicSpeechToText extends VisRxWidget<RxData, BasicSpeechTo
             }
         };
 
-        this.recognition.onend =  () => {
+        this.recognition.onend = () => {
             this.recognition.stop();
             this.recognition = null;
             if (!this.ignoreOnEnd) {
@@ -377,7 +381,9 @@ export default class BasicSpeechToText extends VisRxWidget<RxData, BasicSpeechTo
             this.setState({ text });
 
             if (finalTranscript) {
-                if (timer) clearTimeout(timer);
+                if (timer) {
+                    clearTimeout(timer);
+                }
 
                 if (foundKeyword) {
                     this.setState({
@@ -404,7 +410,9 @@ export default class BasicSpeechToText extends VisRxWidget<RxData, BasicSpeechTo
             } else {
                 lastText = interimTranscript;
 
-                if (timer) clearTimeout(timer);
+                if (timer) {
+                    clearTimeout(timer);
+                }
                 timer = setTimeout(() => {
                     this.recognition.onend = null;
                     this.recognition.stop();
@@ -452,41 +460,54 @@ export default class BasicSpeechToText extends VisRxWidget<RxData, BasicSpeechTo
     renderWidgetBody(props: RxRenderWidgetProps): React.JSX.Element {
         super.renderWidgetBody(props);
 
-        return <div className="vis-widget-body">
-            {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
-            <table
-                style={{ height: '100%', width: '100%' }}
-                onClick={() => {
-                    if (this.state.rxData.speechMode !== 'continuous' && !this.state.editMode && window.webkitSpeechRecognition) {
-                        this.startRecognition();
-                    }
-                }}
-            >
-                <tbody>
-                    <tr>
-                        <td style={{ display: this.state.rxData.noImage ? 'none' : undefined }}>
-                            <Icon
-                                alt="mic"
-                                style={{ height: `${this.state.rxData.imageHeightPx}px`, width: `${this.state.rxData.imageWidthPx}px` }}
-                                src={this.state.image}
-                            />
-                        </td>
-                        {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-                        <td className="mic-text" style={{ width: '100%' }}>
-                            <div
-                                style={{ display: this.state.rxData.noText ? 'none' : undefined }}
-                                /* eslint-disable-next-line react/no-danger */
-                                dangerouslySetInnerHTML={{ __html:  this.state.text }}
-                            />
-                            <div
-                                style={{ display: this.state.rxData.noResults ? 'none' : undefined, color: this.state.resultColor }}
-                                /* eslint-disable-next-line react/no-danger */
-                                dangerouslySetInnerHTML={{ __html:  this.state.result }}
-                            />
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>;
+        return (
+            <div className="vis-widget-body">
+                <table
+                    style={{ height: '100%', width: '100%' }}
+                    onClick={() => {
+                        if (
+                            this.state.rxData.speechMode !== 'continuous' &&
+                            !this.state.editMode &&
+                            window.webkitSpeechRecognition
+                        ) {
+                            this.startRecognition();
+                        }
+                    }}
+                >
+                    <tbody>
+                        <tr>
+                            <td style={{ display: this.state.rxData.noImage ? 'none' : undefined }}>
+                                <Icon
+                                    alt="mic"
+                                    style={{
+                                        height: `${this.state.rxData.imageHeightPx}px`,
+                                        width: `${this.state.rxData.imageWidthPx}px`,
+                                    }}
+                                    src={this.state.image}
+                                />
+                            </td>
+                            <td
+                                className="mic-text"
+                                style={{ width: '100%' }}
+                            >
+                                <div
+                                    style={{ display: this.state.rxData.noText ? 'none' : undefined }}
+                                    /* eslint-disable-next-line react/no-danger */
+                                    dangerouslySetInnerHTML={{ __html: this.state.text }}
+                                />
+                                <div
+                                    style={{
+                                        display: this.state.rxData.noResults ? 'none' : undefined,
+                                        color: this.state.resultColor,
+                                    }}
+                                    /* eslint-disable-next-line react/no-danger */
+                                    dangerouslySetInnerHTML={{ __html: this.state.result }}
+                                />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        );
     }
 }

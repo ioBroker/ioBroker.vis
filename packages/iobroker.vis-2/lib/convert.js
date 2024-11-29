@@ -10,15 +10,16 @@ function stringify(name, data, isConvert, files) {
             for (let mm = 0; mm < m.length; mm++) {
                 let fn = m[mm].substring(5); // remove ": "/
                 const originalFileName = fn.replace(/"/g, ''); // remove last "
-                const p  = fn.split('/');
+                const p = fn.split('/');
                 const adapter = p.shift(); // remove vis.0 or whatever
                 const _project = p.length > 1 ? p.shift() : '';
-                fn  = p.length ? p.shift() : ''; // keep only one subdirectory
-                fn += p.length ? `/${p.join('/')}` : '';// all other subdirectories combine again
+                fn = p.length ? p.shift() : ''; // keep only one subdirectory
+                fn += p.length ? `/${p.join('/')}` : ''; // all other subdirectories combine again
 
                 if (adapter !== 'vis-2.0' || _project !== project) {
                     // add to files
-                    if (files.indexOf(originalFileName) === -1) { // if "vis.0/dir/otherProject.png"
+                    if (files.indexOf(originalFileName) === -1) {
+                        // if "vis.0/dir/otherProject.png"
                         files.push(originalFileName);
                     }
                     data = data.replace(m[mm], `": "/vis-2.0/${project}/${fn}`);
@@ -31,15 +32,16 @@ function stringify(name, data, isConvert, files) {
             for (let mm = 0; mm < m.length; mm++) {
                 let fn = m[mm].substring(7); // remove src=\"/
                 const originalFileName = fn.replace(/\\"/g, ''); // remove last "
-                const p  = fn.split('/');
+                const p = fn.split('/');
                 const adapter = p.shift(); // remove vis-2.0 or whatever
                 const _project = p.length > 1 ? p.shift() : '';
-                fn  = p.length ? p.shift() : ''; // keep only one subdirectory
-                fn += p.length ? `/${p.join('/')}` : '';// all other subdirectories combine again
+                fn = p.length ? p.shift() : ''; // keep only one subdirectory
+                fn += p.length ? `/${p.join('/')}` : ''; // all other subdirectories combine again
 
                 if (adapter !== 'vis-2.0' || _project !== project) {
                     // add to files
-                    if (files.indexOf(originalFileName) === -1) { // if "vis-2.0/dir/otherProject.png"
+                    if (files.indexOf(originalFileName) === -1) {
+                        // if "vis-2.0/dir/otherProject.png"
                         files.push(originalFileName);
                     }
                     data = data.replace(m[mm], `src=\\"/vis-2.0/${project}/${fn}`);
@@ -52,15 +54,16 @@ function stringify(name, data, isConvert, files) {
             for (let mm = 0; mm < m.length; mm++) {
                 let fn = m[mm].substring(6); // remove src="/
                 const originalFileName = fn.replace(/'/g, ''); // remove last "
-                const p  = fn.split('/');
+                const p = fn.split('/');
                 const adapter = p.shift(); // remove vis.0 or whatever
                 const _project = p.length > 1 ? p.shift() : '';
-                fn  = p.length ? p.shift() : ''; // keep only one subdirectory
-                fn += p.length ? `/${p.join('/')}` : '';// all other subdirectories combine again
+                fn = p.length ? p.shift() : ''; // keep only one subdirectory
+                fn += p.length ? `/${p.join('/')}` : ''; // all other subdirectories combine again
 
                 if (adapter !== 'vis-2.0' || _project !== project) {
                     // add to files
-                    if (files.indexOf(originalFileName) === -1) { // if "vis-2.0/dir/otherProject.png"
+                    if (files.indexOf(originalFileName) === -1) {
+                        // if "vis-2.0/dir/otherProject.png"
                         files.push(originalFileName);
                     }
                     data = data.replace(m[mm], `src='/vis-2.0/${project}/${fn}`);
@@ -99,4 +102,4 @@ function parse(projectName, fileName, data, settings) {
     return data;
 }
 module.exports.stringify = stringify;
-module.exports.parse     = parse;
+module.exports.parse = parse;

@@ -1352,6 +1352,7 @@ export interface ClassesValue {
     file: string;
     attrs?: React.CSSProperties;
     parentStyle?: React.CSSProperties;
+    parentClass?: string;
 }
 
 declare global {

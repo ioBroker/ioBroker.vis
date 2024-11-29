@@ -14,10 +14,7 @@
  */
 
 import React, { type Component } from 'react';
-import {
-    Card,
-    CardContent,
-} from '@mui/material';
+import { Card, CardContent } from '@mui/material';
 
 import { I18n, Icon } from '@iobroker/adapter-react-v5';
 import type {
@@ -30,18 +27,19 @@ import type {
     RxWidgetInfoAttributesFieldSelectSimple,
     RxWidgetInfoAttributesField,
     RxWidgetInfoAttributesFieldCheckbox,
-    VisLinkContextBinding, VisLinkContextItem,
-    VisLinkContextSignalItem, RxRenderWidgetProps,
+    VisLinkContextBinding,
+    VisLinkContextItem,
+    VisLinkContextSignalItem,
+    RxRenderWidgetProps,
     RxWidgetInfoWriteable,
-    Writeable, VisViewProps,
-    VisBaseWidgetProps, VisWidgetCommand, GroupData,
+    Writeable,
+    VisViewProps,
+    VisBaseWidgetProps,
+    VisWidgetCommand,
+    GroupData,
 } from '@iobroker/types-vis-2';
 import { deepClone, calculateOverflow } from '@/Utils/utils';
-import type {
-    VisBaseWidgetState,
-    WidgetStyleState,
-} from './visBaseWidget';
-import VisBaseWidget from './visBaseWidget';
+import VisBaseWidget, { type VisBaseWidgetState, type WidgetStyleState } from './visBaseWidget';
 import VisView from './visView';
 import { addClass, getUsedObjectIDsInWidget } from './visUtils';
 
@@ -92,7 +90,10 @@ export const POSSIBLE_MUI_STYLES = [
     'word-spacing',
 ];
 
-class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<VisRxWidgetState> = VisRxWidgetState> extends VisBaseWidget<VisRxWidgetState & TState & { rxData: TRxData }> {
+class VisRxWidget<
+    TRxData extends Record<string, any>,
+    TState extends Partial<VisRxWidgetState> = VisRxWidgetState,
+> extends VisBaseWidget<VisRxWidgetState & TState & { rxData: TRxData }> {
     static POSSIBLE_MUI_STYLES = POSSIBLE_MUI_STYLES;
 
     private linkContext: {
@@ -116,11 +117,13 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
 
     private ignoreMouseEvents?: boolean;
 
-    private mouseDownOnView?: null | ((e: MouseEvent, wid: AnyWidgetId, isRelative: boolean, isResize: boolean, isDoubleClick: boolean) => void);
+    private mouseDownOnView?:
+        | null
+        | ((e: MouseEvent, wid: AnyWidgetId, isRelative: boolean, isResize: boolean, isDoubleClick: boolean) => void);
 
     private bindingsTimer?: ReturnType<typeof setTimeout>;
 
-    private informIncludedWidgets?:  ReturnType<typeof setTimeout>;
+    private informIncludedWidgets?: ReturnType<typeof setTimeout>;
 
     private filterDisplay?: '' | 'none' | 'block' | 'inline' | 'inline-block';
 
@@ -132,18 +135,21 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
         const widgetAttrInfo: Record<string, RxWidgetInfoAttributesField> = {};
         // collect all attributes (only types)
         if (Array.isArray(options.visAttrs)) {
-            options.visAttrs.forEach((group: RxWidgetInfoGroup) =>
-                group.fields && group.fields.forEach(item => {
-                    widgetAttrInfo[item.name] = {
-                        name: item.name,
-                        type: (item as RxWidgetInfoAttributesFieldSelectSimple).type,
-                    };
-                    // @ts-expect-error fallback
-                    if (!widgetAttrInfo[item.name].type) {
+            options.visAttrs.forEach(
+                (group: RxWidgetInfoGroup) =>
+                    group.fields &&
+                    group.fields.forEach(item => {
+                        widgetAttrInfo[item.name] = {
+                            name: item.name,
+                            type: (item as RxWidgetInfoAttributesFieldSelectSimple).type,
+                        };
                         // @ts-expect-error fallback
-                        widgetAttrInfo[item.name].type = '';
-                    }
-                }));
+                        if (!widgetAttrInfo[item.name].type) {
+                            // @ts-expect-error fallback
+                            widgetAttrInfo[item.name].type = '';
+                        }
+                    }),
+            );
         }
 
         this.linkContext = {
@@ -171,7 +177,10 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
 
         // find in fields visResizable name
         // if resizable exists, take the resizable from data
-        const visResizable: RxWidgetInfoAttributesFieldCheckbox = VisRxWidget.findField(options, 'visResizable') as RxWidgetInfoAttributesFieldCheckbox;
+        const visResizable: RxWidgetInfoAttributesFieldCheckbox = VisRxWidget.findField(
+            options,
+            'visResizable',
+        ) as RxWidgetInfoAttributesFieldCheckbox;
         if (visResizable) {
             this.visDynamicResizable = {
                 default: visResizable.default !== undefined ? visResizable.default : true,
@@ -183,9 +192,19 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
 
         this.state = {
             ...this.state,
-            resizable: options.resizable === undefined ? (options.visResizable === undefined ? true : options.visResizable) : options.resizable,
+            resizable:
+                options.resizable === undefined
+                    ? options.visResizable === undefined
+                        ? true
+                        : options.visResizable
+                    : options.resizable,
             draggable: options.visDraggable === undefined ? true : options.visDraggable,
-            resizeHandles: options.resizeHandles === undefined ? (options.visResizeHandles === undefined ? ['n', 'e', 's', 'w', 'nw', 'ne', 'sw', 'se'] : options.visResizeHandles) : options.resizeHandles,
+            resizeHandles:
+                options.resizeHandles === undefined
+                    ? options.visResizeHandles === undefined
+                        ? ['n', 'e', 's', 'w', 'nw', 'ne', 'sw', 'se']
+                        : options.visResizeHandles
+                    : options.resizeHandles,
             rxData: newState.rxData,
             rxStyle: newState.rxStyle,
             values: {},
@@ -194,7 +213,10 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
         };
     }
 
-    static findField(widgetInfo: RxWidgetInfo | RxWidgetInfoWriteable, name: string): Writeable<RxWidgetInfoAttributesField> | null {
+    static findField(
+        widgetInfo: RxWidgetInfo | RxWidgetInfoWriteable,
+        name: string,
+    ): Writeable<RxWidgetInfoAttributesField> | null {
         if (!widgetInfo.visAttrs) {
             return null;
         }
@@ -212,11 +234,11 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
         return null;
     }
 
-    static getI18nPrefix() {
+    static getI18nPrefix(): string {
         return '';
     }
 
-    static getText(text: string | ioBroker.Translated) {
+    static getText(text: string | ioBroker.Translated): string {
         if (typeof text === 'object') {
             return text[I18n.getLanguage()] || text.en;
         }
@@ -224,22 +246,22 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
         return text;
     }
 
-    static t(key: string, ...args: string[]) {
+    static t(key: string, ...args: string[]): string {
         // it is a very strange construction,
         // but "this" at this place takes the spout class (what is required) and not the instance
         if (this.getI18nPrefix) {
-            return I18n.t(`${this.getI18nPrefix()}${key}`,  ...args);
+            return I18n.t(`${this.getI18nPrefix()}${key}`, ...args);
         }
 
         return I18n.t(key);
     }
 
-    static getLanguage() {
+    static getLanguage(): ioBroker.Languages {
         return I18n.getLanguage();
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onCommand(command: VisWidgetCommand, _option?: any) {
+    onCommand(command: VisWidgetCommand, _option?: any): any {
         const result = super.onCommand(command);
         if (result === false) {
             if (command === 'collectFilters') {
@@ -258,11 +280,11 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,class-methods-use-this
-    onStateUpdated(id: string, state: ioBroker.State) {
+    onStateUpdated(id: string, state: ioBroker.State): void {
         //
     }
 
-    onIoBrokerStateChanged = (id: StateID, state: ioBroker.State | null | undefined) => {
+    onIoBrokerStateChanged = (id: StateID, state: ioBroker.State | null | undefined): void => {
         this.onStateChanged(id, state);
     };
 
@@ -273,10 +295,10 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
         /** state object */
         id?: StateID | null,
         /** state value */
-        state?: ioBroker.State | null | undefined,
+        state?: ioBroker.State | null,
         /** if state should not be set */
         doNotApplyState?: boolean,
-    ) {
+    ): Partial<VisRxWidgetState & TState & { rxData: TRxData }> | null {
         if (!this.newState) {
             // @ts-expect-error fix later
             this.newState = {
@@ -301,7 +323,7 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
 
         if (id && state) {
             // @ts-expect-error fix later
-            Object.keys(state).forEach(attr => this.newState.values[`${id}.${attr}`] = state[attr]);
+            Object.keys(state).forEach(attr => (this.newState.values[`${id}.${attr}`] = state[attr]));
             // wait till the state is saved in this.newState.values
             setTimeout(() => this.onStateUpdated(id, state), 60);
         }
@@ -318,7 +340,10 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
             this.newState.disabled = false;
 
             if (this.newState.rxData.filterkey && typeof this.newState.rxData.filterkey === 'string') {
-                this.newState.rxData.filterkey = this.newState.rxData.filterkey.split(/[;,]+/).map(f => f.trim()).filter(f => f);
+                this.newState.rxData.filterkey = this.newState.rxData.filterkey
+                    .split(/[;,]+/)
+                    .map(f => f.trim())
+                    .filter(f => f);
             }
 
             if (userGroups?.length && !this.isUserMemberOfGroup(this.props.context.user, userGroups)) {
@@ -339,7 +364,8 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
         this.updateTimer && clearTimeout(this.updateTimer);
 
         // compare
-        if (JSON.stringify(this.state.values) !== JSON.stringify(this.newState.values) ||
+        if (
+            JSON.stringify(this.state.values) !== JSON.stringify(this.newState.values) ||
             JSON.stringify(this.state.rxData) !== JSON.stringify(this.newState.rxData) ||
             JSON.stringify(this.state.rxStyle) !== JSON.stringify(this.newState.rxStyle) ||
             JSON.stringify(this.state.applyBindings) !== JSON.stringify(this.newState.applyBindings)
@@ -358,46 +384,49 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
         return null;
     }
 
-    applyBinding(stateId: string, newState: typeof this.state) {
-        this.linkContext.bindings[stateId] && this.linkContext.bindings[stateId].forEach(item => {
-            const value = this.props.context.formatUtils.formatBinding({
-                format: item.format,
-                view: item.view,
-                wid: this.props.id,
-                widget: this.props.context.views[item.view].widgets[this.props.id],
-                widgetData: newState.rxData as WidgetData,
-                values: newState.values,
-                moment: this.props.context.moment,
-            });
+    applyBinding(stateId: string, newState: typeof this.state): void {
+        this.linkContext.bindings[stateId] &&
+            this.linkContext.bindings[stateId].forEach(item => {
+                const value = this.props.context.formatUtils.formatBinding({
+                    format: item.format,
+                    view: item.view,
+                    wid: this.props.id,
+                    widget: this.props.context.views[item.view].widgets[this.props.id],
+                    widgetData: newState.rxData as WidgetData,
+                    values: newState.values,
+                    moment: this.props.context.moment,
+                });
 
-            if (item.type === 'data') {
-                // @ts-expect-error fix later
-                newState.rxData[item.attr] = value;
-            } else if (newState.rxStyle) {
-                // @ts-expect-error fix later
-                newState.rxStyle[item.attr] = value;
-            }
-        });
+                if (item.type === 'data') {
+                    // @ts-expect-error fix later
+                    newState.rxData[item.attr] = value;
+                } else if (newState.rxStyle) {
+                    // @ts-expect-error fix later
+                    newState.rxStyle[item.attr] = value;
+                }
+            });
     }
 
-    componentDidMount() {
+    componentDidMount(): void {
         super.componentDidMount();
 
-        this.linkContext.IDs.length && this.props.context.socket.subscribeStateAsync(this.linkContext.IDs, this.onStateChangedBind)
-            .catch(e => console.error(`Cannot subscribe on ${this.linkContext.IDs}: ${e}`));
+        this.linkContext.IDs.length &&
+            this.props.context.socket
+                .subscribeStateAsync(this.linkContext.IDs, this.onStateChangedBind)
+                .catch(e => console.error(`Cannot subscribe on ${this.linkContext.IDs}: ${e}`));
     }
 
     // eslint-disable-next-line no-unused-vars,class-methods-use-this, @typescript-eslint/no-unused-vars
-    onRxDataChanged(_prevRxData: typeof this.state.rxData) {
+    onRxDataChanged(_prevRxData: typeof this.state.rxData): void {
         //
     }
 
     // eslint-disable-next-line no-unused-vars,class-methods-use-this, @typescript-eslint/no-unused-vars
-    onRxStyleChanged(_prevRxStyle: typeof this.state.rxStyle) {
+    onRxStyleChanged(_prevRxStyle: typeof this.state.rxStyle): void {
         //
     }
 
-    componentDidUpdate(prevProps: VisRxWidgetProps, prevState: typeof this.state) {
+    componentDidUpdate(prevProps: VisRxWidgetProps, prevState: typeof this.state): void {
         if (prevState) {
             if (JSON.stringify(this.state.rxData) !== JSON.stringify(prevState.rxData)) {
                 this.onRxDataChanged(prevState.rxData);
@@ -408,7 +437,7 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
         }
     }
 
-    componentWillUnmount() {
+    componentWillUnmount(): void {
         if (this.linkContext.IDs.length) {
             this.props.context.socket.unsubscribeState(this.linkContext.IDs, this.onIoBrokerStateChanged);
         }
@@ -436,7 +465,7 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
      * @param stateId state id to check visibility for
      * @param newState the new state
      */
-    checkVisibility(stateId?: string | null, newState?: typeof this.newState) {
+    checkVisibility(stateId?: string | null, newState?: typeof this.newState): boolean {
         newState = newState || this.state;
 
         if (!this.isWidgetVisibleForGroup(newState)) {
@@ -447,11 +476,19 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
             if (!this.isWidgetFilteredOut(newState.rxData as WidgetData | GroupData)) {
                 if (stateId) {
                     if (this.linkContext.visibility[stateId]) {
-                        return !VisBaseWidget.isWidgetHidden(newState.rxData as WidgetData | GroupData, newState.values, this.props.id);
+                        return !VisBaseWidget.isWidgetHidden(
+                            newState.rxData as WidgetData | GroupData,
+                            newState.values,
+                            this.props.id,
+                        );
                     }
                 } else {
                     // check if visible
-                    return !VisBaseWidget.isWidgetHidden(newState.rxData as WidgetData | GroupData, newState.values, this.props.id);
+                    return !VisBaseWidget.isWidgetHidden(
+                        newState.rxData as WidgetData | GroupData,
+                        newState.values,
+                        this.props.id,
+                    );
                 }
             } else {
                 return false;
@@ -461,7 +498,7 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
         return true;
     }
 
-    async onPropertiesUpdated() {
+    onPropertiesUpdated(): void {
         const oldIDs = this.linkContext.IDs;
         this.linkContext = {
             IDs: [],
@@ -475,12 +512,7 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
         const context = this.props.context;
 
         // extract bindings anew as data or style was changes
-        getUsedObjectIDsInWidget(
-            context.views,
-            this.props.view,
-            this.props.id,
-            this.linkContext,
-        );
+        getUsedObjectIDsInWidget(context.views, this.props.view, this.props.id, this.linkContext);
 
         // subscribe on some new IDs and remove old IDs
         const unsubscribe = oldIDs.filter(id => !this.linkContext.IDs.includes(id));
@@ -498,7 +530,7 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
         this.onStateChanged();
     }
 
-    formatValue(value: number | string, round: number) {
+    formatValue(value: number | string, round: number): string {
         if (typeof value === 'number') {
             if (round === 1) {
                 value = Math.round(value * 10) / 10;
@@ -523,7 +555,7 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
         headerStyle?: React.CSSProperties,
         onCardClick?: (e?: React.MouseEvent<HTMLDivElement>) => void,
         components?: Record<string, Component<any>>,
-    ) {
+    ): React.JSX.Element | React.JSX.Element[] | null {
         if (this.props.context.views[this.props.view].widgets[this.props.id].usedInWidget) {
             return content;
         }
@@ -540,66 +572,70 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
         };
 
         // apply style from the element
-        Object.keys(this.state.rxStyle as Record<string, number | string | boolean | null | undefined>).forEach(attr => {
-            const value = (this.state.rxStyle as Record<string, number | string | boolean | null | undefined>)[attr];
-            if (value !== null &&
-                value !== undefined &&
-                POSSIBLE_MUI_STYLES.includes(attr)
-            ) {
-                attr = attr.replace(
-                    /(-\w)/g,
-                    text => text[1].toUpperCase(),
-                );
-                style[attr] = value;
-            }
-        });
+        Object.keys(this.state.rxStyle as Record<string, number | string | boolean | null | undefined>).forEach(
+            attr => {
+                const value = (this.state.rxStyle as Record<string, number | string | boolean | null | undefined>)[
+                    attr
+                ];
+                if (value !== null && value !== undefined && POSSIBLE_MUI_STYLES.includes(attr)) {
+                    attr = attr.replace(/(-\w)/g, text => text[1].toUpperCase());
+                    style[attr] = value;
+                }
+            },
+        );
 
         this.wrappedContent = true;
 
-        // @ts-expect-error fix later
-        return <MyCard
-            className="vis_rx_widget_card"
-            style={style}
-            onClick={onCardClick}
-        >
-            {/* @ts-expect-error fix later */}
-            <MyCardContent
-                className="vis_rx_widget_card_content"
-                style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    height: 'calc(100% - 32px)',
-                    paddingBottom: 16,
-                    position: 'relative',
-                    ...cardContentStyle,
-                }}
+        return (
+            // @ts-expect-error fix later
+            <MyCard
+                className="vis_rx_widget_card"
+                style={style}
+                onClick={onCardClick}
             >
-                {this.state.rxData.widgetTitle ? <div
-                    className="vis_rx_widget_card_name"
+                {/* @ts-expect-error fix later */}
+                <MyCardContent
+                    className="vis_rx_widget_card_content"
                     style={{
                         display: 'flex',
-                        justifyContent: 'space-between',
-                        width: '100%',
+                        flexDirection: 'column',
                         alignItems: 'center',
+                        height: 'calc(100% - 32px)',
+                        paddingBottom: 16,
+                        position: 'relative',
+                        ...cardContentStyle,
                     }}
                 >
-                    <div
-                        className="vis_rx_widget_card_name_div"
-                        style={{
-                            fontSize: 24,
-                            paddingTop: 0,
-                            paddingBottom: 4,
-                            ...headerStyle,
-                        }}
-                    >
-                        {this.state.rxData.widgetTitle}
-                    </div>
-                    {addToHeader || null}
-                </div> : (addToHeader || null)}
-                {content}
-            </MyCardContent>
-        </MyCard>;
+                    {this.state.rxData.widgetTitle ? (
+                        <div
+                            className="vis_rx_widget_card_name"
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                width: '100%',
+                                alignItems: 'center',
+                            }}
+                        >
+                            <div
+                                className="vis_rx_widget_card_name_div"
+                                style={{
+                                    fontSize: 24,
+                                    paddingTop: 0,
+                                    paddingBottom: 4,
+                                    ...headerStyle,
+                                }}
+                            >
+                                {this.state.rxData.widgetTitle}
+                            </div>
+                            {addToHeader || null}
+                        </div>
+                    ) : (
+                        addToHeader || null
+                    )}
+                    {content}
+                </MyCardContent>
+            </MyCard>
+        );
     }
 
     renderWidgetBody(props: RxRenderWidgetProps): React.JSX.Element | null {
@@ -611,19 +647,20 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
             props.className = addClass(props.className, 'vis-user-disabled');
         }
 
-        Object.keys(this.state.rxStyle as Record<string, number | string | boolean | null | undefined>).forEach(attr => {
-            const value = (this.state.rxStyle as Record<string, number | string | boolean | null | undefined>)[attr];
-            if (value !== null && value !== undefined) {
-                if (!this.wrappedContent || !POSSIBLE_MUI_STYLES.includes(attr)) {
-                    attr = attr.replace(
-                        /(-\w)/g,
-                        text => text[1].toUpperCase(),
-                    );
+        Object.keys(this.state.rxStyle as Record<string, number | string | boolean | null | undefined>).forEach(
+            attr => {
+                const value = (this.state.rxStyle as Record<string, number | string | boolean | null | undefined>)[
+                    attr
+                ];
+                if (value !== null && value !== undefined) {
+                    if (!this.wrappedContent || !POSSIBLE_MUI_STYLES.includes(attr)) {
+                        attr = attr.replace(/(-\w)/g, text => text[1].toUpperCase());
 
-                    (props.style as Record<string, number | string | boolean | null | undefined>)[attr] = value;
+                        (props.style as Record<string, number | string | boolean | null | undefined>)[attr] = value;
+                    }
                 }
-            }
-        });
+            },
+        );
 
         if (this.props.isRelative) {
             props.style.position = this.state.rxStyle?.position || 'relative';
@@ -634,7 +671,9 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
         }
 
         if (this.state.editMode) {
-            const zIndex = this.state.rxStyle ? parseInt(((this.state.rxStyle['z-index'] as unknown as string) || '0'), 10) : 0;
+            const zIndex = this.state.rxStyle
+                ? parseInt((this.state.rxStyle['z-index'] as unknown as string) || '0', 10)
+                : 0;
             if (this.state.selected) {
                 // move widget to foreground
                 props.style.zIndex = 800 + zIndex;
@@ -646,22 +685,24 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
         return null;
     }
 
-    getWidgetView(view: string, props?: Partial<VisViewProps>) {
+    getWidgetView(view: string, props?: Partial<VisViewProps>): React.JSX.Element {
         const context = this.props.context;
         const VisViewComponent = context.VisView;
         props = props || {};
 
-        return <VisViewComponent
-            context={this.props.context}
-            viewsActiveFilter={this.props.viewsActiveFilter}
-            activeView={view}
-            editMode={false}
-            key={`${this.props.id}_${view}`}
-            view={view}
-            visInWidget
-            theme={this.props.context.theme}
-            {...props}
-        />;
+        return (
+            <VisViewComponent
+                context={this.props.context}
+                viewsActiveFilter={this.props.viewsActiveFilter}
+                activeView={view}
+                editMode={false}
+                key={`${this.props.id}_${view}`}
+                view={view}
+                visInWidget
+                theme={this.props.context.theme}
+                {...props}
+            />
+        );
     }
 
     // eslint-disable-next-line no-unused-vars
@@ -673,7 +714,7 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
             refParent?: React.RefObject<HTMLDivElement>;
             isRelative?: boolean;
         },
-    ) {
+    ): React.JSX.Element {
         props = props || {};
 
         // old (can) widgets require props.refParent
@@ -699,7 +740,7 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
         });
     }
 
-    isSignalVisible(index: number) {
+    isSignalVisible(index: number): boolean {
         const oid = this.state.rxData[`signals-oid-${index}`];
 
         if (oid) {
@@ -725,7 +766,8 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
             const valueType = typeof val;
 
             if (valueType === 'boolean' || val === 'false' || val === 'true') {
-                targetValue = targetValue === 'true' || targetValue === true || targetValue === 1 || targetValue === '1';
+                targetValue =
+                    targetValue === 'true' || targetValue === true || targetValue === 1 || targetValue === '1';
             } else if (valueType === 'number') {
                 targetValue = parseFloat(targetValue);
             } else if (valueType === 'object') {
@@ -736,18 +778,34 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
                 case '==':
                     targetValue = targetValue.toString();
                     val = val.toString();
-                    if (val === '1') val = 'true';
-                    if (targetValue === '1') targetValue = 'true';
-                    if (val === '0') val = 'false';
-                    if (targetValue === '0') targetValue = 'false';
+                    if (val === '1') {
+                        val = 'true';
+                    }
+                    if (targetValue === '1') {
+                        targetValue = 'true';
+                    }
+                    if (val === '0') {
+                        val = 'false';
+                    }
+                    if (targetValue === '0') {
+                        targetValue = 'false';
+                    }
                     return targetValue === val;
                 case '!=':
                     targetValue = targetValue.toString();
                     val = val.toString();
-                    if (val === '1') val = 'true';
-                    if (targetValue === '1') targetValue = 'true';
-                    if (val === '0') val = 'false';
-                    if (targetValue === '0') targetValue = 'false';
+                    if (val === '1') {
+                        val = 'true';
+                    }
+                    if (targetValue === '1') {
+                        targetValue = 'true';
+                    }
+                    if (val === '0') {
+                        val = 'false';
+                    }
+                    if (targetValue === '0') {
+                        targetValue = 'false';
+                    }
                     return targetValue !== val;
                 case '>=':
                     return val >= targetValue;
@@ -778,7 +836,7 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
         }
     }
 
-    static text2style(textStyle: string, style: any) {
+    static text2style(textStyle: string, style: React.CSSProperties): React.CSSProperties {
         if (textStyle) {
             style = style || {};
             const parts = textStyle.split(';');
@@ -791,14 +849,14 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
                         attrParts[p] = attrParts[p][0].toUpperCase() + attrParts[p].substring(1);
                     }
 
-                    style[attrParts.join('')] = value.trim();
+                    (style as Record<string, string>)[attrParts.join('')] = value.trim();
                 }
             });
         }
         return style;
     }
 
-    renderSignal(index: number) {
+    renderSignal(index: number): React.JSX.Element {
         const oid = this.state.rxData[`signals-oid-${index}`];
         if (!oid || oid === 'nothing_selected') {
             return null;
@@ -817,7 +875,7 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
                 icon = this.state.rxData[`signals-icon-${index}`];
             }
 
-            const style = {
+            const style: React.CSSProperties = {
                 color,
                 position: 'absolute',
                 top: `${parseInt(this.state.rxData[`signals-vert-${index}`], 10) || 0}%`,
@@ -832,7 +890,13 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
                     width: parseFloat(this.state.rxData[`signals-icon-size-${index}`]) || 32,
                     height: 'auto',
                 };
-                icon = <Icon src={icon} style={imageStyle} className="vis-signal-icon" />;
+                icon = (
+                    <Icon
+                        src={icon}
+                        style={imageStyle}
+                        className="vis-signal-icon"
+                    />
+                );
             }
             VisRxWidget.text2style(this.state.rxData[`signals-icon-style-${index}`], style);
             let text = this.state.rxData[`signals-text-${index}`];
@@ -841,27 +905,33 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
                     color: this.state.rxData[`signals-color-${index}`],
                 };
                 VisRxWidget.text2style(this.state.rxData[`signals-text-style-${index}`], textStyle);
-                text = <div
-                    className="vis-signal-text"
-                    style={textStyle}
-                >
-                    {this.state.rxData[`signals-text-${index}`]}
-                </div>;
+                text = (
+                    <div
+                        className="vis-signal-text"
+                        style={textStyle}
+                    >
+                        {this.state.rxData[`signals-text-${index}`]}
+                    </div>
+                );
             } else {
                 text = null;
             }
 
             // class name only to address the icon by user's CSS
-            // @ts-expect-error fix later
-            return <div style={style} className={this.state.rxData[`signals-blink-${index}`] ? 'vis-signals-blink' : null}>
-                {icon}
-                {text}
-            </div>;
+            return (
+                <div
+                    style={style}
+                    className={this.state.rxData[`signals-blink-${index}`] ? 'vis-signals-blink' : null}
+                >
+                    {icon}
+                    {text}
+                </div>
+            );
         }
         return null;
     }
 
-    renderLastChange(widgetStyle: any) {
+    renderLastChange(widgetStyle: CSSStyleDeclaration | React.CSSProperties): React.JSX.Element {
         const oid = this.state.rxData['lc-oid'];
         if (!oid || oid === 'nothing_selected') {
             return null;
@@ -873,9 +943,12 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
             fontFamily: 'Tahoma',
             position: 'absolute',
             zIndex: 0,
-            borderRadius: this.state.rxData['lc-position-horz'] === 'left' ?
-                `${border}px 0 0 ${border}px` :
-                (this.state.rxData['lc-position-horz'] === 'right' ? `0 ${border}px ${border}px 0` : border),
+            borderRadius:
+                this.state.rxData['lc-position-horz'] === 'left'
+                    ? `${border}px 0 0 ${border}px`
+                    : this.state.rxData['lc-position-horz'] === 'right'
+                      ? `0 ${border}px ${border}px 0`
+                      : border,
             whiteSpace: 'nowrap',
         };
         const fontSize = this.state.rxData['lc-font-size'];
@@ -947,18 +1020,22 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
 
         calculateOverflow(widgetStyle);
 
-        return <div
-            className="vis-last-change" // just to have a possibility to address it in user's CSS
-            style={style}
-        >
-            {this.formatDate(
-                this.state.values[`${this.state.rxData['lc-oid']}.${this.state.rxData['lc-type'] === 'last-change' ? 'lc' : 'ts'}`],
-                this.state.rxData['lc-format'],
-                this.state.rxData['lc-is-interval'],
-                this.state.rxData['lc-is-moment'],
-                true,
-            )}
-        </div>;
+        return (
+            <div
+                className="vis-last-change" // just to have a possibility to address it in user's CSS
+                style={style}
+            >
+                {this.formatDate(
+                    this.state.values[
+                        `${this.state.rxData['lc-oid']}.${this.state.rxData['lc-type'] === 'last-change' ? 'lc' : 'ts'}`
+                    ],
+                    this.state.rxData['lc-format'],
+                    this.state.rxData['lc-is-interval'],
+                    this.state.rxData['lc-is-moment'],
+                    true,
+                )}
+            </div>
+        );
     }
 
     renderSignals(): React.ReactNode {
@@ -976,15 +1053,15 @@ class VisRxWidget<TRxData extends Record<string, any>, TState extends Partial<Vi
         return result;
     }
 
-    render() {
+    render(): React.JSX.Element | null {
         if (!this.state.visible && !this.state.editMode) {
             return null;
         }
 
         if (this.state.applyBindings && !this.bindingsTimer) {
-            this.bindingsTimer = setTimeout(async () => {
+            this.bindingsTimer = setTimeout((): void => {
                 this.bindingsTimer = undefined;
-                await this.onPropertiesUpdated();
+                this.onPropertiesUpdated();
 
                 const refs: any[] = [];
                 // if widget has included widgets => inform them about the new size or position

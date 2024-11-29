@@ -22,7 +22,7 @@ import type {
 import JQuiButton from './JQuiButton';
 
 class JQuiContainerDialog extends JQuiButton {
-    static getWidgetInfo() {
+    static getWidgetInfo(): RxWidgetInfo {
         const widgetInfo = JQuiButton.getWidgetInfo() as unknown as RxWidgetInfoWriteable;
 
         const newWidgetInfo = {

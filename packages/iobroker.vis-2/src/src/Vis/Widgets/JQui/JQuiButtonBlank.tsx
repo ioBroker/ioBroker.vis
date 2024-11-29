@@ -14,8 +14,11 @@
  */
 
 import type {
-    RxWidgetInfo, RxWidgetInfoAttributesFieldCheckbox, RxWidgetInfoAttributesFieldSelect,
-    RxWidgetInfoAttributesFieldText, RxWidgetInfoWriteable,
+    RxWidgetInfo,
+    RxWidgetInfoAttributesFieldCheckbox,
+    RxWidgetInfoAttributesFieldSelect,
+    RxWidgetInfoAttributesFieldText,
+    RxWidgetInfoWriteable,
 } from '@iobroker/types-vis-2';
 import JQuiButton from './JQuiButton';
 

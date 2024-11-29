@@ -1,15 +1,19 @@
 import React, { Component } from 'react';
 import {
-    Checkbox, FormControl, MenuItem,
-    Menu, List,
-    ListItemButton, ListItemText,
-    ListItemIcon, InputLabel, Button, Box,
+    Checkbox,
+    FormControl,
+    MenuItem,
+    Menu,
+    List,
+    ListItemButton,
+    ListItemText,
+    ListItemIcon,
+    InputLabel,
+    Button,
+    Box,
 } from '@mui/material';
 
-import {
-    ArrowDropDown as IconArrowDown,
-    ArrowDropUp as IconArrowUp,
-} from '@mui/icons-material';
+import { ArrowDropDown as IconArrowDown, ArrowDropUp as IconArrowUp } from '@mui/icons-material';
 
 import { Utils, I18n, type ThemeType } from '@iobroker/adapter-react-v5';
 import type { VisTheme } from '@iobroker/types-vis-2';
@@ -97,7 +101,7 @@ class MultiSelect extends Component<MultiSelectProps, MultiSelectState> {
         };
     }
 
-    render() {
+    render(): React.JSX.Element {
         const props = this.props;
         const value = props.value || [];
 
@@ -111,11 +115,13 @@ class MultiSelect extends Component<MultiSelectProps, MultiSelectState> {
                 text = item.name;
                 subText = item.subName;
                 color = item.color;
-                icon = item.icon ? <img
-                    src={item.icon}
-                    style={styles.icon}
-                    alt={item.name}
-                /> : null;
+                icon = item.icon ? (
+                    <img
+                        src={item.icon}
+                        style={styles.icon}
+                        alt={item.name}
+                    />
+                ) : null;
             } else {
                 text = value[0];
             }
@@ -135,112 +141,132 @@ class MultiSelect extends Component<MultiSelectProps, MultiSelectState> {
 
         const isNarrow = !props.label;
 
-        return <FormControl variant="standard" style={{ margin: '0px 10px' }}>
-            {props.label ? <InputLabel shrink>{props.label}</InputLabel> : null}
-            <List
-                component="nav"
-                style={{
-                    width: props.width,
-                    marginTop: isNarrow ? 0 : 16,
-                }}
-                sx={Utils.getStyle(this.props.theme, styles.navMain, isNarrow && styles.nav)}
+        return (
+            <FormControl
+                variant="standard"
+                style={{ margin: '0px 10px' }}
             >
-                <ListItemButton
-                    onClick={e => this.setState({ elAnchor: e.currentTarget })}
-                    style={styles.listItemButton}
+                {props.label ? <InputLabel shrink>{props.label}</InputLabel> : null}
+                <List
+                    component="nav"
+                    style={{
+                        width: props.width,
+                        marginTop: isNarrow ? 0 : 16,
+                    }}
+                    sx={Utils.getStyle(this.props.theme, styles.navMain, isNarrow && styles.nav)}
                 >
-                    {icon ? <ListItemIcon style={{ minWidth: 28 }}>
-                        {icon}
-                    </ListItemIcon> : null}
-                    <ListItemText
-                        sx={{
-                            '&.MuiListItemText-root': styles.listItemButton,
-                            '& .MuiListItemText-primary': styles.primary,
-                            '& .MuiListItemText-secondary': styles.secondary,
-                        }}
-                        primary={text}
-                        secondary={<span
-                            style={{
-                                ...(color ? styles.coloredSecondary : undefined),
-                                color,
-                                background: backColor,
-                                whiteSpace: 'nowrap',
+                    <ListItemButton
+                        onClick={e => this.setState({ elAnchor: e.currentTarget })}
+                        style={styles.listItemButton}
+                    >
+                        {icon ? <ListItemIcon style={{ minWidth: 28 }}>{icon}</ListItemIcon> : null}
+                        <ListItemText
+                            sx={{
+                                '&.MuiListItemText-root': styles.listItemButton,
+                                '& .MuiListItemText-primary': styles.primary,
+                                '& .MuiListItemText-secondary': styles.secondary,
                             }}
-                        >
-                            {subText}
-                        </span>}
-                    />
-                    <ListItemIcon style={{ minWidth: 16 }}>{this.state.elAnchor ? <IconArrowUp /> : <IconArrowDown />}</ListItemIcon>
-                </ListItemButton>
-            </List>
-            <Menu
-                open={!!this.state.elAnchor}
-                anchorEl={this.state.elAnchor}
-                onClose={() => this.setState({ elAnchor: null })}
-            >
-                <Box sx={styles.menuToolbar}>
-                    {I18n.t('All')}
-                    <Button
-                        disabled={value.length === props.options.length}
-                        onClick={() => this.props.setSelectedWidgets(props.options.map(item => item.value))}
-                        startIcon={<Checkbox style={{ opacity: value.length === props.options.length ? 0.5 : 1 }} checked />}
-                    >
-                        {I18n.t('Select')}
-                    </Button>
-                    <Button
-                        disabled={!value.length}
-                        onClick={() => this.props.setSelectedWidgets([])}
-                        startIcon={<Checkbox style={{ opacity: !value.length ? 0.5 : 1 }} />}
-                    >
-                        {I18n.t('Unselect')}
-                    </Button>
-                </Box>
-                {props.options.map(item => <MenuItem
-                    value={item.value}
-                    key={item.value}
-                    style={styles.menuItem}
-                    onClick={() =>
-                        this.setState({ elAnchor: null }, () =>
-                            props.onChange([item.value]))}
+                            primary={text}
+                            secondary={
+                                <span
+                                    style={{
+                                        ...(color ? styles.coloredSecondary : undefined),
+                                        color,
+                                        background: backColor,
+                                        whiteSpace: 'nowrap',
+                                    }}
+                                >
+                                    {subText}
+                                </span>
+                            }
+                        />
+                        <ListItemIcon style={{ minWidth: 16 }}>
+                            {this.state.elAnchor ? <IconArrowUp /> : <IconArrowDown />}
+                        </ListItemIcon>
+                    </ListItemButton>
+                </List>
+                <Menu
+                    open={!!this.state.elAnchor}
+                    anchorEl={this.state.elAnchor}
+                    onClose={() => this.setState({ elAnchor: null })}
                 >
-                    <div style={{ display: 'flex' }}>
-                        <div>
-                            <Checkbox
-                                checked={props.value.includes(item.value)}
-                                onClick={e => {
-                                    e.stopPropagation();
-                                    e.preventDefault();
-                                    const _value = [...value];
-                                    if (_value.includes(item.value)) {
-                                        _value.splice(_value.indexOf(item.value), 1);
-                                    } else {
-                                        _value.push(item.value);
-                                    }
-                                    props.onChange(_value);
-                                }}
-                            />
-                        </div>
-                        <div>
-                            {item.icon ? <div style={styles.menuItemIcon}>
-                                <img src={item.icon} style={styles.icon} alt={item.name} />
-                            </div> : null}
-                            <div style={styles.menuItemMainText}>{item.name}</div>
-                            <div
-                                style={{
-                                    ...(color ? styles.coloredSecondary : undefined),
-                                    fontSize: 10,
-                                    fontStyle: 'italic',
-                                    color: item.color,
-                                    background: item.color ? Utils.getInvertedColor(item.color, props.themeType, false) : undefined,
-                                }}
-                            >
-                                {item.subName}
+                    <Box sx={styles.menuToolbar}>
+                        {I18n.t('All')}
+                        <Button
+                            disabled={value.length === props.options.length}
+                            onClick={() => this.props.setSelectedWidgets(props.options.map(item => item.value))}
+                            startIcon={
+                                <Checkbox
+                                    style={{ opacity: value.length === props.options.length ? 0.5 : 1 }}
+                                    checked
+                                />
+                            }
+                        >
+                            {I18n.t('Select')}
+                        </Button>
+                        <Button
+                            disabled={!value.length}
+                            onClick={() => this.props.setSelectedWidgets([])}
+                            startIcon={<Checkbox style={{ opacity: !value.length ? 0.5 : 1 }} />}
+                        >
+                            {I18n.t('Unselect')}
+                        </Button>
+                    </Box>
+                    {props.options.map(item => (
+                        <MenuItem
+                            value={item.value}
+                            key={item.value}
+                            style={styles.menuItem}
+                            onClick={() => this.setState({ elAnchor: null }, () => props.onChange([item.value]))}
+                        >
+                            <div style={{ display: 'flex' }}>
+                                <div>
+                                    <Checkbox
+                                        checked={props.value.includes(item.value)}
+                                        onClick={e => {
+                                            e.stopPropagation();
+                                            e.preventDefault();
+                                            const _value = [...value];
+                                            if (_value.includes(item.value)) {
+                                                _value.splice(_value.indexOf(item.value), 1);
+                                            } else {
+                                                _value.push(item.value);
+                                            }
+                                            props.onChange(_value);
+                                        }}
+                                    />
+                                </div>
+                                <div>
+                                    {item.icon ? (
+                                        <div style={styles.menuItemIcon}>
+                                            <img
+                                                src={item.icon}
+                                                style={styles.icon}
+                                                alt={item.name}
+                                            />
+                                        </div>
+                                    ) : null}
+                                    <div style={styles.menuItemMainText}>{item.name}</div>
+                                    <div
+                                        style={{
+                                            ...(color ? styles.coloredSecondary : undefined),
+                                            fontSize: 10,
+                                            fontStyle: 'italic',
+                                            color: item.color,
+                                            background: item.color
+                                                ? Utils.getInvertedColor(item.color, props.themeType, false)
+                                                : undefined,
+                                        }}
+                                    >
+                                        {item.subName}
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                </MenuItem>)}
-            </Menu>
-        </FormControl>;
+                        </MenuItem>
+                    ))}
+                </Menu>
+            </FormControl>
+        );
     }
 }
 

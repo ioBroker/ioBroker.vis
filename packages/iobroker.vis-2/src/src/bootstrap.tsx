@@ -23,11 +23,13 @@ window.adapterName = 'vis-2';
 
 console.log(`iobroker.${window.adapterName}@${packageJson.version}`);
 
-import('./Vis/visRxWidget')
-    .then(_VisRxWidget => window.visRxWidget = _VisRxWidget.default);
+import('./Vis/visRxWidget').then(_VisRxWidget => (window.visRxWidget = _VisRxWidget.default));
 
 function modifyClasses(className: string, addClass?: string, removeClass?: string): string {
-    const classes = (className || '').split(' ').map(c => c.trim()).filter(c => c);
+    const classes = (className || '')
+        .split(' ')
+        .map(c => c.trim())
+        .filter(c => c);
     const pos = classes.indexOf(removeClass);
     if (pos !== -1) {
         classes.splice(pos, 1);
@@ -48,7 +50,7 @@ function inIframe(): boolean {
 }
 
 // apply background color only if not in iframe
-function setBackground() {
+function setBackground(): void {
     if (!inIframe()) {
         if (Utils.getThemeType() === 'dark') {
             window.document.body.className = modifyClasses(window.document.body.className, 'body-dark', 'body-light');
@@ -62,23 +64,26 @@ function setBackground() {
 
 setBackground();
 
-function build() {
+function build(): void {
     const container = document.getElementById('root');
-    const root = createRoot(container);
-    return root.render(<App
-        setBackground={() => setBackground()}
-        version={packageJson.version}
-    />);
+    if (container) {
+        const root = createRoot(container);
+        root.render(
+            <App
+                setBackground={() => setBackground()}
+                version={packageJson.version}
+            />,
+        );
+    }
 }
 
 // wait till all scrips are loaded
-window.visConfigLoaded
-    .then(() => {
-        if (!window.disableDataReporting) {
-            window.sentryDSN = 'https://db8b6e837c71447a876069559a00a742@sentry.iobroker.net/232';
-        }
-        build();
-    });
+void window.visConfigLoaded.then(() => {
+    if (!window.disableDataReporting) {
+        window.sentryDSN = 'https://db8b6e837c71447a876069559a00a742@sentry.iobroker.net/232';
+    }
+    build();
+});
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

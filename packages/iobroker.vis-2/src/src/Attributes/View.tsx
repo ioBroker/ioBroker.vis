@@ -1,28 +1,10 @@
-import React, {
-    useEffect,
-    useState,
-    useMemo,
-} from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 
-import {
-    Accordion,
-    AccordionDetails,
-    AccordionSummary,
-    Tooltip,
-    IconButton, Box,
-} from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Tooltip, IconButton, Box } from '@mui/material';
 
-import {
-    ExpandMore as ExpandMoreIcon, FormatPaint,
-    Info as InfoIcon, Visibility,
-} from '@mui/icons-material';
+import { ExpandMore as ExpandMoreIcon, FormatPaint, Info as InfoIcon, Visibility } from '@mui/icons-material';
 
-import {
-    Utils,
-    I18n,
-    type LegacyConnection,
-    type ThemeType,
-} from '@iobroker/adapter-react-v5';
+import { Utils, I18n, type LegacyConnection, type ThemeType } from '@iobroker/adapter-react-v5';
 
 import { store } from '@/Store';
 import type { Project, View, VisTheme } from '@iobroker/types-vis-2';
@@ -91,7 +73,7 @@ const checkFunction = (
             _func = funcText;
         } else {
             // eslint-disable-next-line no-new-func
-            _func = (new Function('data', `return ${funcText}`)) as (dataSettings: Record<string, any>) => boolean;
+            _func = new Function('data', `return ${funcText}`) as (dataSettings: Record<string, any>) => boolean;
         }
         return _func(settings);
     } catch (e) {
@@ -105,49 +87,57 @@ function addButton(
     disabled: boolean,
     onShowViews: () => void,
     onClick?: () => void,
-) {
-    return <div style={{ display: 'flex', width: '100%', alignItems: 'end' }}>
-        <div
-            style={{
-                flex: 1,
-                lineHeight: '36px',
-                marginRight: 4,
-                display: 'flex',
-                alignItems: 'center',
-            }}
-        >
-            {content}
+): React.JSX.Element {
+    return (
+        <div style={{ display: 'flex', width: '100%', alignItems: 'end' }}>
+            <div
+                style={{
+                    flex: 1,
+                    lineHeight: '36px',
+                    marginRight: 4,
+                    display: 'flex',
+                    alignItems: 'center',
+                }}
+            >
+                {content}
+            </div>
+            {onClick ? (
+                <Tooltip
+                    title={I18n.t('Apply ALL navigation properties to all views')}
+                    slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+                >
+                    <span>
+                        <IconButton
+                            size="small"
+                            disabled={disabled}
+                            color="primary"
+                            onClick={() => onClick()}
+                        >
+                            <FormatPaint />
+                        </IconButton>
+                    </span>
+                </Tooltip>
+            ) : null}
+            {onShowViews ? (
+                <Tooltip
+                    title={I18n.t('Show this attribute by all views')}
+                    slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+                >
+                    <span>
+                        <IconButton
+                            size="small"
+                            disabled={disabled}
+                            onClick={() => onShowViews()}
+                        >
+                            <Visibility />
+                        </IconButton>
+                    </span>
+                </Tooltip>
+            ) : (
+                <div style={{ width: 24, height: 24 }} />
+            )}
         </div>
-        {onClick ? <Tooltip
-            title={I18n.t('Apply ALL navigation properties to all views')}
-            componentsProps={{ popper: { sx: commonStyles.tooltip } }}
-        >
-            <span>
-                <IconButton
-                    size="small"
-                    disabled={disabled}
-                    color="primary"
-                    onClick={() => onClick()}
-                >
-                    <FormatPaint />
-                </IconButton>
-            </span>
-        </Tooltip> : null}
-        {onShowViews ? <Tooltip
-            title={I18n.t('Show this attribute by all views')}
-            componentsProps={{ popper: { sx: commonStyles.tooltip } }}
-        >
-            <span>
-                <IconButton
-                    size="small"
-                    disabled={disabled}
-                    onClick={() => onShowViews()}
-                >
-                    <Visibility />
-                </IconButton>
-            </span>
-        </Tooltip> : <div style={{ width: 24, height: 24 }} />}
-    </div>;
+    );
 }
 
 interface ViewProps {
@@ -169,29 +159,20 @@ interface ViewProps {
     socket: LegacyConnection;
 }
 
-const ViewAttributes = (props: ViewProps) => {
-    const project: Project = store.getState().visProject;
-    if (!project?.[props.selectedView]) {
-        return null;
-    }
-
+const ViewAttributes = (props: ViewProps): React.JSX.Element | null => {
     const [triggerAllOpened, setTriggerAllOpened] = useState(0);
     const [triggerAllClosed, setTriggerAllClosed] = useState(0);
     const [showAllViewDialog, setShowAllViewDialog] = useState<ApplyField | null>(null);
     const [showViewsDialog, setShowViewsDialog] = useState<Field | null>(null);
 
-    const view: View = project[props.selectedView];
+    let resolutionSelect = 'none';
+    const project: Project = store.getState().visProject;
 
-    let resolutionSelect = `${view.settings.sizex}x${view.settings.sizey}`;
-    if (!view.settings || (view.settings.sizex === undefined && view.settings.sizey === undefined)) {
-        resolutionSelect = 'none';
-    } else if (!resolution.find(item => item.value === resolutionSelect)) {
-        resolutionSelect = 'user';
-    }
+    const view: View | null = project[props.selectedView];
 
     const fields = useMemo(
-        () => getFields(resolutionSelect, view, props.selectedView, props.editMode, props.changeProject),
-        [resolutionSelect, view.settings?.sizex, view.settings?.sizey, props.selectedView, props.editMode],
+        () => (view ? getFields(resolutionSelect, view, props.selectedView, props.editMode, props.changeProject) : []),
+        [resolutionSelect, view?.settings?.sizex, view?.settings?.sizey, props.selectedView, props.editMode],
     );
 
     const [accordionOpen, setAccordionOpen] = useState<Record<string, 0 | 1 | 2>>({});
@@ -202,14 +183,14 @@ const ViewAttributes = (props: ViewProps) => {
         if (_accordionOpen) {
             try {
                 _accordionOpen = JSON.parse(accordionOpenStr || '');
-            } catch (e) {
+            } catch {
                 // ignore
             }
         }
         if (_accordionOpen) {
             // convert from old format
             Object.keys(_accordionOpen).forEach(key => {
-                if (_accordionOpen[key] as any === true || _accordionOpen[key] === 1) {
+                if ((_accordionOpen[key] as any) === true || _accordionOpen[key] === 1) {
                     _accordionOpen[key] = 1;
                 } else {
                     _accordionOpen[key] = 0;
@@ -220,20 +201,31 @@ const ViewAttributes = (props: ViewProps) => {
     }, []);
 
     useEffect(() => {
-        const newAccordionOpen: Record<string, 0 | 1 |2> = {};
+        const newAccordionOpen: Record<string, 0 | 1 | 2> = {};
         if (props.triggerAllOpened !== triggerAllOpened) {
-            fields.forEach((_group, key) => newAccordionOpen[key] = 1);
+            fields.forEach((_group, key) => (newAccordionOpen[key] = 1));
             setTriggerAllOpened(props.triggerAllOpened || 0);
             window.localStorage.setItem('attributesView', JSON.stringify(newAccordionOpen));
             setAccordionOpen(newAccordionOpen);
         }
         if (props.triggerAllClosed !== triggerAllClosed) {
-            fields.forEach((_group, key) => newAccordionOpen[key] = 0);
+            fields.forEach((_group, key) => (newAccordionOpen[key] = 0));
             setTriggerAllClosed(props.triggerAllClosed || 0);
             window.localStorage.setItem('attributesView', JSON.stringify(newAccordionOpen));
             setAccordionOpen(newAccordionOpen);
         }
     }, [props.triggerAllOpened, props.triggerAllClosed]);
+
+    if (!project?.[props.selectedView]) {
+        return null;
+    }
+
+    resolutionSelect = `${view.settings.sizex}x${view.settings.sizey}`;
+    if (!view.settings || (view.settings.sizex === undefined && view.settings.sizey === undefined)) {
+        resolutionSelect = 'none';
+    } else if (!resolution.find(item => item.value === resolutionSelect)) {
+        resolutionSelect = 'user';
+    }
 
     const allOpened = !fields.find((_group, key) => accordionOpen[key] === 0 || accordionOpen[key] === 2);
     const allClosed = !fields.find((_group, key) => accordionOpen[key] === 1);
@@ -247,7 +239,7 @@ const ViewAttributes = (props: ViewProps) => {
 
     const viewList = Object.keys(project).filter(v => v !== '___settings' && v !== props.selectedView);
 
-    const allViewDialog =  renderApplyDialog({
+    const allViewDialog = renderApplyDialog({
         field: showAllViewDialog,
         viewList,
         project,
@@ -272,149 +264,175 @@ const ViewAttributes = (props: ViewProps) => {
         checkFunction,
     });
 
-    return <div style={{ height: '100%', overflowY: 'auto' }}>
-        {fields.map((group, key) => {
-            if (checkFunction(group.hidden, project[props.selectedView]?.settings || {})) {
-                return null;
-            }
-            return <Accordion
-                sx={{
-                    '&.MuiAccordion-root': styles.accordionRoot,
-                    '& .Mui-expanded': commonStyles.clearPadding,
-                }}
-                square
-                key={key}
-                elevation={0}
-                expanded={accordionOpen[key] === 1}
-                onChange={(_e, expanded) => {
-                    const newAccordionOpen: Record<string, 0 | 1 | 2> = { ...accordionOpen };
-                    newAccordionOpen[key] = expanded ? 1 : 2;
-                    expanded && window.localStorage.setItem('attributesView', JSON.stringify(newAccordionOpen));
-                    setAccordionOpen(newAccordionOpen);
+    return (
+        <div style={{ height: '100%', overflowY: 'auto' }}>
+            {fields.map((group, key) => {
+                if (checkFunction(group.hidden, project[props.selectedView]?.settings || {})) {
+                    return null;
+                }
+                return (
+                    <Accordion
+                        sx={{
+                            '&.MuiAccordion-root': styles.accordionRoot,
+                            '& .Mui-expanded': commonStyles.clearPadding,
+                        }}
+                        square
+                        key={key}
+                        elevation={0}
+                        expanded={accordionOpen[key] === 1}
+                        onChange={(_e, expanded) => {
+                            const newAccordionOpen: Record<string, 0 | 1 | 2> = { ...accordionOpen };
+                            newAccordionOpen[key] = expanded ? 1 : 2;
+                            expanded && window.localStorage.setItem('attributesView', JSON.stringify(newAccordionOpen));
+                            setAccordionOpen(newAccordionOpen);
 
-                    if (!expanded) {
-                        props.setIsAllClosed(false);
-                        setTimeout(() => {
-                            const _newAccordionOpen: Record<string, 0 | 1 | 2> = { ...accordionOpen };
-                            _newAccordionOpen[key] = 0;
-                            window.localStorage.setItem('attributesView', JSON.stringify(_newAccordionOpen));
-                            setAccordionOpen(_newAccordionOpen);
-                        }, 200);
-                    }
-                }}
-            >
-                <AccordionSummary
-                    sx={{
-                        '&.MuiAccordionSummary-root': Utils.getStyle(
-                            props.theme,
-                            commonStyles.clearPadding,
-                            accordionOpen[key] === 1 ? styles.groupSummaryExpanded : styles.groupSummary,
-                            styles.lightedPanel,
-                        ),
-                        '& .MuiAccordionSummary-content': Utils.getStyle(
-                            props.theme,
-                            commonStyles.clearPadding,
-                            accordionOpen[key] === 1 && styles.accordionOpenedSummary,
-                        ),
-                        '& .Mui-expanded': commonStyles.clearPadding,
-                        '& .MuiAccordionSummary-expandIconWrapper': commonStyles.clearPadding,
-                    }}
-                    expandIcon={<ExpandMoreIcon />}
-                >
-                    {I18n.t(group.label)}
-                </AccordionSummary>
-                {accordionOpen[key] !== 0 ? <AccordionDetails sx={styles.accordionDetails}>
-                    <table style={{ width: '100%' }}>
-                        <tbody>
-                            {group.fields.map((field, key2) => {
-                                let disabled = false;
-                                if (field.disabled !== undefined) {
-                                    if (field.disabled === true) {
-                                        disabled = true;
-                                    } else if (field.disabled === false) {
-                                        disabled = false;
-                                    } else {
-                                        disabled = !!checkFunction(field.disabled, project[props.selectedView].settings || {});
-                                    }
-                                }
+                            if (!expanded) {
+                                props.setIsAllClosed(false);
+                                setTimeout(() => {
+                                    const _newAccordionOpen: Record<string, 0 | 1 | 2> = { ...accordionOpen };
+                                    _newAccordionOpen[key] = 0;
+                                    window.localStorage.setItem('attributesView', JSON.stringify(_newAccordionOpen));
+                                    setAccordionOpen(_newAccordionOpen);
+                                }, 200);
+                            }
+                        }}
+                    >
+                        <AccordionSummary
+                            sx={{
+                                '&.MuiAccordionSummary-root': Utils.getStyle(
+                                    props.theme,
+                                    commonStyles.clearPadding,
+                                    accordionOpen[key] === 1 ? styles.groupSummaryExpanded : styles.groupSummary,
+                                    styles.lightedPanel,
+                                ),
+                                '& .MuiAccordionSummary-content': Utils.getStyle(
+                                    props.theme,
+                                    commonStyles.clearPadding,
+                                    accordionOpen[key] === 1 && styles.accordionOpenedSummary,
+                                ),
+                                '& .Mui-expanded': commonStyles.clearPadding,
+                                '& .MuiAccordionSummary-expandIconWrapper': commonStyles.clearPadding,
+                            }}
+                            expandIcon={<ExpandMoreIcon />}
+                        >
+                            {I18n.t(group.label)}
+                        </AccordionSummary>
+                        {accordionOpen[key] !== 0 ? (
+                            <AccordionDetails sx={styles.accordionDetails}>
+                                <table style={{ width: '100%' }}>
+                                    <tbody>
+                                        {group.fields.map((field, key2) => {
+                                            let disabled = false;
+                                            if (field.disabled !== undefined) {
+                                                if (field.disabled === true) {
+                                                    disabled = true;
+                                                } else if (field.disabled === false) {
+                                                    disabled = false;
+                                                } else {
+                                                    disabled = !!checkFunction(
+                                                        field.disabled,
+                                                        project[props.selectedView].settings || {},
+                                                    );
+                                                }
+                                            }
 
-                                let result = getEditField({
-                                    field,
-                                    disabled,
-                                    view: props.selectedView,
-                                    editMode: props.editMode,
-                                    changeProject: props.changeProject,
-                                    userGroups: props.userGroups,
-                                    adapterName: props.adapterName,
-                                    themeType: props.themeType,
-                                    instance: props.instance,
-                                    projectName: props.projectName,
-                                    socket: props.socket,
-                                    checkFunction,
-                                    project,
-                                    theme: props.theme,
-                                });
+                                            let result = getEditField({
+                                                field,
+                                                disabled,
+                                                view: props.selectedView,
+                                                editMode: props.editMode,
+                                                changeProject: props.changeProject,
+                                                userGroups: props.userGroups,
+                                                adapterName: props.adapterName,
+                                                themeType: props.themeType,
+                                                instance: props.instance,
+                                                projectName: props.projectName,
+                                                socket: props.socket,
+                                                checkFunction,
+                                                project,
+                                                theme: props.theme,
+                                            });
 
-                                if (!result) {
-                                    return null;
-                                }
+                                            if (!result) {
+                                                return null;
+                                            }
 
-                                let helpText = null;
-                                if (field.title) {
-                                    helpText = <Tooltip
-                                        title={I18n.t(field.title)}
-                                        componentsProps={{ popper: { sx: commonStyles.tooltip } }}
-                                    >
-                                        <InfoIcon style={styles.fieldHelpText} fontSize="small" />
-                                    </Tooltip>;
-                                }
+                                            let helpText = null;
+                                            if (field.title) {
+                                                helpText = (
+                                                    <Tooltip
+                                                        title={I18n.t(field.title)}
+                                                        slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+                                                    >
+                                                        <InfoIcon
+                                                            style={styles.fieldHelpText}
+                                                            fontSize="small"
+                                                        />
+                                                    </Tooltip>
+                                                );
+                                            }
 
-                                // if all attributes of navigation could be applied to all views with enabled navigation
-                                if (field.groupApply) {
-                                    // find all fields with applyToAll flag, and if any is not equal show button
-                                    const isShow = group.fields.find(_field =>
-                                        _field.applyToAll &&
-                                        getViewsWithDifferentValues(
-                                            project,
-                                            _field,
-                                            props.selectedView,
-                                            viewList,
-                                            checkFunction,
-                                        ));
+                                            // if all attributes of navigation could be applied to all views with enabled navigation
+                                            if (field.groupApply) {
+                                                // find all fields with applyToAll flag, and if any is not equal show button
+                                                const isShow = group.fields.find(
+                                                    _field =>
+                                                        _field.applyToAll &&
+                                                        getViewsWithDifferentValues(
+                                                            project,
+                                                            _field,
+                                                            props.selectedView,
+                                                            viewList,
+                                                            checkFunction,
+                                                        ),
+                                                );
 
-                                    result = addButton(
-                                        result,
-                                        !props.editMode || disabled,
-                                        () => setShowViewsDialog(field),
-                                        isShow && (project[props.selectedView].settings as Record<string, any>)?.[field.attr] ? () => setShowAllViewDialog({ ...field, group }) : null,
-                                    );
-                                } else if (field.attr?.startsWith('navigation')) {
-                                    result = addButton(
-                                        result,
-                                        !props.editMode || disabled,
-                                        () => setShowViewsDialog(field),
-                                    );
-                                }
+                                                result = addButton(
+                                                    result,
+                                                    !props.editMode || disabled,
+                                                    () => setShowViewsDialog(field),
+                                                    isShow &&
+                                                        (project[props.selectedView].settings as Record<string, any>)?.[
+                                                            field.attr
+                                                        ]
+                                                        ? () => setShowAllViewDialog({ ...field, group })
+                                                        : null,
+                                                );
+                                            } else if (field.attr?.startsWith('navigation')) {
+                                                result = addButton(result, !props.editMode || disabled, () =>
+                                                    setShowViewsDialog(field),
+                                                );
+                                            }
 
-                                return <tr key={key2}>
-                                    <td
-                                        style={styles.fieldTitle}
-                                        title={!field.title ? undefined : I18n.t(field.title)}
-                                    >
-                                        {I18n.t(field.label)}
-                                        {helpText}
-                                    </td>
-                                    <Box component="td" sx={{ ...commonStyles.fieldContent, width: '100%' }}>{result}</Box>
-                                </tr>;
-                            })}
-                        </tbody>
-                    </table>
-                </AccordionDetails> : null}
-            </Accordion>;
-        })}
-        {allViewDialog}
-        {showViewsDialogElement}
-    </div>;
+                                            return (
+                                                <tr key={key2}>
+                                                    <td
+                                                        style={styles.fieldTitle}
+                                                        title={!field.title ? undefined : I18n.t(field.title)}
+                                                    >
+                                                        {I18n.t(field.label)}
+                                                        {helpText}
+                                                    </td>
+                                                    <Box
+                                                        component="td"
+                                                        sx={{ ...commonStyles.fieldContent, width: '100%' }}
+                                                    >
+                                                        {result}
+                                                    </Box>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </AccordionDetails>
+                        ) : null}
+                    </Accordion>
+                );
+            })}
+            {allViewDialog}
+            {showViewsDialogElement}
+        </div>
+    );
 };
 
 export default ViewAttributes;

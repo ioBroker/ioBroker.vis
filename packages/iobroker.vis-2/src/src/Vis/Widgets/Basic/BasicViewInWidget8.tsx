@@ -13,13 +13,11 @@
  * (Free for non-commercial use).
  */
 
-import type { CSSProperties } from 'react';
-import React from 'react';
+import React, { type CSSProperties } from 'react';
 
 import { I18n } from '@iobroker/adapter-react-v5';
 
-// eslint-disable-next-line import/no-cycle
-import type { RxRenderWidgetProps, RxWidgetInfoGroup } from '@iobroker/types-vis-2';
+import type { RxRenderWidgetProps, RxWidgetInfo, RxWidgetInfoGroup } from '@iobroker/types-vis-2';
 import VisRxWidget from '../../visRxWidget';
 
 interface RxData {
@@ -29,7 +27,7 @@ interface RxData {
 }
 
 class BasicViewInWidget8 extends VisRxWidget<RxData> {
-    static getWidgetInfo() {
+    static getWidgetInfo(): RxWidgetInfo {
         return {
             id: 'tplStatefulContainerView8',
             visSet: 'basic',
@@ -40,11 +38,11 @@ class BasicViewInWidget8 extends VisRxWidget<RxData> {
     }
 
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo() {
+    getWidgetInfo(): RxWidgetInfo {
         return BasicViewInWidget8.getWidgetInfo();
     }
 
-    renderWidgetBody(props: RxRenderWidgetProps) {
+    renderWidgetBody(props: RxRenderWidgetProps): React.JSX.Element {
         super.renderWidgetBody(props);
         // set default width and height
         if (props.style.width === undefined) {
@@ -66,7 +64,7 @@ class BasicViewInWidget8 extends VisRxWidget<RxData> {
         let view;
 
         if (oid !== 'nothing_selected' && val !== undefined) {
-            if (val === 'true' || val === true)  {
+            if (val === 'true' || val === true) {
                 val = 1;
             }
             if (val === 'false' || val === false) {
@@ -93,9 +91,14 @@ class BasicViewInWidget8 extends VisRxWidget<RxData> {
         </div>
          */
         if (view === this.props.view) {
-            return <div className="vis-widget-body" style={{ overflow: 'hidden', position: 'absolute' }}>
-                {I18n.t('vis_2_widgets_basic_cannot_recursive')}
-            </div>;
+            return (
+                <div
+                    className="vis-widget-body"
+                    style={{ overflow: 'hidden', position: 'absolute' }}
+                >
+                    {I18n.t('vis_2_widgets_basic_cannot_recursive')}
+                </div>
+            );
         }
 
         const style: CSSProperties = {
@@ -124,10 +127,15 @@ class BasicViewInWidget8 extends VisRxWidget<RxData> {
         delete props.style.overflowX;
         delete props.style.overflowY;
 
-        return <div className="vis-widget-body" style={style}>
-            {this.state.editMode ? <div className="vis-editmode-helper" /> : null}
-            {super.getWidgetView(view, undefined)}
-        </div>;
+        return (
+            <div
+                className="vis-widget-body"
+                style={style}
+            >
+                {this.state.editMode ? <div className="vis-editmode-helper" /> : null}
+                {super.getWidgetView(view, undefined)}
+            </div>
+        );
     }
 }
 

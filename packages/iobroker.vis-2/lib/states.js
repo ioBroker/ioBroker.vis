@@ -94,7 +94,9 @@ function extractBinding(format) {
                 systemOid = systemOid.substring(0, systemOid.length - 3);
             }
             let operations = null;
-            const isEval = visOid.match(/^[\d\w_]+:\s?[-._/ :!#$%&()+=@^{}|~\p{Ll}\p{Lu}\p{Nd}]+$/u) || (!visOid.length && parts.length > 0); // (visOid.indexOf(':') !== -1) && (visOid.indexOf('::') === -1);
+            const isEval =
+                visOid.match(/^[\d\w_]+:\s?[-._/ :!#$%&()+=@^{}|~\p{Ll}\p{Lu}\p{Nd}]+$/u) ||
+                (!visOid.length && parts.length > 0); // (visOid.indexOf(':') !== -1) && (visOid.indexOf('::') === -1);
 
             if (isEval) {
                 const xx = visOid.split(':', 2);
@@ -104,11 +106,13 @@ function extractBinding(format) {
                 operations = [];
                 operations.push({
                     op: 'eval',
-                    arg: [{
-                        name: xx[0],
-                        visOid,
-                        systemOid,
-                    }],
+                    arg: [
+                        {
+                            name: xx[0],
+                            visOid,
+                            systemOid,
+                        },
+                    ],
                 });
             }
 
@@ -116,7 +120,8 @@ function extractBinding(format) {
                 // eval construction
                 if (isEval) {
                     const trimmed = parts[u].trim();
-                    if (isIdBinding(trimmed)) { // parts[u].indexOf(':') !== -1 && parts[u].indexOf('::') === -1) {
+                    if (isIdBinding(trimmed)) {
+                        // parts[u].indexOf(':') !== -1 && parts[u].indexOf('::') === -1) {
                         const argParts = trimmed.split(':', 2);
                         let _visOid = argParts[1].trim();
                         let _systemOid = _visOid;
@@ -159,7 +164,8 @@ function extractBinding(format) {
                     if (parse && parse[1]) {
                         parse[1] = parse[1].trim();
                         // operators requires parameter
-                        if (parse[1] === '*' ||
+                        if (
+                            parse[1] === '*' ||
                             parse[1] === '+' ||
                             parse[1] === '-' ||
                             parse[1] === '/' ||
@@ -201,7 +207,7 @@ function extractBinding(format) {
                         } else if (parse[1] === 'value') {
                             // value formatting
                             operations = operations || [];
-                            let param = (parse[2] === undefined) ? '(2)' : (parse[2] || '');
+                            let param = parse[2] === undefined ? '(2)' : parse[2] || '';
                             param = param.trim();
                             param = param.substring(1, param.length - 1);
                             operations.push({ op: parse[1], arg: param });
@@ -353,7 +359,6 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
 
     // if widget is in the group => replace groupAttrX values
     if (widget.grouped) {
-
         // widget.groupid = widget.groupid || getWidgetGroup(views, view, wid);
 
         if (!views[view].widgets[widget.groupid]) {
@@ -452,7 +457,12 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
                         }
                     }
                 });
-            } else if (attr !== 'oidTrueValue' && attr !== 'oidFalseValue' && data[attr] && data[attr] !== 'nothing_selected') {
+            } else if (
+                attr !== 'oidTrueValue' &&
+                attr !== 'oidFalseValue' &&
+                data[attr] &&
+                data[attr] !== 'nothing_selected'
+            ) {
                 let isID = attr.match(/oid\d{0,2}$/);
                 if (attr.startsWith('oid')) {
                     isID = true;
@@ -460,7 +470,10 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
                     isID = true;
                 } else if (linkContext.widgetAttrInfo) {
                     const _attr = attr.replace(/\d{0,2}$/, '');
-                    if (linkContext.widgetAttrInfo[_attr]?.type === 'id' && linkContext.widgetAttrInfo[_attr].noSubscribe !== true) {
+                    if (
+                        linkContext.widgetAttrInfo[_attr]?.type === 'id' &&
+                        linkContext.widgetAttrInfo[_attr].noSubscribe !== true
+                    ) {
                         isID = true;
                     }
                 }
@@ -686,7 +699,10 @@ function calcProject(objects, projects, instance, result, callback) {
         }
         const dps = getUsedObjectIDs(json, false);
         if (dps && dps.IDs) {
-            result.push({id: `vis-2.${instance}.datapoints.${project.file.replace(/[.\\s]/g, '_')}`, val: dps.IDs.length});
+            result.push({
+                id: `vis-2.${instance}.datapoints.${project.file.replace(/[.\\s]/g, '_')}`,
+                val: dps.IDs.length,
+            });
         }
         setImmediate(calcProject, objects, projects, instance, result, callback);
     });
@@ -695,7 +711,7 @@ function calcProject(objects, projects, instance, result, callback) {
 function calcProjects(objects, states, instance, config, callback) {
     objects.readDir(`vis-2.${instance}`, '/', (err, projects) => {
         if (err || !projects || !projects.length) {
-            callback && callback(err || null, [{id: `vis-2.${instance}.datapoints.total`, val: 0}]);
+            callback && callback(err || null, [{ id: `vis-2.${instance}.datapoints.total`, val: 0 }]);
         } else {
             calcProject(objects, projects, instance, [], (err, result) => {
                 if (result && result.length) {
@@ -703,7 +719,7 @@ function calcProjects(objects, states, instance, config, callback) {
                     for (let r = 0; r < result.length; r++) {
                         total += result[r].val;
                     }
-                    result.push({id: `vis-2.${instance}.datapoints.total`, val: total});
+                    result.push({ id: `vis-2.${instance}.datapoints.total`, val: total });
                 }
 
                 callback && callback(err, result);

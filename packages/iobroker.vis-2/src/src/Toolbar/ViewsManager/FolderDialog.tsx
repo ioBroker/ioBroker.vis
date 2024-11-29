@@ -1,8 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 
-import {
-    TextField,
-} from '@mui/material';
+import { TextField } from '@mui/material';
 
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -35,7 +33,9 @@ const FolderDialog: React.FC<FolderDialogProps> = props => {
         return null;
     }
 
-    const folderObject = store.getState().visProject.___settings.folders.find(folder => folder.id === props.dialogFolder);
+    const folderObject = store
+        .getState()
+        .visProject.___settings.folders.find(folder => folder.id === props.dialogFolder);
 
     const dialogTitles = {
         delete: `${I18n.t('Do you want to delete folder "%s"', folderObject?.name)}?`,
@@ -49,43 +49,46 @@ const FolderDialog: React.FC<FolderDialogProps> = props => {
         add: I18n.t('Add'),
     };
 
-    const addFolder = () => {
+    const addFolder = (): void => {
         const project = deepClone(store.getState().visProject);
         project.___settings.folders.push({
             id: uuidv4(),
             name: props.dialogName,
             parentId: props.dialogParentId,
         });
-        props.changeProject(project);
+        void props.changeProject(project);
     };
 
-    const deleteFolder = () => {
+    const deleteFolder = (): void => {
         const project = deepClone(store.getState().visProject);
-        project.___settings.folders.splice(project.___settings.folders.findIndex(folder => folder.id === props.dialogFolder), 1);
-        props.changeProject(project);
+        project.___settings.folders.splice(
+            project.___settings.folders.findIndex(folder => folder.id === props.dialogFolder),
+            1,
+        );
+        void props.changeProject(project);
     };
 
-    const renameFolder = () => {
+    const renameFolder = (): void => {
         const project = deepClone(store.getState().visProject);
         project.___settings.folders.find(folder => folder.id === props.dialogFolder).name = props.dialogName;
-        props.changeProject(project);
+        void props.changeProject(project);
     };
 
     const dialogActions = {
         delete: deleteFolder,
         rename: renameFolder,
-        add:    addFolder,
+        add: addFolder,
     };
 
     const dialogInputs = {
         rename: I18n.t('New name'),
-        add:    I18n.t('Name'),
+        add: I18n.t('Name'),
     };
 
     const dialogIcons = {
         delete: DeleteIcon,
         rename: EditIcon,
-        add:    AddIcon,
+        add: AddIcon,
     };
 
     const DialogIcon = dialogIcons[props.dialog];
@@ -95,30 +98,33 @@ const FolderDialog: React.FC<FolderDialogProps> = props => {
         dialogDisabled = props.dialogName === '' || props.dialogName === folderObject?.name;
     }
 
-    return <IODialog
-        title={dialogTitles[props.dialog]}
-        noTranslation
-        actionTitle={dialogButtons[props.dialog]}
-        open={!!props.dialog}
-        onClose={() => {
-            props.setDialog(null);
-            props.setDialogFolder(null);
-        }}
-        ActionIcon={DialogIcon || null}
-        action={dialogActions[props.dialog]}
-        actionColor={props.dialog === 'delete' ? 'secondary' : 'primary'}
-        actionDisabled={dialogDisabled}
-    >
-        {props.dialog === 'delete' ? null
-            : <TextField
-                variant="standard"
-                label={dialogInputs[props.dialog]}
-                inputRef={inputField}
-                fullWidth
-                value={props.dialogName}
-                onChange={e => props.setDialogName(e.target.value)}
-            /> }
-    </IODialog>;
+    return (
+        <IODialog
+            title={dialogTitles[props.dialog]}
+            noTranslation
+            actionTitle={dialogButtons[props.dialog]}
+            open={!!props.dialog}
+            onClose={() => {
+                props.setDialog(null);
+                props.setDialogFolder(null);
+            }}
+            ActionIcon={DialogIcon || null}
+            action={dialogActions[props.dialog]}
+            actionColor={props.dialog === 'delete' ? 'secondary' : 'primary'}
+            actionDisabled={dialogDisabled}
+        >
+            {props.dialog === 'delete' ? null : (
+                <TextField
+                    variant="standard"
+                    label={dialogInputs[props.dialog]}
+                    inputRef={inputField}
+                    fullWidth
+                    value={props.dialogName}
+                    onChange={e => props.setDialogName(e.target.value)}
+                />
+            )}
+        </IODialog>
+    );
 };
 
 export default FolderDialog;

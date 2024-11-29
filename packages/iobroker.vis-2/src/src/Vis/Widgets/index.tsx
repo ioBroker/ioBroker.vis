@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-cycle
 import BasicBar from './Basic/BasicBar';
 import BasicBulb from './Basic/BasicBulb';
 import BasicRedNumber from './Basic/BasicRedNumber';
