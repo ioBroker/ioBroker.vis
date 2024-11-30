@@ -2064,7 +2064,6 @@ class Widget extends Component<WidgetProps, WidgetState> {
                         <IODialog
                             title="Are you sure"
                             onClose={() => this.setState({ clearGroup: null })}
-                            open={!0}
                             action={() => this.onGroupDelete(this.state.clearGroup)}
                             actionTitle="Clear"
                         >

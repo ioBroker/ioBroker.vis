@@ -380,7 +380,6 @@ export default class PermissionsDialog extends React.Component<PermissionsDialog
         return (
             <IODialog
                 title="Permissions"
-                open={!0}
                 onClose={() => this.props.onClose()}
                 actionNoClose
                 action={() => this.onSave()}

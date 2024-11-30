@@ -41,7 +41,8 @@ const Root: React.FC<RootProps> = props => {
 
     useEffect(() => {
         props.setIsOverRoot(isOver && canDrop);
-    }, [isOver]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isOver, canDrop]);
 
     return props.isDragging && canDrop ? (
         <div ref={drop}>

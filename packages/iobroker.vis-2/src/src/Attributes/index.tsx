@@ -74,6 +74,7 @@ const Attributes = (props: AttributesProps): React.JSX.Element => {
         if (prevSelectedWidgets && !prevSelectedWidgets.length && props.selectedWidgets.length) {
             setSelected('Widget');
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.selectedWidgets]);
 
     if (!props.openedViews.length) {

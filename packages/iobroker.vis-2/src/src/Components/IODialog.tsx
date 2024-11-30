@@ -19,7 +19,6 @@ interface IODialogProps {
     dialogActions?: any;
     keyboardDisabled?: boolean;
     onClose: () => void;
-    open: boolean;
     title: string;
     fullScreen?: boolean;
     maxWidth?: Breakpoint;
@@ -27,61 +26,60 @@ interface IODialogProps {
     noTranslation?: boolean;
 }
 
-const IODialog = (props: IODialogProps): React.JSX.Element =>
-    props.open ? (
-        <Dialog
-            onClose={props.closeDisabled ? null : props.onClose}
-            open={!0}
-            fullScreen={!!props.fullScreen}
-            maxWidth={props.maxWidth || 'md'}
-        >
-            <DialogTitle>{props.noTranslation ? props.title : I18n.t(props.title)}</DialogTitle>
-            <DialogContent
-                style={{ minWidth: props.minWidth || undefined }}
-                onKeyUp={e => {
-                    if (props.action) {
-                        if (!props.actionDisabled && !props.keyboardDisabled) {
-                            if (e.key === 'Enter') {
-                                props.action();
-                                if (!props.actionNoClose) {
-                                    props.onClose();
-                                }
-                            }
-                        }
-                    }
-                }}
-            >
-                {props.children}
-            </DialogContent>
-            <DialogActions>
-                {props.dialogActions || null}
-                {props.actionTitle ? (
-                    <Button
-                        variant="contained"
-                        onClick={() => {
+const IODialog = (props: IODialogProps): React.JSX.Element => (
+    <Dialog
+        onClose={props.closeDisabled ? null : props.onClose}
+        open={!0}
+        fullScreen={!!props.fullScreen}
+        maxWidth={props.maxWidth || 'md'}
+    >
+        <DialogTitle>{props.noTranslation ? props.title : I18n.t(props.title)}</DialogTitle>
+        <DialogContent
+            style={{ minWidth: props.minWidth || undefined }}
+            onKeyUp={e => {
+                if (props.action) {
+                    if (!props.actionDisabled && !props.keyboardDisabled) {
+                        if (e.key === 'Enter') {
                             props.action();
                             if (!props.actionNoClose) {
                                 props.onClose();
                             }
-                        }}
-                        color={props.actionColor || 'primary'}
-                        disabled={props.actionDisabled}
-                        startIcon={props.ActionIcon ? <props.ActionIcon /> : undefined}
-                    >
-                        {props.noTranslation ? props.actionTitle : I18n.t(props.actionTitle)}
-                    </Button>
-                ) : null}
+                        }
+                    }
+                }
+            }}
+        >
+            {props.children}
+        </DialogContent>
+        <DialogActions>
+            {props.dialogActions || null}
+            {props.actionTitle ? (
                 <Button
                     variant="contained"
-                    color="grey"
-                    onClick={props.onClose}
-                    disabled={props.closeDisabled}
-                    startIcon={<CloseIcon />}
+                    onClick={() => {
+                        props.action();
+                        if (!props.actionNoClose) {
+                            props.onClose();
+                        }
+                    }}
+                    color={props.actionColor || 'primary'}
+                    disabled={props.actionDisabled}
+                    startIcon={props.ActionIcon ? <props.ActionIcon /> : undefined}
                 >
-                    {props.noTranslation && props.closeTitle ? props.closeTitle : I18n.t(props.closeTitle || 'Cancel')}
+                    {props.noTranslation ? props.actionTitle : I18n.t(props.actionTitle)}
                 </Button>
-            </DialogActions>
-        </Dialog>
-    ) : null;
+            ) : null}
+            <Button
+                variant="contained"
+                color="grey"
+                onClick={props.onClose}
+                disabled={props.closeDisabled}
+                startIcon={<CloseIcon />}
+            >
+                {props.noTranslation && props.closeTitle ? props.closeTitle : I18n.t(props.closeTitle || 'Cancel')}
+            </Button>
+        </DialogActions>
+    </Dialog>
+);
 
 export default IODialog;

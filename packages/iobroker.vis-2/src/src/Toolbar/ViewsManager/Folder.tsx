@@ -83,6 +83,8 @@ const Folder: React.FC<FolderProps> = props => {
         </Box>
     );
 
+    const visProject = store.getState().visProject;
+
     const [{ canDrop }, drop] = useDrop<
         {
             name: string;
@@ -96,13 +98,14 @@ const Folder: React.FC<FolderProps> = props => {
             drop: () => ({ folder: props.folder }),
             canDrop: (item, monitor) => {
                 if (monitor.getItemType() === 'view') {
-                    return store.getState().visProject[item.name].parentId !== props.folder.id;
+                    return visProject[item.name].parentId !== props.folder.id;
                 }
                 if (monitor.getItemType() === 'folder') {
                     let currentFolder = props.folder;
                     if (currentFolder.id === item.folder.parentId) {
                         return false;
                     }
+                    const folders = visProject.___settings.folders;
                     // eslint-disable-next-line no-constant-condition
                     while (true) {
                         if (currentFolder.id === item.folder.id) {
@@ -111,11 +114,8 @@ const Folder: React.FC<FolderProps> = props => {
                         if (!currentFolder.parentId) {
                             return true;
                         }
-                        currentFolder = store
-                            .getState()
-                            .visProject.___settings.folders.find(
-                                foundFolder => foundFolder.id === currentFolder.parentId,
-                            );
+                        const parentId = currentFolder.parentId;
+                        currentFolder = folders.find(foundFolder => foundFolder.id === parentId);
                     }
                 }
                 return false;
@@ -125,7 +125,7 @@ const Folder: React.FC<FolderProps> = props => {
                 canDrop: monitor.canDrop(),
             }),
         }),
-        [store.getState().visProject],
+        [visProject],
     );
 
     const [{ isDraggingThisItem }, dragRef, preview] = useDrag(
@@ -146,15 +146,17 @@ const Folder: React.FC<FolderProps> = props => {
                 handlerId: monitor.getHandlerId(),
             }),
         },
-        [store.getState().visProject],
+        [visProject],
     );
 
     useEffect(() => {
         preview(getEmptyImage(), { captureDraggingState: true });
-    }, [store.getState().visProject]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [visProject]);
 
     useEffect(() => {
         props.setIsDragging(isDraggingThisItem ? props.folder.id : '');
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isDraggingThisItem]);
 
     console.log(`${props.folder.name} ${props.isDragging} ${canDrop}`);
@@ -291,7 +293,7 @@ const Folder: React.FC<FolderProps> = props => {
                                             .visProject.___settings.folders.find(
                                                 foundFolder => foundFolder.parentId === props.folder.id,
                                             ) ||
-                                        Object.values(store.getState().visProject).find(
+                                        Object.values(visProject).find(
                                             foundView => foundView.parentId === props.folder.id,
                                         )
                                     )

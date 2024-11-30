@@ -37,7 +37,7 @@ import VisBaseWidget from '@/Vis/visBaseWidget';
 import { deepClone } from '@/Utils/utils';
 
 import VisRxWidget, { type VisRxWidgetState } from '../../visRxWidget';
-import BulkEditor, { type BulkEditorData } from './BulkEditor';
+import BulkEditor from './BulkEditor';
 import type {
     RxRenderWidgetProps,
     RxWidgetInfo,
@@ -50,6 +50,21 @@ import type {
     Writeable,
 } from '@iobroker/types-vis-2';
 
+interface BulkEditorData {
+    variant?: 'outlined' | 'contained';
+    type: 'select' | 'radio';
+    oid: string;
+    count: number;
+    [colors: `color${number}`]: string;
+    [values: `value${number}`]: string | number;
+    [values: `text${number}`]: string;
+    [values: `icon${number}`]: string | null;
+    [values: `g_states-${number}`]: boolean;
+    [values: `image${number}`]: string;
+    [values: `activeColor${number}`]: string;
+    [values: `tooltip${number}`]: string;
+}
+
 type RxData = {
     type: 'button' | 'select' | 'radio' | 'slider';
     oid: string;
@@ -61,17 +76,15 @@ type RxData = {
     widgetTitle: string;
     timeout: number;
     open: boolean;
-    states: {
-        value: string;
-        test: boolean;
-        onlyIcon: boolean;
-        text: string;
-        color: string;
-        activeColor: string;
-        image: string;
-        icon: string;
-        tooltip: string;
-    }[];
+    [key: `value${number}`]: string;
+    [key: `test${number}`]: boolean;
+    [key: `onlyIcon${number}`]: boolean;
+    [key: `text${number}`]: string;
+    [key: `color${number}`]: string;
+    [key: `activeColor${number}`]: string;
+    [key: `image${number}`]: string;
+    [key: `icon${number}`]: string;
+    [key: `tooltip${number}`]: string;
 };
 
 interface JQuiStateState extends VisRxWidgetState {
@@ -478,7 +491,7 @@ class JQuiState<P extends RxData = RxData, S extends JQuiStateState = JQuiStateS
                     this.controlTimeout = null;
                     const oid = this.getControlOid();
                     if (oid) {
-                        this.props.context.setValue(oid, parseFloat(indexOrValue as unknown as string));
+                        this.props.context.setValue(oid, parseFloat(indexOrValue as string));
                     }
                 },
                 immediately ? 0 : parseInt(this.state.rxData.timeout as unknown as string, 10) || 300,
@@ -488,18 +501,12 @@ class JQuiState<P extends RxData = RxData, S extends JQuiStateState = JQuiStateS
             const oid = this.getControlOid();
             if (oid) {
                 if (typeof this.state.object === 'object' && this.state.object?.common.type === 'number') {
-                    this.props.context.setValue(
-                        oid,
-                        parseFloat((this.state.rxData as unknown as Record<string, string>)[`value${indexOrValue}`]),
-                    );
+                    this.props.context.setValue(oid, parseFloat(this.state.rxData[`value${indexOrValue as number}`]));
                 } else {
-                    this.props.context.setValue(
-                        oid,
-                        (this.state.rxData as unknown as Record<string, string>)[`value${indexOrValue}`],
-                    );
+                    this.props.context.setValue(oid, this.state.rxData[`value${indexOrValue as number}`]);
                 }
             }
-            this.setState({ value: (this.state.rxData as unknown as Record<string, string>)[`value${indexOrValue}`] });
+            this.setState({ value: this.state.rxData[`value${indexOrValue as number}`] });
         }
     }
 

@@ -130,7 +130,6 @@ const ImportProjectDialog: React.FC<ImportProjectDialogProps> = props => {
     return (
         <IODialog
             title="Import project"
-            open={!0}
             onClose={() => props.onClose()}
             actionNoClose
             action={importProject}

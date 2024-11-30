@@ -162,7 +162,7 @@ const Views = (props: ViewsProps): React.JSX.Element => {
                 dialogCallback={dialogCallback}
                 noTranslation
                 dialogParentId={dialogParentId}
-                setDialog={setDialog}
+                closeDialog={() => setDialog(null)}
                 setDialogView={setDialogView}
                 setDialogName={setDialogName}
                 setDialogParentId={setDialogParentId}

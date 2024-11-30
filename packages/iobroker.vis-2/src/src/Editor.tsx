@@ -2127,10 +2127,9 @@ class Editor extends Runtime<EditorProps, EditorState> {
         );
     }
 
-    renderCreateFirstProjectDialog(): React.JSX.Element {
+    renderCreateFirstProjectDialog(): React.JSX.Element | null {
         return this.state.createFirstProjectDialog ? (
             <CreateFirstProjectDialog
-                open={!0}
                 onClose={() => this.setState({ createFirstProjectDialog: false })}
                 addProject={this.addProject}
             />

@@ -9,14 +9,12 @@ import { store } from '../../Store';
 
 interface ExportDialogProps {
     onClose: () => void;
-    open: boolean;
     themeType: ThemeType;
     view: string;
 }
 
 const ExportDialog: React.FC<ExportDialogProps> = props => (
     <IODialog
-        open={props.open}
         onClose={props.onClose}
         title={I18n.t('Export "%s"', props.view)}
         closeTitle="Close"

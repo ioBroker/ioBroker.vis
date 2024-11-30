@@ -14,7 +14,7 @@ interface ProjectDialogProps {
     dialogProject: string;
     dialogName: string;
     projects: string[];
-    setDialog: (dialog: null | 'delete' | 'rename' | 'add') => void;
+    closeDialog: () => void;
     setDialogProject: (project: null | string) => void;
     setDialogName: (name: string) => void;
     addProject: (name: string) => void;
@@ -22,7 +22,7 @@ interface ProjectDialogProps {
     renameProject: (project: string, name: string) => void;
 }
 
-const ProjectDialog: React.FC<ProjectDialogProps> = props => {
+const ProjectDialog: React.FC<ProjectDialogProps> = (props: ProjectDialogProps): React.JSX.Element | null => {
     const inputField = useFocus(props.dialog && props.dialog !== 'delete', props.dialog === 'add');
 
     if (!props.dialog) {
@@ -76,9 +76,8 @@ const ProjectDialog: React.FC<ProjectDialogProps> = props => {
             title={dialogTitles[props.dialog]}
             actionTitle={dialogButtons[props.dialog]}
             noTranslation
-            open={!!props.dialog}
             onClose={() => {
-                props.setDialog(null);
+                props.closeDialog();
                 props.setDialogProject(null);
             }}
             ActionIcon={DialogIcon || null}

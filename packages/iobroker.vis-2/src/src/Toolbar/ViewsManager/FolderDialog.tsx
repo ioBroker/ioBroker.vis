@@ -21,12 +21,12 @@ interface FolderDialogProps {
     dialogFolder: string;
     dialogName: string;
     dialogParentId: string;
-    setDialog: (dialog: 'add' | 'rename' | 'delete' | null) => void;
+    closeDialog: () => void;
     setDialogFolder: (folder: string | null) => void;
     setDialogName: (name: string) => void;
 }
 
-const FolderDialog: React.FC<FolderDialogProps> = props => {
+const FolderDialog: React.FC<FolderDialogProps> = (props: FolderDialogProps): React.JSX.Element | null => {
     const inputField = useFocus(props.dialog && props.dialog !== 'delete', props.dialog === 'add');
 
     if (!props.dialog) {
@@ -103,9 +103,8 @@ const FolderDialog: React.FC<FolderDialogProps> = props => {
             title={dialogTitles[props.dialog]}
             noTranslation
             actionTitle={dialogButtons[props.dialog]}
-            open={!!props.dialog}
             onClose={() => {
-                props.setDialog(null);
+                props.closeDialog();
                 props.setDialogFolder(null);
             }}
             ActionIcon={DialogIcon || null}

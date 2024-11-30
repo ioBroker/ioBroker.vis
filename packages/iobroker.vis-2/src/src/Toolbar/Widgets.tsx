@@ -69,22 +69,21 @@ const Widgets: React.FC<WidgetsProps> = props => {
     const [importDialog, setImportDialog] = useState(false);
     const [filterDialog, setFilterDialog] = useState(false);
 
-    // eslint-disable-next-line no-spaced-func
-    const toolbar = useMemo<ToolbarGroup>(() => {
-        const project = store.getState().visProject;
+    const viewSettings = store.getState().visProject?.[props.selectedView];
 
+    const toolbar = useMemo<ToolbarGroup>(() => {
         if (!props.widgetsLoaded) {
             return null;
         }
         if (!props.openedViews.length) {
             return null;
         }
-        if (!project[props.selectedView]) {
+        if (!viewSettings) {
             return null;
         }
 
         const widgetTypes = getWidgetTypes();
-        const widgets = project[props.selectedView].widgets;
+        const widgets = viewSettings.widgets;
 
         const shownWidgets = Object.keys(widgets).filter((widget: AnyWidgetId) =>
             props.selectedGroup
@@ -99,7 +98,7 @@ const Widgets: React.FC<WidgetsProps> = props => {
                     type: 'icon-button',
                     Icon: FilterIcon,
                     name: 'Filter widgets',
-                    color: project[props.selectedView].filterWidgets?.length ? '#c00000' : undefined,
+                    color: viewSettings.filterWidgets?.length ? '#c00000' : undefined,
                     disabled: !props.editMode,
                     onAction: () => setFilterDialog(true),
                 } as ToolbarItem,
@@ -409,6 +408,7 @@ const Widgets: React.FC<WidgetsProps> = props => {
                 ],
             ],
         } as ToolbarGroup;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [
         props.selectedGroup,
         props.selectedWidgets,
@@ -419,7 +419,7 @@ const Widgets: React.FC<WidgetsProps> = props => {
         props.history.length,
         props.widgetsLoaded,
         props.openedViews.length,
-        store.getState().visProject[props.selectedView],
+        viewSettings,
     ]);
 
     if (!props.widgetsLoaded) {

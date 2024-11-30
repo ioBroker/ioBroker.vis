@@ -86,6 +86,8 @@ const View = (props: ViewProps): React.JSX.Element => {
         </Box>
     );
 
+    const visProject = store.getState().visProject;
+
     const [{ isDraggingThisItem }, dragRef, preview] = useDrag(
         {
             type: 'view',
@@ -104,15 +106,17 @@ const View = (props: ViewProps): React.JSX.Element => {
                 handlerId: monitor.getHandlerId(),
             }),
         },
-        [store.getState().visProject],
+        [visProject],
     );
 
     useEffect(() => {
         preview(getEmptyImage(), { captureDraggingState: true });
-    }, [store.getState().visProject]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [visProject]);
 
     useEffect(() => {
         props.setIsDragging(isDraggingThisItem ? props.name : '');
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isDraggingThisItem]);
 
     const selectView = (): void => {

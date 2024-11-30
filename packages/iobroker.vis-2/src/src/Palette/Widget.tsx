@@ -261,6 +261,7 @@ const Widget = (props: WidgetProps): React.JSX.Element => {
 
     useEffect(() => {
         preview(getEmptyImage(), { captureDraggingState: true });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.widgetType]);
 
     if (typeof props.widgetType.customPalette === 'function') {

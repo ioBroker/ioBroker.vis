@@ -214,7 +214,6 @@ const ViewsManager: React.FC<ViewsManagerProps> = props => {
 
     return (
         <IODialog
-            open={props.open}
             onClose={props.onClose}
             title="Manage views"
             closeTitle="Close"
@@ -337,19 +336,20 @@ const ViewsManager: React.FC<ViewsManagerProps> = props => {
                     </div>
                 </DndProvider>
             </div>
-            <FolderDialog
-                dialog={folderDialog}
-                dialogFolder={folderDialogId}
-                dialogName={folderDialogName}
-                dialogParentId={folderDialogParentId}
-                setDialog={setFolderDialog}
-                setDialogFolder={setFolderDialogId}
-                setDialogName={setFolderDialogName}
-                changeProject={props.changeProject}
-            />
+            {folderDialog ? (
+                <FolderDialog
+                    dialog={folderDialog}
+                    dialogFolder={folderDialogId}
+                    dialogName={folderDialogName}
+                    dialogParentId={folderDialogParentId}
+                    closeDialog={() => setFolderDialog(null)}
+                    setDialogFolder={setFolderDialogId}
+                    setDialogName={setFolderDialogName}
+                    changeProject={props.changeProject}
+                />
+            ) : null}
             {importDialog !== false ? (
                 <ImportDialog
-                    open
                     onClose={() => setImportDialog(false)}
                     view={importDialog || ''}
                     importViewAction={importViewAction}
@@ -358,7 +358,6 @@ const ViewsManager: React.FC<ViewsManagerProps> = props => {
             ) : null}
             {exportDialog !== false ? (
                 <ExportDialog
-                    open
                     onClose={() => setExportDialog(false)}
                     view={exportDialog || ''}
                     themeType={props.themeType}

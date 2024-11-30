@@ -12,49 +12,42 @@ import { store } from '../../Store';
 interface ImportDialogProps {
     importViewAction: (view: string, data: string) => void;
     onClose: () => void;
-    open: boolean;
     view: string;
     themeType: ThemeType;
 }
 
 const ImportDialog: React.FC<ImportDialogProps> = props => {
-    const [data, setData] = useState('');
-    const [view, setView] = useState('');
-    const [errors, setErrors] = useState([]);
+    const visProject = store.getState().visProject;
 
-    const inputField = useFocus(props.open, true, true);
-
-    useEffect(() => {
-        setErrors([]);
-        setView(props.view);
-        setData(
-            store.getState().visProject[props.view]
-                ? JSON.stringify(store.getState().visProject[props.view], null, 2)
-                : `{
+    const [data, setData] = useState(
+        visProject[props.view]
+            ? JSON.stringify(visProject[props.view], null, 2)
+            : `{
   "settings": {
     "style": {}
   },
   "widgets": {},
   "activeWidgets": {}
 }`,
-        );
-    }, [props.open]);
+    );
+    const [view, setView] = useState(props.view);
+    const [errors, setErrors] = useState([]);
+
+    const inputField = useFocus(true, true, true);
 
     const editor = useRef(null);
 
     useEffect(() => {
-        if (editor.current) {
-            editor.current.editor.getSession().on('changeAnnotation', () => {
-                if (editor.current) {
-                    setErrors(editor.current.editor.getSession().getAnnotations());
-                }
-            });
-        }
+        editor.current?.editor.getSession().on('changeAnnotation', () => {
+            if (editor.current) {
+                setErrors(editor.current.editor.getSession().getAnnotations());
+            }
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [editor.current]);
 
     return (
         <IODialog
-            open={props.open}
             onClose={props.onClose}
             title="Import view"
             closeTitle="Close"

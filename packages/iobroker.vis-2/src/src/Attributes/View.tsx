@@ -172,7 +172,16 @@ const ViewAttributes = (props: ViewProps): React.JSX.Element | null => {
 
     const fields = useMemo(
         () => (view ? getFields(resolutionSelect, view, props.selectedView, props.editMode, props.changeProject) : []),
-        [resolutionSelect, view?.settings?.sizex, view?.settings?.sizey, props.selectedView, props.editMode],
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [
+            view,
+            resolutionSelect,
+            view?.settings?.sizex,
+            view?.settings?.sizey,
+            props.selectedView,
+            props.editMode,
+            props.changeProject,
+        ],
     );
 
     const [accordionOpen, setAccordionOpen] = useState<Record<string, 0 | 1 | 2>>({});
@@ -214,7 +223,8 @@ const ViewAttributes = (props: ViewProps): React.JSX.Element | null => {
             window.localStorage.setItem('attributesView', JSON.stringify(newAccordionOpen));
             setAccordionOpen(newAccordionOpen);
         }
-    }, [props.triggerAllOpened, props.triggerAllClosed]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.triggerAllOpened, props.triggerAllClosed, fields]);
 
     if (!project?.[props.selectedView]) {
         return null;

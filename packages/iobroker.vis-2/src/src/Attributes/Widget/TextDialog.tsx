@@ -20,7 +20,6 @@ const TextDialog = (props: TextDialogProps): React.JSX.Element => {
         <IODialog
             keyboardDisabled
             title={props.type === 'json' ? 'JSON edit' : props.type === 'html' ? 'HTML edit' : 'Text edit'}
-            open={!0}
             actionTitle="Save"
             action={() => props.onChange(value)}
             onClose={props.onClose}

@@ -194,7 +194,6 @@ const ProjectsManage: React.FC<ProjectsManageProps> = props => {
 
     return props.open ? (
         <IODialog
-            open={!0}
             onClose={props.onClose}
             title="Manage projects"
             closeTitle="Close"
@@ -338,7 +337,7 @@ const ProjectsManage: React.FC<ProjectsManageProps> = props => {
                     dialog={dialog}
                     dialogProject={dialogProject}
                     dialogName={dialogName}
-                    setDialog={setDialog}
+                    closeDialog={() => setDialog(null)}
                     setDialogProject={setDialogProject}
                     setDialogName={setDialogName}
                     addProject={props.addProject}

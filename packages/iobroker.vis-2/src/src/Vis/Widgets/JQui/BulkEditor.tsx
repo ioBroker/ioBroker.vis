@@ -60,14 +60,14 @@ export interface BulkEditorData {
     type: 'select' | 'radio';
     oid: string;
     count: number;
-    [colors: `color${string}`]: string;
-    [values: `value${string}`]: string | number;
-    [values: `text${string}`]: string;
-    [values: `icon${string}`]: string | null;
-    [values: `g_states-${string}`]: boolean;
-    [values: `image${string}`]: string;
-    [values: `activeColor${string}`]: string;
-    [values: `tooltip${string}`]: string;
+    [colors: `color${number}`]: string;
+    [values: `value${number}`]: string | number;
+    [values: `text${number}`]: string;
+    [values: `icon${number}`]: string | null;
+    [values: `g_states-${number}`]: boolean;
+    [values: `image${number}`]: string;
+    [values: `activeColor${number}`]: string;
+    [values: `tooltip${number}`]: string;
 }
 
 interface BulkEditorProps {

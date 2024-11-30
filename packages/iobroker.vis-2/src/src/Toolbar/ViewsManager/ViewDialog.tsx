@@ -20,7 +20,7 @@ interface ViewDialogProps {
     dialogView: string;
     dialogCallback?: { cb: (dialogName: string) => void };
     selectedView: string;
-    setDialog: (closeAction: null) => void;
+    closeDialog: () => void;
     setDialogName: (dialogName: string) => void;
     setDialogView: (action: null) => void;
     dialogParentId?: string;
@@ -37,7 +37,7 @@ const ViewDialog = (props: ViewDialogProps): React.JSX.Element => {
         delete project[view];
         await props.changeView(Object.keys(project).filter(foundView => !foundView.startsWith('__'))[0]);
         await props.changeProject(project);
-        props.setDialog(null); // close dialog
+        props.closeDialog(); // close dialog
     };
 
     const addView = async (): Promise<void> => {
@@ -53,7 +53,7 @@ const ViewDialog = (props: ViewDialogProps): React.JSX.Element => {
         } as View;
         await props.changeProject(project);
         await props.changeView(props.dialogName.trim());
-        props.setDialog(null); // close dialog
+        props.closeDialog(); // close dialog
         props.dialogCallback?.cb(props.dialogName.trim());
     };
 
@@ -108,7 +108,7 @@ const ViewDialog = (props: ViewDialogProps): React.JSX.Element => {
 
         await props.changeProject(project);
         await props.changeView(newViewName);
-        props.setDialog(null);
+        props.closeDialog();
         props.dialogCallback?.cb(newViewName);
     };
 
@@ -134,7 +134,7 @@ const ViewDialog = (props: ViewDialogProps): React.JSX.Element => {
 
         await props.changeProject(project);
         await props.changeView(props.dialogName);
-        props.setDialog(null);
+        props.closeDialog();
         props.dialogCallback?.cb(props.dialogName);
     };
 
@@ -190,9 +190,8 @@ const ViewDialog = (props: ViewDialogProps): React.JSX.Element => {
             title={dialogTitles[props.dialog]}
             noTranslation={props.noTranslation}
             actionTitle={dialogButtons[props.dialog]}
-            open={!!props.dialog}
             onClose={() => {
-                props.setDialog(null);
+                props.closeDialog();
                 props.setDialogView(null);
                 props.setDialogParentId(null);
             }}

@@ -47,11 +47,13 @@ const UploadFile = (props: UploadFileProps): React.JSX.Element => {
         ) => {
             if (acceptedFiles?.length) {
                 setWorking(true);
-                error && setError('');
+                if (error) {
+                    setError('');
+                }
                 const reader = new FileReader();
                 setFileName(acceptedFiles[0].name);
 
-                reader.onload = async (evt: ProgressEvent<FileReader>): Promise<void> => {
+                reader.onload = (evt: ProgressEvent<FileReader>): void => {
                     setWorking(false);
                     setFileData(evt.target.result);
                     props.onUpload(acceptedFiles[0].name, evt.target.result);
@@ -68,11 +70,17 @@ const UploadFile = (props: UploadFileProps): React.JSX.Element => {
                     } else {
                         setError(`Error: ${err.message}`);
                     }
-                    setTimeout(() => error && setError(''), 3000);
+                    // hide error after 3 seconds
+                    setTimeout(() => {
+                        if (error) {
+                            setError('');
+                        }
+                    }, 3000);
                 });
             }
         },
-        [],
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [error],
     );
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({

@@ -28,17 +28,16 @@ interface WidgetFilterDialogProps {
 
 const WidgetFilterDialog: React.FC<WidgetFilterDialogProps> = props => {
     const [filters, setFilters] = useState<{ key: AnyWidgetId; count: number }[]>([]);
-    const [filterWidgets, setFilterWidgets] = useState(
-        store.getState().visProject[props.selectedView].filterWidgets || [],
-    );
-    const [filterInvert, setFilterInvert] = useState(
-        store.getState().visProject[props.selectedView].filterInvert || false,
-    );
+
+    const visProject = store.getState().visProject;
+
+    const [filterWidgets, setFilterWidgets] = useState(visProject[props.selectedView].filterWidgets || []);
+    const [filterInvert, setFilterInvert] = useState(visProject[props.selectedView].filterInvert || false);
 
     useEffect(() => {
         // Collect all filters of all widgets
         const _filters: { key: AnyWidgetId; count: number }[] = [];
-        const widgets = store.getState().visProject[props.selectedView].widgets;
+        const widgets = visProject[props.selectedView].widgets;
         Object.values(widgets).forEach(widget => {
             if (widget.data && widget.data.filterkey) {
                 widget.data.filterkey.split(',').forEach(filter => {
@@ -53,7 +52,7 @@ const WidgetFilterDialog: React.FC<WidgetFilterDialogProps> = props => {
             }
         });
         setFilters(_filters);
-    }, [store.getState().visProject, props.selectedView]);
+    }, [visProject, props.selectedView]);
 
     return (
         <Dialog
@@ -151,14 +150,14 @@ const WidgetFilterDialog: React.FC<WidgetFilterDialogProps> = props => {
                 </div>
             </DialogContent>
             <DialogActions>
-                {store.getState().visProject[props.selectedView].filterWidgets?.length ? (
+                {visProject[props.selectedView].filterWidgets?.length ? (
                     <Button
                         disabled={!filters.length}
                         variant="outlined"
                         onClick={() => {
-                            const project = JSON.parse(JSON.stringify(store.getState().visProject));
+                            const project = JSON.parse(JSON.stringify(visProject));
                             project[props.selectedView].filterWidgets = [];
-                            props.changeProject(project);
+                            void props.changeProject(project);
                             props.onClose();
                         }}
                         color="primary"
@@ -172,10 +171,10 @@ const WidgetFilterDialog: React.FC<WidgetFilterDialogProps> = props => {
                     variant="contained"
                     autoFocus
                     onClick={() => {
-                        const project = JSON.parse(JSON.stringify(store.getState().visProject));
+                        const project = JSON.parse(JSON.stringify(visProject));
                         project[props.selectedView].filterWidgets = filterWidgets;
                         project[props.selectedView].filterInvert = filterInvert;
-                        props.changeProject(project);
+                        void props.changeProject(project);
                         props.onClose();
                     }}
                     color="primary"

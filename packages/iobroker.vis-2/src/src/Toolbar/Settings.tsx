@@ -86,7 +86,7 @@ const Settings: React.FC<SettingsProps> = props => {
 
     const [settings, setSettings] = useState<ProjectSettings>({} as ProjectSettings);
     const [instance, setInstance] = useState('');
-    /* eslint no-underscore-dangle: 0 */
+
     useEffect(() => {
         const _settings = { ...store.getState().visProject.___settings };
         if (_settings.reloadOnEdit === undefined) {
@@ -105,6 +105,7 @@ const Settings: React.FC<SettingsProps> = props => {
         });
 
         setSettings(_settings);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const fields: SettingsField[] = [
@@ -247,7 +248,6 @@ const Settings: React.FC<SettingsProps> = props => {
 
     return (
         <IODialog
-            open={!0}
             onClose={props.onClose}
             title="Settings"
             ActionIcon={SaveIcon}

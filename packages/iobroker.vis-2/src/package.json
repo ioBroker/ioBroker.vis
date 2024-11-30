@@ -7,7 +7,7 @@
     "scripts": {
         "start": "craco start",
         "types": "tsc ./src/Vis/visRxWidget.tsx --declaration --emitDeclarationOnly --outDir ../../types-vis-2",
-        "lint": "eslint --fix --ext .js,.jsx src",
+        "lint": "eslint -c eslint.config.mjs --debug",
         "build": "craco build",
         "check-ts": "tsc --noEmit --checkJS false"
     },

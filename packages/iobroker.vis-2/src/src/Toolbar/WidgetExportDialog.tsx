@@ -35,9 +35,10 @@ const WidgetExportDialog: React.FC<WidgetExportDialogProps> = props => {
 
             if (widget.data?.members) {
                 const members: string[] = [];
-                widget.data.members.forEach(member => {
+                for (let m = 0; m < widget.data.members.length; m++) {
+                    const member = widget.data.members[m];
                     if (groupWidgets.includes(member)) {
-                        return;
+                        continue;
                     }
                     const memberWidget = deepClone(props.widgets[member]);
                     memberWidget._id = `i${wIdx.toString().padStart(6, '0')}`;
@@ -47,7 +48,7 @@ const WidgetExportDialog: React.FC<WidgetExportDialogProps> = props => {
                     memberWidget.grouped = true;
                     widgets.push(memberWidget);
                     groupWidgets.push(member);
-                });
+                }
 
                 widget.data.members = members as AnyWidgetId[];
             }
@@ -66,7 +67,6 @@ const WidgetExportDialog: React.FC<WidgetExportDialogProps> = props => {
 
     return (
         <IODialog
-            open={!0}
             onClose={props.onClose}
             title="Export widgets"
             closeTitle="Close"

@@ -502,6 +502,7 @@ const WidgetField = (props: WidgetFieldProps): string | React.JSX.Element | Reac
                 });
             }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [propValue]);
 
     let value: string | number | boolean | null = cachedValue;
@@ -565,7 +566,7 @@ const WidgetField = (props: WidgetFieldProps): string | React.JSX.Element | Reac
             // take the first child in div
             customLegacyComponent.init.call(refCustom.current.children[0] || refCustom.current, field.name, propValue);
         }
-    }, []);
+    });
 
     if (askForUsage) {
         const usages = findWidgetUsages(store.getState().visProject, props.selectedView, askForUsage.wid);
