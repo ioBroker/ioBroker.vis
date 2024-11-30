@@ -626,21 +626,23 @@ class Palette extends Component<PaletteProps, PaletteState> {
                     onChange={e => this.setState({ filter: e.target.value }, () => this.buildListTrigger())}
                     placeholder={I18n.t('Search')}
                     sx={styles.searchLabel}
-                    InputProps={{
-                        sx: styles.clearPadding,
-                        endAdornment: this.state.filter ? (
-                            <IconButton
-                                size="small"
-                                onClick={() => this.setState({ filter: '' }, () => this.buildListTrigger())}
-                            >
-                                <ClearIcon style={{ width: 22, height: 22 }} />
-                            </IconButton>
-                        ) : null,
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                <Search />
-                            </InputAdornment>
-                        ),
+                    slotProps={{
+                        input: {
+                            sx: styles.clearPadding,
+                            endAdornment: this.state.filter ? (
+                                <IconButton
+                                    size="small"
+                                    onClick={() => this.setState({ filter: '' }, () => this.buildListTrigger())}
+                                >
+                                    <ClearIcon style={{ width: 22, height: 22 }} />
+                                </IconButton>
+                            ) : null,
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <Search />
+                                </InputAdornment>
+                            ),
+                        },
                     }}
                 />
                 <div style={{ ...styles.widgets, opacity: !this.props.editMode ? 0.3 : undefined }}>

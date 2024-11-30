@@ -215,22 +215,26 @@ class BasicValueInput extends VisRxWidget<RxData, BasicValueInputState> {
                         },
                     }}
                     variant={this.state.rxData.variant}
-                    InputLabelProps={{ shrink: true }}
-                    InputProps={{
-                        readOnly: this.state.rxData.readOnly || this.props.editMode,
-                        endAdornment:
-                            !this.props.editMode && this.state.rxData.withEnter && oid && !this.state.sentValue ? (
-                                <IconButton
-                                    size="small"
-                                    onClick={() =>
-                                        this.setState({ sentValue: true }, () =>
-                                            this.props.context.setValue(oid, this.state.value),
-                                        )
-                                    }
-                                >
-                                    <EnterIcon />
-                                </IconButton>
-                            ) : null,
+                    slotProps={{
+                        inputLabel: {
+                            shrink: true,
+                        },
+                        input: {
+                            readOnly: this.state.rxData.readOnly || this.props.editMode,
+                            endAdornment:
+                                !this.props.editMode && this.state.rxData.withEnter && oid && !this.state.sentValue ? (
+                                    <IconButton
+                                        size="small"
+                                        onClick={() =>
+                                            this.setState({ sentValue: true }, () =>
+                                                this.props.context.setValue(oid, this.state.value),
+                                            )
+                                        }
+                                    >
+                                        <EnterIcon />
+                                    </IconButton>
+                                ) : null,
+                        },
                     }}
                     label={this.state.rxData.html_prepend}
                     helperText={this.state.rxData.html_append}

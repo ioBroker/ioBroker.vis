@@ -19,7 +19,10 @@ const isLocalhost = Boolean(
         window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/),
 );
 
-export function register(config) {
+export function register(config?: {
+    onUpdate: (r: ServiceWorkerRegistration) => void;
+    onSuccess: (r: ServiceWorkerRegistration) => void;
+}): void {
     if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
         // The URL constructor is available in all browsers that support SW.
         const publicUrl = new URL(process.env.PUBLIC_URL, window.location.href);
@@ -53,7 +56,10 @@ export function register(config) {
     }
 }
 
-function registerValidSW(swUrl, config) {
+function registerValidSW(
+    swUrl: string | URL,
+    config?: { onUpdate: (r: ServiceWorkerRegistration) => void; onSuccess: (r: ServiceWorkerRegistration) => void },
+): void {
     navigator.serviceWorker
         .register(swUrl)
         .then(registration => {
@@ -74,7 +80,7 @@ function registerValidSW(swUrl, config) {
                             );
 
                             // Execute callback
-                            if (config && config.onUpdate) {
+                            if (config?.onUpdate) {
                                 config.onUpdate(registration);
                             }
                         } else {
@@ -84,7 +90,7 @@ function registerValidSW(swUrl, config) {
                             console.log('Content is cached for offline use.');
 
                             // Execute callback
-                            if (config && config.onSuccess) {
+                            if (config?.onSuccess) {
                                 config.onSuccess(registration);
                             }
                         }
@@ -97,7 +103,10 @@ function registerValidSW(swUrl, config) {
         });
 }
 
-function checkValidServiceWorker(swUrl, config) {
+function checkValidServiceWorker(
+    swUrl: string | URL,
+    config?: { onUpdate: (r: ServiceWorkerRegistration) => void; onSuccess: (r: ServiceWorkerRegistration) => void },
+): void {
     // Check if the service worker can be found. If it can't reload the page.
     fetch(swUrl)
         .then(response => {
@@ -120,10 +129,10 @@ function checkValidServiceWorker(swUrl, config) {
         });
 }
 
-export function unregister() {
+export function unregister(): void {
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.ready.then(registration => {
-            registration.unregister();
+            return registration.unregister();
         });
     }
 }

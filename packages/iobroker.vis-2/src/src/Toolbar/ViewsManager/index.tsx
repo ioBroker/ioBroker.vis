@@ -63,7 +63,6 @@ interface ViewsManagerProps {
     changeProject: Editor['changeProject'];
     name?: string;
     onClose: () => void;
-    open: boolean;
     showDialog: (
         type: 'add' | 'rename' | 'delete' | 'copy',
         view?: string,

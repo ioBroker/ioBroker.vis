@@ -953,17 +953,19 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
                                     );
                                 }
                             }}
-                            InputProps={{
-                                endAdornment: this.state.editValue ? (
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            onClick={() => this.setState({ editValue: '' })}
-                                            edge="end"
-                                        >
-                                            <Clear />
-                                        </IconButton>
-                                    </InputAdornment>
-                                ) : null,
+                            slotProps={{
+                                input: {
+                                    endAdornment: this.state.editValue ? (
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                onClick={() => this.setState({ editValue: '' })}
+                                                edge="end"
+                                            >
+                                                <Clear />
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ) : null,
+                                },
                             }}
                             style={{ width: 'calc(100% - 72px)' }}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>): void =>
@@ -1144,24 +1146,26 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
                                         );
                                     }
                                 }}
-                                InputProps={{
-                                    endAdornment: this.state.askForArguments.arg1 ? (
-                                        <InputAdornment position="end">
-                                            <IconButton
-                                                onClick={() =>
-                                                    this.setState({
-                                                        askForArguments: {
-                                                            ...this.state.askForArguments,
-                                                            arg1: '',
-                                                        },
-                                                    })
-                                                }
-                                                edge="end"
-                                            >
-                                                <Clear />
-                                            </IconButton>
-                                        </InputAdornment>
-                                    ) : null,
+                                slotProps={{
+                                    input: {
+                                        endAdornment: this.state.askForArguments.arg1 ? (
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    onClick={() =>
+                                                        this.setState({
+                                                            askForArguments: {
+                                                                ...this.state.askForArguments,
+                                                                arg1: '',
+                                                            },
+                                                        })
+                                                    }
+                                                    edge="end"
+                                                >
+                                                    <Clear />
+                                                </IconButton>
+                                            </InputAdornment>
+                                        ) : null,
+                                    },
                                 }}
                                 autoFocus
                                 onChange={e =>
@@ -1325,28 +1329,30 @@ class WidgetBindingField extends Component<WidgetBindingFieldProps, WidgetBindin
                 sx={styles.fieldContent}
                 fullWidth
                 placeholder={this.props.isDifferent ? I18n.t('different') : null}
-                InputProps={{
-                    sx: { ...styles.clearPadding, ...styles.fieldContent },
-                    endAdornment: (
-                        <Button
-                            title={I18n.t('Edit binding')}
-                            disabled={this.props.disabled}
-                            size="small"
-                            variant="contained"
-                            onClick={async () => {
-                                const { calculatedEditValue, values } = await this.calculateValue(this.state.value);
-                                this.setState({
-                                    showEditBindingDialog: true,
-                                    editValue: this.state.value,
-                                    calculatedEditValue,
-                                    values,
-                                    newStyle: !this.detectOldBindingStyle(this.state.value),
-                                });
-                            }}
-                        >
-                            <LinkIcon />
-                        </Button>
-                    ),
+                slotProps={{
+                    input: {
+                        sx: { ...styles.clearPadding, ...styles.fieldContent },
+                        endAdornment: (
+                            <Button
+                                title={I18n.t('Edit binding')}
+                                disabled={this.props.disabled}
+                                size="small"
+                                variant="contained"
+                                onClick={async () => {
+                                    const { calculatedEditValue, values } = await this.calculateValue(this.state.value);
+                                    this.setState({
+                                        showEditBindingDialog: true,
+                                        editValue: this.state.value,
+                                        calculatedEditValue,
+                                        values,
+                                        newStyle: !this.detectOldBindingStyle(this.state.value),
+                                    });
+                                }}
+                            >
+                                <LinkIcon />
+                            </Button>
+                        ),
+                    },
                 }}
                 error={!!this.state.error}
                 helperText={typeof this.state.error === 'string' ? I18n.t(this.state.error) : null}

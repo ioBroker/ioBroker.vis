@@ -56,18 +56,19 @@ const BUTTONS: Record<string, string> = {
 };
 
 export interface BulkEditorData {
-    variant?: 'outlined' | 'contained';
-    type: 'select' | 'radio';
+    variant?: 'contained' | 'outlined' | 'text' | 'standard';
+    type: 'button' | 'select' | 'radio' | 'slider';
     oid: string;
     count: number;
-    [colors: `color${number}`]: string;
-    [values: `value${number}`]: string | number;
-    [values: `text${number}`]: string;
-    [values: `icon${number}`]: string | null;
-    [values: `g_states-${number}`]: boolean;
-    [values: `image${number}`]: string;
-    [values: `activeColor${number}`]: string;
-    [values: `tooltip${number}`]: string;
+
+    [key: `value${number}`]: string | number;
+    [key: `color${number}`]: string;
+    [key: `text${number}`]: string;
+    [key: `icon${number}`]: string | null;
+    [key: `g_states-${number}`]: boolean;
+    [key: `image${number}`]: string;
+    [key: `activeColor${number}`]: string;
+    [key: `tooltip${number}`]: string;
 }
 
 interface BulkEditorProps {
@@ -164,7 +165,7 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
     }
 
     static async generateFields(data: BulkEditorData, socket: LegacyConnection): Promise<BulkEditorData | false> {
-        const oid = data.oid;
+        const oid: string | null | undefined = data.oid;
         if (!oid || oid === 'nothing_selected') {
             return false;
         }
@@ -619,16 +620,18 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
                     key="image"
                     variant="standard"
                     fullWidth
-                    InputProps={{
-                        sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
-                        endAdornment: (
-                            <Button
-                                size="small"
-                                onClick={() => this.setState({ imageDialog: i })}
-                            >
-                                ...
-                            </Button>
-                        ),
+                    slotProps={{
+                        input: {
+                            sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
+                            endAdornment: (
+                                <Button
+                                    size="small"
+                                    onClick={() => this.setState({ imageDialog: i })}
+                                >
+                                    ...
+                                </Button>
+                            ),
+                        },
                     }}
                     ref={this.textRef[i]}
                     value={this.state.images[i] || ''}
@@ -717,7 +720,14 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
                                 : this.state.colors[i] || undefined,
                     }}
                     color={this.state.activeLine === i ? 'primary' : 'grey'}
-                    variant={this.props.data.variant === undefined ? 'contained' : this.props.data.variant}
+                    // "contained" | "outlined" | "text"
+                    variant={
+                        this.props.data.variant === undefined
+                            ? 'contained'
+                            : this.props.data.variant === 'standard'
+                              ? 'contained'
+                              : this.props.data.variant
+                    }
                     onClick={() => this.setState({ activeLine: i })}
                     startIcon={
                         <Icon
@@ -770,20 +780,22 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
                                     icons[i] = e.target.value;
                                     this.setState({ icons });
                                 }}
-                                InputProps={{
-                                    endAdornment: this.state.icons[i] ? (
-                                        <IconButton
-                                            size="small"
-                                            onClick={() => {
-                                                const icons = [...this.state.icons];
-                                                icons[i] = '';
-                                                this.setState({ icons });
-                                            }}
-                                        >
-                                            <Clear />
-                                        </IconButton>
-                                    ) : null,
-                                    sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
+                                slotProps={{
+                                    input: {
+                                        endAdornment: this.state.icons[i] ? (
+                                            <IconButton
+                                                size="small"
+                                                onClick={() => {
+                                                    const icons = [...this.state.icons];
+                                                    icons[i] = '';
+                                                    this.setState({ icons });
+                                                }}
+                                            >
+                                                <Clear />
+                                            </IconButton>
+                                        ) : null,
+                                        sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
+                                    },
                                 }}
                             />
                             <Button
@@ -957,7 +969,14 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
                     />
                     <ButtonGroup
                         style={{ marginTop: 20 }}
-                        variant={this.props.data.variant === undefined ? 'contained' : this.props.data.variant}
+                        // "contained" | "outlined" | "text"
+                        variant={
+                            this.props.data.variant === undefined
+                                ? 'contained'
+                                : this.props.data.variant === 'standard'
+                                  ? 'contained'
+                                  : this.props.data.variant
+                        }
                     >
                         {buttons}
                     </ButtonGroup>

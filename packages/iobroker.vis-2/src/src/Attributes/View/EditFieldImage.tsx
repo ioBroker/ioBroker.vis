@@ -130,27 +130,29 @@ export default function EditFieldImage(props: EditFieldImageProps): React.JSX.El
                 error={!!props.error}
                 // helperText={typeof props.error === 'string' ? I18n.t(props.error) : null}
                 disabled={!props.editMode || props.disabled}
-                InputProps={{
-                    sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
-                    endAdornment: [
-                        props.value ? (
-                            <IconButton
-                                key="clear"
-                                onClick={() => props.change('')}
+                slotProps={{
+                    input: {
+                        sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
+                        endAdornment: [
+                            props.value ? (
+                                <IconButton
+                                    key="clear"
+                                    onClick={() => props.change('')}
+                                    size="small"
+                                >
+                                    <ClearIcon />
+                                </IconButton>
+                            ) : null,
+                            <Button
+                                key="select"
+                                disabled={!props.editMode || props.disabled}
                                 size="small"
+                                onClick={() => setShowDialog(true)}
                             >
-                                <ClearIcon />
-                            </IconButton>
-                        ) : null,
-                        <Button
-                            key="select"
-                            disabled={!props.editMode || props.disabled}
-                            size="small"
-                            onClick={() => setShowDialog(true)}
-                        >
-                            ...
-                        </Button>,
-                    ],
+                                ...
+                            </Button>,
+                        ],
+                    },
                 }}
                 ref={textRef}
                 value={props.value}

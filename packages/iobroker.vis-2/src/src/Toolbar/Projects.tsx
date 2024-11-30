@@ -104,7 +104,6 @@ const Tools = (props: ToolsProps): React.JSX.Element => {
             ) : null}
             {props.projectsDialog ? (
                 <ProjectsManager
-                    open={!0}
                     onClose={() => props.setProjectsDialog(false)}
                     adapterName={props.adapterName}
                     instance={props.instance}

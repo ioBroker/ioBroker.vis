@@ -29,10 +29,17 @@ function copyRuntimeSrc() {
         fs.writeFileSync(`${__dirname}/runtime/public/index.html`, runtimeText);
     }
 
-    copyFolder(`${__dirname}/src/src/Vis`, `${__dirname}/runtime/src/Vis`,  ['visContextMenu.tsx', 'oldVis.jsx', 'visOrderMenu.tsx', 'BulkEditor.tsx']);
+    copyFolder(`${__dirname}/src/src/Vis`, `${__dirname}/runtime/src/Vis`, [
+        'visContextMenu.tsx',
+        'oldVis.jsx',
+        'visOrderMenu.tsx',
+        'BulkEditor.tsx',
+    ]);
     copyFolder(`${__dirname}/src/src/img`, `${__dirname}/runtime/src/img`);
 
-    fs.writeFileSync(`${__dirname}/runtime/src/Vis/visOrderMenu.tsx`, `
+    fs.writeFileSync(
+        `${__dirname}/runtime/src/Vis/visOrderMenu.tsx`,
+        `
 import React from 'react';
 
 class VisOrderMenu extends React.Component<any, any> {
@@ -43,9 +50,12 @@ class VisOrderMenu extends React.Component<any, any> {
 
 export default VisOrderMenu;
 
-`);
+`,
+    );
 
-    fs.writeFileSync(`${__dirname}/runtime/src/Vis/Widgets/JQui/BulkEditor.tsx`, `
+    fs.writeFileSync(
+        `${__dirname}/runtime/src/Vis/Widgets/JQui/BulkEditor.tsx`,
+        `
 import React from 'react';
 
 class BulkEditor extends React.Component<any, any> {
@@ -60,9 +70,12 @@ class BulkEditor extends React.Component<any, any> {
 
 export default BulkEditor;
 
-`);
+`,
+    );
 
-    fs.writeFileSync(`${__dirname}/runtime/src/Vis/Widgets/Basic/FiltersEditorDialog.tsx`, `
+    fs.writeFileSync(
+        `${__dirname}/runtime/src/Vis/Widgets/Basic/FiltersEditorDialog.tsx`,
+        `
 import React from 'react';
 
 class FiltersEditorDialog extends React.Component<any, any> {
@@ -73,7 +86,8 @@ class FiltersEditorDialog extends React.Component<any, any> {
 
 export default FiltersEditorDialog;
 
-`);
+`,
+    );
 
     const pack = JSON.parse(fs.readFileSync(`${__dirname}/src/package.json`).toString());
     delete pack.dependencies['@devbookhq/splitter'];
@@ -91,18 +105,30 @@ export default FiltersEditorDialog;
 
     fs.writeFileSync(`${__dirname}/runtime/package.json`, JSON.stringify(pack, null, 2));
     fs.writeFileSync(`${__dirname}/runtime/craco.config.js`, fs.readFileSync(`${__dirname}/src/craco.config.js`));
-    fs.writeFileSync(`${__dirname}/runtime/modulefederation.config.js`, fs.readFileSync(`${__dirname}/src/modulefederation.config.js`));
+    fs.writeFileSync(
+        `${__dirname}/runtime/modulefederation.config.js`,
+        fs.readFileSync(`${__dirname}/src/modulefederation.config.js`),
+    );
     fs.writeFileSync(`${__dirname}/runtime/src/Editor.tsx`, fs.readFileSync(`${__dirname}/src/src/Runtime.tsx`));
     fs.writeFileSync(`${__dirname}/runtime/src/version.json`, fs.readFileSync(`${__dirname}/src/src/version.json`));
     fs.writeFileSync(`${__dirname}/runtime/tsconfig.json`, fs.readFileSync(`${__dirname}/src/tsconfig.json`));
     fs.writeFileSync(`${__dirname}/runtime/src/Store.tsx`, fs.readFileSync(`${__dirname}/src/src/Store.tsx`));
-    fs.writeFileSync(`${__dirname}/runtime/src/Utils/utils.tsx`, fs.readFileSync(`${__dirname}/src/src/Utils/utils.tsx`));
-    fs.writeFileSync(`${__dirname}/runtime/src/serviceWorker.jsx`, fs.readFileSync(`${__dirname}/src/src/serviceWorker.jsx`));
+    fs.writeFileSync(
+        `${__dirname}/runtime/src/Utils/utils.tsx`,
+        fs.readFileSync(`${__dirname}/src/src/Utils/utils.tsx`),
+    );
+    fs.writeFileSync(
+        `${__dirname}/runtime/src/serviceWorker.tsx`,
+        fs.readFileSync(`${__dirname}/src/src/serviceWorker.tsx`),
+    );
     fs.writeFileSync(`${__dirname}/runtime/src/index.tsx`, fs.readFileSync(`${__dirname}/src/src/index.tsx`));
     fs.writeFileSync(`${__dirname}/runtime/src/theme.tsx`, fs.readFileSync(`${__dirname}/src/src/theme.tsx`));
     fs.writeFileSync(`${__dirname}/runtime/src/bootstrap.tsx`, fs.readFileSync(`${__dirname}/src/src/bootstrap.tsx`));
     fs.writeFileSync(`${__dirname}/runtime/src/index.css`, fs.readFileSync(`${__dirname}/src/src/index.css`));
-    fs.writeFileSync(`${__dirname}/runtime/src/Utils/styles.tsx`, 'const commonStyles: Record<string, any> = {};\nexport default commonStyles;');
+    fs.writeFileSync(
+        `${__dirname}/runtime/src/Utils/styles.tsx`,
+        'const commonStyles: Record<string, any> = {};\nexport default commonStyles;',
+    );
     copyFolder(`${__dirname}/src/src/i18nRuntime`, `${__dirname}/runtime/src/i18n`);
 }
 
@@ -153,16 +179,24 @@ async function generateSvgFiles() {
     });
 
     Object.keys(result).forEach(file => {
-        updateFile(`${__dirname}/src/public/material-icons/${file.replace('.svg', '')}.json`, JSON.stringify(result[file]));
+        updateFile(
+            `${__dirname}/src/public/material-icons/${file.replace('.svg', '')}.json`,
+            JSON.stringify(result[file]),
+        );
     });
 
     // prepare https://github.com/OpenAutomationProject/knx-uf-iconset/archive/refs/heads/master.zip
     if (!fs.existsSync(`${__dirname}/knx-uf-iconset/master.zip`)) {
-        const res = await axios('https://github.com/OpenAutomationProject/knx-uf-iconset/archive/refs/heads/master.zip', {responseType: 'arraybuffer'});
+        const res = await axios(
+            'https://github.com/OpenAutomationProject/knx-uf-iconset/archive/refs/heads/master.zip',
+            { responseType: 'arraybuffer' },
+        );
         !fs.existsSync(`${__dirname}/knx-uf-iconset`) && fs.mkdirSync(`${__dirname}/knx-uf-iconset`);
         fs.writeFileSync(`${__dirname}/knx-uf-iconset/master.zip`, res.data);
 
-        const zip = fs.createReadStream(`${__dirname}/knx-uf-iconset/master.zip`).pipe(unzipper.Parse({forceStream: true}));
+        const zip = fs
+            .createReadStream(`${__dirname}/knx-uf-iconset/master.zip`)
+            .pipe(unzipper.Parse({ forceStream: true }));
         for await (const entry of zip) {
             const fileName = entry.path;
             if (entry.type === 'File' && fileName.endsWith('.svg')) {
@@ -174,7 +208,7 @@ async function generateSvgFiles() {
 
         // prepare KNX-UF icons
         const files = fs.readdirSync(`${__dirname}/knx-uf-iconset/`).filter(file => file.endsWith('.svg'));
-        const result = {}
+        const result = {};
         for (let f = 0; f < files.length; f++) {
             let data = fs.readFileSync(`${__dirname}/knx-uf-iconset/${files[f]}`).toString('utf8');
             // add currentColor
@@ -259,13 +293,14 @@ function buildEditor() {
                     langsEditor[file.replace('.json', '')] = require(`./src/src/i18n/${file}`);
                 });
             }
-            Object.keys(langsEditor).forEach(lang => langsEditor[lang][key] = langsRuntime[lang][key]);
+            Object.keys(langsEditor).forEach(lang => (langsEditor[lang][key] = langsRuntime[lang][key]));
         }
     });
 
     if (langsEditor.de) {
         Object.keys(langsEditor).forEach(lang =>
-            fs.writeFileSync(`${__dirname}/src/src/i18n/${lang}.json`, JSON.stringify(langsEditor[lang], null, 2)));
+            fs.writeFileSync(`${__dirname}/src/src/i18n/${lang}.json`, JSON.stringify(langsEditor[lang], null, 2)),
+        );
     }
 
     return buildReact(`${__dirname}/src/`, { craco: true, ramSize: 7000, rootDir: `${__dirname}/../../` });
@@ -273,15 +308,24 @@ function buildEditor() {
 
 function copyAllFiles() {
     copyFolder(path.join(__dirname, 'src/build'), path.join(__dirname, 'www'), ['index.html']);
-    fs.writeFileSync(path.join(__dirname, 'www/edit.html'), fs.readFileSync(path.join(__dirname, 'src', 'build', 'index.html')));
+    fs.writeFileSync(
+        path.join(__dirname, 'www/edit.html'),
+        fs.readFileSync(path.join(__dirname, 'src', 'build', 'index.html')),
+    );
     return Promise.resolve();
 }
 
 function patchFile(htmlFile) {
     if (fs.existsSync(htmlFile)) {
         let code = fs.readFileSync(htmlFile).toString('utf8');
-        code = code.replace(/<script>const script=document[^<]+<\/script>/, `<script type="text/javascript" onerror="setTimeout(function(){window.location.reload()}, 5000)" src="../../lib/js/socket.io.js"></script>`);
-        code = code.replace(/<script>var script=document[^<]+<\/script>/, `<script type="text/javascript" onerror="setTimeout(function(){window.location.reload()}, 5000)" src="../../lib/js/socket.io.js"></script>`);
+        code = code.replace(
+            /<script>const script=document[^<]+<\/script>/,
+            `<script type="text/javascript" onerror="setTimeout(function(){window.location.reload()}, 5000)" src="../../lib/js/socket.io.js"></script>`,
+        );
+        code = code.replace(
+            /<script>var script=document[^<]+<\/script>/,
+            `<script type="text/javascript" onerror="setTimeout(function(){window.location.reload()}, 5000)" src="../../lib/js/socket.io.js"></script>`,
+        );
 
         fs.writeFileSync(htmlFile, code);
     }
@@ -322,7 +366,8 @@ function patchEditor() {
     patchFile(`${__dirname}/www/index.html`);
     patchFile(`${__dirname}/src/build/index.html`);
     patchFile(`${__dirname}/src/build/edit.html`);
-    fs.existsSync(`${__dirname}/www/marketplaceConfig.sample.js`) && fs.unlinkSync(`${__dirname}/www/marketplaceConfig.sample.js`);
+    fs.existsSync(`${__dirname}/www/marketplaceConfig.sample.js`) &&
+        fs.unlinkSync(`${__dirname}/www/marketplaceConfig.sample.js`);
     copyFolder(`${__dirname}/www`, `${__dirname}/../../www`);
     fs.writeFileSync(`${__dirname}/../../io-package.json`, fs.readFileSync(`${__dirname}/io-package.json`).toString());
     fs.writeFileSync(`${__dirname}/../../main.js`, fs.readFileSync(`${__dirname}/main.js`).toString());
@@ -338,11 +383,11 @@ if (process.argv.includes('--runtime-0-clean')) {
 } else if (process.argv.includes('--runtime-1-copy-src')) {
     copyRuntimeSrc();
 } else if (process.argv.includes('--runtime-2-npm')) {
-    npmInstall(`${__dirname}/runtime`)
-        .catch(e => console.error(`Cannot install: ${e}`));
+    npmInstall(`${__dirname}/runtime`).catch(e => console.error(`Cannot install: ${e}`));
 } else if (process.argv.includes('--runtime-3-build')) {
-    buildReact(`${__dirname}/runtime/`, { craco: true, ramSize: 7000, rootDir: `${__dirname}/../../` })
-        .catch(e => console.error(`Cannot build: ${e}`));
+    buildReact(`${__dirname}/runtime/`, { craco: true, ramSize: 7000, rootDir: `${__dirname}/../../` }).catch(e =>
+        console.error(`Cannot build: ${e}`),
+    );
 } else if (process.argv.includes('--runtime-4-copy')) {
     copyRuntimeDist();
 } else if (process.argv.includes('--runtime-5-patch')) {
@@ -351,15 +396,12 @@ if (process.argv.includes('--runtime-0-clean')) {
     deleteFoldersRecursive(`${__dirname}/src/build`);
 } else if (process.argv.includes('--1-npm')) {
     if (!fs.existsSync(`${__dirname}/src/node_modules`)) {
-        npmInstall(`${__dirname}/src`)
-            .catch(e => console.error(`Cannot install: ${e}`));
+        npmInstall(`${__dirname}/src`).catch(e => console.error(`Cannot install: ${e}`));
     }
 } else if (process.argv.includes('--2-svg-icons')) {
-    generateSvgFiles()
-        .catch(e => console.error(`Cannot generate SVG icons: ${e}`));
+    generateSvgFiles().catch(e => console.error(`Cannot generate SVG icons: ${e}`));
 } else if (process.argv.includes('--3-build')) {
-    buildEditor()
-        .catch(e => console.error(`Cannot build: ${e}`));
+    buildEditor().catch(e => console.error(`Cannot build: ${e}`));
 } else if (process.argv.includes('--4-copy')) {
     copyAllFiles();
 } else if (process.argv.includes('--5-patch')) {

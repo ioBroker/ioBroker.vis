@@ -1,11 +1,11 @@
 const helper = require('@iobroker/vis-2-widgets-testing');
-const path = require('node:path')
+const path = require('node:path');
 
 let gPage;
 let gBrowser;
 
 describe('vis', () => {
-    before(async function (){
+    before(async function () {
         this.timeout(180_000);
 
         // install js-controller, web and vis-2
@@ -17,8 +17,8 @@ describe('vis', () => {
             rootDir: path.normalize(`${path.join(__dirname, '..')}/`).replace(/\\/g, '/'),
         });
         const { browser, page } = await helper.startBrowser(process.env.CI === 'true');
-        gBrowser = browser
-        gPage = page
+        gBrowser = browser;
+        gPage = page;
         await helper.createProject();
 
         // open widgets
@@ -26,7 +26,7 @@ describe('vis', () => {
         await helper.screenshot(gPage, '02_widgets_opened');
     });
 
-    it('Check all widgets', async function (){
+    it('Check all widgets', async function () {
         this.timeout(120_000);
         const widgetSets = await helper.palette.getListOfWidgetSets();
         console.log(`Widget sets found: ${widgetSets.join(', ')}`);
@@ -43,7 +43,7 @@ describe('vis', () => {
         await new Promise(resolve => setTimeout(resolve, 2_000));
     });
 
-    it('Check runtime', async function (){
+    it('Check runtime', async function () {
         this.timeout(20_000);
         // add widget in editor
         const basicWidgets = await helper.palette.getListOfWidgets(gPage, 'basic');

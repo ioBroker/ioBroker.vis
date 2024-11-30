@@ -722,17 +722,19 @@ const WidgetField = (props: WidgetFieldProps): string | React.JSX.Element | Reac
                     sx={{
                         '& .MuiInputBase-root': { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
                     }}
-                    InputProps={{
-                        endAdornment: (
-                            <Button
-                                style={{ minWidth: 30 }}
-                                disabled={disabled}
-                                size="small"
-                                onClick={() => setIdDialog(true)}
-                            >
-                                ...
-                            </Button>
-                        ),
+                    slotProps={{
+                        input: {
+                            endAdornment: (
+                                <Button
+                                    style={{ minWidth: 30 }}
+                                    disabled={disabled}
+                                    size="small"
+                                    onClick={() => setIdDialog(true)}
+                                >
+                                    ...
+                                </Button>
+                            ),
+                        },
                     }}
                     error={!!error}
                     helperText={typeof error === 'string' ? I18n.t(error) : null}
@@ -811,18 +813,20 @@ const WidgetField = (props: WidgetFieldProps): string | React.JSX.Element | Reac
                     error={!!error}
                     helperText={typeof error === 'string' ? I18n.t(error) : null}
                     disabled={disabled}
-                    InputProps={{
-                        sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
-                        endAdornment: (
-                            <Button
-                                style={{ minWidth: 30 }}
-                                disabled={disabled}
-                                size="small"
-                                onClick={() => setIdDialog(true)}
-                            >
-                                ...
-                            </Button>
-                        ),
+                    slotProps={{
+                        input: {
+                            sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
+                            endAdornment: (
+                                <Button
+                                    style={{ minWidth: 30 }}
+                                    disabled={disabled}
+                                    size="small"
+                                    onClick={() => setIdDialog(true)}
+                                >
+                                    ...
+                                </Button>
+                            ),
+                        },
                     }}
                     ref={textRef}
                     value={value}
@@ -919,31 +923,37 @@ const WidgetField = (props: WidgetFieldProps): string | React.JSX.Element | Reac
                             error={!!error}
                             helperText={typeof error === 'string' ? I18n.t(error) : null}
                             disabled={disabled}
-                            InputProps={{
-                                ...params.InputProps,
-                                sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
-                                endAdornment:
-                                    !isDifferent && !customValue ? (
-                                        <Button
-                                            style={{ minWidth: 30 }}
-                                            size="small"
-                                            disabled={disabled}
-                                            title={t('Convert %s to %s', unit, unit === '%' ? 'px' : '%')}
-                                            onClick={() => {
-                                                if (unit !== '%') {
-                                                    props.onPxToPercent(props.selectedWidgets, field.name, newValues =>
-                                                        change(newValues[0]),
-                                                    );
-                                                } else {
-                                                    props.onPercentToPx(props.selectedWidgets, field.name, newValues =>
-                                                        change(newValues[0]),
-                                                    );
-                                                }
-                                            }}
-                                        >
-                                            {unit}
-                                        </Button>
-                                    ) : null,
+                            slotProps={{
+                                input: {
+                                    ...params.InputProps,
+                                    sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
+                                    endAdornment:
+                                        !isDifferent && !customValue ? (
+                                            <Button
+                                                style={{ minWidth: 30 }}
+                                                size="small"
+                                                disabled={disabled}
+                                                title={t('Convert %s to %s', unit, unit === '%' ? 'px' : '%')}
+                                                onClick={() => {
+                                                    if (unit !== '%') {
+                                                        props.onPxToPercent(
+                                                            props.selectedWidgets,
+                                                            field.name,
+                                                            newValues => change(newValues[0]),
+                                                        );
+                                                    } else {
+                                                        props.onPercentToPx(
+                                                            props.selectedWidgets,
+                                                            field.name,
+                                                            newValues => change(newValues[0]),
+                                                        );
+                                                    }
+                                                }}
+                                            >
+                                                {unit}
+                                            </Button>
+                                        ) : null,
+                                },
                             }}
                             value={value}
                             onChange={e => change(e.target.value)}
@@ -960,29 +970,31 @@ const WidgetField = (props: WidgetFieldProps): string | React.JSX.Element | Reac
                 error={!!error}
                 helperText={typeof error === 'string' ? I18n.t(error) : null}
                 disabled={disabled}
-                InputProps={{
-                    sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
-                    endAdornment: !customValue ? (
-                        <Button
-                            size="small"
-                            style={{ minWidth: 30 }}
-                            disabled={disabled}
-                            title={t('Convert %s to %s', unit, unit === '%' ? 'px' : '%')}
-                            onClick={() => {
-                                if (unit !== '%') {
-                                    props.onPxToPercent(props.selectedWidgets, field.name, newValues =>
-                                        change(newValues[0]),
-                                    );
-                                } else {
-                                    props.onPercentToPx(props.selectedWidgets, field.name, newValues =>
-                                        change(newValues[0]),
-                                    );
-                                }
-                            }}
-                        >
-                            {unit}
-                        </Button>
-                    ) : null,
+                slotProps={{
+                    input: {
+                        sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
+                        endAdornment: !customValue ? (
+                            <Button
+                                size="small"
+                                style={{ minWidth: 30 }}
+                                disabled={disabled}
+                                title={t('Convert %s to %s', unit, unit === '%' ? 'px' : '%')}
+                                onClick={() => {
+                                    if (unit !== '%') {
+                                        props.onPxToPercent(props.selectedWidgets, field.name, newValues =>
+                                            change(newValues[0]),
+                                        );
+                                    } else {
+                                        props.onPercentToPx(props.selectedWidgets, field.name, newValues =>
+                                            change(newValues[0]),
+                                        );
+                                    }
+                                }}
+                            >
+                                {unit}
+                            </Button>
+                        ) : null,
+                    },
                 }}
                 value={value}
                 onChange={e => change(e.target.value)}
@@ -1651,17 +1663,19 @@ const WidgetField = (props: WidgetFieldProps): string | React.JSX.Element | Reac
                     error={!!error}
                     disabled={disabled}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>): void => change(e.target.value)}
-                    InputProps={{
-                        endAdornment: value ? (
-                            <IconButton
-                                disabled={disabled}
-                                size="small"
-                                onClick={() => change('')}
-                            >
-                                <ClearIcon />
-                            </IconButton>
-                        ) : null,
-                        sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
+                    slotProps={{
+                        input: {
+                            endAdornment: value ? (
+                                <IconButton
+                                    disabled={disabled}
+                                    size="small"
+                                    onClick={() => change('')}
+                                >
+                                    <ClearIcon />
+                                </IconButton>
+                            ) : null,
+                            sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
+                        },
                     }}
                 />
                 <Button
@@ -1709,18 +1723,20 @@ const WidgetField = (props: WidgetFieldProps): string | React.JSX.Element | Reac
                     disabled={disabled}
                     helperText={typeof error === 'string' ? I18n.t(error) : null}
                     onChange={e => change(e.target.value)}
-                    InputProps={{
-                        endAdornment: field.noButton ? null : (
-                            <Button
-                                disabled={disabled}
-                                size="small"
-                                style={{ minWidth: 30 }}
-                                onClick={() => setIdDialog(true)}
-                            >
-                                <EditIcon />
-                            </Button>
-                        ),
-                        sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
+                    slotProps={{
+                        input: {
+                            endAdornment: field.noButton ? null : (
+                                <Button
+                                    disabled={disabled}
+                                    size="small"
+                                    style={{ minWidth: 30 }}
+                                    onClick={() => setIdDialog(true)}
+                                >
+                                    <EditIcon />
+                                </Button>
+                            ),
+                            sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
+                        },
                     }}
                     rows={2}
                 />
@@ -1787,17 +1803,19 @@ const WidgetField = (props: WidgetFieldProps): string | React.JSX.Element | Reac
                         }
                     }}
                     placeholder={isDifferent ? t('different') : null}
-                    InputProps={{
-                        endAdornment:
-                            field.clearButton && cachedValue !== null && cachedValue !== undefined ? (
-                                <IconButton
-                                    size="small"
-                                    onClick={() => change(null)}
-                                >
-                                    <ClearIcon />
-                                </IconButton>
-                            ) : null,
-                        sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
+                    slotProps={{
+                        input: {
+                            endAdornment:
+                                field.clearButton && cachedValue !== null && cachedValue !== undefined ? (
+                                    <IconButton
+                                        size="small"
+                                        onClick={() => change(null)}
+                                    >
+                                        <ClearIcon />
+                                    </IconButton>
+                                ) : null,
+                            sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
+                        },
                     }}
                     value={value}
                     onChange={e => change(e.target.value)}

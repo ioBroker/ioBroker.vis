@@ -304,33 +304,36 @@ class JQuiInput<P extends RxData = RxData, S extends JQuiInputState = JQuiInputS
                     onBlur={() => (this.focused = false)}
                     autoFocus={!this.props.editMode && this.state.rxData.autoFocus}
                     variant={this.state.rxData.variant === undefined ? 'standard' : this.state.rxData.variant}
-                    inputProps={{ readOnly: this.state.rxData.readOnly }}
-                    // eslint-disable-next-line react/jsx-no-duplicate-props
-                    InputProps={{
-                        endAdornment:
-                            this.state.rxData.withEnter && !this.state.rxData.readOnly ? (
-                                <InputAdornment position="end">
-                                    {this.state.rxData.buttontext ? (
-                                        <Button
-                                            onClick={() => this.setValue(this.state.input)}
-                                            variant="contained"
-                                            style={{ marginBottom: 10, minWidth: 40 }}
-                                        >
-                                            {this.state.rxData.buttontext}
-                                        </Button>
-                                    ) : (
-                                        <IconButton
-                                            onClick={() => this.setValue(this.state.input)}
-                                            edge="end"
-                                        >
-                                            <KeyboardReturn />
-                                        </IconButton>
-                                    )}
-                                </InputAdornment>
+                    slotProps={{
+                        htmlInput: {
+                            readOnly: this.state.rxData.readOnly,
+                        },
+                        input: {
+                            endAdornment:
+                                this.state.rxData.withEnter && !this.state.rxData.readOnly ? (
+                                    <InputAdornment position="end">
+                                        {this.state.rxData.buttontext ? (
+                                            <Button
+                                                onClick={() => this.setValue(this.state.input)}
+                                                variant="contained"
+                                                style={{ marginBottom: 10, minWidth: 40 }}
+                                            >
+                                                {this.state.rxData.buttontext}
+                                            </Button>
+                                        ) : (
+                                            <IconButton
+                                                onClick={() => this.setValue(this.state.input)}
+                                                edge="end"
+                                            >
+                                                <KeyboardReturn />
+                                            </IconButton>
+                                        )}
+                                    </InputAdornment>
+                                ) : undefined,
+                            startAdornment: this.state.rxData.unit ? (
+                                <InputAdornment position="start">{this.state.rxData.unit}</InputAdornment>
                             ) : undefined,
-                        startAdornment: this.state.rxData.unit ? (
-                            <InputAdornment position="start">{this.state.rxData.unit}</InputAdornment>
-                        ) : undefined,
+                        },
                     }}
                     label={label}
                     onChange={e => this.onChange(e.target.value)}

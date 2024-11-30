@@ -32,17 +32,19 @@ export default function EditFieldIcon64(props: EditFieldIcon64Props): React.JSX.
                 error={!!props.error}
                 disabled={!props.editMode || props.disabled}
                 onChange={e => props.change(e.target.value)}
-                InputProps={{
-                    endAdornment: props.value ? (
-                        <IconButton
-                            disabled={!props.editMode || props.disabled}
-                            size="small"
-                            onClick={() => props.change('')}
-                        >
-                            <ClearIcon />
-                        </IconButton>
-                    ) : null,
-                    sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
+                slotProps={{
+                    input: {
+                        endAdornment: props.value ? (
+                            <IconButton
+                                disabled={!props.editMode || props.disabled}
+                                size="small"
+                                onClick={() => props.change('')}
+                            >
+                                <ClearIcon />
+                            </IconButton>
+                        ) : null,
+                        sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
+                    },
                 }}
             />
             <Button

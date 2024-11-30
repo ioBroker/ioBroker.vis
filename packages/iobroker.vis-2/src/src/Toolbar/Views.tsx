@@ -143,33 +143,36 @@ const Views = (props: ViewsProps): React.JSX.Element => {
                 themeType={props.themeType}
                 toolbarHeight={props.toolbarHeight}
             />
-            <ViewsManager
-                open={props.viewsManager}
-                onClose={() => props.setViewsManager(false)}
-                showDialog={showDialog}
-                theme={props.theme}
-                changeProject={props.changeProject}
-                editMode={props.editMode}
-                selectedView={props.selectedView}
-                themeName={props.themeName}
-                themeType={props.themeType}
-                toggleView={props.toggleView}
-            />
-            <ViewDialog
-                dialog={dialog}
-                dialogView={dialogView}
-                dialogName={dialogName}
-                dialogCallback={dialogCallback}
-                noTranslation
-                dialogParentId={dialogParentId}
-                closeDialog={() => setDialog(null)}
-                setDialogView={setDialogView}
-                setDialogName={setDialogName}
-                setDialogParentId={setDialogParentId}
-                changeProject={props.changeProject}
-                changeView={props.changeView}
-                selectedView={props.selectedView}
-            />
+            {props.viewsManager ? (
+                <ViewsManager
+                    onClose={() => props.setViewsManager(false)}
+                    showDialog={showDialog}
+                    theme={props.theme}
+                    changeProject={props.changeProject}
+                    editMode={props.editMode}
+                    selectedView={props.selectedView}
+                    themeName={props.themeName}
+                    themeType={props.themeType}
+                    toggleView={props.toggleView}
+                />
+            ) : null}
+            {dialog ? (
+                <ViewDialog
+                    dialog={dialog}
+                    dialogView={dialogView}
+                    dialogName={dialogName}
+                    dialogCallback={dialogCallback}
+                    noTranslation
+                    dialogParentId={dialogParentId}
+                    closeDialog={() => setDialog(null)}
+                    setDialogView={setDialogView}
+                    setDialogName={setDialogName}
+                    setDialogParentId={setDialogParentId}
+                    changeProject={props.changeProject}
+                    changeView={props.changeView}
+                    selectedView={props.selectedView}
+                />
+            ) : null}
         </>
     );
 };

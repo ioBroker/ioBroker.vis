@@ -7,7 +7,7 @@ import { Close, DragHandle, FormatPaint } from '@mui/icons-material';
 
 import { I18n, type LegacyConnection, type ThemeType } from '@iobroker/adapter-react-v5';
 
-import type { Project, VisTheme } from '@iobroker/types-vis-2';
+import type { Project, ViewSettings, VisTheme } from '@iobroker/types-vis-2';
 import { getViewsWithDifferentValues } from '@/Attributes/View/ApplyProperties';
 import getEditField from '@/Attributes/View/EditField';
 import type { Field } from '@/Attributes/View/Items';
@@ -30,8 +30,8 @@ interface ShowAllViewsDialogProps {
     themeType: ThemeType;
     theme: VisTheme;
     checkFunction: (
-        funcText: boolean | string | ((settings: Record<string, any>) => boolean),
-        settings: Record<string, any>,
+        funcText: boolean | string | ((settings: ViewSettings) => boolean),
+        settings: ViewSettings,
     ) => boolean;
     userGroups: Record<string, ioBroker.GroupObject>;
     adapterName: string;
@@ -47,7 +47,7 @@ export default function showAllViewsDialog(props: ShowAllViewsDialogProps): Reac
 
     const viewList = Object.keys(props.project).filter(v => v !== '___settings');
 
-    const items = viewList
+    const items: { control: React.JSX.Element; view: string; order: number }[] = viewList
         .map(view => {
             let disabled = false;
             if (props.field.disabled !== undefined) {
@@ -76,6 +76,7 @@ export default function showAllViewsDialog(props: ShowAllViewsDialogProps): Reac
                 project: props.project,
                 theme: props.theme,
             });
+
             if (!control) {
                 return null;
             }
@@ -86,6 +87,7 @@ export default function showAllViewsDialog(props: ShowAllViewsDialogProps): Reac
             };
         })
         .filter(it => it);
+
     items.sort((prevItem, nextItem) =>
         prevItem.order === nextItem.order ? 0 : prevItem.order < nextItem.order ? -1 : 1,
     );
@@ -111,8 +113,10 @@ export default function showAllViewsDialog(props: ShowAllViewsDialogProps): Reac
                             newProject[view].settings.navigationOrder = index;
                         });
                         const index = newProject[viewOrderList[data.destination.index]].settings.navigationOrder;
+
                         newProject[viewOrderList[data.destination.index]].settings.navigationOrder =
                             newProject[viewOrderList[data.source.index]].settings.navigationOrder;
+
                         newProject[viewOrderList[data.source.index]].settings.navigationOrder = index;
                         props.changeProject(newProject);
                     }}

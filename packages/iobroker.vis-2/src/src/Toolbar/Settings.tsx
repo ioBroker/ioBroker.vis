@@ -193,13 +193,15 @@ const Settings: React.FC<SettingsProps> = props => {
                         label={I18n.t('Browser instance ID')}
                         value={instance || ''}
                         onChange={e => setInstance(e.target.value)}
-                        InputProps={{
-                            endAdornment: instance ? (
-                                <IconButton onClick={() => Utils.copyToClipboard(instance)}>
-                                    <ContentCopy />
-                                </IconButton>
-                            ) : null,
-                            sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
+                        slotProps={{
+                            input: {
+                                endAdornment: instance ? (
+                                    <IconButton onClick={() => Utils.copyToClipboard(instance)}>
+                                        <ContentCopy />
+                                    </IconButton>
+                                ) : null,
+                                sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
+                            },
                         }}
                     />
                     <Button

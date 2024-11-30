@@ -26,7 +26,7 @@ import { Clear as ClearIcon } from '@mui/icons-material';
 import { deepClone } from '@/Utils/utils';
 import commonStyles from '@/Utils/styles';
 import type { Field } from '@/Attributes/View/Items';
-import type { Project, VisTheme } from '@iobroker/types-vis-2';
+import type { Project, ViewSettings, VisTheme } from '@iobroker/types-vis-2';
 
 import EditFieldImage from './EditFieldImage';
 import EditFieldIcon64 from './EditFieldIcon64';
@@ -38,8 +38,8 @@ interface EditFieldProps {
     themeType: ThemeType;
     theme: VisTheme;
     checkFunction: (
-        funcText: boolean | string | ((settings: Record<string, any>) => boolean),
-        settings: Record<string, any>,
+        funcText: boolean | string | ((settings: ViewSettings) => boolean),
+        settings: ViewSettings,
     ) => boolean;
     changeProject: (project: Project) => void;
     userGroups: Record<string, ioBroker.GroupObject>;
@@ -343,17 +343,19 @@ export default function getEditField(gProps: EditFieldProps): React.JSX.Element 
             disabled={!editMode || disabled}
             variant="standard"
             fullWidth
-            InputProps={{
-                endAdornment:
-                    field.clearButton && rawValue !== null && rawValue !== undefined ? (
-                        <IconButton
-                            size="small"
-                            onClick={() => change(null)}
-                        >
-                            <ClearIcon />
-                        </IconButton>
-                    ) : null,
-                sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
+            slotProps={{
+                input: {
+                    endAdornment:
+                        field.clearButton && rawValue !== null && rawValue !== undefined ? (
+                            <IconButton
+                                size="small"
+                                onClick={() => change(null)}
+                            >
+                                <ClearIcon />
+                            </IconButton>
+                        ) : null,
+                    sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
+                },
             }}
             value={value}
             onChange={e => change(e.target.value)}

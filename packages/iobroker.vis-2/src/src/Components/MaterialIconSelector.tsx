@@ -274,23 +274,25 @@ class MaterialIconSelector extends Component<MaterialIconSelectorProps, Material
                     {this.state.iconType !== 'upload' ? (
                         <TextField
                             value={this.state.filter}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <SearchIcon />
-                                    </InputAdornment>
-                                ),
-                                endAdornment: this.state.filter ? (
-                                    <InputAdornment position="start">
-                                        <ClearIcon
-                                            style={{ cursor: 'pointer' }}
-                                            onClick={() => {
-                                                window.localStorage.removeItem('vis.icon.filter');
-                                                this.setState({ filter: '' }, () => this.applyFilter(true));
-                                            }}
-                                        />
-                                    </InputAdornment>
-                                ) : null,
+                            slotProps={{
+                                input: {
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <SearchIcon />
+                                        </InputAdornment>
+                                    ),
+                                    endAdornment: this.state.filter ? (
+                                        <InputAdornment position="start">
+                                            <ClearIcon
+                                                style={{ cursor: 'pointer' }}
+                                                onClick={() => {
+                                                    window.localStorage.removeItem('vis.icon.filter');
+                                                    this.setState({ filter: '' }, () => this.applyFilter(true));
+                                                }}
+                                            />
+                                        </InputAdornment>
+                                    ) : null,
+                                },
                             }}
                             variant="standard"
                             onChange={e => {

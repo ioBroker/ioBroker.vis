@@ -66,11 +66,10 @@ const styles: Record<string, React.CSSProperties> = {
     },
 };
 
-interface ProjectsManageProps {
+interface ProjectsManagerProps {
     addProject: Editor['addProject'];
     loadProject: Editor['loadProject'];
     onClose: () => void;
-    open: boolean;
     projects: string[];
     projectName: string;
     refreshProjects: Editor['refreshProjects'];
@@ -85,7 +84,7 @@ interface ProjectsManageProps {
     renameProject: Editor['renameProject'];
 }
 
-const ProjectsManage: React.FC<ProjectsManageProps> = props => {
+const ProjectsManager: React.FC<ProjectsManagerProps> = props => {
     const [dialog, setDialog] = useState<'add' | 'rename' | 'delete' | null>(null);
     const [dialogName, setDialogName] = useState<string>('');
     const [dialogProject, setDialogProject] = useState<string | null>(null);
@@ -192,7 +191,7 @@ const ProjectsManage: React.FC<ProjectsManageProps> = props => {
         </Menu>
     );
 
-    return props.open ? (
+    return (
         <IODialog
             onClose={props.onClose}
             title="Manage projects"
@@ -376,7 +375,7 @@ const ProjectsManage: React.FC<ProjectsManageProps> = props => {
                 />
             ) : null}
         </IODialog>
-    ) : null;
+    );
 };
 
-export default ProjectsManage;
+export default ProjectsManager;

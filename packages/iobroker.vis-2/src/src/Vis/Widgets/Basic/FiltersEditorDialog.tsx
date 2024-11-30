@@ -329,19 +329,21 @@ class FiltersEditorDialog extends Component<FiltersEditorDialogProps, FiltersEdi
                                             items[index].icon = e.target.value;
                                             this.updateItems(items);
                                         }}
-                                        InputProps={{
-                                            endAdornment: item.icon ? (
-                                                <IconButton
-                                                    size="small"
-                                                    onClick={() => {
-                                                        const items = JSON.parse(JSON.stringify(this.state.items));
-                                                        items[index].icon = '';
-                                                        this.updateItems(items);
-                                                    }}
-                                                >
-                                                    <ClearIcon />
-                                                </IconButton>
-                                            ) : null,
+                                        slotProps={{
+                                            input: {
+                                                endAdornment: item.icon ? (
+                                                    <IconButton
+                                                        size="small"
+                                                        onClick={() => {
+                                                            const items = JSON.parse(JSON.stringify(this.state.items));
+                                                            items[index].icon = '';
+                                                            this.updateItems(items);
+                                                        }}
+                                                    >
+                                                        <ClearIcon />
+                                                    </IconButton>
+                                                ) : null,
+                                            },
                                         }}
                                     />
                                     <Button
@@ -367,19 +369,21 @@ class FiltersEditorDialog extends Component<FiltersEditorDialogProps, FiltersEdi
                                     <TextField
                                         variant="standard"
                                         fullWidth
-                                        InputProps={{
-                                            endAdornment: item.image ? (
-                                                <IconButton
-                                                    size="small"
-                                                    onClick={() => {
-                                                        const items = JSON.parse(JSON.stringify(this.state.items));
-                                                        items[index].image = '';
-                                                        this.updateItems(items);
-                                                    }}
-                                                >
-                                                    <ClearIcon />
-                                                </IconButton>
-                                            ) : null,
+                                        slotProps={{
+                                            input: {
+                                                endAdornment: item.image ? (
+                                                    <IconButton
+                                                        size="small"
+                                                        onClick={() => {
+                                                            const items = JSON.parse(JSON.stringify(this.state.items));
+                                                            items[index].image = '';
+                                                            this.updateItems(items);
+                                                        }}
+                                                    >
+                                                        <ClearIcon />
+                                                    </IconButton>
+                                                ) : null,
+                                            },
                                         }}
                                         value={item.image}
                                         onChange={e => {

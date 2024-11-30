@@ -397,8 +397,10 @@ export function getFields(
                                 variant="standard"
                                 value={view.settings?.sizex === undefined ? '' : view.settings.sizex}
                                 disabled={!editMode || resolutionSelect !== 'user'}
-                                InputProps={{
-                                    sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
+                                slotProps={{
+                                    input: {
+                                        sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
+                                    },
                                 }}
                                 onChange={e => {
                                     const project = JSON.parse(JSON.stringify(store.getState().visProject));
@@ -416,8 +418,10 @@ export function getFields(
                                 variant="standard"
                                 value={view.settings?.sizey === undefined ? '' : view.settings.sizey}
                                 disabled={!editMode || resolutionSelect !== 'user'}
-                                InputProps={{
-                                    sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
+                                slotProps={{
+                                    input: {
+                                        sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
+                                    },
                                 }}
                                 onChange={e => {
                                     const project = JSON.parse(JSON.stringify(store.getState().visProject));

@@ -43,7 +43,6 @@ import type {
     RxWidgetInfo,
     RxWidgetInfoAttributesField,
     RxWidgetInfoAttributesFieldCheckbox,
-    RxWidgetInfoAttributesFieldID,
     RxWidgetInfoCustomComponentProperties,
     VisBaseWidgetProps,
     WidgetData,
@@ -66,25 +65,29 @@ interface BulkEditorData {
 }
 
 type RxData = {
-    type: 'button' | 'select' | 'radio' | 'slider';
     oid: string;
+    count: number;
+
+    type: 'button' | 'select' | 'radio' | 'slider';
     readOnly: boolean;
     click_id: string;
-    count: number;
     variant: 'contained' | 'outlined' | 'text' | 'standard';
     orientation: 'horizontal' | 'vertical';
     widgetTitle: string;
     timeout: number;
     open: boolean;
-    [key: `value${number}`]: string;
-    [key: `test${number}`]: boolean;
-    [key: `onlyIcon${number}`]: boolean;
-    [key: `text${number}`]: string;
+
+    [key: `value${number}`]: string | number;
     [key: `color${number}`]: string;
-    [key: `activeColor${number}`]: string;
+    [key: `text${number}`]: string;
+    [key: `icon${number}`]: string | null;
+    [key: `g_states-${number}`]: boolean;
     [key: `image${number}`]: string;
-    [key: `icon${number}`]: string;
+    [key: `activeColor${number}`]: string;
     [key: `tooltip${number}`]: string;
+
+    [key: `onlyIcon${number}`]: boolean;
+    [key: `test${number}`]: boolean;
 };
 
 interface JQuiStateState extends VisRxWidgetState {
@@ -127,13 +130,14 @@ class JQuiState<P extends RxData = RxData, S extends JQuiStateState = JQuiStateS
                             name: 'oid',
                             type: 'id',
                             onChange: async (
-                                field: RxWidgetInfoAttributesField,
-                                data: Record<string, any>,
-                                changeData: (newData: Record<string, any>) => void,
+                                _field: RxWidgetInfoAttributesField,
+                                data: RxData,
+                                changeData: (newData: RxData) => void,
                                 socket: LegacyConnection,
                             ): Promise<void> => {
-                                if (data[(field as RxWidgetInfoAttributesFieldID).name]) {
-                                    if (await BulkEditor.generateFields(data as BulkEditorData, socket)) {
+                                if (data.oid) {
+                                    // unknown bug by compilation
+                                    if (await (BulkEditor.generateFields as any)(data, socket)) {
                                         changeData(data);
                                     }
                                 }
@@ -501,7 +505,10 @@ class JQuiState<P extends RxData = RxData, S extends JQuiStateState = JQuiStateS
             const oid = this.getControlOid();
             if (oid) {
                 if (typeof this.state.object === 'object' && this.state.object?.common.type === 'number') {
-                    this.props.context.setValue(oid, parseFloat(this.state.rxData[`value${indexOrValue as number}`]));
+                    this.props.context.setValue(
+                        oid,
+                        parseFloat(this.state.rxData[`value${indexOrValue as number}`] as string),
+                    );
                 } else {
                     this.props.context.setValue(oid, this.state.rxData[`value${indexOrValue as number}`]);
                 }
