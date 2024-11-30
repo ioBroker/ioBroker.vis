@@ -5,7 +5,7 @@
         "target": "esnext",
         "baseUrl": ".",
         "jsx": "preserve",
-        "moduleResolution": "node"
+        "moduleResolution": "node",
     },
     "include": ["packages/"],
     "exclude": ["**/node_modules", "**/dist"]

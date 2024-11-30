@@ -1644,12 +1644,12 @@ const WidgetField = (props: WidgetFieldProps): string | React.JSX.Element | Reac
                 <TextField
                     fullWidth
                     size="small"
-                    placeholder={isDifferent ? t('different') : null}
+                    placeholder={isDifferent ? t('different') : undefined}
                     variant="standard"
                     value={value}
                     error={!!error}
                     disabled={disabled}
-                    onChange={e => change(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>): void => change(e.target.value)}
                     InputProps={{
                         endAdornment: value ? (
                             <IconButton
@@ -1725,7 +1725,6 @@ const WidgetField = (props: WidgetFieldProps): string | React.JSX.Element | Reac
                 />
                 {idDialog ? (
                     <TextDialog
-                        open={!0}
                         value={value as string}
                         onChange={newValue => change(newValue)}
                         onClose={() => setIdDialog(false)}

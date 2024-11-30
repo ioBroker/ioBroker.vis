@@ -199,9 +199,10 @@ const VisContextMenu = (props: VisContextMenuProps): React.JSX.Element | null =>
 
                                             if (widget.data && widget.data.members) {
                                                 const members: SingleWidgetId[] = [];
-                                                widget.data.members.forEach((member: SingleWidgetId) => {
+                                                for (let m = 0; m < widget.data.members.length; m++) {
+                                                    const member: SingleWidgetId = widget.data.members[m];
                                                     if (groupWidgets.includes(member)) {
-                                                        return;
+                                                        continue;
                                                     }
                                                     const memberWidget = JSON.parse(
                                                         JSON.stringify(visProject[props.selectedView].widgets[member]),
@@ -218,7 +219,7 @@ const VisContextMenu = (props: VisContextMenuProps): React.JSX.Element | null =>
                                                     delete memberWidget.marketplace;
                                                     widgets.push(memberWidget);
                                                     groupWidgets.push(member);
-                                                });
+                                                }
 
                                                 widget.data.members = members;
                                             }

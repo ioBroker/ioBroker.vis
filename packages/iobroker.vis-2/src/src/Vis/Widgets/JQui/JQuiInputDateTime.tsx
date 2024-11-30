@@ -32,7 +32,7 @@ import 'dayjs/locale/nl';
 
 import type { TextFieldVariants } from '@mui/material';
 
-import type { RxRenderWidgetProps } from '@iobroker/types-vis-2';
+import type { RxRenderWidgetProps, RxWidgetInfo } from '@iobroker/types-vis-2';
 import VisRxWidget from '../../visRxWidget';
 
 const styles: { textRoot: { [key: string]: React.CSSProperties } } = {
@@ -135,11 +135,11 @@ class JQuiInputDateTime extends VisRxWidget<RxData> {
     }
 
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo() {
+    getWidgetInfo(): RxWidgetInfo {
         return JQuiInputDateTime.getWidgetInfo();
     }
 
-    renderWidgetBody(props: RxRenderWidgetProps) {
+    renderWidgetBody(props: RxRenderWidgetProps): React.JSX.Element {
         super.renderWidgetBody(props);
 
         const val = this.state.values[`${this.state.rxData.oid}.val`];
@@ -155,7 +155,7 @@ class JQuiInputDateTime extends VisRxWidget<RxData> {
                     <TimePicker
                         value={val && !asDate ? dayjs(val, 'HH:mm') : dayjs(val)}
                         ampm={this.state.rxData.ampm || false}
-                        minutesStep={parseInt(this.state.rxData.stepMinute as any as string, 10) || 1}
+                        minutesStep={parseInt(this.state.rxData.stepMinute as unknown as string, 10) || 1}
                         label={this.state.rxData.widgetTitle || null}
                         formatDensity="dense"
                         format="HH:mm"
@@ -173,7 +173,7 @@ class JQuiInputDateTime extends VisRxWidget<RxData> {
                         }}
                         slotProps={{
                             textField: {
-                                variant: (this.state.rxData.variant as TextFieldVariants) || 'standard',
+                                variant: this.state.rxData.variant || 'standard',
                                 style: {
                                     width: '100%',
                                     height: '100%',

@@ -2,7 +2,7 @@
  *  ioBroker.vis-2
  *  https://github.com/ioBroker/ioBroker.vis-2
  *
- *  Copyright (c) 2023 Denis Haev https://github.com/GermanBluefox,
+ *  Copyright (c) 2023-2024 Denis Haev https://github.com/GermanBluefox,
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -12,14 +12,18 @@
  * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
  * (Free for non-commercial use).
  */
-import PropTypes from 'prop-types';
-
-// eslint-disable-next-line import/no-cycle
 import JQuiButton from './JQuiButton';
+import type {
+    RxWidgetInfo,
+    RxWidgetInfoAttributesField,
+    RxWidgetInfoAttributesFieldCheckbox,
+    RxWidgetInfoAttributesFieldSimple,
+    Writeable,
+} from '@iobroker/types-vis-2';
 
 class JQuiDialogExternal extends JQuiButton {
     static getWidgetInfo(): RxWidgetInfo {
-        const widgetInfo = JQuiButton.getWidgetInfo();
+        const widgetInfo: RxWidgetInfo = JQuiButton.getWidgetInfo();
 
         const newWidgetInfo = {
             id: 'tplContainerDialogExternal',
@@ -32,32 +36,28 @@ class JQuiDialogExternal extends JQuiButton {
         };
 
         // Add note
-        newWidgetInfo.visAttrs[0].fields.unshift({
+        (newWidgetInfo.visAttrs[0].fields as Writeable<RxWidgetInfoAttributesField[]>).unshift({
             name: '_note',
             type: 'help',
             text: 'jqui_button_link_blank_note',
         });
 
-        const externalDialog = JQuiButton.findField(newWidgetInfo, 'externalDialog');
+        const externalDialog = JQuiButton.findField<RxWidgetInfoAttributesFieldCheckbox>(
+            newWidgetInfo,
+            'externalDialog',
+        );
         externalDialog.default = true;
 
-        const htmlDialog = JQuiButton.findField(newWidgetInfo, 'html_dialog');
+        const htmlDialog = JQuiButton.findField<RxWidgetInfoAttributesFieldSimple>(newWidgetInfo, 'html_dialog');
         htmlDialog.default = '<div>HTML Dialog</div>';
 
         return newWidgetInfo;
     }
 
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo() {
+    getWidgetInfo(): RxWidgetInfo {
         return JQuiDialogExternal.getWidgetInfo();
     }
 }
-
-JQuiDialogExternal.propTypes = {
-    id: PropTypes.string.isRequired,
-    context: PropTypes.object.isRequired,
-    view: PropTypes.string.isRequired,
-    editMode: PropTypes.bool.isRequired,
-};
 
 export default JQuiDialogExternal;

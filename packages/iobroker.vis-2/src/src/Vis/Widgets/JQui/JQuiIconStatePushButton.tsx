@@ -2,7 +2,7 @@
  *  ioBroker.vis-2
  *  https://github.com/ioBroker/ioBroker.vis-2
  *
- *  Copyright (c) 2023 Denis Haev https://github.com/GermanBluefox,
+ *  Copyright (c) 2023-2024 Denis Haev https://github.com/GermanBluefox,
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -13,14 +13,17 @@
  * (Free for non-commercial use).
  */
 
-import PropTypes from 'prop-types';
-
-// eslint-disable-next-line import/no-cycle
 import JQuiBinaryState from './JQuiBinaryState';
+import type {
+    RxWidgetInfo,
+    RxWidgetInfoAttributesField,
+    RxWidgetInfoAttributesFieldCheckbox,
+    Writeable,
+} from '@iobroker/types-vis-2';
 
 class JQuiIconStatePushButton extends JQuiBinaryState {
     static getWidgetInfo(): RxWidgetInfo {
-        const widgetInfo = JQuiBinaryState.getWidgetInfo();
+        const widgetInfo: RxWidgetInfo = JQuiBinaryState.getWidgetInfo();
         const newWidgetInfo = {
             id: 'tplIconStatePushButton',
             visSet: 'jqui',
@@ -35,13 +38,13 @@ class JQuiIconStatePushButton extends JQuiBinaryState {
             },
         };
 
-        const pushMode = JQuiBinaryState.findField(newWidgetInfo, 'pushMode');
+        const pushMode = JQuiBinaryState.findField<RxWidgetInfoAttributesFieldCheckbox>(newWidgetInfo, 'pushMode');
         if (pushMode) {
             pushMode.default = true;
         }
 
         // Add note
-        newWidgetInfo.visAttrs[0].fields.unshift({
+        (newWidgetInfo.visAttrs[0].fields as Writeable<RxWidgetInfoAttributesField[]>).unshift({
             name: '_note',
             type: 'help',
             text: 'jqui_button_binary_control_note',
@@ -51,17 +54,9 @@ class JQuiIconStatePushButton extends JQuiBinaryState {
     }
 
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo() {
+    getWidgetInfo(): RxWidgetInfo {
         return JQuiIconStatePushButton.getWidgetInfo();
     }
 }
-
-JQuiIconStatePushButton.propTypes = {
-    id: PropTypes.string.isRequired,
-    context: PropTypes.object.isRequired,
-    view: PropTypes.string.isRequired,
-    editMode: PropTypes.bool.isRequired,
-    tpl: PropTypes.string.isRequired,
-};
 
 export default JQuiIconStatePushButton;

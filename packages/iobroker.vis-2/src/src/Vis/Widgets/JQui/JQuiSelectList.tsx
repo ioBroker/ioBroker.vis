@@ -2,7 +2,7 @@
  *  ioBroker.vis-2
  *  https://github.com/ioBroker/ioBroker.vis-2
  *
- *  Copyright (c) 2023 Denis Haev https://github.com/GermanBluefox,
+ *  Copyright (c) 2023-2024 Denis Haev https://github.com/GermanBluefox,
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -13,10 +13,13 @@
  * (Free for non-commercial use).
  */
 
-import PropTypes from 'prop-types';
-
-// eslint-disable-next-line import/no-cycle
 import JQuiState from './JQuiState';
+import type {
+    RxWidgetInfo,
+    RxWidgetInfoAttributesField,
+    RxWidgetInfoAttributesFieldSelect,
+    Writeable,
+} from '@iobroker/types-vis-2';
 
 class JQuiSelectList extends JQuiState {
     static getWidgetInfo(): RxWidgetInfo {
@@ -35,11 +38,12 @@ class JQuiSelectList extends JQuiState {
             },
         };
 
-        const type = JQuiState.findField(newWidgetInfo, 'type');
+        const type: Writeable<RxWidgetInfoAttributesFieldSelect> =
+            JQuiState.findField<RxWidgetInfoAttributesFieldSelect>(newWidgetInfo, 'type');
         type.default = 'select';
 
         // Add note
-        newWidgetInfo.visAttrs[0].fields.unshift({
+        (newWidgetInfo.visAttrs[0].fields as Writeable<RxWidgetInfoAttributesField[]>).unshift({
             name: '_note',
             type: 'help',
             text: 'jqui_state_note',
@@ -49,17 +53,9 @@ class JQuiSelectList extends JQuiState {
     }
 
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo() {
+    getWidgetInfo(): RxWidgetInfo {
         return JQuiSelectList.getWidgetInfo();
     }
 }
-
-JQuiSelectList.propTypes = {
-    id: PropTypes.string.isRequired,
-    context: PropTypes.object.isRequired,
-    view: PropTypes.string.isRequired,
-    editMode: PropTypes.bool.isRequired,
-    tpl: PropTypes.string.isRequired,
-};
 
 export default JQuiSelectList;

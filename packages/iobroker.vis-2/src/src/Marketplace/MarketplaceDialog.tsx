@@ -25,7 +25,7 @@ export interface MarketplaceDialogProps {
         image?: string;
     };
     installedWidgets: MarketplaceWidgetRevision[];
-    updateWidgets: (widget: MarketplaceWidgetRevision) => Promise<void>;
+    updateWidgets: (widget: MarketplaceWidgetRevision) => void;
     installWidget: (widgetId: string, id: string) => Promise<void>;
     themeName: ThemeName;
 }
@@ -61,7 +61,7 @@ const MarketplaceDialog = (props: MarketplaceDialogProps): React.JSX.Element => 
                 }
             });
             if (widgets.length) {
-                await props.updateWidgets(marketplace);
+                props.updateWidgets(marketplace);
             } else {
                 await props.installWidget(marketplace.widget_id, marketplace.id);
             }

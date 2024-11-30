@@ -2234,10 +2234,11 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
 }
 
 export interface VisEngineHandlers {
-    onStealStyle: VisView['onStealStyle'];
-    onPxToPercent: VisView['onPxToPercent'];
-    pxToPercent: VisView['pxToPercent'];
-    onPercentToPx: VisView['onPercentToPx'];
+    onStealStyle: (attr: string, cb: (value: string | number | boolean | null) => void) => void;
+    pxToPercent: (oldStyle: WidgetStyle, newStyle: WidgetStyle) => null | WidgetStyle;
+
+    onPxToPercent: (wids: AnyWidgetId[], attr: string, cb: (results: (string | null)[]) => void) => (string | null)[];
+    onPercentToPx: (wids: AnyWidgetId[], attr: string, cb: (results: (string | null)[]) => void) => (string | null)[];
 }
 
 export default VisView;

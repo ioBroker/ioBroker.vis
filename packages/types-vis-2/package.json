@@ -16,6 +16,6 @@
     },
     "scripts": {
         "check-ts": "tsc --noEmit --checkJS false",
-        "lint": "eslint -c eslint.config.mjs src"
+        "lint": "eslint -c eslint.config.mjs"
     }
 }

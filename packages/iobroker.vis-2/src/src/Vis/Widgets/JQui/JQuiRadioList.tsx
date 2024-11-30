@@ -2,7 +2,7 @@
  *  ioBroker.vis-2
  *  https://github.com/ioBroker/ioBroker.vis-2
  *
- *  Copyright (c) 2023 Denis Haev https://github.com/GermanBluefox,
+ *  Copyright (c) 2023-2024 Denis Haev https://github.com/GermanBluefox,
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -13,15 +13,18 @@
  * (Free for non-commercial use).
  */
 
-import PropTypes from 'prop-types';
-
-// eslint-disable-next-line import/no-cycle
 import JQuiState from './JQuiState';
+import type {
+    RxWidgetInfo,
+    RxWidgetInfoAttributesFieldSelect,
+    Writeable,
+    RxWidgetInfoAttributesField,
+} from '@iobroker/types-vis-2';
 
 class JQuiRadioList extends JQuiState {
     static getWidgetInfo(): RxWidgetInfo {
-        const widgetInfo = JQuiState.getWidgetInfo();
-        const newWidgetInfo = {
+        const widgetInfo: RxWidgetInfo = JQuiState.getWidgetInfo();
+        const newWidgetInfo: RxWidgetInfo = {
             id: 'tplJquiRadioList',
             visSet: 'jqui',
             visName: 'Radiobuttons ValueList',
@@ -35,11 +38,11 @@ class JQuiRadioList extends JQuiState {
             },
         };
 
-        const type = JQuiState.findField(newWidgetInfo, 'type');
+        const type = JQuiState.findField<RxWidgetInfoAttributesFieldSelect>(newWidgetInfo, 'type');
         type.default = 'radio';
 
         // Add note
-        newWidgetInfo.visAttrs[0].fields.unshift({
+        (newWidgetInfo.visAttrs[0].fields as Writeable<RxWidgetInfoAttributesField[]>).unshift({
             name: '_note',
             type: 'help',
             text: 'jqui_state_note',
@@ -49,17 +52,9 @@ class JQuiRadioList extends JQuiState {
     }
 
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo() {
+    getWidgetInfo(): RxWidgetInfo {
         return JQuiRadioList.getWidgetInfo();
     }
 }
-
-JQuiRadioList.propTypes = {
-    id: PropTypes.string.isRequired,
-    context: PropTypes.object.isRequired,
-    view: PropTypes.string.isRequired,
-    editMode: PropTypes.bool.isRequired,
-    tpl: PropTypes.string.isRequired,
-};
 
 export default JQuiRadioList;

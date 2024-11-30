@@ -39,7 +39,7 @@ import {
 
 import MaterialIconSelector from '@/Components/MaterialIconSelector';
 import type { VisTheme } from '@iobroker/types-vis-2';
-import commonStyles from '@/Utils/styles';
+import commonStyles from '../../../Utils/styles';
 
 const BUTTONS: Record<string, string> = {
     AUTO: 'thermostat_auto',
@@ -55,7 +55,7 @@ const BUTTONS: Record<string, string> = {
     OFF: 'power_settings_new',
 };
 
-interface BulkEditorData {
+export interface BulkEditorData {
     variant?: 'outlined' | 'contained';
     type: 'select' | 'radio';
     oid: string;

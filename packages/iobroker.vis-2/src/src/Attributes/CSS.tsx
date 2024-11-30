@@ -86,7 +86,7 @@ const CSS = (props: CSSProps): React.JSX.Element => {
         };
 
         load().catch(e => console.error('Error loading CSS: ', e));
-    }, []);
+    });
 
     const save = (value: string, saveType: 'global' | 'local'): void => {
         timers[saveType].setValue(value);

@@ -2,7 +2,7 @@
  *  ioBroker.vis-2
  *  https://github.com/ioBroker/ioBroker.vis-2
  *
- *  Copyright (c) 2023 Denis Haev https://github.com/GermanBluefox,
+ *  Copyright (c) 2023-2024 Denis Haev https://github.com/GermanBluefox,
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -13,15 +13,18 @@
  * (Free for non-commercial use).
  */
 
-import PropTypes from 'prop-types';
-
-// eslint-disable-next-line import/no-cycle
 import JQuiBinaryState from './JQuiBinaryState';
+import type {
+    RxWidgetInfo,
+    RxWidgetInfoAttributesFieldSelect,
+    Writeable,
+    RxWidgetInfoAttributesField,
+} from '@iobroker/types-vis-2';
 
 class JQuiRadio extends JQuiBinaryState {
     static getWidgetInfo(): RxWidgetInfo {
-        const widgetInfo = JQuiBinaryState.getWidgetInfo();
-        const newWidgetInfo = {
+        const widgetInfo: RxWidgetInfo = JQuiBinaryState.getWidgetInfo();
+        const newWidgetInfo: RxWidgetInfo = {
             id: 'tplJquiRadio',
             visSet: 'jqui',
             visName: 'Radiobuttons on/off',
@@ -36,13 +39,13 @@ class JQuiRadio extends JQuiBinaryState {
         };
 
         // Add note
-        newWidgetInfo.visAttrs[0].fields.unshift({
+        (newWidgetInfo.visAttrs[0].fields as Writeable<RxWidgetInfoAttributesField[]>).unshift({
             name: '_note',
             type: 'help',
             text: 'jqui_button_binary_control_note',
         });
 
-        const type = JQuiBinaryState.findField(newWidgetInfo, 'type');
+        const type = JQuiBinaryState.findField<RxWidgetInfoAttributesFieldSelect>(newWidgetInfo, 'type');
         if (type) {
             type.default = 'radio';
         }
@@ -51,17 +54,9 @@ class JQuiRadio extends JQuiBinaryState {
     }
 
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo() {
+    getWidgetInfo(): RxWidgetInfo {
         return JQuiRadio.getWidgetInfo();
     }
 }
-
-JQuiRadio.propTypes = {
-    id: PropTypes.string.isRequired,
-    context: PropTypes.object.isRequired,
-    view: PropTypes.string.isRequired,
-    editMode: PropTypes.bool.isRequired,
-    tpl: PropTypes.string.isRequired,
-};
 
 export default JQuiRadio;

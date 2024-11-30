@@ -1,5 +1,6 @@
 import type * as SpeechRecognition from 'dom-speech-recognition';
 import type VisRxWidget from '@/Vis/visRxWidget';
+import type JQuery from '@types/jquery';
 
 declare global {
     interface Window {
@@ -11,5 +12,6 @@ declare global {
         visConfigLoaded?: Promise<void>;
         sentryDSN?: string;
         disableDataReporting?: boolean;
+        jQuery: JQuery;
     }
 }

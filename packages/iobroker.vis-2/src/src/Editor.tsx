@@ -35,7 +35,6 @@ import {
     Layers,
 } from '@mui/icons-material';
 
-import type { IobTheme, LegacyConnection, ThemeName } from '@iobroker/adapter-react-v5';
 import {
     I18n,
     Utils,
@@ -43,6 +42,9 @@ import {
     Message as MessageDialog,
     SelectFile as SelectFileDialog,
     Icon,
+    type IobTheme,
+    type LegacyConnection,
+    type ThemeName,
 } from '@iobroker/adapter-react-v5';
 
 import type {
@@ -62,7 +64,6 @@ import type {
     WidgetStyle,
     VisTheme,
 } from '@iobroker/types-vis-2';
-import commonStyles from '@/Utils/styles';
 import { recalculateFields, store, updateProject } from './Store';
 import {
     isGroup,
@@ -80,15 +81,17 @@ import Toolbar from './Toolbar';
 import CodeDialog from './Components/CodeDialog';
 import CreateFirstProjectDialog from './Components/CreateFirstProjectDialog';
 import { DndPreview, isTouchDevice } from './Utils';
-import type { WidgetAttributesGroupInfoStored, WidgetType } from './Vis/visWidgetsCatalog';
-import { getWidgetTypes, parseAttributes } from './Vis/visWidgetsCatalog';
+import {
+    getWidgetTypes,
+    parseAttributes,
+    type WidgetAttributesGroupInfoStored,
+    type WidgetType,
+} from './Vis/visWidgetsCatalog';
 import VisContextMenu from './Vis/visContextMenu';
-import type { RuntimeProps, RuntimeState } from './Runtime';
-import Runtime from './Runtime';
+import Runtime, { type RuntimeProps, type RuntimeState } from './Runtime';
 import ImportProjectDialog from './Toolbar/ProjectsManager/ImportProjectDialog';
 import { findWidgetUsages } from './Vis/visUtils';
-import type { MarketplaceDialogProps } from './Marketplace/MarketplaceDialog';
-import MarketplaceDialog from './Marketplace/MarketplaceDialog';
+import MarketplaceDialog, { type MarketplaceDialogProps } from './Marketplace/MarketplaceDialog';
 import type { VisEngineHandlers } from './Vis/visView';
 
 const styles: Record<string, any> = {
@@ -335,14 +338,14 @@ class Editor extends Runtime<EditorProps, EditorState> {
 
     historyTimer: ReturnType<typeof setTimeout>;
 
-    onIgnoreMouseEvents = (ignore: boolean) => {
+    onIgnoreMouseEvents = (ignore: boolean): void => {
         if (this.state.ignoreMouseEvents !== ignore) {
             setTimeout(() => this.setState({ ignoreMouseEvents: ignore }), 100);
         }
     };
 
     // eslint-disable-next-line class-methods-use-this
-    initState = (newState: Partial<EditorState>) => {
+    initState = (newState: Partial<EditorState>): void => {
         this.visEngineHandlers = {};
         window.visAddWidget = this.addWidget; // Used for tests
 
@@ -406,13 +409,13 @@ class Editor extends Runtime<EditorProps, EditorState> {
         });
     };
 
-    async componentDidMount() {
+    componentDidMount(): void {
         super.componentDidMount();
         window.addEventListener('keydown', this.onKeyDown, false);
         window.addEventListener('beforeunload', this.onBeforeUnload, false);
     }
 
-    componentWillUnmount() {
+    componentWillUnmount(): void {
         this.savingTimer && clearTimeout(this.savingTimer);
         this.savingTimer = null;
         super.componentWillUnmount();
@@ -420,7 +423,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         window.removeEventListener('beforeunload', this.onBeforeUnload, false);
     }
 
-    onBeforeUnload = (e: BeforeUnloadEvent) => {
+    onBeforeUnload = (e: BeforeUnloadEvent): null | string => {
         if (this.state.needSave) {
             this.needRestart = true;
             e.returnValue = I18n.t("Project doesn't saved. Are you sure?");
@@ -430,7 +433,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         return null;
     };
 
-    onKeyDown = async (e: KeyboardEvent) => {
+    onKeyDown = async (e: KeyboardEvent): Promise<void> => {
         if (!this.state.editMode) {
             return;
         }
@@ -439,12 +442,10 @@ class Editor extends Runtime<EditorProps, EditorState> {
             if (controlKey && e.key === 'z' && this.state.historyCursor !== 0) {
                 e.preventDefault();
                 await this.undo();
-            }
-            if (controlKey && e.key === 'y' && this.state.historyCursor !== this.state.history.length - 1) {
+            } else if (controlKey && e.key === 'y' && this.state.historyCursor !== this.state.history.length - 1) {
                 e.preventDefault();
                 await this.redo();
-            }
-            if (this.state.selectedWidgets.length) {
+            } else if (this.state.selectedWidgets.length) {
                 if (controlKey && e.key === 'c') {
                     e.preventDefault();
                     await this.copyWidgets();
@@ -453,15 +454,13 @@ class Editor extends Runtime<EditorProps, EditorState> {
                     e.preventDefault();
                     await this.cutWidgets();
                 }
-            }
-            if (controlKey && e.key === 'v' && Object.keys(this.state.widgetsClipboard.widgets).length) {
+            } else if (controlKey && e.key === 'v' && Object.keys(this.state.widgetsClipboard.widgets).length) {
                 e.preventDefault();
                 await this.pasteWidgets();
-            }
-            if (controlKey && e.key === 'a') {
+            } else if (controlKey && e.key === 'a') {
                 e.preventDefault();
                 if (this.state.selectedGroup) {
-                    this.setSelectedWidgets(
+                    await this.setSelectedWidgets(
                         (
                             Object.keys(store.getState().visProject[this.state.selectedView].widgets) as AnyWidgetId[]
                         ).filter(
@@ -472,7 +471,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
                         ),
                     );
                 } else {
-                    this.setSelectedWidgets(
+                    await this.setSelectedWidgets(
                         (
                             Object.keys(store.getState().visProject[this.state.selectedView].widgets) as AnyWidgetId[]
                         ).filter(
@@ -482,38 +481,36 @@ class Editor extends Runtime<EditorProps, EditorState> {
                         ),
                     );
                 }
-            }
-            if (e.key === 'Escape') {
+            } else if (e.key === 'Escape') {
                 e.preventDefault();
-                this.setSelectedWidgets([]);
-            }
-            if (e.key === 'Delete') {
+                await this.setSelectedWidgets([]);
+            } else if (e.key === 'Delete') {
                 e.preventDefault();
-                await this.deleteWidgets();
+                this.deleteWidgets();
             }
         }
     };
 
-    setWidgetsLoadingProgress = (step: number, total: number) => {
+    setWidgetsLoadingProgress = (step: number, total: number): void => {
         this.setState({ loadingProgress: { step, total } });
     };
 
-    onWidgetSetsChanged = (id: string, state: ioBroker.State) => {
+    onWidgetSetsChanged = (id: string, state: ioBroker.State): void => {
         if (state && this.lastUploadedState && state.val !== this.lastUploadedState) {
             this.lastUploadedState = state.val;
             this.onVisChanged();
         }
     };
 
-    setViewsManager = (isOpen: boolean) => {
+    setViewsManager = (isOpen: boolean): void => {
         if (!!isOpen !== this.state.viewsManager) {
             this.setState({ viewsManager: !!isOpen });
         }
     };
 
-    setProjectsDialog = (isOpen: boolean) => this.setState({ projectsDialog: isOpen });
+    setProjectsDialog = (isOpen: boolean): void => this.setState({ projectsDialog: isOpen });
 
-    loadSelectedWidgets(selectedView: string) {
+    loadSelectedWidgets(selectedView: string): AnyWidgetId[] {
         selectedView = selectedView || this.state.selectedView;
         const selectedWidgets: AnyWidgetId[] =
             JSON.parse(window.localStorage.getItem(`${this.state.projectName}.${selectedView}.widgets`) || '[]') || [];
@@ -609,9 +606,9 @@ class Editor extends Runtime<EditorProps, EditorState> {
         return newKey;
     };
 
-    deleteWidgets = async () => this.setState({ deleteWidgetsDialog: true });
+    deleteWidgets = (): void => this.setState({ deleteWidgetsDialog: true });
 
-    updateWidgets = async (marketplaceWidget: MarketplaceWidgetRevision) =>
+    updateWidgets = (marketplaceWidget: MarketplaceWidgetRevision): void =>
         this.setState({ updateWidgetsDialog: marketplaceWidget });
 
     updateWidgetsAction = async (
@@ -620,7 +617,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
             name: string;
             widgets: AnyWidgetId[];
         }[],
-    ) => {
+    ): Promise<void> => {
         await this.installWidget(marketplace.widget_id, marketplace.id);
         const project = deepClone(store.getState().visProject);
         widgets.forEach(view => {
@@ -648,7 +645,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         await this.changeProject(project);
     };
 
-    deleteWidgetsAction = async () => {
+    deleteWidgetsAction = async (): Promise<void> => {
         const project = deepClone(store.getState().visProject);
         const widgets = project[this.state.selectedView].widgets;
         for (const selectedWidget of this.state.selectedWidgets) {
@@ -676,14 +673,14 @@ class Editor extends Runtime<EditorProps, EditorState> {
         await this.changeProject(project);
     };
 
-    lockWidgets = async (type: 'lock' | 'unlock') => {
+    lockWidgets = async (type: 'lock' | 'unlock'): Promise<void> => {
         const project = deepClone(store.getState().visProject);
         const widgets = project[this.state.selectedView].widgets;
         this.state.selectedWidgets.forEach(selectedWidget => (widgets[selectedWidget].data.locked = type === 'lock'));
         await this.changeProject(project);
     };
 
-    toggleWidgetHint = () => {
+    toggleWidgetHint = (): void => {
         let widgetHint: 'light' | 'dark' | 'hide';
         if (this.state.widgetHint === 'light') {
             widgetHint = 'dark';
@@ -696,15 +693,15 @@ class Editor extends Runtime<EditorProps, EditorState> {
         window.localStorage.setItem('widgetHint', widgetHint);
     };
 
-    cutWidgets = async () => {
+    cutWidgets = async (): Promise<void> => {
         await this.cutCopyWidgets('cut');
     };
 
-    copyWidgets = async () => {
+    copyWidgets = async (): Promise<void> => {
         await this.cutCopyWidgets('copy');
     };
 
-    cutCopyWidgets = async (type: 'cut' | 'copy') => {
+    cutCopyWidgets = async (type: 'cut' | 'copy'): Promise<void> => {
         const widgets: Record<string, Widget> = {};
         const groupMembers: Record<string, Widget> = {};
         const project = deepClone(store.getState().visProject);
@@ -745,7 +742,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         }
     };
 
-    pasteWidgets = async () => {
+    pasteWidgets = async (): Promise<void> => {
         const project = deepClone(store.getState().visProject);
         const widgets = project[this.state.selectedView].widgets;
 
@@ -796,7 +793,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         this.setSelectedWidgets(newKeys);
     };
 
-    cloneWidgets = async () => {
+    cloneWidgets = async (): Promise<void> => {
         const project = deepClone(store.getState().visProject);
         const widgets = project[this.state.selectedView].widgets;
 
@@ -827,9 +824,9 @@ class Editor extends Runtime<EditorProps, EditorState> {
                 newKeys.push(newKey);
             }
         });
-        this.setSelectedWidgets([]);
+        await this.setSelectedWidgets([]);
         await this.changeProject(project);
-        this.setSelectedWidgets(newKeys);
+        await this.setSelectedWidgets(newKeys);
     };
 
     alignWidgets = (
@@ -844,7 +841,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
             | 'vertical-equal'
             | 'width'
             | 'height',
-    ) => {
+    ): void => {
         const project = deepClone(store.getState().visProject);
         const widgets = project[this.state.selectedView].widgets;
         const newCoordinates = {
@@ -1031,10 +1028,10 @@ class Editor extends Runtime<EditorProps, EditorState> {
             });
             this.setState({ align: { alignType, alignIndex, alignValues } });
         }
-        this.changeProject(project);
+        void this.changeProject(project);
     };
 
-    orderWidgets = (type: 'front' | 'back') => {
+    orderWidgets = (type: 'front' | 'back'): Promise<void> => {
         const project = deepClone(store.getState().visProject);
         const widgets = project[this.state.selectedView].widgets;
         let minZ = 0;
@@ -1086,7 +1083,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         return null;
     }
 
-    groupWidgets = async () => {
+    groupWidgets = async (): Promise<void> => {
         const project = deepClone(store.getState().visProject);
         const widgets = project[this.state.selectedView].widgets;
         const group: GroupWidget = {
@@ -1145,10 +1142,10 @@ class Editor extends Runtime<EditorProps, EditorState> {
         widgets[groupId] = group;
 
         await this.changeProject(project);
-        this.setSelectedWidgets([groupId]);
+        await this.setSelectedWidgets([groupId]);
     };
 
-    ungroupWidgets = () => {
+    ungroupWidgets = async (): Promise<void> => {
         const project = deepClone(store.getState().visProject);
         const widgets = project[this.state.selectedView].widgets;
         const group = widgets[this.state.selectedWidgets[0]];
@@ -1182,14 +1179,14 @@ class Editor extends Runtime<EditorProps, EditorState> {
             parentGroupWidget.data.members.splice(idx, 1);
         }
 
-        this.setSelectedWidgets(group.data.members);
+        await this.setSelectedWidgets(group.data.members);
 
         delete widgets[this.state.selectedWidgets[0]];
 
         return this.changeProject(project);
     };
 
-    setSelectedGroup = (groupId: GroupWidgetId) => {
+    setSelectedGroup = (groupId: GroupWidgetId): void => {
         if (store.getState().visProject[this.state.selectedView].widgets[groupId].marketplace) {
             return;
         }
@@ -1197,29 +1194,29 @@ class Editor extends Runtime<EditorProps, EditorState> {
         this.setSelectedWidgets([]);
     };
 
-    undo = async () => {
+    undo = async (): Promise<void> => {
         this.setSelectedWidgets([]);
         await this.changeProject(this.state.history[this.state.historyCursor - 1], true);
         await this.setStateAsync({ historyCursor: this.state.historyCursor - 1 });
     };
 
-    redo = async () => {
+    redo = async (): Promise<void> => {
         this.setSelectedWidgets([]);
         await this.changeProject(this.state.history[this.state.historyCursor + 1], true);
         await this.setStateAsync({ historyCursor: this.state.historyCursor + 1 });
     };
 
-    toggleLockDragging = () => {
+    toggleLockDragging = (): void => {
         window.localStorage.setItem('lockDragging', JSON.stringify(!this.state.lockDragging));
         this.setState({ lockDragging: !this.state.lockDragging });
     };
 
-    toggleDisableInteraction = () => {
+    toggleDisableInteraction = (): void => {
         window.localStorage.setItem('disableInteraction', JSON.stringify(!this.state.disableInteraction));
         this.setState({ disableInteraction: !this.state.disableInteraction });
     };
 
-    saveHistory(project: Project) {
+    saveHistory(project: Project): void {
         this.historyTimer && clearTimeout(this.historyTimer);
 
         this.historyTimer = setTimeout(() => {
@@ -1239,7 +1236,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         }, 1000);
     }
 
-    changeProject = async (project: Project, ignoreHistory = false) => {
+    changeProject = async (project: Project, ignoreHistory = false): Promise<void> => {
         // set timestamp
         project.___settings.ts = `${Date.now()}.${Math.random().toString(36).substring(7)}`;
 
@@ -1283,7 +1280,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         }, 1_000);
     };
 
-    renameProject = async (fromProjectName: string, toProjectName: string) => {
+    renameProject = async (fromProjectName: string, toProjectName: string): Promise<void> => {
         try {
             await this.socket.rename(this.adapterId, fromProjectName, toProjectName);
             if (this.state.projectName === fromProjectName) {
@@ -1298,7 +1295,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         }
     };
 
-    deleteProject = async (projectName: string) => {
+    deleteProject = async (projectName: string): Promise<void> => {
         try {
             await this.socket.deleteFolder(this.adapterId, projectName);
             await this.refreshProjects();
@@ -1310,7 +1307,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         }
     };
 
-    toggleView = async (view: string, isShow: boolean, isActivate = false) => {
+    toggleView = async (view: string, isShow: boolean, isActivate = false): Promise<void> => {
         let changed = false;
         const project = deepClone(store.getState().visProject);
         const pos = project.___settings.openedViews.indexOf(view);
@@ -1338,7 +1335,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         selectedWidgets: AnyWidgetId[],
         selectedView?: string | (() => void),
         cb?: () => void,
-    ) => {
+    ): Promise<void> => {
         if (typeof selectedView === 'function') {
             cb = selectedView;
             selectedView = null;
@@ -1374,7 +1371,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         }
     };
 
-    toggleCode = () => {
+    toggleCode = (): void => {
         const oldShowCode = this.state.showCode;
         this.setState({ showCode: !oldShowCode });
         window.localStorage.setItem('showCode', JSON.stringify(!oldShowCode));
@@ -1389,7 +1386,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         }[],
         view: string,
         viewSettings: ViewSettings,
-    ) => {
+    ): void => {
         this.tempProject = this.tempProject || deepClone(store.getState().visProject);
         changedData?.forEach(item => {
             if (item.style) {
@@ -1448,11 +1445,11 @@ class Editor extends Runtime<EditorProps, EditorState> {
         }, 200);
     };
 
-    onFontsUpdate(fonts: string[]) {
+    onFontsUpdate(fonts: string[]): void {
         this.setState({ fonts });
     }
 
-    cssClone = (attr: string, cb: (value: string | number | boolean) => void) => {
+    cssClone = (attr: string, cb: (value: string | number | boolean) => void): void => {
         if (
             this.visEngineHandlers[this.state.selectedView] &&
             this.visEngineHandlers[this.state.selectedView].onStealStyle
@@ -1464,13 +1461,27 @@ class Editor extends Runtime<EditorProps, EditorState> {
     };
 
     registerCallback = (
-        name: keyof VisEngineHandlers,
+        name: 'onStealStyle' | 'pxToPercent' | 'onPxToPercent' | 'onPercentToPx',
         view: string,
-        cb: VisEngineHandlers[keyof VisEngineHandlers],
-    ) => {
+        cb:
+            | VisEngineHandlers['onStealStyle']
+            | VisEngineHandlers['pxToPercent']
+            | VisEngineHandlers['onPxToPercent']
+            | VisEngineHandlers['onPercentToPx'],
+    ): void => {
         if (cb) {
             this.visEngineHandlers[view] = this.visEngineHandlers[view] || {};
-            (this.visEngineHandlers[view][name] as VisEngineHandlers[keyof VisEngineHandlers]) = cb;
+            if (name === 'onStealStyle') {
+                this.visEngineHandlers[view].onStealStyle = cb as VisEngineHandlers['onStealStyle'];
+            } else if (name === 'pxToPercent') {
+                this.visEngineHandlers[view].pxToPercent = cb as VisEngineHandlers['pxToPercent'];
+            } else if (name === 'onPxToPercent') {
+                this.visEngineHandlers[view].onPxToPercent = cb as VisEngineHandlers['onPxToPercent'];
+            } else if (name === 'onPercentToPx') {
+                this.visEngineHandlers[view].onPercentToPx = cb as VisEngineHandlers['onPercentToPx'];
+            } else {
+                throw new Error(`Unknown callback name: ${name}`);
+            }
         } else if (this.visEngineHandlers[view]) {
             delete this.visEngineHandlers[view][name];
             if (!Object.keys(this.visEngineHandlers[view]).length) {
@@ -1479,7 +1490,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         }
     };
 
-    onPxToPercent = (wids: AnyWidgetId[], attr: string, cb: (results: string[]) => void) => {
+    onPxToPercent = (wids: AnyWidgetId[], attr: string, cb: (results: string[]) => void): string[] => {
         if (
             this.visEngineHandlers[this.state.selectedView] &&
             this.visEngineHandlers[this.state.selectedView].onPxToPercent
@@ -1490,18 +1501,15 @@ class Editor extends Runtime<EditorProps, EditorState> {
         return null;
     };
 
-    pxToPercent = (oldStyle: WidgetStyle, newStyle: WidgetStyle) => {
-        if (
-            this.visEngineHandlers[this.state.selectedView] &&
-            this.visEngineHandlers[this.state.selectedView].pxToPercent
-        ) {
+    pxToPercent = (oldStyle: WidgetStyle, newStyle: WidgetStyle): WidgetStyle | null => {
+        if (this.visEngineHandlers[this.state.selectedView]?.pxToPercent) {
             return this.visEngineHandlers[this.state.selectedView].pxToPercent(oldStyle, newStyle);
         }
         // cb && cb(wids, attr, null); // cancel selection
         return null;
     };
 
-    onPercentToPx = (wids: AnyWidgetId[], attr: string, cb: (results: string[]) => void) => {
+    onPercentToPx = (wids: AnyWidgetId[], attr: string, cb: (results: string[]) => void): string[] | null => {
         if (
             this.visEngineHandlers[this.state.selectedView] &&
             this.visEngineHandlers[this.state.selectedView].onPercentToPx
@@ -1512,7 +1520,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         // cb && cb(wids, attr, null); // cancel selection
     };
 
-    saveCssFile = (directory: string, fileName: string, data: string) => {
+    saveCssFile = (directory: string, fileName: string, data: string): void => {
         if (fileName.endsWith('vis-common-user.css')) {
             this.setState({ visCommonCss: data });
         } else if (fileName.endsWith('vis-user.css')) {
@@ -1528,17 +1536,18 @@ class Editor extends Runtime<EditorProps, EditorState> {
         icon: string;
         width: number;
         callback: (isYes: boolean) => void;
-    }) {
+    }): void {
         this.setState({ confirmDialog });
     }
 
-    showCodeDialog(codeDialog: { code: string; title: string; mode: string }) {
+    showCodeDialog(codeDialog: { code: string; title: string; mode: string }): void {
         this.setState({ showCodeDialog: codeDialog });
     }
 
-    setMarketplaceDialog = (marketplaceDialog: Partial<MarketplaceDialogProps>) => this.setState({ marketplaceDialog });
+    setMarketplaceDialog = (marketplaceDialog: Partial<MarketplaceDialogProps>): void =>
+        this.setState({ marketplaceDialog });
 
-    installWidget = async (widgetId: string, id: string) => {
+    installWidget = async (widgetId: string, id: string): Promise<void> => {
         if (window.VisMarketplace?.api) {
             const project = deepClone(store.getState().visProject);
             const marketplaceWidget = await window.VisMarketplace.api.apiGetWidgetRevision(widgetId, id);
@@ -1557,7 +1566,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         }
     };
 
-    uninstallWidget = async (widget: string) => {
+    uninstallWidget = async (widget: string): Promise<void> => {
         const project = deepClone(store.getState().visProject);
         const widgetIndex = project.___settings.marketplace.findIndex(item => item.id === widget);
         if (widgetIndex !== -1) {
@@ -1576,7 +1585,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         widgetId: AnyWidgetId,
         oldData: WidgetData,
         oldStyle: WidgetStyle,
-    ) {
+    ): Project {
         const newWidgets: Record<AnyWidgetId, Widget> = {};
 
         widgets.forEach(_widget => {
@@ -1638,7 +1647,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         widgetId?: AnyWidgetId,
         oldData?: WidgetData,
         oldStyle?: WidgetStyle,
-    ) => {
+    ): Promise<void> => {
         const project = deepClone(store.getState().visProject);
         const widgets = deepClone(
             store.getState().visProject.___settings.marketplace.find(item => item.id === id).widget,
@@ -1657,7 +1666,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         await this.changeProject(project);
     };
 
-    updateWidget = async (id: AnyWidgetId) => {
+    updateWidget = async (id: AnyWidgetId): Promise<void> => {
         const project = deepClone(store.getState().visProject);
         const widget = project[this.state.selectedView].widgets[id];
         if (widget && widget.marketplace) {
@@ -1671,7 +1680,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         }
     };
 
-    renderAskAboutIncludeDialog() {
+    renderAskAboutIncludeDialog(): React.JSX.Element | null {
         if (this.state.askAboutInclude) {
             return (
                 <Dialog
@@ -1731,10 +1740,13 @@ class Editor extends Runtime<EditorProps, EditorState> {
     }
 
     // eslint-disable-next-line no-shadow
-    askAboutInclude = (wid: AnyWidgetId, toWid: AnyWidgetId, cb: (wid: AnyWidgetId, toWid: AnyWidgetId) => void) =>
-        this.setState({ askAboutInclude: { wid, toWid, cb } });
+    askAboutInclude = (
+        wid: AnyWidgetId,
+        toWid: AnyWidgetId,
+        cb: (wid: AnyWidgetId, toWid: AnyWidgetId) => void,
+    ): void => this.setState({ askAboutInclude: { wid, toWid, cb } });
 
-    renderTabs() {
+    renderTabs(): React.JSX.Element {
         const { visProject } = store.getState();
         const views = visProject.___settings.openedViews.filter(view => Object.keys(visProject).includes(view));
 
@@ -1926,7 +1938,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         );
     }
 
-    renderPalette() {
+    renderPalette(): React.JSX.Element {
         return (
             <div
                 style={{
@@ -1963,7 +1975,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         );
     }
 
-    renderWorkspace() {
+    renderWorkspace(): React.JSX.Element {
         const visEngine = this.getVisEngine();
 
         return (
@@ -2022,7 +2034,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         );
     }
 
-    renderAttributes() {
+    renderAttributes(): React.JSX.Element {
         return (
             <div
                 style={{
@@ -2060,7 +2072,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         );
     }
 
-    renderConfirmDialog() {
+    renderConfirmDialog(): React.JSX.Element | null {
         if (this.state.confirmDialog) {
             return (
                 <ConfirmDialog
@@ -2079,7 +2091,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         return null;
     }
 
-    renderShowCodeDialog() {
+    renderShowCodeDialog(): React.JSX.Element | null {
         if (this.state.showCodeDialog !== null) {
             return (
                 <CodeDialog
@@ -2095,7 +2107,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         return null;
     }
 
-    renderShowProjectUpdateDialog() {
+    renderShowProjectUpdateDialog(): React.JSX.Element | null {
         if (!this.state.showProjectUpdateDialog) {
             return null;
         }
@@ -2107,7 +2119,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
                 onClose={result =>
                     this.setState({ showProjectUpdateDialog: false }, () => {
                         if (result) {
-                            this.loadProject(this.state.projectName);
+                            void this.loadProject(this.state.projectName);
                         }
                     })
                 }
@@ -2115,7 +2127,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         );
     }
 
-    renderCreateFirstProjectDialog() {
+    renderCreateFirstProjectDialog(): React.JSX.Element {
         return this.state.createFirstProjectDialog ? (
             <CreateFirstProjectDialog
                 open={!0}
@@ -2125,7 +2137,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         ) : null;
     }
 
-    renderUpdateDialog() {
+    renderUpdateDialog(): React.JSX.Element | null {
         if (!this.state.updateWidgetsDialog) {
             return null;
         }
@@ -2193,11 +2205,11 @@ class Editor extends Runtime<EditorProps, EditorState> {
         );
     }
 
-    setLoadingText = (text: string) => {
+    setLoadingText = (text: string): void => {
         this.setState({ loadingText: I18n.t(text) });
     };
 
-    renderDeleteDialog() {
+    renderDeleteDialog(): React.JSX.Element | null {
         return this.state.deleteWidgetsDialog ? (
             <ConfirmDialog
                 fullWidth={false}
@@ -2216,7 +2228,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         ) : null;
     }
 
-    renderMessageDialog() {
+    renderMessageDialog(): React.JSX.Element | null {
         return this.state.messageDialog ? (
             <MessageDialog
                 text={this.state.messageDialog.text}
@@ -2230,7 +2242,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         ) : null;
     }
 
-    renderImportProjectDialog() {
+    renderImportProjectDialog(): React.JSX.Element | null {
         if (!this.state.showImportDialog) {
             return null;
         }
@@ -2261,9 +2273,9 @@ class Editor extends Runtime<EditorProps, EditorState> {
             path?: string;
             userArg?: any;
         },
-    ) => this.setState({ legacyFileSelector: { callback, options } });
+    ): void => this.setState({ legacyFileSelector: { callback, options } });
 
-    renderLegacyFileSelectorDialog() {
+    renderLegacyFileSelectorDialog(): React.JSX.Element {
         return this.state.legacyFileSelector ? (
             <SelectFileDialog
                 title={I18n.t('Select file')}
@@ -2304,7 +2316,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         ) : null;
     }
 
-    renderLoadingText() {
+    renderLoadingText(): React.JSX.Element | null {
         if (!this.state.loadingText) {
             return null;
         }
@@ -2318,14 +2330,14 @@ class Editor extends Runtime<EditorProps, EditorState> {
         );
     }
 
-    toggleTheme(newThemeName?: ThemeName) {
+    toggleTheme(newThemeName?: ThemeName): void {
         super.toggleTheme(newThemeName);
 
         // apply background color only if not in iframe
         this.props.setBackground();
     }
 
-    render() {
+    render(): React.JSX.Element {
         if (this.state.projectDoesNotExist) {
             return (
                 <StyledEngineProvider injectFirst>

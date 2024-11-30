@@ -340,8 +340,7 @@ const detectDevices = async (socket: LegacyConnection): Promise<DetectorResult[]
 
     return result;
 };
-
-export default {
+const funcs = {
     deviceIcons,
     detectDevices,
     getObjectIcon,
@@ -350,3 +349,5 @@ export default {
     /** @deprecated use "getNewWidgetId" instead, it will give you the full wid like "w000001" */
     getNewWidgetIdNumber,
 };
+
+export default funcs;

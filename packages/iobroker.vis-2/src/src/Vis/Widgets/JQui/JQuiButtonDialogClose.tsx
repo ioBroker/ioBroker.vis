@@ -13,30 +13,43 @@
  * (Free for non-commercial use).
  */
 
-import type { CSSProperties } from 'react';
-import React from 'react';
+import React, { type CSSProperties } from 'react';
 
 import { Autocomplete, Button, Fab, TextField } from '@mui/material';
 
 import { I18n, Icon } from '@iobroker/adapter-react-v5';
 
-import type { WidgetStyleState } from '@/Vis/visBaseWidget';
-import VisBaseWidget from '@/Vis/visBaseWidget';
+import VisBaseWidget, { type WidgetStyleState } from '@/Vis/visBaseWidget';
 import type {
     AnyWidgetId,
-    GetRxDataFromWidget,
     RxRenderWidgetProps,
     RxWidgetInfoAttributesField,
     RxWidgetInfoCustomComponentProperties,
     ViewCommand,
     WidgetData,
     VisBaseWidgetProps,
+    RxWidgetInfo,
 } from '@iobroker/types-vis-2';
-import type { VisRxWidgetState } from '../../visRxWidget';
-import VisRxWidget from '../../visRxWidget';
+import VisRxWidget, { type VisRxWidgetState } from '../../visRxWidget';
 
 // eslint-disable-next-line no-use-before-define
-type RxData = GetRxDataFromWidget<typeof JQuiButtonDialogClose>;
+type RxData = {
+    dlgName: string;
+    buttontext: string;
+    html: string;
+    no_style: boolean;
+    jquery_style: boolean;
+    padding: number;
+    variant: 'contained' | 'outlined' | 'standard';
+    color: '' | 'primary' | 'secondary';
+    html_prepend: string;
+    html_append: string;
+    visResizable: boolean;
+    src: string;
+    icon: string;
+    invert_icon: boolean;
+    imageHeight: number;
+};
 
 interface JQuiButtonDialogCloseState extends VisRxWidgetState {
     width: number;
@@ -63,7 +76,6 @@ class JQuiButtonDialogClose extends VisRxWidget<RxData, JQuiButtonDialogCloseSta
                     name: 'common',
                     fields: [
                         {
-                            name: 'dlgName',
                             label: 'jqui_dialog_name',
                             tooltip: 'jqui_dialog_name_tooltip',
                             type: 'custom',
@@ -100,19 +112,19 @@ class JQuiButtonDialogClose extends VisRxWidget<RxData, JQuiButtonDialogCloseSta
                                         freeSolo
                                         options={names}
                                         // variant="standard"
-                                        value={data[field.name] || ''}
+                                        value={data.dlgName || ''}
                                         sx={{ width: '100%' }}
                                         onInputChange={(e, inputValue) => {
                                             if (typeof inputValue === 'object' && inputValue !== null) {
                                                 inputValue = (inputValue as { label: string; value: string }).value;
                                             }
-                                            onDataChange({ [field.name]: inputValue });
+                                            onDataChange({ dlgName: inputValue });
                                         }}
                                         onChange={(e, inputValue) => {
                                             if (typeof inputValue === 'object' && inputValue !== null) {
                                                 inputValue = inputValue.value;
                                             }
-                                            onDataChange({ [field.name]: inputValue });
+                                            onDataChange({ dlgName: inputValue });
                                         }}
                                         getOptionLabel={option => {
                                             if (typeof option === 'string') {
@@ -231,11 +243,11 @@ class JQuiButtonDialogClose extends VisRxWidget<RxData, JQuiButtonDialogCloseSta
     }
 
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo() {
+    getWidgetInfo(): RxWidgetInfo {
         return JQuiButtonDialogClose.getWidgetInfo();
     }
 
-    onClick() {
+    onClick(): void {
         let dlgName: AnyWidgetId = this.state.rxData.dlgName as AnyWidgetId;
         if (!dlgName) {
             // go through all widgets and find the one with dialog content as this view
@@ -281,7 +293,7 @@ class JQuiButtonDialogClose extends VisRxWidget<RxData, JQuiButtonDialogCloseSta
         }
     }
 
-    renderWidgetBody(props: RxRenderWidgetProps) {
+    renderWidgetBody(props: RxRenderWidgetProps): React.JSX.Element {
         super.renderWidgetBody(props);
 
         const iconStyle: CSSProperties = {

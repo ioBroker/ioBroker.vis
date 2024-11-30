@@ -2,7 +2,7 @@
  *  ioBroker.vis-2
  *  https://github.com/ioBroker/ioBroker.vis-2
  *
- *  Copyright (c) 2023 Denis Haev https://github.com/GermanBluefox,
+ *  Copyright (c) 2023-2024 Denis Haev https://github.com/GermanBluefox,
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -13,15 +13,18 @@
  * (Free for non-commercial use).
  */
 
-import PropTypes from 'prop-types';
-
-// eslint-disable-next-line import/no-cycle
 import JQuiSlider from './JQuiSlider';
+import type {
+    RxWidgetInfo,
+    RxWidgetInfoAttributesFieldSelect,
+    Writeable,
+    RxWidgetInfoAttributesField,
+} from '@iobroker/types-vis-2';
 
 class JQuiSliderVertical extends JQuiSlider {
     static getWidgetInfo(): RxWidgetInfo {
-        const widgetInfo = JQuiSlider.getWidgetInfo();
-        const newWidgetInfo = {
+        const widgetInfo: RxWidgetInfo = JQuiSlider.getWidgetInfo();
+        const newWidgetInfo: RxWidgetInfo = {
             id: 'tplJquiSliderVertical',
             visSet: 'jqui',
             visName: 'Vertical slider ',
@@ -34,30 +37,22 @@ class JQuiSliderVertical extends JQuiSlider {
                 height: 300,
             },
         };
-        newWidgetInfo.visAttrs[0].fields.unshift({
+        (newWidgetInfo.visAttrs[0].fields as Writeable<RxWidgetInfoAttributesField[]>).unshift({
             name: '_note',
             type: 'help',
             text: 'jqui_slider_note',
         });
 
-        const orientation = JQuiSlider.findField(newWidgetInfo, 'orientation');
+        const orientation = JQuiSlider.findField<RxWidgetInfoAttributesFieldSelect>(newWidgetInfo, 'orientation');
         orientation.default = 'vertical';
 
         return newWidgetInfo;
     }
 
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo() {
+    getWidgetInfo(): RxWidgetInfo {
         return JQuiSliderVertical.getWidgetInfo();
     }
 }
-
-JQuiSliderVertical.propTypes = {
-    id: PropTypes.string.isRequired,
-    context: PropTypes.object.isRequired,
-    view: PropTypes.string.isRequired,
-    editMode: PropTypes.bool.isRequired,
-    tpl: PropTypes.string.isRequired,
-};
 
 export default JQuiSliderVertical;

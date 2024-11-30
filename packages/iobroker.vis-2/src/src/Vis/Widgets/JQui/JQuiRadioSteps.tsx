@@ -2,7 +2,7 @@
  *  ioBroker.vis-2
  *  https://github.com/ioBroker/ioBroker.vis-2
  *
- *  Copyright (c) 2023 Denis Haev https://github.com/GermanBluefox,
+ *  Copyright (c) 2023-2024 Denis Haev https://github.com/GermanBluefox,
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -13,15 +13,13 @@
  * (Free for non-commercial use).
  */
 
-import PropTypes from 'prop-types';
-
-// eslint-disable-next-line import/no-cycle
 import JQuiState from './JQuiState';
+import type { RxWidgetInfo, Writeable, RxWidgetInfoAttributesField } from '@iobroker/types-vis-2';
 
 class JQuiRadioSteps extends JQuiState {
     static getWidgetInfo(): RxWidgetInfo {
-        const widgetInfo = JQuiState.getWidgetInfo();
-        const newWidgetInfo = {
+        const widgetInfo: RxWidgetInfo = JQuiState.getWidgetInfo();
+        const newWidgetInfo: RxWidgetInfo = {
             id: 'tplJquiRadioSteps',
             visSet: 'jqui',
             visName: 'Radiobuttons 25%',
@@ -36,7 +34,7 @@ class JQuiRadioSteps extends JQuiState {
         };
 
         // Add note
-        newWidgetInfo.visAttrs[0].fields.unshift({
+        (newWidgetInfo.visAttrs[0].fields as Writeable<RxWidgetInfoAttributesField[]>).unshift({
             name: '_note',
             type: 'help',
             text: 'jqui_state_note',
@@ -46,17 +44,9 @@ class JQuiRadioSteps extends JQuiState {
     }
 
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo() {
+    getWidgetInfo(): RxWidgetInfo {
         return JQuiRadioSteps.getWidgetInfo();
     }
 }
-
-JQuiRadioSteps.propTypes = {
-    id: PropTypes.string.isRequired,
-    context: PropTypes.object.isRequired,
-    view: PropTypes.string.isRequired,
-    editMode: PropTypes.bool.isRequired,
-    tpl: PropTypes.string.isRequired,
-};
 
 export default JQuiRadioSteps;

@@ -24,7 +24,7 @@ import type {
     VisRxWidgetStateValues,
     RxWidgetInfoGroup,
     StateID,
-    RxWidgetInfoAttributesFieldSelectSimple,
+    RxWidgetInfoAttributesFieldSimple,
     RxWidgetInfoAttributesField,
     RxWidgetInfoAttributesFieldCheckbox,
     VisLinkContextBinding,
@@ -38,14 +38,14 @@ import type {
     VisWidgetCommand,
     GroupData,
 } from '@iobroker/types-vis-2';
-import { deepClone, calculateOverflow } from '@/Utils/utils';
+import { deepClone, calculateOverflow } from '../Utils/utils';
 import VisBaseWidget, { type VisBaseWidgetState, type WidgetStyleState } from './visBaseWidget';
 import VisView from './visView';
 import { addClass, getUsedObjectIDsInWidget } from './visUtils';
 
 type VisRxWidgetProps = VisBaseWidgetProps;
 
-interface VisRxData {
+export interface VisRxData {
     _originalData?: string;
     filterkey?: string | string[];
     /** If value is hide widget should be hidden if user not in groups, else disabled */
@@ -109,7 +109,7 @@ class VisRxWidget<
     private readonly onStateChangedBind: (id: StateID, state: ioBroker.State, doNotApplyState?: any) => void;
 
     // private newState?: Partial<VisRxWidgetState & TState & { rxData: TRxData }> | null;
-    private newState?: Partial<VisRxWidgetState & TState & { rxData: TRxData }> | null;
+    protected newState?: Partial<VisRxWidgetState & TState & { rxData: TRxData }> | null;
 
     private wrappedContent?: boolean;
 
@@ -135,20 +135,18 @@ class VisRxWidget<
         const widgetAttrInfo: Record<string, RxWidgetInfoAttributesField> = {};
         // collect all attributes (only types)
         if (Array.isArray(options.visAttrs)) {
-            options.visAttrs.forEach(
-                (group: RxWidgetInfoGroup) =>
-                    group.fields &&
-                    group.fields.forEach(item => {
-                        widgetAttrInfo[item.name] = {
-                            name: item.name,
-                            type: (item as RxWidgetInfoAttributesFieldSelectSimple).type,
-                        };
+            options.visAttrs.forEach((group: RxWidgetInfoGroup) =>
+                group.fields?.forEach(item => {
+                    widgetAttrInfo[item.name] = {
+                        name: item.name,
+                        type: (item as RxWidgetInfoAttributesFieldSimple).type,
+                    };
+                    // @ts-expect-error fallback
+                    if (!widgetAttrInfo[item.name].type) {
                         // @ts-expect-error fallback
-                        if (!widgetAttrInfo[item.name].type) {
-                            // @ts-expect-error fallback
-                            widgetAttrInfo[item.name].type = '';
-                        }
-                    }),
+                        widgetAttrInfo[item.name].type = '';
+                    }
+                }),
             );
         }
 

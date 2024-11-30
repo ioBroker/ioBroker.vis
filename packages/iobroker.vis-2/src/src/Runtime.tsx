@@ -53,6 +53,18 @@ import { store, updateActiveUser, updateProject } from './Store';
 import createTheme from './theme';
 import { hasProjectAccess, hasViewAccess } from './Utils/utils';
 
+import enLang from './i18n/en.json';
+import deLang from './i18n/de.json';
+import ruLang from './i18n/ru.json';
+import ptLang from './i18n/pt.json';
+import nlLang from './i18n/nl.json';
+import frLang from './i18n/fr.json';
+import itLang from './i18n/it.json';
+import esLang from './i18n/es.json';
+import plLang from './i18n/pl.json';
+import ukLang from './i18n/uk.json';
+import zhLang from './i18n/zh-cn.json';
+
 const styles: { editModeComponentStyle: React.CSSProperties } = {
     editModeComponentStyle: {
         zIndex: 1002,
@@ -153,25 +165,25 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
 
     lastUploadedState: ioBroker.StateValue;
 
-    checkForUpdates: () => Promise<void>;
+    protected checkForUpdates?: () => Promise<void>;
 
-    getNewWidgetId: (project: Project) => SingleWidgetId;
+    protected getNewWidgetId?: (project: Project) => SingleWidgetId;
 
-    getNewGroupId: (project: Project) => GroupWidgetId;
+    protected getNewGroupId?: (project: Project) => GroupWidgetId;
 
-    changeProject: (project: Project, ignoreHistory?: boolean) => Promise<void>;
+    protected changeProject?: (project: Project, ignoreHistory?: boolean) => Promise<void>;
 
-    renderImportProjectDialog?(): React.JSX.Element;
+    protected renderImportProjectDialog?(): React.JSX.Element;
 
-    setSelectedWidgets: (
+    protected setSelectedWidgets: (
         selectedWidgets: AnyWidgetId[],
         selectedView?: string | (() => void),
         cb?: () => void,
     ) => Promise<void>;
 
-    setSelectedGroup: (selectedGroup: GroupWidgetId) => void;
+    protected setSelectedGroup?: (selectedGroup: GroupWidgetId) => void;
 
-    onWidgetsChanged: (
+    protected onWidgetsChanged?: (
         changedData: {
             wid: AnyWidgetId;
             view: string;
@@ -182,16 +194,20 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         viewSettings: ViewSettings,
     ) => void;
 
-    onFontsUpdate?(fonts: string[]): void;
+    protected onFontsUpdate?(fonts: string[]): void;
 
-    registerCallback: (name: string, view: string, cb: () => void) => void;
+    protected registerCallback?: (name: string, view: string, cb: () => void) => void;
 
-    onIgnoreMouseEvents: (ignore: boolean) => void;
+    protected onIgnoreMouseEvents?: (ignore: boolean) => void;
 
     // eslint-disable-next-line no-shadow
-    askAboutInclude: (wid: AnyWidgetId, toWid: AnyWidgetId, cb: (wid: AnyWidgetId, toWid: AnyWidgetId) => void) => void;
+    protected askAboutInclude?: (
+        wid: AnyWidgetId,
+        toWid: AnyWidgetId,
+        cb: (wid: AnyWidgetId, toWid: AnyWidgetId) => void,
+    ) => void;
 
-    showConfirmDialog?(dialog: {
+    protected showConfirmDialog?(dialog: {
         message: string;
         title: string;
         icon: string;
@@ -199,9 +215,9 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         callback: (isYes: boolean) => void;
     }): void;
 
-    showCodeDialog?(dialog: { code: string; title: string; mode: string }): void;
+    protected showCodeDialog?(dialog: { code: string; title: string; mode: string }): void;
 
-    showLegacyFileSelector: (
+    protected showLegacyFileSelector?: (
         callback: (data: { path: string; file: string }, userArg: any) => void,
         options: {
             path?: string;
@@ -209,24 +225,24 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         },
     ) => void;
 
-    initState: (newState: Partial<S | RuntimeState>) => void;
+    protected initState?: (newState: Partial<S | RuntimeState>) => void;
 
-    setLoadingText: (text: string) => void;
+    protected setLoadingText?: (text: string) => void;
 
     constructor(props: P) {
         const extendedProps = { ...props };
         extendedProps.translations = {
-            en: require('./i18n/en'),
-            de: require('./i18n/de'),
-            ru: require('./i18n/ru'),
-            pt: require('./i18n/pt'),
-            nl: require('./i18n/nl'),
-            fr: require('./i18n/fr'),
-            it: require('./i18n/it'),
-            es: require('./i18n/es'),
-            pl: require('./i18n/pl'),
-            uk: require('./i18n/uk'),
-            'zh-cn': require('./i18n/zh-cn'),
+            en: enLang,
+            de: deLang,
+            ru: ruLang,
+            pt: ptLang,
+            nl: nlLang,
+            fr: frLang,
+            it: itLang,
+            es: esLang,
+            pl: plLang,
+            uk: ukLang,
+            'zh-cn': zhLang,
         };
 
         extendedProps.Connection = LegacyConnection as unknown as LegacyConnection;
@@ -272,7 +288,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
     }
 
     // eslint-disable-next-line class-methods-use-this
-    createTheme(name?: ThemeName | null | undefined): VisTheme {
+    createTheme(name?: ThemeName | null): VisTheme {
         return createTheme(Utils.getThemeName(name));
     }
 
@@ -284,7 +300,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         });
     }
 
-    componentDidMount() {
+    componentDidMount(): void {
         super.componentDidMount();
 
         const newState: Partial<RuntimeState> = {
@@ -323,8 +339,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         }
     }
 
-    componentWillUnmount() {
-        super.componentWillUnmount();
+    componentWillUnmount(): void {
         super.componentWillUnmount();
         window.removeEventListener('hashchange', this.onHashChange, false);
         this.checkTimeout && clearTimeout(this.checkTimeout);
@@ -340,26 +355,26 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         window.alert = this.alert;
     }
 
-    onHashChange = () => {
+    onHashChange = (): void => {
         const currentPath = VisEngine.getCurrentPath();
         this.changeView(currentPath.view).catch(e => console.error(`Cannot change view: ${e}`));
     };
 
-    onProjectChange = (id: string, fileName: string) => {
+    onProjectChange = (_id: string, fileName: string): void => {
         if (fileName.endsWith('.json')) {
             this.checkTimeout && clearTimeout(this.checkTimeout);
             // if runtime => just update project
             if (this.state.runtime) {
                 this.checkTimeout = setTimeout(() => {
                     this.checkTimeout = null;
-                    this.loadProject(this.state.projectName);
+                    void this.loadProject(this.state.projectName);
                 }, 500);
             } else if (fileName.endsWith(`${this.state.projectName}/vis-views.json`)) {
                 // wait a little bit to avoid multiple calls
                 this.checkTimeout = setTimeout(() => {
                     this.checkTimeout = null;
                     // compare last executed file with new one
-                    readFile(this.socket as unknown as LegacyConnection, this.adapterId, fileName).then(file => {
+                    void readFile(this.socket as unknown as LegacyConnection, this.adapterId, fileName).then(file => {
                         try {
                             const ts = (JSON.parse((file as any).file || file) as Project).___settings.ts;
                             if (ts === store.getState().visProject.___settings.ts) {
@@ -381,7 +396,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         }
     };
 
-    fixProject(project: Project) {
+    fixProject(project: Project): void {
         project.___settings = project.___settings || ({} as Project['___settings']);
         project.___settings.folders = project.___settings.folders || [];
         project.___settings.openedViews = project.___settings.openedViews || [];
@@ -509,7 +524,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         });
     }
 
-    static syncMultipleWidgets(project: Project) {
+    static syncMultipleWidgets(project: Project): void {
         project = project || store.getState().visProject;
         Object.keys(project).forEach(view => {
             if (view === '___settings') {
@@ -560,7 +575,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         });
     }
 
-    static findViewWithNearestResolution(project: Project, resultRequired?: boolean) {
+    static findViewWithNearestResolution(project: Project, resultRequired?: boolean): string {
         const w = window.innerWidth;
         const h = window.innerHeight;
 
@@ -631,23 +646,27 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         return result;
     }
 
-    loadProject = async (projectName: string, file?: string | { file: string; mimeType: string }) => {
-        if (!file) {
-            this.setLoadingText && this.setLoadingText('Load project file...');
-            try {
-                file = await readFile(
-                    this.socket as unknown as LegacyConnection,
-                    this.adapterId,
-                    `${projectName}/vis-views.json`,
-                );
-            } catch (err) {
-                console.warn(`Cannot read project file "${projectName}/vis-views.json": ${err}`);
-                file = '{}';
+    loadProject = async (projectName: string): Promise<void> => {
+        let fileStr: string;
+        this.setLoadingText && this.setLoadingText('Load project file...');
+        try {
+            const file: string | { file: string; mimeType: string } = await readFile(
+                this.socket as unknown as LegacyConnection,
+                this.adapterId,
+                `${projectName}/vis-views.json`,
+            );
+            if (typeof file === 'object') {
+                fileStr = file.file;
+            } else {
+                fileStr = file;
             }
-            this.setLoadingText && this.setLoadingText(null);
+        } catch (err) {
+            console.warn(`Cannot read project file "${projectName}/vis-views.json": ${err}`);
+            fileStr = '{}';
         }
+        this.setLoadingText && this.setLoadingText(null);
 
-        if (!file || file === '{}') {
+        if (!fileStr || fileStr === '{}') {
             // read if show projects dialog allowed
             const obj = await this.socket.getObject(`system.adapter.${this.adapterName}.${this.instance}`);
             if (this.state.runtime && obj.native.doNotShowProjectDialog) {
@@ -660,17 +679,17 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
             return;
         }
 
-        file = file.toString();
+        fileStr = fileStr.toString();
 
         if (!this.state.runtime) {
             // remember the last loaded project file
-            this.lastProjectJSONfile = file;
+            this.lastProjectJSONfile = fileStr;
         }
 
         let project: Project;
         try {
-            project = JSON.parse(file);
-        } catch (e) {
+            project = JSON.parse(fileStr);
+        } catch {
             window.alert('Cannot parse project file!');
             project = {
                 'Cannot parse project file!': {
@@ -774,8 +793,10 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         }
     };
 
-    orientationChange = () => {
-        this.resolutionTimer && clearTimeout(this.resolutionTimer);
+    orientationChange = (): void => {
+        if (this.resolutionTimer) {
+            clearTimeout(this.resolutionTimer);
+        }
         this.resolutionTimer = setTimeout(async () => {
             this.resolutionTimer = null;
             const view = Runtime.findViewWithNearestResolution(store.getState().visProject);
@@ -786,12 +807,12 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
     };
 
     // this function is required here if the project not defined
-    refreshProjects = async (reloadCurrentProject?: boolean) => {
+    refreshProjects = async (reloadCurrentProject?: boolean): Promise<void> => {
         let projects: ioBroker.ReadDirResult[];
 
         try {
             projects = await this.socket.readDir(this.adapterId, '');
-        } catch (e) {
+        } catch {
             projects = [];
         }
 
@@ -804,7 +825,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         }
     };
 
-    onVisChanged() {
+    onVisChanged(): void {
         this.setState({
             messageDialog: {
                 text: I18n.t('Detected new version of vis files. Reloading in 2 seconds...'),
@@ -826,14 +847,14 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         }
     }
 
-    onWidgetSetsChanged = (id: string, state: ioBroker.State) => {
+    onWidgetSetsChanged = (id: string, state: ioBroker.State): void => {
         if (state && this.lastUploadedState && state.val !== this.lastUploadedState) {
             this.lastUploadedState = state.val;
             this.onVisChanged();
         }
     };
 
-    async onConnectionReady() {
+    async onConnectionReady(): Promise<void> {
         // preload all widgets first
         if (this.state.widgetsLoaded === Runtime.WIDGETS_LOADING_STEP_HTML_LOADED) {
             await VisWidgetsCatalog.collectRxInformation(
@@ -864,7 +885,11 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         });
 
         // subscribe on info.uploaded
-        this.socket.subscribeState(`${this.adapterName}.${this.instance}.info.uploaded`, this.onWidgetSetsChanged);
+        await this.socket.subscribeState(
+            `${this.adapterName}.${this.instance}.info.uploaded`,
+            this.onWidgetSetsChanged,
+        );
+
         const uploadedState = await this.socket.getState(`${this.adapterName}.${this.instance}.info.uploaded`);
         if (uploadedState && uploadedState.val !== this.lastUploadedState) {
             if (this.lastUploadedState) {
@@ -907,7 +932,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         }
     }
 
-    changeView = async (selectedView: string) => {
+    changeView = async (selectedView: string): Promise<void> => {
         if (selectedView === this.state.selectedView) {
             // inform about inView navigation
             if (this.state.runtime || !this.state.editMode) {
@@ -932,7 +957,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
             if (
                 !store.getState().visProject[selectedView] ||
                 !store.getState().visProject[selectedView].widgets ||
-                !store.getState().visProject[selectedView].widgets[selectedWidgets[i] as AnyWidgetId]
+                !store.getState().visProject[selectedView].widgets[selectedWidgets[i]]
             ) {
                 selectedWidgets = selectedWidgets.splice(i, 1);
             }
@@ -986,7 +1011,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         await this.setStateAsync(newState);
     };
 
-    showAlert(message: string, type: 'error' | 'warning' | 'info' | 'success') {
+    showAlert(message: string, type: 'error' | 'warning' | 'info' | 'success'): void {
         if (type !== 'error' && type !== 'warning' && type !== 'info' && type !== 'success') {
             type = 'info';
         }
@@ -998,7 +1023,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         });
     }
 
-    renderAlertDialog = () => (
+    renderAlertDialog = (): React.JSX.Element => (
         <Snackbar
             key="__snackbar_134__"
             style={
@@ -1021,7 +1046,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         />
     );
 
-    async onWidgetsLoaded() {
+    async onWidgetsLoaded(): Promise<void> {
         let widgetsLoaded = Runtime.WIDGETS_LOADING_STEP_HTML_LOADED;
         if (this.socket.isConnected()) {
             await VisWidgetsCatalog.collectRxInformation(
@@ -1034,7 +1059,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         this.setState({ widgetsLoaded });
     }
 
-    addProject = async (projectName: string, doNotLoad?: boolean) => {
+    addProject = async (projectName: string, doNotLoad?: boolean): Promise<void> => {
         try {
             const project: Project = {
                 ___settings: {
@@ -1063,7 +1088,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         }
     };
 
-    showCreateNewProjectDialog() {
+    showCreateNewProjectDialog(): React.JSX.Element | null {
         if (!this.state.showNewProjectDialog) {
             return null;
         }
@@ -1123,7 +1148,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         );
     }
 
-    showSmallProjectsDialog() {
+    showSmallProjectsDialog(): React.JSX.Element {
         return (
             <Dialog
                 open={!0}
@@ -1201,7 +1226,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         );
     }
 
-    renderProjectDoesNotExist() {
+    renderProjectDoesNotExist(): React.JSX.Element {
         return (
             <div
                 style={{
@@ -1222,7 +1247,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         );
     }
 
-    getVisEngine() {
+    getVisEngine(): React.JSX.Element {
         if (!this.state.runtime && this.state.projectDoesNotExist) {
             return this.renderProjectDoesNotExist();
         }
@@ -1321,7 +1346,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         );
     }
 
-    renderLoader() {
+    renderLoader(): React.JSX.Element | null {
         if (window.loadingHideLogo === 'true') {
             return null;
         }
@@ -1361,7 +1386,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         );
     }
 
-    render() {
+    render(): React.JSX.Element {
         return (
             <StyledEngineProvider injectFirst>
                 <ThemeProvider theme={this.state.theme}>

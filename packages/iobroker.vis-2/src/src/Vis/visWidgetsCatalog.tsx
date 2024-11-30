@@ -1,7 +1,7 @@
 import type React from 'react';
 
 import type { LegacyConnection, ThemeType, ObjectBrowserCustomFilter } from '@iobroker/adapter-react-v5';
-import type {
+import {
     GroupWidgetId,
     Project,
     RxWidgetInfoGroup,
@@ -11,7 +11,7 @@ import type {
     WidgetData,
     RxWidgetInfoCustomComponentProperties,
     RxWidgetAttributeType,
-    Widget,
+    Widget, WidgetStyle,
 } from '@iobroker/types-vis-2';
 import type VisRxWidget from '@/Vis/visRxWidget';
 
@@ -227,7 +227,7 @@ export interface WidgetType {
 
     order?: number;
     hidden?: boolean;
-    style?: React.CSSProperties;
+    style?: WidgetStyle;
     customPalette?: (context: CustomPaletteProperties) => React.JSX.Element;
 
     adapter?: string;

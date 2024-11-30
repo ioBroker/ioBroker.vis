@@ -15,7 +15,7 @@
 
 import type {
     RxWidgetInfo,
-    RxWidgetInfoAttributesFieldSelectSimple,
+    RxWidgetInfoAttributesFieldSimple,
     RxWidgetInfoAttributesFieldText,
     RxWidgetInfoWriteable,
 } from '@iobroker/types-vis-2';
@@ -45,7 +45,7 @@ class JQuiContainerButtonDialog extends JQuiButton {
         const buttonText = JQuiButton.findField<RxWidgetInfoAttributesFieldText>(newWidgetInfo, 'buttontext');
         buttonText.default = 'Container Dialog';
 
-        const containsView = JQuiButton.findField<RxWidgetInfoAttributesFieldSelectSimple>(
+        const containsView = JQuiButton.findField<RxWidgetInfoAttributesFieldSimple>(
             newWidgetInfo,
             'contains_view',
         );

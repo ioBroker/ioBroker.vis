@@ -23,7 +23,7 @@ window.adapterName = 'vis-2';
 
 console.log(`iobroker.${window.adapterName}@${packageJson.version}`);
 
-import('./Vis/visRxWidget').then(_VisRxWidget => (window.visRxWidget = _VisRxWidget.default));
+void import('./Vis/visRxWidget').then(_VisRxWidget => (window.visRxWidget = _VisRxWidget.default));
 
 function modifyClasses(className: string, addClass?: string, removeClass?: string): string {
     const classes = (className || '')

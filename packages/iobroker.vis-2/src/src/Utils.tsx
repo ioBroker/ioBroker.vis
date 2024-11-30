@@ -65,7 +65,7 @@ export const useFocus = (open: boolean, select: boolean, isAce = false): Mutable
             }, 100);
         }
         return () => clearInterval(interval);
-    }, [open]);
+    }, [open, isAce, select]);
 
     return inputField;
 };

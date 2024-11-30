@@ -2,7 +2,7 @@
  *  ioBroker.vis-2
  *  https://github.com/ioBroker/ioBroker.vis-2
  *
- *  Copyright (c) 2023 Denis Haev https://github.com/GermanBluefox,
+ *  Copyright (c) 2023-2024 Denis Haev https://github.com/GermanBluefox,
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -12,16 +12,21 @@
  * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
  * (Free for non-commercial use).
  */
-import PropTypes from 'prop-types';
-
-// eslint-disable-next-line import/no-cycle
 import JQuiButton from './JQuiButton';
+import type {
+    RxWidgetInfoAttributesField,
+    RxWidgetInfoAttributesFieldCheckbox,
+    RxWidgetInfoAttributesFieldSimple,
+    WidgetStyle,
+    Writeable,
+    RxWidgetInfo,
+} from '@iobroker/types-vis-2';
 
 class JQuiDialog extends JQuiButton {
     static getWidgetInfo(): RxWidgetInfo {
         const widgetInfo = JQuiButton.getWidgetInfo();
 
-        const newWidgetInfo = {
+        const newWidgetInfo: RxWidgetInfo = {
             id: 'tplJquiDialog',
             visSet: 'jqui',
             visName: 'HTML - Dialog',
@@ -32,27 +37,27 @@ class JQuiDialog extends JQuiButton {
         };
 
         // Add note
-        newWidgetInfo.visAttrs[0].fields.unshift({
+        (newWidgetInfo.visAttrs[0].fields as Writeable<RxWidgetInfoAttributesField[]>).unshift({
             name: '_note',
             type: 'help',
             text: 'jqui_button_link_blank_note',
         });
 
         // set resizable to true
-        const visResizable = JQuiButton.findField(newWidgetInfo, 'visResizable');
+        const visResizable = JQuiButton.findField<RxWidgetInfoAttributesFieldCheckbox>(newWidgetInfo, 'visResizable');
         visResizable.default = true;
 
-        const html = JQuiButton.findField(newWidgetInfo, 'html');
+        const html = JQuiButton.findField<RxWidgetInfoAttributesFieldSimple>(newWidgetInfo, 'html');
         html.default = '<div>HTML</div>';
 
-        const buttonText = JQuiButton.findField(newWidgetInfo, 'buttontext');
+        const buttonText = JQuiButton.findField<RxWidgetInfoAttributesFieldSimple>(newWidgetInfo, 'buttontext');
         delete buttonText.default;
 
-        const htmlDialog = JQuiButton.findField(newWidgetInfo, 'html_dialog');
+        const htmlDialog = JQuiButton.findField<RxWidgetInfoAttributesFieldSimple>(newWidgetInfo, 'html_dialog');
         htmlDialog.default = '<div>HTML Dialog</div>';
 
-        newWidgetInfo.visDefaultStyle = {
-            'border-width': 1,
+        (newWidgetInfo.visDefaultStyle as Writeable<WidgetStyle>) = {
+            'border-width': '1px',
             'border-style': 'solid',
             'border-color': '#000',
             width: '200px',
@@ -64,16 +69,9 @@ class JQuiDialog extends JQuiButton {
     }
 
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo() {
+    getWidgetInfo(): RxWidgetInfo {
         return JQuiDialog.getWidgetInfo();
     }
 }
-
-JQuiDialog.propTypes = {
-    id: PropTypes.string.isRequired,
-    context: PropTypes.object.isRequired,
-    view: PropTypes.string.isRequired,
-    editMode: PropTypes.bool.isRequired,
-};
 
 export default JQuiDialog;

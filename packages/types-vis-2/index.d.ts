@@ -655,9 +655,11 @@ export type RxWidgetInfoAttributesFieldSelectViews = {
     ) => Promise<void>;
 };
 
-export type RxWidgetInfoAttributesFieldSelectCustom = {
+export type RxWidgetInfoAttributesFieldCustom = {
     /** Field type */
     readonly type: 'custom';
+    /** Field type */
+    readonly name?: string;
     /** Field default value */
     readonly default?: string | number | boolean;
     /** if false, only one view can be selected. Default is true. */
@@ -668,8 +670,6 @@ export type RxWidgetInfoAttributesFieldSelectCustom = {
         props: RxWidgetInfoCustomComponentProperties,
     ) => React.JSX.Element | React.JSX.Element[];
 
-    /** Name of the widget field */
-    readonly name: string;
     /** Field label (i18n) */
     readonly label?: string;
     /** JS Function for conditional visibility */
@@ -701,7 +701,7 @@ export type RxWidgetInfoAttributesFieldSelectCustom = {
     ) => Promise<void>;
 };
 
-export type RxWidgetInfoAttributesFieldSelectSimple = {
+export type RxWidgetInfoAttributesFieldSimple = {
     /** Field type */
     readonly type:
         | 'image'
@@ -793,37 +793,37 @@ export type RxWidgetInfoAttributesFieldDefault = {
 };
 
 export type RxWidgetInfoAttributesField =
-    | RxWidgetInfoAttributesFieldText
+    | RxWidgetInfoAttributesFieldCheckbox
+    | RxWidgetInfoAttributesFieldCustom
+    | RxWidgetInfoAttributesFieldDefault
     | RxWidgetInfoAttributesFieldDelimiter
-    | RxWidgetInfoAttributesFieldHelp
     | RxWidgetInfoAttributesFieldHTML
+    | RxWidgetInfoAttributesFieldHelp
     | RxWidgetInfoAttributesFieldID
     | RxWidgetInfoAttributesFieldInstance
-    | RxWidgetInfoAttributesFieldSelect
-    | RxWidgetInfoAttributesFieldCheckbox
     | RxWidgetInfoAttributesFieldNumber
-    | RxWidgetInfoAttributesFieldSlider
-    | RxWidgetInfoAttributesFieldWidget
+    | RxWidgetInfoAttributesFieldSelect
     | RxWidgetInfoAttributesFieldSelectViews
-    | RxWidgetInfoAttributesFieldSelectCustom
-    | RxWidgetInfoAttributesFieldSelectSimple
-    | RxWidgetInfoAttributesFieldDefault;
+    | RxWidgetInfoAttributesFieldSimple
+    | RxWidgetInfoAttributesFieldSlider
+    | RxWidgetInfoAttributesFieldText
+    | RxWidgetInfoAttributesFieldWidget;
 
 export type RxWidgetInfoAttributesFieldWithType =
-    | RxWidgetInfoAttributesFieldText
+    | RxWidgetInfoAttributesFieldCheckbox
+    | RxWidgetInfoAttributesFieldCustom
     | RxWidgetInfoAttributesFieldDelimiter
-    | RxWidgetInfoAttributesFieldHelp
     | RxWidgetInfoAttributesFieldHTML
+    | RxWidgetInfoAttributesFieldHelp
     | RxWidgetInfoAttributesFieldID
     | RxWidgetInfoAttributesFieldInstance
-    | RxWidgetInfoAttributesFieldSelect
-    | RxWidgetInfoAttributesFieldCheckbox
     | RxWidgetInfoAttributesFieldNumber
-    | RxWidgetInfoAttributesFieldSlider
-    | RxWidgetInfoAttributesFieldWidget
+    | RxWidgetInfoAttributesFieldSelect
+    | RxWidgetInfoAttributesFieldSimple
     | RxWidgetInfoAttributesFieldSelectViews
-    | RxWidgetInfoAttributesFieldSelectCustom
-    | RxWidgetInfoAttributesFieldSelectSimple;
+    | RxWidgetInfoAttributesFieldSlider
+    | RxWidgetInfoAttributesFieldText
+    | RxWidgetInfoAttributesFieldWidget;
 
 export type Timer = ReturnType<typeof setTimeout>;
 
@@ -1788,7 +1788,7 @@ interface RxWidgetInfo {
     /** Groups of attributes */
     visAttrs: readonly RxWidgetInfoGroup[];
     /** Default style for widget */
-    readonly visDefaultStyle?: React.CSSProperties;
+    readonly visDefaultStyle?: WidgetStyle;
     /** Position in the widget set */
     readonly visOrder?: number;
     /** required, that width is always equal to height (quadratic widget) */

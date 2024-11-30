@@ -2,7 +2,7 @@
  *  ioBroker.vis-2
  *  https://github.com/ioBroker/ioBroker.vis-2
  *
- *  Copyright (c) 2023 Denis Haev https://github.com/GermanBluefox,
+ *  Copyright (c) 2023-2024 Denis Haev https://github.com/GermanBluefox,
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -13,15 +13,19 @@
  * (Free for non-commercial use).
  */
 
-import PropTypes from 'prop-types';
-
-// eslint-disable-next-line import/no-cycle
+import type {
+    RxWidgetInfo,
+    RxWidgetInfoAttributesField,
+    RxWidgetInfoAttributesFieldHelp,
+    RxWidgetInfoAttributesFieldSimple,
+    Writeable,
+} from '@iobroker/types-vis-2';
 import JQuiBinaryState from './JQuiBinaryState';
 
 class JQuiToggle extends JQuiBinaryState {
     static getWidgetInfo(): RxWidgetInfo {
-        const widgetInfo = JQuiBinaryState.getWidgetInfo();
-        const newWidgetInfo = {
+        const widgetInfo: RxWidgetInfo = JQuiBinaryState.getWidgetInfo();
+        const newWidgetInfo: RxWidgetInfo = {
             id: 'tplJquiToogle',
             visSet: 'jqui',
             visName: 'Icon Toggle',
@@ -36,18 +40,21 @@ class JQuiToggle extends JQuiBinaryState {
         };
 
         // Add note
-        newWidgetInfo.visAttrs[0].fields.unshift({
+        (newWidgetInfo.visAttrs[0].fields as Writeable<RxWidgetInfoAttributesField[]>).unshift({
             name: '_note',
             type: 'help',
             text: 'jqui_button_binary_control_note',
-        });
+        } as Writeable<RxWidgetInfoAttributesFieldHelp>);
 
-        const iconFalse = JQuiBinaryState.findField(newWidgetInfo, 'icon_false');
+        const iconFalse: Writeable<RxWidgetInfoAttributesFieldSimple> =
+            JQuiBinaryState.findField<RxWidgetInfoAttributesFieldSimple>(newWidgetInfo, 'icon_false');
         if (iconFalse) {
-            iconFalse.default = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSJjdXJyZW50Q29sb3IiIGQ9Ik0xMyAzaC0ydjEwaDJWM3ptNC44MyAyLjE3bC0xLjQyIDEuNDJBNi45MiA2LjkyIDAgMCAxIDE5IDEyYzAgMy44Ny0zLjEzIDctNyA3QTYuOTk1IDYuOTk1IDAgMCAxIDcuNTggNi41OEw2LjE3IDUuMTdBOC45MzIgOC45MzIgMCAwIDAgMyAxMmE5IDkgMCAwIDAgMTggMGMwLTIuNzQtMS4yMy01LjE4LTMuMTctNi44M3oiLz48L3N2Zz4=';
+            iconFalse.default =
+                'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSJjdXJyZW50Q29sb3IiIGQ9Ik0xMyAzaC0ydjEwaDJWM3ptNC44MyAyLjE3bC0xLjQyIDEuNDJBNi45MiA2LjkyIDAgMCAxIDE5IDEyYzAgMy44Ny0zLjEzIDctNyA3QTYuOTk1IDYuOTk1IDAgMCAxIDcuNTggNi41OEw2LjE3IDUuMTdBOC45MzIgOC45MzIgMCAwIDAgMyAxMmE5IDkgMCAwIDAgMTggMGMwLTIuNzQtMS4yMy01LjE4LTMuMTctNi44M3oiLz48L3N2Zz4=';
         }
 
-        const colorTrue = JQuiBinaryState.findField(newWidgetInfo, 'color_true');
+        const colorTrue = JQuiBinaryState.findField<RxWidgetInfoAttributesFieldSimple>(newWidgetInfo, 'color_true');
+
         if (colorTrue) {
             colorTrue.default = '#93ff93';
         }
@@ -56,17 +63,9 @@ class JQuiToggle extends JQuiBinaryState {
     }
 
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo() {
+    getWidgetInfo(): RxWidgetInfo {
         return JQuiToggle.getWidgetInfo();
     }
 }
-
-JQuiToggle.propTypes = {
-    id: PropTypes.string.isRequired,
-    context: PropTypes.object.isRequired,
-    view: PropTypes.string.isRequired,
-    editMode: PropTypes.bool.isRequired,
-    tpl: PropTypes.string.isRequired,
-};
 
 export default JQuiToggle;

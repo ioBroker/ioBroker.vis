@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import type { ThemeType } from '@iobroker/adapter-react-v5';
 
@@ -8,7 +8,6 @@ import CustomAceEditor from '../../Components/CustomAceEditor';
 interface TextDialogProps {
     onChange: (value: string) => void;
     onClose: () => void;
-    open: boolean;
     themeType: ThemeType;
     type: string;
     value: string;
@@ -17,11 +16,7 @@ interface TextDialogProps {
 const TextDialog = (props: TextDialogProps): React.JSX.Element => {
     const [value, changeValue] = useState('');
 
-    useEffect(() => {
-        changeValue(props.value);
-    }, [props.open]);
-
-    return props.open ? (
+    return (
         <IODialog
             keyboardDisabled
             title={props.type === 'json' ? 'JSON edit' : props.type === 'html' ? 'HTML edit' : 'Text edit'}
@@ -41,7 +36,7 @@ const TextDialog = (props: TextDialogProps): React.JSX.Element => {
                 onChange={newValue => changeValue(newValue)}
             />
         </IODialog>
-    ) : null;
+    );
 };
 
 export default TextDialog;

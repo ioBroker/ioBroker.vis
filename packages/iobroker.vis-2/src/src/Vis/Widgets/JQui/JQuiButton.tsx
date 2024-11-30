@@ -434,7 +434,7 @@ class JQuiButton<
     static findField<Field extends { [x: string]: any } = RxWidgetInfoAttributesField>(
         widgetInfo: RxWidgetInfo | RxWidgetInfoWriteable,
         name: string,
-    ): Writeable<Field> {
+    ): Writeable<Field> | null {
         return VisRxWidget.findField(widgetInfo as RxWidgetInfo, name) as unknown as Writeable<Field>;
     }
 

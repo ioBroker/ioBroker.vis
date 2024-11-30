@@ -19,7 +19,7 @@ import { Button, Fab, FormControlLabel, Tooltip, Checkbox, Switch, ButtonGroup }
 
 import { I18n, Icon } from '@iobroker/adapter-react-v5';
 
-import VisBaseWidget from '@/Vis/visBaseWidget';
+import VisBaseWidget from '../../visBaseWidget';
 import type {
     RxRenderWidgetProps,
     RxWidgetInfo,
@@ -31,7 +31,6 @@ import type { VisRxWidgetState } from '../../visRxWidget';
 // eslint-disable-next-line no-duplicate-imports
 import VisRxWidget from '../../visRxWidget';
 
-// eslint-disable-next-line no-use-before-define
 type RxData = {
     type: 'button' | 'round-button' | 'html' | 'radio' | 'checkbox' | 'image' | 'switch';
     oid: string;
@@ -77,13 +76,15 @@ interface JQuiBinaryStateState extends VisRxWidgetState {
 }
 
 class JQuiBinaryState extends VisRxWidget<RxData, JQuiBinaryStateState> {
-    textsLengthCache: Record<string, number>;
+    private textsLengthCache: Record<string, number> = {};
 
     constructor(props: VisBaseWidgetProps) {
         super(props);
-        (this.state as JQuiBinaryStateState).isOn = false;
-        (this.state as JQuiBinaryStateState).height = 0;
-        (this.state as JQuiBinaryStateState).width = 0;
+        Object.assign(this.state, {
+            isOn: false,
+            height: 0,
+            width: 0,
+        });
     }
 
     static getWidgetInfo(): RxWidgetInfo {
@@ -362,17 +363,19 @@ class JQuiBinaryState extends VisRxWidget<RxData, JQuiBinaryStateState> {
             data.false_text = null;
             data.true_text = null;
 
-            setTimeout(
-                () =>
-                    this.props.context.onWidgetsChanged([
-                        {
-                            wid: this.props.id,
-                            view: this.props.view,
-                            data,
-                        },
-                    ]),
-                100,
-            );
+            if (this.props.context.onWidgetsChanged) {
+                setTimeout(
+                    () =>
+                        this.props.context.onWidgetsChanged([
+                            {
+                                wid: this.props.id,
+                                view: this.props.view,
+                                data,
+                            },
+                        ]),
+                    100,
+                );
+            }
         }
 
         if (this.state.rxData.oid && this.state.rxData.oid !== 'nothing_selected') {
@@ -385,8 +388,11 @@ class JQuiBinaryState extends VisRxWidget<RxData, JQuiBinaryStateState> {
         }
     }
 
-    static findField(widgetInfo: RxWidgetInfo, name: string): Writeable<RxWidgetInfoAttributesField> | null {
-        return VisRxWidget.findField(widgetInfo, name);
+    static findField<Field extends { [x: string]: any } = RxWidgetInfoAttributesField>(
+        widgetInfo: RxWidgetInfo,
+        name: string,
+    ): Writeable<Field> | null {
+        return VisRxWidget.findField(widgetInfo, name) as unknown as Writeable<Field>;
     }
 
     // eslint-disable-next-line class-methods-use-this
@@ -561,7 +567,6 @@ class JQuiBinaryState extends VisRxWidget<RxData, JQuiBinaryStateState> {
         if (!this.refService.current) {
             return (text as unknown as number) * 14;
         }
-        this.textsLengthCache = this.textsLengthCache || {};
         if (this.textsLengthCache[text]) {
             return this.textsLengthCache[text];
         }

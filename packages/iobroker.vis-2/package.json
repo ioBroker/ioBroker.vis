@@ -64,7 +64,6 @@
     "lerna": "^8.1.9",
     "mocha": "^10.8.2",
     "mui-nested-menu": "^3.4.0",
-    "prop-types": "^15.8.1",
     "react-ace": "^13.0.0",
     "react-beautiful-dnd": "^13.1.1",
     "react-color": "^2.19.3",

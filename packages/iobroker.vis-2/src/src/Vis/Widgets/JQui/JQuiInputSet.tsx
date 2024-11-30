@@ -2,7 +2,7 @@
  *  ioBroker.vis-2
  *  https://github.com/ioBroker/ioBroker.vis-2
  *
- *  Copyright (c) 2023 Denis Haev https://github.com/GermanBluefox,
+ *  Copyright (c) 2023-2024 Denis Haev https://github.com/GermanBluefox,
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -13,15 +13,19 @@
  * (Free for non-commercial use).
  */
 
-import PropTypes from 'prop-types';
-
-// eslint-disable-next-line import/no-cycle
 import JQuiInput from './JQuiInput';
+import type {
+    RxWidgetInfo,
+    RxWidgetInfoAttributesField,
+    RxWidgetInfoAttributesFieldCheckbox,
+    RxWidgetInfoAttributesFieldSimple,
+    Writeable,
+} from '@iobroker/types-vis-2';
 
 class JQuiInputSet extends JQuiInput {
     static getWidgetInfo(): RxWidgetInfo {
         const widgetInfo = JQuiInput.getWidgetInfo();
-        const newWidgetInfo = {
+        const newWidgetInfo: RxWidgetInfo = {
             id: 'tplJquiInputSet',
             visSet: 'jqui',
             visName: 'Input + Button',
@@ -36,18 +40,18 @@ class JQuiInputSet extends JQuiInput {
         };
 
         // Add note
-        newWidgetInfo.visAttrs[0].fields.unshift({
+        (newWidgetInfo.visAttrs[0].fields as Writeable<RxWidgetInfoAttributesField[]>).unshift({
             name: '_note',
             type: 'help',
             text: 'jqui_button_input_note',
         });
 
-        const withEnter = JQuiInput.findField(newWidgetInfo, 'withEnter');
+        const withEnter = JQuiInput.findField<RxWidgetInfoAttributesFieldCheckbox>(newWidgetInfo, 'withEnter');
         if (withEnter) {
             withEnter.default = true;
         }
 
-        const buttonText = JQuiInput.findField(newWidgetInfo, 'buttontext');
+        const buttonText = JQuiInput.findField<RxWidgetInfoAttributesFieldSimple>(newWidgetInfo, 'buttontext');
         if (buttonText) {
             buttonText.default = 'OK';
         }
@@ -56,17 +60,9 @@ class JQuiInputSet extends JQuiInput {
     }
 
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo() {
+    getWidgetInfo(): RxWidgetInfo {
         return JQuiInputSet.getWidgetInfo();
     }
 }
-
-JQuiInputSet.propTypes = {
-    id: PropTypes.string.isRequired,
-    context: PropTypes.object.isRequired,
-    view: PropTypes.string.isRequired,
-    editMode: PropTypes.bool.isRequired,
-    tpl: PropTypes.string.isRequired,
-};
 
 export default JQuiInputSet;
