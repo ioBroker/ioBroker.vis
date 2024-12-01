@@ -125,11 +125,14 @@ export default function showAllViewsDialog(props: ShowAllViewsDialogProps): Reac
                         droppableId="items"
                         type="ROW"
                     >
-                        {(dropProvided /* dropSnapshot */) => (
+                        {(dropProvided, dropSnapshot) => (
                             <div
                                 ref={dropProvided.innerRef}
                                 {...dropProvided.droppableProps}
-                                style={{ width: '100%' }}
+                                style={{
+                                    width: '100%',
+                                    backgroundColor: dropSnapshot.isDraggingOver ? '#112233' : undefined,
+                                }}
                             >
                                 {items.map((item, index) => (
                                     <Draggable
@@ -137,12 +140,16 @@ export default function showAllViewsDialog(props: ShowAllViewsDialogProps): Reac
                                         draggableId={item.view || ''}
                                         index={index}
                                     >
-                                        {(dragProvided /* dragSnapshot */) => (
+                                        {(dragProvided, dragSnapshot) => (
                                             <div
                                                 key={item.view}
                                                 ref={dragProvided.innerRef}
                                                 {...dragProvided.draggableProps}
-                                                style={styles.draggableItem}
+                                                style={{
+                                                    ...styles.draggableItem,
+                                                    ...dragProvided.draggableProps.style,
+                                                    backgroundColor: dragSnapshot.isDragging ? '#334455' : undefined,
+                                                }}
                                             >
                                                 <div
                                                     {...dragProvided.dragHandleProps}

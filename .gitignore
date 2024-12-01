@@ -25,3 +25,4 @@ src/dist
 **/runtime
 **/tmp
 packages/iobroker.vis-2/README.md
+/packages/iobroker.vis-2/build-backend/

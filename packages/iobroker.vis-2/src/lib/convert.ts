@@ -1,5 +1,5 @@
 // this file is used by controller when build uploads
-function stringify(name, data, isConvert, files) {
+export function stringify(name: string, data: string, isConvert: boolean, files: string[]): string {
     if (isConvert && name.match(/vis-views\.json$/)) {
         const parts = name.split('/');
         const project = parts.shift();
@@ -8,17 +8,17 @@ function stringify(name, data, isConvert, files) {
         let m = data.match(/": "\/[-_0-9\w]+(\.[-_0-9\w]+)?\/.+\.(png|jpg|jpeg|gif|wav|mp3|bmp|svg)+"/g);
         if (m) {
             for (let mm = 0; mm < m.length; mm++) {
-                let fn = m[mm].substring(5); // remove ": "/
+                let fn: string = m[mm].substring(5); // remove ": "/
                 const originalFileName = fn.replace(/"/g, ''); // remove last "
                 const p = fn.split('/');
                 const adapter = p.shift(); // remove vis.0 or whatever
                 const _project = p.length > 1 ? p.shift() : '';
-                fn = p.length ? p.shift() : ''; // keep only one subdirectory
+                fn = p.length ? p.shift() || '' : ''; // keep only one subdirectory
                 fn += p.length ? `/${p.join('/')}` : ''; // all other subdirectories combine again
 
                 if (adapter !== 'vis-2.0' || _project !== project) {
                     // add to files
-                    if (files.indexOf(originalFileName) === -1) {
+                    if (!files.includes(originalFileName)) {
                         // if "vis.0/dir/otherProject.png"
                         files.push(originalFileName);
                     }
@@ -35,12 +35,12 @@ function stringify(name, data, isConvert, files) {
                 const p = fn.split('/');
                 const adapter = p.shift(); // remove vis-2.0 or whatever
                 const _project = p.length > 1 ? p.shift() : '';
-                fn = p.length ? p.shift() : ''; // keep only one subdirectory
+                fn = p.length ? p.shift() || '' : ''; // keep only one subdirectory
                 fn += p.length ? `/${p.join('/')}` : ''; // all other subdirectories combine again
 
                 if (adapter !== 'vis-2.0' || _project !== project) {
                     // add to files
-                    if (files.indexOf(originalFileName) === -1) {
+                    if (!files.includes(originalFileName)) {
                         // if "vis-2.0/dir/otherProject.png"
                         files.push(originalFileName);
                     }
@@ -57,12 +57,12 @@ function stringify(name, data, isConvert, files) {
                 const p = fn.split('/');
                 const adapter = p.shift(); // remove vis.0 or whatever
                 const _project = p.length > 1 ? p.shift() : '';
-                fn = p.length ? p.shift() : ''; // keep only one subdirectory
+                fn = p.length ? p.shift() || '' : ''; // keep only one subdirectory
                 fn += p.length ? `/${p.join('/')}` : ''; // all other subdirectories combine again
 
                 if (adapter !== 'vis-2.0' || _project !== project) {
                     // add to files
-                    if (files.indexOf(originalFileName) === -1) {
+                    if (!files.includes(originalFileName)) {
                         // if "vis-2.0/dir/otherProject.png"
                         files.push(originalFileName);
                     }
@@ -86,7 +86,7 @@ function stringify(name, data, isConvert, files) {
     return data;
 }
 
-function parse(projectName, fileName, data, settings) {
+export function parse(projectName: string, fileName: string, data: string, _settings: any): string {
     if (fileName.match(/vis-views\.json$/)) {
         // Check if all images are in the right directory
         let project = projectName;
@@ -101,5 +101,3 @@ function parse(projectName, fileName, data, settings) {
     }
     return data;
 }
-module.exports.stringify = stringify;
-module.exports.parse = parse;

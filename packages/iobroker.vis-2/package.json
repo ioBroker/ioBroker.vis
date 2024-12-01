@@ -83,24 +83,26 @@
   "bugs": {
     "url": "https://github.com/iobroker/iobroker.vis/issues"
   },
-  "main": "main.js",
+  "main": "build-backend/main.js",
   "files": [
     "admin/",
     "img/",
     "lib/",
+    "build-backend/",
     "www/",
     "io-package.json",
-    "LICENSE",
-    "main.js"
+    "LICENSE"
   ],
   "scripts": {
     "check-ts": "tsc --project src/tsconfig.json",
     "start": "cd src && npm run start",
     "test": "mocha ./test/*.engine.js --exit",
     "test-gui": "mocha ./test/*.gui.js --exit",
+    "tsc": "tsc --project tsconfig.build.json && npm run copy-backend",
+    "copy-backend": "node tasks --copy-backend",
     "prepublishOnly": "gulp",
     "clean": "rimraf runtime src/build www",
-    "build": "node tasks",
+    "build": "npm run tsc && node tasks",
     "runtime-0-clean": "node tasks --runtime-0-clean",
     "runtime-1-copy-src": "node tasks --runtime-1-copy-src",
     "runtime-2-npm": "node tasks --runtime-2-npm",

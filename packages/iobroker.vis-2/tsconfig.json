@@ -18,8 +18,6 @@
         "target": "ES2022",
         "types": ["@types/node", "@iobroker/types"]
     },
-    "include": ["**/*.js", "**/*.ts", "**/*.d.ts",
-        "eslint.config.mjs"
-    ],
-    "exclude": ["node_modules/**", "adminWww/**"]
+    "include": ["src/**/*.ts"],
+    "exclude": ["node_modules/**", "www/**", "lib/**", "build-backend/**", "tasks.js"]
 }

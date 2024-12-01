@@ -5,6 +5,7 @@ const path = require('node:path');
 const { deleteFoldersRecursive, buildReact, npmInstall } = require('@iobroker/build-tools');
 const axios = require('axios');
 const unzipper = require('unzipper');
+const { mkdirSync, writeFileSync } = require('node:fs');
 const rootDir = path.join(__dirname, '..', '..');
 
 function clean() {
@@ -123,7 +124,10 @@ export default FiltersEditorDialog;
     );
     fs.writeFileSync(`${__dirname}/runtime/src/index.tsx`, fs.readFileSync(`${__dirname}/src-vis/src/index.tsx`));
     fs.writeFileSync(`${__dirname}/runtime/src/theme.tsx`, fs.readFileSync(`${__dirname}/src-vis/src/theme.tsx`));
-    fs.writeFileSync(`${__dirname}/runtime/src/bootstrap.tsx`, fs.readFileSync(`${__dirname}/src-vis/src/bootstrap.tsx`));
+    fs.writeFileSync(
+        `${__dirname}/runtime/src/bootstrap.tsx`,
+        fs.readFileSync(`${__dirname}/src-vis/src/bootstrap.tsx`),
+    );
     fs.writeFileSync(`${__dirname}/runtime/src/index.css`, fs.readFileSync(`${__dirname}/src-vis/src/index.css`));
     fs.writeFileSync(
         `${__dirname}/runtime/src/Utils/styles.tsx`,
@@ -154,7 +158,8 @@ async function generateSvgFiles() {
     const svgPath = path.join(rootDir, '/node_modules/@material-icons/svg/');
     const data = JSON.parse(fs.readFileSync(`${svgPath}data.json`).toString('utf8'));
 
-    !fs.existsSync(`${__dirname}/src-vis/public/material-icons`) && fs.mkdirSync(`${__dirname}/src-vis/public/material-icons`);
+    !fs.existsSync(`${__dirname}/src-vis/public/material-icons`) &&
+        fs.mkdirSync(`${__dirname}/src-vis/public/material-icons`);
 
     updateFile(`${__dirname}/src-vis/public/material-icons/index.json`, JSON.stringify(data.icons));
 
@@ -312,7 +317,21 @@ function copyAllFiles() {
         path.join(__dirname, 'www/edit.html'),
         fs.readFileSync(path.join(__dirname, 'src-vis', 'build', 'index.html')),
     );
-    return Promise.resolve();
+}
+
+function copyBackend() {
+    if (!fs.existsSync(`${__dirname}/lib`)) {
+        mkdirSync(`${__dirname}/lib`);
+    }
+    writeFileSync(`${__dirname}/lib/states.js`, fs.readFileSync(`${__dirname}/build-backend/lib/states.js`));
+    writeFileSync(
+        `${__dirname}/build-backend/lib/cloudCert.crt`,
+        fs.readFileSync(`${__dirname}/src/lib/cloudCert.crt`),
+    );
+    writeFileSync(
+        `${__dirname}/build-backend/lib/updating.html`,
+        fs.readFileSync(`${__dirname}/src/lib/updating.html`),
+    );
 }
 
 function patchFile(htmlFile) {
@@ -406,6 +425,8 @@ if (process.argv.includes('--runtime-0-clean')) {
     copyAllFiles();
 } else if (process.argv.includes('--5-patch')) {
     patchEditor();
+} else if (process.argv.includes('--copy-backend')) {
+    copyBackend();
 } else {
     clean();
     copyRuntimeSrc();

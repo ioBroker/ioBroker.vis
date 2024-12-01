@@ -300,6 +300,7 @@ export type RxWidgetInfoAttributesFieldID = {
      */
     readonly filter?: {
         readonly common?: {
+            // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
             readonly custom?: true | string | '_dataSources';
             readonly type?: ioBroker.CommonType | ioBroker.CommonType[];
             readonly role?: string | string[];
