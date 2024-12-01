@@ -385,12 +385,14 @@ function patchEditor() {
     patchFile(`${__dirname}/www/index.html`);
     patchFile(`${__dirname}/src-vis/build/index.html`);
     patchFile(`${__dirname}/src-vis/build/edit.html`);
-    fs.existsSync(`${__dirname}/www/marketplaceConfig.sample.js`) &&
+    if (fs.existsSync(`${__dirname}/www/marketplaceConfig.sample.js`)) {
         fs.unlinkSync(`${__dirname}/www/marketplaceConfig.sample.js`);
+    }
+
     copyFolder(`${__dirname}/www`, `${__dirname}/../../www`);
     fs.writeFileSync(`${__dirname}/../../io-package.json`, fs.readFileSync(`${__dirname}/io-package.json`).toString());
-    fs.writeFileSync(`${__dirname}/../../main.js`, fs.readFileSync(`${__dirname}/main.js`).toString());
-    copyFolder(`${__dirname}/lib`, `${__dirname}/../../lib`);
+    fs.writeFileSync(`${__dirname}/../../main.js`, fs.readFileSync(`${__dirname}/build-backend/main.js`).toString());
+    copyFolder(`${__dirname}/build-backend/lib`, `${__dirname}/../../lib`);
 
     let readme = fs.readFileSync(`${__dirname}/../../README.md`).toString('utf8');
     readme = readme.replaceAll('packages/iobroker.vis-2/', '');

@@ -298,6 +298,7 @@ npm run start
 * (@GermanBluefox) Corrected navigation menu
 * (@GermanBluefox) Migrated widgets to React: basic - frame, basic - note, basic - logout 
 * (@GermanBluefox) Added the HTML rebuild button to settings
+* (@GermanBluefox) Backend was migrated to TypeScript
 
 ### 2.10.8 (2024-11-22)
 * (bluefox) Added new option for view: "Limit only for instances"
