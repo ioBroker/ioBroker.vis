@@ -41,12 +41,13 @@
     "@material-icons/svg": "^1.0.33",
     "@mui/icons-material": "^6.1.9",
     "@mui/material": "^6.1.9",
-    "@mui/x-date-pickers": "^7.22.3",
-    "@reduxjs/toolkit": "^2.3.0",
+    "@mui/x-date-pickers": "^7.23.0",
+    "@reduxjs/toolkit": "^2.4.0",
     "@sentry/browser": "^8.41.0",
     "@tsconfig/node18": "^18.2.4",
     "@types/dom-speech-recognition": "^0.0.4",
     "@types/jquery": "^3.5.32",
+    "@types/mime": "^3.0.4",
     "@types/mocha": "^10.0.10",
     "@types/react-beautiful-dnd": "^13.1.8",
     "@types/react-color": "^3.0.12",
@@ -94,14 +95,14 @@
     "LICENSE"
   ],
   "scripts": {
-    "check-ts": "tsc --project src/tsconfig.json",
-    "start": "cd src && npm run start",
+    "check-ts": "cd src-vis && tsc --project tsconfig.json && cd .. && tsc --project tsconfig.build.json",
+    "start": "cd src-vis && npm run start",
     "test": "mocha ./test/*.engine.js --exit",
     "test-gui": "mocha ./test/*.gui.js --exit",
     "tsc": "tsc --project tsconfig.build.json && npm run copy-backend",
     "copy-backend": "node tasks --copy-backend",
     "prepublishOnly": "gulp",
-    "clean": "rimraf runtime src/build www",
+    "clean": "rimraf runtime src-vis/build www",
     "build": "npm run tsc && node tasks",
     "runtime-0-clean": "node tasks --runtime-0-clean",
     "runtime-1-copy-src": "node tasks --runtime-1-copy-src",
@@ -119,8 +120,8 @@
     "release-patch": "release-script patch --yes --no-update-lockfile",
     "release-minor": "release-script minor --yes --no-update-lockfile",
     "release-major": "release-script major --yes --no-update-lockfile",
-    "update-packages": "ncu --upgrade && cd src && ncu --upgrade && cd ..",
-    "npm": "npm i && cd src && npm i -f"
+    "update-packages": "ncu --upgrade && cd src-vis && ncu --upgrade && cd ..",
+    "npm": "npm i -f && cd src-vis && npm i -f"
   },
   "license": "CC-BY-NC-4.0"
 }

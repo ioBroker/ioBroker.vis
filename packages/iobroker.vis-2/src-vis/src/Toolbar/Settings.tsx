@@ -46,6 +46,7 @@ interface SettingsFieldBase {
 interface SettingsFieldSelect extends SettingsFieldBase {
     type: 'select';
     items: { value: string | number | boolean; name: string }[];
+    fullWidth?: boolean;
 }
 
 interface SettingsFieldRaw extends SettingsFieldBase {
@@ -113,6 +114,7 @@ const Settings: React.FC<SettingsProps> = props => {
             type: 'select',
             name: 'Reload all browsers if project changed',
             field: 'reloadOnEdit',
+            fullWidth: true,
             items: [
                 { value: true, name: 'reload' },
                 { value: false, name: 'no_reload' },
@@ -122,6 +124,7 @@ const Settings: React.FC<SettingsProps> = props => {
             type: 'select',
             name: 'Reload if sleep longer than',
             field: 'reloadOnSleep',
+            fullWidth: true,
             items: [
                 { value: 0, name: 'never' },
                 { value: 30, name: '30 seconds' },
@@ -141,6 +144,7 @@ const Settings: React.FC<SettingsProps> = props => {
             type: 'select',
             name: 'Reconnect interval',
             field: 'reconnectInterval',
+            fullWidth: true,
             items: [
                 { value: 1000, name: '1 second' },
                 { value: 2000, name: '2 seconds' },
@@ -156,6 +160,7 @@ const Settings: React.FC<SettingsProps> = props => {
             type: 'select',
             name: 'Destroy inactive view',
             field: 'destroyViewsAfter',
+            fullWidth: true,
             items: [
                 { value: 0, name: 'never' },
                 { value: 1, name: '1 second' },
@@ -232,6 +237,7 @@ const Settings: React.FC<SettingsProps> = props => {
             field: 'bodyOverflow',
             help: 'Default: auto',
             noTranslate: true,
+            fullWidth: false,
             items: [
                 { value: 'auto', name: 'auto' },
                 { value: 'scroll', name: 'scroll' },
@@ -285,7 +291,7 @@ const Settings: React.FC<SettingsProps> = props => {
                         result = (
                             <FormControl
                                 variant="standard"
-                                fullWidth
+                                fullWidth={field.fullWidth}
                             >
                                 <InputLabel>{I18n.t(field.name)}</InputLabel>
                                 <Select
@@ -368,6 +374,23 @@ const Settings: React.FC<SettingsProps> = props => {
                         </div>
                     );
                 })}
+
+                <Button
+                    style={{
+                        marginTop: 10,
+                    }}
+                    color="grey"
+                    variant="contained"
+                    onClick={() =>
+                        props.socket.sendTo(`${props.adapterName}.${props.instance}`, 'rebuild', null).then(() => {
+                            window.alert(I18n.t('Rebuild of HTML pages was started'));
+                            props.onClose();
+                        })
+                    }
+                    startIcon={<Refresh />}
+                >
+                    {I18n.t('Rebuild HTML pages')}
+                </Button>
                 <Button
                     style={{
                         marginTop: 10,

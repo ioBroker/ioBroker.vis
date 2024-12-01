@@ -1,6 +1,6 @@
-import React, { useRef, useState } from 'react';
+import React from 'react';
 
-import { IconButton, Tooltip, Menu as DropMenu, MenuItem as DropMenuItem, Box } from '@mui/material';
+import { IconButton, Tooltip, Menu as DropMenu, MenuItem as DropMenuItem, Box, LinearProgress } from '@mui/material';
 
 import {
     Close as CloseIcon,
@@ -46,6 +46,7 @@ const styles: Record<string, any> = {
         float: 'right',
         display: 'inline-flex',
         flexDirection: 'column',
+        position: 'relative',
     },
     rightBlock: {
         display: 'flex',
@@ -128,203 +129,286 @@ interface ToolbarProps {
     widgetsLoaded: boolean;
 }
 
-const Toolbar = (props: ToolbarProps): React.JSX.Element => {
-    const [right, setRight] = useState(false);
-    const [lastCommand, setLastCommand] = useState(window.localStorage.getItem('Vis.lastCommand') || 'close');
-    const rightRef = useRef(null);
+interface ToolbarState {
+    right: boolean;
+    lastCommand: string;
+    upload: number;
+}
 
-    const lang = I18n.getLanguage();
+class Toolbar extends React.Component<ToolbarProps, ToolbarState> {
+    private readonly rightRef: React.RefObject<HTMLButtonElement>;
+    private readonly lang: ioBroker.Languages;
+    private readonly runtimeURL: string;
 
-    const runtimeURL = window.location.pathname.endsWith('/edit.html')
-        ? `./?${props.projectName}#${props.selectedView}`
-        : `?${props.projectName}&runtime=true#${props.selectedView}`;
+    constructor(props: ToolbarProps) {
+        super(props);
+        this.state = {
+            right: false,
+            lastCommand: window.localStorage.getItem('Vis.lastCommand') || 'close',
+            upload: 0,
+        };
+        this.rightRef = React.createRef();
+        this.lang = I18n.getLanguage();
+        this.runtimeURL = window.location.pathname.endsWith('/edit.html')
+            ? `./?${props.projectName}#${props.selectedView}`
+            : `?${props.projectName}&runtime=true#${props.selectedView}`;
+    }
 
-    const onReload = (): void => {
+    componentDidMount(): void {
+        void this.props.socket.subscribeState(`system.adapter.${this.props.adapterName}.upload`, this.onUpload);
+    }
+
+    componentWillUnmount(): void {
+        void this.props.socket.unsubscribeState(`system.adapter.${this.props.adapterName}.upload`, this.onUpload);
+    }
+
+    onUpload = (_id: string, state: ioBroker.State | null | undefined): void => {
+        if (state?.val || state?.val === 0) {
+            this.setState({ upload: state.val as number });
+        }
+    };
+
+    async onReload(): Promise<void> {
         window.localStorage.setItem('Vis.lastCommand', 'reload');
-        setLastCommand('reload');
-        void props.socket.setState(`${props.adapterName}.${props.instance}.control.instance`, { val: '*', ack: true });
-        void props.socket.setState(`${props.adapterName}.${props.instance}.control.data`, { val: null, ack: true });
-        void props.socket.setState(`${props.adapterName}.${props.instance}.control.command`, {
+        await this.props.socket.setState(`${this.props.adapterName}.${this.props.instance}.control.instance`, {
+            val: '*',
+            ack: true,
+        });
+        await this.props.socket.setState(`${this.props.adapterName}.${this.props.instance}.control.data`, {
+            val: null,
+            ack: true,
+        });
+        await this.props.socket.setState(`${this.props.adapterName}.${this.props.instance}.control.command`, {
             val: 'refresh',
             ack: true,
         });
-        setRight(false);
-    };
+        this.setState({ right: false, lastCommand: 'reload' });
+    }
 
-    const dropMenu = (
-        <DropMenu
-            open={right}
-            anchorEl={rightRef.current}
-            onClose={() => setRight(false)}
-            anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-            }}
-            // getContentAnchorEl={null}
-        >
-            <DropMenuItem
-                onClick={() => {
-                    window.localStorage.setItem('Vis.lastCommand', 'close');
-                    setLastCommand('close');
-                    setRight(false);
-                    window.location.href = runtimeURL;
+    renderDropMenu(): React.JSX.Element {
+        return (
+            <DropMenu
+                open={this.state.right}
+                anchorEl={this.rightRef.current}
+                onClose={() => this.setState({ right: false })}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
                 }}
+                // getContentAnchorEl={null}
             >
-                <CloseIcon style={{ marginRight: 8, color: props.themeType === 'dark' ? '#6388fd' : '#5fa5fe' }} />
-                {I18n.t('Close editor')}
-            </DropMenuItem>
-            <DropMenuItem
-                onClick={() => {
-                    window.localStorage.setItem('Vis.lastCommand', 'open');
-                    setLastCommand('open');
-                    setRight(false);
-                    window.open(runtimeURL, 'vis-2.runtime');
-                }}
-            >
-                <PlayArrowIcon style={{ marginRight: 8, color: props.themeType === 'dark' ? '#50ff50' : '#008800' }} />
-                {I18n.t('Open runtime in new window')}
-            </DropMenuItem>
-            <DropMenuItem onClick={onReload}>
-                <SyncIcon style={{ marginRight: 8, color: props.themeType === 'dark' ? '#ffa947' : '#884900' }} />
-                {I18n.t('Reload all runtimes')}
-            </DropMenuItem>
-        </DropMenu>
-    );
-
-    let heightButton;
-    if (props.toolbarHeight === 'narrow') {
-        heightButton = (
-            <Tooltip
-                title={I18n.t('Narrow panel')}
-                slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
-            >
-                <IconButton
-                    style={styles.heightButton}
-                    onClick={() => props.setToolbarHeight('veryNarrow')}
+                <DropMenuItem
+                    onClick={() => {
+                        window.localStorage.setItem('Vis.lastCommand', 'close');
+                        this.setState({ lastCommand: 'close', right: false });
+                        window.location.href = this.runtimeURL;
+                    }}
                 >
-                    <HeightNarrowIcon />
-                </IconButton>
-            </Tooltip>
-        );
-    } else if (props.toolbarHeight === 'veryNarrow') {
-        heightButton = (
-            <Tooltip
-                title={I18n.t('Full panel')}
-                slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
-            >
-                <IconButton
-                    style={styles.heightButton}
-                    onClick={() => props.setToolbarHeight('full')}
+                    <CloseIcon
+                        style={{ marginRight: 8, color: this.props.themeType === 'dark' ? '#6388fd' : '#5fa5fe' }}
+                    />
+                    {I18n.t('Close editor')}
+                </DropMenuItem>
+                <DropMenuItem
+                    onClick={() => {
+                        window.localStorage.setItem('Vis.lastCommand', 'open');
+                        this.setState({ lastCommand: 'open', right: false });
+                        window.open(this.runtimeURL, 'vis-2.runtime');
+                    }}
                 >
-                    <HeightVeryNarrowIcon />
-                </IconButton>
-            </Tooltip>
-        );
-    } else {
-        heightButton = (
-            <Tooltip
-                title={I18n.t('Hide panel names')}
-                slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
-            >
-                <IconButton
-                    style={styles.heightButton}
-                    onClick={() => props.setToolbarHeight('narrow')}
-                >
-                    <HeightFullIcon />
-                </IconButton>
-            </Tooltip>
+                    <PlayArrowIcon
+                        style={{ marginRight: 8, color: this.props.themeType === 'dark' ? '#50ff50' : '#008800' }}
+                    />
+                    {I18n.t('Open runtime in new window')}
+                </DropMenuItem>
+                <DropMenuItem onClick={() => this.onReload()}>
+                    <SyncIcon
+                        style={{ marginRight: 8, color: this.props.themeType === 'dark' ? '#ffa947' : '#884900' }}
+                    />
+                    {I18n.t('Reload all runtimes')}
+                </DropMenuItem>
+            </DropMenu>
         );
     }
 
-    const currentUser = props.currentUser ? (
-        <div style={styles.rightBlock}>
-            {props.currentUser?.common?.icon ? (
-                <Icon
-                    src={props.currentUser?.common?.icon || ''}
-                    style={styles.icon}
-                />
-            ) : (
-                <PersonIcon fontSize="small" />
-            )}
-            <span style={{ paddingRight: 8, marginLeft: 8 }}>
-                {Utils.getObjectNameFromObj(props.currentUser, lang)}
-            </span>
-            {props.socket.isSecure ? (
+    renderUserPart(): React.JSX.Element {
+        let heightButton: React.JSX.Element;
+
+        if (this.props.toolbarHeight === 'narrow') {
+            heightButton = (
                 <Tooltip
-                    title={I18n.t('Exit')}
+                    title={I18n.t('Narrow panel')}
+                    slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+                >
+                    <IconButton
+                        style={styles.heightButton}
+                        onClick={() => this.props.setToolbarHeight('veryNarrow')}
+                    >
+                        <HeightNarrowIcon />
+                    </IconButton>
+                </Tooltip>
+            );
+        } else if (this.props.toolbarHeight === 'veryNarrow') {
+            heightButton = (
+                <Tooltip
+                    title={I18n.t('Full panel')}
+                    slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+                >
+                    <IconButton
+                        style={styles.heightButton}
+                        onClick={() => this.props.setToolbarHeight('full')}
+                    >
+                        <HeightVeryNarrowIcon />
+                    </IconButton>
+                </Tooltip>
+            );
+        } else {
+            heightButton = (
+                <Tooltip
+                    title={I18n.t('Hide panel names')}
+                    slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+                >
+                    <IconButton
+                        style={styles.heightButton}
+                        onClick={() => this.props.setToolbarHeight('narrow')}
+                    >
+                        <HeightFullIcon />
+                    </IconButton>
+                </Tooltip>
+            );
+        }
+
+        const currentUser: React.JSX.Element = this.props.currentUser ? (
+            <div style={styles.rightBlock}>
+                {this.props.currentUser?.common?.icon ? (
+                    <Icon
+                        src={this.props.currentUser?.common?.icon || ''}
+                        style={styles.icon}
+                    />
+                ) : (
+                    <PersonIcon fontSize="small" />
+                )}
+                <span style={{ paddingRight: 8, marginLeft: 8 }}>
+                    {Utils.getObjectNameFromObj(this.props.currentUser, this.lang)}
+                </span>
+                {this.props.socket.isSecure ? (
+                    <Tooltip
+                        title={I18n.t('Exit')}
+                        slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+                    >
+                        <IconButton
+                            size="small"
+                            onClick={async () => {
+                                try {
+                                    await this.props.socket.logout();
+                                } catch (e) {
+                                    console.error(e);
+                                    return;
+                                }
+                                window.location.reload();
+                            }}
+                        >
+                            <ExitToAppIcon />
+                        </IconButton>
+                    </Tooltip>
+                ) : null}
+            </div>
+        ) : null;
+
+        let lastCommandButton: React.JSX.Element;
+        if (this.state.lastCommand === 'close') {
+            lastCommandButton = (
+                <Tooltip
+                    title={I18n.t('Close editor')}
                     slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
                 >
                     <IconButton
                         size="small"
-                        onClick={async () => {
-                            try {
-                                await props.socket.logout();
-                            } catch (e) {
-                                console.error(e);
-                                return;
-                            }
-                            window.location.reload();
-                        }}
+                        onClick={() => (window.location.href = this.runtimeURL)}
                     >
-                        <ExitToAppIcon />
+                        <CloseIcon style={{ color: this.props.themeType === 'dark' ? '#6388fd' : '#5fa5fe' }} />
                     </IconButton>
                 </Tooltip>
-            ) : null}
-        </div>
-    ) : null;
+            );
+        } else if (this.state.lastCommand === 'open') {
+            lastCommandButton = (
+                <Tooltip
+                    title={I18n.t('Open runtime in new window')}
+                    slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+                >
+                    <IconButton
+                        size="small"
+                        onClick={() => window.open(this.runtimeURL, 'vis-2.runtime')}
+                    >
+                        <PlayArrowIcon style={{ color: this.props.themeType === 'dark' ? '#50ff50' : '#008800' }} />
+                    </IconButton>
+                </Tooltip>
+            );
+        } else if (this.state.lastCommand === 'reload') {
+            lastCommandButton = (
+                <Tooltip
+                    title={I18n.t('Reload all runtimes')}
+                    slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
+                >
+                    <IconButton
+                        size="small"
+                        onClick={() => void this.onReload()}
+                    >
+                        <SyncIcon style={{ color: this.props.themeType === 'dark' ? '#ffa947' : '#884900' }} />
+                    </IconButton>
+                </Tooltip>
+            );
+        }
 
-    let lastCommandButton;
-    if (lastCommand === 'close') {
-        lastCommandButton = (
-            <Tooltip
-                title={I18n.t('Close editor')}
-                slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
-            >
-                <IconButton
-                    size="small"
-                    onClick={() => (window.location.href = runtimeURL)}
-                >
-                    <CloseIcon style={{ color: props.themeType === 'dark' ? '#6388fd' : '#5fa5fe' }} />
-                </IconButton>
-            </Tooltip>
-        );
-    } else if (lastCommand === 'open') {
-        lastCommandButton = (
-            <Tooltip
-                title={I18n.t('Open runtime in new window')}
-                slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
-            >
-                <IconButton
-                    size="small"
-                    onClick={() => window.open(runtimeURL, 'vis-2.runtime')}
-                >
-                    <PlayArrowIcon style={{ color: props.themeType === 'dark' ? '#50ff50' : '#008800' }} />
-                </IconButton>
-            </Tooltip>
-        );
-    } else if (lastCommand === 'reload') {
-        lastCommandButton = (
-            <Tooltip
-                title={I18n.t('Reload all runtimes')}
-                slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
-            >
-                <IconButton
-                    size="small"
-                    onClick={onReload}
-                >
-                    <SyncIcon style={{ color: props.themeType === 'dark' ? '#ffa947' : '#884900' }} />
-                </IconButton>
-            </Tooltip>
+        return (
+            <span style={styles.right}>
+                {this.state.upload ? (
+                    <LinearProgress
+                        variant="determinate"
+                        value={this.state.upload}
+                        style={{ position: 'absolute', top: 0, left: 0, right: 0 }}
+                    />
+                ) : null}
+                <div style={styles.rightBlock}>
+                    {this.props.needSave ? (
+                        <SaveIcon
+                            fontSize="small"
+                            style={Utils.getStyle(this.props.theme, styles.saveIcon)}
+                        />
+                    ) : null}
+                    {this.props.toolbarHeight === 'veryNarrow' ? currentUser : null}
+                    {heightButton}
+                    <ToggleThemeMenu
+                        toggleTheme={this.props.toggleTheme}
+                        themeName={this.props.themeName as any}
+                        t={I18n.t}
+                    />
+                    {lastCommandButton}
+                    <IconButton
+                        ref={this.rightRef}
+                        onClick={() => this.setState({ right: !this.state.right })}
+                        size="small"
+                    >
+                        <ArrowDropDownIcon />
+                    </IconButton>
+                    {this.renderDropMenu()}
+                </div>
+                {this.props.toolbarHeight !== 'veryNarrow' ? currentUser : null}
+                {this.props.toolbarHeight === 'full' && this.props.version ? (
+                    <span style={styles.version}>v{this.props.version}</span>
+                ) : null}
+            </span>
         );
     }
 
-    return (
-        <Box
-            component="div"
-            sx={styles.lightedPanel}
-        >
-            <style>
-                {`
+    render(): React.JSX.Element {
+        return (
+            <Box
+                component="div"
+                sx={styles.lightedPanel}
+            >
+                <style>
+                    {`
                 @keyframes blink {
                     0% {
                         opacity: 0;
@@ -337,111 +421,87 @@ const Toolbar = (props: ToolbarProps): React.JSX.Element => {
                     }
                 }
             `}
-            </style>
-            <span style={styles.right}>
-                <div style={styles.rightBlock}>
-                    {props.needSave ? (
-                        <SaveIcon
-                            fontSize="small"
-                            style={Utils.getStyle(props.theme, styles.saveIcon)}
-                        />
-                    ) : null}
-                    {props.toolbarHeight === 'veryNarrow' ? currentUser : null}
-                    {heightButton}
-                    <ToggleThemeMenu
-                        toggleTheme={props.toggleTheme}
-                        themeName={props.themeName as any}
-                        t={I18n.t}
+                </style>
+                {this.renderUserPart()}
+                <Box
+                    component="div"
+                    sx={Utils.getStyle(
+                        this.props.theme,
+                        styles.toolbar,
+                        this.props.toolbarHeight !== 'full' && styles.narrowToolbar,
+                    )}
+                    style={{ alignItems: 'initial' }}
+                >
+                    <Views
+                        toolbarHeight={this.props.toolbarHeight}
+                        changeProject={this.props.changeProject}
+                        changeView={this.props.changeView}
+                        editMode={this.props.editMode}
+                        projectName={this.props.projectName}
+                        selectedGroup={this.props.selectedGroup}
+                        selectedView={this.props.selectedView}
+                        setProjectsDialog={this.props.setProjectsDialog}
+                        setSelectedWidgets={this.props.setSelectedWidgets}
+                        setViewsManager={this.props.setViewsManager}
+                        themeName={this.props.themeName}
+                        themeType={this.props.themeType}
+                        theme={this.props.theme}
+                        toggleView={this.props.toggleView}
+                        viewsManager={this.props.viewsManager}
                     />
-                    {lastCommandButton}
-                    <IconButton
-                        ref={rightRef}
-                        onClick={() => setRight(!right)}
-                        size="small"
-                    >
-                        <ArrowDropDownIcon />
-                    </IconButton>
-                    {dropMenu}
-                </div>
-                {props.toolbarHeight !== 'veryNarrow' ? currentUser : null}
-                {props.toolbarHeight === 'full' && props.version ? (
-                    <span style={styles.version}>v{props.version}</span>
-                ) : null}
-            </span>
-            <Box
-                component="div"
-                sx={Utils.getStyle(props.theme, styles.toolbar, props.toolbarHeight !== 'full' && styles.narrowToolbar)}
-                style={{ alignItems: 'initial' }}
-            >
-                <Views
-                    toolbarHeight={props.toolbarHeight}
-                    changeProject={props.changeProject}
-                    changeView={props.changeView}
-                    editMode={props.editMode}
-                    projectName={props.projectName}
-                    selectedGroup={props.selectedGroup}
-                    selectedView={props.selectedView}
-                    setProjectsDialog={props.setProjectsDialog}
-                    setSelectedWidgets={props.setSelectedWidgets}
-                    setViewsManager={props.setViewsManager}
-                    themeName={props.themeName}
-                    themeType={props.themeType}
-                    theme={props.theme}
-                    toggleView={props.toggleView}
-                    viewsManager={props.viewsManager}
-                />
-                <Widgets
-                    toolbarHeight={props.toolbarHeight}
-                    alignWidgets={props.alignWidgets}
-                    changeProject={props.changeProject}
-                    cloneWidgets={props.cloneWidgets}
-                    copyWidgets={props.copyWidgets}
-                    cutWidgets={props.cutWidgets}
-                    deleteWidgets={props.deleteWidgets}
-                    editMode={props.editMode}
-                    history={props.history}
-                    historyCursor={props.historyCursor}
-                    lockDragging={props.lockDragging}
-                    openedViews={props.openedViews}
-                    orderWidgets={props.orderWidgets}
-                    pasteWidgets={props.pasteWidgets}
-                    redo={props.redo}
-                    selectedGroup={props.selectedGroup}
-                    selectedView={props.selectedView}
-                    selectedWidgets={props.selectedWidgets}
-                    setSelectedWidgets={props.setSelectedWidgets}
-                    themeType={props.themeType}
-                    theme={props.theme}
-                    toggleLockDragging={props.toggleLockDragging}
-                    toggleWidgetHint={props.toggleWidgetHint}
-                    undo={props.undo}
-                    widgetHint={props.widgetHint}
-                    widgetsClipboard={props.widgetsClipboard}
-                    widgetsLoaded={props.widgetsLoaded}
-                />
-                <Projects
-                    theme={props.theme}
-                    toolbarHeight={props.toolbarHeight}
-                    adapterName={props.adapterName}
-                    changeProject={props.changeProject}
-                    instance={props.instance}
-                    projectName={props.projectName}
-                    projectsDialog={props.projectsDialog}
-                    selectedView={props.selectedView}
-                    setProjectsDialog={props.setProjectsDialog}
-                    setSelectedWidgets={props.setSelectedWidgets}
-                    socket={props.socket}
-                    themeType={props.themeType}
-                    addProject={props.addProject}
-                    deleteProject={props.deleteProject}
-                    loadProject={props.loadProject}
-                    projects={props.projects}
-                    refreshProjects={props.refreshProjects}
-                    renameProject={props.renameProject}
-                />
+                    <Widgets
+                        toolbarHeight={this.props.toolbarHeight}
+                        alignWidgets={this.props.alignWidgets}
+                        changeProject={this.props.changeProject}
+                        cloneWidgets={this.props.cloneWidgets}
+                        copyWidgets={this.props.copyWidgets}
+                        cutWidgets={this.props.cutWidgets}
+                        deleteWidgets={this.props.deleteWidgets}
+                        editMode={this.props.editMode}
+                        history={this.props.history}
+                        historyCursor={this.props.historyCursor}
+                        lockDragging={this.props.lockDragging}
+                        openedViews={this.props.openedViews}
+                        orderWidgets={this.props.orderWidgets}
+                        pasteWidgets={this.props.pasteWidgets}
+                        redo={this.props.redo}
+                        selectedGroup={this.props.selectedGroup}
+                        selectedView={this.props.selectedView}
+                        selectedWidgets={this.props.selectedWidgets}
+                        setSelectedWidgets={this.props.setSelectedWidgets}
+                        themeType={this.props.themeType}
+                        theme={this.props.theme}
+                        toggleLockDragging={this.props.toggleLockDragging}
+                        toggleWidgetHint={this.props.toggleWidgetHint}
+                        undo={this.props.undo}
+                        widgetHint={this.props.widgetHint}
+                        widgetsClipboard={this.props.widgetsClipboard}
+                        widgetsLoaded={this.props.widgetsLoaded}
+                    />
+                    <Projects
+                        theme={this.props.theme}
+                        toolbarHeight={this.props.toolbarHeight}
+                        adapterName={this.props.adapterName}
+                        changeProject={this.props.changeProject}
+                        instance={this.props.instance}
+                        projectName={this.props.projectName}
+                        projectsDialog={this.props.projectsDialog}
+                        selectedView={this.props.selectedView}
+                        setProjectsDialog={this.props.setProjectsDialog}
+                        setSelectedWidgets={this.props.setSelectedWidgets}
+                        socket={this.props.socket}
+                        themeType={this.props.themeType}
+                        addProject={this.props.addProject}
+                        deleteProject={this.props.deleteProject}
+                        loadProject={this.props.loadProject}
+                        projects={this.props.projects}
+                        refreshProjects={this.props.refreshProjects}
+                        renameProject={this.props.renameProject}
+                    />
+                </Box>
             </Box>
-        </Box>
-    );
-};
+        );
+    }
+}
 
 export default Toolbar;

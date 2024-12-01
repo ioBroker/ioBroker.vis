@@ -449,10 +449,15 @@ class Editor extends Runtime<EditorProps, EditorState> {
                 if (controlKey && e.key === 'c') {
                     e.preventDefault();
                     await this.copyWidgets();
-                }
-                if (controlKey && e.key === 'x') {
+                } else if (controlKey && e.key === 'x') {
                     e.preventDefault();
                     await this.cutWidgets();
+                } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    await this.setSelectedWidgets([]);
+                } else if (e.key === 'Delete') {
+                    e.preventDefault();
+                    this.deleteWidgets();
                 }
             } else if (controlKey && e.key === 'v' && Object.keys(this.state.widgetsClipboard.widgets).length) {
                 e.preventDefault();
@@ -481,12 +486,6 @@ class Editor extends Runtime<EditorProps, EditorState> {
                         ),
                     );
                 }
-            } else if (e.key === 'Escape') {
-                e.preventDefault();
-                await this.setSelectedWidgets([]);
-            } else if (e.key === 'Delete') {
-                e.preventDefault();
-                this.deleteWidgets();
             }
         }
     };
@@ -1669,7 +1668,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
     updateWidget = async (id: AnyWidgetId): Promise<void> => {
         const project = deepClone(store.getState().visProject);
         const widget = project[this.state.selectedView].widgets[id];
-        if (widget && widget.marketplace) {
+        if (widget?.marketplace) {
             const marketplace = deepClone(
                 store
                     .getState()

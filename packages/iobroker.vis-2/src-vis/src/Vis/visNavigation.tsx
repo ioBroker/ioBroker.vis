@@ -68,7 +68,7 @@ const styles: Record<string, any> = {
         zIndex: 450,
     }),
     toolBarWithClosedMenu: {
-        paddingLeft: 16 + TOOLBAR_SIZE,
+        paddingLeft: `${16 + TOOLBAR_SIZE}px`,
     },
     viewContentWithToolbar: {
         position: 'relative',
@@ -496,6 +496,28 @@ class VisNavigation extends React.Component<VisNavigationProps> {
     }
 
     renderOpenMenuButton(settings: ViewSettings): React.JSX.Element {
+        let backgroundColor: string | undefined;
+        let color: string | undefined;
+        if (this.props.menuWidth === 'hidden') {
+            if (settings.navigationButtonBackground) {
+                backgroundColor = this.props.context.themeType === 'dark' ? '#FFFFFF40' : '#00000040';
+            } else {
+                backgroundColor = 'transparent';
+            }
+
+            if (settings.navigationBar && !settings.navigationChevronColor) {
+                if (settings.navigationBarColor) {
+                    color = Utils.getInvertedColor(settings.navigationBarColor, this.props.context.themeType, true);
+                } else {
+                    color = this.props.context.themeType === 'dark' ? '#FFF' : '#000';
+                }
+            } else {
+                color = settings.navigationChevronColor;
+            }
+        } else {
+            backgroundColor = 'transparent';
+        }
+
         return (
             <IconButton
                 onClick={() => {
@@ -521,18 +543,7 @@ class VisNavigation extends React.Component<VisNavigationProps> {
                         this.props.setMenuWidth('full');
                     }
                 }}
-                style={{
-                    backgroundColor:
-                        this.props.menuWidth === 'hidden' && settings.navigationButtonBackground
-                            ? settings.navigationButtonBackground ||
-                              (this.props.context.themeType === 'dark' ? 'white' : 'black')
-                            : 'inherit',
-                    color:
-                        this.props.menuWidth === 'hidden' && settings.navigationButtonBackground
-                            ? settings.navigationButtonBackground ||
-                              (this.props.context.themeType === 'dark' ? 'black' : 'white')
-                            : 'inherit',
-                }}
+                style={{ backgroundColor }}
             >
                 <ChevronLeftIcon
                     style={{
@@ -540,11 +551,7 @@ class VisNavigation extends React.Component<VisNavigationProps> {
                         (this.props.menuWidth === 'narrow' && settings.navigationNoHide)
                             ? styles.openMenuButtonIconHidden
                             : undefined),
-                        color:
-                            settings.navigationBar && this.props.menuWidth === 'hidden'
-                                ? settings.navigationChevronColor ||
-                                  (this.props.context.themeType === 'dark' ? '#000' : '#FFF')
-                                : settings.navigationChevronColor,
+                        color,
                     }}
                 />
             </IconButton>
@@ -595,39 +602,43 @@ class VisNavigation extends React.Component<VisNavigationProps> {
             ? 'hidden'
             : this.props.menuWidth;
 
+        const styleMenu: React.CSSProperties = { ...styles.openMenuButton };
+        if (this.props.menuWidth === 'full') {
+            styleMenu.left = menuFullWidth - TOOLBAR_SIZE;
+            Object.assign(styleMenu, styles.openMenuButtonFull);
+        } else if (this.props.menuWidth === 'narrow') {
+            Object.assign(styleMenu, styles.openMenuButtonNarrow);
+        } else {
+            Object.assign(styleMenu, styles.openMenuButtonHidden);
+            if (settings.navigationBar) {
+                styleMenu.opacity = 1;
+            }
+        }
+
+        const styleView: React.CSSProperties = { ...styles.afterMenu };
+        if (!settings.navigationHideMenu) {
+            // Menu must be shown
+            if (menuWidth === 'full') {
+                Object.assign(styleView, styles.afterMenuFull);
+                styleView.width = `calc(100% - ${menuFullWidth}px)`;
+            } else if (menuWidth === 'narrow') {
+                Object.assign(styleView, styles.afterMenuNarrow);
+            } else {
+                Object.assign(styleView, styles.afterMenuHidden);
+            }
+        } else {
+            Object.assign(styleView, styles.afterMenuHidden);
+        }
+
         return (
             <div style={styles.root}>
                 {!settings.navigationHideMenu ? (
-                    <div
-                        style={{
-                            ...styles.openMenuButton,
-                            left: this.props.menuWidth === 'full' ? menuFullWidth - TOOLBAR_SIZE : undefined,
-                            ...(this.props.menuWidth === 'full' ? styles.openMenuButtonFull : undefined),
-                            ...(this.props.menuWidth === 'narrow' ? styles.openMenuButtonNarrow : undefined),
-                            ...(this.props.menuWidth === 'hidden' ? styles.openMenuButtonHidden : undefined),
-                            opacity: settings.navigationBar && this.props.menuWidth === 'hidden' ? 1 : undefined,
-                        }}
-                    >
-                        {this.renderOpenMenuButton(settings)}
-                    </div>
+                    <div style={styleMenu}>{this.renderOpenMenuButton(settings)}</div>
                 ) : null}
 
                 {!settings.navigationHideMenu ? this.renderMenu(settings, menuFullWidth) : null}
 
-                <div
-                    style={{
-                        ...styles.afterMenu,
-                        ...(!settings.navigationHideMenu && menuWidth === 'full' ? styles.afterMenuFull : undefined),
-                        ...(!settings.navigationHideMenu && menuWidth === 'narrow'
-                            ? styles.afterMenuNarrow
-                            : undefined),
-                        ...(settings.navigationHideMenu || menuWidth === 'hidden' ? styles.afterMenuHidden : undefined),
-                        width:
-                            !settings.navigationHideMenu && menuWidth === 'full'
-                                ? `calc(100% - ${menuFullWidth}px)`
-                                : undefined,
-                    }}
-                >
+                <div style={styleView}>
                     {this.renderToolbar(settings)}
                     <div
                         style={

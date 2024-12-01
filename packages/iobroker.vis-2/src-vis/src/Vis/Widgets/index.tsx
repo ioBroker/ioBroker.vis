@@ -18,6 +18,9 @@ import BasicHtmlNav from './Basic/BasicHtmlNav';
 import BasicFilterDropdown from './Basic/BasicFilterDropdown';
 import BasicLink from './Basic/BasicLink';
 import BasicImage8 from './Basic/BasicImage8';
+import BasicFrame from './Basic/BasicFrame';
+import BasicNote from './Basic/BasicNote';
+import BasicLogout from './Basic/BasicLogout';
 
 import JQuiButton from './JQui/JQuiButton';
 import JQuiButtonBlank from './JQui/JQuiButtonBlank';
@@ -76,6 +79,9 @@ const WIDGETS = [
     BasicIFrame8,
     BasicImage,
     BasicImage8,
+    BasicFrame,
+    BasicNote,
+    BasicLogout,
 
     JQuiButton,
     JQuiButtonBlank,

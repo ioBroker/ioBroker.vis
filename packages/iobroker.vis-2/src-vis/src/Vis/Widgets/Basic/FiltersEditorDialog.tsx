@@ -509,6 +509,7 @@ class FiltersEditorDialog extends Component<FiltersEditorDialogProps, FiltersEdi
                                 {...dropProvided.droppableProps}
                             >
                                 {this.state.items.map((item, index) => this.renderTableRow(item, index))}
+                                {dropProvided.placeholder}
                             </TableBody>
                         )}
                     </Droppable>

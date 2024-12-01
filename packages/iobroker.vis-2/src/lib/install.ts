@@ -9,7 +9,7 @@ import {
     rmdirSync,
 } from 'node:fs';
 import { join, basename, normalize } from 'node:path';
-import { lookup } from 'mime';
+import mime from 'mime';
 import { createHash } from 'node:crypto';
 
 const wwwDir = existsSync(`${__dirname}/../../www/`) ? `${__dirname}/../../www/` : `${__dirname}/../www/`;
@@ -35,7 +35,7 @@ function copyFileSync(source: string, target: string, forceBuild?: boolean): boo
     if (existsSync(targetFile)) {
         const newFile = readFileSync(source);
         const oldFile = readFileSync(targetFile);
-        const type = lookup(source);
+        const type = mime.getType(source);
         !type && console.log(`Unknown file type: ${source}`);
         if (newFile.byteLength !== oldFile.byteLength || forceBuild) {
             changed = true;

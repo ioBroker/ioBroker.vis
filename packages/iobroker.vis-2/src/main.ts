@@ -45,6 +45,7 @@ class VisAdapter extends Adapter {
     private isLicenseError = false;
     private lastProgressUpdate: number = 0;
     private synchronizing = false;
+    private synchronizingQueued: { forceBuild: boolean } | null = null;
     private vendorPrefix = '';
 
     constructor(options: Partial<AdapterOptions> = {}) {
@@ -113,6 +114,14 @@ class VisAdapter extends Adapter {
                 const result = await this.checkL(obj.native.license, obj.native.useLicenseManager, msg.message);
                 this.sendTo(msg.from, msg.command, { result }, msg.callback);
             }
+        } else if (msg?.command === 'rebuild' && msg.callback) {
+            if (!this.synchronizing) {
+                await this.buildHtmlPages(true);
+                this.sendTo(msg.from, msg.command, { result: 'done' }, msg.callback);
+                this.log.warn('Force build done!');
+            } else {
+                this.sendTo(msg.from, msg.command, { error: 'already running' }, msg.callback);
+            }
         }
     }
 
@@ -176,6 +185,11 @@ class VisAdapter extends Adapter {
     }
 
     async buildHtmlPages(forceBuild: boolean): Promise<void> {
+        if (this.synchronizing) {
+            this.synchronizingQueued = { forceBuild };
+            return;
+        }
+
         this.synchronizing = true;
         const enabledList = await this.readAdapterList();
         const configChanged = await this.generateConfigPage(forceBuild, enabledList);
@@ -262,6 +276,10 @@ class VisAdapter extends Adapter {
         if (typeof this.stoppingPromise === 'function') {
             this.stoppingPromise();
             this.stoppingPromise = null;
+        } else if (this.synchronizingQueued && !this.visConfig.forceBuild) {
+            const forceBuild = this.synchronizingQueued.forceBuild;
+            this.synchronizingQueued = null;
+            setImmediate(() => void this.buildHtmlPages(forceBuild));
         }
     }
 
@@ -873,7 +891,9 @@ if (typeof exports !== 'undefined') {
     async upload(files: string[]): Promise<void> {
         const uploadID = 'system.adapter.vis-2.upload';
 
-        await this.setForeignStateAsync(uploadID, { val: 0, ack: true });
+        if (files.length) {
+            await this.setForeignStateAsync(uploadID, 1, true);
+        }
 
         const wwwLen = `${wwwDir}/`.length;
 
@@ -901,12 +921,13 @@ if (typeof exports !== 'undefined') {
 
             // Update upload indicator
             const now = Date.now();
-            if (!this.lastProgressUpdate || now - this.lastProgressUpdate > 1000) {
+            if (!this.lastProgressUpdate || now - this.lastProgressUpdate > 2000) {
                 this.lastProgressUpdate = now;
-                await this.setForeignStateAsync(uploadID, {
-                    val: Math.round((1000 * (files.length - f)) / files.length) / 10,
-                    ack: true,
-                });
+                await this.setForeignStateAsync(
+                    uploadID,
+                    Math.round((1000 * (files.length - f)) / files.length) / 10,
+                    true,
+                );
             }
 
             try {
@@ -919,7 +940,7 @@ if (typeof exports !== 'undefined') {
 
         // Set upload progress to 0;
         if (files.length) {
-            await this.setForeignStateAsync(uploadID, { val: 0, ack: true });
+            await this.setForeignStateAsync(uploadID, 0, true);
         }
     }
 
@@ -1138,6 +1159,7 @@ if (typeof exports !== 'undefined') {
         this.visConfig = this.config as VisAdapterConfig;
 
         const visObj = await this.getForeignObjectAsync('vis-2');
+        await this.setForeignStateAsync('system.adapter.vis-2.upload', 0, true);
 
         if (!existsSync(wwwDir)) {
             this.log.error(
