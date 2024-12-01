@@ -116,8 +116,8 @@ class VisAdapter extends Adapter {
             }
         } else if (msg?.command === 'rebuild' && msg.callback) {
             if (!this.synchronizing) {
-                await this.buildHtmlPages(true);
                 this.sendTo(msg.from, msg.command, { result: 'done' }, msg.callback);
+                await this.buildHtmlPages(true);
                 this.log.warn('Force build done!');
             } else {
                 this.sendTo(msg.from, msg.command, { error: 'already running' }, msg.callback);
@@ -871,6 +871,10 @@ if (typeof exports !== 'undefined') {
 
     async eraseFiles(files: string[]): Promise<void> {
         if (files?.length) {
+            const uploadID = 'system.adapter.vis-2.upload';
+
+            await this.setForeignStateAsync(uploadID, 1, true);
+
             for (let f = 0; f < files.length; f++) {
                 const file = files[f];
                 if (file === '/index.html' || file === '/edit.html') {
@@ -879,12 +883,23 @@ if (typeof exports !== 'undefined') {
                 if (this.stoppingPromise) {
                     return;
                 }
+                const now = Date.now();
+                if (!this.lastProgressUpdate || now - this.lastProgressUpdate > 1000) {
+                    this.lastProgressUpdate = now;
+                    await this.setForeignStateAsync(
+                        uploadID,
+                        // upload starts from 0% and runs to 50% and round to 10th
+                        Math.round((100 * (10 / 2) * f) / files.length) / 10,
+                        true,
+                    );
+                }
                 try {
                     await this.unlinkAsync('vis-2', file);
                 } catch (err) {
                     this.log.error(`Cannot delete file "${file}": ${err}`);
                 }
             }
+            await this.setForeignStateAsync(uploadID, 50, true);
         }
     }
 
@@ -892,7 +907,7 @@ if (typeof exports !== 'undefined') {
         const uploadID = 'system.adapter.vis-2.upload';
 
         if (files.length) {
-            await this.setForeignStateAsync(uploadID, 1, true);
+            await this.setForeignStateAsync(uploadID, 50, true);
         }
 
         const wwwLen = `${wwwDir}/`.length;
@@ -925,7 +940,8 @@ if (typeof exports !== 'undefined') {
                 this.lastProgressUpdate = now;
                 await this.setForeignStateAsync(
                     uploadID,
-                    Math.round((1000 * (files.length - f)) / files.length) / 10,
+                    // upload starts from 50% and runs to 100%
+                    50 + Math.round((100 * (10 / 2) * f) / files.length) / 10,
                     true,
                 );
             }

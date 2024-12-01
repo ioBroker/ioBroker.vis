@@ -382,10 +382,13 @@ const Settings: React.FC<SettingsProps> = props => {
                     color="grey"
                     variant="contained"
                     onClick={() =>
-                        props.socket.sendTo(`${props.adapterName}.${props.instance}`, 'rebuild', null).then(() => {
-                            window.alert(I18n.t('Rebuild of HTML pages was started'));
-                            props.onClose();
-                        })
+                        props.socket
+                            .sendTo(`${props.adapterName}.${props.instance}`, 'rebuild', null)
+                            .then(() => {
+                                window.alert(I18n.t('Rebuild of HTML pages was started'));
+                                props.onClose();
+                            })
+                            .catch(e => window.alert(`Cannot rebuild: ${e}`))
                     }
                     startIcon={<Refresh />}
                 >
