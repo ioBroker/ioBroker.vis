@@ -30,17 +30,18 @@ describe('vis', () => {
         this.timeout(120_000);
         const widgetSets = await helper.palette.getListOfWidgetSets();
         console.log(`Widget sets found: ${widgetSets.join(', ')}`);
+        const start = Date.now();
         for (let s = 0; s < widgetSets.length; s++) {
             const widgets = await helper.palette.getListOfWidgets(gPage, widgetSets[s]);
             for (let w = 0; w < widgets.length; w++) {
                 const wid = await helper.palette.addWidget(gPage, widgets[w], true);
-                await helper.screenshot(gPage, `10_${widgetSets[s]}_${widgets[w]}`);
-                await helper.view.deleteWidget(gPage, wid);
+                await helper.screenshot(gPage, `${10 + s}_${(Date.now() - start).toString().padStart(6, '0')}_${widgetSets[s]}_${widgets[w]}`);
+                await helper.view.deleteWidget(gPage, wid, 3_500);
             }
         }
 
         // wait for saving
-        await new Promise(resolve => setTimeout(resolve, 2_000));
+        await new Promise(resolve => setTimeout(resolve, 4_000));
     });
 
     it('Check runtime', async function () {

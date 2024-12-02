@@ -37,7 +37,7 @@
     "@iobroker/build-tools": "^2.0.9",
     "@iobroker/type-detector": "^4.0.1",
     "@iobroker/vis-2-widgets-react-dev": "^4.0.4",
-    "@iobroker/vis-2-widgets-testing": "^1.0.4",
+    "@iobroker/vis-2-widgets-testing": "^1.0.5",
     "@material-icons/svg": "^1.0.33",
     "@mui/icons-material": "^6.1.9",
     "@mui/material": "^6.1.9",
