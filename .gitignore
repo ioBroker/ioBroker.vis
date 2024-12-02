@@ -7,6 +7,7 @@ node_modules
 /.build
 /lib
 /www/_socket
+/lerna-debug.log
 knx-uf-iconset
 iob_npm.done
 /packages/**/package-lock.json
@@ -24,3 +25,4 @@ src/dist
 **/runtime
 **/tmp
 packages/iobroker.vis-2/README.md
+/packages/iobroker.vis-2/build-backend/

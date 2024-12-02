@@ -1,0 +1,121 @@
+<html>
+    <head>
+        <link
+            rel="shortcut icon"
+            href="favicon.ico"
+        />
+
+        <title>Updating</title>
+        <script>
+            let originalPageSize = 0;
+            function getMyself() {
+                return fetch(`${window.location.pathname}?${Date.now()}`).then(resp => resp.text());
+            }
+            getMyself().then(text => (originalPageSize = text.length));
+
+            setInterval(function () {
+                getMyself().then(text => {
+                    if (text.length !== originalPageSize) {
+                        window.location.reload();
+                    }
+                });
+            }, 5000);
+        </script>
+        <style>
+            body {
+                font-family: Roboto, Helvetica, Arial, sans-serif;
+            }
+            @media (prefers-color-scheme: light) {
+                body {
+                    background: #fff;
+                    color: #333;
+                }
+            }
+            @media (prefers-color-scheme: dark) {
+                body {
+                    background: #1a1a1a;
+                    color: #fff;
+                }
+            }
+            div {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+
+            #container {
+                width: 200px;
+                height: 200px;
+            }
+
+            @keyframes animation {
+                0% {
+                    stroke-dasharray: 1 98;
+                    stroke-dashoffset: -105;
+                }
+                50% {
+                    stroke-dasharray: 80 10;
+                    stroke-dashoffset: -160;
+                }
+                100% {
+                    stroke-dasharray: 1 98;
+                    stroke-dashoffset: -300;
+                }
+            }
+
+            #spinner {
+                transform-origin: center;
+                animation-name: animation;
+                animation-duration: 1.2s;
+                animation-timing-function: cubic-bezier;
+                animation-iteration-count: infinite;
+            }
+            #divElement {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                margin-top: -50px;
+                margin-left: -50px;
+                width: 300px;
+                height: 150px;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="divElement">
+            <h4>The vis is updating just now...</h4>
+            <div style="opacity: 0.3">
+                <svg
+                    viewBox="0 0 100 100"
+                    width="100"
+                >
+                    <defs>
+                        <filter id="shadow">
+                            <feDropShadow
+                                dx="0"
+                                dy="0"
+                                stdDeviation="1.5"
+                                flood-color="#0F77FF"
+                            />
+                        </filter>
+                    </defs>
+                    <circle
+                        id="spinner"
+                        style="
+                            fill: transparent;
+                            stroke: #0f40b7;
+                            stroke-width: 7px;
+                            stroke-linecap: round;
+                            filter: url(#shadow);
+                        "
+                        cx="50"
+                        cy="50"
+                        r="45"
+                    />
+                </svg>
+            </div>
+        </div>
+    </body>
+</html>

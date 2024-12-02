@@ -46,7 +46,7 @@ E.g., to calculate the hypotenuse of a triangle:
 
 `{h:javascript.0.myCustom.height;w:javascript.0.myCustom.width;Math.max(20, Math.sqrt(h*h + w*w))}` will be interpreted as function:
 
-```
+```js
 value = await (async function () {
     var h = (await getState('javascript.0.myCustom.height')).val;
     var w = (await getState('javascript.0.myCustom.width')).val;
@@ -64,14 +64,14 @@ You can use *any* javascript (browser) functions. Arguments must be defined with
 Take care about types. All of them are defined as strings. To be sure, that value will be treated as number use parseFloat function.
 
 So our Hypotenuse calculation will be:
-```
+```js
 {h:javascript.0.myCustom.height;w:javascript.0.myCustom.width;Math.max(20, Math.sqrt(Math.pow(parseFloat(h), 2) + Math.pow(parseFloat(w), 2)))}
 ```
 
 ### Deprecated format
 Patten has the following format:
 
-```
+```js
 {objectID;operation1;operation2;...}
 ```
 
@@ -265,7 +265,7 @@ In order to make adjustments to the vis-2 editor itself, to search for errors an
 
 2. clone the repository into a directory. copy the url from your GitHub repository. the command looks like
 
-```
+```shell
 git clone https://github.com/<your profile name>/ioBroker.vis-2.git
 ```
 
@@ -273,14 +273,14 @@ git clone https://github.com/<your profile name>/ioBroker.vis-2.git
 
 4. to install and download all necessary libraries, run the following command in a terminal in the root directory of the repository
 
-```
+```shell
 npm run install-monorepo
 ```
 
 5. to start the editor in the browser, please execute the following command. 
 An already separately running iobroker server instance must be available on port 8082.
 
-```
+```shell
 npm run start
 ```
 
@@ -294,6 +294,12 @@ npm run start
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Corrected navigation menu
+* (@GermanBluefox) Migrated widgets to React: basic - frame, basic - note, basic - logout 
+* (@GermanBluefox) Added the HTML rebuild button to settings
+* (@GermanBluefox) Backend was migrated to TypeScript
+
 ### 2.10.8 (2024-11-22)
 * (bluefox) Added new option for view: "Limit only for instances"
 

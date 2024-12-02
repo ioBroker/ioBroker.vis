@@ -1,0 +1,23 @@
+// Root tsconfig to set the settings and power editor support for all TS files
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        // do not compile anything. This file is just to configure type checking
+        "noEmit": true,
+        // check JS files
+        "allowJs": true,
+        "checkJs": true,
+        "outDir": "./build-backend/",
+        "sourceMap": true,
+        "inlineSources": true,
+
+        // This is necessary for the automatic typing of the adapter config
+        "resolveJsonModule": true,
+        "noImplicitAny": true,
+        "useUnknownInCatchVariables": false,
+        "target": "ES2022",
+        "types": ["@types/node", "@iobroker/types"]
+    },
+    "include": ["src/**/*.ts"],
+    "exclude": ["node_modules/**", "www/**", "lib/**", "build-backend/**", "tasks.js"]
+}

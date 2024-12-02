@@ -1,0 +1,318 @@
+/**
+ *  ioBroker.vis-2
+ *  https://github.com/ioBroker/ioBroker.vis
+ *
+ *  Copyright (c) 2022-2023 Denis Haev https://github.com/GermanBluefox,
+ *  Creative Common Attribution-NonCommercial (CC BY-NC)
+ *
+ *  http://creativecommons.org/licenses/by-nc/4.0/
+ *
+ * Short content:
+ * Licensees may copy, distribute, display and perform the work and make derivative works based on it only if they give the author or licensor the credits in the manner specified by these.
+ * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
+ * (Free for non-commercial use).
+ */
+
+/* Reset all fonts settings */
+body,
+html {
+    font-style: normal;
+    font-stretch: normal;
+    text-shadow: none;
+    text-transform: none;
+    text-rendering: auto;
+    color: initial;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-indent: 0;
+    display: inline-block;
+    text-align: start;
+    font: 1em Arial;
+}
+
+/* set font as in editor */
+#vis_container {
+    font-family: Arial, sans-serif;
+}
+
+.vis-widget {
+    position: absolute;
+    overflow: hidden;
+}
+
+.vis-view {
+    top: 0;
+    min-height: 100%;
+    min-width: 100%;
+}
+
+.vis-editmode-steal-style:hover {
+    box-shadow: 0 0 15px 8px #002aad;
+}
+
+.vis-editmode-widget-shadow {
+    border: 1px dotted #0d72b8;
+    position: relative;
+}
+
+.vis-editmode-helper,
+.editmode-helper {
+    width: 100%;
+    height: 100%;
+    z-index: 600;
+    opacity: 0.1;
+    background-image: /* tint image */
+        linear-gradient(to right, rgba(192, 192, 192, 0.75), rgba(192, 192, 192, 0.75)),
+        /* checkered effect */ linear-gradient(to right, black 50%, white 50%),
+        linear-gradient(to bottom, black 50%, white 50%);
+    background-blend-mode: normal, difference, normal;
+    background-size: 1em 1em;
+}
+
+.vis-editmode-overlay {
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    opacity: 0.3;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.vis-editmode-overlay-not-selected:hover {
+    background: #ada400a0;
+    box-shadow: 0 0 15px 4px #ada400;
+}
+
+.vis-editmode-overlay-move-button {
+    position: absolute;
+    top: calc(50% - 8px);
+    font-size: 1.5em;
+    opacity: 0.7;
+    cursor: pointer;
+    z-index: 1204;
+}
+
+.vis-editmode-overlay-move-button:hover {
+    transform: scale(2);
+}
+
+.vis-editmode-overlay-absolute {
+    position: absolute;
+}
+
+.vis-editmode-selected.vis-editmode-overlay {
+    /* background-color: green; */
+    z-index: 1001;
+}
+
+.vis-editmode-selected.vis-editmode-selected-background.vis-editmode-overlay {
+    background-color: green;
+}
+
+.vis-editmode-widget-name {
+    font-size: 10px !important;
+    background: #002e4f;
+    border-radius: 3px 3px 0 0;
+    position: absolute !important;
+    top: -14px;
+    left: 0 !important;
+    padding: 1px 16px 1px 3px;
+    font-family: Arial, Helvetica, sans-serif !important;
+    overflow: visible !important;
+    text-shadow: none !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    line-height: unset !important;
+    font-style: normal !important;
+    font-weight: normal !important;
+    text-align: left !important;
+    font-variant: unset !important;
+}
+.vis-editmode-widget-name-long {
+    padding: 1px 50px 1px 3px;
+}
+.vis-editmode-widget-name.dark {
+    background: black;
+    color: white;
+}
+.vis-editmode-widget-name.light {
+    background: white;
+    color: black;
+}
+.vis-editmode-widget-name.vis-editmode-widget-name-bottom {
+    top: -0;
+    border-radius: 0 0 3px 3px;
+    opacity: 0.5;
+    z-index: 1002;
+}
+.vis-editmode-widget-name.vis-editmode-widget-name-selected.dark {
+    background: #ffc733;
+    color: black;
+}
+.vis-editmode-widget-name.vis-editmode-widget-name-selected.light {
+    background: #0064c0;
+    color: #ffffff;
+}
+
+.vis-editmode-select-rect {
+    border: 1px dashed white;
+    background-color: #f00;
+    opacity: 0.1;
+}
+
+.vis-widget-body {
+    width: 100%;
+    height: 100%;
+}
+
+.vis-anchor {
+    position: absolute;
+    top: 0;
+    right: 2px;
+    /* font-size: 10px;*/
+    width: 13px;
+    height: 13px;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+.vis-anchor:hover {
+    transform: scale(2);
+    color: #f00;
+}
+.vis-anchor:active {
+    transform: scale(1.7);
+    color: #f00;
+}
+.vis-anchor-enabled {
+    color: #0b9512;
+}
+.vis-anchor-disabled {
+    opacity: 0.7;
+}
+.vis-expand {
+    transform: rotate(90deg);
+    position: absolute;
+    top: 0;
+    right: 17px;
+    /* font-size: 10px;*/
+    width: 13px;
+    height: 13px;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+.vis-expand:hover {
+    transform: scale(2) rotate(90deg);
+    color: #f00;
+}
+.vis-expand:active {
+    transform: scale(1.7) rotate(90deg);
+    color: #f00;
+}
+.vis-expand-enabled {
+    color: #0b9512;
+}
+.vis-expand-disabled {
+    opacity: 0.7;
+}
+
+.vis-new-line {
+    position: absolute;
+    top: 0;
+    right: 34px;
+    /* font-size: 10px;*/
+    width: 13px;
+    height: 13px;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+.vis-new-line:hover {
+    transform: scale(2);
+    color: #f00;
+}
+.vis-new-line:active {
+    transform: scale(1.7);
+    color: #7c7c7c;
+}
+.vis-new-line-enabled {
+    color: #ed00ff;
+}
+.vis-new-line-disabled {
+    opacity: 0.7;
+}
+
+.vis-view-column {
+    flex: 1 0 0;
+    max-width: 500px;
+    min-width: 100px;
+    min-height: 100%;
+    position: relative;
+}
+
+.vis-view-column-edit {
+    border: 1px dashed #888888;
+    box-sizing: border-box;
+}
+
+.vis-editmode-widget-move-buttons {
+    background: #002e4f;
+    border-radius: 3px 3px 0 0;
+    position: absolute;
+    top: -13px;
+    right: 0;
+    overflow: visible;
+    height: 13px;
+    width: 45px;
+    font-size: 12px;
+}
+.vis-editmode-widget-move-buttons.dark {
+    background: black;
+    color: white;
+}
+.vis-editmode-widget-move-buttons.light {
+    background: white;
+    color: black;
+}
+.vis-editmode-widget-move-buttons.vis-editmode-widget-name-bottom {
+    top: -0;
+    border-radius: 0 0 3px 3px;
+    opacity: 0.5;
+    z-index: 1002;
+}
+
+.vis-editmode-move-button {
+    position: absolute;
+    top: 0;
+    left: 16px;
+    width: 13px;
+    height: 13px;
+    cursor: pointer;
+    transition: transform 0.1s;
+    display: inline-block;
+}
+.vis-editmode-move-button svg {
+    width: 13px;
+    height: 13px;
+}
+.vis-editmode-move-button:hover {
+    transform: scale(2);
+    color: #f00;
+}
+.vis-editmode-move-button:active {
+    transform: scale(1.7);
+    color: #f00;
+}
+.vis-editmode-widget-number {
+    position: absolute;
+    top: -1.5px;
+    left: 10px;
+    font-size: 11px;
+}
+
+.vis-signals-blink {
+    animation: vis-blink-animation 1s steps(5, start) infinite;
+}
+@keyframes vis-blink-animation {
+    to {
+        visibility: hidden;
+    }
+}
