@@ -87,6 +87,7 @@ interface MultiSelectProps {
     setSelectedWidgets: (widgets: string[]) => void;
     themeType: ThemeType;
     theme: VisTheme;
+    id?: string;
 }
 
 interface MultiSelectState {
@@ -105,10 +106,10 @@ class MultiSelect extends Component<MultiSelectProps, MultiSelectState> {
         const props = this.props;
         const value = props.value || [];
 
-        let text;
-        let subText = null;
+        let text: string | React.JSX.Element;
+        let subText: string | null = null;
         let color: string;
-        let icon;
+        let icon: React.JSX.Element | undefined;
         if (value.length === 1) {
             const item = props.options.find(foundItem => foundItem.value === value[0]);
             if (item) {
@@ -127,6 +128,9 @@ class MultiSelect extends Component<MultiSelectProps, MultiSelectState> {
             }
         } else {
             text = value.join(', ');
+        }
+        if (props.id) {
+            text = <span id={props.id}>{text}</span>;
         }
 
         let backColor;

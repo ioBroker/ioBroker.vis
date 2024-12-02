@@ -106,6 +106,7 @@ const Widgets: React.FC<WidgetsProps> = props => {
                     type: 'multiselect',
                     name: I18n.t('Active widget(s) from %s', shownWidgets.length),
                     doNotTranslateName: true,
+                    id: 'tests-vis-selected-widget',
                     items: shownWidgets.map((widgetId: AnyWidgetId) => {
                         const tpl = widgets[widgetId].tpl;
                         const widgetType = widgetTypes.find(w => w.name === tpl);

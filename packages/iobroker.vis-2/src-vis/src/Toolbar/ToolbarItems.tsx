@@ -83,6 +83,7 @@ export interface MultiselectToolbarItem extends BaseToolbarItem {
     width: number;
     value?: string[];
     onAction: (value: string[]) => void;
+    id?: string;
 }
 
 export interface CheckboxToolbarItem extends BaseToolbarItem {
@@ -218,6 +219,7 @@ class ToolbarItems extends React.Component<ToolbarItemsProps, ToolbarItemsState>
                 theme={this.props.theme}
                 key={key}
                 // style={{ margin: '0px 10px' }}
+                id={item.id}
                 label={
                     this.props.toolbarHeight !== 'veryNarrow'
                         ? item.doNotTranslateName
