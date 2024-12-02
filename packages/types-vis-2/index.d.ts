@@ -1271,7 +1271,8 @@ export interface VisLegacy {
     ) => string;
     getViewOfWidget: (wid: AnyWidgetId) => string | null;
     confirmMessage: (message: string, title: string, icon: string, width: number, callback: () => boolean) => void;
-    config: {}; // storage of dialog positions and size (Deprecated)
+    // @deprecated
+    config: object; // storage of dialog positions and size (Deprecated)
     showCode: (code: string, title: string, mode?: 'html' | 'json' | 'css') => void;
     findCommonAttributes: (/* view, widgets */) => void;
     bindWidgetClick: () => void;
