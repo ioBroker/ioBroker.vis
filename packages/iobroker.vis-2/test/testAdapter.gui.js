@@ -3,6 +3,7 @@ const path = require('node:path');
 
 let gPage;
 let gBrowser;
+const start = Date.now();
 
 describe('vis', () => {
     before(async function () {
@@ -23,14 +24,13 @@ describe('vis', () => {
 
         // open widgets
         await helper.palette.openWidgetSet(gPage, 'basic');
-        await helper.screenshot(gPage, '02_widgets_opened');
+        await helper.screenshot(gPage, `02_${(Date.now() - start).toString().padStart(6, '0')}_widgets_opened`);
     });
 
     it('Check all widgets', async function () {
         this.timeout(120_000);
         const widgetSets = await helper.palette.getListOfWidgetSets();
         console.log(`Widget sets found: ${widgetSets.join(', ')}`);
-        const start = Date.now();
         for (let s = 0; s < widgetSets.length; s++) {
             const widgets = await helper.palette.getListOfWidgets(gPage, widgetSets[s]);
             for (let w = 0; w < widgets.length; w++) {
@@ -46,13 +46,16 @@ describe('vis', () => {
 
     it('Check runtime', async function () {
         this.timeout(20_000);
+
+        await helper.screenshot(gPage, `90_${(Date.now() - start).toString().padStart(6, '0')}before_runtime`);
+
         // add widget in editor
         const basicWidgets = await helper.palette.getListOfWidgets(gPage, 'basic');
         const wid = await helper.palette.addWidget(gPage, basicWidgets[0], true);
         // wait for saving
         await new Promise(resolve => setTimeout(resolve, 5_000));
 
-        await helper.screenshot(gPage, '90_runtime');
+        await helper.screenshot(gPage, `90_${(Date.now() - start).toString().padStart(6, '0')}_runtime`);
 
         const runtimePage = await gBrowser.newPage();
 
@@ -60,7 +63,7 @@ describe('vis', () => {
         await runtimePage.goto(`http://127.0.0.1:18082/vis-2/index.html`, { waitUntil: 'domcontentloaded' });
         await runtimePage.waitForSelector('#root', { timeout: 5_000 });
         await runtimePage.waitForSelector(`#${wid}`, { timeout: 20_000 });
-        await helper.screenshot(runtimePage, '91_runtime');
+        await helper.screenshot(runtimePage, `91_${(Date.now() - start).toString().padStart(6, '0')}runtime`);
 
         await runtimePage.close();
     });
