@@ -1,17 +1,25 @@
 {
-    "version": "2.11.0",
-    "packages": ["packages/*"],
-    "command": {
-        "run": {
-            "stream": true
-        },
-        "version": {
-            "npmClientArgs": ["-f"],
-            "allowBranch": ["master"],
-            "ignoreChanges": ["*.md"],
-            "exact": true,
-            "forcePublish": true
-        }
+  "version": "2.11.1",
+  "packages": [
+    "packages/*"
+  ],
+  "command": {
+    "run": {
+      "stream": true
     },
-    "$schema": "node_modules/lerna/schemas/lerna-schema.json"
+    "version": {
+      "npmClientArgs": [
+        "-f"
+      ],
+      "allowBranch": [
+        "master"
+      ],
+      "ignoreChanges": [
+        "*.md"
+      ],
+      "exact": true,
+      "forcePublish": true
+    }
+  },
+  "$schema": "node_modules/lerna/schemas/lerna-schema.json"
 }

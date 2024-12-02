@@ -294,7 +294,7 @@ npm run start
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.11.1 (2024-12-02)
 * (@GermanBluefox) Corrected navigation menu
 * (@GermanBluefox) Migrated widgets to React: basic - frame, basic - note, basic - logout 
 * (@GermanBluefox) Added the HTML rebuild button to settings
