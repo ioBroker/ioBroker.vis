@@ -2099,6 +2099,11 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
                     style={{
                         top: widgetNameBottom ? undefined : `calc(-14px - ${borderWidth})`,
                     }}
+                    onMouseDown={e => {
+                        if (this.props.context.setSelectedWidgets) {
+                            this.onMouseDown(e);
+                        }
+                    }}
                 >
                     <span>
                         {this.state.multiViewWidget
@@ -2237,7 +2242,11 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
             this.props.selectedGroup !== this.props.id ? ( // and it does not the edited group itself
                 <div
                     className={classNames.join(' ')}
-                    onMouseDown={e => !!this.props.context.setSelectedWidgets && this.onMouseDown(e)}
+                    onMouseDown={e => {
+                        if (this.props.context.setSelectedWidgets) {
+                            this.onMouseDown(e);
+                        }
+                    }}
                 />
             ) : null;
 
