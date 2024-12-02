@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.10.8",
+    "version": "2.11.0",
     "news": {
       "2.10.8": {
         "en": "Added new option for view: \"Limit only for instances\"",
