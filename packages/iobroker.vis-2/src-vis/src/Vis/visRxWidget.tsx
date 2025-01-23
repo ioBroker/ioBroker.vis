@@ -119,7 +119,13 @@ class VisRxWidget<
 
     private mouseDownOnView?:
         | null
-        | ((e: MouseEvent, wid: AnyWidgetId, isRelative: boolean, isResize: boolean, isDoubleClick: boolean) => void);
+        | ((
+              e: React.MouseEvent,
+              wid: AnyWidgetId,
+              isRelative: boolean,
+              isResize?: boolean,
+              isDoubleClick?: boolean,
+          ) => void);
 
     private bindingsTimer?: ReturnType<typeof setTimeout>;
 

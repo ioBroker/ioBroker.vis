@@ -1190,17 +1190,17 @@ class Editor extends Runtime<EditorProps, EditorState> {
             return;
         }
         this.setState({ selectedGroup: groupId });
-        this.setSelectedWidgets([]);
+        void this.setSelectedWidgets([]);
     };
 
     undo = async (): Promise<void> => {
-        this.setSelectedWidgets([]);
+        void this.setSelectedWidgets([]);
         await this.changeProject(this.state.history[this.state.historyCursor - 1], true);
         await this.setStateAsync({ historyCursor: this.state.historyCursor - 1 });
     };
 
     redo = async (): Promise<void> => {
-        this.setSelectedWidgets([]);
+        void this.setSelectedWidgets([]);
         await this.changeProject(this.state.history[this.state.historyCursor + 1], true);
         await this.setStateAsync({ historyCursor: this.state.historyCursor + 1 });
     };
@@ -1669,13 +1669,15 @@ class Editor extends Runtime<EditorProps, EditorState> {
         const project = deepClone(store.getState().visProject);
         const widget = project[this.state.selectedView].widgets[id];
         if (widget?.marketplace) {
-            const marketplace = deepClone(
+            const marketplace: MarketplaceWidgetRevision | null = deepClone(
                 store
                     .getState()
                     .visProject.___settings.marketplace.find(item => item.widget_id === widget.marketplace.widget_id),
             );
             await this.deleteWidgetsAction();
-            await this.addMarketplaceWidget(marketplace.id, null, null, id, widget.data, widget.style);
+            if (marketplace) {
+                await this.addMarketplaceWidget(marketplace.id, null, null, id, widget.data, widget.style);
+            }
         }
     };
 
@@ -2152,13 +2154,12 @@ class Editor extends Runtime<EditorProps, EditorState> {
                     name: view,
                     widgets: [],
                 };
-                Object.keys(store.getState().visProject[view].widgets).forEach((widget: AnyWidgetId) => {
+                const pWidgets = store.getState().visProject[view].widgets;
+                Object.keys(pWidgets).forEach((widget: AnyWidgetId) => {
                     if (
                         this.state.updateWidgetsDialog &&
-                        store.getState().visProject[view].widgets[widget].marketplace?.widget_id ===
-                            this.state.updateWidgetsDialog.widget_id &&
-                        store.getState().visProject[view].widgets[widget].marketplace?.version !==
-                            this.state.updateWidgetsDialog.version
+                        pWidgets[widget].marketplace?.widget_id === this.state.updateWidgetsDialog.widget_id &&
+                        pWidgets[widget].marketplace?.version !== this.state.updateWidgetsDialog.version
                     ) {
                         viewWidgets.widgets.push(widget);
                     }

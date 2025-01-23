@@ -81,7 +81,13 @@ interface CreateWidgetOptions {
     isRelative: boolean;
     mouseDownOnView:
         | null
-        | ((e: MouseEvent, wid: AnyWidgetId, isRelative: boolean, isResize: boolean, isDoubleClick: boolean) => void);
+        | ((
+              e: React.MouseEvent,
+              wid: AnyWidgetId,
+              isRelative: boolean,
+              isResize?: boolean,
+              isDoubleClick?: boolean,
+          ) => void);
     moveAllowed: boolean;
     ignoreMouseEvents?: boolean | undefined;
     onIgnoreMouseEvents?: (ignore: boolean) => void;
@@ -581,7 +587,13 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
     // Called from Widget
     mouseDownOnView = this.props.context.runtime
         ? null
-        : (e: MouseEvent, wid: AnyWidgetId, _isRelative: boolean, isResize: boolean, isDoubleClick: boolean) => {
+        : (
+              e: React.MouseEvent,
+              wid: AnyWidgetId,
+              _isRelative: boolean,
+              isResize?: boolean,
+              isDoubleClick?: boolean,
+          ) => {
               if (this.ignoreMouseEvents) {
                   return;
               }

@@ -16,11 +16,11 @@
 import React from 'react';
 
 import { I18n } from '@iobroker/adapter-react-v5';
-import type { RxRenderWidgetProps, RxWidgetInfo } from '@iobroker/types-vis-2';
+import type { RxRenderWidgetProps, RxWidgetInfo, WidgetData } from '@iobroker/types-vis-2';
 import VisRxWidget from '../../visRxWidget';
 import InstallSwipe from './InstallSwipe';
 
-interface RxData {
+interface RxData extends WidgetData {
     left_nav_view: string;
     right_nav_view: string;
     hideIndication: boolean;

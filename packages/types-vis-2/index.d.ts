@@ -50,7 +50,9 @@ export type WidgetReference = {
         x?: number,
         y?: number,
         save?: boolean,
-        calculateRelativeWidgetPosition?: null | ((...props: any[]) => void),
+        calculateRelativeWidgetPosition?:
+            | null
+            | ((id: AnyWidgetId, left: string, top: string, shadowDiv: HTMLDivElement, order: AnyWidgetId[]) => void),
     ) => void;
     onResize?: undefined | (() => void);
     onTempSelect?: (selected?: boolean) => void;
@@ -87,8 +89,25 @@ export interface VisBaseWidgetProps {
     /** Function to register the widget */
     askView: (command: AskViewCommand, props?: WidgetReference) => any;
     onIgnoreMouseEvents: (bool: boolean) => void;
-    onWidgetsChanged: (...props: any[]) => void;
-    mouseDownOnView: (...props: any[]) => void;
+    onWidgetsChanged: (
+        changesOfWidgets:
+            | {
+                  wid: AnyWidgetId;
+                  view: string;
+                  style: WidgetStyle;
+                  data: WidgetData;
+              }[]
+            | null,
+        view: string,
+        viewSettings?: ViewSettings,
+    ) => void;
+    mouseDownOnView: (
+        e: React.MouseEvent,
+        wid: AnyWidgetId,
+        isRelative: boolean,
+        isResize?: boolean,
+        isDoubleClick?: boolean,
+    ) => void;
     refParent: React.RefObject<HTMLElement>;
     // eslint-disable-next-line react/no-unused-prop-types
     customSettings: Record<string, any>;
@@ -175,29 +194,20 @@ export type RxWidgetInfoAttributesFieldText = {
     /** Field label (i18n) */
     readonly label?: string;
     /** JS Function for conditional visibility */
-    readonly hidden?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly hidden?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** Tooltip (i18n) */
     readonly tooltip?: string;
     /** JS Function for conditional disability */
-    readonly disabled?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly disabled?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** JS Function for error */
-    readonly error?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly error?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
     readonly onChange?: (
         field: RxWidgetInfoAttributesField,
-        data: Record<string, any>,
-        changeData: (newData: Record<string, any>) => void,
+        data: WidgetData,
+        changeData: (newData: WidgetData) => void,
         socket: LegacyConnection,
         index?: number,
     ) => Promise<void>;
@@ -209,10 +219,7 @@ export type RxWidgetInfoAttributesFieldDelimiter = {
     /** It is not required here */
     readonly name: string;
     /** JS Function for conditional visibility */
-    readonly hidden?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly hidden?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
 };
 
 export type RxWidgetInfoAttributesFieldHelp = {
@@ -230,10 +237,7 @@ export type RxWidgetInfoAttributesFieldHelp = {
     /** Field label (i18n) */
     readonly label?: string;
     /** JS Function for conditional visibility */
-    readonly hidden?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly hidden?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
 };
 
 export type RxWidgetInfoAttributesFieldHTML = {
@@ -249,29 +253,20 @@ export type RxWidgetInfoAttributesFieldHTML = {
     /** Field label (i18n) */
     readonly label?: string;
     /** JS Function for conditional visibility */
-    readonly hidden?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly hidden?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** Tooltip (i18n) */
     readonly tooltip?: string;
     /** JS Function for conditional disability */
-    readonly disabled?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly disabled?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** JS Function for error */
-    readonly error?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly error?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
     readonly onChange?: (
         field: RxWidgetInfoAttributesField,
-        data: Record<string, any>,
-        changeData: (newData: Record<string, any>) => void,
+        data: WidgetData,
+        changeData: (newData: WidgetData) => void,
         socket: LegacyConnection,
         index?: number,
     ) => Promise<void>;
@@ -286,7 +281,8 @@ export type RxWidgetInfoAttributesFieldID = {
     readonly noInit?: boolean;
     /** Do not subscribe on changes of the object */
     readonly noSubscribe?: boolean;
-    /** Filter of objects (not JSON string, it is an object), like:
+    /**
+     * Filter of objects (not JSON string, it is an object), like:
      - `{common: {custom: true}}` - show only objects with some custom settings
      - `{common: {custom: 'sql.0'}}` - show only objects with sql.0 custom settings (only of the specific instance)
      - `{common: {custom: '_dataSources'}}` - show only objects of adapters `influxdb' or 'sql' or 'history'
@@ -313,29 +309,20 @@ export type RxWidgetInfoAttributesFieldID = {
     /** Field label (i18n) */
     readonly label?: string;
     /** JS Function for conditional visibility */
-    readonly hidden?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly hidden?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** Tooltip (i18n) */
     readonly tooltip?: string;
     /** JS Function for conditional disability */
-    readonly disabled?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly disabled?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** JS Function for error */
-    readonly error?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly error?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
     readonly onChange?: (
         field: RxWidgetInfoAttributesField,
-        data: Record<string, any>,
-        changeData: (newData: Record<string, any>) => void,
+        data: WidgetData,
+        changeData: (newData: WidgetData) => void,
         socket: LegacyConnection,
         index?: number,
     ) => Promise<void>;
@@ -358,29 +345,20 @@ export type RxWidgetInfoAttributesFieldInstance = {
     /** Field label (i18n) */
     readonly label?: string;
     /** JS Function for conditional visibility */
-    readonly hidden?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly hidden?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** Tooltip (i18n) */
     readonly tooltip?: string;
     /** JS Function for conditional disability */
-    readonly disabled?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly disabled?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** JS Function for error */
-    readonly error?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly error?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
     readonly onChange?: (
         field: RxWidgetInfoAttributesField,
-        data: Record<string, any>,
-        changeData: (newData: Record<string, any>) => void,
+        data: WidgetData,
+        changeData: (newData: WidgetData) => void,
         socket: LegacyConnection,
         index?: number,
     ) => Promise<void>;
@@ -401,29 +379,20 @@ export type RxWidgetInfoAttributesFieldSelect = {
     /** Field label (i18n) */
     readonly label?: string;
     /** JS Function for conditional visibility */
-    readonly hidden?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly hidden?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** Tooltip (i18n) */
     readonly tooltip?: string;
     /** JS Function for conditional disability */
-    readonly disabled?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly disabled?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** JS Function for error */
-    readonly error?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly error?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
     readonly onChange?: (
         field: RxWidgetInfoAttributesField,
-        data: Record<string, any>,
-        changeData: (newData: Record<string, any>) => void,
+        data: WidgetData,
+        changeData: (newData: WidgetData) => void,
         socket: LegacyConnection,
         index?: number,
     ) => Promise<void>;
@@ -442,29 +411,20 @@ export type RxWidgetInfoAttributesFieldCheckbox = {
     /** Field label (i18n) */
     readonly label?: string;
     /** JS Function for conditional visibility */
-    readonly hidden?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly hidden?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** Tooltip (i18n) */
     readonly tooltip?: string;
     /** JS Function for conditional disability */
-    readonly disabled?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly disabled?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** JS Function for error */
-    readonly error?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly error?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
     readonly onChange?: (
         field: RxWidgetInfoAttributesField,
-        data: Record<string, any>,
-        changeData: (newData: Record<string, any>) => void,
+        data: WidgetData,
+        changeData: (newData: WidgetData) => void,
         socket: LegacyConnection,
         index?: number,
     ) => Promise<void>;
@@ -487,29 +447,20 @@ export type RxWidgetInfoAttributesFieldNumber = {
     /** Field label (i18n) */
     readonly label?: string;
     /** JS Function for conditional visibility */
-    readonly hidden?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly hidden?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** Tooltip (i18n) */
     readonly tooltip?: string;
     /** JS Function for conditional disability */
-    readonly disabled?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly disabled?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** JS Function for error */
-    readonly error?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly error?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
     readonly onChange?: (
         field: RxWidgetInfoAttributesField,
-        data: Record<string, any>,
-        changeData: (newData: Record<string, any>) => void,
+        data: WidgetData,
+        changeData: (newData: WidgetData) => void,
         socket: LegacyConnection,
         index?: number,
     ) => Promise<void>;
@@ -536,29 +487,20 @@ export type RxWidgetInfoAttributesFieldSlider = {
     /** Field label (i18n) */
     readonly label?: string;
     /** JS Function for conditional visibility */
-    readonly hidden?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly hidden?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** Tooltip (i18n) */
     readonly tooltip?: string;
     /** JS Function for conditional disability */
-    readonly disabled?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly disabled?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** JS Function for error */
-    readonly error?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly error?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
     readonly onChange?: (
         field: RxWidgetInfoAttributesField,
-        data: Record<string, any>,
-        changeData: (newData: Record<string, any>) => void,
+        data: WidgetData,
+        changeData: (newData: WidgetData) => void,
         socket: LegacyConnection,
         index?: number,
     ) => Promise<void>;
@@ -587,29 +529,20 @@ export type RxWidgetInfoAttributesFieldWidget = {
     /** Field label (i18n) */
     readonly label?: string;
     /** JS Function for conditional visibility */
-    readonly hidden?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly hidden?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** Tooltip (i18n) */
     readonly tooltip?: string;
     /** JS Function for conditional disability */
-    readonly disabled?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly disabled?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** JS Function for error */
-    readonly error?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly error?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
     readonly onChange?: (
         field: RxWidgetInfoAttributesField,
-        data: Record<string, any>,
-        changeData: (newData: Record<string, any>) => void,
+        data: WidgetData,
+        changeData: (newData: WidgetData) => void,
         socket: LegacyConnection,
         index?: number,
     ) => Promise<void>;
@@ -628,29 +561,20 @@ export type RxWidgetInfoAttributesFieldSelectViews = {
     /** Field label (i18n) */
     readonly label?: string;
     /** JS Function for conditional visibility */
-    readonly hidden?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly hidden?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** Tooltip (i18n) */
     readonly tooltip?: string;
     /** JS Function for conditional disability */
-    readonly disabled?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly disabled?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** JS Function for error */
-    readonly error?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly error?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
     readonly onChange?: (
         field: RxWidgetInfoAttributesField,
-        data: Record<string, any>,
-        changeData: (newData: Record<string, any>) => void,
+        data: WidgetData,
+        changeData: (newData: WidgetData) => void,
         socket: LegacyConnection,
         index?: number,
     ) => Promise<void>;
@@ -674,29 +598,20 @@ export type RxWidgetInfoAttributesFieldCustom = {
     /** Field label (i18n) */
     readonly label?: string;
     /** JS Function for conditional visibility */
-    readonly hidden?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly hidden?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** Tooltip (i18n) */
     readonly tooltip?: string;
     /** JS Function for conditional disability */
-    readonly disabled?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly disabled?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** JS Function for error */
-    readonly error?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly error?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
     readonly onChange?: (
         field: RxWidgetInfoAttributesField,
-        data: Record<string, any>,
-        changeData: (newData: Record<string, any>) => void,
+        data: WidgetData,
+        changeData: (newData: WidgetData) => void,
         socket: LegacyConnection,
         index?: number,
     ) => Promise<void>;
@@ -728,29 +643,20 @@ export type RxWidgetInfoAttributesFieldSimple = {
     /** Field label (i18n) */
     readonly label?: string;
     /** JS Function for conditional visibility */
-    readonly hidden?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly hidden?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** Tooltip (i18n) */
     readonly tooltip?: string;
     /** JS Function for conditional disability */
-    readonly disabled?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly disabled?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** JS Function for error */
-    readonly error?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly error?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
     readonly onChange?: (
         field: RxWidgetInfoAttributesField,
-        data: Record<string, any>,
-        changeData: (newData: Record<string, any>) => void,
+        data: WidgetData,
+        changeData: (newData: WidgetData) => void,
         socket: LegacyConnection,
         index?: number,
     ) => Promise<void>;
@@ -765,29 +671,20 @@ export type RxWidgetInfoAttributesFieldDefault = {
     /** Field label (i18n) */
     readonly label?: string;
     /** JS Function for conditional visibility */
-    readonly hidden?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly hidden?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** Tooltip (i18n) */
     readonly tooltip?: string;
     /** JS Function for conditional disability */
-    readonly disabled?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly disabled?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** JS Function for error */
-    readonly error?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly error?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
     /** Do not show binding symbol fot this field */
     readonly noBinding?: boolean;
     /** Callback called if the field value changed */
     readonly onChange?: (
         field: RxWidgetInfoAttributesField,
-        data: Record<string, any>,
-        changeData: (newData: Record<string, any>) => void,
+        data: WidgetData,
+        changeData: (newData: WidgetData) => void,
         socket: LegacyConnection,
         index?: number,
     ) => Promise<void>;
@@ -1006,7 +903,7 @@ export interface SingleWidget {
     /** Permissions for each user for the widget */
     permissions?: UserPermissions;
     /** This widget was taken from a marketplace */
-    marketplace?: any;
+    marketplace?: MarketplaceWidgetRevision;
     /** Indicator that this widget is used in another widget (e.g., in panel) */
     usedInWidget?: boolean;
     /** CSS for this widget */
@@ -1195,17 +1092,64 @@ export interface VisCanWidgetStateValues extends VisRxWidgetStateValues {
     removeAttr: (id: string) => void;
 }
 
+export interface LegacyVisConnection {
+    namespace: string;
+    logError: (errorText: string) => void;
+    getIsConnected: () => boolean;
+    getGroups: (
+        groupName: string | ((result: any) => void) | boolean,
+        useCache: boolean | ((result: any) => void),
+        cb: (result: any) => void,
+    ) => void;
+    getConfig: (
+        useCache: boolean,
+        cb?: (error: string | null, systemConfig?: ioBroker.SystemConfigCommon) => void,
+    ) => void;
+    getObjects: (useCache?: boolean) => Promise<Record<string, ioBroker.Object>>;
+    getLoggedUser: (cb: (isSecure: boolean, user: string) => void) => void;
+    subscribe: (ids: string[], cb: () => void) => void;
+    unsubscribe: (ids: string[], cb: () => void) => void;
+    authenticate: (user: string, password: string, salt: string) => void;
+    getStates: (ids: string, cb: (error: Error | null, states?: Record<string, ioBroker.State>) => void) => void;
+    setState: (id: string, val: ioBroker.StateValue, cb: (error?: Error | null) => void) => void;
+    sendTo: (instance: string, command: string, data: any, cb?: (result: Record<string, any>) => void) => void;
+    setReloadTimeout: () => void;
+    setReconnectInterval: (interval: number) => void;
+    getUser: () => string;
+    sendCommand: (instance: string, command: string, data: any, ack?: boolean) => Promise<void>;
+    readFile: (
+        filename: string,
+        cb: (error: Error | null, data?: string | Buffer, filename?: string, mimeType?: string) => void,
+    ) => Promise<void>;
+    getHistory: (
+        id: string,
+        options: ioBroker.GetHistoryOptions & { timeout: number },
+        cb: (error: Error | null, result?: ioBroker.GetHistoryResult) => void,
+    ) => void;
+    getHttp: (url: string, callback: (data: any) => void) => boolean;
+    _socket: {
+        emit: (cmd: string, data: any, cb: (arg1: any, arg2?: any) => void) => void;
+    };
+}
+
 export interface VisLegacy {
     instance: string;
-    navChangeCallbacks: (() => void)[];
+    navChangeCallbacks: ((view: string) => void)[];
     findNearestResolution: (width?: number, height?: number) => string;
     version: number;
     states: VisCanWidgetStateValues;
-    objects: Record<string, any>;
+    objects: Record<string, ioBroker.Object>;
     isTouch: boolean;
     activeWidgets: string[];
     editMode: boolean;
-    binds: any;
+    binds: {
+        basic: any;
+        table: any;
+        jqplot: any;
+        jqueryui: any;
+        swipe: any;
+        [visWidgetSet: string]: any;
+    };
     views: Project;
     activeView: string;
     language: string;
@@ -1217,7 +1161,7 @@ export interface VisLegacy {
     viewsActiveFilter: Record<string, string[]>;
     onChangeCallbacks: ArgumentChanged[];
     subscribing: Subscribing;
-    conn: any;
+    conn: LegacyVisConnection;
     lastChangedView: string | null; // used in vis-2 to save last sent view name over vis-2.0.command
     updateContainers: () => void;
     renderView: (viewDiv: string, view: string, hidden: boolean, cb: (viewDiv: string, view: string) => void) => void;
@@ -1253,14 +1197,22 @@ export interface VisLegacy {
     ) => void;
     showWidgetHelper: (viewDiv: string, view: string, wid: string, isShow: boolean) => void;
     addFont: (fontName: string) => void;
-    registerOnChange: (callback: any, arg: string, wid: AnyWidgetId) => void;
-    unregisterOnChange: (callback: any, arg: string, wid: AnyWidgetId) => void;
+    registerOnChange: (
+        callback: (itemArg: any, wid: string, val: ioBroker.StateValue, ack: boolean, ts: number) => void,
+        itemArg: any,
+        wid: AnyWidgetId,
+    ) => void;
+    unregisterOnChange: (
+        callback: (itemArg: any, wid: string, val: ioBroker.StateValue, ack: boolean, ts: number) => void,
+        arg: itemArg,
+        wid: AnyWidgetId,
+    ) => void;
     generateInstance: () => string;
-    findByRoles: (stateId: string, roles: string[]) => any;
-    findByName: (stateId: string, objName: string) => any;
+    findByRoles: (stateId: string, roles: string[]) => Record<string, string>;
+    findByName: (stateId: string, objName: string) => string | false;
     hideShowAttr: (widAttr: string) => void;
-    bindingsCache: Record<string, any>;
-    extractBinding: (format: string, doNotIgnoreEditMode?: boolean) => any;
+    bindingsCache: Record<string, VisBinding[]>;
+    extractBinding: (format: string, doNotIgnoreEditMode?: boolean) => VisBinding[] | null;
     formatBinding: (
         format: string,
         view: string,
@@ -1667,8 +1619,8 @@ export interface VisContext {
                   | {
                         wid: AnyWidgetId;
                         view: string;
-                        style?: Record<string, any>;
-                        data?: Record<string, any>;
+                        style?: WidgetStyle;
+                        data?: WidgetData;
                     }[]
                   | null,
               view?: string,
@@ -1741,7 +1693,7 @@ export interface CustomPaletteProperties {
     themeType: 'dark' | 'light';
     helpers: {
         deviceIcons: Record<string, React.JSX.Element>;
-        detectDevices: (socket: LegacyConnection) => Promise<any[]>;
+        detectDevices: (socket: LegacyConnection) => Promise<DetectorResult[]>;
         getObjectIcon: (obj: ioBroker.Object, id?: string, imagePrefix?: string) => string;
         allObjects: (socket: LegacyConnection) => Promise<Record<string, ioBroker.Object>>;
         getNewWidgetId: (project: Project, offset?: number) => SingleWidgetId;
@@ -1759,10 +1711,7 @@ interface RxWidgetInfoGroup {
     readonly label?: string;
     readonly indexFrom?: number;
     readonly indexTo?: string;
-    readonly hidden?:
-        | string
-        | ((data: Record<string, any>) => boolean)
-        | ((data: Record<string, any>, index: number) => boolean);
+    readonly hidden?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
 }
 
 interface RxWidgetInfo {

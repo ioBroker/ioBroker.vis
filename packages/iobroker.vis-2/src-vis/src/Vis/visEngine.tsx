@@ -55,6 +55,11 @@ import type {
     VisFormatUtils as VisFormatUtilsType,
     VisCanWidgetStateValues,
     CanObservable,
+    LegacyVisConnection,
+    VisBinding,
+    Widget,
+    WidgetData,
+    VisRxWidgetStateValues,
 } from '@iobroker/types-vis-2';
 import type Editor from '@/Editor';
 import { deepClone } from '@/Utils/utils';
@@ -252,8 +257,8 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
     statesDebounce: Record<
         string,
         {
-            state: any;
-            timeout: number;
+            state: ioBroker.StateValue | null;
+            timeout: ReturnType<typeof setTimeout> | number;
         }
     >;
 
@@ -289,7 +294,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
     viewsActiveFilter: Record<string, string[]>;
 
     // eslint-disable-next-line react/no-unused-class-component-methods
-    defaultMode: any;
+    defaultMode: number;
 
     can: any;
 
@@ -406,15 +411,15 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                 this.vis.language = systemConfig.common.language || 'en';
                 this.systemConfig = systemConfig;
 
-                this.props.socket.subscribeState(
+                void this.props.socket.subscribeState(
                     this.ID_CONTROL_INSTANCE,
                     this.onStateChange as ioBroker.StateChangeHandler,
                 );
-                this.props.socket.subscribeState(
+                void this.props.socket.subscribeState(
                     this.ID_CONTROL_DATA,
                     this.onStateChange as ioBroker.StateChangeHandler,
                 );
-                this.props.socket.subscribeState(
+                void this.props.socket.subscribeState(
                     this.ID_CONTROL_COMMAND,
                     this.onStateChange as ioBroker.StateChangeHandler,
                 );
@@ -636,7 +641,13 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
             activeWidgets: [],
             navChangeCallbacks: [],
             editMode: !!this.props.editMode,
-            binds: {},
+            binds: {
+                basic: null,
+                table: null,
+                jqplot: null,
+                jqueryui: null,
+                swipe: null,
+            },
             views: store.getState().visProject,
             activeView: this.props.selectedView,
             language: this.props.lang,
@@ -809,7 +820,9 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                 }
             },
             registerOnChange: (callback: any, arg: string, wid: AnyWidgetId) => {
-                !wid && console.warn('No widget ID for registerOnChange callback! Please fix');
+                if (!wid) {
+                    console.warn('No widget ID for registerOnChange callback! Please fix');
+                }
 
                 if (
                     !this.onChangeCallbacks.find(
@@ -841,7 +854,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                 window.localStorage.setItem('visInstance', instance);
                 return this.instance;
             },
-            findByRoles: (stateId, roles) => {
+            findByRoles: (stateId: string, roles: string[]): Record<string, string> => {
                 if (typeof roles !== 'object') {
                     roles = [roles];
                 } else {
@@ -892,7 +905,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                 }
                 return result;
             },
-            findByName: (stateId, objName) => {
+            findByName: (stateId: string, objName: string): string | false => {
                 // try to detect other values
 
                 // Go through all channels of this device
@@ -919,7 +932,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
             },
             hideShowAttr: widAttr => console.warn('hideShowAttr is deprecated: ', widAttr),
             bindingsCache: {},
-            extractBinding: (format, doNotIgnoreEditMode) => {
+            extractBinding: (format: string, doNotIgnoreEditMode: boolean): VisBinding[] | null => {
                 if ((!doNotIgnoreEditMode && !!this.props.editMode) || !format) {
                     return null;
                 }
@@ -928,17 +941,23 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                     return JSON.parse(JSON.stringify(this.vis.bindingsCache[format]));
                 }
 
-                const result = extractBinding(format);
+                const result: VisBinding[] | null = extractBinding(format);
 
                 // cache bindings
                 if (result) {
-                    this.vis.bindingsCache = this.vis.bindingsCache || {};
                     this.vis.bindingsCache[format] = JSON.parse(JSON.stringify(result));
                 }
 
                 return result;
             },
-            formatBinding: (format, view, wid, widget, widgetData, values) =>
+            formatBinding: (
+                format: string,
+                view: string,
+                wid: AnyWidgetId,
+                widget: Widget,
+                widgetData: WidgetData,
+                values: VisRxWidgetStateValues,
+            ): string =>
                 this.formatUtils.formatBinding({
                     format,
                     view,
@@ -948,7 +967,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                     values,
                     moment,
                 }),
-            getViewOfWidget: id => {
+            getViewOfWidget: (id: AnyWidgetId): string => {
                 const views = store.getState().visProject;
                 // find a view of this widget
                 for (const v in views) {
@@ -961,18 +980,23 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                 }
                 return null;
             },
-            confirmMessage: (message, title, icon, width, callback) =>
-                this.props.onConfirmDialog(message, title, icon, width, callback),
+            confirmMessage: (
+                message: string,
+                title: string,
+                icon: string,
+                width: number,
+                callback: () => boolean,
+            ): void => this.props.onConfirmDialog(message, title, icon, width, callback),
             config: {}, // storage of dialog positions and size (Deprecated)
             showCode: (code, title, mode) => this.props.onShowCode(code, title, mode),
-            findCommonAttributes: (/* view, widgets */) => {
+            findCommonAttributes: (/* view, widgets */): void => {
                 //
             },
-            bindWidgetClick: () => {
+            bindWidgetClick: (): void => {
                 // used in vis.1
                 // do nothing, as it is not required in react
             },
-            preloadImages: srcs => {
+            preloadImages: (srcs: string[]): void => {
                 // preload images
                 this.preloadImagesCacheImgs = this.preloadImagesCacheImgs || [];
                 this.preloadImagesCacheSrcs = this.preloadImagesCacheSrcs || [];
@@ -989,9 +1013,9 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                 }
             },
             updateStates: data => {
-                data &&
+                if (data) {
                     Object.keys(data).forEach(id => {
-                        let state = data[id];
+                        let state: ioBroker.State = data[id];
 
                         if (id.startsWith('local_')) {
                             // if it is a local variable, we have to initiate this
@@ -1004,14 +1028,17 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                                 user: this.props.currentUser ? this.props.currentUser._id : 'system.user.admin',
                                 q: 0,
                             };
+                            this.onStateChange(id, state);
+                            return;
                         }
 
                         if (!state) {
                             return;
                         }
 
-                        this.setValue(id, state);
+                        this.setValue(id, state.val);
                     });
+                }
             },
             getHistory: (id, options, cb) => {
                 options = options || {};
@@ -1198,7 +1225,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
     }
 
     // allows sending command to view
-    onCommand = (view: string, command: ViewCommand, data: ViewCommandOptions): void => {
+    onCommand = (view: string, command: ViewCommand, data?: ViewCommandOptions): void => {
         if (this.refViews[view]?.onCommand) {
             this.refViews[view].onCommand(command, data);
         }
@@ -1297,42 +1324,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
         );
     }
 
-    createConnection(): {
-        namespace: string;
-        logError: (errorText: string) => void;
-        getIsConnected: () => boolean;
-        getGroups: (
-            groupName: string | ((result: any) => void) | boolean,
-            useCache: boolean | ((result: any) => void),
-            cb: (result: any) => void,
-        ) => void;
-        getConfig: (
-            useCache: boolean,
-            cb?: (error: string | null, systemConfig?: ioBroker.SystemConfigCommon) => void,
-        ) => void;
-        getObjects: (useCache?: boolean) => Promise<Record<string, ioBroker.Object>>;
-        getLoggedUser: (cb: (isSecure: boolean, user: string) => void) => void;
-        subscribe: (IDs: string[], cb: () => void) => void;
-        unsubscribe: (IDs: string[], cb: () => void) => void;
-        authenticate: (user: string, password: string, salt: string) => void;
-        getStates: (IDs: string, cb: (arg1: any, arg2?: any) => void) => void;
-        setState: (id: string, val: any, cb: (arg1?: any) => void) => void;
-        sendTo: (instance: string, command: string, data: any, cb?: (result: Record<string, any>) => void) => void;
-        setReloadTimeout: () => void;
-        setReconnectInterval: (interval: number) => void;
-        getUser: () => string;
-        sendCommand: (instance: string, command: string, data: any, ack: boolean) => Promise<void>;
-        readFile: (filename: string, cb: (arg1: any, arg2?: any, arg3?: any, arg4?: any) => void) => Promise<void>;
-        getHistory: (
-            id: string,
-            options: ioBroker.GetHistoryOptions & { timeout: number },
-            cb: (arg1: any, arg2?: any) => void,
-        ) => void;
-        getHttp: (url: string, callback: (data: any) => void) => boolean;
-        _socket: {
-            emit: (cmd: string, data: any, cb: (arg1: any, arg2?: any) => void) => void;
-        };
-    } {
+    createConnection(): LegacyVisConnection {
         // props.socket
         return {
             namespace: this.props.adapterId,
@@ -1420,7 +1412,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                     // find out the default file mode
                     if (objects[instance]?.native?.defaultFileMode) {
                         // eslint-disable-next-line react/no-unused-class-component-methods
-                        this.defaultMode = objects[instance].native.defaultFileMode;
+                        this.defaultMode = objects[instance].native.defaultFileMode as number;
                     }
 
                     return objects;
@@ -1449,19 +1441,24 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                     };
                 }
             },
-            getStates: (IDs: string, cb: (arg1: any, arg2?: any) => void): void => {
-                if (!IDs || !IDs.length) {
-                    cb && cb(null, {});
+            getStates: (
+                ids: string,
+                cb: (error: Error | null, states?: Record<string, ioBroker.State>) => void,
+            ): void => {
+                if (!ids || !ids.length) {
+                    if (cb) {
+                        cb(null, {});
+                    }
                     return;
                 }
                 this.props.socket
-                    .getForeignStates(IDs)
+                    .getForeignStates(ids)
                     .then(data => cb(null, data))
                     .catch(error => cb(error || 'Authentication required'));
             },
-            setState: (id: string, val: any, cb: (arg1?: any) => void): void => {
+            setState: (id: string, val: ioBroker.StateValue, cb: (error?: Error | null) => void): void => {
                 if (!id) {
-                    cb && cb('No id');
+                    cb && cb(new Error('No id'));
                     return;
                 }
                 this.props.socket
@@ -1487,7 +1484,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                 //
             },
             getUser: (): string => this.userName,
-            sendCommand: (instance: string, command: string, data: any, ack: boolean): Promise<void> =>
+            sendCommand: (instance: string, command: string, data: any, ack?: boolean): Promise<void> =>
                 this.props.socket
                     .setState(this.ID_CONTROL_INSTANCE, { val: instance || 'notdefined', ack: true })
                     .then(() => this.props.socket.setState(this.ID_CONTROL_DATA, { val: data, ack: true }))
@@ -1500,7 +1497,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                     .catch(e => console.error(`Cannot set state: ${e}`)),
             readFile: (
                 filename: string,
-                cb: (arg1: any, arg2?: any, arg3?: any, arg4?: any) => void,
+                cb: (error: Error | null, data?: string | Buffer, filename?: string, mimeType?: string) => void,
             ): Promise<void> => {
                 let adapter = this.conn.namespace;
                 if (filename[0] === '/') {
@@ -1519,17 +1516,17 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
             getHistory: (
                 id: string,
                 options: ioBroker.GetHistoryOptions & { timeout: number },
-                cb: (arg1: any, arg2?: any) => void,
+                cb: (error: Error | null, result?: ioBroker.GetHistoryResult) => void,
             ): void => {
                 options = options || ({} as ioBroker.GetHistoryOptions & { timeout: number });
                 options.timeout = options.timeout || 2000;
 
                 let timeout = setTimeout(() => {
                     timeout = null;
-                    cb('timeout');
+                    cb(new Error('timeout'));
                 }, options.timeout);
 
-                this.props.socket
+                void this.props.socket
                     .getHistory(id, options)
                     .then(result => {
                         if (timeout) {
@@ -1549,7 +1546,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
             getHttp: (url: string, callback: (data: any) => void): boolean =>
                 this.props.socket.getRawSocket().emit('httpGet', url, (data: any): void => callback && callback(data)),
             _socket: {
-                emit: (cmd: string, data: any, cb: (arg1: any, arg2?: any) => void): void => {
+                emit: (cmd: string, data: any, cb: (error: Error | null, arg2?: any) => void): void => {
                     let promise;
                     if (cmd === 'getObject') {
                         promise = this.props.socket.getObject(data);
@@ -1730,7 +1727,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
         */
     }
 
-    _setValue(id: string, val: any): void {
+    _setValue(id: string, val: ioBroker.StateValue): void {
         const oldVal = this.canStates.attr(`${id}.val`);
 
         // Send ack=false with new value to all widgets
@@ -1758,9 +1755,9 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
         });
     }
 
-    setValue = (id: string, val: any): void => {
+    setValue = (id: string, val: ioBroker.StateValue): void => {
         if (!id) {
-            console.log(`ID is null for val=${val}`);
+            console.log(`ID is null for val=${JSON.stringify(val)}`);
             return;
         }
 
@@ -2095,18 +2092,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
         return false;
     }
 
-    onStateChange = (
-        id: string,
-        state: Partial<
-            ioBroker.State & {
-                val: {
-                    instance: string;
-                    command: string;
-                    data: any;
-                };
-            }
-        >,
-    ): void => {
+    onStateChange = (id: string, state: ioBroker.SettableState | null | undefined): void => {
         if (!id || state === null || typeof state !== 'object') {
             return;
         }
@@ -2121,6 +2107,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                 return;
             }
 
+            let command: { instance: string; command: string; data: any } | undefined;
             // if command is a JSON string
             if (
                 state.val &&
@@ -2130,15 +2117,15 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
             ) {
                 // try to parse it
                 try {
-                    state.val = JSON.parse(state.val);
+                    command = JSON.parse(state.val);
                 } catch {
                     console.warn(`Command seems to be an object, but cannot parse it: ${state.val}`);
                 }
             }
 
             // if command is an object {instance: 'iii', command: 'cmd', data: 'ddd'}
-            if (state.val?.instance) {
-                if (this.onUserCommand(state.val.instance, state.val.command, state.val.data)) {
+            if (command?.instance) {
+                if (this.onUserCommand(command.instance, command.command, command.data)) {
                     // clear state
                     this.props.socket
                         .setState(id, { val: '', ack: true })
@@ -2209,19 +2196,15 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
         }
 
         // process visibility
-        this.linkContext.visibility[id]?.forEach(item => {
-            this.updateWidget(item.view, item.widget, 'visibility', item);
-        });
+        this.linkContext.visibility[id]?.forEach(item => this.updateWidget(item.view, item.widget, 'visibility', item));
 
         // process signals
-        this.linkContext.signals[id]?.forEach(item => {
-            this.updateWidget(item.view, item.widget, 'signal', item, id);
-        });
+        this.linkContext.signals[id]?.forEach(item => this.updateWidget(item.view, item.widget, 'signal', item, id));
 
         // Process last update
-        this.linkContext.lastChanges[id]?.forEach(item => {
-            this.updateWidget(item.view, item.widget, 'lastChange', item, id);
-        });
+        this.linkContext.lastChanges[id]?.forEach(item =>
+            this.updateWidget(item.view, item.widget, 'lastChange', item, id),
+        );
 
         // Bindings on every element
         this.linkContext.bindings[id]?.forEach(item => this.updateWidget(item.view, item.widget, 'binding', item, id));
@@ -2251,7 +2234,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                 console.log(`[${new Date().toISOString()}] +SUBSCRIBE: ${id}`);
                 this.createCanState(id);
                 if (!id.startsWith('local_')) {
-                    this.props.socket.subscribeState(id, this.onStateChange as ioBroker.StateChangeHandler);
+                    void this.props.socket.subscribeState(id, this.onStateChange as ioBroker.StateChangeHandler);
                 }
             }
         });
@@ -2454,7 +2437,9 @@ ${this.scripts}
             );
 
             // inform the legacy widgets
-            window.jQuery && (window.jQuery as any)(window).trigger('viewChanged', this.props.activeView);
+            if (window.jQuery) {
+                (window as any).jQuery(window).trigger('viewChanged', this.props.activeView);
+            }
         }
 
         this.visContext = {
