@@ -243,7 +243,8 @@ function getRemoteWidgets(
                 if (!obj.common.visWidgets) {
                     return false;
                 }
-                const ignoreVersions: number[] = (obj.common.visWidgets as any).ignoreInVersions || [];
+                // @ts-expect-error deprecated, but we still check it
+                const ignoreVersions: number[] = obj.common.visWidgets.ignoreInVersions || [];
                 return (
                     !ignoreVersions.includes(2) &&
                     (!onlyWidgetSets || onlyWidgetSets.includes(getText(obj.common.name)))
@@ -267,6 +268,14 @@ function getRemoteWidgets(
                     } else {
                         const visWidgetsCollection: ioBroker.VisWidget =
                             dynamicWidgetInstance.common.visWidgets[widgetSetName];
+
+                        if (
+                            Array.isArray(visWidgetsCollection.ignoreInVersions) &&
+                            visWidgetsCollection.ignoreInVersions.includes(2)
+                        ) {
+                            continue;
+                        }
+
                         if (!visWidgetsCollection.url?.startsWith('http')) {
                             visWidgetsCollection.url = `./widgets/${visWidgetsCollection.url}`;
                         }

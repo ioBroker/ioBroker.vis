@@ -64,14 +64,14 @@ You can use *any* javascript (browser) functions. Arguments must be defined with
 Take care about types. All of them are defined as strings. To be sure, that value will be treated as number use parseFloat function.
 
 So our Hypotenuse calculation will be:
-```js
+```
 {h:javascript.0.myCustom.height;w:javascript.0.myCustom.width;Math.max(20, Math.sqrt(Math.pow(parseFloat(h), 2) + Math.pow(parseFloat(w), 2)))}
 ```
 
 ### Deprecated format
 Patten has the following format:
 
-```js
+```
 {objectID;operation1;operation2;...}
 ```
 
@@ -294,6 +294,9 @@ npm run start
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Do not load vis-1 widgets if vis-2 widgets provided
+
 ### 2.11.1 (2024-12-02)
 * (@GermanBluefox) Corrected navigation menu
 * (@GermanBluefox) Migrated widgets to React: basic - frame, basic - note, basic - logout 
@@ -664,7 +667,7 @@ npm run start
 * (bluefox) Completely new visualization, but partly compatible with the previous version
 
 ## License
- Copyright (c) 2021-2024 Denis Haev, https://github.com/GermanBluefox <dogafox@gmail.com>,
+ Copyright (c) 2021-2025 Denis Haev, https://github.com/GermanBluefox <dogafox@gmail.com>,
   
  Creative Common Attribution-NonCommercial (CC BY-NC)
 
