@@ -18,10 +18,10 @@ import React from 'react';
 import { Tab, Tabs } from '@mui/material';
 import { Icon } from '@iobroker/adapter-react-v5';
 
-import type { RxRenderWidgetProps, RxWidgetInfo } from '@iobroker/types-vis-2';
+import type { RxRenderWidgetProps, RxWidgetInfo, WidgetData } from '@iobroker/types-vis-2';
 import VisRxWidget, { type VisRxWidgetState } from '../../visRxWidget';
 
-interface RxData {
+interface RxData extends WidgetData {
     show_tabs: number;
     vertical: boolean;
     variant: '' | 'centered' | 'fullWidth';

@@ -1,10 +1,10 @@
 import React from 'react';
 
 import { Icon } from '@iobroker/adapter-react-v5';
-import type { RxRenderWidgetProps, VisBaseWidgetProps } from '@iobroker/types-vis-2';
+import type { RxRenderWidgetProps, VisBaseWidgetProps, WidgetData } from '@iobroker/types-vis-2';
 import VisRxWidget from '@/Vis/visRxWidget';
 
-export interface RxDataBasicImageGeneric {
+export interface RxDataBasicImageGeneric extends WidgetData {
     stretch: boolean;
     refreshInterval: number;
     refreshOnWakeUp: boolean;

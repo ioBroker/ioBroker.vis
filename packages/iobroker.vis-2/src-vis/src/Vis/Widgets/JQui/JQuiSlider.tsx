@@ -19,16 +19,17 @@ import { FormControl, FormLabel, Slider, Stack, LinearProgress } from '@mui/mate
 
 import { Icon, type LegacyConnection } from '@iobroker/adapter-react-v5';
 
-import VisRxWidget, { type VisRxData, type VisRxWidgetState } from '../../visRxWidget';
+import VisRxWidget, { type VisRxWidgetState } from '../../visRxWidget';
 import type {
     RxRenderWidgetProps,
     RxWidgetInfo,
     RxWidgetInfoAttributesField,
     VisBaseWidgetProps,
+    WidgetData,
     Writeable,
 } from '@iobroker/types-vis-2';
 
-interface RxData extends VisRxData {
+interface RxData extends WidgetData {
     type: 'single' | 'range';
     oid: string;
     click_id: string;

@@ -17,10 +17,10 @@ import React, { type CSSProperties } from 'react';
 
 import { I18n } from '@iobroker/adapter-react-v5';
 
-import type { RxRenderWidgetProps, RxWidgetInfo, RxWidgetInfoGroup } from '@iobroker/types-vis-2';
+import type { RxRenderWidgetProps, RxWidgetInfo, RxWidgetInfoGroup, WidgetData } from '@iobroker/types-vis-2';
 import VisRxWidget from '../../visRxWidget';
 
-interface RxData {
+interface RxData extends WidgetData {
     oid: string;
     count: number;
     [key: `contains_view_${number}`]: string;
