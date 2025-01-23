@@ -1,320 +1,329 @@
 {
-    "common": {
-        "name": "vis-2",
-        "version": "2.11.1",
-        "news": {
-            "2.11.1": {
-                "en": "Corrected navigation menu\nMigrated widgets to React: basic - frame, basic - note, basic - logout \nAdded the HTML rebuild button to settings\nBackend was migrated to TypeScript",
-                "de": "Navigationsmenü korrigiert\nMigrated widgets to React: basic - frame, basic - note, basic - logout\nHinzufügen der HTML-Wiederaufbau-Taste zu den Einstellungen\nBackend wurde zu TypeScript migriert",
-                "ru": "Исправленное меню навигации\nМигрированные виджеты для Реакция: базовый - кадр, основной - заметка, основной - logout\nДобавлена кнопка восстановления HTML в настройки\nBackend был перенесен на TypeScript",
-                "pt": "Menu de navegação correto\nWidgets migrados para React: basic - frame, basic - note, basic - logout\nAdicionado o botão de reconstrução HTML para configurações\nO backend foi migrado para TypeScript",
-                "nl": "Gecorrigeerd navigatiemenu\nMigreerde widgets om te reageren: basis - frame, basis - noot, basis - uitloggen\nDe HTML-herbouwknop toegevoegd aan instellingen\nBackend is gemigreerd naar TypeScript",
-                "fr": "Menu de navigation corrigé\nLes widgets migrés pour Réagir: basic - frame, basic - note, basic - loggout\nAjout du bouton de reconstruction HTML aux paramètres\nBackend a été migré vers TypeScript",
-                "it": "Menu di navigazione corretto\nWidget migrati a React: basic - frame, basic - note, basic - logout\nAggiunto il pulsante di ricostruzione HTML alle impostazioni\nBackend è stato migrato a TypeScript",
-                "es": "Menú de navegación corregido\nWidgets Migrated para React: basic - frame, basic - note, basic - logout\nAñadido el botón de reconstrucción HTML a la configuración\nBackend fue migrado a TipoScript",
-                "pl": "Skorygowane menu nawigacyjne\nMigrated widgets to React: podstawowy - ramka, podstawowy - notatka, podstawowy - logout\nDodano przycisk odbudowania HTML do ustawień\nBackend został przeniesiony do TypeScript",
-                "uk": "Корисне меню навігації\nMigrated віджети до React: базовий - кадр, базовий - замітка, базовий - логотип\nДодано кнопку відновлення HTML на налаштування\nBackend був мігрований до TypeScript",
-                "zh-cn": "已更正的导航菜单\n切换部件到反应:基本 - 框架、基本 - 注、基本 - 登录\n将 HTML 重建按钮添加到设置\n后端已迁移到类型脚本"
-            },
-            "2.10.8": {
-                "en": "Added new option for view: \"Limit only for instances\"",
-                "de": "Neue Option zur Ansicht hinzugefügt: \"Limit nur für Instanzen\"",
-                "ru": "Добавлена новая опция для просмотра: \"Подобный только для случаев\"",
-                "pt": "Adicionado nova opção para visualização: \"Limitar apenas por instâncias\"",
-                "nl": "Nieuwe optie toegevoegd voor weergave: \"Alleen voor instanties beperken\"",
-                "fr": "Ajout d'une nouvelle option pour la vue: \"Limiter uniquement pour les instances\"",
-                "it": "Aggiunto nuova opzione per visualizzare: \"Limit solo per istanze\"",
-                "es": "Añadido nueva opción para ver: \"Limit only for instances\"",
-                "pl": "Dodano nową opcję widoku: \"Limit tylko dla instancji\"",
-                "uk": "Додано новий варіант для перегляду: \"Всі тільки екземпляри\"",
-                "zh-cn": "为视图添加了新选项 : “ 仅限实例”"
-            },
-            "2.10.7": {
-                "en": "Optimization of the module federation",
-                "de": "Optimierung der Modulbeschickung",
-                "ru": "Оптимизация федерации модулей",
-                "pt": "Otimização da federação do módulo",
-                "nl": "Optimalisatie van de modulefederatie",
-                "fr": "Optimisation de la fédération des modules",
-                "it": "Ottimizzazione della federazione del modulo",
-                "es": "Optimización de la federación del módulo",
-                "pl": "Optymalizacja federacji modułów",
-                "uk": "Оптимізація федерації модуля",
-                "zh-cn": "优化模块联合会"
-            },
-            "2.10.6": {
-                "en": "Improved the typing in typescript",
-                "de": "Verbessert die Eingabe in der Schrift",
-                "ru": "Улучшен типографский состав",
-                "pt": "Melhoria da digitação no typescript",
-                "nl": "Het typen in typescript verbeterd",
-                "fr": "Amélioration de la dactylographie",
-                "it": "Migliorata la digitazione in typescript",
-                "es": "Mejora de la escritura",
-                "pl": "Ulepszenie pisania na maszynie",
-                "uk": "Покращує типування у форматі",
-                "zh-cn": "改进打字符"
-            },
-            "2.10.4": {
-                "en": "Corrected the jumping by object selection\nImplemented swipe widget",
-                "de": "Korrektur des Sprungs durch Objektauswahl\nErgänztes Swipe Widget",
-                "ru": "Исправлена прыжок с помощью выбора объекта\nРеализованный виджет",
-                "pt": "Corrigido o salto por seleção de objetos\nImplementado widget swipe",
-                "nl": "Het springen door objectselectie gecorrigeerd\nGeïmplementeerd widget",
-                "fr": "Correction de la sélection de saut par objet\nWidget de balayage mis en œuvre",
-                "it": "Corretto il salto dalla selezione degli oggetti\nWidget di swipe implementato",
-                "es": "Corregido el salto por selección de objetos\nWidget implementado",
-                "pl": "Skok poprawiony przez wybór obiektu\nWbudowany widżet przewijania",
-                "uk": "Виправлено стрибки за вибором об'єкта\nРеалізовано віджет swipe",
-                "zh-cn": "通过对象选择修正跳跃\n已执行的刷新部件"
-            },
-            "2.10.3": {
-                "en": "Converted the CanJSWidget to typescript\nAdded \"clone\" button to the attribute groups",
-                "de": "Konvertiert das CanJSWidget in Schrift\nSchaltfläche \"Klon\" zu den Attributgruppen hinzugefügt",
-                "ru": "Преобразование CanJSWidget в Typescript\nДобавлена кнопка \"клон\" к группам атрибутов",
-                "pt": "Convertido o CanJSWidget para digitar oscript\nAdicionado botão \"clone\" para os grupos de atributos",
-                "nl": "Het CanJSWidget omzetten naar typescript\n\"kloon\" toegevoegd aan de attribuutgroepen",
-                "fr": "Converti le CanJSWidget en dactylographie\nAjout du bouton \"clone\" aux groupes d'attributs",
-                "it": "Convertito il CanJSWidget a typescript\nAggiunto \"clone\" pulsante ai gruppi attribute",
-                "es": "Convertir el CanJSWidget en typescript\nAñadido botón \"clone\" a los grupos de atributos",
-                "pl": "Konwersja CanJSwidget na maszynopis\nDodano przycisk \"clone\" do grup atrybutów",
-                "uk": "Перетворено CanJSWidget у форматіscript\nДодано кнопку \"клон\" до груп атрибутів",
-                "zh-cn": "将 CanJSWidget 转换为打字符\n在属性组中添加“ clone” 按钮"
-            },
-            "2.10.2": {
-                "en": "Removed incompatible package for styles\nAll widgets must be updated\nThe basic input value widget was migrated to ReactJS",
-                "de": "Unverträgliches Paket für Styles entfernt\nAlle Widgets müssen aktualisiert werden\nDas grundlegende Eingabewert-Widget wurde zu ReactJS migriert",
-                "ru": "Удаленный несовместимый пакет для стилей\nВсе виджеты должны быть обновлены\nОсновной виджет входного значения был перенесен в ReactJS",
-                "pt": "Pacote incompatível removido para estilos\nTodos os widgets devem ser atualizados\nO widget básico do valor de entrada foi migrado para ReactJS",
-                "nl": "Incompatibel pakket voor stijlen verwijderd\nAlle widgets moeten bijgewerkt worden\nDe basis invoerwaarde widget is gemigreerd naar ReactJS",
-                "fr": "Enlever le paquet incompatible pour les styles\nTous les widgets doivent être actualisés\nLe widget de valeur d'entrée de base a été migré vers ReactJS",
-                "it": "Pacchetto incompatibile rimosso per stili\nTutti i widget devono essere aggiornati\nIl widget di base del valore di input è stato migrato a ReactJS",
-                "es": "Paquete incompatible eliminado para estilos\nTodos los widgets deben ser actualizados\nEl widget de valor de entrada básico fue migrado a ReactJS",
-                "pl": "Usunięty niekompatybilny pakiet stylów\nWszystkie widżety muszą być aktualizowane\nPodstawowa wartość wejściowa widget została przeniesiona do ReactJS",
-                "uk": "Видалено несумісний пакет для стилів\nВсі віджети повинні бути оновлені\nБазовий віджет значення вводу був мігрований до ReactJS",
-                "zh-cn": "删除样式不兼容的软件包\n所有部件都必须更新\n基本输入值部件已迁移到 ReactJS"
-            }
-        },
-        "title": "Visualisation Next Generation",
-        "titleLang": {
-            "en": "Visualisation Next Generation",
-            "de": "Visualisierung Next Generation",
-            "ru": "Визуализация Next Generation",
-            "pt": "Visualização Next Generation",
-            "nl": "Visualisatie Next Generation",
-            "fr": "Visualisation Next Generation",
-            "it": "Visualizzazione Next Generation",
-            "es": "Visualización Next Generation",
-            "pl": "Wizualizacja Next Generation",
-            "uk": "Візуалізація Next Generation",
-            "zh-cn": "可视化 Next Generation"
-        },
-        "desc": {
-            "en": "Extended GUI for ioBroker",
-            "de": "Erweiterte GUI für ioBroker",
-            "ru": "Расширенный GUI для ioBroker",
-            "pt": "GUI estendido para ioBroker",
-            "nl": "Uitgebreide GUI voor ioBroker",
-            "fr": "Interface graphique étendue pour ioBroker",
-            "it": "Interfaccia grafica estesa per ioBroker",
-            "es": "Interfaz gráfica extendida para ioBroker",
-            "pl": "Rozszerzone GUI dla ioBroker",
-            "uk": "Розширений GUI для ioBroker",
-            "zh-cn": "ioBroker的扩展GUI"
-        },
-        "platform": "Javascript/Node.js",
-        "loglevel": "info",
-        "icon": "vis-2.png",
-        "enabled": true,
-        "mode": "daemon",
-        "nogit": true,
-        "extIcon": "https://raw.githubusercontent.com/iobroker/iobroker.vis-2/master/packages/iobroker.vis-2/admin/vis-2.png",
-        "keywords": ["DashUI", "GUI", "graphical", "scada"],
-        "messagebox": true,
-        "readme": "https://github.com/iobroker/iobroker.vis-2/blob/master/README.md",
-        "authors": ["bluefox <dogafox@gmail.com>"],
-        "localLinks": {
-            "_default": {
-                "link": "%web_protocol%://%ip%:%web_port%/vis-2/edit.html",
-                "icon": "vis-2/img/faviconEdit.png",
-                "name": {
-                    "en": "vis-2 Editor",
-                    "de": "vis-2 Editor",
-                    "ru": "vis-2 редактор",
-                    "pt": "Editor vis-2",
-                    "nl": "vis-2 Editor",
-                    "fr": "Éditeur vis-2",
-                    "it": "Editor vis-2",
-                    "es": "Editor vis-2",
-                    "pl": "Edytor vis-2",
-                    "uk": "Редактор vis-2",
-                    "zh-cn": "vis-2 编辑器"
-                },
-                "color": "#c8ffe1",
-                "pro": "vis-2/edit.html",
-                "intro": true
-            },
-            "Runtime": {
-                "link": "%web_protocol%://%ip%:%web_port%/vis-2/index.html",
-                "icon": "vis-2/img/favicon.png",
-                "color": "#ffe9c8",
-                "pro": "vis-2/index.htm",
-                "cloud": "vis-2/index.html",
-                "intro": true,
-                "name": {
-                    "en": "vis-2 Runtime",
-                    "de": "vis-2 Runtime",
-                    "ru": "vis-2 Runtime",
-                    "pt": "vis-2 Runtime",
-                    "nl": "vis-2 Runtime",
-                    "fr": "vis-2 Runtime",
-                    "it": "vis-2 Runtime",
-                    "es": "vis-2 Runtime",
-                    "pl": "vis-2 Runtime",
-                    "uk": "vis-2 Runtime",
-                    "zh-cn": "vis-2 Runtime"
-                }
-            }
-        },
-        "license": "CC-BY-NC-4.0",
-        "dependencies": [
-            {
-                "web": ">=5.4.0"
-            },
-            {
-                "js-controller": ">=5.0.0"
-            }
-        ],
-        "restartAdapters": ["vis-2"],
-        "serviceStates": "lib/states.js",
-        "singleton": true,
-        "type": "visualization",
-        "connectionType": "local",
-        "dataSource": "push",
-        "tier": 3,
-        "noConfig": false,
-        "adminUI": {
-            "config": "json"
-        },
-        "plugins": {
-            "sentry": {
-                "dsn": "https://db8b6e837c71447a876069559a00a742@sentry.iobroker.net/232"
-            }
-        },
-        "compact": true,
-        "eraseOnUpload": true,
-        "welcomeScreen": [
-            {
-                "link": "vis-2/index.html",
-                "name": "vis 2 runtime",
-                "img": "vis-2/img/favicon.png",
-                "color": "#ffe9c8",
-                "order": 0
-            }
-        ],
-        "welcomeScreenPro": [
-            {
-                "link": "vis-2/edit.html",
-                "name": "vis 2 editor",
-                "img": "vis-2/img/faviconEdit.png",
-                "color": "#c8ffe1",
-                "order": 1
-            }
-        ],
-        "licenseInformation": {
-            "type": "commercial",
-            "link": "https://raw.githubusercontent.com/ioBroker/ioBroker.vis-2/master/LICENSE",
-            "license": "CC-BY-NC-4.0"
-        },
-        "stopBeforeUpdate": true
+  "common": {
+    "name": "vis-2",
+    "version": "2.11.2",
+    "news": {
+      "2.11.2": {
+        "en": "Do not load vis-1 widgets if vis-2 widgets provided",
+        "de": "Nicht laden vis-1 Widgets, wenn vis-2 Widgets zur Verfügung gestellt",
+        "ru": "Не загружайте виджеты vis-1, если они предоставлены vis-2",
+        "pt": "Não carregar vis-1 widgets se vis-2 widgets fornecidos",
+        "nl": "Vis-1 widgets niet laden als vis-2 widgets meegeleverd zijn",
+        "fr": "Ne pas charger les widgets vis-1 si vis-2 fourni",
+        "it": "Non caricare widget vis-1 se i widget vis-2 forniti",
+        "es": "No cargar widgets vis-1 si vis-2 widgets proporcionados",
+        "pl": "Nie wczytywać widżetów vis-1, jeśli widżety vis-2 są dostarczane",
+        "uk": "Не завантажуйте віджети vis-1, якщо передбачено віджети Vis-2",
+        "zh-cn": "如果提供了相对 2 个部件, 请不要装入 "
+      },
+      "2.11.1": {
+        "en": "Corrected navigation menu\nMigrated widgets to React: basic - frame, basic - note, basic - logout \nAdded the HTML rebuild button to settings\nBackend was migrated to TypeScript",
+        "de": "Navigationsmenü korrigiert\nMigrated widgets to React: basic - frame, basic - note, basic - logout\nHinzufügen der HTML-Wiederaufbau-Taste zu den Einstellungen\nBackend wurde zu TypeScript migriert",
+        "ru": "Исправленное меню навигации\nМигрированные виджеты для Реакция: базовый - кадр, основной - заметка, основной - logout\nДобавлена кнопка восстановления HTML в настройки\nBackend был перенесен на TypeScript",
+        "pt": "Menu de navegação correto\nWidgets migrados para React: basic - frame, basic - note, basic - logout\nAdicionado o botão de reconstrução HTML para configurações\nO backend foi migrado para TypeScript",
+        "nl": "Gecorrigeerd navigatiemenu\nMigreerde widgets om te reageren: basis - frame, basis - noot, basis - uitloggen\nDe HTML-herbouwknop toegevoegd aan instellingen\nBackend is gemigreerd naar TypeScript",
+        "fr": "Menu de navigation corrigé\nLes widgets migrés pour Réagir: basic - frame, basic - note, basic - loggout\nAjout du bouton de reconstruction HTML aux paramètres\nBackend a été migré vers TypeScript",
+        "it": "Menu di navigazione corretto\nWidget migrati a React: basic - frame, basic - note, basic - logout\nAggiunto il pulsante di ricostruzione HTML alle impostazioni\nBackend è stato migrato a TypeScript",
+        "es": "Menú de navegación corregido\nWidgets Migrated para React: basic - frame, basic - note, basic - logout\nAñadido el botón de reconstrucción HTML a la configuración\nBackend fue migrado a TipoScript",
+        "pl": "Skorygowane menu nawigacyjne\nMigrated widgets to React: podstawowy - ramka, podstawowy - notatka, podstawowy - logout\nDodano przycisk odbudowania HTML do ustawień\nBackend został przeniesiony do TypeScript",
+        "uk": "Корисне меню навігації\nMigrated віджети до React: базовий - кадр, базовий - замітка, базовий - логотип\nДодано кнопку відновлення HTML на налаштування\nBackend був мігрований до TypeScript",
+        "zh-cn": "已更正的导航菜单\n切换部件到反应:基本 - 框架、基本 - 注、基本 - 登录\n将 HTML 重建按钮添加到设置\n后端已迁移到类型脚本"
+      },
+      "2.10.8": {
+        "en": "Added new option for view: \"Limit only for instances\"",
+        "de": "Neue Option zur Ansicht hinzugefügt: \"Limit nur für Instanzen\"",
+        "ru": "Добавлена новая опция для просмотра: \"Подобный только для случаев\"",
+        "pt": "Adicionado nova opção para visualização: \"Limitar apenas por instâncias\"",
+        "nl": "Nieuwe optie toegevoegd voor weergave: \"Alleen voor instanties beperken\"",
+        "fr": "Ajout d'une nouvelle option pour la vue: \"Limiter uniquement pour les instances\"",
+        "it": "Aggiunto nuova opzione per visualizzare: \"Limit solo per istanze\"",
+        "es": "Añadido nueva opción para ver: \"Limit only for instances\"",
+        "pl": "Dodano nową opcję widoku: \"Limit tylko dla instancji\"",
+        "uk": "Додано новий варіант для перегляду: \"Всі тільки екземпляри\"",
+        "zh-cn": "为视图添加了新选项 : “ 仅限实例”"
+      },
+      "2.10.7": {
+        "en": "Optimization of the module federation",
+        "de": "Optimierung der Modulbeschickung",
+        "ru": "Оптимизация федерации модулей",
+        "pt": "Otimização da federação do módulo",
+        "nl": "Optimalisatie van de modulefederatie",
+        "fr": "Optimisation de la fédération des modules",
+        "it": "Ottimizzazione della federazione del modulo",
+        "es": "Optimización de la federación del módulo",
+        "pl": "Optymalizacja federacji modułów",
+        "uk": "Оптимізація федерації модуля",
+        "zh-cn": "优化模块联合会"
+      },
+      "2.10.6": {
+        "en": "Improved the typing in typescript",
+        "de": "Verbessert die Eingabe in der Schrift",
+        "ru": "Улучшен типографский состав",
+        "pt": "Melhoria da digitação no typescript",
+        "nl": "Het typen in typescript verbeterd",
+        "fr": "Amélioration de la dactylographie",
+        "it": "Migliorata la digitazione in typescript",
+        "es": "Mejora de la escritura",
+        "pl": "Ulepszenie pisania na maszynie",
+        "uk": "Покращує типування у форматі",
+        "zh-cn": "改进打字符"
+      },
+      "2.10.4": {
+        "en": "Corrected the jumping by object selection\nImplemented swipe widget",
+        "de": "Korrektur des Sprungs durch Objektauswahl\nErgänztes Swipe Widget",
+        "ru": "Исправлена прыжок с помощью выбора объекта\nРеализованный виджет",
+        "pt": "Corrigido o salto por seleção de objetos\nImplementado widget swipe",
+        "nl": "Het springen door objectselectie gecorrigeerd\nGeïmplementeerd widget",
+        "fr": "Correction de la sélection de saut par objet\nWidget de balayage mis en œuvre",
+        "it": "Corretto il salto dalla selezione degli oggetti\nWidget di swipe implementato",
+        "es": "Corregido el salto por selección de objetos\nWidget implementado",
+        "pl": "Skok poprawiony przez wybór obiektu\nWbudowany widżet przewijania",
+        "uk": "Виправлено стрибки за вибором об'єкта\nРеалізовано віджет swipe",
+        "zh-cn": "通过对象选择修正跳跃\n已执行的刷新部件"
+      },
+      "2.10.3": {
+        "en": "Converted the CanJSWidget to typescript\nAdded \"clone\" button to the attribute groups",
+        "de": "Konvertiert das CanJSWidget in Schrift\nSchaltfläche \"Klon\" zu den Attributgruppen hinzugefügt",
+        "ru": "Преобразование CanJSWidget в Typescript\nДобавлена кнопка \"клон\" к группам атрибутов",
+        "pt": "Convertido o CanJSWidget para digitar oscript\nAdicionado botão \"clone\" para os grupos de atributos",
+        "nl": "Het CanJSWidget omzetten naar typescript\n\"kloon\" toegevoegd aan de attribuutgroepen",
+        "fr": "Converti le CanJSWidget en dactylographie\nAjout du bouton \"clone\" aux groupes d'attributs",
+        "it": "Convertito il CanJSWidget a typescript\nAggiunto \"clone\" pulsante ai gruppi attribute",
+        "es": "Convertir el CanJSWidget en typescript\nAñadido botón \"clone\" a los grupos de atributos",
+        "pl": "Konwersja CanJSwidget na maszynopis\nDodano przycisk \"clone\" do grup atrybutów",
+        "uk": "Перетворено CanJSWidget у форматіscript\nДодано кнопку \"клон\" до груп атрибутів",
+        "zh-cn": "将 CanJSWidget 转换为打字符\n在属性组中添加“ clone” 按钮"
+      }
     },
-    "native": {
-        "defaultFileMode": 1604,
-        "license": "",
-        "useLicenseManager": 0,
-        "doNotShowProjectDialog": false,
-        "loadingBackgroundColor": "",
-        "loadingHideLogo": false,
-        "loadingBackgroundImage": false
+    "title": "Visualisation Next Generation",
+    "titleLang": {
+      "en": "Visualisation Next Generation",
+      "de": "Visualisierung Next Generation",
+      "ru": "Визуализация Next Generation",
+      "pt": "Visualização Next Generation",
+      "nl": "Visualisatie Next Generation",
+      "fr": "Visualisation Next Generation",
+      "it": "Visualizzazione Next Generation",
+      "es": "Visualización Next Generation",
+      "pl": "Wizualizacja Next Generation",
+      "uk": "Візуалізація Next Generation",
+      "zh-cn": "可视化 Next Generation"
     },
-    "instanceObjects": [
-        {
-            "_id": "",
-            "type": "meta",
-            "common": {
-                "name": "user files and images for vis-2",
-                "type": "meta.user"
-            },
-            "native": {}
+    "desc": {
+      "en": "Extended GUI for ioBroker",
+      "de": "Erweiterte GUI für ioBroker",
+      "ru": "Расширенный GUI для ioBroker",
+      "pt": "GUI estendido para ioBroker",
+      "nl": "Uitgebreide GUI voor ioBroker",
+      "fr": "Interface graphique étendue pour ioBroker",
+      "it": "Interfaccia grafica estesa per ioBroker",
+      "es": "Interfaz gráfica extendida para ioBroker",
+      "pl": "Rozszerzone GUI dla ioBroker",
+      "uk": "Розширений GUI для ioBroker",
+      "zh-cn": "ioBroker的扩展GUI"
+    },
+    "platform": "Javascript/Node.js",
+    "loglevel": "info",
+    "icon": "vis-2.png",
+    "enabled": true,
+    "mode": "daemon",
+    "nogit": true,
+    "extIcon": "https://raw.githubusercontent.com/iobroker/iobroker.vis-2/master/packages/iobroker.vis-2/admin/vis-2.png",
+    "keywords": [
+      "DashUI",
+      "GUI",
+      "graphical",
+      "scada"
+    ],
+    "messagebox": true,
+    "readme": "https://github.com/iobroker/iobroker.vis-2/blob/master/README.md",
+    "authors": [
+      "bluefox <dogafox@gmail.com>"
+    ],
+    "localLinks": {
+      "_default": {
+        "link": "%web_protocol%://%ip%:%web_port%/vis-2/edit.html",
+        "icon": "vis-2/img/faviconEdit.png",
+        "name": {
+          "en": "vis-2 Editor",
+          "de": "vis-2 Editor",
+          "ru": "vis-2 редактор",
+          "pt": "Editor vis-2",
+          "nl": "vis-2 Editor",
+          "fr": "Éditeur vis-2",
+          "it": "Editor vis-2",
+          "es": "Editor vis-2",
+          "pl": "Edytor vis-2",
+          "uk": "Редактор vis-2",
+          "zh-cn": "vis-2 编辑器"
         },
-        {
-            "_id": "info",
-            "type": "channel",
-            "common": {
-                "name": "info"
-            },
-            "native": {}
-        },
-        {
-            "_id": "info.uploaded",
-            "type": "state",
-            "common": {
-                "name": "Files were uploaded",
-                "type": "number",
-                "role": "value.time"
-            },
-            "native": {}
-        },
-        {
-            "_id": "control",
-            "type": "channel",
-            "common": {
-                "name": "Control vis-2"
-            },
-            "native": {}
-        },
-        {
-            "_id": "control.instance",
-            "type": "state",
-            "common": {
-                "name": "Control vis-2",
-                "type": "string",
-                "desc": "Write here browser instance ID to control or 'FFFFFFFF' to control all instances"
-            },
-            "native": {}
-        },
-        {
-            "_id": "control.command",
-            "type": "state",
-            "common": {
-                "name": "Command for vis-2",
-                "type": "string",
-                "desc": "Writing this variable act as the trigger. Instance and data must be preset before 'command' will be written. 'changedView' will be signalled too",
-                "role": "state",
-                "states": {
-                    "alert": "alert",
-                    "changeView": "changeView",
-                    "refresh": "refresh",
-                    "reload": "reload",
-                    "dialog": "dialog",
-                    "dialogClose": "dialogClose",
-                    "popup": "popup",
-                    "playSound": "playSound",
-                    "changedView": "changedView",
-                    "tts": "tts"
-                }
-            },
-            "native": {}
-        },
-        {
-            "_id": "control.data",
-            "type": "state",
-            "common": {
-                "name": "Data for control vis-2",
-                "type": "string",
-                "desc": "Used for: alert, changeView, dialog, popup, playSound, changedView"
-            },
-            "native": {}
+        "color": "#c8ffe1",
+        "pro": "vis-2/edit.html",
+        "intro": true
+      },
+      "Runtime": {
+        "link": "%web_protocol%://%ip%:%web_port%/vis-2/index.html",
+        "icon": "vis-2/img/favicon.png",
+        "color": "#ffe9c8",
+        "pro": "vis-2/index.htm",
+        "cloud": "vis-2/index.html",
+        "intro": true,
+        "name": {
+          "en": "vis-2 Runtime",
+          "de": "vis-2 Runtime",
+          "ru": "vis-2 Runtime",
+          "pt": "vis-2 Runtime",
+          "nl": "vis-2 Runtime",
+          "fr": "vis-2 Runtime",
+          "it": "vis-2 Runtime",
+          "es": "vis-2 Runtime",
+          "pl": "vis-2 Runtime",
+          "uk": "vis-2 Runtime",
+          "zh-cn": "vis-2 Runtime"
         }
-    ]
+      }
+    },
+    "license": "CC-BY-NC-4.0",
+    "dependencies": [
+      {
+        "web": ">=5.4.0"
+      },
+      {
+        "js-controller": ">=5.0.0"
+      }
+    ],
+    "restartAdapters": [
+      "vis-2"
+    ],
+    "serviceStates": "lib/states.js",
+    "singleton": true,
+    "type": "visualization",
+    "connectionType": "local",
+    "dataSource": "push",
+    "tier": 3,
+    "noConfig": false,
+    "adminUI": {
+      "config": "json"
+    },
+    "plugins": {
+      "sentry": {
+        "dsn": "https://db8b6e837c71447a876069559a00a742@sentry.iobroker.net/232"
+      }
+    },
+    "compact": true,
+    "eraseOnUpload": true,
+    "welcomeScreen": [
+      {
+        "link": "vis-2/index.html",
+        "name": "vis 2 runtime",
+        "img": "vis-2/img/favicon.png",
+        "color": "#ffe9c8",
+        "order": 0
+      }
+    ],
+    "welcomeScreenPro": [
+      {
+        "link": "vis-2/edit.html",
+        "name": "vis 2 editor",
+        "img": "vis-2/img/faviconEdit.png",
+        "color": "#c8ffe1",
+        "order": 1
+      }
+    ],
+    "licenseInformation": {
+      "type": "commercial",
+      "link": "https://raw.githubusercontent.com/ioBroker/ioBroker.vis-2/master/LICENSE",
+      "license": "CC-BY-NC-4.0"
+    },
+    "stopBeforeUpdate": true
+  },
+  "native": {
+    "defaultFileMode": 1604,
+    "license": "",
+    "useLicenseManager": 0,
+    "doNotShowProjectDialog": false,
+    "loadingBackgroundColor": "",
+    "loadingHideLogo": false,
+    "loadingBackgroundImage": false
+  },
+  "instanceObjects": [
+    {
+      "_id": "",
+      "type": "meta",
+      "common": {
+        "name": "user files and images for vis-2",
+        "type": "meta.user"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info",
+      "type": "channel",
+      "common": {
+        "name": "info"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.uploaded",
+      "type": "state",
+      "common": {
+        "name": "Files were uploaded",
+        "type": "number",
+        "role": "value.time"
+      },
+      "native": {}
+    },
+    {
+      "_id": "control",
+      "type": "channel",
+      "common": {
+        "name": "Control vis-2"
+      },
+      "native": {}
+    },
+    {
+      "_id": "control.instance",
+      "type": "state",
+      "common": {
+        "name": "Control vis-2",
+        "type": "string",
+        "desc": "Write here browser instance ID to control or 'FFFFFFFF' to control all instances"
+      },
+      "native": {}
+    },
+    {
+      "_id": "control.command",
+      "type": "state",
+      "common": {
+        "name": "Command for vis-2",
+        "type": "string",
+        "desc": "Writing this variable act as the trigger. Instance and data must be preset before 'command' will be written. 'changedView' will be signalled too",
+        "role": "state",
+        "states": {
+          "alert": "alert",
+          "changeView": "changeView",
+          "refresh": "refresh",
+          "reload": "reload",
+          "dialog": "dialog",
+          "dialogClose": "dialogClose",
+          "popup": "popup",
+          "playSound": "playSound",
+          "changedView": "changedView",
+          "tts": "tts"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "control.data",
+      "type": "state",
+      "common": {
+        "name": "Data for control vis-2",
+        "type": "string",
+        "desc": "Used for: alert, changeView, dialog, popup, playSound, changedView"
+      },
+      "native": {}
+    }
+  ]
 }
