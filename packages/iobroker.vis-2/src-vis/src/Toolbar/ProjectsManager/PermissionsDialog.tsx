@@ -90,7 +90,13 @@ export default class PermissionsDialog extends React.Component<PermissionsDialog
         const widgetPermissions: Record<string, PermissionsMap> = {};
 
         const adminObj = Object.values(userView).find(obj => obj._id === 'system.user.admin');
-        this.adminUser = adminObj?.common.name || this.adminUser;
+        const name: string =
+            typeof adminObj?.common.name === 'object'
+                ? !adminObj?.common.name
+                    ? ''
+                    : adminObj.common.name[I18n.getLanguage()] || adminObj.common.name.en || ''
+                : adminObj?.common.name || '';
+        this.adminUser = name || this.adminUser;
 
         for (const user of Object.keys(userView)) {
             projectPermissions.set(user, visProject.___settings.permissions?.[user] ?? DEFAULT_PERMISSIONS);

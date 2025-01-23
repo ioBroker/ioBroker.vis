@@ -130,27 +130,28 @@ function deleteFolderRecursive(dirPath: string): void {
 export function syncWidgetSets(
     enabledList: { path: string; name: string; pack: ioBroker.AdapterObject }[],
     forceBuild?: boolean,
-): { widgetSets: (string | { name: string; depends?: string | string[]; always?: boolean })[]; filesChanged: boolean } {
+): {
+    widgetSets: { name: string; depends?: string | string[]; always?: boolean; v2: boolean }[];
+    filesChanged: boolean;
+} {
     let filesChanged = false;
     let found: { path: string; name: string; pack: ioBroker.AdapterObject } | undefined;
     let name: string;
+    const v2: Record<string, boolean> = {};
 
     // Now we have the list of widgets => copy them all to widgets directory
     for (let d = 0; d < enabledList.length; d++) {
-        const _changed = copyFolderRecursiveSync(
-            `${enabledList[d].path}/widgets/`,
-            normalize(wwwDir),
-            forceBuild,
-        );
+        const _changed = copyFolderRecursiveSync(`${enabledList[d].path}/widgets/`, normalize(wwwDir), forceBuild);
         if (_changed) {
             filesChanged = true;
         }
         console.log(
             `Check ${enabledList[d].path.replace(/\\/g, '/').split('/').pop()}... ${_changed ? 'COPIED.' : 'no changes.'}`,
         );
+        v2[enabledList[d].name.replace('iobroker.', '').replace('ioBroker.', '')] = !!enabledList[d].pack.common.visWidgets;
     }
 
-    const widgetSets: (string | { name: string; depends?: string | string[]; always?: boolean })[] = [];
+    const widgetSets: { name: string; depends?: string | string[]; always?: boolean; v2: boolean }[] = [];
 
     // Read the list of installed widgets
     const installed = readdirSync(`${wwwDir}widgets/`);
@@ -178,16 +179,16 @@ export function syncWidgetSets(
                     widgetSetsDependencies[name] ||
                     typeof widgetSetsDependencies[name] === 'string'
                 ) {
-                    widgetSets.push({ name, depends: widgetSetsDependencies[name] });
+                    widgetSets.push({ name, depends: widgetSetsDependencies[name], v2: false });
                 } else {
-                    widgetSets.push(name);
+                    widgetSets.push({ name, v2: false });
                 }
             } else if (found?.pack?.native?.always) {
-                widgetSets.push({ name, always: true });
+                widgetSets.push({ name, always: true, v2: v2[name] });
             } else if (found?.pack?.native?.dependencies?.length) {
-                widgetSets.push({ name, depends: found.pack.native.dependencies });
+                widgetSets.push({ name, depends: found.pack.native.dependencies, v2: v2[name] });
             } else {
-                widgetSets.push(name);
+                widgetSets.push({ name, v2: v2[name] });
             }
         }
     }

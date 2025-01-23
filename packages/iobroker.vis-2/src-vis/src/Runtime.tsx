@@ -868,8 +868,12 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         const userName = await this.socket.getCurrentUser(); // just name, like "admin"
 
         const currentUser = await this.socket.getObject(`system.user.${userName || 'admin'}`);
+        const name =
+            typeof currentUser.common.name === 'object'
+                ? currentUser.common.name[I18n.getLanguage()] || currentUser.common.name.en
+                : currentUser.common.name;
 
-        store.dispatch(updateActiveUser(currentUser.common.name));
+        store.dispatch(updateActiveUser(name));
 
         const groups = await this.socket.getGroups();
         const userGroups: Record<ioBroker.ObjectIDs.Group, ioBroker.GroupObject> = {};

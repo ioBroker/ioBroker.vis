@@ -2,7 +2,7 @@
  *
  *      iobroker vis-2 Adapter
  *
- *      Copyright (c) 2021-2024, bluefox
+ *      Copyright (c) 2021-2025, bluefox
  *
  *      CC-NC-BY 4.0 License
  *
@@ -203,7 +203,7 @@ class VisAdapter extends Adapter {
         const { widgetSets, filesChanged } = syncWidgetSets(enabledList, forceBuild);
         const widgetsChanged = await this.generateWidgetsHtml(widgetSets, forceBuild);
 
-        let uploadedIndexHtml: string | null = null;
+        let uploadedIndexHtml: string | null;
         let indexHtml = '';
         if (existsSync(`${wwwDir}/index.html`)) {
             indexHtml = readFileSync(`${wwwDir}/index.html`).toString('utf8');
@@ -222,7 +222,7 @@ class VisAdapter extends Adapter {
             uploadedIndexHtml = '';
         }
 
-        let uploadedEditHtml: string | null = null;
+        let uploadedEditHtml: string | null;
         let editHtml = '';
         if (existsSync(`${wwwDir}/edit.html`)) {
             editHtml = readFileSync(`${wwwDir}/edit.html`).toString('utf8');
@@ -284,20 +284,20 @@ class VisAdapter extends Adapter {
     }
 
     async generateWidgetsHtml(
-        widgetSets: (string | { name: string; depends?: string | string[]; always?: boolean })[],
+        widgetSets: { name: string; depends?: string | string[]; always?: boolean; v2: boolean }[],
         forceBuild: boolean,
     ): Promise<boolean> {
         let text = '';
         for (let w = 0; w < widgetSets.length; w++) {
             const widgetSet = widgetSets[w];
             let file;
-            let name;
+            const name = `${widgetSet.name}.html`;
 
-            if (typeof widgetSet === 'object') {
-                name = `${widgetSet.name}.html`;
-            } else {
-                name = `${widgetSet}.html`;
+            // ignore the HTML file if adapter has widgets for vis-1 and vis-2. Vis-2 will be loaded from js file and nor from html
+            if (widgetSet.v2) {
+                continue;
             }
+
             try {
                 file = readFileSync(`${wwwDir}/widgets/${name}`);
                 // extract all css and js
@@ -323,7 +323,7 @@ class VisAdapter extends Adapter {
         if (data && (data !== text || forceBuild)) {
             try {
                 writeFileSync(`${wwwDir}/widgets.html`, text);
-                // upload file to DB
+                // upload a file to DB
                 await this.writeFileAsync('vis-2', 'www/widgets.html', text);
             } catch (e) {
                 this.log.error(`Cannot write file www/widgets.html: ${e}`);

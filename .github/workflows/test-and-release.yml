@@ -6,140 +6,139 @@ name: Test and Release
 # Run this job on all pushes and pull requests
 # as well as tags with a semantic version
 on:
-  push:
-    branches:
-      - '*'
-    tags:
-      # normal versions
-      - "v?[0-9]+.[0-9]+.[0-9]+"
-      # pre-releases
-      - "v?[0-9]+.[0-9]+.[0-9]+-**"
-  pull_request: {}
+    push:
+        branches:
+            - '*'
+        tags:
+            # normal versions
+            - 'v?[0-9]+.[0-9]+.[0-9]+'
+            # pre-releases
+            - 'v?[0-9]+.[0-9]+.[0-9]+-**'
+    pull_request: {}
 
 # Cancel previous PR/branch runs when a new commit is pushed
 concurrency:
-  group: ${{ github.ref }}
-  cancel-in-progress: true
+    group: ${{ github.ref }}
+    cancel-in-progress: true
 
 jobs:
-  adapter-tests-gui:
-    if: contains(github.event.head_commit.message, '[skip ci]') == false
-    runs-on: ubuntu-latest
+    adapter-tests-gui:
+        if: contains(github.event.head_commit.message, '[skip ci]') == false
+        runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v3
+        steps:
+            - uses: actions/checkout@v4
 
-      - name: Use Node.js 18.x
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18.x
+            - name: Use Node.js 20.x
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20.x
 
-      - name: Install Monorepo
-        run: npm run install-monorepo
+            - name: Install Monorepo
+              run: npm run install-monorepo
 
-      - name: Build
-        run: NODE_OPTIONS=--max_old_space_size=8192 npm run build
+            - name: Build
+              run: NODE_OPTIONS=--max_old_space_size=8192 npm run build
 
-      - name: Test TypeScript
-        run: npm run check-ts -w packages/iobroker.vis-2
+            - name: Test TypeScript
+              run: npm run check-ts -w packages/iobroker.vis-2
 
-      - name: Run local tests
-        run: npm run test-gui -w packages/iobroker.vis-2
+            - name: Run local tests
+              run: npm run test-gui -w packages/iobroker.vis-2
 
-      - name: Archive screenshots
-        if: always()
-        # if: failure()
-        uses: actions/upload-artifact@v3
-        with:
-          path: packages/iobroker.vis-2/tmp/screenshots/**/*.png
-          retention-days: 3
+            - name: Archive screenshots
+              if: always()
+              # if: failure()
+              uses: actions/upload-artifact@v4
+              with:
+                  path: packages/iobroker.vis-2/tmp/screenshots/**/*.png
+                  retention-days: 3
 
-  # Deploys the final package to NPM
-  deploy:
-    needs: [adapter-tests-gui]
+    # Deploys the final package to NPM
+    deploy:
+        needs: [adapter-tests-gui]
 
-    # Trigger this step only when a commit on master is tagged with a version number
-    if: |
-      contains(github.event.head_commit.message, '[skip ci]') == false &&
-      github.event_name == 'push' &&
-      startsWith(github.ref, 'refs/tags/')
-    runs-on: macos-latest # ubuntu-latest has too few RAM
+        # Trigger this step only when a commit on master is tagged with a version number
+        if: |
+            contains(github.event.head_commit.message, '[skip ci]') == false &&
+            github.event_name == 'push' &&
+            startsWith(github.ref, 'refs/tags/')
+        runs-on: macos-latest # ubuntu-latest has too few RAM
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+              with:
+                  ref: 'master'
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          ref: 'master'
+            - name: Use Node.js 20.x
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20.x
 
-      - name: Use Node.js 18.x
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18.x
+            - name: Extract the version and commit body from the tag
+              id: extract_release
+              # The body may be multiline, therefore, we need to escape some characters
+              run: |
+                  VERSION="${{ github.ref }}"
+                  VERSION=${VERSION##*/}
+                  VERSION=${VERSION##*v}
+                  echo "::set-output name=VERSION::$VERSION"
+                  BODY=$(git show -s --format=%b)
+                  BODY="${BODY//'%'/'%25'}"
+                  BODY="${BODY//$'\n'/'%0A'}"
+                  BODY="${BODY//$'\r'/'%0D'}"
+                  echo "::set-output name=BODY::$BODY"
 
-      - name: Extract the version and commit body from the tag
-        id: extract_release
-        # The body may be multiline, therefore, we need to escape some characters
-        run: |
-          VERSION="${{ github.ref }}"
-          VERSION=${VERSION##*/}
-          VERSION=${VERSION##*v}
-          echo "::set-output name=VERSION::$VERSION"
-          BODY=$(git show -s --format=%b)
-          BODY="${BODY//'%'/'%25'}"
-          BODY="${BODY//$'\n'/'%0A'}"
-          BODY="${BODY//$'\r'/'%0D'}"
-          echo "::set-output name=BODY::$BODY"
+            - name: Install Dependencies
+              run: npm run install-monorepo
 
-      - name: Install Dependencies
-        run: npm run install-monorepo
+            - name: Create a clean build
+              run: npm run build
 
-      - name: Create a clean build
-        run: npm run build
+            - name: Publish package to npm
+              env:
+                  VERSION: ${{ steps.extract_release.outputs.VERSION }}
+              run: |
+                  npm config set //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
+                  npm whoami
+                            
+                  git add .
+                  git config --global user.email "dogafox@gmail.com"
+                  git config --global user.name "Github Action"
+                  git commit -m "v${VERSION}" && npx lerna version ${VERSION} --no-push --exact --no-commit-hooks --yes --amend --force-publish || npx lerna version ${VERSION} --exact --no-push --no-commit-hooks --yes --force-publish
 
-      - name: Publish package to npm
-        env:
-          VERSION: ${{ steps.extract_release.outputs.VERSION }}
-        run: |
-          npm config set //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
-          npm whoami
-                    
-          git add .
-          git config --global user.email "dogafox@gmail.com"
-          git config --global user.name "Github Action"
-          git commit -m "v${VERSION}" && npx lerna version ${VERSION} --no-push --exact --no-commit-hooks --yes --amend --force-publish || npx lerna version ${VERSION} --exact --no-push --no-commit-hooks --yes --force-publish
-          
-          git status
-          
-          npx lerna publish from-package --yes
+                  git status
 
-      - name: Create Github Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release v${{ steps.extract_release.outputs.VERSION }}
-          draft: false
-          # Prerelease versions create pre-releases on GitHub
-          prerelease: ${{ contains(steps.extract_release.outputs.VERSION, '-') }}
-          body: ${{ steps.extract_release.outputs.BODY }}
+                  npx lerna publish from-package --yes
 
-      - name: Notify Sentry.io about the release
-        run: |
-          npm i -g @sentry/cli
-          export SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
-          export SENTRY_URL=https://sentry.iobroker.net
-          export SENTRY_ORG=iobroker
-          export SENTRY_PROJECT=iobroker-vis-2
-          export SENTRY_VERSION=iobroker.vis-2@${{ steps.extract_release.outputs.VERSION }}
-          export SENTRY_RELEASE=${{ steps.extract_release.outputs.VERSION }}
-          sentry-cli releases new $SENTRY_VERSION
-          sentry-cli releases finalize $SENTRY_VERSION
-          sentry-cli sourcemaps inject ./www
-          sentry-cli sourcemaps upload ./www
+            - name: Create Github Release
+              uses: actions/create-release@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  tag_name: ${{ github.ref }}
+                  release_name: Release v${{ steps.extract_release.outputs.VERSION }}
+                  draft: false
+                  # Prerelease versions create pre-releases on GitHub
+                  prerelease: ${{ contains(steps.extract_release.outputs.VERSION, '-') }}
+                  body: ${{ steps.extract_release.outputs.BODY }}
 
-        # Add the following line BEFORE finalize if repositories are connected in Sentry
-        # sentry-cli releases set-commits $SENTRY_VERSION --auto
+            - name: Notify Sentry.io about the release
+              run: |
+                  npm i -g @sentry/cli
+                  export SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+                  export SENTRY_URL=https://sentry.iobroker.net
+                  export SENTRY_ORG=iobroker
+                  export SENTRY_PROJECT=iobroker-vis-2
+                  export SENTRY_VERSION=iobroker.vis-2@${{ steps.extract_release.outputs.VERSION }}
+                  export SENTRY_RELEASE=${{ steps.extract_release.outputs.VERSION }}
+                  sentry-cli releases new $SENTRY_VERSION
+                  sentry-cli releases finalize $SENTRY_VERSION
+                  sentry-cli sourcemaps inject ./www
+                  sentry-cli sourcemaps upload ./www
 
-        # Add the following line BEFORE finalize if sourcemap uploads are needed
-        # sentry-cli releases files $SENTRY_VERSION upload-sourcemaps build/
+              # Add the following line BEFORE finalize if repositories are connected in Sentry
+              # sentry-cli releases set-commits $SENTRY_VERSION --auto
+
+              # Add the following line BEFORE finalize if sourcemap uploads are needed
+              # sentry-cli releases files $SENTRY_VERSION upload-sourcemaps build/

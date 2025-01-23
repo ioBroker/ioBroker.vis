@@ -1,5 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
 exports.default = calcProjects;
 /**
  * Stringify-parse copy with type inference
@@ -13,8 +13,9 @@ function deepClone(obj) {
  * Determine if the string is of form identifier:ioBrokerId, like, val:hm-rpc.0.device.channel.state
  */
 function isIdBinding(
-/** the possible assignment to check */
-assignment) {
+    /** the possible assignment to check */
+    assignment,
+) {
     return !!assignment.match(/^[\d\w_]+:\s?[-.\d\w_#]+$/);
 }
 function replaceGroupAttr(inputStr, groupAttrList) {
@@ -28,8 +29,7 @@ function replaceGroupAttr(inputStr, groupAttrList) {
             const val = groupAttrList[m];
             if (val === null || val === undefined) {
                 newString = newString.replace(/groupAttr(\d+)/, '');
-            }
-            else {
+            } else {
                 newString = newString.replace(/groupAttr(\d+)/, groupAttrList[m]);
             }
         });
@@ -38,13 +38,12 @@ function replaceGroupAttr(inputStr, groupAttrList) {
     ms = inputStr.match(/%([-_a-zA-Z\d]+)+?%/g);
     if (ms) {
         match = true;
-        ms.forEach((m) => {
+        ms.forEach(m => {
             const attr = m.substring(1, m.length - 1);
             const val = groupAttrList[attr];
             if (val === null || val === undefined) {
                 newString = newString.replace(m, '');
-            }
-            else {
+            } else {
                 newString = newString.replace(m, val);
             }
         });
@@ -81,12 +80,12 @@ function extractBinding(format) {
             test2 = systemOid.substring(systemOid.length - 3);
             if (test1 === '.val' || test1 === '.ack') {
                 systemOid = systemOid.substring(0, systemOid.length - 4);
-            }
-            else if (test2 === '.lc' || test2 === '.ts') {
+            } else if (test2 === '.lc' || test2 === '.ts') {
                 systemOid = systemOid.substring(0, systemOid.length - 3);
             }
             let operations = null;
-            const isEval = visOid.match(/^[\d\w_]+:\s?[-._/ :!#$%&()+=@^{}|~\p{Ll}\p{Lu}\p{Nd}]+$/u) ||
+            const isEval =
+                visOid.match(/^[\d\w_]+:\s?[-._/ :!#$%&()+=@^{}|~\p{Ll}\p{Lu}\p{Nd}]+$/u) ||
                 (!visOid.length && parts.length > 0); // (visOid.indexOf(':') !== -1) && (visOid.indexOf('::') === -1);
             if (isEval) {
                 const xx = visOid.split(':', 2);
@@ -120,8 +119,7 @@ function extractBinding(format) {
                         test1 = _systemOid.substring(_systemOid.length - 4);
                         if (test1 === '.val' || test1 === '.ack') {
                             _systemOid = _systemOid.substring(0, _systemOid.length - 4);
-                        }
-                        else {
+                        } else {
                             test2 = _systemOid.substring(_systemOid.length - 3);
                             if (test2 === '.lc' || test2 === '.ts') {
                                 _systemOid = _systemOid.substring(0, _systemOid.length - 3);
@@ -132,106 +130,94 @@ function extractBinding(format) {
                             visOid: _visOid,
                             systemOid: _systemOid,
                         });
-                    }
-                    else {
+                    } else {
                         parts[u] = parts[u].replace(/::/g, ':');
                         if (operations[0].formula) {
                             const n = deepClone(operations[0]);
                             n.formula = parts[u];
                             operations.push(n);
-                        }
-                        else {
+                        } else {
                             operations[0].formula = parts[u];
                         }
                     }
                 }
-            }
-            else {
+            } else {
                 for (let u = 1; u < parts.length; u++) {
                     const parse = parts[u].match(/([\w\s/+*-]+)(\(.+\))?/);
                     if (parse && parse[1]) {
                         const op = parse[1].trim();
                         // operators requires parameter
-                        if (op === '*' ||
+                        if (
+                            op === '*' ||
                             op === '+' ||
                             op === '-' ||
                             op === '/' ||
                             op === '%' ||
                             op === 'min' ||
-                            op === 'max') {
+                            op === 'max'
+                        ) {
                             if (parse[2] === undefined) {
                                 console.log(`Invalid format of format string: ${format}`);
-                            }
-                            else {
+                            } else {
                                 // try to extract number
                                 let argStr = (parse[2] || '').trim().replace(',', '.');
                                 argStr = argStr.substring(1, argStr.length - 1).trim();
                                 const arg = parseFloat(argStr);
                                 if (arg.toString() === 'NaN') {
                                     console.log(`Invalid format of format string: ${format}`);
-                                }
-                                else {
+                                } else {
                                     operations = operations || [];
                                     operations.push({ op, arg });
                                 }
                             }
-                        }
-                        else if (op === 'date' || op === 'momentDate') {
+                        } else if (op === 'date' || op === 'momentDate') {
                             // date formatting
                             operations = operations || [];
                             let arg = (parse[2] || '').trim();
                             // Remove braces from {momentDate(format)}
                             arg = arg.substring(1, arg.length - 1);
                             operations.push({ op, arg });
-                        }
-                        else if (op === 'array') {
+                        } else if (op === 'array') {
                             // returns array[value]. e.g.: {id.ack;array(ack is false,ack is true)}
                             operations = operations || [];
                             let param = (parse[2] || '').trim();
                             param = param.substring(1, param.length - 1);
                             operations.push({ op, arg: param.split(',') }); // xxx
-                        }
-                        else if (op === 'value') {
+                        } else if (op === 'value') {
                             // value formatting
                             operations = operations || [];
                             let arg = parse[2] === undefined ? '(2)' : parse[2] || '';
                             arg = arg.trim();
                             arg = arg.substring(1, arg.length - 1);
                             operations.push({ op, arg });
-                        }
-                        else if (op === 'pow' || op === 'round' || op === 'random') {
+                        } else if (op === 'pow' || op === 'round' || op === 'random') {
                             // operators have optional parameter
                             if (parse[2] === undefined) {
                                 operations = operations || [];
                                 operations.push({ op });
-                            }
-                            else {
+                            } else {
                                 let argStr = (parse[2] || '').trim().replace(',', '.');
                                 argStr = argStr.substring(1, argStr.length - 1);
                                 const arg = parseFloat(argStr.trim());
                                 if (arg.toString() === 'NaN') {
                                     console.log(`Invalid format of format string: ${format}`);
-                                }
-                                else {
+                                } else {
                                     operations = operations || [];
                                     operations.push({ op, arg });
                                 }
                             }
-                        }
-                        else if (op === 'json') {
+                        } else if (op === 'json') {
                             // json(objPropPath)  ex: json(prop1);  json(prop1.propA)
                             operations = operations || [];
                             let arg = (parse[2] || '').trim();
                             arg = arg.substring(1, arg.length - 1);
                             operations.push({ op, arg });
-                        }
-                        else {
+                        } else {
                             // operators without parameter
                             operations = operations || [];
                             operations.push({ op: op });
                         }
-                    }
-                    else {
+                    } else {
                         console.log(`Invalid format ${format}`);
                     }
                 }
@@ -349,8 +335,7 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
             if (newGroupData) {
                 data = newGroupData;
             }
-        }
-        else {
+        } else {
             console.error(`Invalid group id "${widget.groupid}" in widget "${wid}"`);
         }
     }
@@ -398,22 +383,23 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
                         }
                     }
                 });
-            }
-            else if (attr !== 'oidTrueValue' &&
+            } else if (
+                attr !== 'oidTrueValue' &&
                 attr !== 'oidFalseValue' &&
                 data[attr] &&
-                data[attr] !== 'nothing_selected') {
+                data[attr] !== 'nothing_selected'
+            ) {
                 let isID = !!attr.match(/oid\d{0,2}$/);
                 if (attr.startsWith('oid')) {
                     isID = true;
-                }
-                else if (attr.startsWith('signals-oid-')) {
+                } else if (attr.startsWith('signals-oid-')) {
                     isID = true;
-                }
-                else if (linkContext.widgetAttrInfo) {
+                } else if (linkContext.widgetAttrInfo) {
                     const _attr = attr.replace(/\d{0,2}$/, '');
-                    if (linkContext.widgetAttrInfo[_attr]?.type === 'id' &&
-                        linkContext.widgetAttrInfo[_attr].noSubscribe !== true) {
+                    if (
+                        linkContext.widgetAttrInfo[_attr]?.type === 'id' &&
+                        linkContext.widgetAttrInfo[_attr].noSubscribe !== true
+                    ) {
                         isID = true;
                     }
                 }
@@ -437,16 +423,14 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
                                     if (result1.doesMatch) {
                                         vid = result1.newString;
                                     }
-                                }
-                                else {
+                                } else {
                                     console.warn(`Invalid group: ${vGroup} in ${view} / ${wid}`);
                                 }
                             }
                         }
                         linkContext.visibility[vid] = linkContext.visibility[vid] || [];
                         linkContext.visibility[vid].push({ view, widget: wid });
-                    }
-                    else if (attr.startsWith('signals-oid-')) {
+                    } else if (attr.startsWith('signals-oid-')) {
                         // Signal binding
                         let sid = data[attr];
                         if (widget.grouped) {
@@ -464,8 +448,7 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
                             widget: wid,
                             index: parseInt(attr.substring(12), 10), // 'signals-oid-'.length = 12
                         });
-                    }
-                    else if (attr === 'lc-oid') {
+                    } else if (attr === 'lc-oid') {
                         let lcSid = data[attr];
                         if (widget.grouped) {
                             const gGroup = getWidgetGroup(views, view, wid);
@@ -479,8 +462,7 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
                         linkContext.lastChanges[lcSid] = linkContext.lastChanges[lcSid] || [];
                         linkContext.lastChanges[lcSid].push({ view, widget: wid });
                     }
-                }
-                else if (data[attr] === 'id') {
+                } else if (data[attr] === 'id') {
                     m = attr.match(/^attrType(\d+)$/);
                     if (m) {
                         const _id = `groupAttr${m[1]}`;
@@ -587,8 +569,7 @@ function getUsedObjectIDs(views, isByViews) {
                                     changed = true;
                                 }
                             }
-                        }
-                        else {
+                        } else {
                             console.warn(`View does not exist: "${widget.data.contains_view}"`);
                         }
                     }
@@ -614,8 +595,7 @@ function calcProject(objects, projects, instance, result, callback) {
         let json;
         try {
             json = JSON.parse(data?.toString() || '{}');
-        }
-        catch {
+        } catch {
             console.error(`Cannot parse "/${project.file}/vis-views.json`);
             setImmediate(calcProject, objects, projects, instance, result, callback);
             return;
@@ -636,8 +616,7 @@ function calcProjects(objects, _states, instance, config, callback) {
             if (callback) {
                 callback(err || null, [{ id: `vis-2.${instance}.datapoints.total`, val: 0 }]);
             }
-        }
-        else {
+        } else {
             calcProject(objects, projects, instance, [], (err, result) => {
                 if (result && result.length) {
                     let total = 0;
