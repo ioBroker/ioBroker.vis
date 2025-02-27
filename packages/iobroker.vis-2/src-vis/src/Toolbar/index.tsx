@@ -305,6 +305,7 @@ class Toolbar extends React.Component<ToolbarProps, ToolbarState> {
                                     console.error(e);
                                     return;
                                 }
+
                                 window.location.reload();
                             }}
                         >

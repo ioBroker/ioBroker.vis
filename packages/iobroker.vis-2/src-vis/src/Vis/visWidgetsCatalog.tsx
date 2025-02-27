@@ -1,7 +1,7 @@
 import type React from 'react';
 
 import type { LegacyConnection, ThemeType, ObjectBrowserCustomFilter } from '@iobroker/adapter-react-v5';
-import {
+import type {
     GroupWidgetId,
     Project,
     RxWidgetInfoGroup,
@@ -11,7 +11,8 @@ import {
     WidgetData,
     RxWidgetInfoCustomComponentProperties,
     RxWidgetAttributeType,
-    Widget, WidgetStyle,
+    Widget,
+    WidgetStyle,
 } from '@iobroker/types-vis-2';
 import type VisRxWidget from '@/Vis/visRxWidget';
 
