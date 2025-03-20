@@ -744,8 +744,7 @@ if (typeof exports !== 'undefined') {
             // An object of options to indicate where to post to
             const postOptions = {
                 host: 'iobroker.net',
-                port: 3101,
-                path: '/api/v1/public/cert/',
+                path: '/api/v1/public/cert',
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
