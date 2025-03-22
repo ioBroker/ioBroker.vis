@@ -32,6 +32,7 @@ import commonStyles from '@/Utils/styles';
 import type Editor from '../Editor';
 import Widget from './Widget';
 import MarketplacePalette from '../Marketplace/MarketplacePalette';
+import { loadRemote, registerRemotes } from '@module-federation/runtime';
 
 // declare global {
 //     interface Window {
@@ -207,22 +208,26 @@ class Palette extends Component<PaletteProps, PaletteState> {
         ) {
             this.marketplaceLoadingStarted = true;
             // load marketplace
-            this.setState({ marketplaceLoading: true }, () => {
-                const tPromise = loadComponent(
-                    // @ts-expect-error solve later
-                    '__marketplace',
-                    'default',
-                    './translations',
-                    `${window.marketplaceClient}/customWidgets.js`,
-                )().then((translations: any) => I18n.extendTranslations(translations.default));
 
-                const mPromise = loadComponent(
-                    // @ts-expect-error solve later
-                    '__marketplace',
-                    'default',
-                    './VisMarketplace',
-                    `${window.marketplaceClient}/customWidgets.js`,
-                )().then(marketplace => (window.VisMarketplace = marketplace as any as Marketplace));
+            registerRemotes(
+                [
+                    {
+                        name: '__marketplace',
+                        entry: `${window.marketplaceClient}/customWidgets.js`,
+                        // type: this.props.schema.bundlerType || undefined,
+                    },
+                ],
+                // force: true // may be needed to side-load remotes after the fact.
+            );
+
+            this.setState({ marketplaceLoading: true }, () => {
+                const tPromise = loadRemote<any>('__marketplace/translations').then((translations: any) =>
+                    I18n.extendTranslations(translations.default),
+                );
+
+                const mPromise = loadRemote<any>('__marketplace/VisMarketplace').then(
+                    marketplace => (window.VisMarketplace = marketplace as Marketplace),
+                );
 
                 Promise.all([tPromise, mPromise])
                     .then(async () => {

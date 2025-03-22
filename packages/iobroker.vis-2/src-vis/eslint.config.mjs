@@ -8,6 +8,12 @@ export default [
             'no-new-func': 'warn',
             'no-extend-native': 'warn',
             'no-eval': 'warn',
+            "prettier/prettier": [
+               "error",
+                {
+                    "endOfLine": "auto"
+                }
+            ]
         },
     },
     {

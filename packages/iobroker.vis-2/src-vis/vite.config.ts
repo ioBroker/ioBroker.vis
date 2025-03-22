@@ -4,14 +4,13 @@ import commonjs from 'vite-plugin-commonjs';
 import vitetsConfigPaths from 'vite-tsconfig-paths';
 import { federation } from '@module-federation/vite';
 import path, { resolve } from 'node:path';
-// import { moduleFederationShared } from '@iobroker/adapter-react-v5/modulefederation.admin.config';
+import { moduleFederationShared } from './modulefederation.admin.config';
 
 export default defineConfig({
     plugins: [
         federation({
             name: 'iobroker_vis',
-            shared: [],
-            // shared: moduleFederationShared(),
+            shared: moduleFederationShared(),
             exposes: {
                 './visRxWidget': './src/Vis/visRxWidget',
             },
