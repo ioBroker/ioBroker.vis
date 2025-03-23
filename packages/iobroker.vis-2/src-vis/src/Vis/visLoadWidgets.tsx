@@ -147,20 +147,6 @@ function getRemoteWidgets(
             for (let i = 0; i < dynamicWidgetInstances.length; i++) {
                 const dynamicWidgetInstance = dynamicWidgetInstances[i];
                 for (const widgetSetName in dynamicWidgetInstance.common.visWidgets) {
-                    if (dynamicWidgetInstance.common.visWidgets[widgetSetName].name) {
-                        registerRemotes(
-                            [
-                                {
-                                    name: dynamicWidgetInstance.common.visWidgets[widgetSetName].name,
-                                    entry: dynamicWidgetInstance.common.visWidgets[widgetSetName].url,
-                                    type:
-                                        (dynamicWidgetInstance.common.visWidgets[widgetSetName] as any).bundlerType ||
-                                        undefined,
-                                },
-                            ],
-                            // force: true // may be needed to side-load remotes after the fact.
-                        );
-                    }
                     // deprecated
                     if (widgetSetName === 'i18n') {
                         // ignore
@@ -185,6 +171,16 @@ function getRemoteWidgets(
                         if (!visWidgetsCollection.url?.startsWith('http')) {
                             visWidgetsCollection.url = `./widgets/${visWidgetsCollection.url}`;
                         }
+                        registerRemotes(
+                            [
+                                {
+                                    name: visWidgetsCollection.name,
+                                    entry: visWidgetsCollection.url,
+                                    type: (visWidgetsCollection as any).bundlerType || undefined,
+                                },
+                            ],
+                            // force: true // may be needed to side-load remotes after the fact.
+                        );
                         if (visWidgetsCollection.components) {
                             ((collection, instance) => {
                                 try {
