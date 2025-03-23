@@ -71,17 +71,6 @@ function _loadComponentHelper(context: VisLoadComponentContext): Promise<void[]>
     // result
     const promises: Promise<void>[] = [];
 
-    registerRemotes(
-        [
-            {
-                name: context.visWidgetsCollection.name,
-                entry: context.visWidgetsCollection.url,
-                // type: this.props.schema.bundlerType || undefined,
-            },
-        ],
-        // force: true // may be needed to side-load remotes after the fact.
-    );
-
     for (let i = 0; i < context.visWidgetsCollection.components.length; i++) {
         ((index: number, _visWidgetsCollection) => {
             context.countRef.max++;
@@ -158,6 +147,20 @@ function getRemoteWidgets(
             for (let i = 0; i < dynamicWidgetInstances.length; i++) {
                 const dynamicWidgetInstance = dynamicWidgetInstances[i];
                 for (const widgetSetName in dynamicWidgetInstance.common.visWidgets) {
+                    if (dynamicWidgetInstance.common.visWidgets[widgetSetName].name) {
+                        registerRemotes(
+                            [
+                                {
+                                    name: dynamicWidgetInstance.common.visWidgets[widgetSetName].name,
+                                    entry: dynamicWidgetInstance.common.visWidgets[widgetSetName].url,
+                                    type:
+                                        (dynamicWidgetInstance.common.visWidgets[widgetSetName] as any).bundlerType ||
+                                        undefined,
+                                },
+                            ],
+                            // force: true // may be needed to side-load remotes after the fact.
+                        );
+                    }
                     // deprecated
                     if (widgetSetName === 'i18n') {
                         // ignore
