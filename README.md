@@ -19,7 +19,6 @@ WEB visualization for ioBroker platform.
 - [Settings](#settings)
 - [SVG and curentColor](#svg-and-currentcolor)
 
-
 ## License requirements
 To use this adapter in `ioBroker` you need to accept the source code license of the adapter. The source code of this adapter is available under the CC BY-NC license.
 
@@ -294,6 +293,9 @@ npm run start
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Added new SVG icon as favicon.
+
 ### 2.11.2 (2025-01-23)
 * (@GermanBluefox) Do not load vis-1 widgets if vis-2 widgets provided
 
