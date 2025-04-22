@@ -124,11 +124,11 @@
     },
     "platform": "Javascript/Node.js",
     "loglevel": "info",
-    "icon": "vis-2.png",
+    "icon": "vis-2.svg",
     "enabled": true,
     "mode": "daemon",
     "nogit": true,
-    "extIcon": "https://raw.githubusercontent.com/iobroker/iobroker.vis-2/master/packages/iobroker.vis-2/admin/vis-2.png",
+    "extIcon": "https://raw.githubusercontent.com/iobroker/iobroker.vis-2/master/packages/iobroker.vis-2/admin/vis-2.svg",
     "keywords": [
       "DashUI",
       "GUI",
@@ -143,7 +143,7 @@
     "localLinks": {
       "_default": {
         "link": "%web_protocol%://%ip%:%web_port%/vis-2/edit.html",
-        "icon": "vis-2/img/faviconEdit.png",
+        "icon": "vis-2/img/faviconEdit.svg",
         "name": {
           "en": "vis-2 Editor",
           "de": "vis-2 Editor",
@@ -157,14 +157,14 @@
           "uk": "Редактор vis-2",
           "zh-cn": "vis-2 编辑器"
         },
-        "color": "#c8ffe1",
+        "color": "#E9E869",
         "pro": "vis-2/edit.html",
         "intro": true
       },
       "Runtime": {
         "link": "%web_protocol%://%ip%:%web_port%/vis-2/index.html",
-        "icon": "vis-2/img/favicon.png",
-        "color": "#ffe9c8",
+        "icon": "vis-2/img/favicon.svg",
+        "color": "#168537",
         "pro": "vis-2/index.htm",
         "cloud": "vis-2/index.html",
         "intro": true,
@@ -216,8 +216,8 @@
       {
         "link": "vis-2/index.html",
         "name": "vis 2 runtime",
-        "img": "vis-2/img/favicon.png",
-        "color": "#ffe9c8",
+        "img": "vis-2/img/favicon.svg",
+        "color": "#168537",
         "order": 0
       }
     ],
@@ -225,8 +225,8 @@
       {
         "link": "vis-2/edit.html",
         "name": "vis 2 editor",
-        "img": "vis-2/img/faviconEdit.png",
-        "color": "#c8ffe1",
+        "img": "vis-2/img/faviconEdit.svg",
+        "color": "#E9E869",
         "order": 1
       }
     ],

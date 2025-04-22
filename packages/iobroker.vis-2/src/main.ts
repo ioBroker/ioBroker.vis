@@ -744,10 +744,10 @@ if (typeof exports !== 'undefined') {
             // An object of options to indicate where to post to
             const postOptions = {
                 host: 'iobroker.net',
-                path: '/api/v1/public/cert/',
+                path: '/api/v1/public/cert',
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'text/plain',
+                    'Content-Type': 'application/json',
                     'Content-Length': Buffer.byteLength(data),
                 },
             };
@@ -812,13 +812,20 @@ if (typeof exports !== 'undefined') {
                                 resolve(true);
                             }
                         } catch (err: unknown) {
+                            this.log.warn('License is invalid 2. Error: ' + err);
                             reject(new Error(err as string));
                         }
                     });
 
-                    res.on('error', err => reject(err));
+                    res.on('error', err => {
+                        this.log.warn('License is invalid. Error: ' + err);
+                        reject(err);
+                    });
                 })
-                .on('error', err => reject(err));
+                .on('error', err => {
+                    this.log.warn('License is invalid 1. Error: ' + err);
+                    reject(err);
+                });
 
             postReq.write(data);
             postReq.end();
