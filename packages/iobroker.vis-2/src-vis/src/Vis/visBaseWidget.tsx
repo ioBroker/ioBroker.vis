@@ -112,7 +112,7 @@ interface ResizerElement extends HTMLDivElement {
 }
 
 /**
- * Methods which should be optionally implemented by inherited classes
+ * Methods, which should be optionally implemented by inherited classes
  */
 interface VisBaseWidget {
     renderSignals(): React.ReactNode;
@@ -188,7 +188,6 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
         this.state = {
             data,
             style,
-            // eslint-disable-next-line react/no-unused-state
             applyBindings: false,
             editMode: !multiViewWidget && this.props.editMode,
             multiViewWidget,
@@ -280,7 +279,6 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
     }
 
     // this method may be not in form onCommand = command => {}, as it can be overloaded
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onCommand(command: VisWidgetCommand, _option?: any): any {
         if (command === 'includePossible') {
             const overlay: HTMLDivElement = this.refService.current?.querySelector('.vis-editmode-overlay');
@@ -308,7 +306,6 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
                     'vis-editmode-steal-style',
                 );
             }
-            // eslint-disable-next-line no-undef
             const resizers: NodeListOf<HTMLDivElement> =
                 this.refService.current?.querySelectorAll('.vis-editmode-resizer');
             resizers?.forEach(item => (item.style.display = 'none'));
@@ -1268,7 +1265,6 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
         );
     }
 
-    // eslint-disable-next-line react/no-unused-class-component-methods
     static isWidgetHidden(widgetData: WidgetData | GroupData, states: VisRxWidgetStateValues, id: string): boolean {
         const oid = widgetData['visibility-oid'];
         const condition = widgetData['visibility-cond'];

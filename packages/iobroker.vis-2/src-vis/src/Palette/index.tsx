@@ -27,7 +27,6 @@ import type { Marketplace, MarketplaceWidgetRevision, VisTheme } from '@iobroker
 import { store } from '@/Store';
 
 import { getWidgetTypes, type WidgetType } from '@/Vis/visWidgetsCatalog';
-import { loadComponent } from '@/Vis/visLoadWidgets';
 import commonStyles from '@/Utils/styles';
 import type Editor from '../Editor';
 import Widget from './Widget';

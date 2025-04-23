@@ -12,7 +12,7 @@ import type {
     RxWidgetInfoCustomComponentProperties,
     RxWidgetAttributeType,
     Widget,
-    WidgetStyle,
+    WidgetStyle, VisTheme, AnyWidgetId,
 } from '@iobroker/types-vis-2';
 import type VisRxWidget from '@/Vis/visRxWidget';
 
@@ -122,7 +122,19 @@ export type RxWidgetInfoAttributesFieldAll = {
         field: RxWidgetInfoAttributesField,
         data: WidgetData,
         onDataChange: (newData: WidgetData) => void,
-        props: RxWidgetInfoCustomComponentProperties,
+        props: {
+            context: {
+                socket: LegacyConnection;
+                projectName: string;
+                instance: number;
+                adapterName: string;
+                views: Project;
+                theme: VisTheme
+            };
+            selectedView: string;
+            selectedWidgets: AnyWidgetId[];
+            selectedWidget: `w${string}` | `g${string}`
+        },
     ) => React.JSX.Element | React.JSX.Element[];
 
     /** i18n help text - This text will be shown without a label */

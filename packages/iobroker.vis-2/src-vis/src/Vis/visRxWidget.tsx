@@ -264,7 +264,6 @@ class VisRxWidget<
         return I18n.getLanguage();
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onCommand(command: VisWidgetCommand, _option?: any): any {
         const result = super.onCommand(command);
         if (result === false) {
@@ -551,7 +550,6 @@ class VisRxWidget<
         return value === undefined || value === null ? '' : value.toString();
     }
 
-    // eslint-disable-next-line no-unused-vars
     wrapContent(
         content: React.JSX.Element | React.JSX.Element[],
         addToHeader?: React.JSX.Element | null | React.JSX.Element[],

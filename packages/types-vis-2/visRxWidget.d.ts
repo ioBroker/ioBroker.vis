@@ -2,7 +2,7 @@
  *  ioBroker.vis-2
  *  https://github.com/ioBroker/ioBroker.vis-2
  *
- *  Copyright (c) 2022-2024 Denis Haev https://github.com/GermanBluefox,
+ *  Copyright (c) 2022-2025 Denis Haev https://github.com/GermanBluefox,
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -12,8 +12,7 @@
  * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
  * (Free for non-commercial use).
  */
-import type React from 'react';
-import type { Component, JSX } from 'react';
+import type React, { type Component, type JSX } from 'react';
 import type {
     AnyWidgetId,
     RxWidgetInfo,
@@ -27,8 +26,7 @@ import type {
     VisBaseWidgetProps,
     VisWidgetCommand,
 } from './index';
-import type { VisBaseWidgetState } from './visBaseWidget';
-import type VisBaseWidget from './visBaseWidget';
+import type VisBaseWidget, { type VisBaseWidgetState } from './visBaseWidget';
 type VisRxWidgetProps = VisBaseWidgetProps;
 
 interface VisRxData {
@@ -61,22 +59,30 @@ declare class VisRxWidget<
     static POSSIBLE_MUI_STYLES: string[];
     private linkContext;
     /** Method called when state changed */
-    private readonly onStateChangedBind;
-    private newState?;
-    private wrappedContent?;
-    private updateTimer?;
-    private ignoreMouseEvents?;
-    private mouseDownOnView?;
-    private bindingsTimer?;
-    private informIncludedWidgets?;
-    private filterDisplay?;
+    private readonly onStateChangedBind: (id: StateID, state: ioBroker.State, doNotApplyState?: any) => void;
+    protected newState?: Partial<VisRxWidgetState & TState & { rxData: TRxData }> | null;
+    private wrappedContent?: boolean;
+    private updateTimer?: ReturnType<typeof setTimeout>;
+    private ignoreMouseEvents?: boolean;
+    private mouseDownOnView?:
+        | null
+        | ((
+              e: React.MouseEvent,
+              wid: AnyWidgetId,
+              isRelative: boolean,
+              isResize?: boolean,
+              isDoubleClick?: boolean,
+          ) => void);
+    private bindingsTimer?: ReturnType<typeof setTimeout>;
+    private informIncludedWidgets?: ReturnType<typeof setTimeout>;
+    private filterDisplay?: '' | 'none' | 'block' | 'inline' | 'inline-block';
     constructor(props: VisRxWidgetProps);
     static findField(
         widgetInfo: RxWidgetInfo | RxWidgetInfoWriteable,
         name: string,
     ): Writeable<RxWidgetInfoAttributesField> | null;
     static getI18nPrefix(): string;
-    static getText(text: string | ioBroker.Translated): any;
+    static getText(text: ioBroker.StringOrTranslated): string;
     static t(key: string, ...args: string[]): string;
     static getLanguage(): ioBroker.Languages;
     onCommand(command: VisWidgetCommand, _option?: any): any;
@@ -89,7 +95,7 @@ declare class VisRxWidget<
         /** state object */
         id?: StateID | null,
         /** state value */
-        state?: ioBroker.State | null | undefined,
+        state?: ioBroker.State | null,
         /** if state should not be set */
         doNotApplyState?: boolean,
     ): Partial<
@@ -124,7 +130,7 @@ declare class VisRxWidget<
         headerStyle?: React.CSSProperties,
         onCardClick?: (e?: React.MouseEvent<HTMLDivElement>) => void,
         components?: Record<string, Component<any>>,
-    ): any;
+    ): React.JSX.Element | React.JSX.Element[] | null;
     renderWidgetBody(props: RxRenderWidgetProps): React.JSX.Element | null;
     getWidgetView(view: string, props?: Partial<VisViewProps>): JSX.Element;
     getWidgetInWidget(
@@ -135,13 +141,13 @@ declare class VisRxWidget<
             refParent?: React.RefObject<HTMLDivElement>;
             isRelative?: boolean;
         },
-    ): any;
-    isSignalVisible(index: number): any;
-    static text2style(textStyle: string, style: any): any;
+    ): React.JSX.Element;
+    isSignalVisible(index: number): boolean;
+    static text2style(textStyle: string, style: React.CSSProperties): React.CSSProperties;
     renderSignal(index: number): JSX.Element;
-    renderLastChange(widgetStyle: any): JSX.Element;
+    renderLastChange(widgetStyle: React.CSSProperties): JSX.Element;
     renderSignals(): React.ReactNode;
-    render(): any;
+    render(): React.JSX.Element | null;
     /**
      * Get information about specific widget, needs to be implemented by widget class
      */
