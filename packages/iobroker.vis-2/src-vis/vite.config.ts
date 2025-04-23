@@ -3,8 +3,8 @@ import react from '@vitejs/plugin-react';
 import commonjs from 'vite-plugin-commonjs';
 import vitetsConfigPaths from 'vite-tsconfig-paths';
 import { federation } from '@module-federation/vite';
-import path, { resolve } from 'node:path';
-import { moduleFederationShared } from './modulefederation.admin.config';
+import { resolve } from 'node:path';
+import { moduleFederationShared } from './modulefederation.vis.config';
 
 export default defineConfig({
     plugins: [
@@ -39,8 +39,8 @@ export default defineConfig({
     base: './',
     resolve: {
         alias: {
-            '@': path.resolve(__dirname, 'src'),
-            '@iobroker/types-vis-2': path.resolve(__dirname, '..', '..', 'types-vis-2'),
+            '@': resolve(__dirname, 'src'),
+            '@iobroker/types-vis-2': resolve(__dirname, '..', '..', 'types-vis-2'),
         },
     },
     build: {

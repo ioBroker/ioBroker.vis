@@ -297,7 +297,7 @@ npm run start
 * (@GermanBluefox) Added new SVG icon as favicon.
 
 ### 2.11.2 (2025-01-23)
-* (@GermanBluefox) Do not load vis-1 widgets if vis-2 widgets provided
+* (@GermanBluefox) Do not load vis-1 widgets if vis-2 widgets are provided
 
 ### 2.11.1 (2024-12-02)
 * (@GermanBluefox) Corrected navigation menu
@@ -306,7 +306,7 @@ npm run start
 * (@GermanBluefox) Backend was migrated to TypeScript
 
 ### 2.10.8 (2024-11-22)
-* (bluefox) Added new option for view: "Limit only for instances"
+* (bluefox) Added a new option for view: "Limit only for instances"
 
 ### 2.10.7 (2024-07-23)
 * (bluefox) Optimization of the module federation

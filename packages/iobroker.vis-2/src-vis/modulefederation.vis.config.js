@@ -35,7 +35,6 @@ export const moduleFederationShared = packageJson => {
         '@mui/system',
         'prop-types',
         'react',
-        'react-ace',
         'react-dom',
         'react-dom/client',
     ];

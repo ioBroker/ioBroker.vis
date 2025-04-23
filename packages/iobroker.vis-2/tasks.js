@@ -1,5 +1,3 @@
-'use strict';
-
 const fs = require('node:fs');
 const path = require('node:path');
 const { deleteFoldersRecursive, buildReact, npmInstall } = require('@iobroker/build-tools');
@@ -17,13 +15,14 @@ function clean() {
 function copyRuntimeSrc() {
     !fs.existsSync(`${__dirname}/runtime`) && fs.mkdirSync(`${__dirname}/runtime`);
     !fs.existsSync(`${__dirname}/runtime/src-vis`) && fs.mkdirSync(`${__dirname}/runtime/src`);
-    // copy only single shared utils file now
+    // copy only a single shared utils file now
     !fs.existsSync(`${__dirname}/runtime/src-vis/Vis`) && fs.mkdirSync(`${__dirname}/runtime/src/Vis`);
     !fs.existsSync(`${__dirname}/runtime/src-vis/Utils`) && fs.mkdirSync(`${__dirname}/runtime/src/Utils`);
     !fs.existsSync(`${__dirname}/runtime/src-vis/i18n`) && fs.mkdirSync(`${__dirname}/runtime/src/i18n`);
     !fs.existsSync(`${__dirname}/runtime/public`) && fs.mkdirSync(`${__dirname}/runtime/public`);
     copyFolder(`${__dirname}/src-vis/public`, `${__dirname}/runtime/public`, ['ace', 'visEditWords.js']);
-    let text = fs.readFileSync(`${__dirname}/runtime/public/index.html`).toString('utf-8');
+    fs.writeFileSync(`${__dirname}/runtime/index.html`, fs.readFileSync(`${__dirname}/src-vis/index.html`));
+    let text = fs.readFileSync(`${__dirname}/runtime/index.html`).toString('utf-8');
     let runtimeText = text.replace('<title>Editor.vis</title>', '<title>ioBroker.vis</title>');
     runtimeText = runtimeText.replace('faviconEdit.ico', 'favicon.ico');
     if (runtimeText !== text) {
@@ -91,21 +90,27 @@ export default FiltersEditorDialog;
     );
 
     const pack = JSON.parse(fs.readFileSync(`${__dirname}/src-vis/package.json`).toString());
-    delete pack.dependencies['@devbookhq/splitter'];
-    delete pack.dependencies['ace-builds'];
-    delete pack.dependencies['iobroker.type-detector'];
-    delete pack.dependencies['mui-nested-menu'];
-    delete pack.dependencies['react-ace'];
-    delete pack.dependencies['react-dnd'];
-    delete pack.dependencies['react-dnd-html5-backend'];
-    delete pack.dependencies['react-dnd-preview'];
-    delete pack.dependencies['react-dnd-touch-backend'];
-    delete pack.dependencies['react-beautiful-dnd'];
-    delete pack.dependencies['react-dropzone'];
-    delete pack.dependencies['html-to-image'];
+    delete pack.devDependencies['@devbookhq/splitter'];
+    delete pack.devDependencies['ace-builds'];
+    delete pack.devDependencies['iobroker.type-detector'];
+    delete pack.devDependencies['mui-nested-menu'];
+    delete pack.devDependencies['react-ace'];
+    delete pack.devDependencies['react-dnd'];
+    delete pack.devDependencies['react-dnd-html5-backend'];
+    delete pack.devDependencies['react-dnd-preview'];
+    delete pack.devDependencies['react-dnd-touch-backend'];
+    delete pack.devDependencies['react-beautiful-dnd'];
+    delete pack.devDependencies['react-dropzone'];
+    delete pack.devDependencies['html-to-image'];
+    delete pack.devDependencies['react-dropzone'];
+    delete pack.devDependencies['@iobroker/vis-2-widgets-testing'];
+    delete pack.devDependencies['@types/react-beautiful-dnd'];
 
     fs.writeFileSync(`${__dirname}/runtime/package.json`, JSON.stringify(pack, null, 2));
-    fs.writeFileSync(`${__dirname}/runtime/craco.config.js`, fs.readFileSync(`${__dirname}/src-vis/craco.config.js`));
+    fs.writeFileSync(`${__dirname}/runtime/vite.config.ts`, fs.readFileSync(`${__dirname}/src-vis/vite.config.ts`));
+    fs.writeFileSync(`${__dirname}/runtime/modulefederation.vis.config.js`, fs.readFileSync(`${__dirname}/src-vis/modulefederation.vis.config.js`));
+    fs.writeFileSync(`${__dirname}/runtime/modulefederation.vis.config.d.ts`, fs.readFileSync(`${__dirname}/src-vis/modulefederation.vis.config.d.ts`));
+    fs.writeFileSync(`${__dirname}/runtime/modulefederation.config.js`, fs.readFileSync(`${__dirname}/src-vis/modulefederation.config.js`));
     fs.writeFileSync(
         `${__dirname}/runtime/modulefederation.config.js`,
         fs.readFileSync(`${__dirname}/src-vis/modulefederation.config.js`),
@@ -155,7 +160,7 @@ function updateFile(fileName, data) {
 }
 
 async function generateSvgFiles() {
-    const svgPath = path.join(rootDir, '/node_modules/@material-icons/svg/');
+    const svgPath = path.join(__dirname, '/../../node_modules/@material-icons/svg/');
     const data = JSON.parse(fs.readFileSync(`${svgPath}data.json`).toString('utf8'));
 
     !fs.existsSync(`${__dirname}/src-vis/public/material-icons`) &&
@@ -308,7 +313,7 @@ function buildEditor() {
         );
     }
 
-    return buildReact(`${__dirname}/src-vis/`, { craco: true, ramSize: 7000, rootDir: `${__dirname}/../../` });
+    return buildReact(`${__dirname}/src-vis/`, { vite: true, ramSize: 7000, rootDir: `${__dirname}/../../` });
 }
 
 function copyAllFiles() {
@@ -338,11 +343,11 @@ function patchFile(htmlFile) {
     if (fs.existsSync(htmlFile)) {
         let code = fs.readFileSync(htmlFile).toString('utf8');
         code = code.replace(
-            /<script>const script=document[^<]+<\/script>/,
+            /<script>[\s\S]*const script\s?=\s?document[^<]+<\/script>/,
             `<script type="text/javascript" onerror="setTimeout(function(){window.location.reload()}, 5000)" src="../../lib/js/socket.io.js"></script>`,
         );
         code = code.replace(
-            /<script>var script=document[^<]+<\/script>/,
+            /<script>[\s\S]*var script=document[^<]+<\/script>/,
             `<script type="text/javascript" onerror="setTimeout(function(){window.location.reload()}, 5000)" src="../../lib/js/socket.io.js"></script>`,
         );
 
@@ -406,7 +411,7 @@ if (process.argv.includes('--runtime-0-clean')) {
 } else if (process.argv.includes('--runtime-2-npm')) {
     npmInstall(`${__dirname}/runtime`).catch(e => console.error(`Cannot install: ${e}`));
 } else if (process.argv.includes('--runtime-3-build')) {
-    buildReact(`${__dirname}/runtime/`, { craco: true, ramSize: 7000, rootDir: `${__dirname}/../../` }).catch(e =>
+    buildReact(`${__dirname}/runtime/`, { vite: true, ramSize: 7000, rootDir: `${__dirname}/../../` }).catch(e =>
         console.error(`Cannot build: ${e}`),
     );
 } else if (process.argv.includes('--runtime-4-copy')) {
@@ -433,7 +438,7 @@ if (process.argv.includes('--runtime-0-clean')) {
     clean();
     copyRuntimeSrc();
     npmInstall(`${__dirname}/runtime`)
-        .then(() => buildReact(`${__dirname}/runtime/`, { craco: true, ramSize: 7000, rootDir: `${__dirname}/../../` }))
+        .then(() => buildReact(`${__dirname}/runtime/`, { vite: true, ramSize: 7000, rootDir: `${__dirname}/../../` }))
         .then(() => copyRuntimeDist())
         .then(() => patchRuntime())
         .then(() => deleteFoldersRecursive(`${__dirname}/src-vis/build`))
