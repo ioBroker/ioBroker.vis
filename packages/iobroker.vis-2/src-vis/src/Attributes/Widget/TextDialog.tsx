@@ -9,7 +9,7 @@ interface TextDialogProps {
     onChange: (value: string) => void;
     onClose: () => void;
     themeType: ThemeType;
-    type: string;
+    type: 'text' | 'css' | 'json' | 'javascript' | 'html';
     value: string;
 }
 
@@ -30,7 +30,6 @@ const TextDialog = (props: TextDialogProps): React.JSX.Element => {
                 type={props.type}
                 themeType={props.themeType}
                 value={value}
-                focus
                 height={400}
                 onChange={newValue => changeValue(newValue)}
             />

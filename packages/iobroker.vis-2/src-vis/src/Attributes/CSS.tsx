@@ -152,7 +152,6 @@ const CSS = (props: CSSProps): React.JSX.Element => {
                 value={value}
                 onChange={newValue => save(newValue, type)}
                 width="100%"
-                focus
                 height="calc(100% - 34px)"
             />
         </>

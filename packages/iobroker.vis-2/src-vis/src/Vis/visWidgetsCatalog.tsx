@@ -9,10 +9,11 @@ import type {
     CustomPaletteProperties,
     RxWidgetInfoAttributesField,
     WidgetData,
-    RxWidgetInfoCustomComponentProperties,
     RxWidgetAttributeType,
     Widget,
-    WidgetStyle, VisTheme, AnyWidgetId,
+    WidgetStyle,
+    VisTheme,
+    AnyWidgetId,
 } from '@iobroker/types-vis-2';
 import type VisRxWidget from '@/Vis/visRxWidget';
 
@@ -129,11 +130,11 @@ export type RxWidgetInfoAttributesFieldAll = {
                 instance: number;
                 adapterName: string;
                 views: Project;
-                theme: VisTheme
+                theme: VisTheme;
             };
             selectedView: string;
             selectedWidgets: AnyWidgetId[];
-            selectedWidget: `w${string}` | `g${string}`
+            selectedWidget: `w${string}` | `g${string}`;
         },
     ) => React.JSX.Element | React.JSX.Element[];
 

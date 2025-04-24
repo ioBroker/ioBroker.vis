@@ -4,16 +4,16 @@ import { Dialog, Button, DialogActions, DialogContent, DialogTitle } from '@mui/
 
 import { ContentCopy as IconCopy, Close as CloseIcon } from '@mui/icons-material';
 
-import { I18n, Utils } from '@iobroker/adapter-react-v5';
+import { I18n, type ThemeType, Utils } from '@iobroker/adapter-react-v5';
 
 import CustomEditor from './CustomEditor';
 
 interface CodeDialogProps {
     onClose: () => void;
     title?: string;
-    themeType?: string;
+    themeType?: ThemeType;
     code: string;
-    mode?: string;
+    mode?: 'text' | 'css' | 'json' | 'javascript' | 'html';
 }
 
 class CodeDialog extends Component<CodeDialogProps> {
