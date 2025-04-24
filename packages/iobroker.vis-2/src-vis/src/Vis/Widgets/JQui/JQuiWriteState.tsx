@@ -97,7 +97,9 @@ class JQuiWriteState<
                                 socket: LegacyConnection,
                             ): Promise<void> => {
                                 if (data.oid && data.oid !== 'nothing_selected') {
-                                    const obj = (await socket.getObject(data.oid)) as ioBroker.StateObject;
+                                    const obj: ioBroker.StateObject | null | undefined = await socket.getObject(
+                                        data.oid,
+                                    );
                                     let changed = false;
                                     if (obj?.common?.min !== undefined && obj?.common?.min !== null) {
                                         if (data.min !== obj.common.min) {

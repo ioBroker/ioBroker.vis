@@ -1,6 +1,6 @@
 import { store, recalculateFields } from '@/Store';
 import BasicImageGeneric, { type RxDataBasicImageGeneric } from './BasicImageGeneric';
-import { RxWidgetInfo } from '@iobroker/types-vis-2';
+import type { RxWidgetInfo } from '@iobroker/types-vis-2';
 
 interface RxData extends RxDataBasicImageGeneric {
     count: number;
@@ -34,7 +34,7 @@ export default class BasicImage8 extends BasicImageGeneric<RxData> {
                             name: 'count',
                             type: 'number',
                             default: 0,
-                            onChange: async (
+                            onChange: (
                                 _field: unknown,
                                 data: Record<string, any>,
                                 changeData: (newData: Record<string, any>) => void,
@@ -47,6 +47,8 @@ export default class BasicImage8 extends BasicImageGeneric<RxData> {
 
                                 changeData(data);
                                 store.dispatch(recalculateFields(true));
+
+                                return Promise.resolve();
                             },
                         },
                         {
@@ -104,9 +106,7 @@ export default class BasicImage8 extends BasicImageGeneric<RxData> {
         return BasicImage8.getWidgetInfo();
     }
 
-    /**
-     * Get image according to current state
-     * */
+    /** Get image according to current state */
     getImage(): string {
         const images: string[] = [];
 

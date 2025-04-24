@@ -44,7 +44,7 @@
     "scripts": {
         "start": "vite --port 3000",
         "types": "tsc ./src/Vis/visRxWidget.tsx --declaration --emitDeclarationOnly --outDir ../../types-vis-2",
-        "lint": "eslint -c eslint.config.mjs --debug",
+        "lint": "eslint -c eslint.config.mjs",
         "build": "tsc && vite build",
         "preview": "vite preview --port 3000",
         "check-ts": "tsc --noEmit --checkJS false"

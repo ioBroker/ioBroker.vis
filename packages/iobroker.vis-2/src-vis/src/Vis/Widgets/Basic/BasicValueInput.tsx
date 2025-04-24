@@ -269,17 +269,11 @@ class BasicValueInput extends VisRxWidget<RxData, BasicValueInputState> {
                 style={{ display: 'flex', alignItems: 'center', gap: 3 }}
             >
                 {this.state.rxData.noStyle ? (
-                    <span
-                        // eslint-disable-next-line react/no-danger
-                        dangerouslySetInnerHTML={{ __html: this.state.rxData.html_prepend ?? '' }}
-                    />
+                    <span dangerouslySetInnerHTML={{ __html: this.state.rxData.html_prepend ?? '' }} />
                 ) : null}
                 {content}
                 {this.state.rxData.noStyle ? (
-                    <span
-                        // eslint-disable-next-line react/no-danger
-                        dangerouslySetInnerHTML={{ __html: this.state.rxData.html_append ?? '' }}
-                    />
+                    <span dangerouslySetInnerHTML={{ __html: this.state.rxData.html_append ?? '' }} />
                 ) : null}
             </div>
         );

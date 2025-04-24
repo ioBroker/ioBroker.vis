@@ -617,7 +617,6 @@ const WidgetField = (props: WidgetFieldProps): string | React.JSX.Element | Reac
         if (customLegacyComponent.button) {
             return (
                 <div style={{ width: '100%', display: 'flex' }}>
-                    {/* eslint-disable-next-line react/no-danger */}
                     <div
                         ref={refCustom}
                         dangerouslySetInnerHTML={{ __html: customLegacyComponent.input }}
@@ -662,7 +661,6 @@ const WidgetField = (props: WidgetFieldProps): string | React.JSX.Element | Reac
             );
         }
 
-        // eslint-disable-next-line react/no-danger
         return (
             <div
                 ref={refCustom}
@@ -879,7 +877,6 @@ const WidgetField = (props: WidgetFieldProps): string | React.JSX.Element | Reac
         if (m) {
             _value = m[1];
             unit = m[2] || 'px';
-            // eslint-disable-next-line no-restricted-properties
             if (!window.isFinite(_value as any as number) || (m[2] && !POSSIBLE_UNITS.includes(m[2]))) {
                 customValue = true;
             }
@@ -1803,6 +1800,9 @@ const WidgetField = (props: WidgetFieldProps): string | React.JSX.Element | Reac
                         }
                     }}
                     placeholder={isDifferent ? t('different') : null}
+                    value={value}
+                    onChange={e => change(e.target.value)}
+                    type={field.type ? field.type : 'text'}
                     slotProps={{
                         input: {
                             endAdornment:
@@ -1816,15 +1816,11 @@ const WidgetField = (props: WidgetFieldProps): string | React.JSX.Element | Reac
                                 ) : null,
                             sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
                         },
-                    }}
-                    value={value}
-                    onChange={e => change(e.target.value)}
-                    type={field.type ? field.type : 'text'}
-                    // eslint-disable-next-line react/jsx-no-duplicate-props
-                    inputProps={{
-                        min: field.min,
-                        max: field.max,
-                        step: field.step,
+                        htmlInput: {
+                            min: field.min,
+                            max: field.max,
+                            step: field.step,
+                        },
                     }}
                 />
                 {urlPopper}

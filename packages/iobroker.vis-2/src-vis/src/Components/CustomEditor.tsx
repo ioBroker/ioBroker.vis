@@ -50,4 +50,4 @@ export function CustomEditor(props: MonacoEditorProps): React.JSX.Element {
     );
 }
 
-export default CustomEditor
+export default CustomEditor;

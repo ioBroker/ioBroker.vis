@@ -20,7 +20,6 @@ import VisRxWidget from '@/Vis/visRxWidget';
 
 import DangerousHtmlWithScript from '../Utils/DangerousHtmlWithScript';
 
-// eslint-disable-next-line no-use-before-define
 type RxData = GetRxDataFromWidget<typeof BasicHtmlNav>;
 
 class BasicHtmlNav extends VisRxWidget<RxData> {

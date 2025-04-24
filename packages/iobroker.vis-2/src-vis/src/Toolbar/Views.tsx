@@ -47,7 +47,6 @@ interface ViewsProps {
 
 const Views = (props: ViewsProps): React.JSX.Element => {
     const [dialog, setDialog] = useState(null);
-    // eslint-disable-next-line no-spaced-func, func-call-spacing
     const [dialogCallback, setDialogCallback] = useState<{ cb: (dialogName: string) => void }>(null);
     const [dialogName, setDialogName] = useState('');
     const [dialogView, setDialogView] = useState(null);
@@ -57,7 +56,6 @@ const Views = (props: ViewsProps): React.JSX.Element => {
         type: 'add' | 'rename' | 'delete' | 'copy',
         view?: string,
         parentId?: string,
-        // eslint-disable-next-line no-shadow
         cb?: (dialogName: string) => void,
     ): void => {
         view = view || props.selectedView;

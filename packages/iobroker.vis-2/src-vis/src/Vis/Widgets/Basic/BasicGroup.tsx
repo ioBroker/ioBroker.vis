@@ -164,7 +164,6 @@ class BasicGroup extends VisRxWidget<RxData, BasicGroupState> {
         return groupFields;
     }
 
-    // eslint-disable-next-line class-methods-use-this
     getWidgetInfo(): RxWidgetInfo {
         // render dynamical attributes
         const info: RxWidgetInfo = BasicGroup.getWidgetInfo();

@@ -3,7 +3,6 @@ import React from 'react';
 import type { RxRenderWidgetProps, RxWidgetInfo } from '@iobroker/types-vis-2';
 import VisRxWidget from '@/Vis/visRxWidget';
 
-// eslint-disable-next-line no-use-before-define
 type RxData = {
     svgType:
         | 'line'

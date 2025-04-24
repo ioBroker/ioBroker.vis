@@ -140,7 +140,6 @@ export default FiltersEditorDialog;
     );
     writeFileSync(`${__dirname}/runtime/src/index.tsx`, readFileSync(`${__dirname}/src-vis/src/index.tsx`));
     writeFileSync(`${__dirname}/runtime/src/theme.tsx`, readFileSync(`${__dirname}/src-vis/src/theme.tsx`));
-    writeFileSync(`${__dirname}/runtime/src/bootstrap.tsx`, readFileSync(`${__dirname}/src-vis/src/bootstrap.tsx`));
     writeFileSync(`${__dirname}/runtime/src/index.css`, readFileSync(`${__dirname}/src-vis/src/index.css`));
     writeFileSync(
         `${__dirname}/runtime/src/Utils/styles.tsx`,

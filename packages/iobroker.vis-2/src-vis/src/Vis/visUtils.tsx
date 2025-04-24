@@ -718,7 +718,6 @@ function getUsedObjectIDs(views: Project, isByViews?: boolean): VisStateUsage | 
         do {
             changed = false;
             // Check containers
-            // eslint-disable-next-line no-loop-func
             Object.keys(views).forEach(view => {
                 if (view === '___settings') {
                     return;

@@ -691,7 +691,6 @@ class JQuiBinaryState extends VisRxWidget<RxData, JQuiBinaryStateState> {
             this.state.rxData.html_prepend ? (
                 <span
                     key="prepend"
-                    // eslint-disable-next-line react/no-danger
                     dangerouslySetInnerHTML={{ __html: this.state.rxData.html_prepend }}
                 />
             ) : null,
@@ -699,14 +698,12 @@ class JQuiBinaryState extends VisRxWidget<RxData, JQuiBinaryStateState> {
             html ? (
                 <span
                     key="content"
-                    // eslint-disable-next-line react/no-danger
                     dangerouslySetInnerHTML={{ __html: html }}
                 />
             ) : null,
             this.state.rxData.html_append ? (
                 <span
                     key="append"
-                    // eslint-disable-next-line react/no-danger
                     dangerouslySetInnerHTML={{ __html: this.state.rxData.html_append }}
                 />
             ) : null,

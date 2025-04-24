@@ -63,15 +63,12 @@ const allObjects = async (socket: LegacyConnection): Promise<Record<string, ioBr
     const folders = await socket.getObjectViewSystem('folder', '', '\u9999');
     const enums = await socket.getObjectViewSystem('enum', '', '\u9999');
 
-    return (
-        Object.values(states)
-            .concat(Object.values(channels))
-            .concat(Object.values(devices))
-            .concat(Object.values(folders))
-            .concat(Object.values(enums))
-            // eslint-disable-next-line
-            .reduce((obj: Record<string, ioBroker.Object>, item: ioBroker.Object) => ((obj[item._id] = item), obj), {})
-    );
+    return Object.values(states)
+        .concat(Object.values(channels))
+        .concat(Object.values(devices))
+        .concat(Object.values(folders))
+        .concat(Object.values(enums))
+        .reduce((obj: Record<string, ioBroker.Object>, item: ioBroker.Object) => ((obj[item._id] = item), obj), {});
 };
 
 function getObjectIcon(obj: ioBroker.Object, id: string, imagePrefix?: string): string {

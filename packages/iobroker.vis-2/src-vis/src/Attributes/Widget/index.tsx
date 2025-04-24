@@ -1134,7 +1134,6 @@ class Widget extends Component<WidgetProps, WidgetState> {
                     <span
                         style={styles.widgetImage}
                         ref={this.imageRef}
-                        // eslint-disable-next-line react/no-danger
                         dangerouslySetInnerHTML={{ __html: _widgetType?.preview }}
                     />
                 );

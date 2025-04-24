@@ -193,9 +193,7 @@ const styles: Record<string, any> = {
 };
 
 interface ViewDropProps {
-    // eslint-disable-next-line no-use-before-define
     addMarketplaceWidget: Editor['addMarketplaceWidget'];
-    // eslint-disable-next-line no-use-before-define
     addWidget: Editor['addWidget'];
     editMode: boolean;
     children: React.JSX.Element;
@@ -220,13 +218,13 @@ const ViewDrop: React.FC<ViewDropProps> = props => {
             drop(item, monitor) {
                 if (targetRef.current) {
                     if (item.widgetSet === '__marketplace') {
-                        props.addMarketplaceWidget(
+                        void props.addMarketplaceWidget(
                             (item.widgetType as MarketplaceWidgetRevision).id,
                             monitor.getClientOffset().x - targetRef.current.getBoundingClientRect().x,
                             monitor.getClientOffset().y - targetRef.current.getBoundingClientRect().y,
                         );
                     } else {
-                        props.addWidget(
+                        void props.addWidget(
                             item.widgetType.name,
                             monitor.getClientOffset().x - targetRef.current.getBoundingClientRect().x,
                             monitor.getClientOffset().y - targetRef.current.getBoundingClientRect().y,
@@ -344,7 +342,6 @@ class Editor extends Runtime<EditorProps, EditorState> {
         }
     };
 
-    // eslint-disable-next-line class-methods-use-this
     initState = (newState: Partial<EditorState>): void => {
         this.visEngineHandlers = {};
         window.visAddWidget = this.addWidget; // Used for tests
@@ -668,7 +665,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
 
             delete widgets[selectedWidget];
         }
-        this.setSelectedWidgets([]);
+        await this.setSelectedWidgets([]);
         await this.changeProject(project);
     };
 
@@ -737,7 +734,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
 
         // deselect all widgets
         if (type === 'cut') {
-            this.deleteWidgetsAction();
+            await this.deleteWidgetsAction();
         }
     };
 
@@ -787,9 +784,9 @@ class Editor extends Runtime<EditorProps, EditorState> {
             newKeys.push(newKey);
         }
 
-        this.setSelectedWidgets([]);
+        await this.setSelectedWidgets([]);
         await this.changeProject(project);
-        this.setSelectedWidgets(newKeys);
+        await this.setSelectedWidgets(newKeys);
     };
 
     cloneWidgets = async (): Promise<void> => {
@@ -1288,7 +1285,6 @@ class Editor extends Runtime<EditorProps, EditorState> {
                 await this.refreshProjects();
             }
         } catch (e) {
-            // eslint-disable-next-line no-alert
             window.alert(`Cannot rename: ${e}`);
             console.error(e);
         }
@@ -1439,7 +1435,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
         // collect changes from all widgets
         this.changeTimer = setTimeout(() => {
             this.changeTimer = null;
-            this.changeProject(this.tempProject);
+            void this.changeProject(this.tempProject);
             this.tempProject = null;
         }, 200);
     };
@@ -1526,7 +1522,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
             this.setState({ visUserCss: data });
         }
 
-        this.socket.writeFile64(directory, fileName, data);
+        void this.socket.writeFile64(directory, fileName, data);
     };
 
     showConfirmDialog(confirmDialog: {
@@ -1539,7 +1535,11 @@ class Editor extends Runtime<EditorProps, EditorState> {
         this.setState({ confirmDialog });
     }
 
-    showCodeDialog(codeDialog: { code: string; title: string; mode: string }): void {
+    showCodeDialog(codeDialog: {
+        code: string;
+        title: string;
+        mode: 'json' | 'html' | 'javascript' | 'text' | 'css';
+    }): void {
         this.setState({ showCodeDialog: codeDialog });
     }
 
@@ -1706,7 +1706,9 @@ class Editor extends Runtime<EditorProps, EditorState> {
                                 project[this.state.selectedView].widgets[
                                     this.state.askAboutInclude.toWid
                                 ].data.doNotWantIncludeWidgets = true;
-                                this.changeProject(project, true).then(() => this.setState({ askAboutInclude: null }));
+                                void this.changeProject(project, true).then(() =>
+                                    this.setState({ askAboutInclude: null }),
+                                );
                             }}
                         >
                             {I18n.t('Do not ask again')}
@@ -1740,7 +1742,6 @@ class Editor extends Runtime<EditorProps, EditorState> {
         return null;
     }
 
-    // eslint-disable-next-line no-shadow
     askAboutInclude = (
         wid: AnyWidgetId,
         toWid: AnyWidgetId,
@@ -1866,7 +1867,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
                                                         if (isGroupEdited) {
                                                             this.setState({ selectedGroup: null });
                                                         } else {
-                                                            this.toggleView(view, false);
+                                                            void this.toggleView(view, false);
                                                         }
                                                     }}
                                                 >
@@ -1909,7 +1910,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
                                 onClick={() => {
                                     const project = deepClone(store.getState().visProject);
                                     project.___settings.openedViews = [this.state.selectedView];
-                                    this.changeProject(project, true);
+                                    void this.changeProject(project, true);
                                 }}
                             >
                                 <ClearAllIcon />
@@ -2195,7 +2196,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
                 onClose={isYes => {
                     if (isYes) {
                         if (this.state.updateWidgetsDialog) {
-                            this.updateWidgetsAction(this.state.updateWidgetsDialog, widgets);
+                            void this.updateWidgetsAction(this.state.updateWidgetsDialog, widgets);
                         }
                     }
                     this.setState({ updateWidgetsDialog: false });
@@ -2219,7 +2220,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
                 suppressQuestionMinutes={5}
                 onClose={isYes => {
                     if (isYes) {
-                        this.deleteWidgetsAction();
+                        void this.deleteWidgetsAction();
                     }
                     this.setState({ deleteWidgetsDialog: false });
                 }}
@@ -2370,7 +2371,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
 
         for (const i in this.state.selectedWidgets) {
             if (!store.getState().visProject[this.state.selectedView]?.widgets[this.state.selectedWidgets[i]]) {
-                this.setSelectedWidgets([]);
+                void this.setSelectedWidgets([]);
                 return null;
             }
         }

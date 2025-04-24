@@ -63,7 +63,7 @@ class JQuiButtonPasswordNavigation extends JQuiButton {
     }
 
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo() {
+    getWidgetInfo(): RxWidgetInfo {
         return JQuiButtonPasswordNavigation.getWidgetInfo();
     }
 }

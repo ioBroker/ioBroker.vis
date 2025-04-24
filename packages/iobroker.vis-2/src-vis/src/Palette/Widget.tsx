@@ -164,7 +164,6 @@ const Widget = (props: WidgetProps): React.JSX.Element => {
             <span
                 style={styles.widgetImage}
                 ref={imageRef}
-                // eslint-disable-next-line react/no-danger
                 dangerouslySetInnerHTML={{ __html: props.widgetType.preview }}
             />
         );

@@ -200,7 +200,6 @@ export function getFields(
                     type: 'select',
                     options: background,
                     attr: 'background_class',
-                    // eslint-disable-next-line react/no-unstable-nested-components
                     itemModify: item => (
                         <>
                             <span

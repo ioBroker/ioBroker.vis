@@ -32,7 +32,6 @@ import type {
 } from '@iobroker/types-vis-2';
 import VisRxWidget, { type VisRxWidgetState } from '../../visRxWidget';
 
-// eslint-disable-next-line no-use-before-define
 type RxData = {
     dlgName: string;
     buttontext: string;
@@ -361,14 +360,12 @@ class JQuiButtonDialogClose extends VisRxWidget<RxData, JQuiButtonDialogCloseSta
             this.state.rxData.html_prepend ? (
                 <span
                     key="prepend"
-                    // eslint-disable-next-line react/no-danger
                     dangerouslySetInnerHTML={{ __html: this.state.rxData.html_prepend }}
                 />
             ) : null,
             this.state.rxData.html ? (
                 <span
                     key="content"
-                    // eslint-disable-next-line react/no-danger
                     dangerouslySetInnerHTML={{ __html: this.state.rxData.html }}
                 />
             ) : this.state.rxData.no_style || this.state.rxData.jquery_style ? (
@@ -408,7 +405,6 @@ class JQuiButtonDialogClose extends VisRxWidget<RxData, JQuiButtonDialogCloseSta
             this.state.rxData.html_append ? (
                 <span
                     key="append"
-                    // eslint-disable-next-line react/no-danger
                     dangerouslySetInnerHTML={{ __html: this.state.rxData.html_append }}
                 />
             ) : null,

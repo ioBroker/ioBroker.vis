@@ -142,16 +142,12 @@ export interface ToolbarGroup {
 
 interface ToolbarItemsProps {
     theme: VisTheme;
-    // eslint-disable-next-line react/no-unused-prop-types
     themeType: ThemeType;
     group: ToolbarGroup;
     last?: boolean;
     toolbarHeight: 'full' | 'narrow' | 'veryNarrow';
-    // eslint-disable-next-line react/no-unused-prop-types
     changeProject: Editor['changeProject'];
-    // eslint-disable-next-line react/no-unused-prop-types
     selectedView: string;
-    // eslint-disable-next-line react/no-unused-prop-types
     setSelectedWidgets: Editor['setSelectedWidgets'];
 }
 

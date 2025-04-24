@@ -535,13 +535,10 @@ class VisWidgetsCatalog {
 
                                 // init all widgets
                                 if (changeProject) {
-                                    // eslint-disable-next-line no-use-before-define
                                     getWidgetTypes();
                                 } else if (usedWidgetSets) {
-                                    // eslint-disable-next-line no-use-before-define
                                     getWidgetTypes(usedWidgetSets);
                                 } else {
-                                    // eslint-disable-next-line no-use-before-define
                                     getWidgetTypes();
                                 }
 

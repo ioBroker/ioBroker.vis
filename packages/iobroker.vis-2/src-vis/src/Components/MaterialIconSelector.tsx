@@ -435,7 +435,8 @@ class MaterialIconSelector extends Component<MaterialIconSelectorProps, Material
                                 </div>
                                 <UploadFile
                                     themeType={this.props.themeType}
-                                    onUpload={(name, data) => this.setState({ selectedIcon: data.toString() })}
+                                    // eslint-disable-next-line @typescript-eslint/no-base-to-string
+                                    onUpload={(_name, data) => this.setState({ selectedIcon: data.toString() })}
                                     maxSize={15_000}
                                     accept={{
                                         'image/png': ['.png'],

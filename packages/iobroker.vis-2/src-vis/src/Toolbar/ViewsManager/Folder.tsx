@@ -106,7 +106,6 @@ const Folder: React.FC<FolderProps> = props => {
                         return false;
                     }
                     const folders = visProject.___settings.folders;
-                    // eslint-disable-next-line no-constant-condition
                     while (true) {
                         if (currentFolder.id === item.folder.id) {
                             return false;
