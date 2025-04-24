@@ -2,7 +2,8 @@
     "extends": "../../tsconfig.json",
     "compilerOptions": {
         "sourceMap": true,
-        "inlineSources": true
+        "inlineSources": true,
+        "types": ["@iobroker/types"]
     },
     "include": ["*.d.ts"],
 }

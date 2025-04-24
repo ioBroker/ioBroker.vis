@@ -7,7 +7,7 @@ import { Close } from '@mui/icons-material';
 import { I18n, type ThemeType } from '@iobroker/adapter-react-v5';
 
 import type { Widget } from '@iobroker/types-vis-2';
-import CustomAceEditor from '../../Components/CustomAceEditor';
+import CustomEditor from '../../Components/CustomEditor';
 
 interface WidgetCSSProps {
     themeType: ThemeType;
@@ -29,7 +29,7 @@ const WidgetCSS = (props: WidgetCSSProps): React.JSX.Element => {
         >
             <DialogTitle>{I18n.t('Widget CSS')}</DialogTitle>
             <DialogContent style={{ height: 400 }}>
-                <CustomAceEditor
+                <CustomEditor
                     type="css"
                     themeType={props.themeType}
                     readOnly={!props.editMode}

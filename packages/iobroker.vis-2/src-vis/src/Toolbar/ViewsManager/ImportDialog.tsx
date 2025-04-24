@@ -5,7 +5,7 @@ import { TextField } from '@mui/material';
 import { I18n, type ThemeType } from '@iobroker/adapter-react-v5';
 
 import IODialog from '../../Components/IODialog';
-import CustomAceEditor from '../../Components/CustomAceEditor';
+import CustomEditor from '../../Components/CustomEditor';
 import { useFocus } from '../../Utils';
 import { store } from '../../Store';
 
@@ -55,7 +55,7 @@ const ImportDialog: React.FC<ImportDialogProps> = props => {
             action={() => props.importViewAction(view, data)}
             actionDisabled={!view.length || !!errors.length}
         >
-            <CustomAceEditor
+            <CustomEditor
                 type="json"
                 themeType={props.themeType}
                 refEditor={node => {

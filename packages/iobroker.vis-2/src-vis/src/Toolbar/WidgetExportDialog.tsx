@@ -5,7 +5,7 @@ import { Utils, I18n, type ThemeType } from '@iobroker/adapter-react-v5';
 import type { AnyWidgetId, GroupWidgetId, Widget } from '@iobroker/types-vis-2';
 import React from 'react';
 import IODialog from '../Components/IODialog';
-import CustomAceEditor from '../Components/CustomAceEditor';
+import CustomEditor from '../Components/CustomEditor';
 import { deepClone } from '../Utils/utils';
 
 interface WidgetExportDialogProps {
@@ -79,7 +79,7 @@ const WidgetExportDialog: React.FC<WidgetExportDialogProps> = props => {
             actionNoClose
             ActionIcon={FileCopyIcon}
         >
-            <CustomAceEditor
+            <CustomEditor
                 type="json"
                 themeType={props.themeType}
                 value={JSON.stringify(widgets, null, 2)}

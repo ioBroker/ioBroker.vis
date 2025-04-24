@@ -6,7 +6,7 @@ import { ContentCopy as IconCopy, Close as CloseIcon } from '@mui/icons-material
 
 import { I18n, Utils } from '@iobroker/adapter-react-v5';
 
-import CustomAceEditor from './CustomAceEditor';
+import CustomEditor from './CustomEditor';
 
 interface CodeDialogProps {
     onClose: () => void;
@@ -27,7 +27,7 @@ class CodeDialog extends Component<CodeDialogProps> {
             >
                 <DialogTitle>{this.props.title || I18n.t('Code')}</DialogTitle>
                 <DialogContent>
-                    <CustomAceEditor
+                    <CustomEditor
                         type={this.props.mode || 'html'}
                         themeType={this.props.themeType}
                         readOnly

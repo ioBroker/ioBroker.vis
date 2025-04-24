@@ -3,7 +3,7 @@ import React from 'react';
 import type { ThemeType } from '@iobroker/adapter-react-v5';
 import { store } from '@/Store';
 import type { Project } from '@iobroker/types-vis-2';
-import CustomAceEditor from '../Components/CustomAceEditor';
+import CustomEditor from '../Components/CustomEditor';
 
 interface ScriptsProps {
     changeProject: (project: Project) => void;
@@ -12,7 +12,7 @@ interface ScriptsProps {
 }
 
 const Scripts = (props: ScriptsProps): React.JSX.Element => (
-    <CustomAceEditor
+    <CustomEditor
         type="javascript"
         themeType={props.themeType}
         readOnly={!props.editMode}
