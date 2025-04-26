@@ -13,6 +13,7 @@ import { normalize } from 'node:path';
 import https from 'node:https';
 import { verify } from 'jsonwebtoken';
 import { syncWidgetSets } from './lib/install';
+import * as console from 'node:console';
 
 const ioPack: ioBroker.AdapterObject = JSON.parse(readFileSync(`${__dirname}/../io-package.json`).toString());
 
@@ -23,6 +24,7 @@ const POSSIBLE_WIDGET_SETS_LOCATIONS = [
     normalize(`${__dirname}/../node_modules/`),
     normalize(`${__dirname}/../../../`),
     normalize(`${__dirname}/../../../../`),
+    normalize(`${__dirname}/../../../../node_modules/`),
 ];
 
 export interface VisAdapterConfig extends ioBroker.AdapterConfig {
@@ -394,14 +396,10 @@ if (typeof exports !== 'undefined') {
 `;
 
         // upload config.js
-        let currentConfigJs = '';
+        let currentConfigJs: string;
         try {
             const file = await this.readFileAsync('vis-2', 'config.js');
-            if (typeof file === 'object') {
-                currentConfigJs = file.file.toString('utf8');
-            } else {
-                currentConfigJs = file;
-            }
+            currentConfigJs = file.file.toString('utf8');
         } catch {
             // ignore
             currentConfigJs = '';
@@ -440,18 +438,20 @@ if (typeof exports !== 'undefined') {
             }
         }
 
-        // Create common user CSS file
-        let data;
+        // Create a common user CSS file
+        let data: string | null;
         try {
-            data = await this.readFileAsync(this.namespace, 'vis-common-user.css');
-            if (typeof data === 'object') {
-                data = data.file;
+            const file = await this.readFileAsync(this.namespace, 'vis-common-user.css');
+            if (file?.file) {
+                data = file.file.toString();
+            } else {
+                data = null;
             }
         } catch {
             data = null;
         }
 
-        if (data === null || data === undefined) {
+        if (data === null) {
             await this.writeFileAsync(this.namespace, 'vis-common-user.css', '');
         }
 
@@ -812,18 +812,18 @@ if (typeof exports !== 'undefined') {
                                 resolve(true);
                             }
                         } catch (err: unknown) {
-                            this.log.warn('License is invalid 2. Error: ' + err);
+                            this.log.warn(`License is invalid 2. Error: ${err as Error}`);
                             reject(new Error(err as string));
                         }
                     });
 
                     res.on('error', err => {
-                        this.log.warn('License is invalid. Error: ' + err);
+                        this.log.warn(`License is invalid. Error: ${err}`);
                         reject(err);
                     });
                 })
                 .on('error', err => {
-                    this.log.warn('License is invalid 1. Error: ' + err);
+                    this.log.warn(`License is invalid 1. Error: ${err}`);
                     reject(err);
                 });
 
@@ -1011,14 +1011,14 @@ if (typeof exports !== 'undefined') {
 
         // Create "upload progress" object if not exists
         let obj;
-        const _id = 'system.' + 'adapter.vis-2.upload';
+        const _id = 'system.adapter.vis-2.upload' as string;
         try {
             obj = await this.getForeignObjectAsync(_id);
         } catch {
             // ignore
         }
         if (!obj) {
-            await this.setForeignObjectAsync(_id, {
+            await this.setForeignObject(_id, {
                 _id,
                 type: 'state',
                 common: {
@@ -1048,7 +1048,7 @@ if (typeof exports !== 'undefined') {
         // Read all names with subtrees from the local directory
         const files = this.walk(wwwDir);
         if (!result) {
-            await this.setForeignObjectAsync('vis-2', {
+            await this.setForeignObject('vis-2', {
                 _id: 'vis-2',
                 type: 'meta',
                 common: {
@@ -1193,7 +1193,7 @@ if (typeof exports !== 'undefined') {
 
         // create a vis "meta" object if not exists
         if (visObj?.type !== 'meta') {
-            await this.setForeignObjectAsync('vis-2', {
+            await this.setForeignObject('vis-2', {
                 type: 'meta',
                 common: {
                     name: 'vis-2 core files',
@@ -1206,7 +1206,7 @@ if (typeof exports !== 'undefined') {
         // create a vis-2.0 "meta" object, if not exists
         const visObjNS = await this.getForeignObjectAsync(this.namespace);
         if (visObjNS?.type !== 'meta') {
-            await this.setForeignObjectAsync(this.namespace, {
+            await this.setForeignObject(this.namespace, {
                 type: 'meta',
                 common: {
                     name: 'user files and images for vis-2',
@@ -1222,7 +1222,7 @@ if (typeof exports !== 'undefined') {
             systemView.views.chart = {
                 map: "function(doc) { if (doc.type === 'chart') emit(doc._id, doc) }",
             };
-            await this.setForeignObjectAsync(systemView._id, systemView);
+            await this.setForeignObject(systemView._id, systemView);
         }
 
         // Change running mode to daemon, enable messagebox and correct the local links
@@ -1237,7 +1237,7 @@ if (typeof exports !== 'undefined') {
             instanceObj.common.messagebox = true;
             instanceObj.common.localLinks = ioPack.common.localLinks;
 
-            await this.setForeignObjectAsync(instanceObj._id, instanceObj);
+            await this.setForeignObject(instanceObj._id, instanceObj);
             // controller will do restart
             return;
         }

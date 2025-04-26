@@ -2369,8 +2369,8 @@ class Editor extends Runtime<EditorProps, EditorState> {
             return this.getVisEngine();
         }
 
-        for (const i in this.state.selectedWidgets) {
-            if (!store.getState().visProject[this.state.selectedView]?.widgets[this.state.selectedWidgets[i]]) {
+        for (const widgetId of this.state.selectedWidgets) {
+            if (!store.getState().visProject[this.state.selectedView]?.widgets[widgetId]) {
                 void this.setSelectedWidgets([]);
                 return null;
             }

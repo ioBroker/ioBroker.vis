@@ -395,8 +395,8 @@ export const getWidgetTypes: (_usedWidgetSets?: string[]) => WidgetType[] = (use
                                 _field.options.forEach(option => {
                                     if (typeof option === 'object') {
                                         if (option.label && !option.label.startsWith(i18nPrefix)) {
-                                            // @ts-expect-error we must add prefix to the label
-                                            option.label = i18nPrefix + option.label;
+                                            // we must add a prefix to the label
+                                            (option as any).label = i18nPrefix + option.label;
                                         }
                                     }
                                 });
@@ -566,7 +566,7 @@ class VisWidgetsCatalog {
 function deepCloneRx(obj: any[] | Record<string, any>): any[] | Record<string, any> {
     if (Array.isArray(obj)) {
         const newObj: any[] = [];
-        for (const key in obj) {
+        for (let key = 0; key < obj.length; key++) {
             if (obj[key] !== undefined) {
                 if (Array.isArray(obj[key]) || typeof obj[key] === 'object') {
                     // If it is ReactJS object

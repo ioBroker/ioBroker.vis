@@ -169,7 +169,7 @@ function getRemoteWidgets(
                         }
 
                         if (!visWidgetsCollection.url?.startsWith('http')) {
-                            visWidgetsCollection.url = `./widgets/${visWidgetsCollection.url}`;
+                            visWidgetsCollection.url = `./vis-2/widgets/${visWidgetsCollection.url}`;
                         }
                         registerRemotes(
                             [

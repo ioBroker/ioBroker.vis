@@ -73,6 +73,7 @@ const styles: Record<string, any> = {
     accordionRoot: {
         p: 0,
         m: 0,
+        width: '100%',
         minHeight: 'initial',
         '&:before': {
             opacity: 0,
@@ -82,14 +83,14 @@ const styles: Record<string, any> = {
         fontWeight: 'bold',
     },
     groupSummary: {
-        mt: '10px',
         borderRadius: '4px',
         p: '2px',
         minHeight: 0,
     },
     groupSummaryExpanded: {
         minHeight: 0,
-        mt: '10px',
+        mt: 0,
+        mb: 0,
         borderTopRightRadius: '4px',
         borderTopLeftRadius: '4px',
         p: '2px',
@@ -173,7 +174,7 @@ class Palette extends Component<PaletteProps, PaletteState> {
     constructor(props: PaletteProps) {
         super(props);
         const accordionOpenStr = window.localStorage.getItem('widgets');
-        let accordionOpen;
+        let accordionOpen: Record<string, boolean>;
         try {
             accordionOpen = accordionOpenStr ? JSON.parse(accordionOpenStr) : {};
         } catch {
@@ -232,9 +233,9 @@ class Palette extends Component<PaletteProps, PaletteState> {
                     .then(async () => {
                         const updates: MarketplaceWidgetRevision[] = [];
                         const deleted = [];
-                        if (store.getState().visProject?.___settings?.marketplace && window.VisMarketplace?.api) {
-                            for (const i in store.getState().visProject.___settings.marketplace) {
-                                const widget = store.getState().visProject.___settings.marketplace[i];
+                        const marketplace = store.getState().visProject?.___settings?.marketplace;
+                        if (marketplace && window.VisMarketplace?.api) {
+                            for (const widget of marketplace) {
                                 try {
                                     const data = await window.VisMarketplace.api.apiGetWidget(widget.widget_id);
                                     if (data.version !== widget.version) {
@@ -375,7 +376,7 @@ class Palette extends Component<PaletteProps, PaletteState> {
             <Accordion
                 sx={{
                     ...styles.accordionRoot,
-                    '& .MuiAccordion-expanded': commonStyles.clearPadding,
+                    '&.Mui-expanded': { margin: 0 },
                 }}
                 elevation={0}
                 expanded={opened || false}
@@ -398,7 +399,6 @@ class Palette extends Component<PaletteProps, PaletteState> {
                             styles.lightedPanel,
                             { minHeight: 0 },
                         ),
-                        '&.Mui-expanded': { minHeight: 0 },
                         '& .MuiAccordionSummary-content': {
                             ...commonStyles.clearPadding,
                             ...(opened ? styles.accordionOpenedSummary : undefined),
@@ -590,6 +590,7 @@ class Palette extends Component<PaletteProps, PaletteState> {
                             slotProps={{ popper: { sx: { pointerEvents: 'none' } } }}
                         >
                             <IconButton
+                                size="small"
                                 onClick={() => {
                                     const accordionOpen: Record<string, boolean> = {};
                                     Object.keys(this.state.widgetsList).forEach(
@@ -649,7 +650,20 @@ class Palette extends Component<PaletteProps, PaletteState> {
                         },
                     }}
                 />
-                <div style={{ ...styles.widgets, opacity: !this.props.editMode ? 0.3 : undefined }}>
+                <div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: 10,
+                        textAlign: 'center',
+                        overflowY: 'auto',
+                        height: 'calc(100% - 86px)',
+                        opacity: !this.props.editMode ? 0.3 : undefined,
+                    }}
+                >
+                    {/* gap on the very top */}
+                    <div style={{ width: '100%' }} />
                     {this.renderMarketplace()}
                     {Object.keys(this.state.widgetsList).map((category, categoryKey) => {
                         let version = null;
@@ -683,7 +697,7 @@ class Palette extends Component<PaletteProps, PaletteState> {
                             <Accordion
                                 sx={{
                                     ...styles.accordionRoot,
-                                    '& .MuiAccordion-expanded': styles.clearPadding,
+                                    '&.Mui-expanded': { margin: 0 },
                                 }}
                                 key={categoryKey}
                                 elevation={0}
