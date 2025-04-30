@@ -293,7 +293,7 @@ npm run start
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 2.12.3 (2025-04-30)
+### **WORK IN PROGRESS**
 * (@GermanBluefox) Added new SVG icon as favicon.
 * (@GermanBluefox) Added support for the TypeScript widgets
 

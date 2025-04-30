@@ -1684,6 +1684,19 @@ export interface RxWidgetProps extends RxRenderWidgetProps {
     viewsActiveFilter: Record<string, string[]>;
 }
 
+export interface ObjectForDetector {
+    _id: string;
+    common: ioBroker.StateCommon | ioBroker.EnumCommon;
+    name?: ioBroker.StringOrTranslated;
+    type: ioBroker.ObjectType;
+}
+
+export interface DetectorResult {
+    _id: string;
+    common: ioBroker.StateCommon;
+    devices: ObjectForDetector[];
+}
+
 export interface CustomPaletteProperties {
     socket: LegacyConnection;
     project: Project;
