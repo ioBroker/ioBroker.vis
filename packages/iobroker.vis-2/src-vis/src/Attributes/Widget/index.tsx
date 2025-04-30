@@ -1370,7 +1370,7 @@ class Widget extends Component<WidgetProps, WidgetState> {
 
                 lastGroup.fields.forEach((_attr, i) => {
                     const name = lastGroup.fields[i].name.replace(/\d?\d+$/, newIndex.toString());
-                    widgetData[name] = null;
+                    widgetData[name] = _attr.default ?? null;
                 });
 
                 // enable group-used flag
