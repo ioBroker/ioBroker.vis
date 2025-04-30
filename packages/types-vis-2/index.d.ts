@@ -1029,6 +1029,9 @@ export interface ViewSettings {
     rowGap?: number | string;
     /** relative widget order */
     order?: AnyWidgetId[];
+
+    /** For material wizard */
+    wizardId?: string;
 }
 
 export interface View {
@@ -1822,12 +1825,13 @@ export type Branded<T, B> = T & Brand<B>;
 
 export { type VisRxWidget, type VisRxWidgetState, type VisRxWidgetProps, type VisRxData } from './visRxWidget';
 export {
-    type VisBaseWidget,
     type WidgetDataState,
     type GroupDataState,
     type WidgetStyleState,
     type VisBaseWidgetState,
 } from './visBaseWidget';
+import VisBaseWidget from './visBaseWidget';
+export { VisBaseWidget };
 
 declare global {
     interface Window {

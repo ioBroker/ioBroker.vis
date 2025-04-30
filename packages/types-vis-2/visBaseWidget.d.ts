@@ -12,7 +12,7 @@
  * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
  * (Free for non-commercial use).
  */
-import type React, { type JSX } from 'react';
+import type React from 'react';
 import type {
     AnyWidgetId,
     ResizeHandler,
@@ -88,9 +88,10 @@ interface CanHTMLDivElement extends HTMLDivElement {
     };
     _storedDisplay?: React.CSSProperties['display'];
 }
-export declare class VisBaseWidget<
-    TState extends Partial<VisBaseWidgetState> = VisBaseWidgetState,
-> extends React.Component<VisBaseWidgetProps, TState & VisBaseWidgetState> {
+declare class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetState> extends React.Component<
+    VisBaseWidgetProps,
+    TState & VisBaseWidgetState
+> {
     static FORBIDDEN_CHARS: RegExp;
     /** We do not store the SVG Element in the state because it is cyclic */
     // eslint-disable-next-line react/no-unused-class-component-methods
@@ -172,7 +173,7 @@ export declare class VisBaseWidget<
     // eslint-disable-next-line react/no-unused-class-component-methods
     onResizeStart(e: React.MouseEvent, type: Resize): void;
     // eslint-disable-next-line react/no-unused-class-component-methods
-    getResizeHandlers(selected: boolean, widget: Widget, borderWidth: string): JSX.Element[] | null;
+    getResizeHandlers(selected: boolean, widget: Widget, borderWidth: string): React.JSX.Element[] | null;
     // eslint-disable-next-line react/no-unused-class-component-methods
     isUserMemberOfGroup(user: string, userGroups: string[]): boolean;
     static isWidgetFilteredOutStatic(
@@ -186,13 +187,9 @@ export declare class VisBaseWidget<
     // eslint-disable-next-line react/no-unused-class-component-methods
     isWidgetFilteredOut(widgetData: WidgetData | GroupData): boolean;
     static isWidgetHidden(widgetData: WidgetData | GroupData, states: VisRxWidgetStateValues, id: string): boolean;
-    /**
-     * Render the widget body
-     *
-     * @param _props
-     */
+    /** Render the widget body */
     // eslint-disable-next-line react/no-unused-class-component-methods
-    renderWidgetBody(_props: RxRenderWidgetProps): JSX.Element | JSX.Element[] | null;
+    renderWidgetBody(_props: RxRenderWidgetProps): React.JSX.Element | React.JSX.Element[] | null;
     // eslint-disable-next-line react/no-unused-class-component-methods
     changeOrder(e: React.MouseEvent, dir: number): void;
     static formatValue(value: string | number, decimals: number | string, _format?: string): string;
@@ -209,7 +206,7 @@ export declare class VisBaseWidget<
         interval?: boolean,
         isMomentJs?: boolean,
         forRx?: boolean,
-    ): string | JSX.Element;
+    ): string | React.JSX.Element;
     // eslint-disable-next-line react/no-unused-class-component-methods
     onToggleRelative(e: React.MouseEvent): void;
     // eslint-disable-next-line react/no-unused-class-component-methods
@@ -218,8 +215,8 @@ export declare class VisBaseWidget<
     onToggleLineBreak(e: React.MouseEvent): void;
     static correctStylePxValue(value: string | number): string | number;
     // eslint-disable-next-line react/no-unused-class-component-methods
-    renderRelativeMoveMenu(): JSX.Element | null;
+    renderRelativeMoveMenu(): React.JSX.Element | null;
 
-    render(): JSX.Element | null;
+    render(): React.JSX.Element | null;
 }
 export default VisBaseWidget;
