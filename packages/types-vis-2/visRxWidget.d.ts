@@ -27,9 +27,9 @@ import type {
     VisWidgetCommand,
 } from './index';
 import type VisBaseWidget, { type VisBaseWidgetState } from './visBaseWidget';
-type VisRxWidgetProps = VisBaseWidgetProps;
+export type VisRxWidgetProps = VisBaseWidgetProps;
 
-interface VisRxData {
+export interface VisRxData {
     _originalData?: string;
     filterkey?: string | string[];
     /** If value is hide widget should be hidden if user not in groups, else disabled */

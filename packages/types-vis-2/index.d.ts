@@ -1562,7 +1562,7 @@ export interface VisTheme extends IobTheme {
     };
 }
 
-type CanObservable<T> = T & {
+export type CanObservable<T> = T & {
     attr: (
         id: VisRxWidgetStateValues | string,
         val?: string | number | boolean,
@@ -1776,7 +1776,7 @@ export type Writeable<T> = { -readonly [P in keyof T]: Writeable<T[P]> };
 
 export type RxWidgetInfoWriteable = Writeable<RxWidgetInfo>;
 
-type AttributeTypeToDataType<TType extends RxWidgetAttributeType> = TType extends 'checkbox'
+export type AttributeTypeToDataType<TType extends RxWidgetAttributeType> = TType extends 'checkbox'
     ? boolean
     : TType extends 'number' | 'slider'
       ? number
@@ -1797,5 +1797,11 @@ declare const __brand: unique symbol;
 type Brand<B> = { [__brand]: B };
 export type Branded<T, B> = T & Brand<B>;
 
-export { type VisRxWidget } from './visRxWidget';
-export { type VisBaseWidget } from './visBaseWidget';
+export { type VisRxWidget, type VisRxWidgetState, type VisRxWidgetProps, type VisRxData } from './visRxWidget';
+export {
+    type VisBaseWidget,
+    type WidgetDataState,
+    type GroupDataState,
+    type WidgetStyleState,
+    type VisBaseWidgetState,
+} from './visBaseWidget';
