@@ -1,6 +1,6 @@
 {
     "name": "@iobroker/types-vis-2",
-    "version": "2.12.0",
+    "version": "2.12.1",
     "description": "Types for vis-2",
     "files": [
         "index.d.ts",

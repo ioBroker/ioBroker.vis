@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.12.0",
+    "version": "2.12.1",
     "news": {
+      "2.12.1": {
+        "en": "Added new SVG icon as favicon.\nAdded support for the TypeScript widgets",
+        "de": "Neues SVG-Symbol als favicon hinzugefügt.\nUnterstützung für die TypeScript Widgets hinzugefügt",
+        "ru": "Добавлен новый значок SVG в виде favicon.\nДобавлена поддержка виджетов TypeScript",
+        "pt": "Adicionado novo ícone SVG como favicon.\nAdicionado suporte para os widgets TypeScript",
+        "nl": "Nieuw SVG-pictogram toegevoegd als favicon.\nOndersteuning voor de TypeScript-widgets toegevoegd",
+        "fr": "Ajout d'une nouvelle icône SVG comme favicon.\nAjout du support pour les widgets TypeScript",
+        "it": "Aggiunta nuova icona SVG come favicon.\nAggiunto supporto per i widget di TypeScript",
+        "es": "Añadido nuevo icono SVG como favicon.\nSoporte añadido para los widgets TipoScript",
+        "pl": "Dodano nową ikonę SVG jako favicon.\nDodano obsługę widżetów TypeScript",
+        "uk": "Додано нову іконку SVG як favicon.\nДодано підтримку віджетів TypeScript",
+        "zh-cn": "添加新 SVG 图标为favicon .\n为类型脚本部件添加支持"
+      },
       "2.11.2": {
         "en": "Do not load vis-1 widgets if vis-2 widgets provided",
         "de": "Nicht laden vis-1 Widgets, wenn vis-2 Widgets zur Verfügung gestellt",
