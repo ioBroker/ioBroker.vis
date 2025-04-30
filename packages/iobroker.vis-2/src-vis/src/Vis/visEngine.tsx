@@ -1755,7 +1755,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
             return;
         }
 
-        // if no de-bounce running
+        // if no debounce running
         if (!this.statesDebounce[id]) {
             // send control command
             this._setValue(id, val);

@@ -90,7 +90,7 @@ export const POSSIBLE_MUI_STYLES = [
     'word-spacing',
 ];
 
-class VisRxWidget<
+export class VisRxWidget<
     TRxData extends Record<string, any>,
     TState extends Partial<VisRxWidgetState> = VisRxWidgetState,
 > extends VisBaseWidget<VisRxWidgetState & TState & { rxData: TRxData }> {
@@ -553,7 +553,7 @@ class VisRxWidget<
         addToHeader?: React.JSX.Element | null | React.JSX.Element[],
         cardContentStyle?: React.CSSProperties,
         headerStyle?: React.CSSProperties,
-        onCardClick?: (e?: React.MouseEvent<HTMLDivElement>) => void,
+        onCardClick?: (e?: React.MouseEvent<HTMLElement>) => void,
         components?: Record<string, Component<any>>,
     ): React.JSX.Element | React.JSX.Element[] | null {
         if (this.props.context.views[this.props.view].widgets[this.props.id].usedInWidget) {

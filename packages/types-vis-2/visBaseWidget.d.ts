@@ -88,10 +88,9 @@ interface CanHTMLDivElement extends HTMLDivElement {
     };
     _storedDisplay?: React.CSSProperties['display'];
 }
-declare class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetState> extends React.Component<
-    VisBaseWidgetProps,
-    TState & VisBaseWidgetState
-> {
+export declare class VisBaseWidget<
+    TState extends Partial<VisBaseWidgetState> = VisBaseWidgetState,
+> extends React.Component<VisBaseWidgetProps, TState & VisBaseWidgetState> {
     static FORBIDDEN_CHARS: RegExp;
     /** We do not store the SVG Element in the state because it is cyclic */
     // eslint-disable-next-line react/no-unused-class-component-methods

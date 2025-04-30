@@ -4,6 +4,8 @@
     "description": "Types for vis-2",
     "files": [
         "index.d.ts",
+        "visRxWidget.d.ts",
+        "visBaseWidget.d.ts",
         "modulefederation.vis.config.*",
         "LICENSE"
     ],
