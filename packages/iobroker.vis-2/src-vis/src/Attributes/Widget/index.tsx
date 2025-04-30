@@ -389,7 +389,7 @@ class Widget extends Component<WidgetProps, WidgetState> {
                     label: 'signals-count',
                     type: 'select',
                     // noTranslation: true,
-                    options: ['0', '1', '2', '3'],
+                    options: ['0', '1', '2', '3', '4', '5', '6'],
                     default: '0',
                     immediateChange: true,
                 },
