@@ -26,7 +26,7 @@ import type {
     VisBaseWidgetProps,
     VisWidgetCommand,
 } from './index';
-import type VisBaseWidget, { type VisBaseWidgetState } from './visBaseWidget';
+import VisBaseWidget, { type VisBaseWidgetState } from './visBaseWidget';
 export type VisRxWidgetProps = VisBaseWidgetProps;
 
 export interface VisRxData {
@@ -103,7 +103,7 @@ declare class VisRxWidget<
             TState & {
                 rxData: TRxData;
             }
-    >;
+    > | null;
     applyBinding(stateId: string, newState: typeof this.state): void;
     componentDidMount(): void;
     onRxDataChanged(_prevRxData: typeof this.state.rxData): void;
@@ -121,7 +121,7 @@ declare class VisRxWidget<
      * @param newState the new state
      */
     checkVisibility(stateId?: string | null, newState?: typeof this.newState): boolean;
-    onPropertiesUpdated(): Promise<void>;
+    onPropertiesUpdated(): void;
     formatValue(value: number | string, round: number): string;
     wrapContent(
         content: React.JSX.Element | React.JSX.Element[],
@@ -130,8 +130,8 @@ declare class VisRxWidget<
         headerStyle?: React.CSSProperties,
         onCardClick?: (e?: React.MouseEvent<HTMLDivElement>) => void,
         components?: Record<string, Component<any>>,
-    ): React.JSX.Element | React.JSX.Element[] | null;
-    renderWidgetBody(props: RxRenderWidgetProps): React.JSX.Element | null;
+    ): JSX.Element | JSX.Element[] | null;
+    renderWidgetBody(props: RxRenderWidgetProps): JSX.Element[] | JSX.Element | null;
     getWidgetView(view: string, props?: Partial<VisViewProps>): JSX.Element;
     getWidgetInWidget(
         view: string,
@@ -141,11 +141,11 @@ declare class VisRxWidget<
             refParent?: React.RefObject<HTMLDivElement>;
             isRelative?: boolean;
         },
-    ): React.JSX.Element;
+    ): JSX.Element;
     isSignalVisible(index: number): boolean;
     static text2style(textStyle: string, style: React.CSSProperties): React.CSSProperties;
     renderSignal(index: number): JSX.Element;
-    renderLastChange(widgetStyle: React.CSSProperties): JSX.Element;
+    renderLastChange(widgetStyle: CSSStyleDeclaration | React.CSSProperties): JSX.Element;
     renderSignals(): React.ReactNode;
     render(): React.JSX.Element | null;
     /**

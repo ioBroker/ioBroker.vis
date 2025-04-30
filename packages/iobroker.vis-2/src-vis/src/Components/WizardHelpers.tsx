@@ -137,7 +137,7 @@ interface DetectorDevice {
 interface DetectorResult {
     _id: string;
     common: ioBroker.StateCommon;
-    devices: ObjectForDetector[];
+    devices: DetectorDevice[];
 }
 
 const detectDevices = async (socket: LegacyConnection): Promise<DetectorResult[]> => {
@@ -329,7 +329,7 @@ const detectDevices = async (socket: LegacyConnection): Promise<DetectorResult[]
                     }
                 }
             } else {
-                deviceObj.common.icon = getObjectIcon(deviceObj as ioBroker.Object, deviceObj._id, '../..');
+                deviceObj.common.icon = getObjectIcon(deviceObj as any as ioBroker.Object, deviceObj._id, '../..');
             }
         }
     }

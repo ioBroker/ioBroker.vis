@@ -1134,7 +1134,7 @@ export interface LegacyVisConnection {
 
 export interface VisLegacy {
     instance: string;
-    navChangeCallbacks: ((view: string) => void)[];
+    navChangeCallbacks: { id: string; cb: (view: string) => void }[];
     findNearestResolution: (width?: number, height?: number) => string;
     version: number;
     states: VisCanWidgetStateValues;
@@ -1691,10 +1691,20 @@ export interface ObjectForDetector {
     type: ioBroker.ObjectType;
 }
 
+export interface DetectorDevice {
+    _id: string;
+    common: ioBroker.StateCommon;
+    type: ioBroker.ObjectType;
+    deviceType: Types;
+    states: ObjectForDetector[];
+    name?: ioBroker.StringOrTranslated;
+    roomName?: ioBroker.StringOrTranslated;
+}
+
 export interface DetectorResult {
     _id: string;
     common: ioBroker.StateCommon;
-    devices: ObjectForDetector[];
+    devices: DetectorDevice[];
 }
 
 export interface CustomPaletteProperties {
@@ -1818,3 +1828,9 @@ export {
     type WidgetStyleState,
     type VisBaseWidgetState,
 } from './visBaseWidget';
+
+declare global {
+    interface Window {
+        visRxWidget: typeof VisRxWidget;
+    }
+}

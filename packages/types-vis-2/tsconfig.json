@@ -4,6 +4,7 @@
         "sourceMap": true,
         "esModuleInterop": true,
         "inlineSources": true,
+        "lib": ["es2018", "DOM"],
         "types": ["@iobroker/types"],
         "strict": true,
         "skipLibCheck": true

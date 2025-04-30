@@ -146,7 +146,10 @@ export declare class VisBaseWidget<
     componentWillUnmount(): void;
     // eslint-disable-next-line react/no-unused-class-component-methods
     onCommand(command: VisWidgetCommand, _option?: any): any;
-    static getDerivedStateFromProps(props: VisBaseWidgetProps, state: VisBaseWidgetState): Partial<VisBaseWidgetState>;
+    static getDerivedStateFromProps(
+        props: VisBaseWidgetProps,
+        state: VisBaseWidgetState,
+    ): Partial<VisBaseWidgetState> | null;
     static removeFromArray(items: Record<string, any>, IDs: string[], view: string, widget: string): void;
     static parseStyle(style: string, isRxStyle?: boolean): Record<string, string | number>;
     // eslint-disable-next-line react/no-unused-class-component-methods
@@ -169,7 +172,7 @@ export declare class VisBaseWidget<
     // eslint-disable-next-line react/no-unused-class-component-methods
     onResizeStart(e: React.MouseEvent, type: Resize): void;
     // eslint-disable-next-line react/no-unused-class-component-methods
-    getResizeHandlers(selected: boolean, widget: Widget, borderWidth: string): JSX.Element[];
+    getResizeHandlers(selected: boolean, widget: Widget, borderWidth: string): JSX.Element[] | null;
     // eslint-disable-next-line react/no-unused-class-component-methods
     isUserMemberOfGroup(user: string, userGroups: string[]): boolean;
     static isWidgetFilteredOutStatic(
@@ -215,8 +218,8 @@ export declare class VisBaseWidget<
     onToggleLineBreak(e: React.MouseEvent): void;
     static correctStylePxValue(value: string | number): string | number;
     // eslint-disable-next-line react/no-unused-class-component-methods
-    renderRelativeMoveMenu(): JSX.Element;
+    renderRelativeMoveMenu(): JSX.Element | null;
 
-    render(): JSX.Element;
+    render(): JSX.Element | null;
 }
 export default VisBaseWidget;
