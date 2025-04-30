@@ -100,7 +100,7 @@ declare class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBase
     // eslint-disable-next-line react/no-unused-class-component-methods
     private resize: Resize;
     // eslint-disable-next-line react/no-unused-class-component-methods
-    private readonly uuid: string;
+    protected readonly uuid: string;
     // eslint-disable-next-line react/no-unused-class-component-methods
     protected refService: React.refObject<HTMLDivElement>;
     // eslint-disable-next-line react/no-unused-class-component-methods

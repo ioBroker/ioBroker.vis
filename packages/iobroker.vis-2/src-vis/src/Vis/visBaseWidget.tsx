@@ -139,7 +139,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
     /** if currently resizing */
     private resize: Resize = false;
 
-    private readonly uuid = `${Date.now()}.${Math.round(Math.random() * 1_000_000)}`;
+    protected readonly uuid = `${Date.now()}.${Math.round(Math.random() * 1_000_000)}`;
 
     protected refService = React.createRef<HTMLDivElement>();
 
