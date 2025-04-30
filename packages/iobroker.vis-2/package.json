@@ -1,7 +1,7 @@
 {
     "name": "iobroker.vis-2",
     "description": "Next generation graphical user interface for ioBroker.",
-    "version": "2.11.2",
+    "version": "2.12.0",
     "author": {
         "name": "bluefox",
         "email": "dogafox@gmail.com"
@@ -33,9 +33,9 @@
     "devDependencies": {
         "@devbookhq/splitter": "^1.4.2",
         "@iobroker/build-tools": "^2.0.15",
-        "@iobroker/type-detector": "^4.3.1",
         "@iobroker/db-objects-redis": "^7.0.7",
         "@iobroker/db-states-redis": "^7.0.7",
+        "@iobroker/type-detector": "^4.3.1",
         "@iobroker/vis-2-widgets-testing": "^1.0.5",
         "@material-icons/svg": "^1.0.33",
         "@reduxjs/toolkit": "^2.7.0",
