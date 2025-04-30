@@ -26,7 +26,7 @@
     ],
     "dependencies": {
         "@iobroker/adapter-core": "^3.2.3",
-        "axios": "^1.8.4",
+        "axios": "^1.9.0",
         "jsonwebtoken": "^9.0.2",
         "mime": "^3.0.0"
     },
@@ -38,7 +38,7 @@
         "@iobroker/db-states-redis": "^7.0.7",
         "@material-icons/svg": "^1.0.33",
         "@reduxjs/toolkit": "^2.7.0",
-        "@sentry/browser": "^9.13.0",
+        "@sentry/browser": "^9.15.0",
         "@tsconfig/node18": "^18.2.4",
         "@types/dom-speech-recognition": "^0.0.6",
         "@types/jquery": "^3.5.32",

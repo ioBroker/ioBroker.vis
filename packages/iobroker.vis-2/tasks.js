@@ -113,22 +113,6 @@ export default FiltersEditorDialog;
 
     writeFileSync(`${__dirname}/runtime/package.json`, JSON.stringify(pack, null, 2));
     writeFileSync(`${__dirname}/runtime/vite.config.ts`, readFileSync(`${__dirname}/src-vis/vite.config.ts`));
-    writeFileSync(
-        `${__dirname}/runtime/modulefederation.vis.config.js`,
-        readFileSync(`${__dirname}/src-vis/modulefederation.vis.config.js`),
-    );
-    writeFileSync(
-        `${__dirname}/runtime/modulefederation.vis.config.d.ts`,
-        readFileSync(`${__dirname}/src-vis/modulefederation.vis.config.d.ts`),
-    );
-    writeFileSync(
-        `${__dirname}/runtime/modulefederation.config.js`,
-        readFileSync(`${__dirname}/src-vis/modulefederation.config.js`),
-    );
-    writeFileSync(
-        `${__dirname}/runtime/modulefederation.config.js`,
-        readFileSync(`${__dirname}/src-vis/modulefederation.config.js`),
-    );
     writeFileSync(`${__dirname}/runtime/src/Editor.tsx`, readFileSync(`${__dirname}/src-vis/src/Runtime.tsx`));
     writeFileSync(`${__dirname}/runtime/src/version.json`, readFileSync(`${__dirname}/src-vis/src/version.json`));
     writeFileSync(`${__dirname}/runtime/tsconfig.json`, readFileSync(`${__dirname}/src-vis/tsconfig.json`));

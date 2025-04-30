@@ -2,8 +2,11 @@
     "extends": "../../tsconfig.json",
     "compilerOptions": {
         "sourceMap": true,
+        "esModuleInterop": true,
         "inlineSources": true,
-        "types": ["@iobroker/types"]
+        "types": ["@iobroker/types"],
+        "strict": true,
+        "skipLibCheck": true
     },
-    "include": ["*.d.ts"],
+    "include": ["*.d.ts", "*.ts"],
 }

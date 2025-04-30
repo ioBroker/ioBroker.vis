@@ -4,7 +4,7 @@ import commonjs from 'vite-plugin-commonjs';
 import vitetsConfigPaths from 'vite-tsconfig-paths';
 import { federation } from '@module-federation/vite';
 import { resolve } from 'node:path';
-import { moduleFederationShared } from './modulefederation.vis.config';
+import { moduleFederationShared } from '@iobroker/types-vis-2/modulefederation.vis.config';
 
 export default defineConfig({
     plugins: [

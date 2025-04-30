@@ -4,15 +4,17 @@
     "description": "Types for vis-2",
     "files": [
         "index.d.ts",
+        "modulefederation.vis.config.*",
         "LICENSE"
     ],
+    "type": "module",
     "main": "index.js",
     "types": "index.d.ts",
     "publishConfig": {
         "access": "public"
     },
     "devDependencies": {
-        "@iobroker/adapter-react-v5": "^7.6.14",
+        "@iobroker/adapter-react-v5": "^7.6.15",
         "@mui/material": "^6.4.11",
         "@types/moment": "^2.13.0",
         "@types/react": "^18.3.20",
@@ -20,6 +22,7 @@
     },
     "scripts": {
         "check-ts": "tsc --noEmit --checkJS false",
-        "lint": "eslint -c eslint.config.mjs"
+        "lint": "eslint -c eslint.config.mjs",
+        "tsc": "tsc -p tsconfig.json"
     }
 }
