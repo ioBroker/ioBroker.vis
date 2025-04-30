@@ -63,15 +63,12 @@ const allObjects = async (socket: LegacyConnection): Promise<Record<string, ioBr
     const folders = await socket.getObjectViewSystem('folder', '', '\u9999');
     const enums = await socket.getObjectViewSystem('enum', '', '\u9999');
 
-    return (
-        Object.values(states)
-            .concat(Object.values(channels))
-            .concat(Object.values(devices))
-            .concat(Object.values(folders))
-            .concat(Object.values(enums))
-            // eslint-disable-next-line
-            .reduce((obj: Record<string, ioBroker.Object>, item: ioBroker.Object) => ((obj[item._id] = item), obj), {})
-    );
+    return Object.values(states)
+        .concat(Object.values(channels))
+        .concat(Object.values(devices))
+        .concat(Object.values(folders))
+        .concat(Object.values(enums))
+        .reduce((obj: Record<string, ioBroker.Object>, item: ioBroker.Object) => ((obj[item._id] = item), obj), {});
 };
 
 function getObjectIcon(obj: ioBroker.Object, id: string, imagePrefix?: string): string {
@@ -193,7 +190,7 @@ const detectDevices = async (socket: LegacyConnection): Promise<DetectorResult[]
         excludedTypes,
     };
 
-    const result: DetectorResult[] = [];
+    const results: DetectorResult[] = [];
 
     list.forEach(id => {
         options.id = id;
@@ -204,7 +201,7 @@ const detectDevices = async (socket: LegacyConnection): Promise<DetectorResult[]
             controls.forEach(control => {
                 const stateId = control.states.find(state => state.id).id;
                 // if not yet added
-                if (result.find(item => item.devices.find(st => st._id === stateId))) {
+                if (results.find(item => item.devices.find(st => st._id === stateId))) {
                     return;
                 }
                 const deviceObject: DetectorDevice = {
@@ -258,17 +255,17 @@ const detectDevices = async (socket: LegacyConnection): Promise<DetectorResult[]
                 });
                 let roomObj: DetectorResult;
                 if (room) {
-                    roomObj = result.find(obj => obj._id === room);
+                    roomObj = results.find(obj => obj._id === room);
                     if (!roomObj) {
                         roomObj = {
                             _id: room,
                             common: devicesObject[room].common as ioBroker.StateCommon,
                             devices: [],
                         };
-                        result.push(roomObj);
+                        results.push(roomObj);
                     }
                 } else {
-                    roomObj = result.find(obj => obj._id === 'unknown');
+                    roomObj = results.find(obj => obj._id === 'unknown');
                     if (!roomObj) {
                         roomObj = {
                             _id: 'unknown',
@@ -278,7 +275,7 @@ const detectDevices = async (socket: LegacyConnection): Promise<DetectorResult[]
                             } as ioBroker.StateCommon,
                             devices: [],
                         };
-                        result.push(roomObj);
+                        results.push(roomObj);
                     }
                 }
                 deviceObject.roomName = roomObj.common.name;
@@ -288,9 +285,8 @@ const detectDevices = async (socket: LegacyConnection): Promise<DetectorResult[]
     });
 
     // find names and icons for devices
-    for (const k in result) {
-        for (const k2 in result[k].devices) {
-            const deviceObj = result[k].devices[k2];
+    for (const result of results) {
+        for (const deviceObj of result.devices) {
             if (deviceObj.type === 'state' || deviceObj.type === 'channel') {
                 const idArray = deviceObj._id.split('.');
                 idArray.pop();
@@ -338,7 +334,7 @@ const detectDevices = async (socket: LegacyConnection): Promise<DetectorResult[]
         }
     }
 
-    return result;
+    return results;
 };
 const funcs = {
     deviceIcons,

@@ -128,7 +128,7 @@ export interface RuntimeState extends GenericAppState {
     showCodeDialog: {
         code: string;
         title: string;
-        mode: string;
+        mode: 'json' | 'text' | 'javascript' | 'css' | 'html';
     };
 }
 
@@ -200,7 +200,6 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
 
     protected onIgnoreMouseEvents?: (ignore: boolean) => void;
 
-    // eslint-disable-next-line no-shadow
     protected askAboutInclude?: (
         wid: AnyWidgetId,
         toWid: AnyWidgetId,
@@ -945,7 +944,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
                 window.vis.lastChangedView = this.state.projectName
                     ? `${this.state.projectName}/${newHash.replace(/^#/, '')}`
                     : newHash.replace(/^#/, '');
-                window.vis.conn.sendCommand(window.vis.instance, 'changedView', window.vis.lastChangedView);
+                void window.vis.conn.sendCommand(window.vis.instance, 'changedView', window.vis.lastChangedView);
             }
             return;
         }
@@ -992,10 +991,10 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
             window.vis.lastChangedView = this.state.projectName
                 ? `${this.state.projectName}/${newHash.replace(/^#/, '')}`
                 : newHash.replace(/^#/, '');
-            window.vis.conn.sendCommand(window.vis.instance, 'changedView', window.vis.lastChangedView);
+            void window.vis.conn.sendCommand(window.vis.instance, 'changedView', window.vis.lastChangedView);
 
             // inform the legacy widgets
-            window.jQuery && (window.jQuery as any)(window).trigger('viewChanged', selectedView);
+            (window.jQuery as any)?.(window).trigger('viewChanged', selectedView);
         }
 
         // disable group edit if view changed
@@ -1282,7 +1281,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
                 return this.showSmallProjectsDialog();
             }
 
-            this.refreshProjects().then(() => {
+            void this.refreshProjects().then(() => {
                 this.setState({ showProjectsDialog: true });
             });
             return null;

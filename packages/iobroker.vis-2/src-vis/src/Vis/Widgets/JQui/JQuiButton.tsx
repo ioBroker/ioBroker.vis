@@ -13,8 +13,7 @@
  * (Free for non-commercial use).
  */
 
-import type { CSSProperties } from 'react';
-import React from 'react';
+import React, { type CSSProperties } from 'react';
 
 import {
     Button,
@@ -45,7 +44,6 @@ import type {
 import { isVarFinite } from '../../../Utils/utils';
 import VisRxWidget, { type VisRxWidgetState } from '../../visRxWidget';
 
-// eslint-disable-next-line no-use-before-define
 export type JQuiButtonDataProps = {
     buttontext: string;
     html: string;
@@ -443,18 +441,18 @@ class JQuiButton<
         return JQuiButton.getWidgetInfo();
     }
 
-    async componentDidMount() {
+    componentDidMount(): void {
         super.componentDidMount();
-        await this.componentDidUpdate();
+        this.componentDidUpdate();
     }
 
-    async componentWillUnmount() {
+    componentWillUnmount(): void {
         this.hideTimeout && clearTimeout(this.hideTimeout);
         this.hideTimeout = null;
         super.componentWillUnmount();
     }
 
-    async componentDidUpdate() {
+    componentDidUpdate(): void {
         if (this.refButton.current) {
             if (this.state.rxData.jquery_style && !(this.refButton.current as any)._jQueryDone) {
                 (this.refButton.current as any)._jQueryDone = true;
@@ -490,7 +488,7 @@ class JQuiButton<
         }
     }
 
-    showDialog = (show: boolean) => {
+    showDialog = (show: boolean): void => {
         this.setState({ dialogVisible: show });
 
         // Auto-close
@@ -521,7 +519,7 @@ class JQuiButton<
         }
     };
 
-    onPasswordEnter() {
+    onPasswordEnter(): void {
         if (this.state.password === this.state.rxData.Password) {
             this.setState({ showPassword: false }, () => this.onClick(true));
         } else {
@@ -532,7 +530,7 @@ class JQuiButton<
         }
     }
 
-    renderPasswordDialog() {
+    renderPasswordDialog(): React.JSX.Element | null {
         if (!this.state.showPassword) {
             return null;
         }
@@ -587,7 +585,7 @@ class JQuiButton<
         );
     }
 
-    async setObjectWithState(oid: string, value: ioBroker.State['val']) {
+    async setObjectWithState(oid: string, value: ioBroker.State['val']): Promise<void> {
         if (this.setObjectType === undefined) {
             try {
                 const obj = await this.props.context.socket.getObject(oid);
@@ -607,10 +605,10 @@ class JQuiButton<
             value = value.toString();
         }
 
-        await this.props.context.setValue(oid, value);
+        this.props.context.setValue(oid, value);
     }
 
-    onCommand(command: VisWidgetCommand) {
+    onCommand(command: VisWidgetCommand): boolean {
         super.onCommand(command);
         if (command === 'openDialog') {
             this.showDialog(true);
@@ -623,7 +621,7 @@ class JQuiButton<
         return false;
     }
 
-    onClick(passwordChecked?: boolean) {
+    onClick(passwordChecked?: boolean): void {
         if (this.state.dialogVisible) {
             return;
         }
@@ -667,7 +665,7 @@ class JQuiButton<
         }
     }
 
-    renderRxDialog(dialogStyle: CSSProperties, content: React.JSX.Element) {
+    renderRxDialog(dialogStyle: CSSProperties, content: React.JSX.Element): React.JSX.Element {
         console.log('test');
         if (this.state.rxData.modal) {
             console.log('in');
@@ -763,7 +761,7 @@ class JQuiButton<
         );
     }
 
-    renderJQueryDialog(dialogStyle: CSSProperties, content: React.JSX.Element) {
+    renderJQueryDialog(dialogStyle: CSSProperties, content: React.JSX.Element): React.JSX.Element {
         return (
             <div
                 id={`${this.props.id}_dialog`}
@@ -777,7 +775,7 @@ class JQuiButton<
         );
     }
 
-    renderDialog() {
+    renderDialog(): React.JSX.Element | null {
         if (
             this.props.editMode ||
             (!this.state.dialogVisible && !this.state.rxData.persistent && !this.state.rxData.externalDialog) ||
@@ -786,15 +784,11 @@ class JQuiButton<
             return null;
         }
 
-        // eslint-disable-next-line no-restricted-properties
         // const top = isVarFinite(this.state.rxData.dialog_top) ? parseFloat(this.state.rxData.dialog_top) : this.state.rxData.dialog_top;
-        // eslint-disable-next-line no-restricted-properties
         // const left = isVarFinite(this.state.rxData.dialog_left) ? parseFloat(this.state.rxData.dialog_left) : this.state.rxData.dialog_left;
-        // eslint-disable-next-line no-restricted-properties
         const width = isVarFinite(this.state.rxData.dialog_width)
             ? parseFloat(this.state.rxData.dialog_width)
             : this.state.rxData.dialog_width;
-        // eslint-disable-next-line no-restricted-properties
         const height = isVarFinite(this.state.rxData.dialog_height)
             ? parseFloat(this.state.rxData.dialog_height)
             : this.state.rxData.dialog_height;
@@ -823,7 +817,6 @@ class JQuiButton<
                 <div
                     style={dialogStyle}
                     className={this.state.rxData.dialog_class}
-                    // eslint-disable-next-line react/no-danger
                     dangerouslySetInnerHTML={{ __html: this.state.rxData.html_dialog }}
                 />
             );
@@ -836,7 +829,7 @@ class JQuiButton<
         return this.renderRxDialog(dialogStyle, content);
     }
 
-    renderWidgetBody(props: RxRenderWidgetProps) {
+    renderWidgetBody(props: RxRenderWidgetProps): React.JSX.Element {
         super.renderWidgetBody(props);
 
         const iconStyle: CSSProperties = {
@@ -969,14 +962,12 @@ class JQuiButton<
                 this.state.rxData.html_prepend ? (
                     <span
                         key="prepend"
-                        // eslint-disable-next-line react/no-danger
                         dangerouslySetInnerHTML={{ __html: this.state.rxData.html_prepend }}
                     />
                 ) : null,
                 this.state.rxData.html ? (
                     <span
                         key="content"
-                        // eslint-disable-next-line react/no-danger
                         dangerouslySetInnerHTML={{ __html: this.state.rxData.html }}
                     />
                 ) : this.state.rxData.no_style || this.state.rxData.jquery_style ? (
@@ -1019,7 +1010,6 @@ class JQuiButton<
                 this.state.rxData.html_append ? (
                     <span
                         key="append"
-                        // eslint-disable-next-line react/no-danger
                         dangerouslySetInnerHTML={{ __html: this.state.rxData.html_append }}
                     />
                 ) : null,

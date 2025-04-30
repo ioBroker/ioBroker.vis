@@ -20,5 +20,6 @@
             "@iobroker/types-vis-2": ["./packages/types-vis-2"]
         }
     },
-    "include": ["./**/*"]
+    "include": ["./**/*"],
+    "exclude": ["src/Components/CustomAceEditor.tsx"]
 }

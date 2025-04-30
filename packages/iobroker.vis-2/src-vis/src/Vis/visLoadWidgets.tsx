@@ -17,6 +17,7 @@ import type { VisRxWidgetState } from '@/Vis/visRxWidget';
 // eslint-disable-next-line no-duplicate-imports
 import type VisRxWidget from '@/Vis/visRxWidget';
 import type { Branded } from '@iobroker/types-vis-2';
+import { registerRemotes, loadRemote, init } from '@module-federation/runtime';
 
 export type WidgetSetName = Branded<string, 'WidgetSetName'>;
 export type PromiseName = `_promise_${WidgetSetName}`;
@@ -43,116 +44,6 @@ declare global {
     }
 }
 
-const getOrLoadRemote = (remote: string, shareScope: string, remoteFallbackUrl?: string): Promise<null> => {
-    (window as any)[`_promise_${remote}`] =
-        (window as any)[`_promise_${remote}`] ||
-        new Promise((resolve, reject) => {
-            // check if remote exists on window
-            // search dom to see if remote tag exists, but might still be loading (async)
-            const existingRemote = document.querySelector(`[data-webpack="${remote}"]`);
-            // when remote is loaded...
-            const onload = async (): Promise<void> => {
-                const gRemote: WidgetSetStruct = window[remote as any] as any as WidgetSetStruct;
-
-                // check if it was initialized
-                if (!gRemote) {
-                    if (
-                        remoteFallbackUrl &&
-                        (remoteFallbackUrl.startsWith('http://') || remoteFallbackUrl.startsWith('https://'))
-                    ) {
-                        console.error(`Cannot load remote from url "${remoteFallbackUrl}"`);
-                    } else {
-                        reject(new Error(`Cannot load ${remote} from ${remoteFallbackUrl}`));
-                    }
-                    resolve(null);
-                    return;
-                }
-
-                if (!gRemote.__initialized) {
-                    // if share scope doesn't exist (like in webpack 4) then expect shareScope to be a manual object
-                    // @ts-expect-error this is a trick
-                    // eslint-disable-next-line camelcase
-                    if (typeof __webpack_share_scopes__ === 'undefined' && gRemote.init) {
-                        // use the default share scope object, passed in manually
-                        await gRemote.init(shareScope);
-                    } else if (gRemote.init) {
-                        // otherwise, init share scope as usual
-                        try {
-                            // @ts-expect-error this is a trick
-                            // eslint-disable-next-line camelcase, no-undef
-                            await gRemote.init(__webpack_share_scopes__[shareScope]);
-                        } catch (e) {
-                            console.error(`Cannot init remote "${remote}" with "${shareScope}"`);
-                            console.error(e);
-                            reject(new Error(`Cannot init remote "${remote}" with "${shareScope}"`));
-                            return;
-                        }
-                    } else {
-                        reject(new Error(`Remote init function not found for ${remote} from ${remoteFallbackUrl}`));
-                        return;
-                    }
-                    // mark remote as initialized
-                    gRemote.__initialized = true;
-                }
-                // resolve promise so marking remote as loaded
-                resolve(null);
-            };
-
-            if (existingRemote) {
-                console.warn(`SOMEONE IS LOADING THE REMOTE ${remote}`);
-                // if existing remote but not loaded, hook into its onload and wait for it to be ready
-                // existingRemote.onload = onload;
-                // existingRemote.onerror = reject;
-                resolve(null);
-                // check if remote fallback exists as param passed to function
-                // TODO: should scan public config for a matching key if no override exists
-            } else if (remoteFallbackUrl) {
-                // inject remote if a fallback exists and call the same onload function
-                const d = document;
-                const script = d.createElement('script');
-                script.type = 'text/javascript';
-                // mark as data-webpack so runtime can track it internally
-                script.setAttribute('data-webpack', `${remote}`);
-                script.async = true;
-                script.onerror = () => {
-                    if (!remoteFallbackUrl.includes('iobroker.net')) {
-                        reject(new Error(`Cannot load ${remote} from ${remoteFallbackUrl}`));
-                    } else {
-                        resolve(null);
-                    }
-                };
-                script.onload = onload;
-                script.src = remoteFallbackUrl;
-                d.getElementsByTagName('head')[0].appendChild(script);
-            } else {
-                // no remote and no fallback exist, reject
-                reject(new Error(`Cannot Find Remote ${remote} to inject`));
-            }
-        });
-
-    // @ts-expect-error todo fix
-    return window[`_promise_${remote}`];
-};
-
-export const loadComponent =
-    (
-        remote: WidgetSetName,
-        sharedScope: string,
-        module: string,
-        url: string,
-    ): (() => Promise<{ default: VisRxWidgetWithInfo<any> } | null>) =>
-    async (): Promise<{ default: VisRxWidgetWithInfo<any> } | null> => {
-        await getOrLoadRemote(remote, sharedScope, url);
-        const gRemote: WidgetSetStruct = window[remote];
-        if (gRemote) {
-            const factory: () => { default: VisRxWidgetWithInfo<any> } | null = (await gRemote.get(module)) as () => {
-                default: VisRxWidgetWithInfo<any>;
-            } | null;
-            return factory ? factory() : null;
-        }
-        return null;
-    };
-
 function registerWidgetsLoadIndicator(cb: (process: number, max: number) => void): void {
     window.__widgetsLoadIndicator = cb;
 }
@@ -165,6 +56,11 @@ interface VisLoadComponentContext {
     // List of custom React components
     result: VisRxWidgetWithInfo<any>[];
 }
+
+init({
+    name: 'iobroker_vis',
+    remotes: [],
+});
 
 function _loadComponentHelper(context: VisLoadComponentContext): Promise<void[]> {
     // expected in context
@@ -179,13 +75,9 @@ function _loadComponentHelper(context: VisLoadComponentContext): Promise<void[]>
         ((index: number, _visWidgetsCollection) => {
             context.countRef.max++;
 
-            const promise: Promise<void> = loadComponent(
-                // @ts-expect-error todo fix
-                _visWidgetsCollection.name,
-                'default',
-                `./${_visWidgetsCollection.components[index]}`,
-                _visWidgetsCollection.url,
-            )()
+            const promise: Promise<void> = loadRemote<any>(
+                `${context.visWidgetsCollection.name}/${_visWidgetsCollection.components[index]}`,
+            )
                 .then(CustomComponent => {
                     if (CustomComponent) {
                         context.countRef.count++;
@@ -277,8 +169,18 @@ function getRemoteWidgets(
                         }
 
                         if (!visWidgetsCollection.url?.startsWith('http')) {
-                            visWidgetsCollection.url = `./widgets/${visWidgetsCollection.url}`;
+                            visWidgetsCollection.url = `./vis-2/widgets/${visWidgetsCollection.url}`;
                         }
+                        registerRemotes(
+                            [
+                                {
+                                    name: visWidgetsCollection.name,
+                                    entry: visWidgetsCollection.url,
+                                    type: (visWidgetsCollection as any).bundlerType || undefined,
+                                },
+                            ],
+                            // force: true // may be needed to side-load remotes after the fact.
+                        );
                         if (visWidgetsCollection.components) {
                             ((collection, instance) => {
                                 try {
@@ -334,12 +236,9 @@ function getRemoteWidgets(
                                         promises.push(i18nPromiseWait);
                                     } else if (collection.url && collection.i18n === 'component') {
                                         // instance.common.visWidgets.i18n is deprecated
-                                        i18nPromiseWait = loadComponent(
-                                            collection.name as WidgetSetName,
-                                            'default',
-                                            './translations',
-                                            collection.url,
-                                        )()
+                                        i18nPromiseWait = loadRemote<any>(
+                                            `${collection.name as WidgetSetName}/translations`,
+                                        )
                                             .then((translations: any) => {
                                                 countRef.count++;
 

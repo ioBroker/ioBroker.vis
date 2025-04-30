@@ -4,7 +4,7 @@ exports.default = calcProjects;
 /**
  * Stringify-parse copy with type inference
  *
- * @param obj The object which should be cloned
+ * @param obj The object, which should be cloned
  */
 function deepClone(obj) {
     return JSON.parse(JSON.stringify(obj));

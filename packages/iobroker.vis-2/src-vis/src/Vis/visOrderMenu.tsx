@@ -257,7 +257,6 @@ class VisOrderMenu extends React.Component<VisOrderMenuProps, VisOrderMenuState>
                 <span
                     style={styles.widgetImage}
                     ref={this.imageRef[index]}
-                    // eslint-disable-next-line react/no-danger
                     dangerouslySetInnerHTML={{ __html: _widgetType.preview }}
                 />
             );

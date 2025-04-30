@@ -9,10 +9,11 @@ import type {
     CustomPaletteProperties,
     RxWidgetInfoAttributesField,
     WidgetData,
-    RxWidgetInfoCustomComponentProperties,
     RxWidgetAttributeType,
     Widget,
     WidgetStyle,
+    VisTheme,
+    AnyWidgetId,
 } from '@iobroker/types-vis-2';
 import type VisRxWidget from '@/Vis/visRxWidget';
 
@@ -122,7 +123,19 @@ export type RxWidgetInfoAttributesFieldAll = {
         field: RxWidgetInfoAttributesField,
         data: WidgetData,
         onDataChange: (newData: WidgetData) => void,
-        props: RxWidgetInfoCustomComponentProperties,
+        props: {
+            context: {
+                socket: LegacyConnection;
+                projectName: string;
+                instance: number;
+                adapterName: string;
+                views: Project;
+                theme: VisTheme;
+            };
+            selectedView: string;
+            selectedWidgets: AnyWidgetId[];
+            selectedWidget: `w${string}` | `g${string}`;
+        },
     ) => React.JSX.Element | React.JSX.Element[];
 
     /** i18n help text - This text will be shown without a label */
@@ -382,8 +395,8 @@ export const getWidgetTypes: (_usedWidgetSets?: string[]) => WidgetType[] = (use
                                 _field.options.forEach(option => {
                                     if (typeof option === 'object') {
                                         if (option.label && !option.label.startsWith(i18nPrefix)) {
-                                            // @ts-expect-error we must add prefix to the label
-                                            option.label = i18nPrefix + option.label;
+                                            // we must add a prefix to the label
+                                            (option as any).label = i18nPrefix + option.label;
                                         }
                                     }
                                 });
@@ -522,13 +535,10 @@ class VisWidgetsCatalog {
 
                                 // init all widgets
                                 if (changeProject) {
-                                    // eslint-disable-next-line no-use-before-define
                                     getWidgetTypes();
                                 } else if (usedWidgetSets) {
-                                    // eslint-disable-next-line no-use-before-define
                                     getWidgetTypes(usedWidgetSets);
                                 } else {
-                                    // eslint-disable-next-line no-use-before-define
                                     getWidgetTypes();
                                 }
 
@@ -556,7 +566,7 @@ class VisWidgetsCatalog {
 function deepCloneRx(obj: any[] | Record<string, any>): any[] | Record<string, any> {
     if (Array.isArray(obj)) {
         const newObj: any[] = [];
-        for (const key in obj) {
+        for (let key = 0; key < obj.length; key++) {
             if (obj[key] !== undefined) {
                 if (Array.isArray(obj[key]) || typeof obj[key] === 'object') {
                     // If it is ReactJS object

@@ -40,7 +40,6 @@ export function isVarFinite(numberOrString: number | string | undefined): boolea
     // the difference between Number.isFinite and window.isFinite is that window.isFinite tries to convert the parameter to a number
     // and Number.isFinite does not and just check against non NaN and non-Infinity
 
-    // eslint-disable-next-line no-restricted-properties
     return window.isFinite(numberOrString as number);
 }
 

@@ -17,7 +17,7 @@ import { HelpOutline, Check as CheckIcon } from '@mui/icons-material';
 import { I18n, type ThemeType } from '@iobroker/adapter-react-v5';
 
 import { readFile } from '@/Vis/visUtils';
-import { CustomAceEditor } from '@/Components/CustomAceEditor';
+import { CustomEditor } from '@/Components/CustomEditor';
 
 interface CSSProps {
     projectName: string;
@@ -145,14 +145,13 @@ const CSS = (props: CSSProps): React.JSX.Element => {
                 </IconButton>
                 {globalCssTimer || localCssTimer ? <CircularProgress size={20} /> : null}
             </div>
-            <CustomAceEditor
+            <CustomEditor
                 type="css"
                 themeType={props.themeType}
                 readOnly={!props.editMode}
                 value={value}
                 onChange={newValue => save(newValue, type)}
                 width="100%"
-                focus
                 height="calc(100% - 34px)"
             />
         </>

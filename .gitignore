@@ -26,3 +26,4 @@ src/dist
 **/tmp
 packages/iobroker.vis-2/README.md
 /packages/iobroker.vis-2/build-backend/
+/packages/iobroker.vis-2/src-vis/.__mf__temp

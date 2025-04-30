@@ -26,7 +26,6 @@ interface BasicScreenResolutionState extends VisRxWidgetState {
     essentialData?: string;
 }
 
-// eslint-disable-next-line no-use-before-define
 type RxData = GetRxDataFromWidget<typeof BasicScreenResolution>;
 
 export default class BasicScreenResolution extends VisRxWidget<RxData, BasicScreenResolutionState> {

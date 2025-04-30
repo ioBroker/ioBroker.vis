@@ -109,7 +109,6 @@ export interface VisBaseWidgetProps {
         isDoubleClick?: boolean,
     ) => void;
     refParent: React.RefObject<HTMLElement>;
-    // eslint-disable-next-line react/no-unused-prop-types
     customSettings: Record<string, any>;
 }
 

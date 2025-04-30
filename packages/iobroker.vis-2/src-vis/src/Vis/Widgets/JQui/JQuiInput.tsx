@@ -250,10 +250,7 @@ class JQuiInput<P extends RxData = RxData, S extends JQuiInputState = JQuiInputS
 
     async setValue(value: string): Promise<void> {
         if (this.object?._id !== this.state.rxData.oid) {
-            this.object = (await this.props.context.socket.getObject(this.state.rxData.oid)) as
-                | ioBroker.StateObject
-                | null
-                | undefined;
+            this.object = await this.props.context.socket.getObject(this.state.rxData.oid);
             if (!this.object) {
                 return;
             }

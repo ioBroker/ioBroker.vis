@@ -33,7 +33,10 @@ const commonStyles: {
     }),
     clearPadding: {
         p: 0,
-        m: 0,
+        mt: 0,
+        mb: 0,
+        ml: 0,
+        mr: 0,
         minHeight: 'initial',
     },
     fieldContent: {

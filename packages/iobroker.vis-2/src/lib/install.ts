@@ -139,16 +139,18 @@ export function syncWidgetSets(
     let name: string;
     const v2: Record<string, boolean> = {};
 
+    const normalizedWwwDir = normalize(wwwDir);
     // Now we have the list of widgets => copy them all to widgets directory
     for (let d = 0; d < enabledList.length; d++) {
-        const _changed = copyFolderRecursiveSync(`${enabledList[d].path}/widgets/`, normalize(wwwDir), forceBuild);
+        const _changed = copyFolderRecursiveSync(`${enabledList[d].path}/widgets/`, normalizedWwwDir, forceBuild);
         if (_changed) {
             filesChanged = true;
         }
         console.log(
             `Check ${enabledList[d].path.replace(/\\/g, '/').split('/').pop()}... ${_changed ? 'COPIED.' : 'no changes.'}`,
         );
-        v2[enabledList[d].name.replace('iobroker.', '').replace('ioBroker.', '')] = !!enabledList[d].pack.common.visWidgets;
+        v2[enabledList[d].name.replace('iobroker.', '').replace('ioBroker.', '')] =
+            !!enabledList[d].pack.common.visWidgets;
     }
 
     const widgetSets: { name: string; depends?: string | string[]; always?: boolean; v2: boolean }[] = [];

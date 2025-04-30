@@ -45,17 +45,14 @@ class JQuiContainerButtonDialog extends JQuiButton {
         const buttonText = JQuiButton.findField<RxWidgetInfoAttributesFieldText>(newWidgetInfo, 'buttontext');
         buttonText.default = 'Container Dialog';
 
-        const containsView = JQuiButton.findField<RxWidgetInfoAttributesFieldSimple>(
-            newWidgetInfo,
-            'contains_view',
-        );
+        const containsView = JQuiButton.findField<RxWidgetInfoAttributesFieldSimple>(newWidgetInfo, 'contains_view');
         containsView.default = '';
 
         return newWidgetInfo as RxWidgetInfo;
     }
 
     // eslint-disable-next-line class-methods-use-this
-    getWidgetInfo() {
+    getWidgetInfo(): RxWidgetInfo {
         return JQuiContainerButtonDialog.getWidgetInfo();
     }
 }

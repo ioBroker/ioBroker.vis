@@ -112,7 +112,7 @@ interface ResizerElement extends HTMLDivElement {
 }
 
 /**
- * Methods which should be optionally implemented by inherited classes
+ * Methods, which should be optionally implemented by inherited classes
  */
 interface VisBaseWidget {
     renderSignals(): React.ReactNode;
@@ -188,7 +188,6 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
         this.state = {
             data,
             style,
-            // eslint-disable-next-line react/no-unused-state
             applyBindings: false,
             editMode: !multiViewWidget && this.props.editMode,
             multiViewWidget,
@@ -280,7 +279,6 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
     }
 
     // this method may be not in form onCommand = command => {}, as it can be overloaded
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onCommand(command: VisWidgetCommand, _option?: any): any {
         if (command === 'includePossible') {
             const overlay: HTMLDivElement = this.refService.current?.querySelector('.vis-editmode-overlay');
@@ -308,7 +306,6 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
                     'vis-editmode-steal-style',
                 );
             }
-            // eslint-disable-next-line no-undef
             const resizers: NodeListOf<HTMLDivElement> =
                 this.refService.current?.querySelectorAll('.vis-editmode-resizer');
             resizers?.forEach(item => (item.style.display = 'none'));
@@ -326,7 +323,6 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
                     'vis-editmode-steal-style',
                 );
             }
-            // eslint-disable-next-line no-undef
             const resizers: NodeListOf<HTMLDivElement> =
                 this.refService.current?.querySelectorAll('.vis-editmode-resizer');
             resizers?.forEach(item => (item.style.display = ''));
@@ -365,7 +361,6 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
             }
 
             // show resizers again
-            // eslint-disable-next-line no-undef
             const resizers: NodeListOf<HTMLDivElement> =
                 this.refService.current?.querySelectorAll('.vis-editmode-resizer');
             resizers?.forEach(item => (item.style.display = 'block'));
@@ -743,7 +738,6 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
                         height: rect.height,
                     };
                 }
-                // eslint-disable-next-line no-undef
                 const resizers: NodeListOf<ResizerElement> =
                     this.refService.current.querySelectorAll('.vis-editmode-resizer');
                 resizers.forEach(item => {
@@ -880,7 +874,6 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
 
             // end of resize
             if (save) {
-                // eslint-disable-next-line no-undef
                 const resizers: NodeListOf<HTMLDivElementResizers> =
                     this.refService.current?.querySelectorAll('.vis-editmode-resizer');
                 resizers?.forEach(item => {
@@ -920,7 +913,6 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
             };
 
             // hide resizers
-            // eslint-disable-next-line no-undef
             const resizers: NodeListOf<HTMLDivElement> =
                 this.refService.current.querySelectorAll('.vis-editmode-resizer');
             resizers.forEach(item => (item.style.display = 'none'));
@@ -958,7 +950,6 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
             // End of movement
             if (save) {
                 // show resizers
-                // eslint-disable-next-line no-undef
                 const resizers: NodeListOf<HTMLDivElement> =
                     this.refService.current.querySelectorAll('.vis-editmode-resizer');
                 resizers.forEach(item => (item.style.display = 'block'));
@@ -1268,7 +1259,6 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
         );
     }
 
-    // eslint-disable-next-line react/no-unused-class-component-methods
     static isWidgetHidden(widgetData: WidgetData | GroupData, states: VisRxWidgetStateValues, id: string): boolean {
         const oid = widgetData['visibility-oid'];
         const condition = widgetData['visibility-cond'];
@@ -1370,7 +1360,6 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
     /**
      * Render the widget body
      */
-    // eslint-disable-next-line class-methods-use-this,no-unused-vars, @typescript-eslint/no-unused-vars
     renderWidgetBody(_props: RxRenderWidgetProps): React.JSX.Element | React.JSX.Element[] | null {
         // Default render method. Normally it should be overwritten
         return (
@@ -1391,7 +1380,6 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
         );
     }
 
-    // eslint-disable-next-line react/no-unused-class-component-methods
     changeOrder(e: React.MouseEvent, dir: number): void {
         e.stopPropagation();
         e.preventDefault();
@@ -1844,7 +1832,6 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
 
     static correctStylePxValue(value: string | number): string | number {
         if (typeof value === 'string') {
-            // eslint-disable-next-line no-restricted-properties
             if (isVarFinite(value)) {
                 return parseFloat(value) || 0;
             }
@@ -2021,7 +2008,6 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
         ].forEach(attr => {
             const anyStyle = style as Record<string, number | string | undefined>;
             if (anyStyle[attr] !== undefined && typeof anyStyle[attr] === 'string') {
-                // eslint-disable-next-line no-restricted-properties
                 if (isVarFinite(anyStyle[attr])) {
                     anyStyle[attr] = parseFloat(anyStyle[attr] as any as string) || 0;
                 } else if (anyStyle[attr].includes('{')) {

@@ -4,7 +4,7 @@ import { Utils, I18n, type ThemeType } from '@iobroker/adapter-react-v5';
 
 import React from 'react';
 import IODialog from '../../Components/IODialog';
-import CustomAceEditor from '../../Components/CustomAceEditor';
+import CustomEditor from '../../Components/CustomEditor';
 import { store } from '../../Store';
 
 interface ExportDialogProps {
@@ -23,7 +23,7 @@ const ExportDialog: React.FC<ExportDialogProps> = props => (
         actionNoClose
         ActionIcon={FileCopyIcon}
     >
-        <CustomAceEditor
+        <CustomEditor
             type="json"
             themeType={props.themeType}
             value={JSON.stringify(store.getState().visProject[props.view], null, 2)}

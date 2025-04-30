@@ -20,7 +20,6 @@ import { Icon } from '@iobroker/adapter-react-v5';
 import type { RxRenderWidgetProps, RxWidgetInfo } from '@iobroker/types-vis-2';
 import VisRxWidget from '../../visRxWidget';
 
-// eslint-disable-next-line no-use-before-define
 type RxData = {
     oid: string;
     html_prepend: string;
@@ -120,15 +119,9 @@ class BasicValueString extends VisRxWidget<RxData> {
                             }}
                         />
                     ) : null}
-                    <span
-                        // eslint-disable-next-line react/no-danger
-                        dangerouslySetInnerHTML={{ __html: this.state.rxData.html_prepend ?? '' }}
-                    />
+                    <span dangerouslySetInnerHTML={{ __html: this.state.rxData.html_prepend ?? '' }} />
                     <span>{body}</span>
-                    <span
-                        // eslint-disable-next-line react/no-danger
-                        dangerouslySetInnerHTML={{ __html: this.state.rxData.html_append ?? '' }}
-                    />
+                    <span dangerouslySetInnerHTML={{ __html: this.state.rxData.html_append ?? '' }} />
                 </div>
             </div>
         );

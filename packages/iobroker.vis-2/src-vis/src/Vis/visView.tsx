@@ -2058,28 +2058,22 @@ class VisView extends React.Component<VisViewProps, VisViewState> {
                 backgroundStyle.backgroundColor = settings['bg-color'];
             }
             if (settings['bg-position-x']) {
-                // eslint-disable-next-line no-restricted-properties
                 backgroundStyle.backgroundPositionX = isVarFinite(settings['bg-position-x'])
                     ? `${settings['bg-position-x']}px`
                     : settings['bg-position-x'];
             }
             if (settings['bg-position-y']) {
-                // eslint-disable-next-line no-restricted-properties
                 backgroundStyle.backgroundPositionY = isVarFinite(settings['bg-position-y'])
                     ? `${settings['bg-position-y']}px`
                     : settings['bg-position-y'];
             }
             if (settings['bg-width'] && settings['bg-height']) {
-                // eslint-disable-next-line no-restricted-properties
                 const w = isVarFinite(settings['bg-width']) ? `${settings['bg-width']}px` : settings['bg-width'];
-                // eslint-disable-next-line no-restricted-properties
                 const h = isVarFinite(settings['bg-height']) ? `${settings['bg-height']}px` : settings['bg-height'];
                 backgroundStyle.backgroundSize = `${w} ${h}`;
             } else if (settings['bg-width']) {
-                // eslint-disable-next-line no-restricted-properties
                 backgroundStyle.backgroundSize = `${isVarFinite(settings['bg-width']) ? `${settings['bg-width']}px` : settings['bg-width']} auto`;
             } else if (settings['bg-height']) {
-                // eslint-disable-next-line no-restricted-properties
                 const w = isVarFinite(settings['bg-height']) ? `${settings['bg-height']}px` : settings['bg-height'];
                 backgroundStyle.backgroundSize = `auto ${w}`;
             }

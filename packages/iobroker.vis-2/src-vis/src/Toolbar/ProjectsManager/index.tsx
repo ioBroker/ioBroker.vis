@@ -270,7 +270,7 @@ const ProjectsManager: React.FC<ProjectsManagerProps> = props => {
                                                 setAnchorEl(event.currentTarget);
                                                 // TODO ensure correct project is opened
                                                 if (props.projectName !== projectName) {
-                                                    props.loadProject(projectName);
+                                                    void props.loadProject(projectName);
                                                 }
                                                 setShowPermissionsDialog(!!projectName);
                                             }}

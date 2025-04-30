@@ -63,7 +63,6 @@ import type {
 } from '@iobroker/types-vis-2';
 import type Editor from '@/Editor';
 import { deepClone } from '@/Utils/utils';
-// eslint-disable-next-line no-unused-vars
 import type JQuery from 'jquery';
 import './visWords';
 import VisView from './visView';
@@ -282,7 +281,6 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
     // eslint-disable-next-line react/no-unused-class-component-methods
     _authRunning: boolean;
 
-    // eslint-disable-next-line no-use-before-define
     conn: ReturnType<VisEngine['createConnection']>;
 
     visContext: VisContext;
@@ -499,7 +497,6 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
 
     componentDidMount(): void {
         // modify jquery dialog to add it to view (originally dialog was added to body) (because of styles)
-        // eslint-disable-next-line func-names
         (window.$ as any).ui.dialog.prototype._appendTo = function () {
             const wid = this.options.wid;
             const views = store.getState().visProject;
@@ -671,7 +668,6 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                 const refViews = this.refViews;
                 Object.keys(refViews).forEach(view => refViews[view].onCommand('updateContainers'));
             },
-            // eslint-disable-next-line no-shadow
             renderView: (
                 viewDiv,
                 view: string | boolean,
@@ -737,7 +733,6 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
             setValue: this.setValue,
             subscribe: this.subscribe,
             unsubscribe: this.unsubscribe,
-            // eslint-disable-next-line no-shadow
             changeView: (
                 viewDiv,
                 view,
@@ -747,7 +742,6 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                 cb,
             ) => {
                 if (typeof view === 'object') {
-                    // eslint-disable-next-line no-shadow
                     cb = sync as (viewDiv: string, view: string) => void;
                     sync = showOptions;
                     hideOptions = showOptions;
@@ -2430,16 +2424,14 @@ ${this.scripts}
 
         if (this.lastChangedView !== this.props.activeView && !this.props.editMode) {
             this.lastChangedView = this.props.activeView;
-            window.vis.conn.sendCommand(
+            void window.vis.conn.sendCommand(
                 window.vis.instance,
                 'changedView',
                 this.props.projectName ? `${this.props.projectName}/${this.props.activeView}` : this.props.activeView,
             );
 
             // inform the legacy widgets
-            if (window.jQuery) {
-                (window as any).jQuery(window).trigger('viewChanged', this.props.activeView);
-            }
+            (window as any).jQuery?.(window).trigger('viewChanged', this.props.activeView);
         }
 
         this.visContext = {

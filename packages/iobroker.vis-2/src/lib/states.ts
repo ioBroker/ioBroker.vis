@@ -19,7 +19,7 @@ import type { Client as StatesClient } from '@iobroker/db-states-redis';
 /**
  * Stringify-parse copy with type inference
  *
- * @param obj The object which should be cloned
+ * @param obj The object, which should be cloned
  */
 function deepClone<T extends Record<string, any>>(obj: T): T {
     return JSON.parse(JSON.stringify(obj));

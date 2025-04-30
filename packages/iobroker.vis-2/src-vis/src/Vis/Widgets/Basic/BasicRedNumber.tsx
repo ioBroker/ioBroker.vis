@@ -3,7 +3,6 @@ import React from 'react';
 import type { RxRenderWidgetProps, RxWidgetInfo } from '@iobroker/types-vis-2';
 import VisRxWidget from '@/Vis/visRxWidget';
 
-// eslint-disable-next-line no-use-before-define
 type RxData = {
     oid: string;
     type: 'circle' | 'pin';
@@ -154,15 +153,12 @@ export default class BasicRedNumber extends VisRxWidget<RxData> {
                         }}
                     >
                         {this.state.rxData.html_prepend ? (
-                            // eslint-disable-next-line react/no-danger
                             <span dangerouslySetInnerHTML={{ __html: this.state.rxData.html_prepend }} />
                         ) : null}
                         {val === null ? '--' : val}
                         {val === 1 ? (
-                            // eslint-disable-next-line react/no-danger
                             <span dangerouslySetInnerHTML={{ __html: this.state.rxData.html_append_singular }} />
                         ) : (
-                            // eslint-disable-next-line react/no-danger
                             <span dangerouslySetInnerHTML={{ __html: this.state.rxData.html_append_plural }} />
                         )}
                     </div>
@@ -197,15 +193,12 @@ export default class BasicRedNumber extends VisRxWidget<RxData> {
                 style={style}
             >
                 {this.state.rxData.html_prepend ? (
-                    // eslint-disable-next-line react/no-danger
                     <span dangerouslySetInnerHTML={{ __html: this.state.rxData.html_prepend }} />
                 ) : null}
                 {val === null ? '--' : val}
                 {val === 1 ? (
-                    // eslint-disable-next-line react/no-danger
                     <span dangerouslySetInnerHTML={{ __html: this.state.rxData.html_append_singular }} />
                 ) : (
-                    // eslint-disable-next-line react/no-danger
                     <span dangerouslySetInnerHTML={{ __html: this.state.rxData.html_append_plural }} />
                 )}
             </div>

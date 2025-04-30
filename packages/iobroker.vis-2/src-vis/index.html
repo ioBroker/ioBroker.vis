@@ -3,10 +3,10 @@
 <head>
     <title>Editor.vis</title>
     <meta charset="utf-8"/>
-    <link rel="shortcut icon" href="%PUBLIC_URL%/faviconEdit.ico"/>
+    <link rel="shortcut icon" href="/faviconEdit.ico"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <meta name="theme-color" content="#000000"/>
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json"/>
+    <link rel="manifest" href="/manifest.json"/>
 
     <link rel="stylesheet" type="text/css" href="./lib/css/jquery.multiselect-1.13.css"/>
 
@@ -107,15 +107,16 @@
             typeof window.socketLoadedHandler === 'function' && window.socketLoadedHandler();
         };
         setTimeout(() => {
-            script.src = window.location.port.startsWith('300') ? window.location.protocol + '//' + window.location.hostname + ':8082/lib/js/socket.io.js' : '%PUBLIC_URL%/../../lib/js/socket.io.js';
+            script.src = window.location.port.startsWith('300') ? window.location.protocol + '//' + window.location.hostname + ':8082/lib/js/socket.io.js' : '/../../lib/js/socket.io.js';
         }, 1000);
 
         document.head.appendChild(script);
     </script>
-    <!--script type="text/javascript" src="%PUBLIC_URL%/../../socket.io/socket.io.js"></script-->
+    <!--script type="text/javascript" src="/../../socket.io/socket.io.js"></script-->
 </head>
 <body>
 <div id="root"></div>
+<script type="module" src="src/index.tsx"></script>
 </body>
 <script>
     // set background as early as possible

@@ -319,10 +319,8 @@ const Settings: React.FC<SettingsProps> = props => {
                                 label={I18n.t('Available for all')}
                                 control={
                                     <Switch
-                                        // eslint-disable-next-line no-bitwise
                                         checked={!!(projectMode & 0x60)}
                                         onChange={e => {
-                                            // eslint-disable-next-line no-bitwise
                                             props.socket.getRawSocket().emit(
                                                 'chmodFile',
                                                 `${props.adapterName}.${props.instance}`,

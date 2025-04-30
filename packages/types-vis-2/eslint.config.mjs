@@ -21,6 +21,6 @@ export default [
         },
     },
     {
-        files: ['*.d.ts'],
+        ignores: ['*.js', '*.mjs'],
     },
 ];
