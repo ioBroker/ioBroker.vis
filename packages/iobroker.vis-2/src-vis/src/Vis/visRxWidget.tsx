@@ -136,7 +136,7 @@ export class VisRxWidget<
     constructor(props: VisRxWidgetProps) {
         super(props);
 
-        const options: RxWidgetInfo = this.getWidgetInfo() as RxWidgetInfo;
+        const options: RxWidgetInfo = this.getWidgetInfo();
 
         const widgetAttrInfo: Record<string, RxWidgetInfoAttributesField> = {};
         // collect all attributes (only types)

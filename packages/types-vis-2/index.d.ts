@@ -1068,6 +1068,7 @@ export interface ArgumentChanged {
     arg: string;
     wid: string;
 }
+
 export interface Subscribing {
     activeViews: string[];
     byViews: Record<string, string[]>;
@@ -1525,7 +1526,7 @@ export interface ExtendedMuiPalette {
     augmentColor: (options: PaletteAugmentColorOptions) => PaletteColor;
 }
 
-interface ExtendedPalette extends ExtendedMuiPalette {
+export interface ExtendedPalette extends ExtendedMuiPalette {
     mode: ThemeType;
     expert: string;
     grey: {
@@ -1701,7 +1702,7 @@ export interface CustomPaletteProperties {
     };
 }
 
-interface RxWidgetInfoGroup {
+export interface RxWidgetInfoGroup {
     /** Name of the attributes section */
     readonly name: string;
     /** Fields of this attribute section */
@@ -1713,7 +1714,7 @@ interface RxWidgetInfoGroup {
     readonly hidden?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
 }
 
-interface RxWidgetInfo {
+export interface RxWidgetInfo {
     /** Unique ID of the widget. Starts with 'tpl...' */
     readonly id: string;
 
@@ -1771,9 +1772,9 @@ export interface CustomWidgetProperties {
     selectedWidget: AnyWidgetId;
 }
 
-type Writeable<T> = { -readonly [P in keyof T]: Writeable<T[P]> };
+export type Writeable<T> = { -readonly [P in keyof T]: Writeable<T[P]> };
 
-type RxWidgetInfoWriteable = Writeable<RxWidgetInfo>;
+export type RxWidgetInfoWriteable = Writeable<RxWidgetInfo>;
 
 type AttributeTypeToDataType<TType extends RxWidgetAttributeType> = TType extends 'checkbox'
     ? boolean
@@ -1782,12 +1783,12 @@ type AttributeTypeToDataType<TType extends RxWidgetAttributeType> = TType extend
       : string;
 
 /** Infer the RxData from VisAttrs */
-type GetRxDataFromVisAttrs<T extends Record<string, any>> = {
+export type GetRxDataFromVisAttrs<T extends Record<string, any>> = {
     [K in T['visAttrs'][number]['fields'][number] as K['name']]: AttributeTypeToDataType<K['type']>;
 };
 
 /** Infers the RxData from a given Widget */
-type GetRxDataFromWidget<T extends { getWidgetInfo: () => Record<string, any> }> = GetRxDataFromVisAttrs<
+export type GetRxDataFromWidget<T extends { getWidgetInfo: () => Record<string, any> }> = GetRxDataFromVisAttrs<
     ReturnType<T['getWidgetInfo']>
 >;
 

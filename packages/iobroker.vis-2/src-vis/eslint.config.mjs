@@ -36,6 +36,7 @@ export default [
             'modulefederation.vis.config.js',
             'src/Vis/lib/can.custom.min.js',
             'eslint.config.mjs',
+            'src/Components/CustomAceEditor.tsx',
         ],
     },
     {
