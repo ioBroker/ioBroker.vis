@@ -16,7 +16,6 @@
         "access": "public"
     },
     "devDependencies": {
-        "@iobroker/adapter-react-v5": "^7.6.15",
         "@mui/material": "^6.4.11",
         "@types/moment": "^2.13.0",
         "@types/react": "^18.3.20",
