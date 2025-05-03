@@ -364,7 +364,10 @@ export class VisRxWidget<
             return newState;
         }
 
-        this.updateTimer && clearTimeout(this.updateTimer);
+        if (this.updateTimer) {
+            clearTimeout(this.updateTimer);
+            this.updateTimer = null;
+        }
 
         // compare
         if (
@@ -377,8 +380,9 @@ export class VisRxWidget<
                 this.updateTimer = undefined;
                 const newState = this.newState ?? null;
                 this.newState = null;
-                // @ts-expect-error fix later
-                newState && this.setState(newState);
+                if (newState) {
+                    this.setState(newState as VisRxWidgetState & TState & { rxData: TRxData });
+                }
             }, 50);
         } else {
             this.newState = null;
@@ -531,7 +535,7 @@ export class VisRxWidget<
         this.onStateChanged();
     }
 
-    formatValue(value: number | string, round: number): string {
+    formatValue(value: number | string, round?: 0 | 1): string {
         if (typeof value === 'number') {
             if (round === 1) {
                 value = Math.round(value * 10) / 10;

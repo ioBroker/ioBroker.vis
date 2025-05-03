@@ -12,7 +12,7 @@ import type {
 } from '@mui/material/styles/createPalette';
 import type { Color, PaletteMode } from '@mui/material';
 
-import type { LegacyConnection, ThemeType, IobTheme } from '@iobroker/adapter-react-v5';
+import type { LegacyConnection, ThemeType, IobTheme, ThemeName } from '@iobroker/adapter-react-v5';
 
 interface VisView extends React.FC<VisViewProps> {
     getOneWidget(
@@ -188,6 +188,9 @@ export type RxWidgetInfoAttributesFieldText = {
     /** if true, no edit button will be shown. Default is true. */
     readonly noButton?: boolean;
 
+    /** Used by counted fields */
+    readonly index?: number;
+
     /** Name of the widget field */
     readonly name: string;
     /** Field label (i18n) */
@@ -219,6 +222,9 @@ export type RxWidgetInfoAttributesFieldDelimiter = {
     readonly name: string;
     /** JS Function for conditional visibility */
     readonly hidden?: string | ((data: WidgetData) => boolean) | ((data: WidgetData, index: number) => boolean);
+
+    /** Used by counted fields */
+    readonly index?: number;
 };
 
 export type RxWidgetInfoAttributesFieldHelp = {
@@ -230,6 +236,9 @@ export type RxWidgetInfoAttributesFieldHelp = {
     readonly noTranslation?: boolean;
     /** this style will be applied to the text */
     readonly style?: React.CSSProperties;
+
+    /** Used by counted fields */
+    readonly index?: number;
 
     /** Name of the widget field */
     readonly name: string;
@@ -246,6 +255,9 @@ export type RxWidgetInfoAttributesFieldHTML = {
     readonly default?: string;
     /** show multi-line editor */
     readonly multiline?: boolean;
+
+    /** Used by counted fields */
+    readonly index?: number;
 
     /** Name of the widget field */
     readonly name: string;
@@ -303,6 +315,9 @@ export type RxWidgetInfoAttributesFieldID = {
         readonly type?: ioBroker.ObjectType | ioBroker.ObjectType[];
     };
 
+    /** Used by counted fields */
+    readonly index?: number;
+
     /** Name of the widget field */
     readonly name: string;
     /** Field label (i18n) */
@@ -339,6 +354,9 @@ export type RxWidgetInfoAttributesFieldInstance = {
     /** In this case, only instance number (like `0`) is shown and not `history.0`. It can be set to true only with non-empty `adapter` setting. */
     readonly iShort?: boolean;
 
+    /** Used by counted fields */
+    readonly index?: number;
+
     /** Name of the widget field */
     readonly name: string;
     /** Field label (i18n) */
@@ -373,6 +391,9 @@ export type RxWidgetInfoAttributesFieldSelect = {
     /** Do not translate options */
     readonly noTranslation?: boolean;
 
+    /** Used by counted fields */
+    readonly index?: number;
+
     /** Name of the widget field */
     readonly name: string;
     /** Field label (i18n) */
@@ -404,6 +425,9 @@ export type RxWidgetInfoAttributesFieldCheckbox = {
     readonly default?: boolean;
     /** If sizes should be deleted or set to specific value. `false` - delete sizes, or {width: 100, height: 100} */
     readonly desiredSize?: { width: number; height: number } | boolean;
+
+    /** Used by counted fields */
+    readonly index?: number;
 
     /** Name of the widget field */
     readonly name: string;
@@ -441,6 +465,9 @@ export type RxWidgetInfoAttributesFieldNumber = {
     /** Number step */
     readonly step?: number;
 
+    /** Used by counted fields */
+    readonly index?: number;
+
     /** Name of the widget field */
     readonly name: string;
     /** Field label (i18n) */
@@ -470,6 +497,10 @@ export type RxWidgetInfoAttributesFieldSlider = {
     readonly type: 'slider';
     /** Field default value */
     readonly default?: number;
+
+    /** Used by counted fields */
+    readonly index?: number;
+
     /** Slider min value */
     readonly min: number;
     /** Slider max value */
@@ -510,6 +541,10 @@ export type RxWidgetInfoAttributesFieldWidget = {
     readonly type: 'widget';
     /** Field default value */
     readonly default?: string;
+
+    /** Used by counted fields */
+    readonly index?: number;
+
     /** type of the widget, like `tplMaterial2Switches` */
     readonly tpl?: string;
     /** if true, all widgets of all views will be shown, not only from the current view. Default is false. */
@@ -555,6 +590,9 @@ export type RxWidgetInfoAttributesFieldSelectViews = {
     /** if false, only one view can be selected. Default is true. */
     readonly multiple?: boolean;
 
+    /** Used by counted fields */
+    readonly index?: number;
+
     /** Name of the widget field */
     readonly name: string;
     /** Field label (i18n) */
@@ -584,6 +622,10 @@ export type RxWidgetInfoAttributesFieldCustom = {
     readonly type: 'custom';
     /** Field type */
     readonly name?: string;
+
+    /** Used by counted fields */
+    readonly index?: number;
+
     /** Field default value */
     readonly default?: string | number | boolean;
     /** if false, only one view can be selected. Default is true. */
@@ -637,6 +679,9 @@ export type RxWidgetInfoAttributesFieldSimple = {
     /** Field default value */
     readonly default?: string;
 
+    /** Used by counted fields */
+    readonly index?: number;
+
     /** Name of the widget field */
     readonly name: string;
     /** Field label (i18n) */
@@ -664,6 +709,9 @@ export type RxWidgetInfoAttributesFieldSimple = {
 export type RxWidgetInfoAttributesFieldDefault = {
     /** Field default value */
     readonly default?: string;
+
+    /** Used by counted fields */
+    readonly index?: number;
 
     /** Name of the widget field */
     readonly name: string;
@@ -1181,11 +1229,11 @@ export interface VisLegacy {
     setValue: (id: string, val: any) => void;
     changeView: (
         viewDiv: string,
-        view: string,
-        hideOptions: any,
-        showOptions: any,
-        sync: boolean,
-        cb: (viewDiv: string, view: string) => void,
+        view?: string,
+        hideOptions?: any,
+        showOptions?: any,
+        sync?: boolean,
+        cb?: (viewDiv: string, view: string) => void,
     ) => void;
     getCurrentPath: () => string | { view: string; path: string[] };
     navigateInView: (path: string) => void;
@@ -1649,10 +1697,10 @@ export interface VisContext {
     systemConfig: ioBroker.SystemConfigObject;
     theme: VisTheme;
     themeName: string;
-    themeType: 'dark' | 'light';
+    themeType: ThemeType;
     timeInterval: string;
     timeStart: string;
-    toggleTheme: () => void;
+    toggleTheme: (newThemeName?: ThemeName) => void;
     user: string;
     userGroups: Record<string, ioBroker.Object>;
     views: Project; // project

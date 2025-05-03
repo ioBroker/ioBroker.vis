@@ -120,7 +120,7 @@ declare class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBase
     // eslint-disable-next-line react/no-unused-class-component-methods
     private beforeIncludeColor?: string;
     // eslint-disable-next-line react/no-unused-class-component-methods
-    private lastClick?: number;
+    protected lastClick?: number;
     // eslint-disable-next-line react/no-unused-class-component-methods
     protected movement?: VisBaseWidgetMovement;
     /** If resizing is currently locked */

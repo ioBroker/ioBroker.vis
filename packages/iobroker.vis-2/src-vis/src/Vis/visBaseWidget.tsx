@@ -159,7 +159,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
 
     private beforeIncludeColor?: string;
 
-    private lastClick?: number;
+    protected lastClick?: number;
 
     protected movement?: VisBaseWidgetMovement;
 

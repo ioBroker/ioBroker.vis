@@ -45,6 +45,8 @@ export interface RxFieldOption {
 export type RxWidgetInfoAttributesFieldAll = {
     /** Field type */
     type?: RxWidgetAttributeType;
+    /** Used by counted fields */
+    index?: number;
     /** Field default value */
     default?: string | number | boolean;
     /** If sizes should be deleted or set to specific value. `false` - delete sizes, or {width: 100, height: 100} */

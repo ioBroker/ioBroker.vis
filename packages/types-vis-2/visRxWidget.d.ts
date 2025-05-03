@@ -122,7 +122,7 @@ declare class VisRxWidget<
      */
     checkVisibility(stateId?: string | null, newState?: typeof this.newState): boolean;
     onPropertiesUpdated(): void;
-    formatValue(value: number | string, round: number): string;
+    formatValue(value: number | string, round?: 0 | 1): string;
     wrapContent(
         content: React.JSX.Element | React.JSX.Element[],
         addToHeader?: React.JSX.Element | null | React.JSX.Element[],
