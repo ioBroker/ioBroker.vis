@@ -392,26 +392,25 @@ export class VisRxWidget<
     }
 
     applyBinding(stateId: string, newState: typeof this.state): void {
-        this.linkContext.bindings[stateId] &&
-            this.linkContext.bindings[stateId].forEach(item => {
-                const value = this.props.context.formatUtils.formatBinding({
-                    format: item.format,
-                    view: item.view,
-                    wid: this.props.id,
-                    widget: this.props.context.views[item.view].widgets[this.props.id],
-                    widgetData: newState.rxData as WidgetData,
-                    values: newState.values,
-                    moment: this.props.context.moment,
-                });
-
-                if (item.type === 'data') {
-                    // @ts-expect-error fix later
-                    newState.rxData[item.attr] = value;
-                } else if (newState.rxStyle) {
-                    // @ts-expect-error fix later
-                    newState.rxStyle[item.attr] = value;
-                }
+        this.linkContext.bindings[stateId]?.forEach(item => {
+            const value = this.props.context.formatUtils.formatBinding({
+                format: item.format,
+                view: item.view,
+                wid: this.props.id,
+                widget: this.props.context.views[item.view].widgets[this.props.id],
+                widgetData: newState.rxData as WidgetData,
+                values: newState.values,
+                moment: this.props.context.moment,
             });
+
+            if (item.type === 'data') {
+                // @ts-expect-error fix later
+                newState.rxData[item.attr] = value;
+            } else if (newState.rxStyle) {
+                // @ts-expect-error fix later
+                newState.rxStyle[item.attr] = value;
+            }
+        });
     }
 
     componentDidMount(): void {
@@ -913,7 +912,10 @@ export class VisRxWidget<
                         className="vis-signal-text"
                         style={textStyle}
                     >
-                        {this.state.rxData[`signals-text-${index}`]}
+                        {this.state.rxData[`signals-text-${index}`].replace(
+                            '%s',
+                            (this.state.values[`${oid}.val`] ?? '').toString(),
+                        )}
                     </div>
                 );
             } else {

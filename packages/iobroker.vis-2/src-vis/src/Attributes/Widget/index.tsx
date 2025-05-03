@@ -391,6 +391,7 @@ class Widget extends Component<WidgetProps, WidgetState> {
                     // noTranslation: true,
                     options: ['0', '1', '2', '3', '4', '5', '6'],
                     default: '0',
+                    noTranslation: true,
                     immediateChange: true,
                 },
             ],
@@ -407,12 +408,12 @@ class Widget extends Component<WidgetProps, WidgetState> {
                     options: ['==', '!=', '<=', '>=', '<', '>', 'consist', 'not consist', 'exist', 'not exist'],
                     default: '==',
                 },
-                { name: `signals-val-${i}`, default: true },
+                { name: `signals-val-${i}`, default: 'true' },
                 {
                     name: `signals-icon-${i}`,
                     type: 'image',
                     default: '',
-                    hidden: `!!data["signals-smallIcon-${i}"]`, // `${adapterName}/signals/lowbattery.png` },
+                    hidden: `!!data["signals-smallIcon-${i}"]`,
                 },
                 {
                     name: `signals-smallIcon-${i}`,
@@ -424,9 +425,10 @@ class Widget extends Component<WidgetProps, WidgetState> {
                 {
                     name: `signals-color-${i}`,
                     type: 'color',
+                    label: 'signals-color',
                     default: '',
                     hidden: `!data["signals-smallIcon-${i}"] && !data["signals-text-${i}"]`,
-                }, // `${adapterName}/signals/lowbattery.png` },
+                },
                 {
                     name: `signals-icon-size-${i}`,
                     type: 'slider',
@@ -436,7 +438,7 @@ class Widget extends Component<WidgetProps, WidgetState> {
                     default: 0,
                 },
                 { name: `signals-icon-style-${i}` },
-                { name: `signals-text-${i}` },
+                { name: `signals-text-${i}`, label: 'signals-text', tooltip: 'signals-text-tooltip' },
                 { name: `signals-text-style-${i}` },
                 { name: `signals-text-class-${i}` },
                 { name: `signals-blink-${i}`, type: 'checkbox', default: false },
@@ -1797,7 +1799,10 @@ class Widget extends Component<WidgetProps, WidgetState> {
                             />
                         </div>
                     ) : null}
-                    {(field.type !== 'custom' || field.label) && !field.noBinding ? (
+                    {(field.type !== 'custom' || field.label) &&
+                    // Checkboxes have no binding by default as widget must support value 'true' too. Bindings can deliver only strings
+                    ((field.type === 'checkbox' && field.noBinding === false) ||
+                        (field.type !== 'checkbox' && !field.noBinding)) ? (
                         isBoundField ? (
                             <span
                                 style={styles.bindIconSpan}

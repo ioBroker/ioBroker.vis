@@ -129,8 +129,8 @@ Group can have the following attributes:
 - `disabled`: [optional] JS code to calculate the error state of the attribute. Syntax is the same as `hidden`. You can set it permanently to `true`.
 - `error`: [optional] JS code to calculate the error state of the attribute. Syntax is the same as `hidden`, but you may return string instead of boolean.
 - `component`: in development
-- `noBinding`: [optional] if true, no binding button will be shown for this attribute
-- `onChange`: [optional] Script, that will be called, when value of attribute will be changed. Example:
+- `noBinding`: [optional] if true, no binding button will be shown for this attribute. Exception is type `checkbox` for this type you must explicitly say `false` to show the binding, as the widget must support value 'true' that could come from binding. Binding can deliver only strings.
+- `onChange`: [optional] Script, that will be called when value of attribute is changed. Example:
 
 ```
 onChange: async (field, data, changeData, socket) => {

@@ -849,7 +849,7 @@ class VisCanWidget extends VisBaseWidget<VisCanWidgetState> {
     }
 
     addSignalIcon(widgetData?: WidgetData, index?: number): void {
-        widgetData = widgetData || this.props.context.allWidgets[this.props.id]?.data;
+        widgetData ||= this.props.context.allWidgets[this.props.id]?.data;
         if (!widgetData) {
             return;
         }
@@ -888,9 +888,15 @@ class VisCanWidget extends VisBaseWidget<VisCanWidgetState> {
         const text = widgetData[`signals-text-${index}`];
         if (text) {
             const divText = window.document.createElement('div');
+            const val = this.props.context.canStates.attr(`${widgetData[`signals-oid-${index}`]}.val`) as
+                | string
+                | number
+                | boolean
+                | null
+                | undefined;
             divText.className = 'vis-signal-text';
             VisCanWidget.applyStyle(divText, widgetData[`signals-text-style-${index}`]);
-            divText.innerHTML = text;
+            divText.innerHTML = text.replace('%s', (val ?? '').toString());
             divSignal.appendChild(divText);
         }
 

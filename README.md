@@ -293,6 +293,9 @@ npm run start
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Added possibility to use value in signal text
+
 ### 2.12.8 (2025-05-03)
 * (@GermanBluefox) Added new SVG icon as favicon.
 * (@GermanBluefox) Added support for the TypeScript widgets
