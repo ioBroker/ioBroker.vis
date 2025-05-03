@@ -15,3 +15,9 @@ declare global {
         jQuery: JQuery;
     }
 }
+
+declare module '@mui/material/Button' {
+    interface ButtonPropsColorOverrides {
+        grey: true;
+    }
+}
