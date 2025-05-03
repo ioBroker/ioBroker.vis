@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.12.7",
+    "version": "2.12.8",
     "news": {
+      "2.12.8": {
+        "en": "Added new SVG icon as favicon.\nAdded support for the TypeScript widgets\nUsed `vite` for faster loading",
+        "de": "Neues SVG-Symbol als favicon hinzugefügt.\nUnterstützung für die TypeScript Widgets hinzugefügt\nGebraucht `vite` für schnelleres Laden",
+        "ru": "Добавлен новый значок SVG в виде favicon.\nДобавлена поддержка виджетов TypeScript\nИспользуется «vite» для более быстрой загрузки",
+        "pt": "Adicionado novo ícone SVG como favicon.\nAdicionado suporte para os widgets TypeScript\nUsado `vite` para carregamento mais rápido",
+        "nl": "Nieuw SVG-pictogram toegevoegd als favicon.\nOndersteuning voor de TypeScript-widgets toegevoegd\nGebruikte uitnodiging om sneller te laden",
+        "fr": "Ajout d'une nouvelle icône SVG comme favicon.\nAjout du support pour les widgets TypeScript\nUtilisé `vite` pour un chargement plus rapide",
+        "it": "Aggiunta nuova icona SVG come favicon.\nAggiunto supporto per i widget di TypeScript\nUsato `vite` per il caricamento più veloce",
+        "es": "Añadido nuevo icono SVG como favicon.\nSoporte añadido para los widgets TipoScript\nUsado `vite` para una carga más rápida",
+        "pl": "Dodano nową ikonę SVG jako favicon.\nDodano obsługę widżetów TypeScript\nUżywany 'vite' do szybszego ładowania",
+        "uk": "Додано нову іконку SVG як favicon.\nДодано підтримку віджетів TypeScript\nВикористовується для швидкого завантаження",
+        "zh-cn": "添加新 SVG 图标为favicon .\n为类型脚本部件添加支持\n用于更快装载的“vite”"
+      },
       "2.11.2": {
         "en": "Do not load vis-1 widgets if vis-2 widgets provided",
         "de": "Nicht laden vis-1 Widgets, wenn vis-2 Widgets zur Verfügung gestellt",
