@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.12.8",
+    "version": "2.12.9",
     "news": {
+      "2.12.9": {
+        "en": "Added possibility to use value in signal text",
+        "de": "Möglichkeit, Wert im Signaltext zu verwenden",
+        "ru": "Добавлена возможность использования значения в сигнальном тексте",
+        "pt": "Adicionado possibilidade de usar o valor no texto do sinal",
+        "nl": "Toegevoegde mogelijkheid om waarde te gebruiken in signaaltekst",
+        "fr": "Possibilité d'utiliser la valeur dans le texte du signal",
+        "it": "Aggiunto possibilità di utilizzare il valore nel testo del segnale",
+        "es": "Mayor posibilidad de utilizar el valor en el texto de la señal",
+        "pl": "Dodano możliwość użycia wartości w tekście sygnału",
+        "uk": "Додано можливість використання значення в тексті сигналу",
+        "zh-cn": "添加在信号文本中使用值的可能性"
+      },
       "2.12.8": {
         "en": "Added new SVG icon as favicon.\nAdded support for the TypeScript widgets\nUsed `vite` for faster loading",
         "de": "Neues SVG-Symbol als favicon hinzugefügt.\nUnterstützung für die TypeScript Widgets hinzugefügt\nGebraucht `vite` für schnelleres Laden",
@@ -80,19 +93,6 @@
         "pl": "Ulepszenie pisania na maszynie",
         "uk": "Покращує типування у форматі",
         "zh-cn": "改进打字符"
-      },
-      "2.10.4": {
-        "en": "Corrected the jumping by object selection\nImplemented swipe widget",
-        "de": "Korrektur des Sprungs durch Objektauswahl\nErgänztes Swipe Widget",
-        "ru": "Исправлена прыжок с помощью выбора объекта\nРеализованный виджет",
-        "pt": "Corrigido o salto por seleção de objetos\nImplementado widget swipe",
-        "nl": "Het springen door objectselectie gecorrigeerd\nGeïmplementeerd widget",
-        "fr": "Correction de la sélection de saut par objet\nWidget de balayage mis en œuvre",
-        "it": "Corretto il salto dalla selezione degli oggetti\nWidget di swipe implementato",
-        "es": "Corregido el salto por selección de objetos\nWidget implementado",
-        "pl": "Skok poprawiony przez wybór obiektu\nWbudowany widżet przewijania",
-        "uk": "Виправлено стрибки за вибором об'єкта\nРеалізовано віджет swipe",
-        "zh-cn": "通过对象选择修正跳跃\n已执行的刷新部件"
       }
     },
     "title": "Visualisation Next Generation",

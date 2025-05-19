@@ -293,7 +293,7 @@ npm run start
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.12.9 (2025-05-19)
 * (@GermanBluefox) Added possibility to use value in signal text
 
 ### 2.12.8 (2025-05-03)
@@ -312,9 +312,6 @@ npm run start
 
 ### 2.10.8 (2024-11-22)
 * (bluefox) Added a new option for view: "Limit only for instances"
-
-### 2.10.7 (2024-07-23)
-* (bluefox) Optimization of the module federation
 
 ## License
  Copyright (c) 2021-2025 Denis Haev, https://github.com/GermanBluefox <dogafox@gmail.com>,

@@ -356,3 +356,5 @@
 
 ### 2.0.0 (2022-10-21)
 * (bluefox) Completely new visualization, but partly compatible with the previous version
+## 2.10.7 (2024-07-23)
+* (bluefox) Optimization of the module federation
