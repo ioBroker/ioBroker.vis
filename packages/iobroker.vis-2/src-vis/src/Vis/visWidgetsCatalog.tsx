@@ -134,6 +134,7 @@ export type RxWidgetInfoAttributesFieldAll = {
                 views: Project;
                 theme: VisTheme;
             };
+            Editor?: React.FC<{ field: RxWidgetInfoAttributesFieldAll; index?: number; disabled?: boolean }>;
             selectedView: string;
             selectedWidgets: AnyWidgetId[];
             selectedWidget: `w${string}` | `g${string}`;

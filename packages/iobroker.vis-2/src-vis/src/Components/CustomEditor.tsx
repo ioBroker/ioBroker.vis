@@ -37,7 +37,7 @@ export function CustomEditor(props: MonacoEditorProps): React.JSX.Element {
                 // value={value}
                 defaultValue={defaultValue}
                 onChange={onChange ? (value: string): void => onChange(value || '') : undefined}
-                className={props.error ? 'vis-monaco' : 'vis-monaco-error'}
+                className={props.error ? 'vis-monaco-error' : 'vis-monaco'}
                 options={{
                     readOnly: !onChange,
                     minimap: { enabled: false },

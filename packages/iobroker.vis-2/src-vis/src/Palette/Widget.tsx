@@ -11,7 +11,7 @@ import type { MarketplaceWidgetRevision, Project } from '@iobroker/types-vis-2';
 
 import { store } from '@/Store';
 import type { WidgetType } from '@/Vis/visWidgetsCatalog';
-import helpers from '../Components/WizardHelpers';
+import helpers from '../Components/wizardHelpers';
 
 const IMAGE_TYPES = ['.png', '.jpg', '.svg', '.gif', '.apng', '.avif', '.webp'];
 

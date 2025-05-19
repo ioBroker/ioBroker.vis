@@ -72,7 +72,7 @@ const allObjects = async (socket: LegacyConnection): Promise<Record<string, ioBr
 };
 
 function getObjectIcon(obj: ioBroker.Object, id: string, imagePrefix?: string): string {
-    imagePrefix = imagePrefix || '.'; // http://localhost:8081';
+    imagePrefix ||= '.'; // http://localhost:8081';
     let src = '';
     const common = obj?.common;
 
@@ -88,7 +88,7 @@ function getObjectIcon(obj: ioBroker.Object, id: string, imagePrefix?: string): 
                         } else {
                             src = `${imagePrefix}/adapter/${common.name}/${cIcon}`;
                         }
-                    } else if (id && id.startsWith('system.adapter.')) {
+                    } else if (id?.startsWith('system.adapter.')) {
                         instance = id.split('.', 3);
                         if (cIcon[0] === '/') {
                             instance[2] += cIcon;
@@ -169,7 +169,7 @@ const detectDevices = async (socket: LegacyConnection): Promise<DetectorResult[]
         }
         const members = (devicesObject[id].common as ioBroker.EnumCommon).members;
 
-        if (members && members.length) {
+        if (members?.length) {
             members.forEach((member: string) => {
                 // if an object really exists
                 if (devicesObject[member]) {
@@ -308,7 +308,7 @@ const detectDevices = async (socket: LegacyConnection): Promise<DetectorResult[]
                         );
                     }
                     idArray.pop();
-                    // read device
+                    // read a device
                     const grandParentObject = devicesObject[idArray.join('.')];
                     if (grandParentObject?.type === 'device' && grandParentObject.common?.icon) {
                         deviceObj.common.name = grandParentObject.common.name || deviceObj.common.name;

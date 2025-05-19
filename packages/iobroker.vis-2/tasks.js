@@ -17,6 +17,8 @@ const unzipper = require('unzipper');
 function clean() {
     deleteFoldersRecursive(`${__dirname}/www`);
     deleteFoldersRecursive(`${__dirname}/runtime`, ['node_modules', 'package-lock.json']);
+    const version = JSON.parse(readFileSync(`${__dirname}/package.json`, 'utf8')).version;
+    writeFileSync(`${__dirname}/src-vis/src/version.json`, JSON.stringify({ version }, null, 2));
 }
 
 function copyRuntimeSrc() {
@@ -33,7 +35,7 @@ function copyRuntimeSrc() {
     let runtimeText = text.replace('<title>Editor.vis</title>', '<title>ioBroker.vis</title>');
     runtimeText = runtimeText.replace('faviconEdit.ico', 'favicon.ico');
     if (runtimeText !== text) {
-        writeFileSync(`${__dirname}/runtime/public/index.html`, runtimeText);
+        writeFileSync(`${__dirname}/runtime/index.html`, runtimeText);
     }
 
     copyFolder(`${__dirname}/src-vis/src/Vis`, `${__dirname}/runtime/src/Vis`, [
@@ -196,8 +198,9 @@ async function generateSvgFiles() {
         !existsSync(`${__dirname}/knx-uf-iconset`) && mkdirSync(`${__dirname}/knx-uf-iconset`);
         writeFileSync(`${__dirname}/knx-uf-iconset/master.zip`, res.data);
 
-        const zip = createReadStream(`${__dirname}/knx-uf-iconset/master.zip`)
-            .pipe(unzipper.Parse({ forceStream: true }));
+        const zip = createReadStream(`${__dirname}/knx-uf-iconset/master.zip`).pipe(
+            unzipper.Parse({ forceStream: true }),
+        );
         for await (const entry of zip) {
             const fileName = entry.path;
             if (entry.type === 'File' && fileName.endsWith('.svg')) {

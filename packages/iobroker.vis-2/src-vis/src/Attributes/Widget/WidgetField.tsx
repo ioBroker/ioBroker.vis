@@ -58,7 +58,12 @@ import type {
     VisTheme,
 } from '@iobroker/types-vis-2';
 
-import type { RxFieldOption, WidgetAttributeInfoStored, WidgetType } from '@/Vis/visWidgetsCatalog';
+import type {
+    RxFieldOption,
+    RxWidgetInfoAttributesFieldAll,
+    WidgetAttributeInfoStored,
+    WidgetType,
+} from '@/Vis/visWidgetsCatalog';
 import commonStyles from '@/Utils/styles';
 import TextDialog from './TextDialog';
 import MaterialIconSelector from '../../Components/MaterialIconSelector';
@@ -514,9 +519,7 @@ const WidgetField = (props: WidgetFieldProps): string | React.JSX.Element | Reac
         }
     }
 
-    if (!window.collectClassesValue) {
-        window.collectClassesValue = collectClasses();
-    }
+    window.collectClassesValue ||= collectClasses();
 
     const textRef = useRef();
     const [textDialogFocused, setTextDialogFocused] = useState(false);
@@ -724,6 +727,7 @@ const WidgetField = (props: WidgetFieldProps): string | React.JSX.Element | Reac
                         input: {
                             endAdornment: (
                                 <Button
+                                    tabIndex={-1}
                                     style={{ minWidth: 30 }}
                                     disabled={disabled}
                                     size="small"
@@ -816,6 +820,7 @@ const WidgetField = (props: WidgetFieldProps): string | React.JSX.Element | Reac
                             sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
                             endAdornment: (
                                 <Button
+                                    tabIndex={-1}
                                     style={{ minWidth: 30 }}
                                     disabled={disabled}
                                     size="small"
@@ -927,6 +932,7 @@ const WidgetField = (props: WidgetFieldProps): string | React.JSX.Element | Reac
                                     endAdornment:
                                         !isDifferent && !customValue ? (
                                             <Button
+                                                tabIndex={-1}
                                                 style={{ minWidth: 30 }}
                                                 size="small"
                                                 disabled={disabled}
@@ -972,6 +978,7 @@ const WidgetField = (props: WidgetFieldProps): string | React.JSX.Element | Reac
                         sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
                         endAdornment: !customValue ? (
                             <Button
+                                tabIndex={-1}
                                 size="small"
                                 style={{ minWidth: 30 }}
                                 disabled={disabled}
@@ -1555,6 +1562,23 @@ const WidgetField = (props: WidgetFieldProps): string | React.JSX.Element | Reac
 
     if (field.type === 'custom') {
         if (field.component) {
+            const Editor = (editorProps: {
+                field: RxWidgetInfoAttributesFieldAll;
+                disabled?: boolean;
+                error?: boolean;
+                data: Record<string, any>;
+                onChange: (value: any, field: RxWidgetInfoAttributesFieldAll) => void;
+            }): React.JSX.Element => {
+                return (
+                    <WidgetField
+                        {...props}
+                        error={editorProps.error}
+                        field={editorProps.field}
+                        disabled={editorProps.disabled}
+                    />
+                );
+            };
+
             try {
                 return field.component(
                     field as RxWidgetInfoAttributesField,
@@ -1582,6 +1606,7 @@ const WidgetField = (props: WidgetFieldProps): string | React.JSX.Element | Reac
                             views: store.getState().visProject,
                             theme: props.theme,
                         },
+                        Editor,
                         selectedView: props.selectedView,
                         selectedWidgets: props.selectedWidgets,
                         selectedWidget:
@@ -1664,6 +1689,7 @@ const WidgetField = (props: WidgetFieldProps): string | React.JSX.Element | Reac
                         input: {
                             endAdornment: value ? (
                                 <IconButton
+                                    tabIndex={-1}
                                     disabled={disabled}
                                     size="small"
                                     onClick={() => change('')}
@@ -1724,6 +1750,7 @@ const WidgetField = (props: WidgetFieldProps): string | React.JSX.Element | Reac
                         input: {
                             endAdornment: field.noButton ? null : (
                                 <Button
+                                    tabIndex={-1}
                                     disabled={disabled}
                                     size="small"
                                     style={{ minWidth: 30 }}
@@ -1808,6 +1835,7 @@ const WidgetField = (props: WidgetFieldProps): string | React.JSX.Element | Reac
                             endAdornment:
                                 field.clearButton && cachedValue !== null && cachedValue !== undefined ? (
                                     <IconButton
+                                        tabIndex={-1}
                                         size="small"
                                         onClick={() => change(null)}
                                     >

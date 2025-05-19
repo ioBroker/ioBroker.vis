@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { Component } from 'react';
 
 import {
     MenuItem,
@@ -28,134 +28,151 @@ interface CSSProps {
     maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
     editMode: boolean;
 }
+interface CSSState {
+    type: 'global' | 'local';
+    localCss: string;
+    globalCss: string;
+    showHelp: boolean;
+    saving: boolean;
+}
 
-const CSS = (props: CSSProps): React.JSX.Element => {
-    const [type, setType] = useState<'global' | 'local'>('global');
+export default class CSS extends Component<CSSProps, CSSState> {
+    private localCssTimer: ReturnType<typeof setTimeout> | null = null;
+    private globalCssTimer: ReturnType<typeof setTimeout> | null = null;
 
-    const [localCss, setLocalCss] = useState('');
-    const [globalCss, setGlobalCss] = useState('');
-    const [showHelp, setShowHelp] = useState(false);
-
-    const [localCssTimer, setLocalCssTimer] = useState(null);
-    const [globalCssTimer, setGlobalCssTimer] = useState(null);
-
-    const timers = {
-        global: {
-            timer: globalCssTimer,
-            setTimer: setGlobalCssTimer,
-            value: globalCss,
-            setValue: setGlobalCss,
-            directory: props.adapterId,
-            file: 'vis-common-user.css',
-        },
-        local: {
-            timer: localCssTimer,
-            setTimer: setLocalCssTimer,
-            value: localCss,
-            setValue: setLocalCss,
-            directory: props.adapterId,
-            file: `${props.projectName}/vis-user.css`,
-        },
-    };
-
-    useEffect(() => {
-        const load = async (): Promise<void> => {
-            try {
-                const commonCss = (await readFile(props.socket, props.adapterId, 'vis-common-user.css')) as string;
-                setGlobalCss(commonCss);
-            } catch (e) {
-                if (e !== 'Not exists') {
-                    console.warn(`Cannot loading global CSS: ${e}`);
-                }
-            }
-            try {
-                const userCss = (await readFile(
-                    props.socket,
-                    props.adapterId,
-                    `${props.projectName}/vis-user.css`,
-                )) as string;
-                setLocalCss(userCss);
-            } catch (e) {
-                if (e !== 'Not exists') {
-                    console.warn(`Cannot load project CSS: ${e}`);
-                }
-            }
-            if (window.localStorage.getItem('CSS.type')) {
-                setType(window.localStorage.getItem('CSS.type') as 'global' | 'local');
-            }
+    constructor(props: CSSProps) {
+        super(props);
+        this.state = {
+            type: 'global',
+            localCss: '',
+            globalCss: '',
+            showHelp: false,
+            saving: false,
         };
+    }
 
-        load().catch(e => console.error('Error loading CSS: ', e));
-    });
+    async componentDidMount(): Promise<void> {
+        const newState: Partial<CSSState> = {};
+        try {
+            newState.globalCss = (await readFile(
+                this.props.socket,
+                this.props.adapterId,
+                'vis-common-user.css',
+            )) as string;
+        } catch (e) {
+            if (e !== 'Not exists') {
+                console.warn(`Cannot loading global CSS: ${e}`);
+            }
+        }
+        try {
+            newState.localCss = (await readFile(
+                this.props.socket,
+                this.props.adapterId,
+                `${this.props.projectName}/vis-user.css`,
+            )) as string;
+        } catch (e) {
+            if (e !== 'Not exists') {
+                console.warn(`Cannot load project CSS: ${e}`);
+            }
+        }
+        if (window.localStorage.getItem('CSS.type')) {
+            newState.type = window.localStorage.getItem('CSS.type') as 'global' | 'local';
+        }
+        this.setState(newState as CSSState);
+    }
 
-    const save = (value: string, saveType: 'global' | 'local'): void => {
-        timers[saveType].setValue(value);
-        clearTimeout(timers[saveType].timer);
-        timers[saveType].setTimer(
-            setTimeout(() => {
-                timers[saveType].setTimer(null);
-                // inform views about changed CSS
-                props.saveCssFile(timers[saveType].directory, timers[saveType].file, value);
-            }, 1000),
-        );
-    };
+    save(value: string, saveType: 'global' | 'local'): void {
+        const newState: Partial<CSSState> = { saving: true };
+        if (saveType === 'global') {
+            newState.globalCss = value;
+        } else {
+            newState.localCss = value;
+        }
 
-    const value = type === 'global' ? globalCss : localCss;
+        this.setState(newState as CSSState, () => {
+            if (saveType === 'global') {
+                if (this.globalCssTimer) {
+                    clearTimeout(this.globalCssTimer);
+                    this.globalCssTimer = null;
+                }
+                this.globalCssTimer = setTimeout(() => {
+                    this.setState({ saving: false });
+                    this.globalCssTimer = null;
+                    // inform views about changed CSS
+                    this.props.saveCssFile(this.props.adapterId, 'vis-common-user.css', value);
+                }, 1000);
+            } else {
+                if (this.localCssTimer) {
+                    clearTimeout(this.localCssTimer);
+                    this.localCssTimer = null;
+                }
+                this.localCssTimer = setTimeout(() => {
+                    this.localCssTimer = null;
+                    this.setState({ saving: false });
+                    // inform views about changed CSS
+                    this.props.saveCssFile(this.props.adapterId, `${this.props.projectName}/vis-user.css`, value);
+                }, 1000);
+            }
+        });
+    }
 
-    return (
-        <>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-                {showHelp ? (
-                    <Dialog
-                        open={!0}
-                        maxWidth={props.maxWidth || 'md'}
+    render(): React.JSX.Element {
+        const value = this.state.type === 'global' ? this.state.globalCss : this.state.localCss;
+
+        return (
+            <>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    {this.state.showHelp ? (
+                        <Dialog
+                            open={!0}
+                            maxWidth={this.props.maxWidth || 'md'}
+                        >
+                            <DialogTitle>{I18n.t('Explanation')}</DialogTitle>
+                            <DialogContent>
+                                {this.state.type === 'global' ? I18n.t('help_css_global') : I18n.t('help_css_project')}
+                            </DialogContent>
+                            <DialogActions>
+                                <Button
+                                    color="grey"
+                                    variant="contained"
+                                    onClick={() => this.setState({ showHelp: false })}
+                                    startIcon={<CheckIcon />}
+                                >
+                                    {I18n.t('Ok')}
+                                </Button>
+                            </DialogActions>
+                        </Dialog>
+                    ) : null}
+                    <Select
+                        variant="standard"
+                        value={this.state.type}
+                        onChange={e => {
+                            this.setState({ type: e.target.value as 'global' | 'local' });
+                            window.localStorage.setItem('CSS.type', e.target.value);
+                        }}
                     >
-                        <DialogTitle>{I18n.t('Explanation')}</DialogTitle>
-                        <DialogContent>
-                            {type === 'global' ? I18n.t('help_css_global') : I18n.t('help_css_project')}
-                        </DialogContent>
-                        <DialogActions>
-                            <Button
-                                color="grey"
-                                variant="contained"
-                                onClick={() => setShowHelp(false)}
-                                startIcon={<CheckIcon />}
-                            >
-                                {I18n.t('Ok')}
-                            </Button>
-                        </DialogActions>
-                    </Dialog>
-                ) : null}
-                <Select
-                    variant="standard"
-                    value={type}
-                    onChange={e => {
-                        setType(e.target.value as 'global' | 'local');
-                        window.localStorage.setItem('CSS.type', e.target.value);
-                    }}
-                >
-                    <MenuItem value="global">{I18n.t('Global')}</MenuItem>
-                    <MenuItem value="local">{I18n.t('css_project')}</MenuItem>
-                </Select>
-                <IconButton
-                    onClick={() => setShowHelp(true)}
-                    size="small"
-                >
-                    <HelpOutline />
-                </IconButton>
-                {globalCssTimer || localCssTimer ? <CircularProgress size={20} /> : null}
-            </div>
-            <CustomEditor
-                type="css"
-                themeType={props.themeType}
-                readOnly={!props.editMode}
-                value={value}
-                onChange={newValue => save(newValue, type)}
-                width="100%"
-                height="calc(100% - 34px)"
-            />
-        </>
-    );
-};
-
-export default CSS;
+                        <MenuItem value="global">{I18n.t('Global')}</MenuItem>
+                        <MenuItem value="local">{I18n.t('css_project')}</MenuItem>
+                    </Select>
+                    <IconButton
+                        onClick={() => this.setState({ showHelp: true })}
+                        size="small"
+                    >
+                        <HelpOutline />
+                    </IconButton>
+                    {this.state.saving ? <CircularProgress size={20} /> : null}
+                </div>
+                <CustomEditor
+                    key={this.state.type}
+                    type="css"
+                    themeType={this.props.themeType}
+                    readOnly={!this.props.editMode}
+                    value={value}
+                    onChange={newValue => this.save(newValue, this.state.type)}
+                    width="100%"
+                    height="calc(100% - 34px)"
+                />
+            </>
+        );
+    }
+}

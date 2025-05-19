@@ -18,7 +18,7 @@ const Scripts = (props: ScriptsProps): React.JSX.Element => (
         readOnly={!props.editMode}
         value={store.getState().visProject.___settings.scripts as string}
         onChange={newValue => {
-            const project = JSON.parse(JSON.stringify(store.getState().visProject));
+            const project: Project = JSON.parse(JSON.stringify(store.getState().visProject));
             project.___settings.scripts = newValue;
             props.changeProject(project);
         }}

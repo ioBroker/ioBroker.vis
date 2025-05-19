@@ -14,7 +14,7 @@ interface TextDialogProps {
 }
 
 const TextDialog = (props: TextDialogProps): React.JSX.Element => {
-    const [value, changeValue] = useState('');
+    const [value, changeValue] = useState(props.value || '');
 
     return (
         <IODialog
