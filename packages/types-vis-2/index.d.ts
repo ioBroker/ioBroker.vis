@@ -1236,7 +1236,7 @@ export interface VisLegacy {
         cb?: (viewDiv: string, view: string) => void,
     ) => void;
     getCurrentPath: () => string | { view: string; path: string[] };
-    navigateInView: (path: string) => void;
+    navigateInView: (path: string | string[]) => void;
     onWakeUp: (callback: null | (() => void | string), wid?: string) => void;
     inspectWidgets: (viewDiv: string, view: string, addWidget, delWidget, onlyUpdate: boolean) => void;
     showMessage: (
