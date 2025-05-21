@@ -89,7 +89,7 @@ export type RxWidgetInfoAttributesFieldAll = {
     /** Additionally, you can provide `adapters` to filter the instances of specific adapters. */
     readonly adapters?: string[];
     /** In this case, only instance number (like `0`) is shown and not `history.0`. It can be set to true only with non-empty `adapter` setting. */
-    readonly iShort?: boolean;
+    readonly isShort?: boolean;
     /** Options for a select type */
     options?: RxFieldOption[] | string[];
     /** Number min value */
@@ -118,8 +118,6 @@ export type RxWidgetInfoAttributesFieldAll = {
     readonly multiple?: boolean;
     /** show clear button near the field */
     readonly clearButton?: boolean;
-    /** show short instance name  */
-    readonly isShort?: boolean;
     /** if false, only one view can be selected. Default is true. */
     component?: (
         field: RxWidgetInfoAttributesField,

@@ -354,7 +354,7 @@ export type RxWidgetInfoAttributesFieldInstance = {
     /** Additionally, you can provide `adapters` to filter the instances of specific adapters. */
     readonly adapters?: string;
     /** In this case, only instance number (like `0`) is shown and not `history.0`. It can be set to true only with non-empty `adapter` setting. */
-    readonly iShort?: boolean;
+    readonly isShort?: boolean;
 
     /** Used by counted fields */
     readonly index?: number;

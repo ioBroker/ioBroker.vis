@@ -58,7 +58,7 @@ or
 `{h:javascript.0.myCustom.height;w:javascript.0.myCustom.width;h*w}` will simply multiply height with width.
 
 
-You can use *any* javascript (browser) functions. Arguments must be defined with ':', if not, it will be interpreted as formula.
+You can use *any* JavaScript (browser) functions. Arguments must be defined with ':', if not, it will be interpreted as formula.
 
 Take care about types. All of them are defined as strings. To be sure, that value will be treated as number use parseFloat function.
 
@@ -230,7 +230,7 @@ will not be rendered in edit mode.
 ## Settings
 ### Reload if sleep longer than
 There is a rule that after some disconnection period, the whole VIS page will be reloaded to synchronize the project.
-You can configure it in the menu "Settings...". If you set the interval to "never" so the page will never be reloaded.
+You can configure it in the menu "Settings...". If you set the interval to "never", so the page will never be reloaded.
 
 ### Reconnect interval
 Set the interval between the connection attempts if disconnected. If you set 2 seconds, it will try to establish the connection every 2 seconds.
