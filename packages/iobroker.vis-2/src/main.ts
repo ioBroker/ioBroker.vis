@@ -59,9 +59,9 @@ class VisAdapter extends Adapter {
                 if (this.synchronizing) {
                     void new Promise<void>((resolve): void => {
                         this.stoppingPromise = resolve;
-                    }).then(() => callback && callback());
+                    }).then(() => callback?.());
                 } else {
-                    callback && callback();
+                    callback?.();
                 }
             },
             ready: () => void this.main(),
@@ -109,7 +109,7 @@ class VisAdapter extends Adapter {
     async processMessage(msg: ioBroker.Message): Promise<void> {
         if (msg?.command === 'checkLicense' && msg.message && msg.callback) {
             const obj = await this.getForeignObjectAsync(`system.adapter.${msg.message}.0`);
-            if (!obj || !obj.native || (!obj.native.license && !obj.native.useLicenseManager)) {
+            if (!obj?.native || (!obj.native.license && !obj.native.useLicenseManager)) {
                 console.log(`[${msg.message}] License not found`);
                 this.sendTo(msg.from, msg.command, { error: 'License not found' }, msg.callback);
             } else {
@@ -270,7 +270,7 @@ class VisAdapter extends Adapter {
             await this.setState('info.uploaded', Date.now(), true);
         } else {
             const state = await this.getStateAsync('info.uploaded');
-            if (!state || !state.val) {
+            if (!state?.val) {
                 await this.setState('info.uploaded', Date.now(), true);
             }
         }
@@ -483,7 +483,7 @@ if (typeof exports !== 'undefined') {
             const obj = await this.getForeignObjectAsync('system.licenses');
             const uuidObj = await this.getForeignObjectAsync('system.meta.uuid');
 
-            if (!uuidObj || !uuidObj.native || !uuidObj.native.uuid) {
+            if (!uuidObj?.native?.uuid) {
                 this.log.error('No UUID found!');
                 return licenses;
             }
@@ -681,12 +681,16 @@ if (typeof exports !== 'undefined') {
 
         const t = '\u0063\u006f\u006d\u006d\u0065\u0072\u0063\u0069\u0061\u006c';
         if (t.length !== code.length) {
-            originalError && this.log.error(`Cannot check license: ${originalError}`);
+            if (originalError) {
+                this.log.error(`Cannot check license: ${originalError}`);
+            }
             return true;
         }
         for (let s = 0; s < code.length; s++) {
             if (code[s] !== `\\u00${t.charCodeAt(s).toString(16)}`) {
-                originalError && this.log.error(`Cannot check license: ${originalError}`);
+                if (originalError) {
+                    this.log.error(`Cannot check license: ${originalError}`);
+                }
                 return true;
             }
         }
@@ -839,7 +843,7 @@ if (typeof exports !== 'undefined') {
      * @param _result result as string
      */
     async collectExistingFilesToDelete(adapterPath: string, _result?: string[]): Promise<string[]> {
-        _result = _result || [];
+        _result ||= [];
         let files: ioBroker.ReadDirResult[];
 
         if (this.stoppingPromise) {
