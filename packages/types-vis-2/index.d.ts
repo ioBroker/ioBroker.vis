@@ -213,6 +213,8 @@ export type RxWidgetInfoAttributesFieldText = {
         socket: LegacyConnection,
         index?: number,
     ) => Promise<void>;
+    /** show clear button near the field */
+    readonly clearButton?: boolean;
 };
 
 export type RxWidgetInfoAttributesFieldDelimiter = {
@@ -490,6 +492,8 @@ export type RxWidgetInfoAttributesFieldNumber = {
         socket: LegacyConnection,
         index?: number,
     ) => Promise<void>;
+    /** show clear button near the field */
+    readonly clearButton?: boolean;
 };
 
 export type RxWidgetInfoAttributesFieldSlider = {
