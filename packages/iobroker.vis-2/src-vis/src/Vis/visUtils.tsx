@@ -12,7 +12,7 @@
  * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
  * (Free for non-commercial use).
  */
-import { type LegacyConnection } from '@iobroker/adapter-react-v5';
+import type { ThemeType, LegacyConnection } from '@iobroker/adapter-react-v5';
 import type {
     Project,
     AnyWidgetId,
@@ -37,7 +37,10 @@ declare global {
     }
 }
 
-function replaceGroupAttr(inputStr: string, groupAttrList: WidgetData): { doesMatch: boolean; newString: string } {
+export function replaceGroupAttr(
+    inputStr: string,
+    groupAttrList: WidgetData,
+): { doesMatch: boolean; newString: string } {
     let newString = inputStr;
     let match = false;
     // old style: groupAttr0, groupAttr1, groupAttr2, ...
@@ -72,7 +75,7 @@ function replaceGroupAttr(inputStr: string, groupAttrList: WidgetData): { doesMa
     return { doesMatch: match, newString };
 }
 
-function getWidgetGroup(views: Project, view: string, widget: AnyWidgetId): GroupWidgetId | undefined {
+export function getWidgetGroup(views: Project, view: string, widget: AnyWidgetId): GroupWidgetId | undefined {
     const widgets = views[view].widgets;
     const groupId: GroupWidgetId | undefined = widgets[widget]?.groupid;
     if (groupId && widgets[groupId]) {
@@ -92,7 +95,7 @@ function isIdBinding(
     return !!assignment.match(/^[\d\w_]+:\s?[-.\d\w_#]+$/);
 }
 
-function extractBinding(format: string): VisBinding[] | null {
+export function extractBinding(format: string): VisBinding[] | null {
     const oid = format.match(/{(.+?)}/g);
     let result: VisBinding[] | null = null;
 
@@ -302,7 +305,12 @@ function extractBinding(format: string): VisBinding[] | null {
 //    visibility: {} //
 //    signals: {}    //
 // }
-function getUsedObjectIDsInWidget(views: Project, view: string, wid: AnyWidgetId, linkContext: VisStateUsage): void {
+export function getUsedObjectIDsInWidget(
+    views: Project,
+    view: string,
+    wid: AnyWidgetId,
+    linkContext: VisStateUsage,
+): void {
     // Check all attributes
     const widget = deepClone(views[view].widgets[wid]);
 
@@ -681,7 +689,7 @@ function getUsedObjectIDsInWidget(views: Project, view: string, wid: AnyWidgetId
     store.dispatch(updateWidget({ viewId: view, widgetId: wid, data: widget }));
 }
 
-function getUsedObjectIDs(views: Project, isByViews?: boolean): VisStateUsage | null {
+export function getUsedObjectIDs(views: Project, isByViews?: boolean): VisStateUsage | null {
     if (!views) {
         console.log('Check why views are not yet loaded!');
         return null;
@@ -746,7 +754,7 @@ function getUsedObjectIDs(views: Project, isByViews?: boolean): VisStateUsage | 
     return linkContext;
 }
 
-function getUrlParameter(attr: string): string | true {
+export function getUrlParameter(attr: string): string | true {
     const sURLVariables = window.location.search.substring(1).split('&');
 
     for (let i = 0; i < sURLVariables.length; i++) {
@@ -760,7 +768,7 @@ function getUrlParameter(attr: string): string | true {
     return '';
 }
 
-async function readFile(
+export async function readFile(
     socket: LegacyConnection,
     id: string,
     fileName: string,
@@ -785,7 +793,7 @@ async function readFile(
     return data;
 }
 
-function addClass(actualClass: string, toAdd: string | undefined): string {
+export function addClass(actualClass: string, toAdd: string | undefined): string {
     if (actualClass) {
         const parts = actualClass
             .split(' ')
@@ -800,7 +808,7 @@ function addClass(actualClass: string, toAdd: string | undefined): string {
     return toAdd || '';
 }
 
-function removeClass(actualClass: string, toRemove: string): string {
+export function removeClass(actualClass: string, toRemove: string): string {
     if (actualClass) {
         const parts = actualClass
             .split(' ')
@@ -816,7 +824,7 @@ function removeClass(actualClass: string, toRemove: string): string {
     return '';
 }
 
-function parseDimension(field: string | number | null | undefined): { value: number; dimension: string } {
+export function parseDimension(field: string | number | null | undefined): { value: number; dimension: string } {
     const result = { value: 0, dimension: 'px' };
     if (!field) {
         return result;
@@ -830,7 +838,7 @@ function parseDimension(field: string | number | null | undefined): { value: num
     return result;
 }
 
-function findWidgetUsages(
+export function findWidgetUsages(
     views: Project,
     view: string,
     widgetId: AnyWidgetId,
@@ -861,16 +869,50 @@ function findWidgetUsages(
     return result;
 }
 
-export {
-    getUsedObjectIDs,
-    extractBinding,
-    getWidgetGroup,
-    replaceGroupAttr,
-    getUsedObjectIDsInWidget,
-    getUrlParameter,
-    parseDimension,
-    addClass,
-    removeClass,
-    readFile,
-    findWidgetUsages,
-};
+export function applyTitleAndIcon(
+    title: string,
+    icon: string,
+    options: { themeType: ThemeType; adapterName: string; instance: number; projectName: string },
+): void {
+    title ||= window.location.pathname.includes('edit.html') ? 'Editor.vis' : 'ioBroker.vis';
+    icon ||= window.location.pathname.includes('edit.html') ? './faviconEdit.ico' : './favicon.ico';
+    window.document.title = title;
+
+    if (icon.startsWith('../')) {
+        icon = icon.substring(3);
+    } else if (icon.startsWith('_PRJ_NAME/')) {
+        icon = icon.replace('_PRJ_NAME/', `../${options.adapterName}.${options.instance}/${options.projectName}/`);
+    }
+
+    const link = window.document.querySelector('link[rel="icon"]');
+    if (link) {
+        link.setAttribute('href', icon);
+    } else {
+        const newLink = window.document.createElement('link');
+        newLink.setAttribute('rel', 'icon');
+        newLink.setAttribute('href', icon);
+        window.document.head.appendChild(newLink);
+    }
+
+    // Create a manifest.json
+    const manifestJSON = {
+        short_name: title,
+        name: title,
+        icons: [
+            {
+                src: icon,
+                sizes: '64x64 32x32 24x24 16x16',
+                type: 'image/x-icon',
+            },
+        ],
+        start_url: '.',
+        display: 'standalone',
+        theme_color: options.themeType === 'dark' ? 'rgb(51, 51, 51)' : 'rgb(230, 230, 230)',
+        background_color: options.themeType === 'dark' ? '#000' : '#FFF',
+    };
+
+    const stringManifest = JSON.stringify(manifestJSON);
+    const blob = new Blob([stringManifest], { type: 'application/json' });
+    const manifestURL = URL.createObjectURL(blob);
+    document.querySelector('#vis-manifest').setAttribute('href', manifestURL);
+}

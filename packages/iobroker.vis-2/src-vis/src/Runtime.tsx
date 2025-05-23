@@ -45,7 +45,7 @@ import type {
     WidgetStyle,
 } from '@iobroker/types-vis-2';
 import VisEngine from './Vis/visEngine';
-import { extractBinding, findWidgetUsages, readFile } from './Vis/visUtils';
+import { applyTitleAndIcon, extractBinding, findWidgetUsages, readFile } from './Vis/visUtils';
 import { registerWidgetsLoadIndicator } from './Vis/visLoadWidgets';
 import VisWidgetsCatalog from './Vis/visWidgetsCatalog';
 
@@ -270,7 +270,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         this.alert = window.alert;
 
         window.alert = message => {
-            if (message && message.toString().toLowerCase().includes('error')) {
+            if (message?.toString().toLowerCase().includes('error')) {
                 console.error(message);
                 this.showAlert(message.toString(), 'error');
             } else {
@@ -341,11 +341,15 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
     componentWillUnmount(): void {
         super.componentWillUnmount();
         window.removeEventListener('hashchange', this.onHashChange, false);
-        this.checkTimeout && clearTimeout(this.checkTimeout);
-        this.checkTimeout = null;
+        if (this.checkTimeout) {
+            clearTimeout(this.checkTimeout);
+            this.checkTimeout = null;
+        }
 
-        this.resolutionTimer && clearTimeout(this.resolutionTimer);
-        this.resolutionTimer = null;
+        if (this.resolutionTimer) {
+            clearTimeout(this.resolutionTimer);
+            this.resolutionTimer = null;
+        }
 
         if (!this.state.runtime) {
             window.removeEventListener('orientationchange', this.orientationChange, false);
@@ -361,7 +365,9 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
 
     onProjectChange = (_id: string, fileName: string): void => {
         if (fileName.endsWith('.json')) {
-            this.checkTimeout && clearTimeout(this.checkTimeout);
+            if (this.checkTimeout) {
+                clearTimeout(this.checkTimeout);
+            }
             // if runtime => just update project
             if (this.state.runtime) {
                 this.checkTimeout = setTimeout(() => {
@@ -396,14 +402,14 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
     };
 
     fixProject(project: Project): void {
-        project.___settings = project.___settings || ({} as Project['___settings']);
-        project.___settings.folders = project.___settings.folders || [];
-        project.___settings.openedViews = project.___settings.openedViews || [];
+        project.___settings ||= {} as Project['___settings'];
+        project.___settings.folders ||= [];
+        project.___settings.openedViews ||= [];
 
         // fix project
         Object.keys(project).forEach(view => {
             if (view === '___settings') {
-                // rename all "set" to "widgetSet" in marketplace
+                // rename all "set" to "widgetSet" in a marketplace
                 project.___settings.marketplace?.forEach(group => {
                     group.widget?.forEach(widget => {
                         if (widget.set) {
@@ -419,9 +425,9 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
                 delete project[view];
                 return;
             }
-            project[view].settings = project[view].settings || {};
-            project[view].settings.style = project[view].settings.style || {};
-            project[view].widgets = project[view].widgets || {};
+            project[view].settings ||= {};
+            project[view].settings.style ||= {};
+            project[view].widgets ||= {};
             if (project[view].widgets) {
                 Object.keys(project[view].widgets).forEach((wid: AnyWidgetId) => {
                     const widget = project[view].widgets[wid];
@@ -429,8 +435,8 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
                         delete project[view].widgets[wid];
                         return;
                     }
-                    widget.data = widget.data || {};
-                    widget.style = widget.style || {};
+                    widget.data ||= {};
+                    widget.style ||= {};
 
                     if (widget.data.members && !Array.isArray(widget.data.members)) {
                         widget.data.members = [];
@@ -506,7 +512,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
 
                     // fix Groups
                     if (widget.tpl === '_tplGroup' && widget.data.attrCount !== undefined) {
-                        widget.data.members = widget.data.members || [];
+                        widget.data.members ||= [];
                         // replace attrNameX with attrName_groupAttrX and attrTypeX with attrType_groupAttrX
                         for (let i = 1; i <= widget.data.attrCount; i++) {
                             const attrName = widget.data[`attrName${i}`];
@@ -524,7 +530,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
     }
 
     static syncMultipleWidgets(project: Project): void {
-        project = project || store.getState().visProject;
+        project ||= store.getState().visProject;
         Object.keys(project).forEach(view => {
             if (view === '___settings') {
                 return;
@@ -647,7 +653,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
 
     loadProject = async (projectName: string): Promise<void> => {
         let fileStr: string;
-        this.setLoadingText && this.setLoadingText('Load project file...');
+        this.setLoadingText?.('Load project file...');
         try {
             const file: string | { file: string; mimeType: string } = await readFile(
                 this.socket as unknown as LegacyConnection,
@@ -663,7 +669,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
             console.warn(`Cannot read project file "${projectName}/vis-views.json": ${err}`);
             fileStr = '{}';
         }
-        this.setLoadingText && this.setLoadingText(null);
+        this.setLoadingText?.(null);
 
         if (!fileStr || fileStr === '{}') {
             // read if show projects dialog allowed
@@ -671,7 +677,9 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
             if (this.state.runtime && obj.native.doNotShowProjectDialog) {
                 this.setState({ projectDoesNotExist: true });
             } else {
-                !this.state.projects && (await this.refreshProjects());
+                if (!this.state.projects) {
+                    await this.refreshProjects();
+                }
                 // show project dialog
                 this.setState({ showProjectsDialog: true });
             }
@@ -744,6 +752,13 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
             selectedView = project.___settings.openedViews[0];
             window.localStorage.setItem('selectedView', selectedView);
         }
+
+        applyTitleAndIcon(project.___settings.title, project.___settings.favicon, {
+            projectName,
+            instance: this.instance,
+            adapterName: this.adapterName,
+            themeType: this.state.themeType,
+        });
 
         window.localStorage.setItem('projectName', projectName);
 
@@ -910,7 +925,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
                 projectName = '';
             }
         }
-        projectName = projectName || window.localStorage.getItem('projectName') || 'main';
+        projectName ||= window.localStorage.getItem('projectName') || 'main';
 
         let projects = this.state.projects;
         if (!this.state.runtime) {
@@ -928,7 +943,9 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
             if (this.state.runtime && obj.native.doNotShowProjectDialog) {
                 this.setState({ projectDoesNotExist: true });
             } else {
-                !projects && (await this.refreshProjects());
+                if (!projects) {
+                    await this.refreshProjects();
+                }
                 // show project dialog
                 this.setState({ showProjectsDialog: true });
             }
@@ -957,11 +974,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
 
         // Check that all selectedWidgets exist
         for (let i = selectedWidgets.length - 1; i >= 0; i--) {
-            if (
-                !store.getState().visProject[selectedView] ||
-                !store.getState().visProject[selectedView].widgets ||
-                !store.getState().visProject[selectedView].widgets[selectedWidgets[i]]
-            ) {
+            if (!store.getState().visProject[selectedView]?.widgets?.[selectedWidgets[i]]) {
                 selectedWidgets = selectedWidgets.splice(i, 1);
             }
         }
@@ -1326,8 +1339,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
                     width: number,
                     callback: (isYes: boolean) => void,
                 ) =>
-                    this.showConfirmDialog &&
-                    this.showConfirmDialog({
+                    this.showConfirmDialog?.({
                         message,
                         title,
                         icon,
@@ -1335,9 +1347,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
                         callback,
                     })
                 }
-                onShowCode={(code: string, title: string, mode: string) =>
-                    this.showCodeDialog && this.showCodeDialog({ code, title, mode })
-                }
+                onShowCode={(code: string, title: string, mode: string) => this.showCodeDialog?.({ code, title, mode })}
                 currentUser={this.state.currentUser}
                 userGroups={this.state.userGroups}
                 renderAlertDialog={this.renderAlertDialog}

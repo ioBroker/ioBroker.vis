@@ -74,8 +74,8 @@ function _translateWord(text: string, lang?: string, dictionary?: Record<string,
     if (!text) {
         return '';
     }
-    lang = lang || window.systemLang;
-    dictionary = dictionary || window.systemDictionary;
+    lang ||= window.systemLang;
+    dictionary ||= window.systemDictionary;
 
     if (dictionary[text]) {
         let newText = dictionary[text][lang];
@@ -422,17 +422,17 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                     this.onStateChange as ioBroker.StateChangeHandler,
                 );
 
-                this.props.setLoadingText && this.props.setLoadingText('Load widgets...');
+                this.props.setLoadingText?.('Load widgets...');
 
                 return this.loadWidgets();
             })
             .then(() => {
-                this.props.setLoadingText && this.props.setLoadingText(null);
+                this.props.setLoadingText?.(null);
                 this.setState({ ready: true });
             });
 
         // update one time the fonts
-        this.props.onFontsUpdate && this.props.onFontsUpdate(this.fontNames);
+        this.props.onFontsUpdate?.(this.fontNames);
     }
 
     static getCurrentPath(): { view: string; path: string[] } {
@@ -455,7 +455,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
             }
         }
 
-        if (path && typeof path === 'object' && path.length) {
+        if (Array.isArray(path) && path.length) {
             return `#${encodeURIComponent(view)}/${path.map(p => encodeURIComponent(p)).join('/')}`;
         }
 
@@ -500,7 +500,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
         (window.$ as any).ui.dialog.prototype._appendTo = function () {
             const wid = this.options.wid;
             const views = store.getState().visProject;
-            const view = Object.keys(views).find(v => views[v].widgets && views[v].widgets[wid]);
+            const view = Object.keys(views).find(v => views[v].widgets?.[wid]);
             !view && console.warn(`Cannot find view for widget "${wid}"!`);
             return this.document.find(view ? `#visview_${view.replace(/\s/g, '_')}` : 'body').eq(0);
         };
@@ -554,7 +554,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
             return Promise.resolve();
         }
 
-        this.props.setLoadingText && this.props.setLoadingText('Loading objects...');
+        this.props.setLoadingText?.('Loading objects...');
         return this.conn.getObjects().then((objects: Record<string, ioBroker.Object>) => {
             this.vis.objects = objects;
         });
@@ -572,8 +572,10 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                 callback: () => void,
                 debug: boolean,
             ) => {
-                debug && console.log(`[subscribeStatesAtRuntime] ${widgetName} (${wid}) subscribe states at runtime`);
-                callback && callback();
+                if (debug) {
+                    console.log(`[subscribeStatesAtRuntime] ${widgetName} (${wid}) subscribe states at runtime`);
+                }
+                callback?.();
             };
             this.vis.binds.materialdesign.helper.subscribeStatesAtRuntime.__inited = true;
         }
@@ -669,10 +671,10 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                 Object.keys(refViews).forEach(view => refViews[view].onCommand('updateContainers'));
             },
             renderView: (
-                viewDiv,
+                viewDiv: string,
                 view: string | boolean,
-                hidden: boolean | ((viewDiv: string, view: string) => void),
-                cb,
+                hidden?: boolean | ((viewDiv: string, view: string) => void),
+                cb?: (viewDiv: string, view: string) => void,
             ) => {
                 if (typeof view === 'boolean') {
                     cb = hidden as () => void;
@@ -683,14 +685,14 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                 if (!this.state.legacyRequestedViews.includes(viewDiv)) {
                     const legacyRequestedViews = [...this.state.legacyRequestedViews];
                     legacyRequestedViews.push(viewDiv);
-                    this.setState({ legacyRequestedViews }, () => setTimeout(() => cb && cb(viewDiv, view), 100));
+                    this.setState({ legacyRequestedViews }, () => setTimeout(() => cb?.(viewDiv, view), 100));
                 } else {
                     // show this view
-                    cb && cb(viewDiv, view);
+                    cb?.(viewDiv, view);
                 }
             },
             updateFilter: (view?: string): string[] => {
-                view = view || this.props.activeView;
+                view ||= this.props.activeView;
                 if (this.refViews[view]) {
                     // collect all possible filters of widgets
                     if (this.refViews[view]?.onCommand) {
@@ -761,7 +763,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                 }
 
                 this.changeView(view);
-                cb && cb(viewDiv, view);
+                cb?.(viewDiv, view);
             },
             getCurrentPath() {
                 return VisEngine.getCurrentPath();
@@ -805,7 +807,9 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                 if (!this.fontNames.includes(fontName)) {
                     this.fontNames.push(fontName);
                     if (this.props.onFontsUpdate) {
-                        this.fontTimer && clearTimeout(this.fontTimer);
+                        if (this.fontTimer) {
+                            clearTimeout(this.fontTimer);
+                        }
                         this.fontTimer = setTimeout(() => {
                             this.fontTimer = null;
                             this.props.onFontsUpdate(this.fontNames);
@@ -827,7 +831,9 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                 }
             },
             unregisterOnChange: (callback: any, arg: string, wid: AnyWidgetId) => {
-                !wid && console.warn('No widget ID for unregisterOnChange callback! Please fix');
+                if (!wid) {
+                    console.warn('No widget ID for unregisterOnChange callback! Please fix');
+                }
 
                 const index = this.onChangeCallbacks.findIndex(
                     item =>
@@ -968,7 +974,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                     if (v === '___settings') {
                         continue;
                     }
-                    if (views[v]?.widgets && views[v].widgets[id]) {
+                    if (views[v]?.widgets?.[id]) {
                         return v;
                     }
                 }
@@ -992,8 +998,8 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
             },
             preloadImages: (srcs: string[]): void => {
                 // preload images
-                this.preloadImagesCacheImgs = this.preloadImagesCacheImgs || [];
-                this.preloadImagesCacheSrcs = this.preloadImagesCacheSrcs || [];
+                this.preloadImagesCacheImgs ||= [];
+                this.preloadImagesCacheSrcs ||= [];
                 if (!Array.isArray(srcs)) {
                     srcs = [srcs];
                 }
@@ -1035,8 +1041,8 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                 }
             },
             getHistory: (id, options, cb) => {
-                options = options || {};
-                options.timeout = options.timeout || 2000;
+                options ||= {};
+                options.timeout ||= 2000;
 
                 let timeout = setTimeout(() => {
                     timeout = null;
@@ -1061,7 +1067,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                     });
             },
             getHttp: (url, callback) =>
-                this.props.socket.getRawSocket().emit('httpGet', url, (data: any) => callback && callback(data)),
+                this.props.socket.getRawSocket().emit('httpGet', url, (data: any) => callback?.(data)),
             formatDate: (dateObj: string | Date | number, isDuration?: boolean | string, _format?: string) =>
                 this.formatUtils.formatDate(dateObj, isDuration, _format),
             widgets: this.allWidgets,
@@ -1102,7 +1108,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                       return line;
                   },
             isWidgetHidden: (view, widget, val, widgetData) => {
-                widgetData = widgetData || store.getState().visProject[view].widgets[widget].data;
+                widgetData ||= store.getState().visProject[view].widgets[widget].data;
                 const oid = widgetData['visibility-oid'];
                 const condition = widgetData['visibility-cond'];
                 if (oid) {
@@ -1206,23 +1212,19 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
         hideEffect?: string,
         hideDuration?: number,
     ): void {
-        view = view || this.props.activeView;
-        if (this.refViews[view]?.onCommand) {
-            this.refViews[view].onCommand('changeFilter', {
-                filter,
-                showEffect,
-                showDuration,
-                hideEffect,
-                hideDuration,
-            });
-        }
+        view ||= this.props.activeView;
+        this.refViews[view]?.onCommand?.('changeFilter', {
+            filter,
+            showEffect,
+            showDuration,
+            hideEffect,
+            hideDuration,
+        });
     }
 
     // allows sending command to view
     onCommand = (view: string, command: ViewCommand, data?: ViewCommandOptions): void => {
-        if (this.refViews[view]?.onCommand) {
-            this.refViews[view].onCommand(command, data);
-        }
+        this.refViews[view]?.onCommand?.(command, data);
     };
 
     showMessage(
@@ -1346,7 +1348,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                     cb = useCache;
                     useCache = false;
                 }
-                groupName = groupName || '';
+                groupName ||= '';
 
                 return this.readGroups(groupName as string, !useCache)
                     .then(groups => cb(groups))
@@ -1416,11 +1418,11 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                 this.props.socket.getCurrentUser().then(user => cb(this.props.socket.isSecure, user)),
             subscribe: (IDs: string[], cb: () => void): void => {
                 this.subscribe(IDs);
-                cb && cb();
+                cb?.();
             },
             unsubscribe: (IDs: string[], cb: () => void): void => {
                 this.unsubscribe(IDs);
-                cb && cb();
+                cb?.();
             },
             authenticate: (user: string, password: string, salt: string): void => {
                 // eslint-disable-next-line react/no-unused-class-component-methods
@@ -1439,10 +1441,8 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                 ids: string,
                 cb: (error: Error | null, states?: Record<string, ioBroker.State>) => void,
             ): void => {
-                if (!ids || !ids.length) {
-                    if (cb) {
-                        cb(null, {});
-                    }
+                if (!ids?.length) {
+                    cb?.(null, {});
                     return;
                 }
                 this.props.socket
@@ -1452,13 +1452,13 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
             },
             setState: (id: string, val: ioBroker.StateValue, cb: (error?: Error | null) => void): void => {
                 if (!id) {
-                    cb && cb(new Error('No id'));
+                    cb?.(new Error('No id'));
                     return;
                 }
                 this.props.socket
                     .setState(id, val)
-                    .then(() => cb && cb())
-                    .catch(error => cb && cb(error));
+                    .then(() => cb?.())
+                    .catch(error => cb?.(error));
             },
             sendTo: (
                 instance: string,
@@ -1468,8 +1468,8 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
             ): void => {
                 this.props.socket
                     .sendTo(instance, command, data)
-                    .then(result => cb && cb(result))
-                    .catch(error => cb && cb(error));
+                    .then(result => cb?.(result))
+                    .catch(error => cb?.(error));
             },
             setReloadTimeout: (): void => {
                 //
@@ -1512,10 +1512,10 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                 options: ioBroker.GetHistoryOptions & { timeout: number },
                 cb: (error: Error | null, result?: ioBroker.GetHistoryResult) => void,
             ): void => {
-                options = options || ({} as ioBroker.GetHistoryOptions & { timeout: number });
-                options.timeout = options.timeout || 2000;
+                options ||= {} as ioBroker.GetHistoryOptions & { timeout: number };
+                options.timeout ||= 2000;
 
-                let timeout = setTimeout(() => {
+                let timeout: ReturnType<typeof setTimeout> | null = setTimeout(() => {
                     timeout = null;
                     cb(new Error('timeout'));
                 }, options.timeout);
@@ -1538,7 +1538,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                     });
             },
             getHttp: (url: string, callback: (data: any) => void): boolean =>
-                this.props.socket.getRawSocket().emit('httpGet', url, (data: any): void => callback && callback(data)),
+                this.props.socket.getRawSocket().emit('httpGet', url, (data: any): void => callback?.(data)),
             _socket: {
                 emit: (cmd: string, data: any, cb: (error: Error | null, arg2?: any) => void): void => {
                     let promise;
@@ -1550,7 +1550,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                         promise = this.props.socket.getStates(data);
                     }
                     if (promise instanceof Promise) {
-                        promise.then(obj => cb && cb(null, obj)).catch(error => cb && cb(error));
+                        promise.then(obj => cb?.(null, obj)).catch(error => cb?.(error));
                     } else {
                         console.warn(`Unknown command in _socket.emit: ${cmd}`);
                     }
@@ -1567,7 +1567,9 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
         if (this.refViews[view] && this.refViews[view].ref === ref) {
             console.error(`Someone tries to register same ref for view ${view}`);
         } else {
-            this.refViews[view] && console.error(`Someone tries to register new ref for view ${view}`);
+            if (this.refViews[view]) {
+                console.error(`Someone tries to register new ref for view ${view}`);
+            }
             this.refViews[view] = { ref, onCommand };
         }
     };
@@ -1645,7 +1647,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
             result = Object.keys(visProject).find(
                 view => view !== '___settings' && visProject[view].settings?.useAsDefault,
             );
-            result = result || Object.keys(visProject).find(view => view !== '___settings');
+            result ||= Object.keys(visProject).find(view => view !== '___settings');
         }
 
         return result;
@@ -1847,7 +1849,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
             if (!usedWidgetSets || widgetSet === 'default' || usedWidgetSets.includes(widgetSet)) {
                 if (src) {
                     // ejs script
-                    groups[widgetSet] = groups[widgetSet] || [];
+                    groups[widgetSet] ||= [];
                     groups[widgetSet].push({ newScript, oldScript });
                 } else {
                     // inline script
@@ -1902,7 +1904,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                 this.props.runtime && (VisWidgetsCatalog.getUsedWidgetSets(store.getState().visProject) as string[]),
             );
 
-            this.props.onLoaded && this.props.onLoaded();
+            this.props.onLoaded?.();
         } catch (error) {
             console.error(`Cannot load widgets: ${error}`);
             console.error(`Cannot load widgets: ${JSON.stringify(error.stack)}`);
@@ -2046,7 +2048,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                 setTimeout(() => {
                     let href;
 
-                    if (data && data.match(/^http(s)?:\/\//)) {
+                    if (data?.match(/^http(s)?:\/\//)) {
                         href = data;
                     } else {
                         href = `${window.location.protocol}//${window.location.hostname}:${window.location.port}${data}`;

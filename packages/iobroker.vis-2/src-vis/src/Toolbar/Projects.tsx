@@ -20,7 +20,7 @@ import {
 import type { VisTheme } from '@iobroker/types-vis-2';
 import type Editor from '@/Editor';
 import ToolbarItems, { type ToolbarGroup } from './ToolbarItems';
-import Settings from './Settings';
+import { Settings } from './Settings';
 import ProjectsManager from './ProjectsManager';
 
 interface ToolsProps {
@@ -94,9 +94,10 @@ const Tools = (props: ToolsProps): React.JSX.Element => {
             />
             {settingsDialog ? (
                 <Settings
+                    theme={props.theme}
                     onClose={() => setSettingsDialog(false)}
                     adapterName={props.adapterName}
-                    instance={props.instance}
+                    adapterInstance={props.instance}
                     projectName={props.projectName}
                     changeProject={props.changeProject}
                     socket={props.socket}

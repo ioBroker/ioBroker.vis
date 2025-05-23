@@ -789,20 +789,28 @@ export interface UserPermissions {
 }
 
 export interface ProjectSettings {
+    /** Determines if the loading screen is dark or light */
     darkReloadScreen: boolean;
-    destroyViewsAfter: number;
+    /** Organization of views */
     folders: { id: string; name: string; parentId: string }[];
+    /** Last state of opened views in the editor */
     openedViews: string[];
-    reconnectInterval: number;
+    /** If the vis runtime should be updated after the project was edited. `False` means no update. Default is true */
     reloadOnEdit: boolean;
-    reloadOnSleep: number;
+    /** Do not send the command during this period and collect all changes for one object ID */
     statesDebounceTime: number;
-    scripts: unknown;
-    /** Which user has read or write access for the project */
+    /** Project JavaScript scripts */
+    scripts: null | string;
+    /** Defines which users have read or write access to the project */
     permissions?: UserPermissions;
     marketplace?: MarketplaceWidgetRevision[];
+    /** Last modification time */
     ts?: string;
-    bodyOverflow?: string;
+    bodyOverflow?: 'auto' | 'scroll' | 'hidden' | 'visible';
+    /** Browser tab title */
+    title?: string;
+    /** Favicon as base64 or URL */
+    favicon?: string;
 }
 
 export type SingleWidgetId = `w${string}`;
@@ -815,6 +823,7 @@ export interface WidgetData {
     /** Only exists if given by user in a tab general */
     name?: string;
     filterkey?: string;
+    /** Group widget members */
     members?: AnyWidgetId[];
     bindings?: string[];
     [other: string]: any;
@@ -1195,7 +1204,7 @@ export interface VisLegacy {
     states: VisCanWidgetStateValues;
     objects: Record<string, ioBroker.Object>;
     isTouch: boolean;
-    activeWidgets: string[];
+    activeWidgets: AnyWidgetId[];
     editMode: boolean;
     binds: {
         basic: any;
@@ -1207,7 +1216,7 @@ export interface VisLegacy {
     };
     views: Project;
     activeView: string;
-    language: string;
+    language: ioBroker.Languages;
     user: string;
     projectPrefix: string;
     _: (word: string) => string;
@@ -1219,7 +1228,12 @@ export interface VisLegacy {
     conn: LegacyVisConnection;
     lastChangedView: string | null; // used in vis-2 to save last sent view name over vis-2.0.command
     updateContainers: () => void;
-    renderView: (viewDiv: string, view: string, hidden: boolean, cb: (viewDiv: string, view: string) => void) => void;
+    renderView: (
+        viewDiv: string,
+        view: string | boolean,
+        hidden?: boolean | ((viewDiv: string, view: string) => void),
+        cb?: (viewDiv: string, view: string) => void,
+    ) => void;
     updateFilter: (view?: string) => string[];
     destroyUnusedViews: () => void;
     changeFilter: (

@@ -16,14 +16,21 @@ import {
 
 import { ContentCopy, Save as SaveIcon, Refresh } from '@mui/icons-material';
 
-import { I18n, Utils, type LegacyConnection } from '@iobroker/adapter-react-v5';
+import {
+    I18n,
+    Utils,
+    type LegacyConnection,
+    SelectFile as SelectFileDialog,
+    type Connection,
+} from '@iobroker/adapter-react-v5';
 
 import type Editor from '@/Editor';
 import { store } from '@/Store';
 import { deepClone } from '@/Utils/utils';
-import type { ProjectSettings } from '@iobroker/types-vis-2';
+import type { ProjectSettings, VisTheme } from '@iobroker/types-vis-2';
 import commonStyles from '@/Utils/styles';
 import IODialog from '../Components/IODialog';
+import { applyTitleAndIcon } from '@/Vis/visUtils';
 
 const styles: { dialog: React.CSSProperties; field: React.CSSProperties } = {
     dialog: {
@@ -33,12 +40,13 @@ const styles: { dialog: React.CSSProperties; field: React.CSSProperties } = {
         display: 'flex',
         alignItems: 'center',
         padding: '4px 0px',
+        marginBottom: '10px',
     },
 };
 
 interface SettingsFieldBase {
     name?: string;
-    field?: string;
+    field?: keyof ProjectSettings;
     help?: string;
     noTranslate?: boolean;
 }
@@ -66,11 +74,21 @@ interface SettingsFieldNumber extends SettingsFieldBase {
     type: 'number';
 }
 
+interface SettingsFieldText extends SettingsFieldBase {
+    type: 'text';
+}
+
+interface SettingsFieldIcon extends SettingsFieldBase {
+    type: 'image';
+}
+
 type SettingsField =
     | SettingsFieldSelect
     | SettingsFieldRaw
     | SettingsFieldCheckbox
     | SettingsFieldSwitchMode
+    | SettingsFieldText
+    | SettingsFieldIcon
     | SettingsFieldNumber;
 
 interface SettingsProps {
@@ -78,15 +96,17 @@ interface SettingsProps {
     onClose: () => void;
     socket: LegacyConnection;
     adapterName: string;
-    instance: number;
+    adapterInstance: number;
     projectName: string;
+    theme: VisTheme;
 }
 
-const Settings: React.FC<SettingsProps> = props => {
+export function Settings(props: SettingsProps): React.JSX.Element {
     const [projectMode, setProjectMode] = useState(0);
+    const [imageDialog, setImageDialog] = useState(false);
 
     const [settings, setSettings] = useState<ProjectSettings>({} as ProjectSettings);
-    const [instance, setInstance] = useState('');
+    const [browserInstance, setBrowserInstance] = useState('');
 
     useEffect(() => {
         const _settings = { ...store.getState().visProject.___settings };
@@ -95,10 +115,10 @@ const Settings: React.FC<SettingsProps> = props => {
         }
 
         const _instance = (window.localStorage.getItem('visInstance') || '').replace(/^"/, '').replace(/"$/, '');
-        setInstance(_instance);
+        setBrowserInstance(_instance);
 
         // read project settings
-        void props.socket.readDir(`${props.adapterName}.${props.instance}`, props.projectName).then(files => {
+        void props.socket.readDir(`${props.adapterName}.${props.adapterInstance}`, props.projectName).then(files => {
             const file = files.find(f => f.file === 'vis-views.json');
             if ((file as any)?.mode || file?.acl?.permissions) {
                 setProjectMode((file as any).mode || file.acl.permissions);
@@ -120,66 +140,7 @@ const Settings: React.FC<SettingsProps> = props => {
                 { value: false, name: 'no_reload' },
             ],
         },
-        {
-            type: 'select',
-            name: 'Reload if sleep longer than',
-            field: 'reloadOnSleep',
-            fullWidth: true,
-            items: [
-                { value: 0, name: 'never' },
-                { value: 30, name: '30 seconds' },
-                { value: 60, name: '1 minute' },
-                { value: 300, name: '5 minutes' },
-                { value: 600, name: '10 minutes' },
-                { value: 1800, name: '30 minutes' },
-                { value: 3600, name: '1 hour' },
-                { value: 7200, name: '2 hours' },
-                { value: 10800, name: '3 hours' },
-                { value: 21600, name: '6 hours' },
-                { value: 43200, name: '12 hours' },
-                { value: 86400, name: '1 day' },
-            ],
-        },
-        {
-            type: 'select',
-            name: 'Reconnect interval',
-            field: 'reconnectInterval',
-            fullWidth: true,
-            items: [
-                { value: 1000, name: '1 second' },
-                { value: 2000, name: '2 seconds' },
-                { value: 5000, name: '5 seconds' },
-                { value: 10000, name: '10 seconds' },
-                { value: 20000, name: '20 seconds' },
-                { value: 30000, name: '30 seconds' },
-                { value: 60000, name: '1 minute' },
-            ],
-        },
         { type: 'checkbox', name: 'Dark reconnect screen', field: 'darkReloadScreen' },
-        {
-            type: 'select',
-            name: 'Destroy inactive view',
-            field: 'destroyViewsAfter',
-            fullWidth: true,
-            items: [
-                { value: 0, name: 'never' },
-                { value: 1, name: '1 second' },
-                { value: 5, name: '5 seconds' },
-                { value: 10, name: '10 seconds' },
-                { value: 20, name: '20 seconds' },
-                { value: 30, name: '30 seconds' },
-                { value: 60, name: '1 minute' },
-                { value: 300, name: '5 minutes' },
-                { value: 600, name: '10 minutes' },
-                { value: 1800, name: '30 minutes' },
-                { value: 3600, name: '1 hour' },
-                { value: 7200, name: '2 hours' },
-                { value: 10800, name: '3 hours' },
-                { value: 21600, name: '6 hours' },
-                { value: 43200, name: '12 hours' },
-                { value: 86400, name: '1 day' },
-            ],
-        },
         { name: 'States Debounce Time (millis)', field: 'statesDebounceTime', type: 'number' },
         {
             type: 'raw',
@@ -196,12 +157,12 @@ const Settings: React.FC<SettingsProps> = props => {
                         variant="standard"
                         style={{ flexGrow: 1 }}
                         label={I18n.t('Browser instance ID')}
-                        value={instance || ''}
-                        onChange={e => setInstance(e.target.value)}
+                        value={browserInstance || ''}
+                        onChange={e => setBrowserInstance(e.target.value)}
                         slotProps={{
                             input: {
-                                endAdornment: instance ? (
-                                    <IconButton onClick={() => Utils.copyToClipboard(instance)}>
+                                endAdornment: browserInstance ? (
+                                    <IconButton onClick={() => Utils.copyToClipboard(browserInstance)}>
                                         <ContentCopy />
                                     </IconButton>
                                 ) : null,
@@ -221,7 +182,7 @@ const Settings: React.FC<SettingsProps> = props => {
                             newInstance = newInstance.substring(newInstance.length - 8);
                             window.localStorage.setItem('visInstance', newInstance);
                             window.vis.instance = newInstance;
-                            setInstance(newInstance);
+                            setBrowserInstance(newInstance);
                         }}
                         startIcon={<Refresh />}
                     >
@@ -231,6 +192,8 @@ const Settings: React.FC<SettingsProps> = props => {
             ),
         },
         { type: 'switchMode' }, // very specific control
+        { name: 'Browser tab title', type: 'text', field: 'title' },
+        { name: 'Browser tab favicon', type: 'image', field: 'favicon' },
         {
             type: 'select',
             name: 'Body overflow',
@@ -257,23 +220,85 @@ const Settings: React.FC<SettingsProps> = props => {
     return (
         <IODialog
             onClose={props.onClose}
-            title="Settings"
+            title="Project settings"
             ActionIcon={SaveIcon}
             action={save}
             actionTitle="Save"
             actionDisabled={JSON.stringify(store.getState().visProject.___settings) === JSON.stringify(settings)}
         >
             <div style={styles.dialog}>
-                {fields.map((field, key) => {
-                    const value = settings[field.field as keyof ProjectSettings];
+                {fields.map((field, index) => {
+                    let result: React.JSX.Element;
+                    if (field.type === 'raw') {
+                        return (
+                            <div
+                                key="raw"
+                                style={styles.field}
+                            >
+                                {field.Node}
+                            </div>
+                        );
+                    }
+                    if (field.type === 'switchMode') {
+                        return (
+                            <div
+                                key="switchMode"
+                                style={styles.field}
+                            >
+                                <FormControlLabel
+                                    label={I18n.t('Available for all')}
+                                    control={
+                                        <Switch
+                                            checked={!!(projectMode & 0x60)}
+                                            onChange={e => {
+                                                props.socket.getRawSocket().emit(
+                                                    'chmodFile',
+                                                    `${props.adapterName}.${props.adapterInstance}`,
+                                                    `${props.projectName}/*`,
+                                                    { mode: e.target.checked ? 0x644 : 0x600 },
+                                                    (
+                                                        err: string,
+                                                        files: {
+                                                            file: string;
+                                                            mode: number;
+                                                            acl: {
+                                                                owner: string;
+                                                                ownerGroup: string;
+                                                                permissions: number;
+                                                            };
+                                                        }[],
+                                                    ) => {
+                                                        if (err) {
+                                                            window.alert(err);
+                                                        } else {
+                                                            const file = files.find(f => f.file === 'vis-views.json');
+                                                            if (file?.mode || file?.acl?.permissions) {
+                                                                setProjectMode(file.mode || file.acl.permissions);
+                                                            }
+                                                        }
+                                                    },
+                                                );
+                                            }}
+                                        />
+                                    }
+                                />
+                            </div>
+                        );
+                    }
+
+                    const value = settings[field.field];
 
                     const change = (changeValue: any): void => {
                         const newSettings = deepClone(settings);
-                        (newSettings[field.field as keyof ProjectSettings] as any) = changeValue;
+                        (newSettings as Record<string, any>)[field.field] = changeValue;
                         setSettings(newSettings);
+                        applyTitleAndIcon(newSettings.title, newSettings.favicon, {
+                            themeType: props.theme.palette.mode,
+                            adapterName: props.adapterName,
+                            instance: props.adapterInstance,
+                            projectName: props.projectName,
+                        });
                     };
-
-                    let result;
 
                     if (field.type === 'checkbox') {
                         result = (
@@ -291,6 +316,7 @@ const Settings: React.FC<SettingsProps> = props => {
                         result = (
                             <FormControl
                                 variant="standard"
+                                style={{ marginBottom: 10 }}
                                 fullWidth={field.fullWidth}
                             >
                                 <InputLabel>{I18n.t(field.name)}</InputLabel>
@@ -299,10 +325,10 @@ const Settings: React.FC<SettingsProps> = props => {
                                     value={value || ''}
                                     onChange={e => change(e.target.value)}
                                 >
-                                    {field.items.map(selectItem => (
+                                    {field.items.map((selectItem, index) => (
                                         <MenuItem
                                             value={selectItem.value as any}
-                                            key={selectItem as any}
+                                            key={selectItem.name || index.toString()}
                                         >
                                             {field.noTranslate ? selectItem.name : I18n.t(selectItem.name)}
                                         </MenuItem>
@@ -311,45 +337,80 @@ const Settings: React.FC<SettingsProps> = props => {
                                 {field.help ? <FormHelperText>{I18n.t(field.help)}</FormHelperText> : null}
                             </FormControl>
                         );
-                    } else if (field.type === 'raw') {
-                        result = field.Node;
-                    } else if (field.type === 'switchMode') {
+                    } else if (field.type === 'image') {
+                        let _value: string;
+                        if (imageDialog) {
+                            _value = (value as string) || '';
+                            if (_value.startsWith('../')) {
+                                _value = _value.substring(3);
+                            } else if (_value.startsWith('_PRJ_NAME/')) {
+                                _value = _value.replace(
+                                    '_PRJ_NAME/',
+                                    `../${props.adapterName}.${props.adapterInstance}/${props.projectName}/`,
+                                );
+                            }
+                        }
+
                         result = (
-                            <FormControlLabel
-                                label={I18n.t('Available for all')}
-                                control={
-                                    <Switch
-                                        checked={!!(projectMode & 0x60)}
-                                        onChange={e => {
-                                            props.socket.getRawSocket().emit(
-                                                'chmodFile',
-                                                `${props.adapterName}.${props.instance}`,
-                                                `${props.projectName}/*`,
-                                                { mode: e.target.checked ? 0x644 : 0x600 },
-                                                (
-                                                    err: string,
-                                                    files: {
-                                                        file: string;
-                                                        mode: number;
-                                                        acl: { owner: string; ownerGroup: string; permissions: number };
-                                                    }[],
-                                                ) => {
-                                                    if (err) {
-                                                        window.alert(err);
-                                                    } else {
-                                                        const file = files.find(f => f.file === 'vis-views.json');
-                                                        if (file?.mode || file?.acl?.permissions) {
-                                                            setProjectMode(file.mode || file.acl.permissions);
-                                                        }
-                                                    }
-                                                },
-                                            );
+                            <>
+                                <TextField
+                                    variant="standard"
+                                    fullWidth
+                                    slotProps={{
+                                        input: {
+                                            sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
+                                            endAdornment: (
+                                                <Button
+                                                    tabIndex={-1}
+                                                    style={{ minWidth: 30 }}
+                                                    size="small"
+                                                    onClick={() => setImageDialog(true)}
+                                                >
+                                                    ...
+                                                </Button>
+                                            ),
+                                        },
+                                    }}
+                                    label={I18n.t(field.name)}
+                                    value={value || ''}
+                                    onChange={e => change(e.target.value)}
+                                />
+                                {imageDialog ? (
+                                    <SelectFileDialog
+                                        title={I18n.t('Select file')}
+                                        onClose={() => setImageDialog(false)}
+                                        restrictToFolder={`${props.adapterName}.${props.adapterInstance}/${props.projectName}`}
+                                        allowNonRestricted
+                                        allowUpload
+                                        allowDownload
+                                        allowCreateFolder
+                                        allowDelete
+                                        allowView
+                                        showToolbar
+                                        imagePrefix="../"
+                                        selected={_value}
+                                        filterByType="images"
+                                        theme={props.theme}
+                                        onOk={_selected => {
+                                            let selected = Array.isArray(_selected) ? _selected[0] : _selected;
+                                            const projectPrefix = `${props.adapterName}.${props.adapterInstance}/${props.projectName}/`;
+                                            if (selected.startsWith(projectPrefix)) {
+                                                selected = `_PRJ_NAME/${selected.substring(projectPrefix.length)}`;
+                                            } else if (selected.startsWith('/')) {
+                                                selected = `..${selected}`;
+                                            } else if (!selected.startsWith('.')) {
+                                                selected = `../${selected}`;
+                                            }
+                                            change(selected);
+                                            setImageDialog(false);
                                         }}
+                                        socket={props.socket as any as Connection}
                                     />
-                                }
-                            />
+                                ) : null}
+                            </>
                         );
                     } else {
+                        // type === 'text' or type === 'number'
                         result = (
                             <TextField
                                 variant="standard"
@@ -365,7 +426,7 @@ const Settings: React.FC<SettingsProps> = props => {
 
                     return (
                         <div
-                            key={key}
+                            key={field.field || index.toString()}
                             style={styles.field}
                         >
                             {result}
@@ -375,13 +436,13 @@ const Settings: React.FC<SettingsProps> = props => {
 
                 <Button
                     style={{
-                        marginTop: 10,
+                        marginBottom: 10,
                     }}
                     color="grey"
                     variant="contained"
                     onClick={() =>
                         props.socket
-                            .sendTo(`${props.adapterName}.${props.instance}`, 'rebuild', null)
+                            .sendTo(`${props.adapterName}.${props.adapterInstance}`, 'rebuild', null)
                             .then(() => {
                                 window.alert(I18n.t('Rebuild of HTML pages was started'));
                                 props.onClose();
@@ -394,7 +455,6 @@ const Settings: React.FC<SettingsProps> = props => {
                 </Button>
                 <Button
                     style={{
-                        marginTop: 10,
                         opacity: window.localStorage.getItem('developerMode') === 'true' ? 1 : 0,
                     }}
                     variant="contained"
@@ -438,6 +498,4 @@ const Settings: React.FC<SettingsProps> = props => {
             </div>
         </IODialog>
     );
-};
-
-export default Settings;
+}
