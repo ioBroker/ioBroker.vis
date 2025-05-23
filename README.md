@@ -293,6 +293,9 @@ npm run start
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Added possibility to define favicon and browser tab title
+
 ### 2.12.9 (2025-05-19)
 * (@GermanBluefox) Added possibility to use value in signal text
 
