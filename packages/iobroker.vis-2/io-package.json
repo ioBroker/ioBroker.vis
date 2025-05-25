@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.12.9",
+    "version": "2.12.10",
     "news": {
+      "2.12.10": {
+        "en": "Added possibility to define favicon and browser tab title",
+        "de": "Möglichkeit, favicon und Browser-Tab-Titel zu definieren",
+        "ru": "Добавлена возможность определить название вкладки favicon и браузера",
+        "pt": "Adicionado possibilidade de definir favicon e título da guia do navegador",
+        "nl": "Toegevoegde mogelijkheid om favicon en browsertabbladtitel te definiëren",
+        "fr": "Ajout de la possibilité de définir le titre de l'onglet favicon et navigateur",
+        "it": "Aggiunta possibilità di definire favicon e titolo scheda browser",
+        "es": "Añadido posibilidad de definir el título de favicon y pestaña del navegador",
+        "pl": "Dodano możliwość zdefiniowania tytułu karty favicon i przeglądarki",
+        "uk": "Додана можливість визначення назв вкладок favicon та браузера",
+        "zh-cn": "添加定义 favicon 和浏览器标签标题的可能性"
+      },
       "2.12.9": {
         "en": "Added possibility to use value in signal text",
         "de": "Möglichkeit, Wert im Signaltext zu verwenden",
@@ -80,19 +93,6 @@
         "pl": "Optymalizacja federacji modułów",
         "uk": "Оптимізація федерації модуля",
         "zh-cn": "优化模块联合会"
-      },
-      "2.10.6": {
-        "en": "Improved the typing in typescript",
-        "de": "Verbessert die Eingabe in der Schrift",
-        "ru": "Улучшен типографский состав",
-        "pt": "Melhoria da digitação no typescript",
-        "nl": "Het typen in typescript verbeterd",
-        "fr": "Amélioration de la dactylographie",
-        "it": "Migliorata la digitazione in typescript",
-        "es": "Mejora de la escritura",
-        "pl": "Ulepszenie pisania na maszynie",
-        "uk": "Покращує типування у форматі",
-        "zh-cn": "改进打字符"
       }
     },
     "title": "Visualisation Next Generation",

@@ -293,7 +293,7 @@ npm run start
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.12.10 (2025-05-25)
 * (@GermanBluefox) Added possibility to define favicon and browser tab title
 
 ### 2.12.9 (2025-05-19)
@@ -312,9 +312,6 @@ npm run start
 * (@GermanBluefox) Migrated widgets to React: basic - frame, basic - note, basic - logout 
 * (@GermanBluefox) Added the HTML rebuild button to settings
 * (@GermanBluefox) Backend was migrated to TypeScript
-
-### 2.10.8 (2024-11-22)
-* (bluefox) Added a new option for view: "Limit only for instances"
 
 ## License
  Copyright (c) 2021-2025 Denis Haev, https://github.com/GermanBluefox <dogafox@gmail.com>,
