@@ -317,7 +317,7 @@ export function Settings(props: SettingsProps): React.JSX.Element {
                             <FormControl
                                 variant="standard"
                                 style={{ marginBottom: 10 }}
-                                fullWidth={field.fullWidth}
+                                fullWidth
                             >
                                 <InputLabel>{I18n.t(field.name)}</InputLabel>
                                 <Select

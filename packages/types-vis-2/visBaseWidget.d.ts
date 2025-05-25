@@ -196,7 +196,7 @@ declare class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBase
     // eslint-disable-next-line react/no-unused-class-component-methods
     formatIntervalHelper(value: number, type: 'seconds' | 'minutes' | 'hours' | 'days'): string;
     // eslint-disable-next-line react/no-unused-class-component-methods
-    formatInterval(timestamp: number, isMomentJs: boolean): string;
+    formatInterval(timestamp: number, isMomentJs?: boolean): string;
     // eslint-disable-next-line react/no-unused-class-component-methods
     startUpdateInterval(): void;
     // eslint-disable-next-line react/no-unused-class-component-methods

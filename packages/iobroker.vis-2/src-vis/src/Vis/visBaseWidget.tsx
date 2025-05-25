@@ -1512,7 +1512,7 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
         return `${value} ${plural}`;
     }
 
-    formatInterval(timestamp: number, isMomentJs: boolean): string {
+    formatInterval(timestamp: number, isMomentJs?: boolean): string {
         if (isMomentJs) {
             // init moment
             return this.props.context.moment(new Date(timestamp)).fromNow();
