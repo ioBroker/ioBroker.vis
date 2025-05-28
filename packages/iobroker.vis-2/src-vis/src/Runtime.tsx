@@ -331,7 +331,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
 
         window.addEventListener('hashchange', this.onHashChange, false);
 
-        if (!this.state.runtime) {
+        if (newState.runtime) {
             // Listen for resize changes
             window.addEventListener('orientationchange', this.orientationChange, false);
             window.addEventListener('resize', this.orientationChange, false);
@@ -351,7 +351,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
             this.resolutionTimer = null;
         }
 
-        if (!this.state.runtime) {
+        if (this.state.runtime) {
             window.removeEventListener('orientationchange', this.orientationChange, false);
             window.removeEventListener('resize', this.orientationChange, false);
         }
@@ -589,7 +589,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
         let difference = 10000;
 
         // First, find all with the best fitting width
-        project &&
+        if (project) {
             Object.keys(project).forEach(view => {
                 if (view === '___settings') {
                     return;
@@ -602,6 +602,7 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
                     views.push(view);
                 }
             });
+        }
 
         for (let i = 0; i < views.length; i++) {
             if (Math.abs(project[views[i]].settings.sizey - h) < difference) {
@@ -615,36 +616,31 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
             const ratio = w / h;
             difference = 10000;
 
-            project &&
+            if (project) {
                 Object.keys(project).forEach(view => {
                     if (view === '___settings') {
                         return;
                     }
+                    const sizeX = parseInt(project[view].settings?.sizex?.toString() || '0', 10);
+                    const sizeY = parseInt(project[view].settings?.sizey?.toString() || '0', 10);
                     if (
                         project[view].settings?.useAsDefault &&
                         // If difference less than 20%
-                        parseInt(project[view].settings.sizey.toString(), 10) &&
-                        Math.abs(
-                            ratio -
-                                parseInt(project[view].settings.sizex.toString(), 10) /
-                                    parseInt(project[view].settings.sizey.toString(), 10),
-                        ) < difference
+                        sizeY &&
+                        Math.abs(ratio - sizeX / sizeY) < difference
                     ) {
                         result = view;
-                        difference = Math.abs(
-                            ratio -
-                                parseInt(project[view].settings.sizex.toString(), 10) /
-                                    parseInt(project[view].settings.sizey.toString(), 10),
-                        );
+                        difference = Math.abs(ratio - sizeX / sizeY);
                     }
                 });
+            }
+        }
+        if (!result && resultRequired && project) {
+            // try to find view with useAsDefault
+            result = Object.keys(project).find(view => !view.startsWith('__') && project[view].settings?.useAsDefault);
         }
         if (!result && resultRequired) {
-            result =
-                project &&
-                Object.keys(project).find(view => !view.startsWith('__') && project[view].settings?.useAsDefault);
-        }
-        if (!result && resultRequired) {
+            // take first view
             return (project && Object.keys(project).find(view => !view.startsWith('__'))) || '';
         }
 
@@ -810,14 +806,17 @@ class Runtime<P extends RuntimeProps = RuntimeProps, S extends RuntimeState = Ru
     orientationChange = (): void => {
         if (this.resolutionTimer) {
             clearTimeout(this.resolutionTimer);
-        }
-        this.resolutionTimer = setTimeout(async () => {
             this.resolutionTimer = null;
-            const view = Runtime.findViewWithNearestResolution(store.getState().visProject);
-            if (view && view !== this.state.selectedView) {
-                await this.changeView(view);
-            }
-        }, 200);
+        }
+        if (!this.state.editMode) {
+            this.resolutionTimer = setTimeout(async () => {
+                this.resolutionTimer = null;
+                const view = Runtime.findViewWithNearestResolution(store.getState().visProject);
+                if (view && view !== this.state.selectedView) {
+                    await this.changeView(view);
+                }
+            }, 200);
+        }
     };
 
     // this function is required here if the project not defined

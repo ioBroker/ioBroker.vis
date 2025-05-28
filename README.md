@@ -293,6 +293,9 @@ npm run start
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Corrected selection of the view for resolution
+
 ### 2.12.10 (2025-05-25)
 * (@GermanBluefox) Added possibility to define favicon and browser tab title
 
