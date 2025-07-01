@@ -278,23 +278,22 @@ class Palette extends Component<PaletteProps, PaletteState> {
         widgetTypes.forEach(widgetType => {
             const widgetTypeName: string = widgetType.set;
             if (widgetType.developerMode) {
-                widgetSetProps[widgetTypeName] = widgetSetProps[widgetTypeName] || {};
+                widgetSetProps[widgetTypeName] ||= {};
                 widgetSetProps[widgetTypeName].developerMode = true;
             }
-
             if (widgetType.setLabel) {
-                widgetSetProps[widgetTypeName] = widgetSetProps[widgetTypeName] || {};
+                widgetSetProps[widgetTypeName] ||= {};
                 widgetSetProps[widgetTypeName].label = I18n.t(widgetType.setLabel);
             }
             if (widgetType.setColor) {
-                widgetSetProps[widgetTypeName] = widgetSetProps[widgetTypeName] || {};
+                widgetSetProps[widgetTypeName] ||= {};
                 widgetSetProps[widgetTypeName].color = widgetType.setColor;
             }
             if (widgetType.setIcon) {
-                widgetSetProps[widgetTypeName] = widgetSetProps[widgetTypeName] || {};
+                widgetSetProps[widgetTypeName] ||= {};
                 widgetSetProps[widgetTypeName].icon = widgetType.setIcon;
             } else if (widgetType.adapter && !widgetSetProps[widgetTypeName]?.icon) {
-                widgetSetProps[widgetTypeName] = widgetSetProps[widgetTypeName] || {};
+                widgetSetProps[widgetTypeName] ||= {};
                 if (window.location.port === '3000') {
                     widgetSetProps[widgetTypeName].icon = `./adapter/${widgetType.adapter}/${widgetType.adapter}.png`;
                 } else {
@@ -302,11 +301,11 @@ class Palette extends Component<PaletteProps, PaletteState> {
                 }
             }
             if (widgetType.rx) {
-                widgetSetProps[widgetTypeName] = widgetSetProps[widgetTypeName] || {};
+                widgetSetProps[widgetTypeName] ||= {};
                 widgetSetProps[widgetTypeName].rx = true;
             }
             if (widgetType.version) {
-                widgetSetProps[widgetTypeName] = widgetSetProps[widgetTypeName] || {};
+                widgetSetProps[widgetTypeName] ||= {};
                 widgetSetProps[widgetTypeName].version = widgetType.version;
             }
 
@@ -318,7 +317,7 @@ class Palette extends Component<PaletteProps, PaletteState> {
                 return;
             }
 
-            _widgetsList[widgetTypeName] = _widgetsList[widgetTypeName] || {};
+            _widgetsList[widgetTypeName] ||= {};
             _widgetsList[widgetTypeName][widgetType.name] = widgetType;
         });
 
@@ -514,7 +513,9 @@ class Palette extends Component<PaletteProps, PaletteState> {
                 }
             }
         }
-        reload && setTimeout(() => window.location.reload(), 1000);
+        if (reload) {
+            setTimeout(() => window.location.reload(), 1000);
+        }
     }
 
     buildListTrigger(immediate?: boolean): void {

@@ -17,7 +17,7 @@ import type {
 } from '@iobroker/types-vis-2';
 import type VisRxWidget from '@/Vis/visRxWidget';
 
-import { getRemoteWidgets } from './visLoadWidgets';
+import { getRemoteWidgets, type VisRxWidgetWithInfo } from './visLoadWidgets';
 import WIDGETS from './Widgets';
 
 const DEFAULT_SET_COLORS: Record<string, string> = {
@@ -258,9 +258,10 @@ interface VisRxWidgetLoaded extends VisRxWidget<any> {
     readonly version?: string;
     readonly visHidden?: boolean;
     readonly url?: string;
+    readonly setIcon?: string;
 }
 
-export const getWidgetTypes: (_usedWidgetSets?: string[]) => WidgetType[] = (usedWidgetSets?: string[]) => {
+export const getWidgetTypes = (usedWidgetSets?: string[]): WidgetType[] => {
     if (!window.visWidgetTypes) {
         window.visSets = {};
         VisWidgetsCatalog.allWidgetsList = [];
@@ -292,7 +293,7 @@ export const getWidgetTypes: (_usedWidgetSets?: string[]) => WidgetType[] = (use
                 }
 
                 const color = script.getAttribute('data-vis-color');
-                window.visSets[widgetSet] = window.visSets[widgetSet] || {};
+                window.visSets[widgetSet] ||= {};
                 if (color) {
                     window.visSets[widgetSet].color = color;
                 } else if (!window.visSets[widgetSet].color && DEFAULT_SET_COLORS[widgetSet]) {
@@ -352,7 +353,11 @@ export const getWidgetTypes: (_usedWidgetSets?: string[]) => WidgetType[] = (use
                       : undefined, // new style with translation
                 setLabel: widgetInfo.visSetLabel ? i18nPrefix + widgetInfo.visSetLabel : undefined, // new style with translation
                 setColor: widgetInfo.visSetColor,
-                setIcon: widgetInfo.visSetIcon,
+                setIcon:
+                    widgetInfo.visSetIcon ||
+                    (widget.setIcon && widget.adapter && widget.setIcon
+                        ? `../adapter/${widget.adapter}/${widget.setIcon}`
+                        : undefined),
                 color: widgetInfo.visWidgetColor,
                 resizable: widgetInfo.visResizable,
                 resizeLocked: widgetInfo.visResizeLocked,
@@ -367,9 +372,9 @@ export const getWidgetTypes: (_usedWidgetSets?: string[]) => WidgetType[] = (use
                 developerMode: widget.url?.startsWith('http://'),
                 i18nPrefix,
             };
-            VisWidgetsCatalog.allWidgetsList &&
-                !VisWidgetsCatalog.allWidgetsList.includes(widgetObj.name) &&
+            if (VisWidgetsCatalog.allWidgetsList && !VisWidgetsCatalog.allWidgetsList.includes(widgetObj.name)) {
                 VisWidgetsCatalog.allWidgetsList.push(widgetObj.name);
+            }
 
             const index = (window as any).visWidgetTypes.findIndex((item: WidgetType) => item.name === widgetObj.name);
             if (index > -1) {
@@ -464,11 +469,11 @@ class VisWidgetsCatalog {
             for (let w = 0; w < keys.length; w++) {
                 // remove deprecated attributes
                 if (widgets[keys[w]].set) {
-                    views = views || JSON.parse(JSON.stringify(project));
+                    views ||= JSON.parse(JSON.stringify(project));
                     delete views[viewKeys[v]].widgets[keys[w]].set;
                 }
                 if (widgets[keys[w]].wSet) {
-                    views = views || JSON.parse(JSON.stringify(project));
+                    views ||= JSON.parse(JSON.stringify(project));
                     delete views[viewKeys[v]].widgets[keys[w]].wSet;
                 }
                 if (widgets[keys[w]].widgetSet) {
@@ -477,12 +482,12 @@ class VisWidgetsCatalog {
                 const tpl = widgets[keys[w]].tpl;
 
                 if (tpl === '_tplGroup') {
-                    views = views || JSON.parse(JSON.stringify(project));
+                    views ||= JSON.parse(JSON.stringify(project));
                     views[viewKeys[v]].widgets[keys[w]].widgetSet = 'basic';
                 } else {
                     const tplWidget = widgetTypes.find(item => item.name === tpl);
                     if (tplWidget) {
-                        views = views || JSON.parse(JSON.stringify(project));
+                        views ||= JSON.parse(JSON.stringify(project));
                         views[viewKeys[v]].widgets[keys[w]].widgetSet = tplWidget.set;
                     }
                 }
@@ -509,13 +514,13 @@ class VisWidgetsCatalog {
                 setTimeout(
                     () =>
                         getRemoteWidgets(socket, !changeProject && usedWidgetSets ? usedWidgetSets : false).then(
-                            (widgetSets: void | VisRxWidget<any>[]) => {
-                                const collectedWidgets: VisRxWidget<any>[] = [
+                            (widgetSets: void | VisRxWidgetWithInfo<any>[]) => {
+                                const collectedWidgets: VisRxWidgetWithInfo<any>[] = [
                                     ...WIDGETS,
                                     ...(widgetSets || []),
-                                ] as VisRxWidget<any>[];
+                                ] as VisRxWidgetWithInfo<any>[];
 
-                                collectedWidgets.forEach((WidgetEl: VisRxWidget<any>) => {
+                                collectedWidgets.forEach((WidgetEl: VisRxWidgetWithInfo<any>) => {
                                     if (!WidgetEl?.getWidgetInfo) {
                                         console.error(
                                             `Invalid widget without getWidgetInfo: ${WidgetEl.constructor.name}`,
@@ -619,8 +624,8 @@ export const parseAttributes = (
         let groupName = 'common';
         let indexedGroups: { [key: number]: WidgetAttributesGroupInfoStored } = {};
         let isIndexedGroup = false;
-        commonGroups = commonGroups || { common: 1 };
-        commonFields = commonFields || {};
+        commonGroups ||= { common: 1 };
+        commonFields ||= {};
         const fields: WidgetAttributesGroupInfoStored[] = [
             {
                 name: 'common',
@@ -629,7 +634,7 @@ export const parseAttributes = (
             },
         ];
         let currentGroup: WidgetAttributesGroupInfoStored | undefined = fields[0];
-        widgetIndex = widgetIndex || 0;
+        widgetIndex ||= 0;
 
         widgetParams.split(';').forEach(fieldString => {
             if (!fieldString) {
@@ -705,7 +710,7 @@ export const parseAttributes = (
                 }
 
                 // special case for Object ID filter
-                if (field.onChangeFunc && field.onChangeFunc.startsWith('filterType')) {
+                if (field.onChangeFunc?.startsWith('filterType')) {
                     field.filter = field.onChangeFunc.substring('filterType'.length).toLowerCase();
                     delete field.onChangeFunc;
                 }
@@ -721,7 +726,7 @@ export const parseAttributes = (
                 }
 
                 if (field.name === 'oid' || field.name.match(/^oid-/)) {
-                    field.type = field.type || 'id';
+                    field.type ||= 'id';
                 } else if (field.name === 'color') {
                     field.type = 'color';
                 } else if (field.name.match(/nav_view$/)) {
@@ -867,8 +872,8 @@ export const parseAttributes = (
     }
 
     if (Array.isArray(widgetParams)) {
-        commonGroups = commonGroups || { common: 1 };
-        commonFields = commonFields || {};
+        commonGroups ||= { common: 1 };
+        commonFields ||= {};
         const fields = deepCloneRx(widgetParams) as WidgetAttributesGroupInfoStored[];
         let groupIndex = fields.findIndex(group => typeof group.indexFrom === 'number');
 

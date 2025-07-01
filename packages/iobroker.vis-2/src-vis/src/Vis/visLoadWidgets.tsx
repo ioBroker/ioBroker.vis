@@ -22,14 +22,18 @@ import { registerRemotes, loadRemote, init } from '@module-federation/runtime';
 export type WidgetSetName = Branded<string, 'WidgetSetName'>;
 export type PromiseName = `_promise_${WidgetSetName}`;
 
-interface VisRxWidgetWithInfo<
+export interface VisRxWidgetWithInfo<
     TRxData extends Record<string, any>,
     TState extends Partial<VisRxWidgetState> = VisRxWidgetState,
 > extends VisRxWidget<TRxData, TState> {
+    // Widget set name
     adapter: string;
+    // Widget set version
     version: string;
     url: string;
     i18nPrefix?: string;
+    // Widget set icon
+    setIcon: string;
 }
 interface WidgetSetStruct {
     __initialized: boolean;
@@ -87,6 +91,7 @@ function _loadComponentHelper(context: VisLoadComponentContext): Promise<void[]>
                                 .substring('system.adapter.'.length)
                                 .replace(/\.\d*$/, '');
                             CustomComponent.default.version = context.dynamicWidgetInstance.common.version;
+                            CustomComponent.default.setIcon = context.dynamicWidgetInstance.common.icon;
                             CustomComponent.default.url = _visWidgetsCollection.url;
                             if (context.i18nPrefix) {
                                 CustomComponent.default.i18nPrefix = context.i18nPrefix;
@@ -95,8 +100,7 @@ function _loadComponentHelper(context: VisLoadComponentContext): Promise<void[]>
                         } else {
                             console.error(`Cannot load widget ${context.dynamicWidgetInstance._id}. No default found`);
                         }
-                        window.__widgetsLoadIndicator &&
-                            window.__widgetsLoadIndicator(context.countRef.count, context.countRef.max);
+                        window.__widgetsLoadIndicator?.(context.countRef.count, context.countRef.max);
                     }
                 })
                 .catch((e: any) => {
@@ -205,8 +209,7 @@ function getRemoteWidgets(
                                             .then(json => {
                                                 countRef.count++;
                                                 I18n.extendTranslations(json, lang);
-                                                window.__widgetsLoadIndicator &&
-                                                    window.__widgetsLoadIndicator(countRef.count, promises.length);
+                                                window.__widgetsLoadIndicator?.(countRef.count, promises.length);
                                             })
                                             .catch(error => {
                                                 if (lang !== 'en') {
@@ -216,11 +219,10 @@ function getRemoteWidgets(
                                                         .then(json => {
                                                             countRef.count++;
                                                             I18n.extendTranslations(json, lang);
-                                                            window.__widgetsLoadIndicator &&
-                                                                window.__widgetsLoadIndicator(
-                                                                    countRef.count,
-                                                                    promises.length,
-                                                                );
+                                                            window.__widgetsLoadIndicator?.(
+                                                                countRef.count,
+                                                                promises.length,
+                                                            );
                                                         })
                                                         .catch(_error =>
                                                             console.log(
@@ -249,8 +251,7 @@ function getRemoteWidgets(
                                                 i18nPrefix = translations.default.prefix;
 
                                                 I18n.extendTranslations(translations.default);
-                                                window.__widgetsLoadIndicator &&
-                                                    window.__widgetsLoadIndicator(countRef.count, promises.length);
+                                                window.__widgetsLoadIndicator?.(countRef.count, promises.length);
                                             })
                                             .catch((error: string) =>
                                                 console.log(`Cannot load i18n "${collection.name}": ${error}`),
