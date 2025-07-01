@@ -811,6 +811,8 @@ export interface ProjectSettings {
     title?: string;
     /** Favicon as base64 or URL */
     favicon?: string;
+    /** Do not show error if the widget is not loaded */
+    ignoreNotLoaded?: boolean;
 }
 
 export type SingleWidgetId = `w${string}`;

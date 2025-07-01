@@ -194,6 +194,7 @@ export function Settings(props: SettingsProps): React.JSX.Element {
         { type: 'switchMode' }, // very specific control
         { name: 'Browser tab title', type: 'text', field: 'title' },
         { name: 'Browser tab favicon', type: 'image', field: 'favicon' },
+        { name: 'Ignore not loaded widgets', type: 'checkbox', field: 'ignoreNotLoaded' },
         {
             type: 'select',
             name: 'Body overflow',

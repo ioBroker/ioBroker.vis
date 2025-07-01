@@ -1362,6 +1362,9 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
      */
     renderWidgetBody(_props: RxRenderWidgetProps): React.JSX.Element | React.JSX.Element[] | null {
         // Default render method. Normally it should be overwritten
+        if (this.props.context.views.___settings?.ignoreNotLoaded && !this.state.editMode) {
+            return null;
+        }
         return (
             <div
                 style={{

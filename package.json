@@ -13,10 +13,10 @@
         "@alcalzone/release-script-plugin-iobroker": "^3.7.2",
         "@alcalzone/release-script-plugin-lerna": "^3.7.0",
         "@alcalzone/release-script-plugin-license": "^3.7.0",
-        "@iobroker/eslint-config": "^2.0.1",
-        "@iobroker/adapter-react-v5": "^7.6.16",
+        "@iobroker/eslint-config": "^2.0.2",
+        "@iobroker/adapter-react-v5": "^7.7.1",
         "@iobroker/types": "^7.0.7",
-        "lerna": "^8.2.2",
+        "lerna": "^8.2.3",
         "moment": "^2.30.1",
         "react": "^18.3.1",
         "typescript": "^5.8.3"
