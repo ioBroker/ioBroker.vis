@@ -368,18 +368,21 @@ export function getFields(
                         if (e.target.value === 'none') {
                             delete project[selectedView].settings.sizex;
                             delete project[selectedView].settings.sizey;
+                            delete project[selectedView].settings.resolution;
                         } else if (e.target.value === 'user') {
                             project[selectedView].settings.sizex = project[selectedView].settings.sizex || 0;
                             project[selectedView].settings.sizey = project[selectedView].settings.sizey || 0;
-                            const _resolutionSelect = `${project[selectedView].settings.sizex}x${project[selectedView].settings.sizey}`;
-                            if (resolution.find(item => item.value === _resolutionSelect)) {
-                                project[selectedView].settings.sizex++;
-                            }
+                            project[selectedView].settings.resolution = e.target.value || 'none';
+                            // const _resolutionSelectX = `${project[selectedView].settings.sizex}x${project[selectedView].settings.sizey}`;
+                            // if (resolution.find(item => item.value === _resolutionSelectX)) {
+                            //     project[selectedView].settings.sizex++;
+                            // }
                         } else {
                             const match = e.target.value.match(/^([0-9]+)x([0-9]+)$/);
                             if (match) {
                                 project[selectedView].settings.sizex = match[1];
                                 project[selectedView].settings.sizey = match[2];
+                                project[selectedView].settings.resolution = e.target.value || 'none';
                             }
                         }
                         changeProject(project);
@@ -395,7 +398,7 @@ export function getFields(
                             <TextField
                                 variant="standard"
                                 value={view.settings?.sizex === undefined ? '' : view.settings.sizex}
-                                disabled={!editMode || resolutionSelect !== 'user'}
+                                disabled={!editMode || view.settings.resolution !== 'user'}
                                 slotProps={{
                                     input: {
                                         sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },
@@ -416,7 +419,7 @@ export function getFields(
                             <TextField
                                 variant="standard"
                                 value={view.settings?.sizey === undefined ? '' : view.settings.sizey}
-                                disabled={!editMode || resolutionSelect !== 'user'}
+                                disabled={!editMode || view.settings.resolution !== 'user'}
                                 slotProps={{
                                     input: {
                                         sx: { ...commonStyles.clearPadding, ...commonStyles.fieldContent },

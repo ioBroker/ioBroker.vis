@@ -165,11 +165,10 @@ const ViewAttributes = (props: ViewProps): React.JSX.Element | null => {
     const [showAllViewDialog, setShowAllViewDialog] = useState<ApplyField | null>(null);
     const [showViewsDialog, setShowViewsDialog] = useState<Field | null>(null);
 
-    let resolutionSelect = 'none';
     const project: Project = store.getState().visProject;
 
     const view: View | null = project[props.selectedView];
-
+    let resolutionSelect = view?.settings?.resolution || 'none';
     const fields = useMemo(
         () => (view ? getFields(resolutionSelect, view, props.selectedView, props.editMode, props.changeProject) : []),
         // eslint-disable-next-line react-hooks/exhaustive-deps
