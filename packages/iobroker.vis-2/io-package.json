@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.12.10",
+    "version": "2.12.11",
     "news": {
+      "2.12.11": {
+        "en": "Corrected selection of the view for resolution\nAdded option to ignore the unloaded widgets in runtime\nCorrected the user defined resolution for the view",
+        "de": "Korrigierte Auswahl der Ansicht zur Auflösung\nOption hinzugefügt, um die entladenen Widgets in Laufzeit zu ignorieren\nKorrektur der Benutzer-definierten Auflösung für die Ansicht",
+        "ru": "Исправленный выбор точки зрения для резолюции\nДобавлена опция игнорировать незагруженные виджеты во время выполнения\nИсправлено пользовательское определенное разрешение для представления",
+        "pt": "Seleção corrigida da visão para resolução\nAdicionada opção para ignorar os widgets descarregados em tempo de execução\nCorrigido a resolução definida pelo usuário para a visualização",
+        "nl": "Gecorrigeerde selectie van de weergave voor resolutie\nToegevoegd optie om de ongeladen widgets in runtime te negeren\nDe door de gebruiker gedefinieerde resolutie voor het beeld corrigeren",
+        "fr": "Sélection corrigée de la vue pour la résolution\nAjout de l'option pour ignorer les widgets déchargés dans runtime\nCorrection de la résolution définie par l'utilisateur pour la vue",
+        "it": "Selezione corretta della proposta di risoluzione\nAggiunta opzione per ignorare i widget scaricati in runtime\nCorretto la risoluzione definita dall'utente per la visualizzazione",
+        "es": "Selección corregida de la opinión de resolución\nOpción agregada para ignorar los widgets descargados en tiempo de ejecución\nCorregido la resolución definida por el usuario para la vista",
+        "pl": "Skorygowany wybór punktu widzenia na rozdzielczość\nDodano opcję ignorowania rozładowanych widżetów w runtime\nPoprawiono rozdzielczość użytkownika dla widoku",
+        "uk": "Правильний вибір виду для вирішення\nДодано можливість ігнорувати відвантажені віджети в runtime\nВиправлено помилку користувача для перегляду",
+        "zh-cn": "已更正的解决视图\n在运行时忽略已卸载部件的选项\n更正了用户定义的视图分辨率"
+      },
       "2.12.10": {
         "en": "Added possibility to define favicon and browser tab title",
         "de": "Möglichkeit, favicon und Browser-Tab-Titel zu definieren",
@@ -80,19 +93,6 @@
         "pl": "Dodano nową opcję widoku: \"Limit tylko dla instancji\"",
         "uk": "Додано новий варіант для перегляду: \"Всі тільки екземпляри\"",
         "zh-cn": "为视图添加了新选项 : “ 仅限实例”"
-      },
-      "2.10.7": {
-        "en": "Optimization of the module federation",
-        "de": "Optimierung der Modulbeschickung",
-        "ru": "Оптимизация федерации модулей",
-        "pt": "Otimização da federação do módulo",
-        "nl": "Optimalisatie van de modulefederatie",
-        "fr": "Optimisation de la fédération des modules",
-        "it": "Ottimizzazione della federazione del modulo",
-        "es": "Optimización de la federación del módulo",
-        "pl": "Optymalizacja federacji modułów",
-        "uk": "Оптимізація федерації модуля",
-        "zh-cn": "优化模块联合会"
       }
     },
     "title": "Visualisation Next Generation",

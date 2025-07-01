@@ -293,7 +293,7 @@ npm run start
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.12.11 (2025-07-01)
 * (@GermanBluefox) Corrected selection of the view for resolution
 * (@GermanBluefox) Added option to ignore the unloaded widgets in runtime
 * (@oweitman) Corrected the user defined resolution for the view
@@ -311,12 +311,6 @@ npm run start
 
 ### 2.11.2 (2025-01-23)
 * (@GermanBluefox) Do not load vis-1 widgets if vis-2 widgets are provided
-
-### 2.11.1 (2024-12-02)
-* (@GermanBluefox) Corrected navigation menu
-* (@GermanBluefox) Migrated widgets to React: basic - frame, basic - note, basic - logout 
-* (@GermanBluefox) Added the HTML rebuild button to settings
-* (@GermanBluefox) Backend was migrated to TypeScript
 
 ## License
  Copyright (c) 2021-2025 Denis Haev, https://github.com/GermanBluefox <dogafox@gmail.com>,
