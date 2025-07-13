@@ -53,7 +53,7 @@ class BasicViewInWidget8 extends VisRxWidget<RxData> {
         }
 
         const viewArr = [];
-        let i = 0;
+        let i = 1;
         while (this.state.rxData[`contains_view_${i}`] !== undefined) {
             viewArr.push(this.state.rxData[`contains_view_${i}`]);
             i++;
@@ -74,22 +74,7 @@ class BasicViewInWidget8 extends VisRxWidget<RxData> {
         } else {
             view = viewArr[0];
         }
-        /*
-        <% if (vis.editMode) { %>
-            <div class="editmode-helper" />
-        <% } %>
-        <%
-            var viewArr = [];
-            var i = 0;
-            while (data.attr('contains_view_' + i) !== undefined) {
-                viewArr.push(data.attr('contains_view_' + i));
-                i++;
-            }
-        %>
-        <div class="vis-widget-body">
-            <div class="vis-view-container" data-oid="<%= data.attr('oid') %>" data-vis-contains="<%= vis.binds.stateful.value(viewArr, data.attr('oid')) %>" <%= (el) -> vis.binds.stateful.view(el, viewArr, data.attr('persistent'), data.attr('notIfInvisible')) %> />
-        </div>
-         */
+
         if (view === this.props.view) {
             return (
                 <div

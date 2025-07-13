@@ -85,6 +85,18 @@ export function getWidgetGroup(views: Project, view: string, widget: AnyWidgetId
     return widgetKeys.find(w => widgets[w].data?.members?.includes(widget)) as GroupWidgetId;
 }
 
+/** Prefix to detect local states (only exist in browser) */
+const LOCAL_STATE_PREFIX = 'local_';
+
+/**
+ * Check if state id is a local state
+ *
+ * @param id the state id to check
+ */
+export function isLocalStateId(id: string): boolean {
+    return id.startsWith(LOCAL_STATE_PREFIX);
+}
+
 /**
  * Determine if the string is of form identifier:ioBrokerId, like, val:hm-rpc.0.device.channel.state
  */
@@ -754,18 +766,21 @@ export function getUsedObjectIDs(views: Project, isByViews?: boolean): VisStateU
     return linkContext;
 }
 
+/**
+ * Extract URL parameter by name (if given without value, it returns true)
+ *
+ * @param attr attribute name to search in URL
+ */
 export function getUrlParameter(attr: string): string | true {
-    const sURLVariables = window.location.search.substring(1).split('&');
+    const sURLVariables = new URLSearchParams(window.location.search);
 
-    for (let i = 0; i < sURLVariables.length; i++) {
-        const sParameterName = sURLVariables[i].split('=');
-
-        if (sParameterName[0] === attr) {
-            return typeof sParameterName[1] === 'undefined' ? true : decodeURIComponent(sParameterName[1]);
-        }
+    if (!sURLVariables.has(attr)) {
+        return '';
     }
 
-    return '';
+    const sParameterName = sURLVariables.get(attr);
+
+    return typeof sParameterName === 'undefined' ? true : decodeURIComponent(sParameterName);
 }
 
 export async function readFile(
