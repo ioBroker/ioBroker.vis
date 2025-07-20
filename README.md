@@ -293,6 +293,9 @@ npm run start
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (@foxriver76) enabled the local binding states for widgets
+
 ### 2.12.11 (2025-07-01)
 * (@GermanBluefox) Corrected selection of the view for resolution
 * (@GermanBluefox) Added option to ignore the unloaded widgets in runtime
