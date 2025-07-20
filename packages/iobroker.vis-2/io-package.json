@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.12.11",
+    "version": "2.12.12",
     "news": {
+      "2.12.12": {
+        "en": "enabled the local binding states for widgets",
+        "de": "die lokalen bindungszustände für widgets aktiviert",
+        "ru": "возможность локальных связывающих состояний для виджетов",
+        "pt": "ativou os estados de ligação locais para widgets",
+        "nl": "de lokale bindingstoestanden voor widgets ingeschakeld",
+        "fr": "a permis aux états contraignants locaux pour les widgets",
+        "it": "abilitato gli stati di binding locali per i widget",
+        "es": "habilitado los estados de unión local para widgets",
+        "pl": "włącz lokalne stany wiążące widżety",
+        "uk": "увімкнено локальні стани для віджетів",
+        "zh-cn": "启用用于部件的本地绑定状态"
+      },
       "2.12.11": {
         "en": "Corrected selection of the view for resolution\nAdded option to ignore the unloaded widgets in runtime\nCorrected the user defined resolution for the view",
         "de": "Korrigierte Auswahl der Ansicht zur Auflösung\nOption hinzugefügt, um die entladenen Widgets in Laufzeit zu ignorieren\nKorrektur der Benutzer-definierten Auflösung für die Ansicht",
@@ -80,19 +93,6 @@
         "pl": "Skorygowane menu nawigacyjne\nMigrated widgets to React: podstawowy - ramka, podstawowy - notatka, podstawowy - logout\nDodano przycisk odbudowania HTML do ustawień\nBackend został przeniesiony do TypeScript",
         "uk": "Корисне меню навігації\nMigrated віджети до React: базовий - кадр, базовий - замітка, базовий - логотип\nДодано кнопку відновлення HTML на налаштування\nBackend був мігрований до TypeScript",
         "zh-cn": "已更正的导航菜单\n切换部件到反应:基本 - 框架、基本 - 注、基本 - 登录\n将 HTML 重建按钮添加到设置\n后端已迁移到类型脚本"
-      },
-      "2.10.8": {
-        "en": "Added new option for view: \"Limit only for instances\"",
-        "de": "Neue Option zur Ansicht hinzugefügt: \"Limit nur für Instanzen\"",
-        "ru": "Добавлена новая опция для просмотра: \"Подобный только для случаев\"",
-        "pt": "Adicionado nova opção para visualização: \"Limitar apenas por instâncias\"",
-        "nl": "Nieuwe optie toegevoegd voor weergave: \"Alleen voor instanties beperken\"",
-        "fr": "Ajout d'une nouvelle option pour la vue: \"Limiter uniquement pour les instances\"",
-        "it": "Aggiunto nuova opzione per visualizzare: \"Limit solo per istanze\"",
-        "es": "Añadido nueva opción para ver: \"Limit only for instances\"",
-        "pl": "Dodano nową opcję widoku: \"Limit tylko dla instancji\"",
-        "uk": "Додано новий варіант для перегляду: \"Всі тільки екземпляри\"",
-        "zh-cn": "为视图添加了新选项 : “ 仅限实例”"
       }
     },
     "title": "Visualisation Next Generation",

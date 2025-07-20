@@ -356,6 +356,9 @@
 
 ### 2.0.0 (2022-10-21)
 * (bluefox) Completely new visualization, but partly compatible with the previous version
+## 2.11.2 (2025-01-23)
+* (@GermanBluefox) Do not load vis-1 widgets if vis-2 widgets are provided
+
 ## 2.11.1 (2024-12-02)
 * (@GermanBluefox) Corrected navigation menu
 * (@GermanBluefox) Migrated widgets to React: basic - frame, basic - note, basic - logout 

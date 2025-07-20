@@ -293,7 +293,7 @@ npm run start
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.12.12 (2025-07-20)
 * (@foxriver76) enabled the local binding states for widgets
 
 ### 2.12.11 (2025-07-01)
@@ -311,9 +311,6 @@ npm run start
 * (@GermanBluefox) Added new SVG icon as favicon.
 * (@GermanBluefox) Added support for the TypeScript widgets
 * (@GermanBluefox) Used `vite` for faster loading
-
-### 2.11.2 (2025-01-23)
-* (@GermanBluefox) Do not load vis-1 widgets if vis-2 widgets are provided
 
 ## License
  Copyright (c) 2021-2025 Denis Haev, https://github.com/GermanBluefox <dogafox@gmail.com>,
