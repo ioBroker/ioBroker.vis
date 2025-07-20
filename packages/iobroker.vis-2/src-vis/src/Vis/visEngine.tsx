@@ -67,7 +67,7 @@ import type JQuery from 'jquery';
 import './visWords';
 import VisView from './visView';
 import VisFormatUtils from './visFormatUtils';
-import { getUrlParameter, extractBinding, readFile } from './visUtils';
+import { getUrlParameter, extractBinding, readFile, isLocalStateId } from './visUtils';
 import VisWidgetsCatalog from './visWidgetsCatalog';
 
 function _translateWord(text: string, lang?: string, dictionary?: Record<string, Record<string, string>>): string {
@@ -1017,7 +1017,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                     Object.keys(data).forEach(id => {
                         let state: ioBroker.State = data[id];
 
-                        if (id.startsWith('local_')) {
+                        if (isLocalStateId(id)) {
                             // if it is a local variable, we have to initiate this
                             state = {
                                 val: getUrlParameter(id), // using url parameter to set the initial value of the local variable
@@ -1729,7 +1729,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
         // Send ack=false with new value to all widgets
         this.onStateChange(id, { val, ack: false });
 
-        if (id.startsWith('local_')) {
+        if (isLocalStateId(id)) {
             // update local variable state -> needed for binding, etc.
             return;
         }
@@ -2229,7 +2229,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                 this.subscribes[id] = 1;
                 console.log(`[${new Date().toISOString()}] +SUBSCRIBE: ${id}`);
                 this.createCanState(id);
-                if (!id.startsWith('local_')) {
+                if (!isLocalStateId(id)) {
                     void this.props.socket.subscribeState(id, this.onStateChange as ioBroker.StateChangeHandler);
                 }
             }
@@ -2243,7 +2243,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
             const now = Date.now();
             const o: Record<string, any> = {};
             // set all together
-            if (id.startsWith('local_')) {
+            if (isLocalStateId(id)) {
                 o[_val] = getUrlParameter(id);
             } else {
                 o[_val] = 'null';
@@ -2275,7 +2275,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                 if (!this.subscribes[id]) {
                     console.log(`[${new Date().toISOString()}] -UNSUBSCRIBE: ${id}`);
 
-                    if (!id.startsWith('local_')) {
+                    if (!isLocalStateId(id)) {
                         this.props.socket.unsubscribeState(id, this.onStateChange as ioBroker.StateChangeHandler);
                     }
                     delete this.subscribes[id];
@@ -2291,7 +2291,7 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
             if (!this.props.editMode) {
                 if (visProject.___settings) {
                     if (this.scripts !== (visProject.___settings.scripts || '')) {
-                        this.scripts = (visProject.___settings.scripts as string) || '';
+                        this.scripts = visProject.___settings.scripts || '';
                         let userScript = window.document.getElementById('#vis_user_scripts');
                         if (!userScript) {
                             userScript = window.document.createElement('script');

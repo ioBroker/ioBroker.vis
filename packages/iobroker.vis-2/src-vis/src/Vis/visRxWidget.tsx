@@ -41,7 +41,7 @@ import type {
 import { deepClone, calculateOverflow } from '../Utils/utils';
 import VisBaseWidget, { type VisBaseWidgetState, type WidgetStyleState } from './visBaseWidget';
 import VisView from './visView';
-import { addClass, getUsedObjectIDsInWidget } from './visUtils';
+import { addClass, getUsedObjectIDsInWidget, isLocalStateId } from './visUtils';
 
 type VisRxWidgetProps = VisBaseWidgetProps;
 
@@ -132,6 +132,9 @@ export class VisRxWidget<
     private informIncludedWidgets?: ReturnType<typeof setTimeout>;
 
     private filterDisplay?: '' | 'none' | 'block' | 'inline' | 'inline-block';
+
+    /** state change handler for local state changes */
+    private localStateChangeCb?: Parameters<typeof window.vis.registerOnChange>[0];
 
     constructor(props: VisRxWidgetProps) {
         super(props);
@@ -283,7 +286,7 @@ export class VisRxWidget<
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,class-methods-use-this
-    onStateUpdated(id: string, state: ioBroker.State): void {
+    onStateUpdated(id: string, state: Partial<ioBroker.State>): void {
         //
     }
 
@@ -298,7 +301,7 @@ export class VisRxWidget<
         /** state object */
         id?: StateID | null,
         /** state value */
-        state?: ioBroker.State | null,
+        state?: Partial<ioBroker.State> | null,
         /** if state should not be set */
         doNotApplyState?: boolean,
     ): Partial<VisRxWidgetState & TState & { rxData: TRxData }> | null {
@@ -416,10 +419,26 @@ export class VisRxWidget<
     componentDidMount(): void {
         super.componentDidMount();
 
-        this.linkContext.IDs.length &&
+        const localStateIds = this.linkContext.IDs.filter(id => isLocalStateId(id));
+
+        if (localStateIds.length) {
+            // we need to register changes of local states
+            this.localStateChangeCb = (arg, id, val, ack, ts) => {
+                if (!localStateIds.includes(id)) {
+                    return;
+                }
+
+                this.onStateChanged(id, { val, ack, ts });
+            };
+
+            window.vis.registerOnChange(this.localStateChangeCb, 'val', this.props.id);
+        }
+
+        if (this.linkContext.IDs.length) {
             this.props.context.socket
                 .subscribeStateAsync(this.linkContext.IDs, this.onStateChangedBind)
                 .catch(e => console.error(`Cannot subscribe on ${this.linkContext.IDs}: ${e}`));
+        }
     }
 
     onRxDataChanged(_prevRxData: typeof this.state.rxData): void {
@@ -445,6 +464,11 @@ export class VisRxWidget<
         if (this.linkContext.IDs.length) {
             this.props.context.socket.unsubscribeState(this.linkContext.IDs, this.onIoBrokerStateChanged);
         }
+
+        if (this.localStateChangeCb) {
+            window.vis.unregisterOnChange(this.localStateChangeCb, 'val', this.props.id);
+        }
+
         super.componentWillUnmount();
     }
 
