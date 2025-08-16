@@ -307,15 +307,20 @@ export type RxWidgetInfoAttributesFieldID = {
      - `{common: {role: 'switch'}` - show only states with roles starting from switch
      - `{common: {role: ['switch', 'button']}` - show only states with roles starting from `switch` and `button`
      */
-    readonly filter?: {
-        readonly common?: {
-            // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-            readonly custom?: true | string | '_dataSources';
-            readonly type?: ioBroker.CommonType | ioBroker.CommonType[];
-            readonly role?: string | string[];
-        };
-        readonly type?: ioBroker.ObjectType | ioBroker.ObjectType[];
-    };
+    readonly filter?:
+        | {
+              readonly type?: ioBroker.ObjectType | ioBroker.ObjectType[];
+              readonly common?: {
+                  readonly type?: ioBroker.CommonType | ioBroker.CommonType[];
+                  readonly role?: string | string[];
+                  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+                  readonly custom?: '_' | '_dataSources' | true | string | string[];
+              };
+          }
+        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+        | ioBroker.ObjectType
+        | ((data: WidgetData, index: number) => Record<string, any>)
+        | string;
 
     /** Used by counted fields */
     readonly index?: number;
