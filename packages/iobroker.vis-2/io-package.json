@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.12.12",
+    "version": "2.13.0",
     "news": {
+      "2.13.0": {
+        "en": "Added possibility to define SVG icon sets from widgets sets",
+        "de": "Zusätzliche Möglichkeit, SVG-Symbol-Sets von Widgets-Sets zu definieren",
+        "ru": "Добавлена возможность определять наборы значков SVG из наборов виджетов",
+        "pt": "Adicionada possibilidade de definir conjuntos de ícones SVG a partir de conjuntos de widgets",
+        "nl": "Toegevoegd mogelijkheid om SVG-pictogramsets van widgetssets te definiëren",
+        "fr": "Ajout de la possibilité de définir les ensembles d'icônes SVG à partir des jeux de widgets",
+        "it": "Aggiunta possibilità di definire set icona SVG da widget set",
+        "es": "Añadido posibilidad de definir conjuntos de iconos SVG de widgets",
+        "pl": "Dodano możliwość zdefiniowania zestawów ikon SVG z zestawów widżetów",
+        "uk": "Додано можливість визначити значки SVG з наборів віджетів",
+        "zh-cn": "从部件集中添加定义 SVG 图标集的可能性"
+      },
       "2.12.12": {
         "en": "enabled the local binding states for widgets",
         "de": "die lokalen bindungszustände für widgets aktiviert",
@@ -80,19 +93,6 @@
         "pl": "Nie wczytywać widżetów vis-1, jeśli widżety vis-2 są dostarczane",
         "uk": "Не завантажуйте віджети vis-1, якщо передбачено віджети Vis-2",
         "zh-cn": "如果提供了相对 2 个部件, 请不要装入 "
-      },
-      "2.11.1": {
-        "en": "Corrected navigation menu\nMigrated widgets to React: basic - frame, basic - note, basic - logout \nAdded the HTML rebuild button to settings\nBackend was migrated to TypeScript",
-        "de": "Navigationsmenü korrigiert\nMigrated widgets to React: basic - frame, basic - note, basic - logout\nHinzufügen der HTML-Wiederaufbau-Taste zu den Einstellungen\nBackend wurde zu TypeScript migriert",
-        "ru": "Исправленное меню навигации\nМигрированные виджеты для Реакция: базовый - кадр, основной - заметка, основной - logout\nДобавлена кнопка восстановления HTML в настройки\nBackend был перенесен на TypeScript",
-        "pt": "Menu de navegação correto\nWidgets migrados para React: basic - frame, basic - note, basic - logout\nAdicionado o botão de reconstrução HTML para configurações\nO backend foi migrado para TypeScript",
-        "nl": "Gecorrigeerd navigatiemenu\nMigreerde widgets om te reageren: basis - frame, basis - noot, basis - uitloggen\nDe HTML-herbouwknop toegevoegd aan instellingen\nBackend is gemigreerd naar TypeScript",
-        "fr": "Menu de navigation corrigé\nLes widgets migrés pour Réagir: basic - frame, basic - note, basic - loggout\nAjout du bouton de reconstruction HTML aux paramètres\nBackend a été migré vers TypeScript",
-        "it": "Menu di navigazione corretto\nWidget migrati a React: basic - frame, basic - note, basic - logout\nAggiunto il pulsante di ricostruzione HTML alle impostazioni\nBackend è stato migrato a TypeScript",
-        "es": "Menú de navegación corregido\nWidgets Migrated para React: basic - frame, basic - note, basic - logout\nAñadido el botón de reconstrucción HTML a la configuración\nBackend fue migrado a TipoScript",
-        "pl": "Skorygowane menu nawigacyjne\nMigrated widgets to React: podstawowy - ramka, podstawowy - notatka, podstawowy - logout\nDodano przycisk odbudowania HTML do ustawień\nBackend został przeniesiony do TypeScript",
-        "uk": "Корисне меню навігації\nMigrated віджети до React: базовий - кадр, базовий - замітка, базовий - логотип\nДодано кнопку відновлення HTML на налаштування\nBackend був мігрований до TypeScript",
-        "zh-cn": "已更正的导航菜单\n切换部件到反应:基本 - 框架、基本 - 注、基本 - 登录\n将 HTML 重建按钮添加到设置\n后端已迁移到类型脚本"
       }
     },
     "title": "Visualisation Next Generation",

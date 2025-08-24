@@ -356,6 +356,11 @@
 
 ### 2.0.0 (2022-10-21)
 * (bluefox) Completely new visualization, but partly compatible with the previous version
+## 2.12.8 (2025-05-03)
+* (@GermanBluefox) Added new SVG icon as favicon.
+* (@GermanBluefox) Added support for the TypeScript widgets
+* (@GermanBluefox) Used `vite` for faster loading
+
 ## 2.11.2 (2025-01-23)
 * (@GermanBluefox) Do not load vis-1 widgets if vis-2 widgets are provided
 
