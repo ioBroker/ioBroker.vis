@@ -171,6 +171,7 @@ export interface RxWidgetInfoCustomComponentContext {
     readonly adapterName: string;
     readonly views: Project;
     readonly theme: VisTheme;
+    readonly additionalSets: AdditionalIconSet;
 }
 
 export interface RxWidgetInfoCustomComponentProperties {
@@ -1337,7 +1338,17 @@ export interface VisLegacy {
     subscribe: (IDs: string[], cb: () => void) => void;
     unsubscribe: (IDs: string[], cb: () => void) => void;
 }
-
+export interface IconSetDescription {
+    // Name of icons
+    name?: ioBroker.StringOrTranslated;
+    icon?: string; // base64 svg or png
+    // Path to file
+    url: string;
+}
+export interface AdditionalIconSet {
+    // customIcons, 'baseline', 'outline', 'round', 'sharp', 'twotone', 'knx-uf', 'upload' are reserved
+    [iconSet: string]: IconSetDescription;
+}
 export interface MaterialIconSelectorProps {
     onClose: (icon: string | null) => void; // close dialog
     value?: string; // current icon
@@ -1347,6 +1358,7 @@ export interface MaterialIconSelectorProps {
     customColor?: string; // additional icons color
     themeType: ThemeType;
     theme: VisTheme;
+    additionalSets: AdditionalIconSet;
 }
 
 export interface MarketplaceWidgetRevision {

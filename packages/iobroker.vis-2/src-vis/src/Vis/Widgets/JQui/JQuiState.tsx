@@ -179,6 +179,7 @@ class JQuiState<P extends RxData = RxData, S extends JQuiStateState = JQuiStateS
                                     adapterName={props.context.adapterName}
                                     instance={props.context.instance}
                                     projectName={props.context.projectName}
+                                    additionalSets={props.context.additionalSets}
                                 />
                             ),
                         },

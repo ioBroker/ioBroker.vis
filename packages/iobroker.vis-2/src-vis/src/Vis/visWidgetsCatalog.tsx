@@ -14,6 +14,7 @@ import type {
     WidgetStyle,
     VisTheme,
     AnyWidgetId,
+    AdditionalIconSet,
 } from '@iobroker/types-vis-2';
 import type VisRxWidget from '@/Vis/visRxWidget';
 
@@ -131,6 +132,7 @@ export type RxWidgetInfoAttributesFieldAll = {
                 adapterName: string;
                 views: Project;
                 theme: VisTheme;
+                additionalSets: AdditionalIconSet;
             };
             Editor?: React.FC<{ field: RxWidgetInfoAttributesFieldAll; index?: number; disabled?: boolean }>;
             selectedView: string;
@@ -184,6 +186,7 @@ export interface WidgetAttributeInfoStored extends RxWidgetInfoAttributesFieldAl
         indexFrom: number | string | undefined;
     };
 }
+
 export interface WidgetAttributeIterable {
     group: string;
     isFirst: boolean;
@@ -417,10 +420,13 @@ export const getWidgetTypes = (usedWidgetSets?: string[]): WidgetType[] => {
     return (window as any).visWidgetTypes;
 };
 
-class VisWidgetsCatalog {
+export default class VisWidgetsCatalog {
     static rxWidgets: Record<string, VisRxWidgetLoaded> | null = null;
 
     static allWidgetsList: string[] | null = null;
+
+    /** List of all collected icon sets from widget sets */
+    static additionalSets: AdditionalIconSet | null = null;
 
     static getUsedWidgetSets(project: Project): string[] | false {
         let anyWithoutSet = false;
@@ -514,11 +520,13 @@ class VisWidgetsCatalog {
                 setTimeout(
                     () =>
                         getRemoteWidgets(socket, !changeProject && usedWidgetSets ? usedWidgetSets : false).then(
-                            (widgetSets: void | VisRxWidgetWithInfo<any>[]) => {
+                            result => {
                                 const collectedWidgets: VisRxWidgetWithInfo<any>[] = [
                                     ...WIDGETS,
-                                    ...(widgetSets || []),
+                                    ...(result?.widgetSets || []),
                                 ] as VisRxWidgetWithInfo<any>[];
+
+                                VisWidgetsCatalog.additionalSets = result?.additionalSets || {};
 
                                 collectedWidgets.forEach((WidgetEl: VisRxWidgetWithInfo<any>) => {
                                     if (!WidgetEl?.getWidgetInfo) {
@@ -1021,5 +1029,3 @@ export const parseAttributes = (
 
     return null;
 };
-
-export default VisWidgetsCatalog;

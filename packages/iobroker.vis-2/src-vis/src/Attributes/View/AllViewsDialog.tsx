@@ -7,7 +7,7 @@ import { Close, DragHandle, FormatPaint } from '@mui/icons-material';
 
 import { I18n, type LegacyConnection, type ThemeType } from '@iobroker/adapter-react-v5';
 
-import type { Project, ViewSettings, VisTheme } from '@iobroker/types-vis-2';
+import type { Project, ViewSettings, VisTheme, AdditionalIconSet } from '@iobroker/types-vis-2';
 import { getViewsWithDifferentValues } from '@/Attributes/View/ApplyProperties';
 import getEditField from '@/Attributes/View/EditField';
 import type { Field } from '@/Attributes/View/Items';
@@ -38,6 +38,7 @@ interface ShowAllViewsDialogProps {
     instance: number;
     projectName: string;
     socket: LegacyConnection;
+    additionalSets: AdditionalIconSet;
 }
 
 export default function showAllViewsDialog(props: ShowAllViewsDialogProps): React.JSX.Element | null {
@@ -75,6 +76,7 @@ export default function showAllViewsDialog(props: ShowAllViewsDialogProps): Reac
                 checkFunction: props.checkFunction,
                 project: props.project,
                 theme: props.theme,
+                additionalSets: props.additionalSets,
             });
 
             if (!control) {

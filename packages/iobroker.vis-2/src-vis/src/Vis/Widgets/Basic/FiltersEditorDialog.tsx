@@ -125,6 +125,7 @@ class FiltersEditorDialog extends Component<FiltersEditorDialogProps, FiltersEdi
                 themeType={this.props.context.theme.palette.mode}
                 theme={this.props.context.theme}
                 value={this.state.items[this.state.selectIcon]}
+                additionalSets={this.props.context.additionalSets}
                 onClose={(icon: string | null) => {
                     if (icon !== null) {
                         const items = JSON.parse(JSON.stringify(this.state.items));

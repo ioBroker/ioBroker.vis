@@ -65,6 +65,14 @@ const styles: Record<string, any> = {
 
 const ICON_TYPES = ['baseline', 'outline', 'round', 'sharp', 'twotone', 'knx-uf', 'upload'];
 
+interface IconSetFromWidget {
+    [iconName: string]: {
+        src: string; // base64 data
+        name?: ioBroker.StringOrTranslated; // optional name
+        words?: string[]; // optional keywords to search
+    };
+}
+
 interface MaterialIconSelectorState {
     listLoaded: boolean;
     selectedIcon: string;
@@ -75,10 +83,23 @@ interface MaterialIconSelectorState {
     loading: boolean;
     page: number;
     maxPages: number;
+    additionalSetsInfo: {
+        [iconSet: string]: { [iconName: string]: { name?: string; keywords?: string[] } };
+    };
+    anyIconSetLogo: boolean;
 }
 
-class MaterialIconSelector extends Component<MaterialIconSelectorProps, MaterialIconSelectorState> {
-    private list: Record<string, any> = {};
+function getText(text: ioBroker.StringOrTranslated, lang: ioBroker.Languages): string {
+    if (typeof text === 'string') {
+        return text;
+    }
+    return text[lang] || text.en;
+}
+
+export default class MaterialIconSelector extends Component<MaterialIconSelectorProps, MaterialIconSelectorState> {
+    private list: Record<string, true | { [iconName: string]: string }> = {};
+
+    private visibilityTimer: ReturnType<typeof setTimeout> | null = null;
 
     private index:
         | {
@@ -105,6 +126,10 @@ class MaterialIconSelector extends Component<MaterialIconSelectorProps, Material
             loading: iconType !== 'upload',
             page: 1,
             maxPages: 0,
+            additionalSetsInfo: {},
+            anyIconSetLogo: !!Object.keys(this.props.additionalSets).find(
+                iconSet => this.props.additionalSets[iconSet].icon,
+            ),
         };
     }
 
@@ -114,7 +139,7 @@ class MaterialIconSelector extends Component<MaterialIconSelectorProps, Material
         });
     }
 
-    async loadIconSet(type: string): Promise<void> {
+    async loadIconSet(type: string): Promise<string> {
         if (!this.list[type]) {
             await this.setStateAsync({ loading: true });
             this.list[type] = true;
@@ -125,16 +150,56 @@ class MaterialIconSelector extends Component<MaterialIconSelectorProps, Material
                     this.list[type] = {};
                     console.error(`Cannot load custom icons from ${this.props.customIcons}: ${e}`);
                 }
+            } else if (this.props.additionalSets?.[type]) {
+                this.list[type] = await fetch(this.props.additionalSets[type].url)
+                    .then(res => res.json())
+                    .then((data: IconSetFromWidget) => {
+                        // transform into expected format
+                        const list: { [iconName: string]: string } = {};
+                        Object.keys(data).forEach(iconName => {
+                            list[iconName] = data[iconName].src;
+                        });
+                        // add additional info to index
+                        const additionalSetsInfo = { ...this.state.additionalSetsInfo };
+                        additionalSetsInfo[type] = {};
+                        const lang = I18n.getLanguage();
+                        Object.keys(data).forEach(iconName => {
+                            additionalSetsInfo[type][iconName] = {
+                                name: getText(data[iconName].name, lang),
+                                keywords: data[iconName].words,
+                            };
+                        });
+                        this.setState({ additionalSetsInfo });
+                        return list;
+                    })
+                    .catch(async e => {
+                        console.error(
+                            `Cannot load icons set "${type}" from ${this.props.additionalSets[type].url}: ${e}`,
+                        );
+                        // fallback on known type
+                        type = 'baseline';
+                        return await fetch(`./material-icons/${type}.json`).then(res => res.json());
+                    });
+            } else if (ICON_TYPES.includes(type)) {
+                this.list[type] = await fetch(`./material-icons/${type}.json`).then(res => res.json());
             } else {
+                // fallback on known type
+                type = 'baseline';
                 this.list[type] = await fetch(`./material-icons/${type}.json`).then(res => res.json());
             }
-            const icons = Object.keys(this.list[type]);
-            for (let i = 0; i < icons.length; i++) {
-                const icon = icons[i];
-                this.list[type][icon] = `data:image/svg+xml;base64,${this.list[type][icon]}`;
+            // Add "data:" prefix
+            if (typeof this.list[type] !== 'boolean') {
+                const typedList: { [iconName: string]: string } = this.list[type] as { [iconName: string]: string };
+                const icons = Object.keys(typedList);
+                for (let i = 0; i < icons.length; i++) {
+                    const icon = icons[i];
+                    typedList[icon] = `data:image/svg+xml;base64,${typedList[icon]}`;
+                }
             }
+
             this.setState(
                 {
+                    iconType: type,
                     iconTypeLoaded: { ...this.state.iconTypeLoaded, [type]: true },
                     filtered: [],
                     loading: false,
@@ -142,6 +207,7 @@ class MaterialIconSelector extends Component<MaterialIconSelectorProps, Material
                 () => this.applyFilter(true),
             );
         }
+        return type;
     }
 
     loadList(): void {
@@ -150,14 +216,21 @@ class MaterialIconSelector extends Component<MaterialIconSelectorProps, Material
                 .then(res => res.json())
                 .then(async index => {
                     this.index = index;
-                    await this.loadIconSet(this.state.iconType);
-                    this.setState({ listLoaded: true }, () => this.applyFilter(true));
+                    const iconType = await this.loadIconSet(this.state.iconType);
+                    this.setState({ listLoaded: true, iconType }, () => this.applyFilter(true));
                 });
         }
     }
 
     componentWillUnmount(): void {
-        this.filterTimer && clearTimeout(this.filterTimer);
+        if (this.filterTimer) {
+            clearTimeout(this.filterTimer);
+            this.filterTimer = null;
+        }
+        if (this.visibilityTimer) {
+            clearTimeout(this.visibilityTimer);
+            this.visibilityTimer = null;
+        }
     }
 
     applyFilter(filter?: string | boolean): void {
@@ -166,14 +239,25 @@ class MaterialIconSelector extends Component<MaterialIconSelectorProps, Material
             timeout = 0;
             filter = undefined;
         }
-        this.filterTimer && clearTimeout(this.filterTimer);
+        if (this.filterTimer) {
+            clearTimeout(this.filterTimer);
+        }
         this.filterTimer = setTimeout(() => {
             this.filterTimer = null;
             let filtered;
             filter = filter === undefined ? this.state.filter : filter;
             if (filter) {
                 filter = (filter as string).toLowerCase();
-                if (this.state.iconType === 'knx-uf') {
+                if (this.props.additionalSets[this.state.iconType]) {
+                    filtered = Object.keys(this.list[this.state.iconType]).filter(icon => {
+                        const info = this.state.additionalSetsInfo?.[this.state.iconType]?.[icon];
+                        return (
+                            icon.includes(filter as string) ||
+                            info?.name?.toLowerCase().includes(filter as string) ||
+                            info?.keywords?.find(tag => tag.toLowerCase().includes(filter as string))
+                        );
+                    });
+                } else if (this.state.iconType === 'knx-uf') {
                     filtered = Object.keys(this.list['knx-uf']).filter(icon => icon.includes(filter as string));
                 } else if (this.state.iconType === 'customIcons') {
                     filtered = Object.keys(this.list.customIcons).filter(icon => icon.includes(filter as string));
@@ -187,6 +271,8 @@ class MaterialIconSelector extends Component<MaterialIconSelectorProps, Material
                         )
                         .map(icon => icon.name);
                 }
+            } else if (this.props.additionalSets[this.state.iconType]) {
+                filtered = Object.keys(this.list[this.state.iconType]);
             } else if (this.state.iconType === 'knx-uf') {
                 filtered = Object.keys(this.list['knx-uf']);
             } else if (this.state.iconType === 'customIcons') {
@@ -209,13 +295,23 @@ class MaterialIconSelector extends Component<MaterialIconSelectorProps, Material
 
     componentDidMount(): void {
         this.loadList();
+        this.visibilityTimer = setTimeout(() => {
+            // Ensure the selected icon set is visible
+            this.visibilityTimer = null;
+            const el = window.document.getElementById(`vis-material-icon-type-${this.state.iconType}`);
+            el?.scrollIntoView({ block: 'nearest' });
+        }, 200);
     }
 
     onSelect(): void {
+        // If upload
         if (this.state.selectedIcon && this.state.selectedIcon.startsWith('data:')) {
             this.props.onClose(this.state.selectedIcon);
-        } else if (this.list[this.state.iconType] && this.list[this.state.iconType] !== true) {
-            this.props.onClose(this.list[this.state.iconType][this.state.selectedIcon]);
+        } else {
+            const typedList = this.list[this.state.iconType];
+            if (typedList && typedList !== true) {
+                this.props.onClose(typedList[this.state.selectedIcon]);
+            }
         }
     }
 
@@ -224,12 +320,19 @@ class MaterialIconSelector extends Component<MaterialIconSelectorProps, Material
             this.props.customColor && this.state.iconType === 'customIcons' ? { color: this.props.customColor } : {};
         const icons = [];
 
+        const typedIconList: { [iconName: string]: string } | true = this.list[this.state.iconType];
+        if (typeof typedIconList === 'boolean') {
+            return null;
+        }
+        const additionalInfo = this.state.additionalSetsInfo?.[this.state.iconType];
         for (
             let i = (this.state.page - 1) * MAX_ICONS;
             i < this.state.page * MAX_ICONS && i < this.state.filtered.length;
             i++
         ) {
             const icon = this.state.filtered[i];
+            const title = additionalInfo?.[icon]?.name || icon.replace(/_/g, ' ');
+            const keywords = additionalInfo?.[icon]?.keywords ? ` (${additionalInfo[icon].keywords.join(', ')})` : '';
             icons.push(
                 <Box
                     component="div"
@@ -239,14 +342,15 @@ class MaterialIconSelector extends Component<MaterialIconSelectorProps, Material
                         styles.iconDiv,
                         this.state.selectedIcon === icon && styles.iconSelected,
                     )}
+                    title={title + keywords}
                     onClick={() => this.setState({ selectedIcon: icon })}
                     onDoubleClick={() => this.setState({ selectedIcon: icon }, () => this.onSelect())}
                 >
                     <Icon
-                        src={this.list[this.state.iconType][icon]}
+                        src={typedIconList[icon]}
                         style={Utils.getStyle(this.props.theme, styles.icon, iconStyle)}
                     />
-                    <div style={styles.iconName}>{icon.replace(/_/g, ' ')}</div>
+                    <div style={styles.iconName}>{title}</div>
                 </Box>,
             );
         }
@@ -305,25 +409,36 @@ class MaterialIconSelector extends Component<MaterialIconSelectorProps, Material
                 </DialogTitle>
                 <DialogContent style={{ overflowY: 'hidden', height: '100%' }}>
                     {!this.props.iconType ? (
-                        <div style={{ width: 140, display: 'inline-block', verticalAlign: 'top' }}>
+                        <div
+                            style={{
+                                width: 160 + (this.state.anyIconSetLogo ? 32 : 0),
+                                display: 'inline-block',
+                                verticalAlign: 'top',
+                                height: '100%',
+                                overflowY: 'auto',
+                            }}
+                        >
                             <FormControl>
                                 <RadioGroup
-                                    value={this.state.iconType}
+                                    value={this.state.iconType || 'baseline'}
                                     onChange={e => this.setState({ iconType: e.target.value })}
                                 >
                                     {ICON_TYPES.map(type => (
                                         <FormControlLabel
+                                            id={`vis-material-icon-type-${type}`}
                                             onClick={async () => {
                                                 window.localStorage.setItem('vis.icon.type', type);
                                                 const newState: Partial<MaterialIconSelectorState> = { iconType: type };
                                                 if (type !== 'upload') {
-                                                    await this.loadIconSet(type);
+                                                    const iconType = await this.loadIconSet(type);
                                                     if (
+                                                        typeof this.list[type] !== 'boolean' &&
                                                         this.state.selectedIcon &&
                                                         !this.list[type][this.state.selectedIcon]
                                                     ) {
                                                         newState.selectedIcon = '';
                                                     }
+                                                    newState.iconType = iconType;
                                                 } else {
                                                     newState.selectedIcon = '';
                                                     newState.maxPages = 0;
@@ -340,15 +455,61 @@ class MaterialIconSelector extends Component<MaterialIconSelectorProps, Material
                                             sx={{ '.& MuiRadioGroup-label': styles.typeName }}
                                         />
                                     ))}
+                                    {this.props.additionalSets
+                                        ? Object.keys(this.props.additionalSets).map(type => (
+                                              <FormControlLabel
+                                                  id={`vis-material-icon-type-${type}`}
+                                                  onClick={async () => {
+                                                      window.localStorage.setItem('vis.icon.type', type);
+                                                      const newState: Partial<MaterialIconSelectorState> = {
+                                                          iconType: type,
+                                                      };
+                                                      const iconType = await this.loadIconSet(type);
+                                                      if (
+                                                          typeof this.list[type] !== 'boolean' &&
+                                                          this.state.selectedIcon &&
+                                                          !this.list[type][this.state.selectedIcon]
+                                                      ) {
+                                                          newState.selectedIcon = '';
+                                                      }
+                                                      newState.iconType = iconType;
+
+                                                      this.setState(newState as MaterialIconSelectorState, () =>
+                                                          this.applyFilter(true),
+                                                      );
+                                                  }}
+                                                  key={type}
+                                                  value={type}
+                                                  control={<Radio />}
+                                                  label={
+                                                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                          {this.props.additionalSets[type].icon ? (
+                                                              <Icon
+                                                                  src={this.props.additionalSets[type].icon}
+                                                                  style={{ width: 24, height: 24, marginRight: 4 }}
+                                                              />
+                                                          ) : null}
+                                                          {getText(
+                                                              this.props.additionalSets[type].name || type,
+                                                              I18n.getLanguage(),
+                                                          )}
+                                                      </div>
+                                                  }
+                                                  sx={{ '& .MuiFormControlLabel-label': styles.typeName }}
+                                              />
+                                          ))
+                                        : null}
                                     {this.props.customIcons ? (
                                         <FormControlLabel
+                                            id={`vis-material-icon-type-customIcons`}
                                             onClick={async () => {
                                                 window.localStorage.setItem('vis.icon.type', 'customIcons');
-                                                await this.loadIconSet('customIcons');
+                                                const iconType = await this.loadIconSet('customIcons');
                                                 const newState: Partial<MaterialIconSelectorState> = {
-                                                    iconType: 'customIcons',
+                                                    iconType,
                                                 };
                                                 if (
+                                                    typeof this.list.customIcons !== 'boolean' &&
                                                     this.state.selectedIcon &&
                                                     !this.list.customIcons[this.state.selectedIcon]
                                                 ) {
@@ -369,16 +530,16 @@ class MaterialIconSelector extends Component<MaterialIconSelectorProps, Material
                     ) : null}
                     <div
                         style={{
-                            width: 'calc(100% - 150px)',
+                            width: `calc(100% - ${160 + 20 + (this.state.anyIconSetLogo ? 32 : 0)}px)`,
                             display: 'inline-block',
                             height: '100%',
                             overflowY: 'auto',
-                            paddingLeft: 10,
+                            paddingLeft: 20,
                         }}
                     >
                         {this.state.iconType === 'knx-uf' ? (
                             <div style={{ paddingBottom: 20 }}>
-                                {I18n.t('Source:')}
+                                {`${I18n.t('Source')}:`}
                                 &nbsp;
                                 <a
                                     style={{ textDecoration: 'none' }}
@@ -454,7 +615,7 @@ class MaterialIconSelector extends Component<MaterialIconSelectorProps, Material
                 </DialogContent>
                 <DialogActions>
                     {this.state.maxPages > 1 && !this.state.loading ? (
-                        <div style={{ marginLeft: 140 }}>
+                        <div style={{ marginLeft: 160 + (this.state.anyIconSetLogo ? 32 : 0) }}>
                             <Pagination
                                 count={this.state.maxPages}
                                 color="primary"
@@ -498,4 +659,3 @@ class MaterialIconSelector extends Component<MaterialIconSelectorProps, Material
 }
 
 window.VisMaterialIconSelector = MaterialIconSelector;
-export default MaterialIconSelector;

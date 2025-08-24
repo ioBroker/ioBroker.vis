@@ -81,7 +81,7 @@ import Toolbar from './Toolbar';
 import CodeDialog from './Components/CodeDialog';
 import CreateFirstProjectDialog from './Components/CreateFirstProjectDialog';
 import { DndPreview, isTouchDevice } from './Utils';
-import {
+import VisWidgetsCatalog, {
     getWidgetTypes,
     parseAttributes,
     type WidgetAttributesGroupInfoStored,
@@ -2069,6 +2069,7 @@ class Editor extends Runtime<EditorProps, EditorState> {
                         this.setState({ hideAttributes: true });
                     }}
                     adapterId={this.adapterId}
+                    additionalSets={VisWidgetsCatalog.additionalSets}
                 />
             </div>
         );

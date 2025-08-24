@@ -286,13 +286,15 @@ npm run start
 - Debugging is available in the browser e.g. chrome F12
 - if you change a file, automatic reload of the editor is supported
 
-
 ## Todo
 <!--
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Added possibility to define SVG icon sets from widgets sets
+
 ### 2.12.12 (2025-07-20)
 * (@foxriver76) enabled the local binding states for widgets
 

@@ -50,6 +50,7 @@ import type {
     WidgetStyle,
     GroupData,
     RxWidgetInfoGroup,
+    AdditionalIconSet,
 } from '@iobroker/types-vis-2';
 
 import commonStyles from '@/Utils/styles';
@@ -261,6 +262,7 @@ interface WidgetProps {
     onPxToPercent: (widgets: string[], attr: string, cb: (newValues: string[]) => void) => void;
     onPercentToPx: (widgets: string[], attr: string, cb: (newValues: string[]) => void) => void;
     userGroups: ioBroker.UserGroup[];
+    additionalSets: AdditionalIconSet;
 }
 
 interface WidgetState {
@@ -1904,6 +1906,7 @@ class Widget extends Component<WidgetProps, WidgetState> {
                                 userGroups={this.props.userGroups}
                                 error={error}
                                 selectedWidgets={this.props.selectedWidgets}
+                                additionalSets={this.props.additionalSets}
                             />
                         )}
                     </div>

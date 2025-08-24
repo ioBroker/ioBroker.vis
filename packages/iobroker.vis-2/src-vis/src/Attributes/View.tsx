@@ -7,7 +7,7 @@ import { ExpandMore as ExpandMoreIcon, FormatPaint, Info as InfoIcon, Visibility
 import { Utils, I18n, type LegacyConnection, type ThemeType } from '@iobroker/adapter-react-v5';
 
 import { store } from '@/Store';
-import type { Project, View, VisTheme } from '@iobroker/types-vis-2';
+import type { Project, View, VisTheme, AdditionalIconSet } from '@iobroker/types-vis-2';
 
 import commonStyles from '@/Utils/styles';
 import { resolution, getFields, type Field } from './View/Items';
@@ -157,6 +157,7 @@ interface ViewProps {
     instance: number;
     projectName: string;
     socket: LegacyConnection;
+    additionalSets: AdditionalIconSet;
 }
 
 const ViewAttributes = (props: ViewProps): React.JSX.Element | null => {
@@ -271,6 +272,7 @@ const ViewAttributes = (props: ViewProps): React.JSX.Element | null => {
         socket: props.socket,
         theme: props.theme,
         checkFunction,
+        additionalSets: props.additionalSets,
     });
 
     return (
@@ -360,6 +362,7 @@ const ViewAttributes = (props: ViewProps): React.JSX.Element | null => {
                                                 checkFunction,
                                                 project,
                                                 theme: props.theme,
+                                                additionalSets: props.additionalSets,
                                             });
 
                                             if (!result) {

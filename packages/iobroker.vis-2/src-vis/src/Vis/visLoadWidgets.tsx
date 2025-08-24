@@ -16,7 +16,7 @@ import { I18n, type LegacyConnection } from '@iobroker/adapter-react-v5';
 import type { VisRxWidgetState } from '@/Vis/visRxWidget';
 // eslint-disable-next-line no-duplicate-imports
 import type VisRxWidget from '@/Vis/visRxWidget';
-import type { Branded } from '@iobroker/types-vis-2';
+import type { AdditionalIconSet, Branded } from '@iobroker/types-vis-2';
 import { registerRemotes, loadRemote, init } from '@module-federation/runtime';
 
 export type WidgetSetName = Branded<string, 'WidgetSetName'>;
@@ -35,10 +35,20 @@ export interface VisRxWidgetWithInfo<
     // Widget set icon
     setIcon: string;
 }
+
 interface WidgetSetStruct {
     __initialized: boolean;
     get: (module: string) => Promise<() => { default: VisRxWidgetWithInfo<any> }>;
     init?: (shareScope: string) => Promise<void>;
+}
+
+interface VisIconSet {
+    name?: ioBroker.StringOrTranslated;
+    url: string;
+    /** If set, this is not a widget set, but icon set. url, name and icon are required */
+    icon?: string; // base 64 string for iconSet (not used for widgetSets)
+    /** The vis icon set does not support the listed major versions of vis */
+    ignoreInVersions?: number[];
 }
 
 declare global {
@@ -126,11 +136,18 @@ function getText(text: string | ioBroker.StringOrTranslated): string {
 function getRemoteWidgets(
     socket: LegacyConnection,
     onlyWidgetSets?: false | string[],
-): Promise<void | VisRxWidgetWithInfo<any>[]> {
+): Promise<
+    | undefined
+    | {
+          widgetSets: VisRxWidgetWithInfo<any>[];
+          additionalSets: AdditionalIconSet;
+      }
+> {
     return socket
         .getObjectViewSystem('instance', 'system.adapter.', 'system.adapter.\u9999')
         .then(objects => {
             const result: VisRxWidgetWithInfo<any>[] = [];
+            const additionalSets: AdditionalIconSet = {};
             const countRef = { count: 0, max: 0 };
             const instances: ioBroker.InstanceObject[] = Object.values(
                 objects as Record<string, ioBroker.InstanceObject>,
@@ -175,12 +192,14 @@ function getRemoteWidgets(
                         if (!visWidgetsCollection.url?.startsWith('http')) {
                             visWidgetsCollection.url = `./vis-2/widgets/${visWidgetsCollection.url}`;
                         }
+
                         registerRemotes(
                             [
                                 {
                                     name: visWidgetsCollection.name,
                                     entry: visWidgetsCollection.url,
-                                    type: (visWidgetsCollection as any).bundlerType || undefined,
+                                    //@ts-expect-error implemented in js-controller objects
+                                    type: visWidgetsCollection.bundlerType || undefined,
                                 },
                             ],
                             // force: true // may be needed to side-load remotes after the fact.
@@ -301,11 +320,43 @@ function getRemoteWidgets(
                         }
                     }
                 }
+                if (!onlyWidgetSets) {
+                    // @ts-expect-error defined in js-controller@7.0.8
+                    const visIconSets: { [name: string]: VisIconSet } = dynamicWidgetInstance.common.visIconSets || {};
+
+                    for (const widgetSetName in visIconSets) {
+                        const visIconSetCollection = visIconSets[widgetSetName];
+
+                        if (
+                            Array.isArray(visIconSetCollection.ignoreInVersions) &&
+                            visIconSetCollection.ignoreInVersions.includes(2)
+                        ) {
+                            continue;
+                        }
+
+                        if (!visIconSetCollection.url?.startsWith('http')) {
+                            visIconSetCollection.url = `./vis-2/widgets/${visIconSetCollection.url}`;
+                        }
+
+                        // Collect icon sets only if editor
+                        additionalSets[widgetSetName] = {
+                            name: visIconSetCollection.name,
+                            url: visIconSetCollection.url,
+                            icon: visIconSetCollection.icon,
+                        };
+                    }
+                }
             }
 
-            return Promise.all(promises).then(() => result);
+            return Promise.all(promises).then(() => ({
+                widgetSets: result,
+                additionalSets,
+            }));
         })
-        .catch(e => console.error('Cannot read instances', e));
+        .catch((e: unknown): undefined => {
+            console.error('Cannot read instances', e);
+            return undefined;
+        });
 }
 
 export { getRemoteWidgets, registerWidgetsLoadIndicator };

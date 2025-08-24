@@ -6,7 +6,7 @@ import { Clear as ClearIcon } from '@mui/icons-material';
 import { Icon, type ThemeType } from '@iobroker/adapter-react-v5';
 
 import MaterialIconSelector from '@/Components/MaterialIconSelector';
-import type { VisTheme } from '@iobroker/types-vis-2';
+import type { VisTheme, AdditionalIconSet } from '@iobroker/types-vis-2';
 import commonStyles from '@/Utils/styles';
 
 interface EditFieldIcon64Props {
@@ -17,6 +17,7 @@ interface EditFieldIcon64Props {
     editMode: boolean;
     themeType: ThemeType;
     theme: VisTheme;
+    additionalSets: AdditionalIconSet;
 }
 
 export default function EditFieldIcon64(props: EditFieldIcon64Props): React.JSX.Element {
@@ -67,6 +68,7 @@ export default function EditFieldIcon64(props: EditFieldIcon64Props): React.JSX.
                     themeType={props.themeType}
                     theme={props.theme}
                     value={props.value}
+                    additionalSets={props.additionalSets}
                     onClose={(icon: string | null) => {
                         setShowDialog(false);
                         if (icon !== null) {

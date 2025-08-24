@@ -56,6 +56,7 @@ import type {
     ClassesValue,
     RxWidgetInfoAttributesField,
     VisTheme,
+    AdditionalIconSet,
 } from '@iobroker/types-vis-2';
 
 import type {
@@ -311,6 +312,7 @@ interface WidgetFieldProps {
     userGroups: ioBroker.UserGroup[];
     themeType: ThemeType;
     theme: VisTheme;
+    additionalSets: AdditionalIconSet;
 }
 
 const WidgetField = (props: WidgetFieldProps): string | React.JSX.Element | React.JSX.Element[] => {
@@ -1472,7 +1474,7 @@ const WidgetField = (props: WidgetFieldProps): string | React.JSX.Element | Reac
                     return option.type === 'view' ? option.label : option.folder.name;
                 }}
                 getOptionDisabled={option => option.type === 'folder'}
-                renderOption={(optionProps, option) =>
+                renderOption={(optionProps: React.HTMLAttributes<HTMLLIElement> & { key: any }, option) =>
                     option.type === 'view' ? (
                         <Box
                             component="li"
@@ -1503,7 +1505,6 @@ const WidgetField = (props: WidgetFieldProps): string | React.JSX.Element | Reac
                         helperText={typeof error === 'string' ? I18n.t(error) : null}
                         disabled={disabled}
                         {...params}
-                        inputProps={{ ...params.inputProps }}
                     />
                 )}
             />
@@ -1605,6 +1606,7 @@ const WidgetField = (props: WidgetFieldProps): string | React.JSX.Element | Reac
                             adapterName,
                             views: store.getState().visProject,
                             theme: props.theme,
+                            additionalSets: props.additionalSets,
                         },
                         Editor,
                         selectedView: props.selectedView,
@@ -1720,6 +1722,7 @@ const WidgetField = (props: WidgetFieldProps): string | React.JSX.Element | Reac
                         themeType={props.themeType}
                         theme={props.theme}
                         value={value as string}
+                        additionalSets={props.additionalSets}
                         onClose={(icon: string | null) => {
                             setIdDialog(false);
                             if (icon !== null) {

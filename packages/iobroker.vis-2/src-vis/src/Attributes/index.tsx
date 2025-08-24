@@ -12,7 +12,7 @@ import {
 import { I18n, Utils, type ThemeType, type LegacyConnection } from '@iobroker/adapter-react-v5';
 
 import type Editor from '@/Editor';
-import type { VisTheme } from '@iobroker/types-vis-2';
+import type { AdditionalIconSet, VisTheme } from '@iobroker/types-vis-2';
 import CSS from './CSS';
 import Scripts from './Scripts';
 import View from './View';
@@ -54,6 +54,7 @@ interface AttributesProps {
     onPxToPercent: Editor['onPxToPercent'];
     onPercentToPx: Editor['onPercentToPx'];
     theme: VisTheme;
+    additionalSets: AdditionalIconSet;
 }
 
 const Attributes = (props: AttributesProps): React.JSX.Element => {
@@ -186,6 +187,7 @@ const Attributes = (props: AttributesProps): React.JSX.Element => {
                         isAllClosed={isAllClosed}
                         triggerAllOpened={triggerAllOpened}
                         triggerAllClosed={triggerAllClosed}
+                        additionalSets={props.additionalSets}
                     />
                 )}
             </div>

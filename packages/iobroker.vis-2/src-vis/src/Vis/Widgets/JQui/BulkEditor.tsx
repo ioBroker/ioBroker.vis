@@ -38,7 +38,7 @@ import {
 } from '@iobroker/adapter-react-v5';
 
 import MaterialIconSelector from '@/Components/MaterialIconSelector';
-import type { VisTheme } from '@iobroker/types-vis-2';
+import type { AdditionalIconSet, VisTheme } from '@iobroker/types-vis-2';
 import commonStyles from '../../../Utils/styles';
 
 const BUTTONS: Record<string, string> = {
@@ -80,6 +80,7 @@ interface BulkEditorProps {
     instance: number;
     projectName: string;
     onDataChange: (data: BulkEditorData) => void;
+    additionalSets: AdditionalIconSet;
 }
 
 interface BulkEditorState {
@@ -391,6 +392,7 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
             <MaterialIconSelector
                 theme={this.props.theme}
                 key="iconDialog"
+                additionalSets={this.props.additionalSets}
                 themeType={this.props.themeType}
                 value={this.state.icons[this.state.iconDialog]}
                 onClose={(icon: string) => {
@@ -535,13 +537,13 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
                         value={this.state.editDialog.value}
                         onChange={e => {
                             if (this.state.editDialog) {
-                                this.setState({
+                                this.setState(prevState => ({
                                     editDialog: {
                                         value: e.target.value,
-                                        add: this.state.editDialog.add,
-                                        index: this.state.editDialog.index,
+                                        add: prevState.editDialog.add,
+                                        index: prevState.editDialog.index,
                                     },
-                                });
+                                }));
                             }
                         }}
                     />
@@ -748,7 +750,7 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
                     <IconButton
                         size="small"
                         onClick={() =>
-                            this.setState({ editDialog: { add: false, index: i, value: this.state.values[i] } })
+                            this.setState(prevState => ({ editDialog: { add: false, index: i, value: prevState.values[i] } }))
                         }
                     >
                         <Edit />

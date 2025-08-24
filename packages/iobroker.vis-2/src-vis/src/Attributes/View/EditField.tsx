@@ -26,7 +26,7 @@ import { Clear as ClearIcon } from '@mui/icons-material';
 import { deepClone } from '@/Utils/utils';
 import commonStyles from '@/Utils/styles';
 import type { Field } from '@/Attributes/View/Items';
-import type { Project, ViewSettings, VisTheme } from '@iobroker/types-vis-2';
+import type { AdditionalIconSet, Project, ViewSettings, VisTheme } from '@iobroker/types-vis-2';
 
 import EditFieldImage from './EditFieldImage';
 import EditFieldIcon64 from './EditFieldIcon64';
@@ -49,6 +49,7 @@ interface EditFieldProps {
     socket: LegacyConnection;
     disabled: boolean;
     project: Project;
+    additionalSets: AdditionalIconSet;
 }
 
 export default function getEditField(gProps: EditFieldProps): React.JSX.Element {
@@ -67,6 +68,7 @@ export default function getEditField(gProps: EditFieldProps): React.JSX.Element 
         socket,
         disabled,
         theme,
+        additionalSets,
     } = gProps;
     const viewSettings = project[view].settings;
 
@@ -334,6 +336,7 @@ export default function getEditField(gProps: EditFieldProps): React.JSX.Element 
                 themeType={themeType}
                 change={change}
                 theme={theme}
+                additionalSets={additionalSets}
             />
         );
     }

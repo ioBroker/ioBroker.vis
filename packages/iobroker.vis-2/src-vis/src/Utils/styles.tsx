@@ -1,10 +1,10 @@
 import type React from 'react';
-import type { VisTheme } from '@iobroker/types-vis-2';
+import type { Theme } from '@mui/material';
 
 const commonStyles: {
     backgroundClass: React.CSSProperties;
     backgroundClassSquare: React.CSSProperties;
-    selected: (theme: VisTheme) => React.CSSProperties;
+    selected: (theme: Theme) => React.CSSProperties;
     clearPadding: Record<string, any>;
     fieldContent: Record<string, any>;
     fieldContentColor: Record<string, any>;
@@ -27,7 +27,7 @@ const commonStyles: {
         display: 'inline-block',
         marginRight: 4,
     },
-    selected: (theme: VisTheme) => ({
+    selected: (theme: Theme): React.CSSProperties => ({
         backgroundColor: theme.palette.primary.main,
         color: theme.palette.primary.contrastText,
     }),
