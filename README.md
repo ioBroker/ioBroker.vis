@@ -292,6 +292,9 @@ npm run start
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Fixed loading of widgets on the cloud
+
 ### 2.13.0 (2025-08-24)
 * (@GermanBluefox) Added possibility to define SVG icon sets from widgets sets
 

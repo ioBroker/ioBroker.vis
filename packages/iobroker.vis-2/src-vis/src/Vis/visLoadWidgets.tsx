@@ -132,6 +132,31 @@ function getText(text: string | ioBroker.StringOrTranslated): string {
     return (text || '').toString();
 }
 
+const cloudVersions: Record<string, undefined | 'module'> = {
+    echarts: undefined,
+    eventlist: undefined,
+    fullcalendar: undefined,
+    openweathermap: undefined,
+    scenes: undefined,
+    scheduler: 'module',
+    'vis-2-widgets-energy': undefined,
+    'vis-2-widgets-gauges': 'module',
+    'vis-2-widgets-jaeger-design': 'module',
+    'vis-2-widgets-material': undefined,
+};
+/**
+ * We have a problem, that cloud have specific versions of widgets, and they must be loaded sometimes as bundlerType no matter what has the user
+ */
+function fixCloudBundlerType(adapterName: string, visWidgetsCollection: ioBroker.VisWidget): void {
+    if (window.location.hostname.includes('iobroker.')) {
+        // fix possible wrong bundlerType
+        if (adapterName in cloudVersions) {
+            //@ts-expect-error implemented in js-controller objects
+            visWidgetsCollection.bundlerType = cloudVersions[adapterName];
+        }
+    }
+}
+
 /* Do not make this funktion async, because is optimized to simultaneously load the widget sets */
 function getRemoteWidgets(
     socket: LegacyConnection,
@@ -192,6 +217,8 @@ function getRemoteWidgets(
                         if (!visWidgetsCollection.url?.startsWith('http')) {
                             visWidgetsCollection.url = `./vis-2/widgets/${visWidgetsCollection.url}`;
                         }
+
+                        fixCloudBundlerType(dynamicWidgetInstance.common.name, visWidgetsCollection);
 
                         registerRemotes(
                             [
