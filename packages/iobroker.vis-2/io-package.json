@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.13.0",
+    "version": "2.13.1",
     "news": {
+      "2.13.1": {
+        "en": "Fixed loading of widgets on the cloud",
+        "de": "Fixes Laden von Widgets auf der Cloud",
+        "ru": "Фиксированная загрузка виджетов в облако",
+        "pt": "Carregamento fixo de elementos na nuvem",
+        "nl": "Vast laden van widgets op de cloud",
+        "fr": "Chargement fixe de widgets sur le nuage",
+        "it": "Caricamento fisso dei widget sul cloud",
+        "es": "Carga fija de widgets en la nube",
+        "pl": "Naprawiono wczytywanie widżetów na chmurze",
+        "uk": "Виправлено завантаження віджетів у хмарі",
+        "zh-cn": "将部件固定装入云中"
+      },
       "2.13.0": {
         "en": "Added possibility to define SVG icon sets from widgets sets",
         "de": "Zusätzliche Möglichkeit, SVG-Symbol-Sets von Widgets-Sets zu definieren",
@@ -80,19 +93,6 @@
         "pl": "Dodano nową ikonę SVG jako favicon.\nDodano obsługę widżetów TypeScript\nUżywany 'vite' do szybszego ładowania",
         "uk": "Додано нову іконку SVG як favicon.\nДодано підтримку віджетів TypeScript\nВикористовується для швидкого завантаження",
         "zh-cn": "添加新 SVG 图标为favicon .\n为类型脚本部件添加支持\n用于更快装载的“vite”"
-      },
-      "2.11.2": {
-        "en": "Do not load vis-1 widgets if vis-2 widgets provided",
-        "de": "Nicht laden vis-1 Widgets, wenn vis-2 Widgets zur Verfügung gestellt",
-        "ru": "Не загружайте виджеты vis-1, если они предоставлены vis-2",
-        "pt": "Não carregar vis-1 widgets se vis-2 widgets fornecidos",
-        "nl": "Vis-1 widgets niet laden als vis-2 widgets meegeleverd zijn",
-        "fr": "Ne pas charger les widgets vis-1 si vis-2 fourni",
-        "it": "Non caricare widget vis-1 se i widget vis-2 forniti",
-        "es": "No cargar widgets vis-1 si vis-2 widgets proporcionados",
-        "pl": "Nie wczytywać widżetów vis-1, jeśli widżety vis-2 są dostarczane",
-        "uk": "Не завантажуйте віджети vis-1, якщо передбачено віджети Vis-2",
-        "zh-cn": "如果提供了相对 2 个部件, 请不要装入 "
       }
     },
     "title": "Visualisation Next Generation",

@@ -356,6 +356,9 @@
 
 ### 2.0.0 (2022-10-21)
 * (bluefox) Completely new visualization, but partly compatible with the previous version
+## 2.12.9 (2025-05-19)
+* (@GermanBluefox) Added possibility to use value in signal text
+
 ## 2.12.8 (2025-05-03)
 * (@GermanBluefox) Added new SVG icon as favicon.
 * (@GermanBluefox) Added support for the TypeScript widgets

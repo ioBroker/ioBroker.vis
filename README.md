@@ -292,7 +292,7 @@ npm run start
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.13.1 (2025-08-25)
 * (@GermanBluefox) Fixed loading of widgets on the cloud
 
 ### 2.13.0 (2025-08-24)
@@ -308,9 +308,6 @@ npm run start
 
 ### 2.12.10 (2025-05-25)
 * (@GermanBluefox) Added possibility to define favicon and browser tab title
-
-### 2.12.9 (2025-05-19)
-* (@GermanBluefox) Added possibility to use value in signal text
 
 ## License
  Copyright (c) 2021-2025 Denis Haev, https://github.com/GermanBluefox <dogafox@gmail.com>,
