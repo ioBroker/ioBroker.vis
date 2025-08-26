@@ -26,39 +26,30 @@
     ],
     "dependencies": {
         "@iobroker/adapter-core": "^3.2.3",
-        "axios": "^1.10.0",
+        "axios": "^1.11.0",
         "jsonwebtoken": "^9.0.2",
         "mime": "^3.0.0"
     },
     "devDependencies": {
-        "@devbookhq/splitter": "^1.4.2",
         "@iobroker/build-tools": "^2.0.15",
         "@iobroker/db-objects-redis": "^7.0.7",
         "@iobroker/db-states-redis": "^7.0.7",
-        "@iobroker/type-detector": "^4.5.0",
         "@iobroker/vis-2-widgets-testing": "^1.0.6",
         "@material-icons/svg": "^1.0.33",
-        "@reduxjs/toolkit": "^2.8.2",
-        "@sentry/browser": "^9.34.0",
         "@tsconfig/node18": "^18.2.4",
-        "@types/dom-speech-recognition": "^0.0.6",
         "@types/jquery": "^3.5.32",
         "@types/jsonwebtoken": "^9.0.10",
         "@types/mime": "^3.0.4",
         "@types/mocha": "^10.0.10",
         "@types/unzipper": "^0.10.11",
-        "@types/uuid": "^10.0.0",
         "chai": "^4.5.0",
         "dayjs": "^1.11.13",
-        "html-to-image": "^1.11.13",
         "iobroker.web": "*",
         "jquery-ui": "^1.14.1",
         "mocha": "^11.7.1",
-        "redux": "^5.0.1",
         "rimraf": "^6.0.1",
         "sass": "^1.89.2",
-        "unzipper": "^0.12.3",
-        "uuid": "^11.1.0"
+        "unzipper": "^0.12.3"
     },
     "bugs": {
         "url": "https://github.com/iobroker/iobroker.vis/issues"

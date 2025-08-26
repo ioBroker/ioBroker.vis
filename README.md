@@ -292,6 +292,9 @@ npm run start
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Added support for older Android versions
+
 ### 2.13.1 (2025-08-25)
 * (@GermanBluefox) Fixed loading of widgets on the cloud
 
