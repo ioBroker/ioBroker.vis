@@ -356,6 +356,9 @@
 
 ### 2.0.0 (2022-10-21)
 * (bluefox) Completely new visualization, but partly compatible with the previous version
+## 2.12.10 (2025-05-25)
+* (@GermanBluefox) Added possibility to define favicon and browser tab title
+
 ## 2.12.9 (2025-05-19)
 * (@GermanBluefox) Added possibility to use value in signal text
 

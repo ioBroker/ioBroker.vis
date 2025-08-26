@@ -292,7 +292,7 @@ npm run start
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.13.2 (2025-08-26)
 * (@GermanBluefox) Added support for older Android versions
 
 ### 2.13.1 (2025-08-25)
@@ -308,9 +308,6 @@ npm run start
 * (@GermanBluefox) Corrected selection of the view for resolution
 * (@GermanBluefox) Added option to ignore the unloaded widgets in runtime
 * (@oweitman) Corrected the user defined resolution for the view
-
-### 2.12.10 (2025-05-25)
-* (@GermanBluefox) Added possibility to define favicon and browser tab title
 
 ## License
  Copyright (c) 2021-2025 Denis Haev, https://github.com/GermanBluefox <dogafox@gmail.com>,
