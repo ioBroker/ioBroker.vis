@@ -292,6 +292,9 @@ npm run start
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Corrected loading of icon sets
+
 ### 2.13.2 (2025-08-26)
 * (@GermanBluefox) Added support for older Android versions
 
