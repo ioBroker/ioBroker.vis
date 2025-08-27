@@ -51,7 +51,7 @@ export default defineConfig({
         },
     },
     build: {
-        target: 'chrome89',
+        target: 'chrome81',
         outDir: './build',
     },
 });
