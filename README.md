@@ -292,7 +292,7 @@ npm run start
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.13.3 (2025-08-27)
 * (@GermanBluefox) Corrected loading of icon sets
 
 ### 2.13.2 (2025-08-26)
@@ -306,11 +306,6 @@ npm run start
 
 ### 2.12.12 (2025-07-20)
 * (@foxriver76) enabled the local binding states for widgets
-
-### 2.12.11 (2025-07-01)
-* (@GermanBluefox) Corrected selection of the view for resolution
-* (@GermanBluefox) Added option to ignore the unloaded widgets in runtime
-* (@oweitman) Corrected the user defined resolution for the view
 
 ## License
  Copyright (c) 2021-2025 Denis Haev, https://github.com/GermanBluefox <dogafox@gmail.com>,
