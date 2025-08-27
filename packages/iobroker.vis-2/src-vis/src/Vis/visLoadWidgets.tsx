@@ -351,8 +351,8 @@ function getRemoteWidgets(
                     // @ts-expect-error defined in js-controller@7.0.8
                     const visIconSets: { [name: string]: VisIconSet } = dynamicWidgetInstance.common.visIconSets || {};
 
-                    for (const widgetSetName in visIconSets) {
-                        const visIconSetCollection = visIconSets[widgetSetName];
+                    for (const iconSetName in visIconSets) {
+                        const visIconSetCollection = visIconSets[iconSetName];
 
                         if (
                             Array.isArray(visIconSetCollection.ignoreInVersions) &&
@@ -360,13 +360,23 @@ function getRemoteWidgets(
                         ) {
                             continue;
                         }
+                        if (!visIconSetCollection.url) {
+                            console.warn(
+                                `Icon set "${iconSetName}" of ${dynamicWidgetInstance._id} ignored: url missing`,
+                            );
+                            continue;
+                        }
 
-                        if (!visIconSetCollection.url?.startsWith('http')) {
-                            visIconSetCollection.url = `./vis-2/widgets/${visIconSetCollection.url}`;
+                        if (
+                            !visIconSetCollection.url.startsWith('http://') &&
+                            !visIconSetCollection.url.startsWith('https://') &&
+                            !visIconSetCollection.url.startsWith('file://')
+                        ) {
+                            visIconSetCollection.url = `widgets/${visIconSetCollection.url}`;
                         }
 
                         // Collect icon sets only if editor
-                        additionalSets[widgetSetName] = {
+                        additionalSets[iconSetName] = {
                             name: visIconSetCollection.name,
                             url: visIconSetCollection.url,
                             icon: visIconSetCollection.icon,
