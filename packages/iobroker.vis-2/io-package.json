@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.13.3",
+    "version": "2.13.4",
     "news": {
+      "2.13.4": {
+        "en": "Added the basic methods for metro widgets again",
+        "de": "Die Grundmethoden für U-Bahn-Widgets erneut hinzugefügt",
+        "ru": "Добавлены основные методы для виджетов метро",
+        "pt": "Adicionados os métodos básicos para widgets de metro novamente",
+        "nl": "De basismethoden voor metro-widgets opnieuw toegevoegd",
+        "fr": "Ajout des méthodes de base pour les widgets de métro",
+        "it": "Aggiunto i metodi di base per i widget della metropolitana di nuovo",
+        "es": "Añadido los métodos básicos para los widgets de metro de nuevo",
+        "pl": "Dodano podstawowe metody dla widżetów metra ponownie",
+        "uk": "Додайте основні методи віджетів метро",
+        "zh-cn": "再次添加地铁部件的基本方法"
+      },
       "2.13.3": {
         "en": "Corrected loading of icon sets",
         "de": "Korrigierte Beladung von Symbolsätzen",
@@ -80,19 +93,6 @@
         "pl": "Skorygowany wybór punktu widzenia na rozdzielczość\nDodano opcję ignorowania rozładowanych widżetów w runtime\nPoprawiono rozdzielczość użytkownika dla widoku",
         "uk": "Правильний вибір виду для вирішення\nДодано можливість ігнорувати відвантажені віджети в runtime\nВиправлено помилку користувача для перегляду",
         "zh-cn": "已更正的解决视图\n在运行时忽略已卸载部件的选项\n更正了用户定义的视图分辨率"
-      },
-      "2.12.10": {
-        "en": "Added possibility to define favicon and browser tab title",
-        "de": "Möglichkeit, favicon und Browser-Tab-Titel zu definieren",
-        "ru": "Добавлена возможность определить название вкладки favicon и браузера",
-        "pt": "Adicionado possibilidade de definir favicon e título da guia do navegador",
-        "nl": "Toegevoegde mogelijkheid om favicon en browsertabbladtitel te definiëren",
-        "fr": "Ajout de la possibilité de définir le titre de l'onglet favicon et navigateur",
-        "it": "Aggiunta possibilità di definire favicon e titolo scheda browser",
-        "es": "Añadido posibilidad de definir el título de favicon y pestaña del navegador",
-        "pl": "Dodano możliwość zdefiniowania tytułu karty favicon i przeglądarki",
-        "uk": "Додана можливість визначення назв вкладок favicon та браузера",
-        "zh-cn": "添加定义 favicon 和浏览器标签标题的可能性"
       }
     },
     "title": "Visualisation Next Generation",
