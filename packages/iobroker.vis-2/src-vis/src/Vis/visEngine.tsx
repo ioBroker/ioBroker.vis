@@ -1388,9 +1388,14 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                     ),
                 );
                 promises.push(this.props.socket.getEnums(undefined, !useCache));
-                promises.push(
-                    this.props.socket.getObjectViewSystem('instance', 'system.adapter.', 'system.adapter.\u9999'),
-                );
+                let getObjectViewSystem: typeof this.props.socket.getObjectViewSystem =
+                    this.props.socket.getObjectViewSystem.bind(this.props.socket);
+                // @ts-expect-error implemented in socket-client
+                if (this.props.socket.getObjectViewSystemCached) {
+                    // @ts-expect-error implemented in socket-client
+                    getObjectViewSystem = socket.getObjectViewSystemCached.bind(this.props.socket);
+                }
+                promises.push(getObjectViewSystem('instance', 'system.adapter.', 'system.adapter.\u9999'));
 
                 promises.push(this.props.socket.getObjectViewSystem('chart', '', '\u9999'));
                 promises.push(this.props.socket.getObjectViewSystem('channel', '', '\u9999'));

@@ -292,6 +292,9 @@ npm run start
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Added the basic methods for metro widgets again
+
 ### 2.13.3 (2025-08-27)
 * (@GermanBluefox) Corrected loading of icon sets
 

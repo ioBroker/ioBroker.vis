@@ -1,5 +1,12 @@
-<link rel="stylesheet" type="text/css" href="widgets/basic/css/table.css" />
-<script type="text/javascript" src="widgets/basic/js/table.js"></script>
+<link
+    rel="stylesheet"
+    type="text/css"
+    href="widgets/basic/css/table.css"
+/>
+<script
+    type="text/javascript"
+    src="widgets/basic/js/table.js"
+></script>
 
 <script type="text/javascript">
     'use strict';
@@ -8,260 +15,295 @@
         // Add words for basic widgets
         $.extend(true, systemDictionary, {
             // Bars
-            "src":              {"en": "Source",                    "de": "Quelle",                 "ru": "Адрес"},
-            "refreshInterval":  {"en": "Refresh interval(ms)",      "de": "Updatezeit(ms)",         "ru": "Интервал обновления(ms)"},
-            "is_comma":         {"en": "Divider comma",             "de": "Komme als Trennung",     "ru": "Запятая-разделитель"},
-            "is_tdp":           {"en": "Use thousands separator",  "de": "Tausender Trennzeichen",  "ru": "Use thousands separator"},
-            "digits":           {"en": "Digits after comma",        "de": "Zeichen nach Komma",     "ru": "Знаков после запятой"},
-            "oid":              {"en": "Object ID",                 "de": "Object ID",              "ru": "ID Объекта"},
-            "html_prepend":     {"en": "Prepend value",             "de": "Voranstellen HTML",      "ru": "Префикс значения"},
-            "html_append":      {"en": "Append to value",           "de": "HTML anhängen",          "ru": "Суффикс значения"},
-            "html_append_singular": {
-                "en": "Append to value (Singular)",
-                "de": "HTML anhängen (Singulär)",
-                "ru": "Суффикс значения(един.ч.)"
+            src: { en: 'Source', de: 'Quelle', ru: 'Адрес' },
+            refreshInterval: { en: 'Refresh interval(ms)', de: 'Updatezeit(ms)', ru: 'Интервал обновления(ms)' },
+            is_comma: { en: 'Divider comma', de: 'Komme als Trennung', ru: 'Запятая-разделитель' },
+            is_tdp: { en: 'Use thousands separator', de: 'Tausender Trennzeichen', ru: 'Use thousands separator' },
+            digits: { en: 'Digits after comma', de: 'Zeichen nach Komma', ru: 'Знаков после запятой' },
+            oid: { en: 'Object ID', de: 'Object ID', ru: 'ID Объекта' },
+            html_prepend: { en: 'Prepend value', de: 'Voranstellen HTML', ru: 'Префикс значения' },
+            html_append: { en: 'Append to value', de: 'HTML anhängen', ru: 'Суффикс значения' },
+            html_append_singular: {
+                en: 'Append to value (Singular)',
+                de: 'HTML anhängen (Singulär)',
+                ru: 'Суффикс значения(един.ч.)',
             },
-            "html_append_plural": {
-                "en": "Append to value (Plural)",
-                "de": "HTML anhängen(Plüral)",
-                "ru": "Суффикс значения(множ.ч.)"
+            html_append_plural: {
+                en: 'Append to value (Plural)',
+                de: 'HTML anhängen(Plüral)',
+                ru: 'Суффикс значения(множ.ч.)',
             },
-            "html_prepend_tooltip":    {
-                "en": "Write HTML code here that will be placed before,\x0Ae.g. <b> ",
-                "de": "HTML Kod, der wird vom dem Wert platziert,\x0Az.B. <b>",
-                "ru": "HTML код будет помещён перед значением,\x0Aнапример <b>"
+            html_prepend_tooltip: {
+                en: 'Write HTML code here that will be placed before,\x0Ae.g. <b> ',
+                de: 'HTML Kod, der wird vom dem Wert platziert,\x0Az.B. <b>',
+                ru: 'HTML код будет помещён перед значением,\x0Aнапример <b>',
             },
-            "html_append_tooltip":     {
-                "en": "Write HTML code here that will be placed before,\x0Ae.g. </b>",
-                "de": "HTML Kod, der wird vom dem Wert platziert,\x0Az.B. </b>",
-                "ru": "HTML код будет помещён после значения,\x0Aнапример </b>"
+            html_append_tooltip: {
+                en: 'Write HTML code here that will be placed before,\x0Ae.g. </b>',
+                de: 'HTML Kod, der wird vom dem Wert platziert,\x0Az.B. </b>',
+                ru: 'HTML код будет помещён после значения,\x0Aнапример </b>',
             },
-            "stretch":          {"en": "Stretch",                   "de": "Strecken",               "ru": "Растянуть"},
-            "factor":           {"en": "Multiplex factor",          "de": "Multiplikation",         "ru": "Множитеть"},
-            "class_true":       {"en": "Class if quality 'true'",   "de": "Klasse bei Qualität 'true'", "ru": "Класс, если качество 'true'"},
-            "class_false":      {"en": "Class if quality 'false'",  "de": "Klasse bei Qualität 'false'", "ru": "Класс, если качество 'false'"},
-            "test_html":        {"en": "Text for test",             "de": "Testtext",               "ru": "Тестовый текст"},
-            "test_html_tooltip": {
-                "en": "You can specify the test text if value is now empty to visualise settings.\x0AIt is valid only during edit.",
-                "de": "Man kann noch Testtext setzen um die Einstellungen visuell zu sehen.\x0ADas ist nur während Edit gültig.",
-                "ru": "Можно задать тестовый текст, что бы видеть настройки визуально.\x0AОн действителен только во время редактирования."
+            stretch: { en: 'Stretch', de: 'Strecken', ru: 'Растянуть' },
+            factor: { en: 'Multiplex factor', de: 'Multiplikation', ru: 'Множитеть' },
+            class_true: {
+                en: "Class if quality 'true'",
+                de: "Klasse bei Qualität 'true'",
+                ru: "Класс, если качество 'true'",
             },
-            "html":             {"en": "HTML",                      "de": "HTML",                   "ru": "HTML"},
-            "oid-quality":      {"en": "Quality ID",                "de": "Qualität ID",            "ru": "ID-Качество"},
-            "oid-quality_tooltip":     {
-                "en": "You can set additionally Quality ID to indicate if the value valid or not.",
-                "de": "Man kann noch zusätzlich Qualität ID setzetn um zu zeigen ob das Wert aktuell ist.",
-                "ru": "Можно дополнительно установить ID-Качества, что бы показать актуальное значение или нет."},
-            "title":            {"en": "Title",                     "de": "Titel",                  "ru": "Заголовок"},
-            "title_font":       {"en": "Title font name",           "de": "Titelschriftname",       "ru": "Шрифт заголовка"},
-            "title_color":      {"en": "Title color",               "de": "Titelfarbe",             "ru": "Цвет заголовка"},
-            "title_back":       {"en": "Title backg. color",        "de": "Titelhintergrund",       "ru": "Цвет фона текста"},
-            "title_top":        {"en": "Title top padding",         "de": "Titel-Oben-Abstand",     "ru": "Отступ заголовка сверху"},
-            "title_left":       {"en": "Title left padding",        "de": "Titel-Links-Abstand",    "ru": "Отступ заголовка слева"},
-            "header_height":    {"en": "Header height",             "de": "Kopfhöhe",               "ru": "Высота заголовока"},
-            "header_color":     {"en": "Header color",              "de": "Kopffarbe",              "ru": "Цвет фона заголовка"},
-            "refreshOnWakeUp":  {"en": "Refresh on wake up",        "de": "Update bei Aufwachen",   "ru": "Обновлять при выходе из сна"},
-            "refreshOnViewChange": {"en": "Refresh on view change", "de": "Update bei Viewwechsel", "ru": "Обновлять при смене страницы"},
-            "refreshWithNoQuery": {"en": "Do not add anything to URL", "de": "Addiere nichst zu URL", "ru": "Ничего не добавлять к URL"},
-            "src_":             {"en": "URL, by value=",            "de": "URL falls Wert=",        "ru": "Адрес при значении "},
-            "nav_view":         {"en": "View to navigate",          "de": "View zum Navigieren",    "ru": "Перейти на страницу"},
-            "group_effects":    {"en": "Show/Hide Effects",         "de": "Anzeige Effekte",        "ru": "Эффекты появления/исчезновения"},
-            "group_extended":   {"en": "Extended settings",         "de": "Erweiterte Eistellungen", "ru": "Расширенные настройки"},
-            "body-background":  {"en": "Background color by changing", "de": "Hintegrund by Wechsel", "ru": "Фон при смене страниц"},
-            "sync":             {"en": "Hide and show together:",   "de": "Anzeigen und verbergen gleichzeitig", "ru": "Появления и исчезновение вместе"},
+            class_false: {
+                en: "Class if quality 'false'",
+                de: "Klasse bei Qualität 'false'",
+                ru: "Класс, если качество 'false'",
+            },
+            test_html: { en: 'Text for test', de: 'Testtext', ru: 'Тестовый текст' },
+            test_html_tooltip: {
+                en: 'You can specify the test text if value is now empty to visualise settings.\x0AIt is valid only during edit.',
+                de: 'Man kann noch Testtext setzen um die Einstellungen visuell zu sehen.\x0ADas ist nur während Edit gültig.',
+                ru: 'Можно задать тестовый текст, что бы видеть настройки визуально.\x0AОн действителен только во время редактирования.',
+            },
+            html: { en: 'HTML', de: 'HTML', ru: 'HTML' },
+            'oid-quality': { en: 'Quality ID', de: 'Qualität ID', ru: 'ID-Качество' },
+            'oid-quality_tooltip': {
+                en: 'You can set additionally Quality ID to indicate if the value valid or not.',
+                de: 'Man kann noch zusätzlich Qualität ID setzetn um zu zeigen ob das Wert aktuell ist.',
+                ru: 'Можно дополнительно установить ID-Качества, что бы показать актуальное значение или нет.',
+            },
+            title: { en: 'Title', de: 'Titel', ru: 'Заголовок' },
+            title_font: { en: 'Title font name', de: 'Titelschriftname', ru: 'Шрифт заголовка' },
+            title_color: { en: 'Title color', de: 'Titelfarbe', ru: 'Цвет заголовка' },
+            title_back: { en: 'Title backg. color', de: 'Titelhintergrund', ru: 'Цвет фона текста' },
+            title_top: { en: 'Title top padding', de: 'Titel-Oben-Abstand', ru: 'Отступ заголовка сверху' },
+            title_left: { en: 'Title left padding', de: 'Titel-Links-Abstand', ru: 'Отступ заголовка слева' },
+            header_height: { en: 'Header height', de: 'Kopfhöhe', ru: 'Высота заголовока' },
+            header_color: { en: 'Header color', de: 'Kopffarbe', ru: 'Цвет фона заголовка' },
+            refreshOnWakeUp: {
+                en: 'Refresh on wake up',
+                de: 'Update bei Aufwachen',
+                ru: 'Обновлять при выходе из сна',
+            },
+            refreshOnViewChange: {
+                en: 'Refresh on view change',
+                de: 'Update bei Viewwechsel',
+                ru: 'Обновлять при смене страницы',
+            },
+            refreshWithNoQuery: {
+                en: 'Do not add anything to URL',
+                de: 'Addiere nichst zu URL',
+                ru: 'Ничего не добавлять к URL',
+            },
+            src_: { en: 'URL, by value=', de: 'URL falls Wert=', ru: 'Адрес при значении ' },
+            nav_view: { en: 'View to navigate', de: 'View zum Navigieren', ru: 'Перейти на страницу' },
+            group_effects: { en: 'Show/Hide Effects', de: 'Anzeige Effekte', ru: 'Эффекты появления/исчезновения' },
+            group_extended: { en: 'Extended settings', de: 'Erweiterte Eistellungen', ru: 'Расширенные настройки' },
+            'body-background': {
+                en: 'Background color by changing',
+                de: 'Hintegrund by Wechsel',
+                ru: 'Фон при смене страниц',
+            },
+            sync: {
+                en: 'Hide and show together:',
+                de: 'Anzeigen und verbergen gleichzeitig',
+                ru: 'Появления и исчезновение вместе',
+            },
             // Effects
-            "show":             {"en": "show",                      "de": "show",                   "ru": "show"},
-            "blind":            {"en": "blind",                     "de": "blind",                  "ru": "blind"},
-            "bounce":           {"en": "bounce",                    "de": "bounce",                 "ru": "bounce"},
-            "clip":             {"en": "clip",                      "de": "clip",                   "ru": "clip"},
-            "drop":             {"en": "drop",                      "de": "drop",                   "ru": "drop"},
-            "explode":          {"en": "explode",                   "de": "explode",                "ru": "explode"},
-            "fade":             {"en": "fade",                      "de": "fade",                   "ru": "fade"},
-            "fold":             {"en": "fold",                      "de": "fold",                   "ru": "fold"},
-            "highlight":        {"en": "highlight",                 "de": "highlight",              "ru": "highlight"},
-            "puff":             {"en": "puff",                      "de": "puff",                   "ru": "puff"},
-            "pulsate":          {"en": "pulsate",                   "de": "pulsate",                "ru": "pulsate"},
-            "scale":            {"en": "scale",                     "de": "scale",                  "ru": "scale"},
-            "shake":            {"en": "shake",                     "de": "shake",                  "ru": "shake"},
-            "size":             {"en": "size",                      "de": "size",                   "ru": "size"},
-            "slide":            {"en": "slide",                     "de": "slide",                  "ru": "slide"},
-            "is_milliseconds":  {"en": "Milliseconds",              "de": "Millisekunden",          "ru": "Миллисекунды"},
-            "is_milliseconds_tooltip": {
-                "en": "Is object is milliseconds from 1970.01.01 00:00:00. Normally no.",
-                "de": "Ob das Wert die Milleskunden seit 1970.01.01 00:00:00 ist. Normalerweise nicht.",
-                "ru": "Является ли значение объекта миллисекундами с 1970.01.01 00:00:00. Обычно нет."
+            show: { en: 'show', de: 'show', ru: 'show' },
+            blind: { en: 'blind', de: 'blind', ru: 'blind' },
+            bounce: { en: 'bounce', de: 'bounce', ru: 'bounce' },
+            clip: { en: 'clip', de: 'clip', ru: 'clip' },
+            drop: { en: 'drop', de: 'drop', ru: 'drop' },
+            explode: { en: 'explode', de: 'explode', ru: 'explode' },
+            fade: { en: 'fade', de: 'fade', ru: 'fade' },
+            fold: { en: 'fold', de: 'fold', ru: 'fold' },
+            highlight: { en: 'highlight', de: 'highlight', ru: 'highlight' },
+            puff: { en: 'puff', de: 'puff', ru: 'puff' },
+            pulsate: { en: 'pulsate', de: 'pulsate', ru: 'pulsate' },
+            scale: { en: 'scale', de: 'scale', ru: 'scale' },
+            shake: { en: 'shake', de: 'shake', ru: 'shake' },
+            size: { en: 'size', de: 'size', ru: 'size' },
+            slide: { en: 'slide', de: 'slide', ru: 'slide' },
+            is_milliseconds: { en: 'Milliseconds', de: 'Millisekunden', ru: 'Миллисекунды' },
+            is_milliseconds_tooltip: {
+                en: 'Is object is milliseconds from 1970.01.01 00:00:00. Normally no.',
+                de: 'Ob das Wert die Milleskunden seit 1970.01.01 00:00:00 ist. Normalerweise nicht.',
+                ru: 'Является ли значение объекта миллисекундами с 1970.01.01 00:00:00. Обычно нет.',
             },
-            "format_date":      {"en": "Dateformat",                "de": "Datumformat",            "ru": "Формат даты"},
-            "format_date_tooltip": {
-                "en": "Dateformat",
-                "de": "Datumformat",
-                "ru": "Формат даты"
+            format_date: { en: 'Dateformat', de: 'Datumformat', ru: 'Формат даты' },
+            format_date_tooltip: {
+                en: 'Dateformat',
+                de: 'Datumformat',
+                ru: 'Формат даты',
             },
-            "show_interval":    {"en": "As interval",               "de": "Als Intervall",          "ru": "Как интервал"},
-            "hide_effect":      {"en": "Hide effect",               "de": "Verbergeneffekt",        "ru": "Эффект скрытия"},
-            "hide_duration":    {"en": "Hide duration(ms)",         "de": "Verbergendauer",         "ru": "Длительность скрытия(мс)"},
-            "hide_options":     {"en": "Hide options",              "de": "Verbergenoptionen",      "ru": "Опции скрытия"},
-            "show_effect":      {"en": "Show effect",               "de": "Anzeigeeffekt",          "ru": "Эффект появления"},
-            "show_duration":    {"en": "Show duration(ms)",         "de": "Anzeigedauer",           "ru": "Длительность появления(мс)"},
-            "show_options":     {"en": "Show options",              "de": "Anzeigeoptionen",        "ru": "Опции появления"},
-            "left":             {"en": "left",                      "de": "links",                  "ru": "лево"},
-            "right":            {"en": "right",                     "de": "rechts",                 "ru": "право"},
-            "top":              {"en": "top",                       "de": "oben",                   "ru": "верх"},
-            "bottom":           {"en": "bottom",                    "de": "unten",                  "ru": "низ"},
+            show_interval: { en: 'As interval', de: 'Als Intervall', ru: 'Как интервал' },
+            hide_effect: { en: 'Hide effect', de: 'Verbergeneffekt', ru: 'Эффект скрытия' },
+            hide_duration: { en: 'Hide duration(ms)', de: 'Verbergendauer', ru: 'Длительность скрытия(мс)' },
+            hide_options: { en: 'Hide options', de: 'Verbergenoptionen', ru: 'Опции скрытия' },
+            show_effect: { en: 'Show effect', de: 'Anzeigeeffekt', ru: 'Эффект появления' },
+            show_duration: { en: 'Show duration(ms)', de: 'Anzeigedauer', ru: 'Длительность появления(мс)' },
+            show_options: { en: 'Show options', de: 'Anzeigeoptionen', ru: 'Опции появления' },
+            left: { en: 'left', de: 'links', ru: 'лево' },
+            right: { en: 'right', de: 'rechts', ru: 'право' },
+            top: { en: 'top', de: 'oben', ru: 'верх' },
+            bottom: { en: 'bottom', de: 'unten', ru: 'низ' },
 
-            "contains_view":    {"en": "Contains view",             "de": "Viewname",               "ru": "Имя страницы"},
-            "persistent":       {"en": "Persistent",                "de": "Bleibend",               "ru": "Постоянно"},
-            "persistent_tooltip": {
-                "en": "If persistent the view will not be destroyed when inactive, just hide.\nElsewise the view will be destroyed, if inactive.",
-                "de": "Falls 'Bleibend', dann wird die View nicht zerstört, sondern nur versteckt wenn inaktive. Sonst wird die View immer wieder kreiert und zerstört.",
-                "ru": "Если выбранно 'Постоянно', то страница не будет уничтожаться, если она не активна. В противном случае страница будет создаваться и разрушаться."},
-            "notIfInvisible":       {"en": "Only if visible",                "de": "Nur falls sichtbar",               "ru": "Только если видимо"},
-            "notIfInvisible_tooltip": {
-                "en": "View will be used only if this widget is visible",
-                "de": "Die View wird nur benutzt, wenn dieses Widget sichtbar ist",
-                "ru": "Страница будет использоваться только в том случае, если виден этот виджет"
+            contains_view: { en: 'Contains view', de: 'Viewname', ru: 'Имя страницы' },
+            persistent: { en: 'Persistent', de: 'Bleibend', ru: 'Постоянно' },
+            persistent_tooltip: {
+                en: 'If persistent the view will not be destroyed when inactive, just hide.\nElsewise the view will be destroyed, if inactive.',
+                de: "Falls 'Bleibend', dann wird die View nicht zerstört, sondern nur versteckt wenn inaktive. Sonst wird die View immer wieder kreiert und zerstört.",
+                ru: "Если выбранно 'Постоянно', то страница не будет уничтожаться, если она не активна. В противном случае страница будет создаваться и разрушаться.",
             },
-            "valuelist":        {"en": "Values list",               "de": "Wertenliste",            "ru": "Список значений"},
-            "valuelist_tooltip": {
-                "en": "Divide values with semicolon, like 'ok;warning;alram'. Every text accordingly for value 0,1,2 and so on\nTo have ';' in text use §§ instead.",
-                "de": "Die Werte mit Semikolon trennen, wie 'ok;Warnung;Alarm'. Jeder Text ist entsprechend für das Wert 0,1,2 usw.\nUm ';' im Text zu haben, schrein '§§'.",
-                "ru": "Разделять значения точкой запятой, например 'ok;Внимание;Тревога'. Каждый текст соответственно для значения 0,1,2 итд.\nДля написания ';' в тексте используй '§§'."
+            notIfInvisible: { en: 'Only if visible', de: 'Nur falls sichtbar', ru: 'Только если видимо' },
+            notIfInvisible_tooltip: {
+                en: 'View will be used only if this widget is visible',
+                de: 'Die View wird nur benutzt, wenn dieses Widget sichtbar ist',
+                ru: 'Страница будет использоваться только в том случае, если виден этот виджет',
             },
-            "html_false":       {"en": "HTML by 'false'",           "de": "HTML bei 'false'",       "ru": "HTML если 0"},
-            "html_true":        {"en": "HTML by 'true'",            "de": "HTML bei 'true'",        "ru": "HTML если 1"},
-            "text_false":       {"en": "Text by 'false'",           "de": "Text bei 'false'",       "ru": "Текст если 0"},
-            "text_true":        {"en": "Text by 'true'",            "de": "Text bei 'true'",        "ru": "Текст если 1"},
-            "svg_false":        {"en": "SVG by 'false'",            "de": "SVG bei 'false'",        "ru": "SVG если 0"},
-            "svg_true":         {"en": "SVG by 'true'",             "de": "SVG bei 'true'",         "ru": "SVG если 1"},
-            "svg_opacity":      {"en": "Opacity",                   "de": "Durchsichtigkeit",       "ru": "Прозрачность"},
-            "html_closed":      {"en": "HTML by 'closed'",          "de": "HTML bei 'zu'",          "ru": "HTML если закрыто"},
-            "html_open":        {"en": "HTML by 'open'",            "de": "HTML bei 'auf'",         "ru": "HTML если открыто"},
-            "html_tilt":        {"en": "HTML by 'tilted'",          "de": "HTML bei 'gekippt'",     "ru": "HTML если наклоненно"},
-            "html_tilt_tooltip": {
-                "en": "0 - Closed, 1 - tilt, 2 - open",
-                "de": "0- Zu, 1 - gekippt, 2 - auf",
-                "ru": "0 - закрыто, 1 - откинуто, 2 - открыто"
+            valuelist: { en: 'Values list', de: 'Wertenliste', ru: 'Список значений' },
+            valuelist_tooltip: {
+                en: "Divide values with semicolon, like 'ok;warning;alram'. Every text accordingly for value 0,1,2 and so on\nTo have ';' in text use §§ instead.",
+                de: "Die Werte mit Semikolon trennen, wie 'ok;Warnung;Alarm'. Jeder Text ist entsprechend für das Wert 0,1,2 usw.\nUm ';' im Text zu haben, schrein '§§'.",
+                ru: "Разделять значения точкой запятой, например 'ok;Внимание;Тревога'. Каждый текст соответственно для значения 0,1,2 итд.\nДля написания ';' в тексте используй '§§'.",
             },
-            "color":            {"en": "Color",                     "de": "Farbe",                  "ru": "Цвет"},
-            "shadow":           {"en": "Opacity",                   "de": "Durchsichtigkeit",       "ru": "Тень"},
-            "shadow_tooltip":   {
-                "en": "CSS Shadow, like '10px 10px 5px #888888'",
-                "de": "CSS Shatten, wie '10px 10px 5px #888888'",
-                "ru": "CSS Тень, как '10px 10px 5px #888888'"
+            html_false: { en: "HTML by 'false'", de: "HTML bei 'false'", ru: 'HTML если 0' },
+            html_true: { en: "HTML by 'true'", de: "HTML bei 'true'", ru: 'HTML если 1' },
+            text_false: { en: "Text by 'false'", de: "Text bei 'false'", ru: 'Текст если 0' },
+            text_true: { en: "Text by 'true'", de: "Text bei 'true'", ru: 'Текст если 1' },
+            svg_false: { en: "SVG by 'false'", de: "SVG bei 'false'", ru: 'SVG если 0' },
+            svg_true: { en: "SVG by 'true'", de: "SVG bei 'true'", ru: 'SVG если 1' },
+            svg_opacity: { en: 'Opacity', de: 'Durchsichtigkeit', ru: 'Прозрачность' },
+            html_closed: { en: "HTML by 'closed'", de: "HTML bei 'zu'", ru: 'HTML если закрыто' },
+            html_open: { en: "HTML by 'open'", de: "HTML bei 'auf'", ru: 'HTML если открыто' },
+            html_tilt: { en: "HTML by 'tilted'", de: "HTML bei 'gekippt'", ru: 'HTML если наклоненно' },
+            html_tilt_tooltip: {
+                en: '0 - Closed, 1 - tilt, 2 - open',
+                de: '0- Zu, 1 - gekippt, 2 - auf',
+                ru: '0 - закрыто, 1 - откинуто, 2 - открыто',
             },
-            "reverse":          {"en": "Revers value",              "de": "Wert umkehren",          "ru": "Перевернуть значение"},
-            "border":           {"en": "Border",                    "de": "Rand",                   "ru": "Окантовка"},
-            "border_tooltip":   {
-                "en": "CSS border, like 'green 5px solid'",
-                "de": "CSS Rand, wie 'green 5px solid'",
-                "ru": "CSS бордюр, как 'green 5px solid'"
+            color: { en: 'Color', de: 'Farbe', ru: 'Цвет' },
+            shadow: { en: 'Opacity', de: 'Durchsichtigkeit', ru: 'Тень' },
+            shadow_tooltip: {
+                en: "CSS Shadow, like '10px 10px 5px #888888'",
+                de: "CSS Shatten, wie '10px 10px 5px #888888'",
+                ru: "CSS Тень, как '10px 10px 5px #888888'",
             },
-            "test_text":        {"en": "Test text",                 "de": "Testtext",               "ru": "Тестовый текст"},
-            "max_width":        {"en": "Max. width",                "de": "Maximale Breite",        "ru": "Максимальная ширина"},
-            "style":            {"en": "Style for ",                "de": "Stil für ",              "ru": "Стиль для "},
-            "style_tooltip":    {
-                "en": "Write here css style, like: 'color:red;background:white'",
-                "de": "Hier muss CSS Stil stehen, wie 'color:red;background:white'",
-                "ru": "CSS Стиль, например: 'color:red;background:white'"},
-            "count":            {"en": "Values number to",          "de": "Werteanzahl bis",        "ru": "Количество значений до"},
-            "test_list":        {"en": "Test value",                "de": "Testwert",               "ru": "Тестовое значение"},
-            "urlValue":         {"en": "Call URL on click",         "de": "Rufe URL bei click",     "ru": "Вызвать URL при нажатии"},
-            "group_ccontrol":   {"en": "Advanced control",          "de": "Extrasteuerung",         "ru": "Продвинутое управление"},
-            "urlFalse":         {"en": "URL on false",              "de": "URL bei false",          "ru": "URL при false"},
-            "urlTrue":          {"en": "URL on true",               "de": "URL bei true",           "ru": "URL при true"},
-            "oidFalse":         {"en": "Object ID on false",        "de": "Objekt ID bei false",    "ru": "ID объекта при false"},
-            "oidTrue":          {"en": "Object ID on true",         "de": "Objekt ID bei true",     "ru": "ID объекта при true"},
-            "oidTrueValue":     {"en": "Value for OÍD on true",     "de": "Wert für ID bei false",  "ru": "Значение для ID при false"},
-            "oidFalseValue":    {"en": "Value for OÍD on false",    "de": "Wert für ID bei true",   "ru": "Значение для ID при true"},
-            "square":           {"en": "square",                    "de": "square",                 "ru": "квадрат"},
-            "pentagone":        {"en": "pentagone",                 "de": "pentagone",              "ru": "Пятиуголник"},
-            "hexagone":         {"en": "hexagone",                  "de": "hexagone",               "ru": "Шестиугольник"},
-            "octagone":         {"en": "octagone",                  "de": "octagone",               "ru": "Восьмиугольник"},
-            "circle":           {"en": "circle",                    "de": "Kreis",                  "ru": "Круг"},
-            "svgType":          {"en": "Type",                      "de": "Typ",                    "ru": "Тип"},
-            "strokeColor":      {"en": "Stroke color",              "de": "Liniefarbe",             "ru": "Цвет линии"},
-            "fill":             {"en": "Fill color",                "de": "Füllfarbe",              "ru": "Цвет заливки"},
-            "strokeWidth":      {"en": "Stroke width",              "de": "Liniebreite",            "ru": "Ширина линии"},
-            "rotate":           {"en": "Rotate",                    "de": "Drehen",                 "ru": "Повернуть на"},
-            "no_control":       {"en": "Read only",                 "de": "Nur Anzeige",            "ru": "Только показывать"},
-            "numeric":          {"en": "Number",                    "de": "Nummer",                 "ru": "Число"},
-            "autoSet":          {"en": "Auto set",                  "de": "Auto-setzen",            "ru": "Авто запись"},
-            "autoSet_tooltip":  {
-                "en": "Without 'Auto set' you must press ENTER,\x0ato write the value.",
-                "de": "Ohne 'Auto-setzen' man muss danach ENTER drucken,\x0A um das Wert zu schreiben.",
-                "ru": "Без 'Авто записи' нужно нажать ENTER,\x0Aчто бы записать значение."
+            reverse: { en: 'Revers value', de: 'Wert umkehren', ru: 'Перевернуть значение' },
+            border: { en: 'Border', de: 'Rand', ru: 'Окантовка' },
+            border_tooltip: {
+                en: "CSS border, like 'green 5px solid'",
+                de: "CSS Rand, wie 'green 5px solid'",
+                ru: "CSS бордюр, как 'green 5px solid'",
             },
-            "group_views":      {"en": "Views",                     "de": "Views",                  "ru": "Страницы"},
-            "group_frames":     {"en": "iFrames",                   "de": "iFrames",                "ru": "iFrames"},
-            "horizontal":       {"en": "horizontal",                "de": "horizontal",             "ru": "горизонтально"},
-            "vertical":         {"en": "vertical",                  "de": "senkrecht",              "ru": "вертикально"},
-            "orientation":      {"en": "Orientation",               "de": "Ausrichtung ",           "ru": "Направление"},
-            "noSandbox":        {"en": "No sandbox",                "de": "Kein Sandkasten",        "ru": "Не запускать в песочнице"},
-            "scrollX":          {"en": "Scroll X",                  "de": "Scroll X",               "ru": "Scroll X"},
-            "scrollY":          {"en": "Scroll Y",                  "de": "Scroll Y",               "ru": "Scroll Y"},
-            "seamless":         {"en": "Seamless",                  "de": "Kein Rahmen",            "ru": "Без рамки"},
-            "filters":          {"en": "Filters",                   "de": "Filter",                 "ru": "Фильтры"},
-            "filters_Tooltip":  {
-                "en": "Divided by semicolon,\x0Ae.g: light;control",
-                "de": "Geteilt mir Semikolon\x0Az.B.: Licht;Steuerung",
-                "ru": "Разделять точкой запятой\x0Aнапример: Свет;Управление"
+            test_text: { en: 'Test text', de: 'Testtext', ru: 'Тестовый текст' },
+            max_width: { en: 'Max. width', de: 'Maximale Breite', ru: 'Максимальная ширина' },
+            style: { en: 'Style for ', de: 'Stil für ', ru: 'Стиль для ' },
+            style_tooltip: {
+                en: "Write here css style, like: 'color:red;background:white'",
+                de: "Hier muss CSS Stil stehen, wie 'color:red;background:white'",
+                ru: "CSS Стиль, например: 'color:red;background:white'",
             },
-            "Select ID":        {"en": "Select ID",                 "de": "ID auswählen",           "ru": "Выбрать ID"},
-            "redirect_url":     {"en": "Redirect URL",              "de": "Weiterleiten nach Logout", "ru": "Перейти на URL после выхода"},
-            "in_app_close":     {"en": "Close mobile APP",          "de": "Mobiles APP schliessen", "ru": "Закрыть мобильное приложение"},
-            "line":             {"en": "line",                      "de": "Linie",                  "ru": "линия"},
-            "triangle":         {"en": "triangle",                  "de": "Dreieck",                "ru": "треугольник"},
-            "star":             {"en": "star",                      "de": "Stern",                  "ru": "звезда"},
-            "arrow":            {"en": "arrow",                     "de": "Pfeil",                  "ru": "стрела"},
-            "scaleWidth":       {"en": "Scale width",               "de": "breiten Skala",          "ru": "Масштаб по ширине"},
-            "scaleHeight":      {"en": "Scale height",              "de": "höhen Skala",            "ru": "Масштаб по высоте"},
-            "autoFocus": {
-                "en": "Auto focus",
-                "de": "Autofokus",
-                "ru": "Автофокус",
-                "pt": "Auto-foco",
-                "nl": "Autofocus",
-                "fr": "Mise au point automatique",
-                "it": "Messa a fuoco automatica",
-                "es": "Enfoque automático",
-                "pl": "Automatyczne ustawianie ostrości",
-                "zh-cn": "自动对焦"
-            }
+            count: { en: 'Values number to', de: 'Werteanzahl bis', ru: 'Количество значений до' },
+            test_list: { en: 'Test value', de: 'Testwert', ru: 'Тестовое значение' },
+            urlValue: { en: 'Call URL on click', de: 'Rufe URL bei click', ru: 'Вызвать URL при нажатии' },
+            group_ccontrol: { en: 'Advanced control', de: 'Extrasteuerung', ru: 'Продвинутое управление' },
+            urlFalse: { en: 'URL on false', de: 'URL bei false', ru: 'URL при false' },
+            urlTrue: { en: 'URL on true', de: 'URL bei true', ru: 'URL при true' },
+            oidFalse: { en: 'Object ID on false', de: 'Objekt ID bei false', ru: 'ID объекта при false' },
+            oidTrue: { en: 'Object ID on true', de: 'Objekt ID bei true', ru: 'ID объекта при true' },
+            oidTrueValue: { en: 'Value for OÍD on true', de: 'Wert für ID bei false', ru: 'Значение для ID при false' },
+            oidFalseValue: { en: 'Value for OÍD on false', de: 'Wert für ID bei true', ru: 'Значение для ID при true' },
+            square: { en: 'square', de: 'square', ru: 'квадрат' },
+            pentagone: { en: 'pentagone', de: 'pentagone', ru: 'Пятиуголник' },
+            hexagone: { en: 'hexagone', de: 'hexagone', ru: 'Шестиугольник' },
+            octagone: { en: 'octagone', de: 'octagone', ru: 'Восьмиугольник' },
+            circle: { en: 'circle', de: 'Kreis', ru: 'Круг' },
+            svgType: { en: 'Type', de: 'Typ', ru: 'Тип' },
+            strokeColor: { en: 'Stroke color', de: 'Liniefarbe', ru: 'Цвет линии' },
+            fill: { en: 'Fill color', de: 'Füllfarbe', ru: 'Цвет заливки' },
+            strokeWidth: { en: 'Stroke width', de: 'Liniebreite', ru: 'Ширина линии' },
+            rotate: { en: 'Rotate', de: 'Drehen', ru: 'Повернуть на' },
+            no_control: { en: 'Read only', de: 'Nur Anzeige', ru: 'Только показывать' },
+            numeric: { en: 'Number', de: 'Nummer', ru: 'Число' },
+            autoSet: { en: 'Auto set', de: 'Auto-setzen', ru: 'Авто запись' },
+            autoSet_tooltip: {
+                en: "Without 'Auto set' you must press ENTER,\x0ato write the value.",
+                de: "Ohne 'Auto-setzen' man muss danach ENTER drucken,\x0A um das Wert zu schreiben.",
+                ru: "Без 'Авто записи' нужно нажать ENTER,\x0Aчто бы записать значение.",
+            },
+            group_views: { en: 'Views', de: 'Views', ru: 'Страницы' },
+            group_frames: { en: 'iFrames', de: 'iFrames', ru: 'iFrames' },
+            horizontal: { en: 'horizontal', de: 'horizontal', ru: 'горизонтально' },
+            vertical: { en: 'vertical', de: 'senkrecht', ru: 'вертикально' },
+            orientation: { en: 'Orientation', de: 'Ausrichtung ', ru: 'Направление' },
+            noSandbox: { en: 'No sandbox', de: 'Kein Sandkasten', ru: 'Не запускать в песочнице' },
+            scrollX: { en: 'Scroll X', de: 'Scroll X', ru: 'Scroll X' },
+            scrollY: { en: 'Scroll Y', de: 'Scroll Y', ru: 'Scroll Y' },
+            seamless: { en: 'Seamless', de: 'Kein Rahmen', ru: 'Без рамки' },
+            filters: { en: 'Filters', de: 'Filter', ru: 'Фильтры' },
+            filters_Tooltip: {
+                en: 'Divided by semicolon,\x0Ae.g: light;control',
+                de: 'Geteilt mir Semikolon\x0Az.B.: Licht;Steuerung',
+                ru: 'Разделять точкой запятой\x0Aнапример: Свет;Управление',
+            },
+            'Select ID': { en: 'Select ID', de: 'ID auswählen', ru: 'Выбрать ID' },
+            redirect_url: { en: 'Redirect URL', de: 'Weiterleiten nach Logout', ru: 'Перейти на URL после выхода' },
+            in_app_close: { en: 'Close mobile APP', de: 'Mobiles APP schliessen', ru: 'Закрыть мобильное приложение' },
+            line: { en: 'line', de: 'Linie', ru: 'линия' },
+            triangle: { en: 'triangle', de: 'Dreieck', ru: 'треугольник' },
+            star: { en: 'star', de: 'Stern', ru: 'звезда' },
+            arrow: { en: 'arrow', de: 'Pfeil', ru: 'стрела' },
+            scaleWidth: { en: 'Scale width', de: 'breiten Skala', ru: 'Масштаб по ширине' },
+            scaleHeight: { en: 'Scale height', de: 'höhen Skala', ru: 'Масштаб по высоте' },
+            autoFocus: {
+                en: 'Auto focus',
+                de: 'Autofokus',
+                ru: 'Автофокус',
+                pt: 'Auto-foco',
+                nl: 'Autofocus',
+                fr: 'Mise au point automatique',
+                it: 'Messa a fuoco automatica',
+                es: 'Enfoque automático',
+                pl: 'Automatyczne ustawianie ostrości',
+                'zh-cn': '自动对焦',
+            },
         });
     }
 
     $.extend(true, systemDictionary, {
-        "Edit note":    {"en": "Edit note",     "de": "Meldung eingeben",   "ru": "Сообщение"},
-        "Clear":        {"en": "Clear",         "de": "Löschen",            "ru": "Очистить"},
-        "Ok":           {"en": "Ok",            "de": "Ok",                 "ru": "Ok"},
-        "Cancel":       {"en": "Cancel",        "de": "Abbrechen",          "ru": "Отмена"},
-        "all":          {"en": "all",           "de": "Alle",               "ru": "Все"},
-        "just&nbsp;now":  {"en": "just&nbsp;now", "de": "gerade&nbsp;jetzt", "ru": "только&nbsp;что"},
-        "for&nbsp;%s&nbsp;min.":  {"en": "for&nbsp;%s&nbsp;min.", "de": "vor&nbsp;%s&nbsp;Min.", "ru": "%s&nbsp;мин. назад"},
-        "for&nbsp;%s&nbsp;hr.&nbsp;and&nbsp;%s&nbsp;min.": {
-            "en": "for&nbsp;%s&nbsp;hr.&nbsp;and&nbsp;%s&nbsp;min.",
-            "de": "vor&nbsp;%s&nbsp;St.&nbsp;und&nbsp;%s&nbsp;Min.",
-            "ru": "%s&nbsp;часов&nbsp;и&nbsp;%s&nbsp;мин. назад"
+        'Edit note': { en: 'Edit note', de: 'Meldung eingeben', ru: 'Сообщение' },
+        Clear: { en: 'Clear', de: 'Löschen', ru: 'Очистить' },
+        Ok: { en: 'Ok', de: 'Ok', ru: 'Ok' },
+        Cancel: { en: 'Cancel', de: 'Abbrechen', ru: 'Отмена' },
+        all: { en: 'all', de: 'Alle', ru: 'Все' },
+        'just&nbsp;now': { en: 'just&nbsp;now', de: 'gerade&nbsp;jetzt', ru: 'только&nbsp;что' },
+        'for&nbsp;%s&nbsp;min.': { en: 'for&nbsp;%s&nbsp;min.', de: 'vor&nbsp;%s&nbsp;Min.', ru: '%s&nbsp;мин. назад' },
+        'for&nbsp;%s&nbsp;hr.&nbsp;and&nbsp;%s&nbsp;min.': {
+            en: 'for&nbsp;%s&nbsp;hr.&nbsp;and&nbsp;%s&nbsp;min.',
+            de: 'vor&nbsp;%s&nbsp;St.&nbsp;und&nbsp;%s&nbsp;Min.',
+            ru: '%s&nbsp;часов&nbsp;и&nbsp;%s&nbsp;мин. назад',
         },
-        "yesterday":              {"en": "yesterday", "de": "gestern", "ru": "вчера"},
-        "for&nbsp;%s&nbsp;hours": {"en": "for&nbsp;%s&nbsp;hours", "de": "vor&nbsp;%s&nbsp;Stunden", "ru": "%s&nbsp;часов назад"},
-        "click to create":        {"en": "click to create", "de": "klicken um zu erzeugen", "ru": "нажать что бы создать"},
-        "This option works only in APP": {
-            "en": "This option works only in APP",
-            "de": "Funktioniert nur im APP",
-            "ru": "Работает только в мобильном приложении"
+        yesterday: { en: 'yesterday', de: 'gestern', ru: 'вчера' },
+        'for&nbsp;%s&nbsp;hours': {
+            en: 'for&nbsp;%s&nbsp;hours',
+            de: 'vor&nbsp;%s&nbsp;Stunden',
+            ru: '%s&nbsp;часов назад',
+        },
+        'click to create': { en: 'click to create', de: 'klicken um zu erzeugen', ru: 'нажать что бы создать' },
+        'This option works only in APP': {
+            en: 'This option works only in APP',
+            de: 'Funktioniert nur im APP',
+            ru: 'Работает только в мобильном приложении',
         },
     });
 
     /*vis.binds.stateful = {
         view: function (el, viewArr, persistent, notIfInvisible) {
-            var $this = $(el);
-            var oid   = $this.attr('data-oid');
-            var timer = null;
+            const $this = $(el);
+            const oid   = $this.attr('data-oid');
+            let timer = null;
 
             function draw(val) {
                 timer = null;
-                var view = viewArr[val];
+                const view = viewArr[val];
                 if (!persistent) {
                     $this.parent().find('div.vis-view').remove();
                 } else {
@@ -269,7 +311,7 @@
                 }
                 if (vis.views[view]) {
                     vis.renderView(view, view, true, function (_view) {
-                        var $view = $('#visview_' + _view);
+                        const $view = $('#visview_' + _view);
                         $view.show().data('persistent', persistent);
                         if (!$this.find('#visview_' + _view).length) {
                             $view.appendTo($this);
@@ -305,8 +347,8 @@
             }
         },
         iframe: function (el, srcArr, refreshInterval) {
-            var $this = $(el).parent().find('iframe');
-            var oid   = $this.attr('data-oid');
+            const $this = $(el).parent().find('iframe');
+            const oid   = $this.attr('data-oid');
             refreshInterval = parseInt(refreshInterval, 10) || 0;
 
             function onChange (e, newVal) {
@@ -325,7 +367,7 @@
                     .data('bindHandler', onChange);
 
                 if (vis.states[oid + '.val'] !== undefined) {
-                    var val = vis.states[oid + '.val'];
+                    let val = vis.states[oid + '.val'];
                     if (val === 'true'  || val === true)  val = 1;
                     if (val === 'false' || val === false) val = 0;
                     $this.attr('src', srcArr[val]);
@@ -333,18 +375,18 @@
 
                 if (refreshInterval > 0) {
                     setInterval(function () {
-                        var val = vis.states[oid + '.val'] || 0;
+                        let val = vis.states[oid + '.val'] || 0;
                         if (val === 'true'  || val === true)  val = 1;
                         if (val === 'false' || val === false) val = 0;
-                        var src = srcArr[val];
+                        const src = srcArr[val];
                         $this.attr('src', src + (src.match(/\?/) ? '&' : '?') + '_vis_refts=' + Date.now());
                     }, refreshInterval);
                 }
             }
         },
         image: function (el, srcArr, refreshInterval) {
-            var $this = $(el).parent().find('img');
-            var oid = $this.attr('data-oid');
+            const $this = $(el).parent().find('img');
+            const oid = $this.attr('data-oid');
             refreshInterval = parseInt(refreshInterval, 10) || 0;
 
             function onChange (e, newVal) {
@@ -363,7 +405,7 @@
                     .data('bindHandler', onChange);
 
                 if (vis.states[oid + '.val'] !== undefined) {
-                    var val = vis.states[oid + '.val'];
+                    let val = vis.states[oid + '.val'];
                     if (val === 'true'  || val === true)  val = 1;
                     if (val === 'false' || val === false) val = 0;
                     $this.attr('src', srcArr[val]);
@@ -371,11 +413,11 @@
 
                 if (refreshInterval > 0) {
                     setInterval(function () {
-                        var val = vis.states[oid + '.val'] || 0;
+                        let val = vis.states[oid + '.val'] || 0;
                         if (val === 'true'  || val === true)  val = 1;
                         if (val === 'false' || val === false) val = 0;
 
-                        var src = srcArr[val];
+                        const src = srcArr[val];
                         if (src) $this.attr('src', src + ((src.indexOf('?') !== -1) ? '&' : '?') + '_vis_refts=' + Date.now());
                     }, refreshInterval);
                 }
@@ -384,7 +426,7 @@
         },
         value: function (values, oid) {
             if (oid !== 'nothing_selected' && vis.states.attr(oid + '.val') !== undefined) {
-                var val = vis.states.attr(oid + '.val');
+                let val = vis.states.attr(oid + '.val');
                 if (val === 'true'  || val === true)  val = 1;
                 if (val === 'false' || val === false) val = 0;
                 return values[val];
@@ -394,20 +436,22 @@
         }
     };*/
     vis.binds.container = function (el, view) {
-        var $this = $(el);
+        const $this = $(el);
         if (vis.views[view]) {
             vis.renderView(view, view, true, function (_view) {
-                $('#visview_' + _view).appendTo($this).show();
+                $('#visview_' + _view)
+                    .appendTo($this)
+                    .show();
             });
         }
     };
     vis.binds.basic = {
         isFullScreen: false,
         /* filterDropdown: function (el, filters, hideEffect, hideDuration, showEffect, showDuration) {
-            var $this = $(el);
+            const $this = $(el);
             if (filters) {
                 filters = filters.split(';');
-                for (var i = 0; i < filters.length; i++) {
+                for (let i = 0; i < filters.length; i++) {
                     $this.find('select').append('<option value="' + filters[i] + '">' + filters[i] + '</option>');
                 }
             }
@@ -420,20 +464,16 @@
                 vis.changeFilter(null, $this.find('select option:selected').val(), hideEffect, hideDuration, showEffect, showDuration);
             });
         }, */
+        // used in metro
         state: function (el, oid) {
-            var $this = $(el);
+            const $this = $(el);
             oid = oid || $this.attr('data-oid');
-            var val = $this.attr('data-val');
-
             if (oid) {
                 $this.attr('data-ctrl-oid', oid);
             }
 
-            if (val === 'true')  val = true;
-            if (val === 'false') val = false;
-
             if (!vis.editMode) {
-                var moved = false;
+                let moved = false;
                 $this
                     .on('click touchend', function (e) {
                         // Protect against two events
@@ -445,22 +485,30 @@
                             return;
                         }
 
-                        var oid = $(this).attr('data-ctrl-oid');
+                        const oid = $(this).attr('data-ctrl-oid');
 
                         if ($(this).attr('url-value')) {
                             vis.conn.httpGet($(this).attr('url-value'));
                         }
 
                         if (oid) {
-                            var val = $(this).attr('data-val');
-                            if (val === undefined || val === null) val = false;
-                            if (val === 'true')  val = true;
-                            if (val === 'false') val = false;
+                            let val = $(this).attr('data-val');
+                            if (val === undefined || val === null) {
+                                val = false;
+                            }
+                            if (val === 'true') {
+                                val = true;
+                            }
+                            if (val === 'false') {
+                                val = false;
+                            }
                             if (parseFloat(val).toString() == val) {
                                 val = parseFloat(val);
                             }
 
-                            oid && vis.setValue(oid, val);
+                            if (oid) {
+                                vis.setValue(oid, val);
+                            }
                         }
                     })
                     .on('touchmove', function () {
@@ -477,10 +525,10 @@
             function fInterval($that) {
                 vis.binds.basic.pressedNext = true;
                 vis.binds.basic.pressed = null;
-                var oid = $that.attr('data-oid');
+                const oid = $that.attr('data-oid');
                 if (!vis.editMode) {
-                    var step = parseFloat($that.attr('data-vis-step'));
-                    var tmp  = parseFloat(vis.states[oid + '.val']) + step;
+                    const step = parseFloat($that.attr('data-vis-step'));
+                    const tmp = parseFloat(vis.states[oid + '.val']) + step;
                     if (step < 0) {
                         if (tmp >= minmax) {
                             vis.setValue($that.attr('data-oid'), tmp);
@@ -495,10 +543,9 @@
                 }
             }
 
-            function intervalStart(e) {
+            function intervalStart() {
                 vis.binds.basic.pressedNext = false;
-                var $this = $(this);
-                var oid = $this.attr('data-oid');
+                const $this = $(this);
 
                 if (vis.binds.basic.pressed) {
                     clearInterval(vis.binds.basic.pressed);
@@ -509,44 +556,48 @@
             }
 
             if (!vis.editMode) {
-                var moved = false;
-                $(el).on('click touchend', function (e) {
-                    // Protect against two events
-                    if (vis.detectBounce(this)) return;
-
-                    if (moved) return;
-
-                    if (vis.binds.basic.pressed) {
-                        clearInterval(vis.binds.basic.pressed);
-                        vis.binds.basic.pressed = null;
-                    }
-
-                    if (vis.binds.basic.pressedNext) {
-                        vis.binds.basic.pressedNext = false;
-                        return;
-                    }
-                    var $this = $(this);
-                    var oid = $this.attr('data-oid');
-                    var step = parseFloat($this.attr('data-vis-step'));
-                    var tmp  = parseFloat(vis.states[oid + '.val']) + step;
-                    if (step < 0) {
-                        if (minmax === undefined || tmp >= minmax) {
-                            vis.setValue($this.attr('data-oid'), tmp);
+                let moved = false;
+                $(el)
+                    .on('click touchend', function () {
+                        // Protect against two events
+                        if (vis.detectBounce(this) || moved) {
+                            return;
                         }
-                    } else {
-                        if (minmax === undefined || tmp <= minmax) {
-                            vis.setValue($this.attr('data-oid'), tmp);
+
+                        if (vis.binds.basic.pressed) {
+                            clearInterval(vis.binds.basic.pressed);
+                            vis.binds.basic.pressed = null;
                         }
-                    }
-                }).on('touchmove', function () {
-                    moved = true;
-                }).on('touchstart', function () {
-                    moved = false;
-                });
+
+                        if (vis.binds.basic.pressedNext) {
+                            vis.binds.basic.pressedNext = false;
+                            return;
+                        }
+                        const $this = $(this);
+                        const oid = $this.attr('data-oid');
+                        const step = parseFloat($this.attr('data-vis-step'));
+                        const tmp = parseFloat(vis.states[oid + '.val']) + step;
+                        if (step < 0) {
+                            if (minmax === undefined || tmp >= minmax) {
+                                vis.setValue($this.attr('data-oid'), tmp);
+                            }
+                        } else {
+                            if (minmax === undefined || tmp <= minmax) {
+                                vis.setValue($this.attr('data-oid'), tmp);
+                            }
+                        }
+                    })
+                    .on('touchmove', function () {
+                        moved = true;
+                    })
+                    .on('touchstart', function () {
+                        moved = false;
+                    });
             }
 
             if (interval) {
-                $(el).on('mousedown', intervalStart)
+                $(el)
+                    .on('mousedown', intervalStart)
                     .on('touchstart', intervalStart)
                     .on('touchend', function () {
                         if (vis.binds.basic.pressed) {
@@ -559,36 +610,49 @@
                             clearInterval(vis.binds.basic.pressed);
                             vis.binds.basic.pressed = null;
                         }
-                    }).data('destroy', function (id, $widget) {
+                    })
+                    .data('destroy', function (id, $widget) {
                         $widget && $widget.off('mousedown').off('touchstart').off('touchend').off('mouseup');
                     });
             }
         },
-        /*navigation: function (el, options) {
+        // Used in metro
+        navigation: function (el, options) {
             if (!vis.editMode && options.nav_view) {
-                var $this = $(el);
-                var moved = false;
-                $this.on('click touchend', function (e) {
-                    // Protect against two events
-                    if (vis.detectBounce(this)) return;
+                const $this = $(el);
+                let moved = false;
+                $this
+                    .on('click touchend', function (e) {
+                        // Protect against two events
+                        if (vis.detectBounce(this) || moved) {
+                            return;
+                        }
 
-                    if (moved) return;
+                        if (options.background) {
+                            $('body').css({ background: options.background });
+                        }
 
-                    if (options.background) $('body').css({background: options.background});
-
-                    vis.changeView(options.nav_view, options.nav_view, options.hideOptions, options.showOptions, options.sync);
-                    //e.preventDefault();
-                    //return false;
-                }).on('touchmove', function () {
-                    moved = true;
-                }).on('touchstart', function () {
-                    moved = false;
-                });
+                        vis.changeView(
+                            options.nav_view,
+                            options.nav_view,
+                            options.hideOptions,
+                            options.showOptions,
+                            options.sync,
+                        );
+                        //e.preventDefault();
+                        //return false;
+                    })
+                    .on('touchmove', function () {
+                        moved = true;
+                    })
+                    .on('touchstart', function () {
+                        moved = false;
+                    });
             }
-        },*/
+        },
         /*hideOnTrue: function (el) {
-            var $this = $(el);
-            var oid = $this.attr('data-oid');
+            const $this = $(el);
+            const oid = $this.attr('data-oid');
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
                 if (newVal === true || parseFloat(newVal) > 0) {
                     if (!vis.editMode) {
@@ -605,8 +669,8 @@
             }
         },
         showOnValue: function (el, val) {
-            var $this = $(el);
-            var oid = $this.attr('data-oid');
+            const $this = $(el);
+            const oid = $this.attr('data-oid');
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
                 if (newVal != val) {
                     if (!vis.editMode) {
@@ -623,20 +687,22 @@
             }
         },*/
         _onChange: function (el, oid, wid) {
-            var $this = $(el);
+            const $this = $(el);
             // If still working
             //console.log(oid + ' ' + vis.states.attr(oid + '.val') + ' (' + vis.states.attr(oid + '.ack') + ') - ' + wid + ' ' + vis.states.attr(wid + '.val') + ' (' + vis.states.attr(wid + '.ack') + ')');
 
-            if (wid && (vis.states.attr(wid + '.val') === true)) return;
+            if (wid && vis.states.attr(wid + '.val') === true) {
+                return;
+            }
 
-            var val = vis.states.attr(oid + '.val');
+            let val = vis.states.attr(oid + '.val');
 
             if (val === 'false') {
                 val = false;
             } else if (val === 'true') {
                 val = true;
             } else if (typeof val === 'string') {
-                var f = parseFloat(val);
+                const f = parseFloat(val);
                 if (f == val) {
                     val = f;
                 } else if (val !== '') {
@@ -647,21 +713,22 @@
             }
 
             if ($this.data('data-numeric')) {
-                $this.prop('checked', (val > (($this.data('data-max') - $this.data('data-min')) / 2)));
+                $this.prop('checked', val > ($this.data('data-max') - $this.data('data-min')) / 2);
             } else {
                 $this.prop('checked', val);
             }
         },
+        // used in metro
         checkbox: function (el, numeric, min, max) {
-            var $this = $(el);
-            var oid   = $this.data('oid'); // Object ID
-            var wid   = $this.data('oid-working'); // Work ID
+            const $this = $(el);
+            const oid = $this.data('oid'); // Object ID
+            const wid = $this.data('oid-working'); // Work ID
 
             function onChange() {
                 vis.binds.basic._onChange(el, oid, wid);
             }
             if (oid) {
-                var bound = [];
+                const bound = [];
                 vis.states.bind(oid + '.val', onChange);
                 bound.push(oid + '.val');
                 if (wid) {
@@ -670,7 +737,8 @@
                 }
 
                 // remember all ids, that bound
-                $this.closest('.vis-widget')
+                $this
+                    .closest('.vis-widget')
                     .data('bound', bound)
                     // remember bind handler
                     .data('bindHandler', onChange);
@@ -693,15 +761,15 @@
                 max = true;
             }
 
-            $this.data('min',     min);
-            $this.data('max',     max);
+            $this.data('min', min);
+            $this.data('max', max);
             $this.data('numeric', numeric);
 
             vis.binds.basic._onChange(el, oid, wid);
 
             if (!vis.editMode) {
                 $this.change(function () {
-                    var $this_ = $(this);
+                    const $this_ = $(this);
                     if ($this_.prop('checked')) {
                         vis.setValue($this_.data('oid'), $this_.data('max'));
                     } else {
@@ -711,23 +779,24 @@
             }
         },
         input: function (el, data) {
-            var $this = $(el);
-            var oid   = $this.data('oid'); // Object ID
-            var wid   = $this.data('oid-working'); // Work ID
+            const $this = $(el);
+            const oid = $this.data('oid'); // Object ID
+            const wid = $this.data('oid-working'); // Work ID
 
             function onChange(e, val) {
                 $this.val(val);
             }
 
             if (oid) {
-                var bound = [oid + '.val'];
+                const bound = [oid + '.val'];
                 vis.states.bind(oid + '.val', onChange);
                 if (wid) {
                     bound.push(wid + '.val');
                     vis.states.bind(wid + '.val', onChange);
                 }
                 // remember all ids, that bound
-                $this.closest('.vis-widget')
+                $this
+                    .closest('.vis-widget')
                     .data('bound', bound)
                     // remember bind handler
                     .data('bindHandler', onChange);
@@ -760,9 +829,9 @@
 
             if (!vis.editMode) {
                 $this.change(function () {
-                    var $this_ = $(this);
+                    const $this_ = $(this);
                     if (data.numeric) {
-                        var value = parseFloat($this_.val());
+                        let value = parseFloat($this_.val());
                         if (data.min !== null && value < data.min) {
                             value = data.min;
                             $this_.val(value);
@@ -776,27 +845,33 @@
                     }
                 });
                 if (data.autoSet) {
-                    $this.keyup(function(e) {
-                        var timer = $this.data('timer');
-                        timer && clearTimeout(timer);
-                        $this.data('timer', setTimeout(function () {
-                            $this.trigger('change');
-                        }), 1000);
+                    $this.keyup(function (e) {
+                        const timer = $this.data('timer');
+                        if (timer) {
+                            clearTimeout(timer);
+                        }
+                        $this.data(
+                            'timer',
+                            setTimeout(function () {
+                                $this.trigger('change');
+                            }),
+                            1000,
+                        );
                     });
                 }
             }
         },
         select: function (el, invert) {
-            var $this = $(el).prev();
-            var oid   = $this.attr('data-oid');
-            var val   = vis.states[oid + '.val'];
+            const $this = $(el).prev();
+            const oid = $this.attr('data-oid');
+            let val = vis.states[oid + '.val'];
 
             if (val === 'false') {
                 val = false;
             } else if (val === 'true') {
                 val = true;
             } else if (typeof val === 'string') {
-                var f = parseFloat(val);
+                const f = parseFloat(val);
                 if (f == val) {
                     val = f;
                 } else if (val !== '') {
@@ -813,14 +888,15 @@
             if (!vis.editMode) {
                 if (oid !== 'nothing_selected') {
                     $this.change(function () {
-                        var val = $this.find('option:selected').val();
-                        if (invert) val = !val;
+                        let val = $this.find('option:selected').val();
+                        if (invert) {
+                            val = !val;
+                        }
                         vis.setValue(oid, val);
                     });
                 }
             }
             if (oid !== 'nothing_selected') {
-
             }
             function onChange(e, newVal, oldVal) {
                 if (newVal === 'false') {
@@ -828,7 +904,7 @@
                 } else if (newVal === 'true') {
                     newVal = true;
                 } else if (typeof newVal === 'string') {
-                    var f = parseFloat(newVal);
+                    const f = parseFloat(newVal);
                     if (f == newVal) {
                         newVal = f;
                     } else if (newVal !== '') {
@@ -842,7 +918,7 @@
                 } else if (oldVal === 'true') {
                     oldVal = true;
                 } else if (typeof oldVal === 'string') {
-                    var f = parseFloat(oldVal);
+                    const f = parseFloat(oldVal);
                     if (f == oldVal) {
                         oldVal = f;
                     } else if (oldVal !== '') {
@@ -852,7 +928,9 @@
                     }
                 }
 
-                if (newVal == oldVal) return;
+                if (newVal == oldVal) {
+                    return;
+                }
 
                 if (newVal === 'false' || newVal === false || parseFloat(newVal) === 0) {
                     if ($this.find('option[value="1"]').prop('selected')) {
@@ -872,7 +950,8 @@
             if (oid) {
                 vis.states.bind(oid + '.val', onChange);
                 // remember all ids, that bound
-                $this.closest('.vis-widget')
+                $this
+                    .closest('.vis-widget')
                     .data('bound', [oid + '.val'])
                     // remember bind handler
                     .data('bindHandler', onChange);
@@ -880,7 +959,7 @@
         },
         /*pushbutton: function(el, oid) {
             if (!vis.editMode) {
-                var $this = $(el);
+                const $this = $(el);
                 oid = oid || $this.data('oid');
 
                 $this.on('mousedown touchstart', function (e) {
@@ -901,134 +980,176 @@
                 });
             }
         },*/
+        // used in metro
         toggle: function (el, oid) {
-            var $this = $(el);
+            const $this = $(el);
             oid = oid || $this.data('oid');
-            var min = $this.data('min');
-            var max = $this.data('max');
+            let min = $this.data('min');
+            let max = $this.data('max');
 
-            var urlTrue     = $this.data('url-true');
-            var urlFalse    = $this.data('url-false');
-            var oidTrue     = $this.data('oid-true');
-            var oidFalse    = $this.data('oid-false');
-            var oidTrueVal  = $this.data('oid-true-value');
-            var oidFalseVal = $this.data('oid-false-value');
-            var readOnly    = $this.data('read-only');
+            const urlTrue = $this.data('url-true');
+            let urlFalse = $this.data('url-false');
+            const oidTrue = $this.data('oid-true');
+            let oidFalse = $this.data('oid-false');
+            let oidTrueVal = $this.data('oid-true-value');
+            let oidFalseVal = $this.data('oid-false-value');
+            const readOnly = $this.data('read-only');
 
-            if (min === '') min = undefined;
-            if (max === '') max = undefined;
+            if (min === '') {
+                min = undefined;
+            }
+            if (max === '') {
+                max = undefined;
+            }
 
             if ((oid || oidTrue || urlTrue) && !vis.editMode && !readOnly) {
-                var moved = false;
-                $this.on('click touchend', function () {
-                    // Protect against two events
-                    if (vis.detectBounce(this)) return;
+                let moved = false;
+                $this
+                    .on('click touchend', function () {
+                        // Protect against two events
+                        if (vis.detectBounce(this) || moved) {
+                            return;
+                        }
 
-                    if (moved) return;
+                        let val;
 
-                    var val;
+                        if (oidTrue || urlTrue) {
+                            if (!oidFalse && oidTrue) {
+                                oidFalse = oidTrue;
+                            }
+                            if (!urlFalse && urlTrue) {
+                                urlFalse = urlTrue;
+                            }
 
-                    if (oidTrue || urlTrue) {
-                        if (!oidFalse && oidTrue) oidFalse = oidTrue;
-                        if (!urlFalse && urlTrue) urlFalse = urlTrue;
+                            if (!oid || oid === 'nothing_selected') {
+                                val = !$(this).data('state');
+                                // remember state
+                                $(this).data('state', val);
+                            } else {
+                                val = vis.states[oid + '.val'];
+                                if (max !== undefined) {
+                                    if (max === 'true') max = true;
+                                    if (max === 'false') max = false;
+                                    if (val === 'true') val = true;
+                                    if (val === 'false') val = false;
+                                    val = val == max;
+                                } else {
+                                    val = val === 1 || val === '1' || val === true || val === 'true';
+                                }
+                                val = !val; // invert
+                            }
+                            if (min === undefined || min === 'false' || min === null) {
+                                min = false;
+                            }
+                            if (max === undefined || max === 'true' || max === null) {
+                                max = true;
+                            }
 
-                        if (!oid || oid === 'nothing_selected') {
-                            val = !$(this).data('state');
-                            // remember state
-                            $(this).data('state', val);
+                            if (oidTrue) {
+                                if (val) {
+                                    if (oidTrueVal === undefined || oidTrueVal === null) {
+                                        oidTrueVal = max;
+                                    }
+                                    if (oidTrueVal === 'false') {
+                                        oidTrueVal = false;
+                                    }
+                                    if (oidTrueVal === 'true') {
+                                        oidTrueVal = true;
+                                    }
+                                    const f = parseFloat(oidTrueVal);
+                                    if (f.toString() == oidTrueVal) {
+                                        oidTrueVal = f;
+                                    }
+                                    vis.setValue(oidTrue, oidTrueVal);
+                                } else {
+                                    if (oidFalseVal === undefined || oidFalseVal === null) {
+                                        oidFalseVal = min;
+                                    }
+                                    if (oidFalseVal === 'false') {
+                                        oidFalseVal = false;
+                                    }
+                                    if (oidFalseVal === 'true') {
+                                        oidFalseVal = true;
+                                    }
+                                    const f = parseFloat(oidFalseVal);
+                                    if (f.toString() == oidFalseVal) {
+                                        oidFalseVal = f;
+                                    }
+                                    vis.setValue(oidFalse, oidFalseVal);
+                                }
+                            }
+
+                            if (urlTrue) {
+                                if (val) {
+                                    vis.conn.httpGet(urlTrue);
+                                } else {
+                                    vis.conn.httpGet(urlFalse);
+                                }
+                            }
+
+                            // show new state
+                            if (!oid || oid === 'nothing_selected') {
+                                const img = $(this).data('img-class');
+                                if (val) {
+                                    if ($(this).data('as-button')) $(this).addClass('ui-state-active');
+                                    val = $(this).data('img-true');
+                                } else {
+                                    val = $(this).data('img-false');
+                                    if ($(this).data('as-button')) $(this).removeClass('ui-state-active');
+                                }
+                                $(this)
+                                    .find('.' + img)
+                                    .attr('src', val);
+                            }
                         } else {
                             val = vis.states[oid + '.val'];
-                            if (max !== undefined) {
-                                if (max === 'true')  max = true;
-                                if (max === 'false') max = false;
-                                if (val === 'true')  val = true;
-                                if (val === 'false') val = false;
-                                val = (val == max);
+                            if (
+                                (min === undefined &&
+                                    (val === null ||
+                                        val === '' ||
+                                        val === undefined ||
+                                        val === false ||
+                                        val === 'false')) ||
+                                (min !== undefined && min == val)
+                            ) {
+                                vis.setValue(oid, max !== undefined ? max : true);
+                            } else if (
+                                (max === undefined && (val === true || val === 'true')) ||
+                                (max !== undefined && val == max)
+                            ) {
+                                vis.setValue(oid, min !== undefined ? min : false);
                             } else {
-                                val = (val === 1 || val === '1' || val === true || val === 'true');
-                            }
-                            val = !val; // invert
-                        }
-                        if (min === undefined || min === 'false' || min === null) min = false;
-                        if (max === undefined || max === 'true'  || max === null) max = true;
-
-                        if (oidTrue) {
-                            if (val) {
-                                if (oidTrueVal === undefined || oidTrueVal === null) oidTrueVal = max;
-                                if (oidTrueVal === 'false') oidTrueVal = false;
-                                if (oidTrueVal === 'true')  oidTrueVal = true;
-                                var f = parseFloat(oidTrueVal);
-                                if (f.toString() == oidTrueVal) oidTrueVal = f;
-                                vis.setValue(oidTrue,  oidTrueVal);
-                            } else {
-                                if (oidFalseVal === undefined || oidFalseVal === null) oidFalseVal = min;
-                                if (oidFalseVal === 'false') oidFalseVal = false;
-                                if (oidFalseVal === 'true')  oidFalseVal = true;
-                                var f = parseFloat(oidFalseVal);
-                                if (f.toString() == oidFalseVal) oidFalseVal = f;
-                                vis.setValue(oidFalse, oidFalseVal);
-                            }
-                        }
-
-                        if (urlTrue) {
-                            if (val) {
-                                vis.conn.httpGet(urlTrue)
-                            } else {
-                                vis.conn.httpGet(urlFalse);
-                            }
-                        }
-
-                        // show new state
-                        if (!oid || oid === 'nothing_selected') {
-                            var img = $(this).data('img-class');
-                            if (val) {
-                                if ($(this).data('as-button')) $(this).addClass('ui-state-active');
-                                val = $(this).data('img-true');
-                            } else {
-                                val = $(this).data('img-false');
-                                if ($(this).data('as-button')) $(this).removeClass('ui-state-active');
-                            }
-                            $(this).find('.' + img).attr('src', val);
-                        }
-                    } else {
-                        var val = vis.states[oid + '.val'];
-                        if ((min === undefined && (val === null || val === '' || val === undefined || val === false || val === 'false')) ||
-                            (min !== undefined && min == val)) {
-                            vis.setValue(oid, max !== undefined ? max : true);
-                        } else
-                        if ((max === undefined && (val === true || val === 'true')) ||
-                            (max !== undefined && val == max))
-                        {
-                            vis.setValue(oid, min !== undefined ? min : false);
-                        } else {
-                            val = parseFloat(val);
-                            if (min !== undefined && max !== undefined) {
-                                if (val >= (max - min) / 2) {
-                                    val = min;
+                                val = parseFloat(val);
+                                if (min !== undefined && max !== undefined) {
+                                    if (val >= (max - min) / 2) {
+                                        val = min;
+                                    } else {
+                                        val = max;
+                                    }
                                 } else {
-                                    val = max;
+                                    if (val >= 0.5) {
+                                        val = 0;
+                                    } else {
+                                        val = 1;
+                                    }
                                 }
-                            } else {
-                                if (val >= 0.5) {
-                                    val = 0;
-                                } else {
-                                    val = 1;
-                                }
+                                vis.setValue(oid, val);
                             }
-                            vis.setValue(oid, val);
                         }
-                    }
-                }).on('touchmove', function () {
-                    moved = true;
-                }).on('touchstart', function () {
-                    moved = false;
-                }).data('destroy', function (id, $widget) {
-                    $widget.off('click touchend').off('touchmove').off('touchstart');
-                });
+                    })
+                    .on('touchmove', function () {
+                        moved = true;
+                    })
+                    .on('touchstart', function () {
+                        moved = false;
+                    })
+                    .data('destroy', function (id, $widget) {
+                        $widget.off('click touchend').off('touchmove').off('touchstart');
+                    });
             }
         },
         // iframeRefresh: function (el, src, refreshInterval, refreshOnWakeUp, refreshOnViewChange, refreshWithNoQuery) {
-        //     var widgetView;
+        //     let widgetView;
         //     if (src && typeof src === 'object') {
         //         widgetView = refreshInterval;
         //         refreshInterval     = src.refreshInterval;
@@ -1048,8 +1169,8 @@
         //     refreshWithNoQuery  = refreshWithNoQuery  === true || refreshWithNoQuery  === 'true';
         //
         //     if (!vis.editMode && src) {
-        //         var $this = $(el).parent().find('iframe');
-        //         var wid = $this.attr('id');
+        //         const $this = $(el).parent().find('iframe');
+        //         const wid = $this.attr('id');
         //         refreshInterval = parseInt(refreshInterval, 10) || 0;
         //
         //         if (refreshOnViewChange) {
@@ -1063,7 +1184,7 @@
         //         if (refreshInterval > 0) {
         //             setInterval(function () {
         //                 if ($this.is(':visible')) {
-        //                     var p = $this.parents(':hidden');
+        //                     const p = $this.parents(':hidden');
         //                     if (!p.length || p[0].tagName === 'BODY' || p[0].id === 'materialdesign-vuetify-container') {
         //                         $this.attr('src', src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + Date.now()));
         //                     }
@@ -1081,10 +1202,10 @@
         /*htmlRefresh: function (el, html, refreshInterval) {
             refreshInterval = parseInt(refreshInterval, 10) || 0;
             if (html && !vis.editMode && refreshInterval > 0) {
-                var $this = $(el);
+                const $this = $(el);
                 setInterval(function () {
                     if ($this.is(':visible')) {
-                        var p = $this.parents(':hidden');
+                        const p = $this.parents(':hidden');
                         if (!p.length || p[0].tagName === 'BODY' || p[0].id === 'materialdesign-vuetify-container') {
                             $this.html(html);
                         }
@@ -1093,44 +1214,61 @@
             }
         },*/
         imgRefresh: function (el, src, refreshInterval, refreshOnWakeUp, refreshOnViewChange, refreshWithNoQuery) {
-            var widgetView;
+            let widgetView;
             if (src && typeof src === 'object') {
                 widgetView = refreshInterval;
-                refreshInterval     = src.refreshInterval;
-                refreshOnWakeUp     = src.refreshOnWakeUp;
+                refreshInterval = src.refreshInterval;
+                refreshOnWakeUp = src.refreshOnWakeUp;
                 refreshOnViewChange = src.refreshOnViewChange;
-                refreshWithNoQuery  = src.refreshWithNoQuery;
-                src                 = src.src;
+                refreshWithNoQuery = src.refreshWithNoQuery;
+                src = src.src;
             } else if (refreshInterval && typeof refreshInterval === 'object') {
                 widgetView = refreshOnWakeUp;
-                refreshInterval     = refreshInterval.refreshInterval;
-                refreshOnWakeUp     = refreshInterval.refreshOnWakeUp;
+                refreshInterval = refreshInterval.refreshInterval;
+                refreshOnWakeUp = refreshInterval.refreshOnWakeUp;
                 refreshOnViewChange = refreshInterval.refreshOnViewChange;
-                refreshWithNoQuery  = refreshInterval.refreshWithNoQuery;
+                refreshWithNoQuery = refreshInterval.refreshWithNoQuery;
             }
             refreshOnViewChange = refreshOnViewChange === true || refreshOnViewChange === 'true';
-            refreshOnWakeUp     = refreshOnWakeUp     === true || refreshOnWakeUp     === 'true';
-            refreshWithNoQuery  = refreshWithNoQuery  === true || refreshWithNoQuery  === 'true';
+            refreshOnWakeUp = refreshOnWakeUp === true || refreshOnWakeUp === 'true';
+            refreshWithNoQuery = refreshWithNoQuery === true || refreshWithNoQuery === 'true';
 
             if (!vis.editMode && src) {
-                var $this = $(el).parent().find('img');
-                var wid = $this.attr('id');
+                const $this = $(el).parent().find('img');
+                const wid = $this.attr('id');
                 refreshInterval = parseInt(refreshInterval, 10) || 0;
 
                 if (refreshOnViewChange) {
                     widgetView = widgetView || vis.activeView;
-                    vis.navChangeCallbacks.push({cb: function (view) {
-                        if (view === widgetView) {
-                            $this.attr('src', src + (refreshWithNoQuery ? '' : (src.indexOf('?') !== -1 ? '&' : '?') + '_refts=' + Date.now()));
-                        }
-                    }, id: wid});
+                    vis.navChangeCallbacks.push({
+                        cb: function (view) {
+                            if (view === widgetView) {
+                                $this.attr(
+                                    'src',
+                                    src +
+                                        (refreshWithNoQuery
+                                            ? ''
+                                            : (src.indexOf('?') !== -1 ? '&' : '?') + '_refts=' + Date.now()),
+                                );
+                            }
+                        },
+                        id: wid,
+                    });
                 }
                 if (refreshInterval > 0) {
                     setInterval(function () {
                         if ($this.is(':visible')) {
-                            var p = $this.parents(':hidden');
-                            if (!p.length || p[0].tagName === 'BODY' || p[0].id === 'materialdesign-vuetify-container') {
-                                $this[0].src = src + (refreshWithNoQuery ? '' : (src.indexOf('?') !== -1 ? '&' : '?') + '_refts=' + Date.now());
+                            const p = $this.parents(':hidden');
+                            if (
+                                !p.length ||
+                                p[0].tagName === 'BODY' ||
+                                p[0].id === 'materialdesign-vuetify-container'
+                            ) {
+                                $this[0].src =
+                                    src +
+                                    (refreshWithNoQuery
+                                        ? ''
+                                        : (src.indexOf('?') !== -1 ? '&' : '?') + '_refts=' + Date.now());
                             }
                         }
                     }, refreshInterval);
@@ -1140,16 +1278,18 @@
                     vis.onWakeUp(function () {
                         // TODO this does not work. :(
                         //console.log("wakeup refresh!");
-                        $this[0].src = src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + Date.now());
+                        $this[0].src =
+                            src +
+                            (refreshWithNoQuery ? '' : (src.indexOf('?') !== -1 ? '&' : '?') + '_refts=' + Date.now());
                         //console.log($this.attr('src'));
                     }, wid);
                 }
             }
         },
         /* showSvg: function (myClass, view, wid, oid, opacity, svg_false, svg_true, style, no_control) {
-            var $wid = $('#' + wid);
+            const $wid = $('#' + wid);
 
-            var id = $wid.attr('id');
+            const id = $wid.attr('id');
             if (id && id.match(/_removed$/)) return;
 
             if (!$wid.length) {
@@ -1159,10 +1299,10 @@
             }
 
             $wid.find('svg').remove();
-            var str = vis.states.attr(oid + '.val');
+            let str = vis.states.attr(oid + '.val');
             if (typeof str === 'string') str = str.toLowerCase();
-            var val = parseFloat(str);
-            var sText = '<svg version="1.1" style="width:100%;height:100%" xmlns="http://www.w3.org/2000/svg" data-oid="' + oid + '">';
+            const val = parseFloat(str);
+            let sText = '<svg version="1.1" style="width:100%;height:100%" xmlns="http://www.w3.org/2000/svg" data-oid="' + oid + '">';
             if (vis.editMode) {
                 if (opacity === undefined || opacity === null || opacity === '') opacity = 1;
 
@@ -1179,15 +1319,13 @@
 
             if (style) $wid.css(style);
 
-            var moved = false;
+            let moved = false;
 
             function onSvgClick() {
                 // Protect against two events
-                if (vis.detectBounce(this)) return;
+                if (vis.detectBounce(this) || moved) return;
 
-                if (moved) return;
-
-                var val = vis.states[oid + '.val'];
+                let val = vis.states[oid + '.val'];
                 if (val === null || val === '' || val === undefined || val === false || val === "false") {
                     vis.setValue(oid, true);
                 } else if (val === true || val === "true") {
@@ -1206,7 +1344,7 @@
             function onChange (e, newVal) {
                 if (newVal === 'true'  || newVal === true)  newVal = 1;
                 if (newVal === 'false' || newVal === false || newVal === '0') newVal = 0;
-                var $svg = $('#' + wid).find('svg');
+                const $svg = $('#' + wid).find('svg');
 
                 $svg.html(newVal ? svg_true : svg_false);
 
@@ -1231,7 +1369,7 @@
                 // remember bind handler
                     .data('bindHandler', onChange);
             }
-            var $svg = $wid.find('svg');
+            const $svg = $wid.find('svg');
             if (!vis.editMode && !no_control) {
                 $svg.children().off('click touchend').on('click touchend', onSvgClick).off('touchmove').on('touchmove', function () {
                     moved = true;
@@ -1254,20 +1392,20 @@
             min_width  = min_width  ? parseInt(min_width,  10) : 40;
             min_height = min_height ? parseInt(min_height, 10) : 15;
 
-            var $this = $('#div_' + wid);
+            const $this = $('#div_' + wid);
             $('body').append('<div id="dlg_' + wid + '" title="' + _('Edit note') + '">' +
                 '<textarea style="resize: none; width:95%; height:92%" id="text_' + wid + '">' + $this.text().trim() + '</textarea></div>');
 
-            var buttons = {};
+            const buttons = {};
             buttons[_('Clear')] = function () {
                 $('#text_' + $(this).attr('data-wid')).val("");
             };
 
             buttons[_('Ok')] = function () {
-                var dlg  = $(this);
-                var oid  = dlg.attr('data-oid');
-                var wid  = dlg.attr('data-wid');
-                var text = $('#text_' + wid).val();
+                const dlg  = $(this);
+                const oid  = dlg.attr('data-oid');
+                const wid  = dlg.attr('data-wid');
+                let text = $('#text_' + wid).val();
                 text = text.replace('\n', '<br>\n');
 
                 if (!oid) $('#div_' + wid).html(text);
@@ -1301,14 +1439,18 @@
                 val = parseFloat(data.attr('test_html'));
             } else if (val === undefined || val === null) {
                 val = parseFloat(vis.states.attr(data.oid + '.val'));
-            }else {
+            } else {
                 val = parseFloat(val);
             }
             if (data.factor !== undefined && data.factor !== '') val = val * parseFloat(data.factor);
             if (data.digits !== undefined && data.digits !== '') val = val.toFixed(parseFloat(data.digits, 10));
 
             if (data.attr('is_tdp')) {
-                val = this.formatValue(val, data.digits ? parseInt(data.digits) : 2, data.attr('is_comma') ? '.,' : ',.');
+                val = this.formatValue(
+                    val,
+                    data.digits ? parseInt(data.digits) : 2,
+                    data.attr('is_comma') ? '.,' : ',.',
+                );
             } else if (data.attr('is_comma')) {
                 val = '' + val;
                 val = val.replace('.', ',');
@@ -1321,61 +1463,67 @@
                 decimals = 2;
                 _format = decimals;
             }
-            var format = (_format === undefined) ? '.,' : _format;
-            if (typeof value !== 'number') value = parseFloat(value);
-            return isNaN(value) ? '' : value.toFixed(decimals || 0).replace(format[0], format[1]).replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
+            const format = _format === undefined ? '.,' : _format;
+            if (typeof value !== 'number') {
+                value = parseFloat(value);
+            }
+            return isNaN(value)
+                ? ''
+                : value
+                      .toFixed(decimals || 0)
+                      .replace(format[0], format[1])
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
         },
 
         formatIntervalHelper: function (value, type) {
-            var singular;
-            var plural;
-            var special24;
+            let singular;
+            let plural;
+            let special24;
             if (vis.language === 'de') {
                 if (type === 'seconds') {
                     singular = 'Sekunde';
-                    plural   = 'Sekunden';
+                    plural = 'Sekunden';
                 } else if (type === 'minutes') {
                     singular = 'Minute';
-                    plural   = 'Minuten';
+                    plural = 'Minuten';
                 } else if (type === 'hours') {
                     singular = 'Stunde';
-                    plural   = 'Stunden';
+                    plural = 'Stunden';
                 } else if (type === 'days') {
                     singular = 'Tag';
-                    plural   = 'Tagen';
+                    plural = 'Tagen';
                 }
-            } else
-            if (vis.language === 'ru') {
+            } else if (vis.language === 'ru') {
                 if (type === 'seconds') {
-                    singular  = 'секунду';
-                    plural    = 'секунд';
+                    singular = 'секунду';
+                    plural = 'секунд';
                     special24 = 'секунды';
                 } else if (type === 'minutes') {
-                    singular  = 'минуту';
-                    plural    = 'минут';
+                    singular = 'минуту';
+                    plural = 'минут';
                     special24 = 'минуты';
                 } else if (type === 'hours') {
-                    singular  = 'час';
-                    plural    = 'часов';
+                    singular = 'час';
+                    plural = 'часов';
                     special24 = 'часа';
                 } else if (type === 'days') {
-                    singular  = 'день';
-                    plural    = 'дней';
+                    singular = 'день';
+                    plural = 'дней';
                     special24 = 'дня';
                 }
             } else {
                 if (type === 'seconds') {
                     singular = 'second';
-                    plural   = 'seconds';
+                    plural = 'seconds';
                 } else if (type === 'minutes') {
                     singular = 'minute';
-                    plural   = 'minutes';
+                    plural = 'minutes';
                 } else if (type === 'hours') {
                     singular = 'hour';
-                    plural   = 'hours';
+                    plural = 'hours';
                 } else if (type === 'days') {
                     singular = 'day';
-                    plural   = 'days';
+                    plural = 'days';
                 }
             }
 
@@ -1383,43 +1531,39 @@
                 if (vis.language === 'de') {
                     if (type === 'days') {
                         return 'einem ' + singular;
-                    } else {
-                        return 'einer ' + singular;
                     }
-                } else if (vis.language === 'ru') {
+                    return 'einer ' + singular;
+                }
+                if (vis.language === 'ru') {
                     if (type === 'days' || type === 'hours') {
                         return 'один ' + singular;
-                    } else {
-                        return 'одну ' + singular;
                     }
-                } else {
-                    return 'one ' + singular;
+                    return 'одну ' + singular;
                 }
-            } else {
-                if (vis.language === 'de') {
-                    return value + ' ' + plural;
-                } else if (vis.language === 'ru') {
-                    var d = value % 10;
-                    if (d === 1 && value !== 11) {
-                        return value + ' ' + singular;
-                    } else
-                    if (d >= 2 && d <= 4 && (value > 20 || value < 10)) {
-                        return value + ' ' + special24;
-                    } else {
-                        return value + ' ' + plural;
-                    }
-                } else {
-                    return value + ' ' + plural;
-                }
+                return 'one ' + singular;
             }
+            if (vis.language === 'de') {
+                return value + ' ' + plural;
+            }
+            if (vis.language === 'ru') {
+                const d = value % 10;
+                if (d === 1 && value !== 11) {
+                    return value + ' ' + singular;
+                }
+                if (d >= 2 && d <= 4 && (value > 20 || value < 10)) {
+                    return value + ' ' + special24;
+                }
+                return value + ' ' + plural;
+            }
+            return value + ' ' + plural;
         },
         formatInterval: function (timestamp, isMomentJs) {
             if (isMomentJs && typeof moment !== 'undefined') {
                 return moment(new Date(timestamp)).fromNow();
             }
-            var diff = Date.now() - timestamp;
+            let diff = Date.now() - timestamp;
             diff = Math.round(diff / 1000);
-            var text;
+            let text;
             if (diff <= 60) {
                 if (vis.language === 'de') {
                     text = 'vor ' + vis.binds.basic.formatIntervalHelper(diff, 'seconds');
@@ -1429,8 +1573,8 @@
                     text = vis.binds.basic.formatIntervalHelper(diff, 'seconds') + ' ago';
                 }
             } else if (diff < 3600) {
-                var m = Math.floor(diff / 60);
-                var s = diff - m * 60;
+                const m = Math.floor(diff / 60);
+                const s = diff - m * 60;
                 text = '';
                 if (vis.language === 'de') {
                     text = 'vor ' + vis.binds.basic.formatIntervalHelper(m, 'minutes');
@@ -1459,8 +1603,8 @@
                     text += ' ago';
                 }
             } else if (diff < 3600 * 24) {
-                var h = Math.floor(diff / 3600);
-                var m = Math.floor((diff - h * 3600) / 60);
+                const h = Math.floor(diff / 3600);
+                const m = Math.floor((diff - h * 3600) / 60);
                 text = '';
                 if (vis.language === 'de') {
                     text = 'vor ' + vis.binds.basic.formatIntervalHelper(h, 'hours');
@@ -1489,8 +1633,8 @@
                     text += ' ago';
                 }
             } else {
-                var d = Math.floor(diff / (3600 * 24));
-                var h = Math.floor((diff - d * (3600 * 24)) / 3600);
+                const d = Math.floor(diff / (3600 * 24));
+                const h = Math.floor((diff - d * (3600 * 24)) / 3600);
                 text = '';
                 if (vis.language === 'de') {
                     text = 'vor ' + vis.binds.basic.formatIntervalHelper(d, 'days');
@@ -1522,10 +1666,12 @@
             return text;
         },
         startUpdateInterval: function () {
-            if (vis.binds.basic.updateInterval) return;
+            if (vis.binds.basic.updateInterval) {
+                return;
+            }
             vis.binds.basic.updateInterval = setInterval(function () {
                 $('.time-interval').each(function () {
-                    $(this).html(vis.binds.basic.formatInterval($(this).data('time'), $(this).data('moment')))
+                    $(this).html(vis.binds.basic.formatInterval($(this).data('time'), $(this).data('moment')));
                 });
             }, 15000);
         },
@@ -1539,13 +1685,15 @@
 
             format = format || vis.dateFormat || 'DD.MM.YYYY';
 
-            if (!dateObj) return '';
-            var text = typeof dateObj;
+            if (!dateObj) {
+                return '';
+            }
+            const text = typeof dateObj;
             if (text === 'string') {
-		dateObj = new Date(dateObj);
+                dateObj = new Date(dateObj);
             }
             if (text !== 'object') {
-                var i = parseInt(dateObj, 10);
+                let i = parseInt(dateObj, 10);
                 if (i == dateObj) {
                     i = dateObj;
                     // if greater than 2000.01.01 00:00:00
@@ -1560,10 +1708,18 @@
             }
             if (interval) {
                 vis.binds.basic.startUpdateInterval();
-                return '<span class="time-interval" data-time="' + dateObj.getTime() + '" data-moment="' + (isMomentJs || false) + '">' + vis.binds.basic.formatInterval(dateObj.getTime(), isMomentJs) + '</span>';
+                return (
+                    '<span class="time-interval" data-time="' +
+                    dateObj.getTime() +
+                    '" data-moment="' +
+                    (isMomentJs || false) +
+                    '">' +
+                    vis.binds.basic.formatInterval(dateObj.getTime(), isMomentJs) +
+                    '</span>'
+                );
             }
 
-            var v;
+            let v;
 
             // Year
             if (format.indexOf('YYYY') !== -1 || format.indexOf('JJJJ') !== -1 || format.indexOf('ГГГГ') !== -1) {
@@ -1579,25 +1735,25 @@
             }
             // Month
             if (format.indexOf('MM') !== -1 || format.indexOf('ММ') !== -1) {
-                v =  dateObj.getMonth() + 1;
+                v = dateObj.getMonth() + 1;
                 if (v < 10) v = '0' + v;
                 format = format.replace('MM', v);
                 format = format.replace('ММ', v);
             } else if (format.indexOf('M') !== -1 || format.indexOf('М') !== -1) {
-                v =  dateObj.getMonth() + 1;
+                v = dateObj.getMonth() + 1;
                 format = format.replace('M', v);
                 format = format.replace('М', v);
             }
 
             // Day
             if (format.indexOf('DD') !== -1 || format.indexOf('TT') !== -1 || format.indexOf('ДД') !== -1) {
-                v =  dateObj.getDate();
+                v = dateObj.getDate();
                 if (v < 10) v = '0' + v;
                 format = format.replace('DD', v);
                 format = format.replace('TT', v);
                 format = format.replace('ДД', v);
             } else if (format.indexOf('D') !== -1 || format.indexOf('TT') !== -1 || format.indexOf('Д') !== -1) {
-                v =  dateObj.getDate();
+                v = dateObj.getDate();
                 format = format.replace('D', v);
                 format = format.replace('T', v);
                 format = format.replace('Д', v);
@@ -1605,13 +1761,13 @@
 
             // hours
             if (format.indexOf('hh') !== -1 || format.indexOf('SS') !== -1 || format.indexOf('чч') !== -1) {
-                v =  dateObj.getHours();
+                v = dateObj.getHours();
                 if (v < 10) v = '0' + v;
                 format = format.replace('hh', v);
                 format = format.replace('SS', v);
                 format = format.replace('чч', v);
             } else if (format.indexOf('h') !== -1 || format.indexOf('S') !== -1 || format.indexOf('ч') !== -1) {
-                v =  dateObj.getHours();
+                v = dateObj.getHours();
                 format = format.replace('h', v);
                 format = format.replace('S', v);
                 format = format.replace('ч', v);
@@ -1619,19 +1775,19 @@
 
             // minutes
             if (format.indexOf('mm') !== -1 || format.indexOf('мм') !== -1) {
-                v =  dateObj.getMinutes();
+                v = dateObj.getMinutes();
                 if (v < 10) v = '0' + v;
                 format = format.replace('mm', v);
                 format = format.replace('мм', v);
-            } else if (format.indexOf('m') !== -1 ||  format.indexOf('м') !== -1) {
-                v =  dateObj.getMinutes();
+            } else if (format.indexOf('m') !== -1 || format.indexOf('м') !== -1) {
+                v = dateObj.getMinutes();
                 format = format.replace('m', v);
                 format = format.replace('v', v);
             }
 
             // milliseconds
             if (format.indexOf('sss') !== -1 || format.indexOf('ссс') !== -1) {
-                v =  dateObj.getMilliseconds();
+                v = dateObj.getMilliseconds();
                 if (v < 10) {
                     v = '00' + v;
                 } else if (v < 100) {
@@ -1643,12 +1799,12 @@
 
             // seconds
             if (format.indexOf('ss') !== -1 || format.indexOf('сс') !== -1) {
-                v =  dateObj.getSeconds();
+                v = dateObj.getSeconds();
                 if (v < 10) v = '0' + v;
                 format = format.replace('ss', v);
                 format = format.replace('cc', v);
             } else if (format.indexOf('s') !== -1 || format.indexOf('с') !== -1) {
-                v =  dateObj.getHours();
+                v = dateObj.getHours();
                 format = format.replace('s', v);
                 format = format.replace('с', v);
             }
@@ -1735,23 +1891,39 @@
                     return val == min;
                 }
             }
-            if (val === undefined || val === null || val === false || val === 'false' || val === 'FALSE' || val === 'False' || val === 'OFF' || val === 'Off' || val === 'off' || val === '') return true;
-            if (val === '0' || val === 0) return true;
-            var f = parseFloat(val);
-            if (f.toString() !== 'NaN') return !f;
+            if (
+                val === undefined ||
+                val === null ||
+                val === false ||
+                val === 'false' ||
+                val === 'FALSE' ||
+                val === 'False' ||
+                val === 'OFF' ||
+                val === 'Off' ||
+                val === 'off' ||
+                val === ''
+            )
+                return true;
+            if (val === '0' || val === 0) {
+                return true;
+            }
+            const f = parseFloat(val);
+            if (f.toString() !== 'NaN') {
+                return !f;
+            }
             return false;
         },
         /*createValueGesture: function (widgetID, view, data, style) {
-            var $div = $('#' + widgetID);
+            const $div = $('#' + widgetID);
             // if nothing found => wait
             if (!$div.length) {
                 return setTimeout(function () {
                     vis.binds.basic.createValueGesture(widgetID, view, data, style);
                 }, 100);
             }
-            var $content = $('#' + widgetID + ' .vis-widget-body');
+            const $content = $('#' + widgetID + ' .vis-widget-body');
             function refresh(val, x, y) {
-                var text;
+                let text;
                 if (val === null){
                     $div.hide();
                     return;
@@ -1774,9 +1946,9 @@
             });
         },
         getTimeInterval: function (oldTime, hoursToShow) {
-            var result = '';
+            let result = '';
 
-            var newTime = new Date ();
+            const newTime = new Date ();
 
             if (!oldTime) return '';
             if (typeof oldTime === 'string') {
@@ -1785,7 +1957,7 @@
                 if (typeof oldTime === 'number') oldTime = oldTime > 946681200000 ? new Date(oldTime) : new Date(oldTime * 1000);
             }
 
-            var seconds = (newTime.getTime() - oldTime.getTime()) / 1000;
+            const seconds = (newTime.getTime() - oldTime.getTime()) / 1000;
 
             if (hoursToShow && (seconds / 3600) > hoursToShow) return '';
 
@@ -1809,7 +1981,7 @@
         },
         logout: function (el, data) {
             if (vis.editMode) return;
-            var $el = $(el);
+            const $el = $(el);
             $el.data('redirect', data.redirect_url);
             $el.data('app', data.in_app_close);
 
@@ -1821,7 +1993,7 @@
                         vis.showMessage(_('This option works only in APP'));
                     }
                 } else if ($(this).data('redirect')) {
-                    var redirect = $(this).data('redirect');
+                    const redirect = $(this).data('redirect');
                     vis.conn.logout(function() {
                         window.location = redirect;
                     });
@@ -1833,10 +2005,12 @@
             });
         },*/
         toggleFullScreen: function (wid, view, data, style) {
-            var $div = $('#' + wid);
+            const $div = $('#' + wid);
 
-            var id = $div.attr('id');
-            if (id && id.match(/_removed$/)) return;
+            const id = $div.attr('id');
+            if (id && id.match(/_removed$/)) {
+                return;
+            }
 
             // if nothing found => wait
             if (!$div.length) {
@@ -1846,8 +2020,10 @@
                 return;
             }
 
-            var svgOn  = '<svg viewBox="0 0 24 24" style="display: inline-block; color: rgba(0, 0, 0, 0.87); fill: currentcolor; height: 24px; width: 24px; user-select: none; transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"></path></svg>';
-            var svgOff = '<svg viewBox="0 0 24 24" style="display: inline-block; color: rgba(0, 0, 0, 0.87); fill: currentcolor; height: 24px; width: 24px; user-select: none; transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"></path></svg>';
+            const svgOn =
+                '<svg viewBox="0 0 24 24" style="display: inline-block; color: rgba(0, 0, 0, 0.87); fill: currentcolor; height: 24px; width: 24px; user-select: none; transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"></path></svg>';
+            const svgOff =
+                '<svg viewBox="0 0 24 24" style="display: inline-block; color: rgba(0, 0, 0, 0.87); fill: currentcolor; height: 24px; width: 24px; user-select: none; transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"></path></svg>';
 
             if (!vis.editMode) {
                 $div.unbind('click').click(function () {
@@ -1860,10 +2036,12 @@
                         } else if (document.webkitExitFullscreen) {
                             document.webkitExitFullscreen();
                         }
-                        $('#' + wid).find('.vis-fullscreen-icon').html(svgOn);
+                        $('#' + wid)
+                            .find('.vis-fullscreen-icon')
+                            .html(svgOn);
                     } else {
                         vis.binds.basic.isFullScreen = true;
-                        var element = $('#vis_container')[0];
+                        const element = $('#vis_container')[0];
                         if (element.requestFullscreen) {
                             element.requestFullscreen();
                         } else if (element.mozRequestFullScreen) {
@@ -1873,13 +2051,15 @@
                         } else if (element.msRequestFullscreen) {
                             element.msRequestFullscreen();
                         }
-                        $('#' + wid).find('.vis-fullscreen-icon').html(svgOff);
+                        $('#' + wid)
+                            .find('.vis-fullscreen-icon')
+                            .html(svgOff);
                     }
                 });
             }
 
             $div.find('.vis-fullscreen-icon').html(svgOn);
-        }
+        },
     };
 
     $(document).mouseup(function () {
@@ -1891,14 +2071,14 @@
 
     if (vis.editMode) {
         vis.binds.basic.onOrientation = function (widgetID, view, newId, attr, isCss) {
-            var data  = vis.views[view].widgets[widgetID].data;
-            var style = vis.views[view].widgets[widgetID].style;
-            var h = parseInt(style.height, 10);
-            var w = parseInt(style.width, 10);
+            const data = vis.views[view].widgets[widgetID].data;
+            const style = vis.views[view].widgets[widgetID].style;
+            const h = parseInt(style.height, 10);
+            const w = parseInt(style.width, 10);
 
             if (data[attr] === 'vertical') {
                 if (h < w) {
-                    var t = style.height;
+                    const t = style.height;
                     style.height = style.width;
                     style.width = t;
                     setTimeout(function () {
@@ -1908,7 +2088,7 @@
                 }
             } else {
                 if (w < h) {
-                    var t = style.height;
+                    const t = style.height;
                     style.height = style.width;
                     style.width = t;
                     setTimeout(function () {
@@ -1956,11 +2136,11 @@
         <div class="vis-widget-body">
             <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewbox="-50 -50 100 100" style="display: block;width:100%; height:100%;fill:<%== this.data.attr('fill') %>;stroke:<%== this.data.attr('strokeColor')%>;stroke-width: <%== this.data.attr('strokeWidth') %>">
                 <%
-                var svg = '';
-                var rotate      = parseFloat(this.data.attr('rotate')) || 0;
-                var scaleWidth  = parseFloat(this.data.attr('scaleWidth')) || 1;
-                var scaleHeight = parseFloat(this.data.attr('scaleHeight')) || 1;
-                var strokeWidth = parseInt(this.data.attr('strokeWidth'), 10) || 0;
+                let svg = '';
+                const rotate      = parseFloat(this.data.attr('rotate')) || 0;
+                const scaleWidth  = parseFloat(this.data.attr('scaleWidth')) || 1;
+                const scaleHeight = parseFloat(this.data.attr('scaleHeight')) || 1;
+                const strokeWidth = parseInt(this.data.attr('strokeWidth'), 10) || 0;
 
                 if (this.data.svgType === 'triangle') {
                     svg = '<polygon transform="rotate(' + rotate + ')  scale(' + scaleWidth + ', ' + scaleHeight + ') " ' +
@@ -1985,9 +2165,9 @@
                     svg = '<polygon transform="rotate(' + rotate + ')  scale(' + scaleWidth + ', ' + scaleHeight + ') " ' +
                         'points="' + vis.binds.basic.circlePoints(50 - strokeWidth, 5, 144) + '"/>';
                 } else if (this.data.svgType === 'arrow') {
-                    var points = vis.binds.basic.circlePoints(50 - strokeWidth * 4, 3, true);
-                    var text = '';
-                    for (var p = 0; p < points.length; p++) {
+                    const points = vis.binds.basic.circlePoints(50 - strokeWidth * 4, 3, true);
+                    let text = '';
+                    for (let p = 0; p < points.length; p++) {
                         text += points.x + ',' + points.y;
                         if (points.length === p - 2) {
                             text += '0,0';
@@ -2094,8 +2274,8 @@
                 <div class="vis-editmode-helper"/>
             <% } %>
             <%
-                var srcArr = [];
-                var i = 0;
+                const srcArr = [];
+                let i = 0;
                 while(data.attr('src_' + i) !== undefined) {
                     srcArr.push(data.attr('src_' + i));
                     i++;
@@ -2139,8 +2319,8 @@
             <div class="vis-editmode-helper" />
         <% } %>
         <%
-            var viewArr = [];
-            var i = 0;
+            const viewArr = [];
+            let i = 0;
             while (data.attr('contains_view_' + i) !== undefined) {
                 viewArr.push(data.attr('contains_view_' + i));
                 i++;
@@ -2194,8 +2374,8 @@
                 <div class="vis-editmode-helper" />
             <% } %>
             <%
-                var srcArr = [];
-                var i = 0;
+                const srcArr = [];
+                let i = 0;
                 while(data.attr("src_" + i) !== undefined) {
                     srcArr.push(this.data.attr("src_" + i));
                     i++;
@@ -2242,14 +2422,16 @@
     </div>
 </script-->
 
-<script id="tplValueFloat"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-type="val"
-        data-vis-prev='<img src="widgets/basic/img/Prev_ValueFloat.png"></img>'
-        data-vis-name="Number"
-        data-vis-attrs="oid;html_prepend;html_append_singular;html_append_plural;group.extended;digits;is_comma[true]/checkbox;is_tdp/checkbox;factor[1];oid-quality;class_true;class_false;test_html">
+<script
+    id="tplValueFloat"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-set="basic"
+    data-vis-type="val"
+    data-vis-prev='<img src="widgets/basic/img/Prev_ValueFloat.png"></img>'
+    data-vis-name="Number"
+    data-vis-attrs="oid;html_prepend;html_append_singular;html_append_plural;group.extended;digits;is_comma[true]/checkbox;is_tdp/checkbox;factor[1];oid-quality;class_true;class_false;test_html"
+>
     <div class="vis-widget <%== (vis.states.attr(this.data['oid-quality'] + '.val') === 'true' ||  vis.states.attr(this.data['oid-quality'] + '.val') === true) ? this.data.attr('class_true') : this.data.attr('class_false') %> <%== this.data.attr('class') %>" style="top: 0; left: 0; width: 60px; height: 18px" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
@@ -2276,14 +2458,16 @@
     </div>
 </script-->
 
-<script id="tplValueStringRaw"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-type="val"
-        data-vis-prev='<img src="widgets/basic/img/Prev_ValueStringRaw.png"></img>'
-        data-vis-name="String (unescaped)"
-        data-vis-attrs="oid;html_prepend;html_append;test_html">
+<script
+    id="tplValueStringRaw"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-set="basic"
+    data-vis-type="val"
+    data-vis-prev='<img src="widgets/basic/img/Prev_ValueStringRaw.png"></img>'
+    data-vis-name="String (unescaped)"
+    data-vis-attrs="oid;html_prepend;html_append;test_html"
+>
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0; left: 0; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
@@ -2293,14 +2477,16 @@
     </div>
 </script>
 
-<script id="tplValueStringImg"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-prev='<img src="widgets/basic/img/Prev_ValueStringImg.png"></img>'
-        data-vis-type="val"
-        data-vis-name="String img src"
-        data-vis-attrs="oid;html_prepend;html_append;refreshInterval[0]/slider,0,180000,100">
+<script
+    id="tplValueStringImg"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-set="basic"
+    data-vis-prev='<img src="widgets/basic/img/Prev_ValueStringImg.png"></img>'
+    data-vis-type="val"
+    data-vis-name="String img src"
+    data-vis-attrs="oid;html_prepend;html_append;refreshInterval[0]/slider,0,180000,100"
+>
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0; left:0; width:60px; height: 40px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
@@ -2313,14 +2499,16 @@
     </div>
 </script>
 
-<script id="tplTimeValue"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-type="val,timestamp"
-        data-vis-name="TimesValue"
-        data-vis-prev='<img src="widgets/basic/img/Prev_TimeValue.png"></img>'
-        data-vis-attrs="oid;show_interval/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html">
+<script
+    id="tplTimeValue"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-set="basic"
+    data-vis-type="val,timestamp"
+    data-vis-name="TimesValue"
+    data-vis-prev='<img src="widgets/basic/img/Prev_TimeValue.png"></img>'
+    data-vis-attrs="oid;show_interval/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html"
+>
     <div class="vis-widget <%== this.data.attr('class') %>" style="top: 0; left: 0; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
@@ -2330,14 +2518,16 @@
     </div>
 </script>
 
-<script id="tplValueTimestampValue"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-type="val,timestamp"
-        data-vis-name="Timestamp Value"
-        data-vis-prev='<img src="widgets/basic/img/Prev_ValueTimestamp.png"></img>'
-        data-vis-attrs="oid;show_interval/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html">
+<script
+    id="tplValueTimestampValue"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-set="basic"
+    data-vis-type="val,timestamp"
+    data-vis-name="Timestamp Value"
+    data-vis-prev='<img src="widgets/basic/img/Prev_ValueTimestamp.png"></img>'
+    data-vis-attrs="oid;show_interval/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html"
+>
     <div class="vis-widget <%== this.data.attr('class') %>" style="top: 0; left: 0; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
@@ -2347,14 +2537,16 @@
     </div>
 </script>
 
-<script id="tplValueTimestamp"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-type="val,timestamp"
-        data-vis-name="Timestamp"
-        data-vis-prev='<img src="widgets/basic/img/Prev_ValueTimestamp.png"></img>'
-        data-vis-attrs="oid;show_interval/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html">
+<script
+    id="tplValueTimestamp"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-set="basic"
+    data-vis-type="val,timestamp"
+    data-vis-name="Timestamp"
+    data-vis-prev='<img src="widgets/basic/img/Prev_ValueTimestamp.png"></img>'
+    data-vis-attrs="oid;show_interval/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html"
+>
     <div class="vis-widget <%== this.data.attr('class') %>" style="top: 0; left: 0; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
@@ -2364,14 +2556,16 @@
     </div>
 </script>
 
-<script id="tplValueLastchange"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-type="val,timestamp"
-        data-vis-prev='<img src="widgets/basic/img/Prev_ValueLastchange.png"></img>'
-        data-vis-name="Last change Timestamp"
-        data-vis-attrs="oid;show_interval/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html">
+<script
+    id="tplValueLastchange"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-set="basic"
+    data-vis-type="val,timestamp"
+    data-vis-prev='<img src="widgets/basic/img/Prev_ValueLastchange.png"></img>'
+    data-vis-name="Last change Timestamp"
+    data-vis-attrs="oid;show_interval/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html"
+>
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0; left: 0; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
@@ -2381,52 +2575,58 @@
     </div>
 </script>
 
-<script id="tplValueList"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-prev='<img src="widgets/basic/img/Prev_ValueList.png"></img>'
-        data-vis-type="val"
-        data-vis-name="ValueList Text"
-        data-vis-attrs="oid;html_prepend;html_append;valuelist/text;test_list/nselect,,0,1,2,3,4,5,6,7,8,9,10,11,12">
+<script
+    id="tplValueList"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-set="basic"
+    data-vis-prev='<img src="widgets/basic/img/Prev_ValueList.png"></img>'
+    data-vis-type="val"
+    data-vis-name="ValueList Text"
+    data-vis-attrs="oid;html_prepend;html_append;valuelist/text;test_list/nselect,,0,1,2,3,4,5,6,7,8,9,10,11,12"
+>
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0;left:0;width:60px;height:20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
-                <%== this.data.attr('html_prepend') %><%= (function (that){var list = (that.data.valuelist ? that.data.valuelist.split(';') : []); var val = list[(vis.editMode && (that.data.attr('test_list') || that.data.attr('test_list') == '0')) ? parseInt(that.data.attr('test_list')) : parseInt(vis.states.attr(that.data.oid + '.val'), 10)]; if (val) val = val.replace('§§', ';'); return val;})(this) %><%== this.data.attr('html_append') %>
+                <%== this.data.attr('html_prepend') %><%= (function (that){const list = (that.data.valuelist ? that.data.valuelist.split(';') : []); let val = list[(vis.editMode && (that.data.attr('test_list') || that.data.attr('test_list') == '0')) ? parseInt(that.data.attr('test_list')) : parseInt(vis.states.attr(that.data.oid + '.val'), 10)]; if (val) val = val.replace('§§', ';'); return val;})(this) %><%== this.data.attr('html_append') %>
             </div>
         </div>
     </div>
 </script>
 
-<script id="tplValueListHtml"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-prev='<img src="widgets/basic/img/Prev_ValueListHtml.png"></img>'
-        data-vis-type="val"
-        data-vis-name="ValueList HTML"
-        data-vis-attrs="oid;html_prepend;html_append;valuelist/text;test_list/nselect,,0,1,2,3,4,5,6,7,8,9,10,11,12">
+<script
+    id="tplValueListHtml"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-set="basic"
+    data-vis-prev='<img src="widgets/basic/img/Prev_ValueListHtml.png"></img>'
+    data-vis-type="val"
+    data-vis-name="ValueList HTML"
+    data-vis-attrs="oid;html_prepend;html_append;valuelist/text;test_list/nselect,,0,1,2,3,4,5,6,7,8,9,10,11,12"
+>
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0;left:0;width:60px;height:20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
-                <%== this.data.attr('html_prepend') %><%== (function (that){var list = (that.data.valuelist ? that.data.valuelist.split(';') : []); var val = list[(vis.editMode && (that.data.attr('test_list') || that.data.attr('test_list') == '0')) ? parseInt(that.data.attr('test_list')) : parseInt(vis.states.attr(that.data.oid + '.val'), 10)]; if (val) val = val.replace('§§', ';'); return val;})(this) %><%== this.data.attr('html_append') %>
+                <%== this.data.attr('html_prepend') %><%== (function (that){const list = (that.data.valuelist ? that.data.valuelist.split(';') : []); let val = list[(vis.editMode && (that.data.attr('test_list') || that.data.attr('test_list') == '0')) ? parseInt(that.data.attr('test_list')) : parseInt(vis.states.attr(that.data.oid + '.val'), 10)]; if (val) val = val.replace('§§', ';'); return val;})(this) %><%== this.data.attr('html_append') %>
             </div>
         </div>
     </div>
 </script>
 
-<script id="tplValueListHtml8"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-prev='<img src="widgets/basic/img/Prev_ValueListHtml8.png"></img>'
-        data-vis-type="val"
-        data-vis-name="ValueList HTML Style"
-        data-vis-attrs="oid;html_prepend;html_append;count[2]/number,0,10,1;value(0-count);style(0-count);test_list/nselect,,0,1,2,3,4,5,6,7,8,9,10,11,12">
+<script
+    id="tplValueListHtml8"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-set="basic"
+    data-vis-prev='<img src="widgets/basic/img/Prev_ValueListHtml8.png"></img>'
+    data-vis-type="val"
+    data-vis-name="ValueList HTML Style"
+    data-vis-attrs="oid;html_prepend;html_append;count[2]/number,0,10,1;value(0-count);style(0-count);test_list/nselect,,0,1,2,3,4,5,6,7,8,9,10,11,12"
+>
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 100px; height: 30px;" id="<%= this.data.attr('wid') %>">
         <%
-            var slist = [];
-            var i = 0;
+            const slist = [];
+            let i = 0;
             while (data['style' + i] !== undefined) {
                 slist[i] = data['style' + i]; i++;
             }
@@ -2434,8 +2634,8 @@
         <div class="vis-widget-body" style="<%== slist[(vis.editMode && (this.data.attr('test_list') || this.data.attr('test_list') == '0')) ? parseInt(this.data.attr('test_list')) : (parseInt((vis.states.attr(this.data.oid + '.val') == true ? 1 : (vis.states.attr(this.data.oid + '.val') == false ? 0 : vis.states.attr(this.data.oid + '.val'))), 10))] %>">
             <div data-oid="<%= this.data.attr('oid') %>">
                <%== this.data.attr('html_prepend') %><%
-                   var list = [];
-                   var j = 0;
+                   const list = [];
+                   let j = 0;
                    while (data['value' + j] !== undefined) {
                         list[j] = data['value' + j];
                         if (list[j]) list[j] = list[j].replace('§§', ';');
@@ -2447,14 +2647,16 @@
     </div>
 </script>
 
-<script id="tplValueBool"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-prev='<img src="widgets/basic/img/Prev_ValueBool.png"></img>'
-        data-vis-type="val"
-        data-vis-name="Bool HTML"
-        data-vis-attrs="oid;html_prepend;html_append;html_false;html_true">
+<script
+    id="tplValueBool"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-set="basic"
+    data-vis-prev='<img src="widgets/basic/img/Prev_ValueBool.png"></img>'
+    data-vis-type="val"
+    data-vis-name="Bool HTML"
+    data-vis-attrs="oid;html_prepend;html_append;html_false;html_true"
+>
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:76px; height:76px;" id="<%= this.data.attr('wid') %>"  data-oid="<%= this.data.attr('oid') %>" >
         <div class="vis-widget-body">
             <%== this.data.attr('html_prepend') %>
@@ -2468,21 +2670,22 @@
     </div>
 </script>
 
-<script id="tplAckBool"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-prev='<img src="widgets/basic/img/Prev_AckBool.png"></img>'
-        data-vis-type="val"
-        data-vis-name="AckFlag HTML"
-        data-vis-attrs="oid;html_prepend;html_append;html_false;html_true">
+<script
+    id="tplAckBool"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-set="basic"
+    data-vis-prev='<img src="widgets/basic/img/Prev_AckBool.png"></img>'
+    data-vis-type="val"
+    data-vis-name="AckFlag HTML"
+    data-vis-attrs="oid;html_prepend;html_append;html_false;html_true"
+>
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:76px; height:76px;" id="<%= this.data.attr('wid') %>"  data-oid="<%= this.data.attr('oid') %>" >
         <div class="vis-widget-body">
             <%== this.data.attr('html_prepend') %>
             <%
-            var str = vis.states.attr(this.data.oid + ".ack");
-            var val = parseFloat(str);
-            var state;
+            const str = vis.states.attr(this.data.oid + ".ack");
+            const val = parseFloat(str);
             if (str === false || str === "false" || val == 0) {
             %>
             <%== this.data.attr('html_false') %>
@@ -2494,30 +2697,31 @@
     </div>
 </script>
 
-<script id="tplValueBoolCheckbox"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-prev='<img src="widgets/basic/img/Prev_ValueBoolCheckbox.png"></img>'
-        data-vis-set="basic"
-        data-vis-type="ctrl"
-        data-vis-name="Bool Checkbox"
-        data-vis-attrs="oid;html_prepend;html_append;"
-        data-vis-attrs0="autoFocus/checkbox;"
+<script
+    id="tplValueBoolCheckbox"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<img src="widgets/basic/img/Prev_ValueBoolCheckbox.png"></img>'
+    data-vis-set="basic"
+    data-vis-type="ctrl"
+    data-vis-name="Bool Checkbox"
+    data-vis-attrs="oid;html_prepend;html_append;"
+    data-vis-attrs0="autoFocus/checkbox;"
 >
-    <div class="vis-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>" >
-        <div class="vis-widget-body">
-			<%== this.data.attr('html_prepend') %>
-			<input
-			    type="checkbox"
-			    name="<%= this.data.attr('wid') %>_checkbox"
-			    <%= this.data.attr('autoFocus') === true || this.data.attr('autoFocus') === 'true' ? 'autofocus' : '' %>
-			    id="<%= this.data.attr('wid') %>_checkbox"
-			    data-oid="<%= this.data.attr('oid') %>"
-			    <%= (el) -> vis.binds.basic.checkbox(el) %>
-            />
-			<%== this.data.attr('html_append') %>
-        </div>
-    </div>
+     <div class="vis-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>" >
+         <div class="vis-widget-body">
+    <%== this.data.attr('html_prepend') %>
+    <input
+        type="checkbox"
+        name="<%= this.data.attr('wid') %>_checkbox"
+        <%= this.data.attr('autoFocus') === true || this.data.attr('autoFocus') === 'true' ? 'autofocus' : '' %>
+        id="<%= this.data.attr('wid') %>_checkbox"
+        data-oid="<%= this.data.attr('oid') %>"
+        <%= (el) -> vis.binds.basic.checkbox(el) %>
+             />
+    <%== this.data.attr('html_append') %>
+         </div>
+     </div>
 </script>
 
 <!--script id="tplValueInput"
@@ -2545,61 +2749,64 @@
     </div>
 </script-->
 
-<script id="tplValueBoolSelect"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-prev='<img src="widgets/basic/img/Prev_ValueBoolSelect.png"></img>'
-        data-vis-type="ctrl"
-        data-vis-name="Bool Select"
-        data-vis-attrs="oid;html_prepend;html_append;text_true;text_false;"
-        data-vis-attrs0="autoFocus/checkbox;"
+<script
+    id="tplValueBoolSelect"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-set="basic"
+    data-vis-prev='<img src="widgets/basic/img/Prev_ValueBoolSelect.png"></img>'
+    data-vis-type="ctrl"
+    data-vis-name="Bool Select"
+    data-vis-attrs="oid;html_prepend;html_append;text_true;text_false;"
+    data-vis-attrs0="autoFocus/checkbox;"
 >
-    <div class="vis-widget <%== this.data.attr('class') %>" style="overflow:false" id="<%= this.data.attr('wid') %>" >
-        <div class="vis-widget-body"  style="overflow:false">
-			<%== this.data.attr('html_prepend') %>
-			<select id="<%= this.data.attr('wid') %>_select" data-oid="<%= this.data.attr('oid') %>" <%= this.data.attr('autoFocus') === true || this.data.attr('autoFocus') === 'true' ? 'autofocus' : '' %> >
-				<option value="0" selected='selected'><%= this.data.attr('text_false') %></option>
-				<option value="1"><%= this.data.attr('text_true') %></option>
-			</select>
-			<div <%= (el) -> vis.binds.basic.select(el) %>></div>
-			<%== this.data.attr('html_append') %>
-        </div>
-    </div>
+     <div class="vis-widget <%== this.data.attr('class') %>" style="overflow:false" id="<%= this.data.attr('wid') %>" >
+         <div class="vis-widget-body"  style="overflow:false">
+    <%== this.data.attr('html_prepend') %>
+    <select id="<%= this.data.attr('wid') %>_select" data-oid="<%= this.data.attr('oid') %>" <%= this.data.attr('autoFocus') === true || this.data.attr('autoFocus') === 'true' ? 'autofocus' : '' %> >
+    	<option value="0" selected='selected'><%= this.data.attr('text_false') %></option>
+    	<option value="1"><%= this.data.attr('text_true') %></option>
+    </select>
+    <div <%= (el) -> vis.binds.basic.select(el) %>></div>
+    <%== this.data.attr('html_append') %>
+         </div>
+     </div>
 </script>
 
-<script id="tplValueBoolCtrl"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-prev='<img src="widgets/basic/img/Prev_ValueBoolCtrl.png"></img>'
-        data-vis-type="ctrl"
-        data-vis-name="Bool HTML"
-        data-vis-attrs="oid;min;max;html_prepend;html_append;html_false;html_true;"
-        data-vis-attrs1="group.ccontrol;urlTrue;urlFalse;oidTrue/id;oidFalse/id;">
-    <div
-        class="vis-widget <%== this.data.attr('class') %>"
-        style="width:76px; height:76px;"
-        id="<%= this.data.attr('wid') %>"
-        data-oid="<%= this.data.attr('oid') %>"
-        data-min="<%= this.data.attr('min') %>"
-        data-max="<%= this.data.attr('max') %>"
-        data-as-button="<%= this.data.attr('asButton') %>"
-        data-url-true="<%=  this.data.attr('urlTrue') %>"
-        data-url-false="<%= this.data.attr('urlFalse') %>"
-        data-oid-true="<%=  this.data.attr('oidTrue') %>"
-        data-oid-false="<%= this.data.attr('oidFalse') %>"
-        <%= (el) -> vis.binds.basic.toggle(el) %>>
-        <div class="vis-widget-body">
-			<%== this.data.attr('html_prepend') %>
-			<% if (vis.binds.basic.isFalse(vis.states.attr(this.data.oid + '.val'), this.data.attr('min'), this.data.attr('max'))) { %>
-			    <%== this.data.attr('html_false') %>
-			<% } else { %>
-			    <%== this.data.attr('html_true') %>
-			<% } %>
-			<%== this.data.attr('html_append') %>
-        </div>
-    </div>
+<script
+    id="tplValueBoolCtrl"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-set="basic"
+    data-vis-prev='<img src="widgets/basic/img/Prev_ValueBoolCtrl.png"></img>'
+    data-vis-type="ctrl"
+    data-vis-name="Bool HTML"
+    data-vis-attrs="oid;min;max;html_prepend;html_append;html_false;html_true;"
+    data-vis-attrs1="group.ccontrol;urlTrue;urlFalse;oidTrue/id;oidFalse/id;"
+>
+     <div
+         class="vis-widget <%== this.data.attr('class') %>"
+         style="width:76px; height:76px;"
+         id="<%= this.data.attr('wid') %>"
+         data-oid="<%= this.data.attr('oid') %>"
+         data-min="<%= this.data.attr('min') %>"
+         data-max="<%= this.data.attr('max') %>"
+         data-as-button="<%= this.data.attr('asButton') %>"
+         data-url-true="<%=  this.data.attr('urlTrue') %>"
+         data-url-false="<%= this.data.attr('urlFalse') %>"
+         data-oid-true="<%=  this.data.attr('oidTrue') %>"
+         data-oid-false="<%= this.data.attr('oidFalse') %>"
+         <%= (el) -> vis.binds.basic.toggle(el) %>>
+         <div class="vis-widget-body">
+    <%== this.data.attr('html_prepend') %>
+    <% if (vis.binds.basic.isFalse(vis.states.attr(this.data.oid + '.val'), this.data.attr('min'), this.data.attr('max'))) { %>
+        <%== this.data.attr('html_false') %>
+    <% } else { %>
+        <%== this.data.attr('html_true') %>
+    <% } %>
+    <%== this.data.attr('html_append') %>
+         </div>
+     </div>
 </script>
 
 <!--script id="tplValueBoolCtrlSvg"
@@ -2620,27 +2827,29 @@
     </div>
 </script-->
 
-<script id="tplBasicState"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-prev='<img src="widgets/basic/img/Prev_BasicState.png"></img>'
-        data-vis-set="basic"
-        data-vis-type="ctrl"
-        data-vis-name="HTML State"
-        data-vis-attrs="oid;html;value;urlValue">
-    <div
-        class="vis-widget <%== this.data.attr('class') %>"
-        style="width:76px; height:76px;"
-        id="<%= this.data.attr('wid') %>"
-        data-oid="<%= this.data.attr('oid') %>"
-        data-url-value="<%= this.data.attr('urlValue') %>"
-        data-val="<%= this.data.attr('value') %>"
-        <%= (el) -> vis.binds.basic.state(el) %>
-        >
-        <div class="vis-widget-body">
-			<%== this.data.attr("html") %>
-        </div>
-    </div>
+<script
+    id="tplBasicState"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<img src="widgets/basic/img/Prev_BasicState.png"></img>'
+    data-vis-set="basic"
+    data-vis-type="ctrl"
+    data-vis-name="HTML State"
+    data-vis-attrs="oid;html;value;urlValue"
+>
+     <div
+         class="vis-widget <%== this.data.attr('class') %>"
+         style="width:76px; height:76px;"
+         id="<%= this.data.attr('wid') %>"
+         data-oid="<%= this.data.attr('oid') %>"
+         data-url-value="<%= this.data.attr('urlValue') %>"
+         data-val="<%= this.data.attr('value') %>"
+         <%= (el) -> vis.binds.basic.state(el) %>
+         >
+         <div class="vis-widget-body">
+    <%== this.data.attr("html") %>
+         </div>
+     </div>
 </script>
 
 <!--script id="tplNote"
@@ -2658,18 +2867,19 @@
     </div>
 </script-->
 
-<script id="tplTableBody"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-type="json,table"
-        data-vis-name="Table"
-        data-vis-prev='<img src="widgets/basic/img/Prev_TableBody.png"></img>'
-        data-vis-attrs="table_oid/id;"
-        data-vis-attrs0="static_value[[{^Title^: ^first^, ^Value^: 1, ^_Description^: ^Value1^}, {^Title^: ^second^, ^Value^: 2, ^_Description^: ^Value2^}]]/text;"
-        data-vis-attrs1="event_oid/id;new_on_top/checkbox;ack_oid/id;selected_oid/id;hide_header/checkbox;show_scroll/checkbox;detailed_wid/widget;max_rows/number;"
-        data-vis-attrs2="colCount/number;group.header/byindex;colName(1-colCount);colWidth(1-colCount);colAttr(1-colCount);"
-        data-vis-attrs-not-used="btn_print;view_for_print/views"
+<script
+    id="tplTableBody"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-set="basic"
+    data-vis-type="json,table"
+    data-vis-name="Table"
+    data-vis-prev='<img src="widgets/basic/img/Prev_TableBody.png"></img>'
+    data-vis-attrs="table_oid/id;"
+    data-vis-attrs0="static_value[[{^Title^: ^first^, ^Value^: 1, ^_Description^: ^Value1^}, {^Title^: ^second^, ^Value^: 2, ^_Description^: ^Value2^}]]/text;"
+    data-vis-attrs1="event_oid/id;new_on_top/checkbox;ack_oid/id;selected_oid/id;hide_header/checkbox;show_scroll/checkbox;detailed_wid/widget;max_rows/number;"
+    data-vis-attrs2="colCount/number;group.header/byindex;colName(1-colCount);colWidth(1-colCount);colAttr(1-colCount);"
+    data-vis-attrs-not-used="btn_print;view_for_print/views"
 >
     <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width: 300px; height: 150px; background: #d3d3d3">
        <% vis.binds.table.showTable(this.view, this.data.attr('wid'), this.data); %>
@@ -2699,7 +2909,7 @@
         data-vis-attrs="show/checkbox;trigger_id/id;button(1-3);title;text;image/image;width[400]/slider,50,1000,10;height[200]/slider,50,1000,10;modal/checkbox;_no_style[true]/hidden;_no_move[true]/hidden;_no_resize[true]/hidden;margin_left[0]/slider,0,200,1;margin_top[0]/slider,0,200,1"
         >
     <%
-        var options =  {
+        const options =  {
             trigger_id:  this.data.attr('trigger_id'),
             buttons:     [this.data.attr('button1'), this.data.attr('button2'), this.data.attr('button3')],
             image:       this.data.attr('image'),
@@ -2732,18 +2942,20 @@
     </div>
 </script-->
 
-<script id="tplFullScreen"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-prev='<img src="widgets/basic/img/Prev_FullScreen.png"></img>'
-        data-vis-set="basic"
-        data-vis-type="tools"
-        data-vis-name="Full Screen"
-        data-vis-attrs="">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="width:43px; height:43px; background: #AAAAAA; cursor: pointer; opacity: 0.9" id="<%= this.data.attr('wid') %>">
-		<div class='vis-fullscreen-icon' style="padding: 10px"></div>
-		<%= vis.binds.basic.toggleFullScreen(this.data.wid, this.view, this.data, this.style); %>
-    </div>
+<script
+    id="tplFullScreen"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<img src="widgets/basic/img/Prev_FullScreen.png"></img>'
+    data-vis-set="basic"
+    data-vis-type="tools"
+    data-vis-name="Full Screen"
+    data-vis-attrs=""
+>
+      <div class="vis-widget <%== this.data.attr('class') %>" style="width:43px; height:43px; background: #AAAAAA; cursor: pointer; opacity: 0.9" id="<%= this.data.attr('wid') %>">
+    <div class='vis-fullscreen-icon' style="padding: 10px"></div>
+    <%= vis.binds.basic.toggleFullScreen(this.data.wid, this.view, this.data, this.style); %>
+      </div>
 </script>
 
 <!--script-- id="tplScreenResolution"
@@ -2764,7 +2976,6 @@
 		<%= vis.binds.basic.detectScreen(this.data.attr('wid')) %>
     </div>
 </script-->
-
 
 <!--script id="_tplGroup"
         type="text/ejs"

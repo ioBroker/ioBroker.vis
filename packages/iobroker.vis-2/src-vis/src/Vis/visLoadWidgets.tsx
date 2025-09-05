@@ -168,8 +168,14 @@ function getRemoteWidgets(
           additionalSets: AdditionalIconSet;
       }
 > {
-    return socket
-        .getObjectViewSystem('instance', 'system.adapter.', 'system.adapter.\u9999')
+    let getObjectViewSystem: typeof socket.getObjectViewSystem = socket.getObjectViewSystem.bind(socket);
+    // @ts-expect-error implemented in socket-client
+    if (socket.getObjectViewSystemCached) {
+        // @ts-expect-error implemented in socket-client
+        getObjectViewSystem = socket.getObjectViewSystemCached.bind(socket);
+    }
+
+    return getObjectViewSystem('instance', 'system.adapter.', 'system.adapter.\u9999')
         .then(objects => {
             const result: VisRxWidgetWithInfo<any>[] = [];
             const additionalSets: AdditionalIconSet = {};
