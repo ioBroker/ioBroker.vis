@@ -292,7 +292,7 @@ npm run start
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-#### **WORK IN PROGRESS**
+### **WORK IN PROGRESS**
 * (@GermanBluefox) Corrected loading of icon sets
 
 ### 2.13.4 (2025-09-05)
