@@ -292,7 +292,7 @@ npm run start
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.13.5 (2025-09-16)
 * (@GermanBluefox) Corrected loading of icon sets
 
 ### 2.13.4 (2025-09-05)
@@ -306,9 +306,6 @@ npm run start
 
 ### 2.13.1 (2025-08-25)
 * (@GermanBluefox) Fixed loading of widgets on the cloud
-
-### 2.13.0 (2025-08-24)
-* (@GermanBluefox) Added possibility to define SVG icon sets from widgets sets
 
 ## License
  Copyright (c) 2021-2025 Denis Haev, https://github.com/GermanBluefox <dogafox@gmail.com>,

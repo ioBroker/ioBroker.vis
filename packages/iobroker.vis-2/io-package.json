@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis-2",
-    "version": "2.13.4",
+    "version": "2.13.5",
     "news": {
+      "2.13.5": {
+        "en": "Corrected loading of icon sets",
+        "de": "Behobenes Laden von Symbolsets",
+        "ru": "Исправлена загрузка наборов иконок",
+        "pt": "Corrigido carregamento de conjuntos de ícones",
+        "nl": "Gecorrigeerd laden van pictogrammen sets",
+        "fr": "Correction du chargement des jeux d'icônes",
+        "it": "Corretto il caricamento dei set di icone",
+        "es": "Corregida la carga de conjuntos de iconos",
+        "pl": "Poprawiona została ładowanie zestawów ikon",
+        "uk": "Виправлено завантаження наборів іконок",
+        "zh-cn": "修正了图标集的加载"
+      },
       "2.13.4": {
         "en": "Added the basic methods for metro widgets again",
         "de": "Die Grundmethoden für U-Bahn-Widgets erneut hinzugefügt",
@@ -80,19 +93,6 @@
         "pl": "włącz lokalne stany wiążące widżety",
         "uk": "увімкнено локальні стани для віджетів",
         "zh-cn": "启用用于部件的本地绑定状态"
-      },
-      "2.12.11": {
-        "en": "Corrected selection of the view for resolution\nAdded option to ignore the unloaded widgets in runtime\nCorrected the user defined resolution for the view",
-        "de": "Korrigierte Auswahl der Ansicht zur Auflösung\nOption hinzugefügt, um die entladenen Widgets in Laufzeit zu ignorieren\nKorrektur der Benutzer-definierten Auflösung für die Ansicht",
-        "ru": "Исправленный выбор точки зрения для резолюции\nДобавлена опция игнорировать незагруженные виджеты во время выполнения\nИсправлено пользовательское определенное разрешение для представления",
-        "pt": "Seleção corrigida da visão para resolução\nAdicionada opção para ignorar os widgets descarregados em tempo de execução\nCorrigido a resolução definida pelo usuário para a visualização",
-        "nl": "Gecorrigeerde selectie van de weergave voor resolutie\nToegevoegd optie om de ongeladen widgets in runtime te negeren\nDe door de gebruiker gedefinieerde resolutie voor het beeld corrigeren",
-        "fr": "Sélection corrigée de la vue pour la résolution\nAjout de l'option pour ignorer les widgets déchargés dans runtime\nCorrection de la résolution définie par l'utilisateur pour la vue",
-        "it": "Selezione corretta della proposta di risoluzione\nAggiunta opzione per ignorare i widget scaricati in runtime\nCorretto la risoluzione definita dall'utente per la visualizzazione",
-        "es": "Selección corregida de la opinión de resolución\nOpción agregada para ignorar los widgets descargados en tiempo de ejecución\nCorregido la resolución definida por el usuario para la vista",
-        "pl": "Skorygowany wybór punktu widzenia na rozdzielczość\nDodano opcję ignorowania rozładowanych widżetów w runtime\nPoprawiono rozdzielczość użytkownika dla widoku",
-        "uk": "Правильний вибір виду для вирішення\nДодано можливість ігнорувати відвантажені віджети в runtime\nВиправлено помилку користувача для перегляду",
-        "zh-cn": "已更正的解决视图\n在运行时忽略已卸载部件的选项\n更正了用户定义的视图分辨率"
       }
     },
     "title": "Visualisation Next Generation",

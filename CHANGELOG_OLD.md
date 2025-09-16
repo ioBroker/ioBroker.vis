@@ -356,6 +356,9 @@
 
 ### 2.0.0 (2022-10-21)
 * (bluefox) Completely new visualization, but partly compatible with the previous version
+## 2.13.0 (2025-08-24)
+* (@GermanBluefox) Added possibility to define SVG icon sets from widgets sets
+
 ## 2.12.12 (2025-07-20)
 * (@foxriver76) enabled the local binding states for widgets
 
