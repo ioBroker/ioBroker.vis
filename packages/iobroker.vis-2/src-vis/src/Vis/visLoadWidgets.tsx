@@ -161,7 +161,8 @@ function fixCloudBundlerType(adapterName: string, visWidgetsCollection: ioBroker
  * Load all remote widgets from instances
  *
  * !Do not make this funktion async because it is optimized to simultaneously load the widget sets
- * @param socket
+ *
+ * @param socket Socket connection
  * @param onlyWidgetSets If array of names, load only these widget sets
  */
 function getRemoteWidgets(
