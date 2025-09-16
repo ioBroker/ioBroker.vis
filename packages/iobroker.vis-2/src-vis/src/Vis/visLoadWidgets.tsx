@@ -157,7 +157,14 @@ function fixCloudBundlerType(adapterName: string, visWidgetsCollection: ioBroker
     }
 }
 
-/* Do not make this funktion async, because is optimized to simultaneously load the widget sets */
+/**
+ * Load all remote widgets from instances
+ *
+ * !Do not make this funktion async because it is optimized to simultaneously load the widget sets
+ *
+ * @param socket Socket connection
+ * @param onlyWidgetSets If array of names, load only these widget sets
+ */
 function getRemoteWidgets(
     socket: LegacyConnection,
     onlyWidgetSets?: false | string[],
@@ -184,15 +191,20 @@ function getRemoteWidgets(
                 objects as Record<string, ioBroker.InstanceObject>,
             );
             const dynamicWidgetInstances: ioBroker.InstanceObject[] = instances.filter(obj => {
-                if (!obj.common.visWidgets) {
+                // @ts-expect-error defined in js-controller@7.0.8
+                if (!obj.common.visWidgets && !obj.common.visIconSets) {
                     return false;
                 }
-                // @ts-expect-error deprecated, but we still check it
-                const ignoreVersions: number[] = obj.common.visWidgets.ignoreInVersions || [];
-                return (
-                    !ignoreVersions.includes(2) &&
-                    (!onlyWidgetSets || onlyWidgetSets.includes(getText(obj.common.name)))
-                );
+                if (obj.common.visWidgets) {
+                    // @ts-expect-error deprecated, but we still check it
+                    const ignoreVersions: number[] = obj.common.visWidgets.ignoreInVersions || [];
+                    return (
+                        !ignoreVersions.includes(2) &&
+                        (!onlyWidgetSets || onlyWidgetSets.includes(getText(obj.common.name)))
+                    );
+                }
+                // It is only icon set, and they must not be loaded in runtime
+                return !onlyWidgetSets;
             });
 
             const promises: Promise<void[] | void | null>[] = [];
