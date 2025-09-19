@@ -2267,9 +2267,9 @@ class VisBaseWidget<TState extends Partial<VisBaseWidgetState> = VisBaseWidgetSt
             );
         }
 
-        const signals = this.renderSignals ? this.renderSignals() : null;
+        const signals = this.renderSignals?.() || null;
 
-        const lastChange = this.renderLastChange ? this.renderLastChange(style) : null;
+        const lastChange = this.renderLastChange?.(style) || null;
 
         return (
             <div
