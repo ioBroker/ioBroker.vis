@@ -718,8 +718,8 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                     // console.log('gclick: filtered');
                     return true;
                 }
-                let tag = el.tagName.toLowerCase();
-                while (tag !== 'div') {
+                let tag = el.tagName?.toLowerCase();
+                while (tag && tag !== 'div') {
                     el = el.parentNode;
                     tag = el.tagName.toLowerCase();
                 }
