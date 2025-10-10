@@ -63,6 +63,7 @@ import type {
 } from '@iobroker/types-vis-2';
 import type Editor from '@/Editor';
 import { deepClone } from '@/Utils/utils';
+// Do not delete this import - it loads jQuery for old widgets
 import type JQuery from 'jquery';
 import './visWords';
 import VisView from './visView';
@@ -1390,10 +1391,10 @@ class VisEngine extends React.Component<VisEngineProps, VisEngineState> {
                 promises.push(this.props.socket.getEnums(undefined, !useCache));
                 let getObjectViewSystem: typeof this.props.socket.getObjectViewSystem =
                     this.props.socket.getObjectViewSystem.bind(this.props.socket);
-                // @ts-expect-error implemented in socket-client
+                // @ts-expect-error implemented in new adapter-react
                 if (this.props.socket.getObjectViewSystemCached) {
-                    // @ts-expect-error implemented in socket-client
-                    getObjectViewSystem = socket.getObjectViewSystemCached.bind(this.props.socket);
+                    // @ts-expect-error implemented in new adapter-react
+                    getObjectViewSystem = this.props.socket.getObjectViewSystemCached.bind(this.props.socket);
                 }
                 promises.push(getObjectViewSystem('instance', 'system.adapter.', 'system.adapter.\u9999'));
 
@@ -2447,6 +2448,7 @@ ${this.scripts}
             VisView: VisView as unknown as VisContext['VisView'],
             activeView: this.props.activeView,
             adapterName: this.props.adapterName,
+            additionalSets: VisWidgetsCatalog.additionalSets || {},
             allWidgets: this.allWidgets,
             askAboutInclude: this.props.askAboutInclude,
             buildLegacyStructures: this.buildLegacyStructures,

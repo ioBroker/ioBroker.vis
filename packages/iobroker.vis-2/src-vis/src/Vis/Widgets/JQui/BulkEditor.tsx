@@ -750,7 +750,9 @@ class BulkEditor extends React.Component<BulkEditorProps, BulkEditorState> {
                     <IconButton
                         size="small"
                         onClick={() =>
-                            this.setState(prevState => ({ editDialog: { add: false, index: i, value: prevState.values[i] } }))
+                            this.setState(prevState => ({
+                                editDialog: { add: false, index: i, value: prevState.values[i] },
+                            }))
                         }
                     >
                         <Edit />

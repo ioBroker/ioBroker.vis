@@ -127,7 +127,7 @@ export default class MaterialIconSelector extends Component<MaterialIconSelector
             page: 1,
             maxPages: 0,
             additionalSetsInfo: {},
-            anyIconSetLogo: !!Object.keys(this.props.additionalSets).find(
+            anyIconSetLogo: !!Object.keys(this.props.additionalSets || {}).find(
                 iconSet => this.props.additionalSets[iconSet].icon,
             ),
         };
@@ -248,7 +248,7 @@ export default class MaterialIconSelector extends Component<MaterialIconSelector
             filter = filter === undefined ? this.state.filter : filter;
             if (filter) {
                 filter = (filter as string).toLowerCase();
-                if (this.props.additionalSets[this.state.iconType]) {
+                if (this.props.additionalSets?.[this.state.iconType]) {
                     filtered = Object.keys(this.list[this.state.iconType]).filter(icon => {
                         const info = this.state.additionalSetsInfo?.[this.state.iconType]?.[icon];
                         return (
@@ -271,7 +271,7 @@ export default class MaterialIconSelector extends Component<MaterialIconSelector
                         )
                         .map(icon => icon.name);
                 }
-            } else if (this.props.additionalSets[this.state.iconType]) {
+            } else if (this.props.additionalSets?.[this.state.iconType]) {
                 filtered = Object.keys(this.list[this.state.iconType]);
             } else if (this.state.iconType === 'knx-uf') {
                 filtered = Object.keys(this.list['knx-uf']);

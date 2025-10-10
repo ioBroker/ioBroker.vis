@@ -1664,6 +1664,7 @@ export interface VisContext {
     VisView: VisView;
     activeView: string;
     adapterName: string;
+    additionalSets: AdditionalIconSet;
     allWidgets: Record<string, CanWidgetStore>;
     askAboutInclude: (
         wid: AnyWidgetId,

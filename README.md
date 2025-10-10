@@ -292,6 +292,9 @@ npm run start
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Prevent error by the icons selection dialog
+
 ### 2.13.5 (2025-09-16)
 * (@GermanBluefox) Corrected loading of icon sets
 
