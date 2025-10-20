@@ -45,3 +45,6 @@ www/edit.src.html
 www/index.src.html
 *.tgz
 tmp/
+
+#ignore .commitinfo created by ioBroker release script
+.commitinfo
