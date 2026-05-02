@@ -7,7 +7,7 @@
     "email": "dogafox@gmail.com"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=22"
   },
   "contributors": [
     "bluefox <dogafox@gmail.com>",

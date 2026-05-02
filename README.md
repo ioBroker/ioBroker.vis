@@ -206,6 +206,7 @@ Notice that these settings are valid only for reconnection and not for the first
 -->
 ## Changelog
 ### **WORK IN PROGRESS**
+- (copilot) Adapter requires node.js >= 22 now
 * (bluefox) Removed usage of `storage` and uses localStorage instead.
 
 ### 1.5.5 (2024-04-12)
