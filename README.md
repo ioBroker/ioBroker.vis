@@ -558,6 +558,8 @@ Notice that these settings are valid only for reconnection and not for the first
 * (bluefox) support edit on iPad1
 * (bluefox) change security settings
 
+[Older changelogs can be found there](CHANGELOG_OLD.md)
+
 ## License
 The MIT License (MIT)
 
