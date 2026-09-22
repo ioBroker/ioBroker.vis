@@ -164,7 +164,6 @@
       "type": "free"
     },
     "compact": true,
-    "materialize": true,
     "eraseOnUpload": false,
     "welcomeScreen": {
       "link": "vis/index.html",
