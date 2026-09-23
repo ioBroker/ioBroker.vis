@@ -37,7 +37,7 @@
     "@iobroker/vis-2-widgets-testing": "^1.0.4",
     "chai": "^4.4.1",
     "colorette": "^2.0.20",
-    "gulp": "^4.0.2",
+    "gulp": "^5.0.1",
     "gulp-replace": "^1.1.4",
     "iobroker.web": "*",
     "mocha": "^10.4.0",
