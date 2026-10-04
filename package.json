@@ -61,6 +61,7 @@
     "test:package": "mocha test/testPackageFiles.js --exit",
     "test:integration": "mocha --exit",
     "test": "mocha --exit",
+    "lint": "echo \"No linting configured\"",
     "install": "node main.js --install",
     "install-only": "npm install --ignore-scripts",
     "prepublishOnly": "node node_modules/gulp/bin/gulp.js",
