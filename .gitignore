@@ -29,7 +29,6 @@
 /www/css/loading.gif
 /www/css/state.png
 /iob_npm.done
-/package-lock.json
 admin/i18n/*/flat.txt
 admin/i18n/flat.txt
 *.vis.code-workspace

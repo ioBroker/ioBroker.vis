@@ -206,7 +206,8 @@ Notice that these settings are valid only for reconnection and not for the first
 -->
 ## Changelog
 ### **WORK IN PROGRESS**
-- (ioBroker-Bot) Adapter requires js-controller >= 6.0.11 now.
+* (bluefox) Global `let`/`const` variables of widget sets are visible again if the widget sets are loaded dynamically (e.g. via cloud).
+* (ioBroker-Bot) Adapter requires js-controller >= 6.0.11 now.
 * (bluefox) Removed usage of `storage` and uses localStorage instead.
 
 ### 1.5.5 (2024-04-12)

@@ -39,6 +39,36 @@
 /* jshint -W097 */// jshint strict:false
 'use strict';
 
+// jQuery 1.11 evaluates dynamically inserted scripts with an indirect `eval`.
+// `var` and function declarations end up on `window`, but top-level `let`, `const`
+// and `class` declarations land in a lexical scope that is thrown away right after
+// the evaluation, so they are invisible to all other scripts.
+// Locally this never shows up, because the adapter inlines all widget sets into
+// index.html/edit.html and the browser parses them as normal <script> elements.
+// In the cloud the widget sets are requested one by one and injected with
+// `$('head').append(...)`, which goes through $.globalEval - and there every
+// `let`/`const` global of a widget set was lost.
+// Therefore, replace globalEval with the jQuery 3 implementation (DOMEval): a real
+// <script> element. It is executed synchronously while being inserted, so the
+// loading order of the widget sets stays exactly the same. Only difference: an error
+// in the widget set code is no longer thrown synchronously out of `append()`, but
+// reported to `window.onerror`, so one broken script does not stop the remaining ones.
+if (parseInt($.fn.jquery, 10) < 3) {
+    $.globalEval = function (code) {
+        if (!code || !$.trim(code)) {
+            return;
+        }
+        var script = document.createElement('script');
+        script.text = code;
+        // if the page was delivered with a CSP nonce, the new script needs it too
+        var nonced = document.querySelector('script[nonce]');
+        if (nonced && nonced.nonce) {
+            script.setAttribute('nonce', nonced.nonce);
+        }
+        document.head.appendChild(script).parentNode.removeChild(script);
+    };
+}
+
 if (!window.getStoredObjects) {
     window.getStoredObjects = function (name) {
         let objects = window.localStorage.getItem(name || 'objects');

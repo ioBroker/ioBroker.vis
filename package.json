@@ -27,21 +27,21 @@
     "SCADA"
   ],
   "dependencies": {
-    "@iobroker/adapter-core": "^3.1.6"
+    "@iobroker/adapter-core": "^3.4.3"
   },
   "devDependencies": {
-    "@alcalzone/release-script": "^3.7.0",
-    "@alcalzone/release-script-plugin-iobroker": "^3.7.2",
-    "@alcalzone/release-script-plugin-license": "^3.7.0",
-    "@iobroker/legacy-testing": "^1.0.12",
-    "@iobroker/vis-2-widgets-testing": "^1.0.4",
-    "chai": "^4.4.1",
+    "@alcalzone/release-script": "^5.2.1",
+    "@alcalzone/release-script-plugin-iobroker": "^5.2.0",
+    "@alcalzone/release-script-plugin-license": "^5.2.2",
+    "@iobroker/legacy-testing": "^4.0.0",
+    "@iobroker/vis-2-widgets-testing": "^2.0.0",
+    "chai": "^4.5.0",
     "colorette": "^2.0.20",
     "gulp": "^4.0.2",
     "gulp-replace": "^1.1.4",
     "iobroker.web": "*",
-    "mocha": "^10.4.0",
-    "puppeteer": "^22.12.1"
+    "mocha": "^11.8.0",
+    "puppeteer": "^25.12.0"
   },
   "bugs": {
     "url": "https://github.com/iobroker/iobroker.vis/issues"
@@ -58,6 +58,8 @@
     "main.js"
   ],
   "scripts": {
+    "test:package": "mocha test/testPackageFiles.js --exit",
+    "test:integration": "mocha --exit",
     "test": "mocha --exit",
     "install": "node main.js --install",
     "install-only": "npm install --ignore-scripts",
@@ -66,7 +68,7 @@
     "release": "release-script",
     "release-patch": "release-script patch --yes",
     "release-minor": "release-script minor --yes",
-    "update-packages": "ncu --upgrade"
+    "update-packages": "npx npm-check-updates --upgrade"
   },
   "license": "MIT"
 }
