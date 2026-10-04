@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis",
-    "version": "1.5.6",
+    "version": "1.5.7",
     "news": {
+      "1.5.7": {
+        "en": "Global `let`/`const` variables of widget sets are visible again if the widget sets are loaded dynamically (e.g. via cloud).\nAdapter requires js-controller >= 6.0.11 now.\nRemoved usage of `storage` and uses localStorage instead.",
+        "de": "Globale `let`/`const`-Variablen von Widget-Sets sind wieder sichtbar, wenn sie dynamisch geladen werden (z. B. über Cloud).\nAdapter benötigt jetzt JS-Controller >= 6.0.11.\n`Storage` entfernt und nutzt stattdessen LocalStorage.",
+        "ru": "Глобальные переменные `let`/`const` наборов виджетов снова видны, если наборы виджетов загружаются динамически (например, через облако).\nТеперь для адаптера требуется js-контроллер >= 6.0.11.\nУбрано использование `storage` и вместо этого используется localStorage.",
+        "pt": "Variáveis globais `let`/`const` de conjuntos de widgets são visíveis novamente se carregados dinamicamente (por exemplo, via nuvem).\nO adaptador exige js-controller >= 6.0.11.\nRemoveu o uso de `storage` e usa localStorage.",
+        "nl": "De globale variabelen `let`/`const` van widgetsets zijn weer zichtbaar als de widgetsets dynamisch worden geladen (bijvoorbeeld via de cloud).\nVoor de adapter is nu een js-controller >= 6.0.11 nodig.\nHet gebruik van `storage` is verwijderd en in plaats daarvan LocalStorage gebruikt.",
+        "fr": "Les variables globales `let`/`const` des ensembles de widgets sont à nouveau visibles s'ils sont chargés dynamiquement (par exemple via le cloud).\nAdapter nécessite JS-Controller >= 6.0.11.\nSuppression de « storage » au profit de localStorage à la place.",
+        "it": "Le variabili globali `let`/`const` dei set di widget sono nuovamente visibili se caricati dinamicamente (ad esempio via cloud).\nAdapter richiede js-controller >= 6.0.11 ora.\nRimosso l'uso di `storage` e usa invece localStorage.",
+        "es": "Las variables globales `let`/`const` de los conjuntos de widgets vuelven a ser visibles si se cargan de forma dinámica (por ejemplo, en la nube).\nEl adaptador ahora requiere js-controller >= 6.0.11.\nEliminó el uso de «almacenamiento» y usó LocalStorage en su lugar.",
+        "pl": "Globalne zmienne `let`/`const` zestawów widżetów są widoczne ponownie, jeśli zestawy widżetów są ładowane dynamicznie (np. przez chmurę).\nAdapter wymaga teraz kontrolera js->= 6.0.11.\nUsunięto użycie `Storage` i zamiast tego używa localStorage.",
+        "uk": "Глобальні `let`/`const` змінні наборів віджетів знову видно, якщо набори віджетів завантажуються динамічно (наприклад, через хмару).\nДля адаптера зараз потрібен js-контролер >= 6.0.11.\nВилучено використання `storage` і замість цього використовується localStorage.",
+        "zh-cn": "如果小部件集是动态加载的（例如通过云加载），则控件集的全局 `let`/`const`变量将再次可见。\n适配器现在需要 js-controller >= 6.0.11。\n移除了 “存储” 的使用，改为使用本地存储。"
+      },
       "1.5.6": {
         "en": "Removed usage of `storage` and uses localStorage instead.",
         "de": "Entfernte Verwendung von `storage` und verwendet localStorage statt.",
@@ -79,18 +92,6 @@
         "es": "Mejor control de la licencia fuera de línea",
         "pl": "Lepsze sprawdzenie licencji offline",
         "zh-cn": "更好地检查离线许可证"
-      },
-      "1.4.14": {
-        "en": "Corrected GUI bug",
-        "de": "GUI-Fehler behoben",
-        "ru": "Исправлена ошибка графического интерфейса",
-        "pt": "Bug de GUI corrigido",
-        "nl": "Fout in GUI gecorrigeerd",
-        "fr": "Bogue d'interface graphique corrigé",
-        "it": "Bug della GUI corretto",
-        "es": "Error de GUI corregido",
-        "pl": "Poprawiony błąd GUI",
-        "zh-cn": "更正了图形用户界面错误"
       }
     },
     "title": "Visualisation",
