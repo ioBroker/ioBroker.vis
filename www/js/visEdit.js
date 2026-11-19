@@ -1238,8 +1238,8 @@ vis = $.extend(true, vis, {
         if (this.config.editorTheme) {
             $('#commonTheme').remove();
             $('head').prepend('<link rel="stylesheet" type="text/css" href="../../lib/css/themes/jquery-ui/' + this.config.editorTheme + '/jquery-ui.min.css" id="commonTheme"/>');
-            $('li .menu-item [data-theme=' + this.config.editorTheme + ']').addClass('ui-state-active');
         }
+        this.editApplyModernTheme(this.config.editorTheme);
 
         $('#ul_theme li a').click(function () {
             var theme = $(this).data('info');
@@ -1247,6 +1247,7 @@ vis = $.extend(true, vis, {
             $('#ul_theme li').removeClass('ui-state-active');
             $('#commonTheme').remove();
             $('head').prepend('<link rel="stylesheet" type="text/css" href="../../lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css" id="commonTheme"/>');
+            that.editApplyModernTheme(theme);
             //that.additionalThemeCss(theme);
 
             var oldValue = that.config.editorTheme;
@@ -1265,9 +1266,6 @@ vis = $.extend(true, vis, {
                 $('#scrollbar_style').remove();
                 $('head').prepend('<style id="scrollbar_style">html{}::-webkit-scrollbar-thumb {background-color: ' + $('.ui-widget-header').first().css('background-color') + '}</style>');
             }, 300);
-
-            // Select active theme in menu
-            $('li .menu-item [data-theme=' + theme + ']').addClass('ui-state-active');
 
             that.save();
         });
@@ -3173,6 +3171,19 @@ vis = $.extend(true, vis, {
             console.log('Cannot load edit config');
             this.config = {};
         }
+    },
+    // The editor themes "Light" and "Dark" get a modern look (css/vis-editor-modern.css).
+    // Only the editor chrome is styled, the views and the runtime stay unchanged.
+    editApplyModernTheme:   function (theme) {
+        theme = theme || 'custom-light'; // edit.html loads custom-light by default
+        var isModern = theme === 'custom-light' || theme === 'custom-dark';
+        $('html')
+            .toggleClass('vis-edit-modern', isModern)
+            .toggleClass('vis-edit-modern-dark', isModern && theme === 'custom-dark');
+
+        // mark the active theme in the menu
+        $('#ul_theme li').removeClass('ui-state-active');
+        $('#ul_theme li[data-theme="' + theme + '"]').addClass('ui-state-active');
     },
     editSaveConfig:         function (attr, value) {
         if (attr) {
@@ -6035,7 +6046,7 @@ vis = $.extend(true, vis, {
 
         $('#vis_instance').change(function () {
             that.instance = $(this).val();
-            window.localStorage.set(that.storageKeyInstance, that.instance);
+            window.localStorage.setItem(that.storageKeyInstance, that.instance);
         }).val(this.instance);
     },
     lockWidgets:            function (viewDiv, view, widgets) {

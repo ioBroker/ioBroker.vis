@@ -1,4 +1,4 @@
-const expect = require('chai').expect;
+const assert = require('node:assert');
 const setup = require('@iobroker/legacy-testing');
 
 let objects = null;
@@ -36,9 +36,8 @@ describe.skip(`Test ${adapterShortName} adapter`, function () {
 
     it(`Test ${adapterShortName} instance object: it must exists`, function (done) {
         objects.getObject(`system.adapter.${adapterShortName}.0`, (err, obj) => {
-            expect(err).to.be.null;
-            expect(obj).to.be.an('object');
-            expect(obj).not.to.be.null;
+            assert.strictEqual(err, null);
+            assert.ok(obj !== null && typeof obj === 'object', 'instance object must be an object');
             done();
         });
     });

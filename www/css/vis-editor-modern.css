@@ -1,0 +1,1257 @@
+/*
+ * vis editor - modern skin for the editor themes "Light" (custom-light) and "Dark" (custom-dark).
+ *
+ * - This file is loaded ONLY by edit.html. The runtime (index.html) never loads it.
+ * - It is active only if <html> has the class "vis-edit-modern" (see editApplyModernTheme in visEdit.js).
+ *   The themes "Dark-Hive" and "redmond" keep the classic look.
+ * - Every rule is scoped to the editor chrome: main menu, ribbon, widget palette, view tabs,
+ *   attribute panel, dialogs and popup menus. The views inside #vis_container are not touched,
+ *   so they look in the editor exactly as before (and as in the runtime).
+ */
+
+/* ------------------------------------------------------------------ tokens */
+html.vis-edit-modern {
+    --vm-font:          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --vm-bg:            #eef0f3;
+    --vm-surface:       #ffffff;
+    --vm-surface-2:     #f6f7f9;
+    --vm-hover:         rgba(16, 24, 40, 0.06);
+    --vm-hover-solid:   #eef0f3;
+    --vm-border:        #e3e6eb;
+    --vm-border-strong: #cdd2da;
+    --vm-text:          #1d2330;
+    --vm-muted:         #667085;
+    --vm-accent:        #2384c6;
+    --vm-accent-strong: #1b72ad;
+    --vm-accent-soft:   rgba(35, 132, 198, 0.12);
+    --vm-accent-ring:   rgba(35, 132, 198, 0.28);
+    --vm-input-bg:      #ffffff;
+    --vm-scroll:        rgba(16, 24, 40, 0.22);
+    --vm-shadow-sm:     0 1px 2px rgba(16, 24, 40, 0.06);
+    --vm-shadow-lg:     0 16px 40px rgba(16, 24, 40, 0.18), 0 2px 6px rgba(16, 24, 40, 0.08);
+    --vm-radius:        6px;
+    --vm-radius-lg:     12px;
+    --vm-bar-height:    40px;
+}
+
+html.vis-edit-modern.vis-edit-modern-dark {
+    --vm-bg:            #141619;
+    --vm-surface:       #1d2024;
+    --vm-surface-2:     #23272c;
+    --vm-hover:         rgba(255, 255, 255, 0.06);
+    --vm-hover-solid:   #2a2e34;
+    --vm-border:        #2f343b;
+    --vm-border-strong: #3c424a;
+    --vm-text:          #e3e6ea;
+    --vm-muted:         #959daa;
+    --vm-accent:        #4ba9e2;
+    --vm-accent-strong: #2b8ccc;
+    --vm-accent-soft:   rgba(75, 169, 226, 0.16);
+    --vm-accent-ring:   rgba(75, 169, 226, 0.35);
+    --vm-input-bg:      #16181c;
+    --vm-scroll:        rgba(255, 255, 255, 0.20);
+    --vm-shadow-sm:     0 1px 2px rgba(0, 0, 0, 0.35);
+    --vm-shadow-lg:     0 16px 40px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.04);
+    color-scheme: dark;
+}
+
+/* ------------------------------------------------------------------ page */
+html.vis-edit-modern body {
+    background: var(--vm-bg);
+}
+
+html.vis-edit-modern #panel_body {
+    background: var(--vm-bg);
+    border: 0;
+}
+
+/* fonts only for the editor chrome - the views inherit their font from body as before */
+html.vis-edit-modern #menu_body,
+html.vis-edit-modern #view_select,
+html.vis-edit-modern #attr_wrap,
+html.vis-edit-modern #pan_add_wid > div.ui-state-default,
+html.vis-edit-modern #pan_add_wid .clear_input_div,
+html.vis-edit-modern #select_set-button,
+html.vis-edit-modern #toolbox .wid-prev-name,
+html.vis-edit-modern #toolbox .wid-prev-type,
+html.vis-edit-modern #context_menu,
+html.vis-edit-modern #context_menu_template,
+html.vis-edit-modern .ui-dialog,
+html.vis-edit-modern body > .ui-selectmenu-menu,
+html.vis-edit-modern body > .ui-multiselect-menu,
+html.vis-edit-modern body > .ui-autocomplete {
+    font-family: var(--vm-font);
+}
+html.vis-edit-modern #menu_body input,
+html.vis-edit-modern #menu_body select,
+html.vis-edit-modern #menu_body textarea,
+html.vis-edit-modern #menu_body button,
+html.vis-edit-modern #attr_wrap input,
+html.vis-edit-modern #attr_wrap select,
+html.vis-edit-modern #attr_wrap textarea,
+html.vis-edit-modern #attr_wrap button,
+html.vis-edit-modern .ui-dialog input,
+html.vis-edit-modern .ui-dialog select,
+html.vis-edit-modern .ui-dialog textarea,
+html.vis-edit-modern .ui-dialog button {
+    font-family: var(--vm-font);
+}
+
+/* thin, unobtrusive scrollbars in the panels */
+html.vis-edit-modern #toolbox,
+html.vis-edit-modern .tab_attr,
+html.vis-edit-modern .ui-dialog-content,
+html.vis-edit-modern body > .ui-selectmenu-menu .ui-menu,
+html.vis-edit-modern body > .ui-autocomplete,
+html.vis-edit-modern .ui-multiselect-checkboxes {
+    scrollbar-width: thin;
+    scrollbar-color: var(--vm-scroll) transparent;
+}
+
+/* visEdit.js derives the thumb color from the first .ui-widget-header, which is now white/dark */
+html.vis-edit-modern ::-webkit-scrollbar-thumb {
+    background-color: var(--vm-scroll);
+    border-width: 4px;
+    border-radius: 8px;
+}
+
+/* checkboxes and radios in the accent color */
+html.vis-edit-modern #menu_body,
+html.vis-edit-modern #attr_wrap,
+html.vis-edit-modern .ui-dialog,
+html.vis-edit-modern body > .ui-multiselect-menu {
+    accent-color: var(--vm-accent);
+}
+
+/* ------------------------------------------------------------------ top bar */
+/* the band behind the main menu */
+html.vis-edit-modern body > .ui-widget-header {
+    height: var(--vm-bar-height) !important;
+    background: var(--vm-surface) !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--vm-border) !important;
+    box-sizing: border-box;
+}
+
+html.vis-edit-modern #menu_body {
+    font-size: 13px;
+    color: var(--vm-text);
+    border-radius: 0;
+}
+
+/* the blue 5px line under the tabs becomes a hairline */
+html.vis-edit-modern #menu_body > .vis-menu-line {
+    top: calc(var(--vm-bar-height) - 1px) !important;
+    height: 1px !important;
+    background: var(--vm-border) !important;
+    z-index: 1 !important;
+}
+
+/* "vis 1.5.7" */
+html.vis-edit-modern #menu_body > div:first-child {
+    margin-left: 14px !important;
+    margin-right: 14px;
+    top: 0 !important;
+    height: var(--vm-bar-height);
+    line-height: var(--vm-bar-height);
+    vertical-align: top;
+}
+html.vis-edit-modern #menu_body > div:first-child > .ui-widget-header {
+    background: transparent;
+    border: 0;
+    color: var(--vm-accent);
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+html.vis-edit-modern #menu_body > div:first-child > #vis-version {
+    color: var(--vm-muted);
+    background: var(--vm-surface-2);
+    border: 1px solid var(--vm-border) !important;
+    border-radius: 999px;
+    padding: 1px 7px;
+    margin-left: 2px;
+    font-size: 11px;
+    font-weight: 600;
+    vertical-align: 2px;
+}
+
+/* main tabs: Views / Widgets / Tools  and  Setup / Help */
+html.vis-edit-modern #menu_body > .ui-tabs-nav {
+    height: var(--vm-bar-height);
+    margin: 0 !important;
+    padding: 0;
+    vertical-align: top;
+}
+html.vis-edit-modern #menu_body > .ui-tabs-nav > li,
+html.vis-edit-modern #menu_sf .menu-tab {
+    height: var(--vm-bar-height);
+    margin: 0 2px 0 0;
+    padding: 0 !important;
+    top: 0;
+    border: 0 !important;
+    border-radius: 0;
+    background: transparent;
+    white-space: nowrap;
+}
+html.vis-edit-modern #menu_body > .ui-tabs-nav > li > a,
+html.vis-edit-modern #menu_sf .menu-tab > .menu-tab-text {
+    display: block;
+    height: var(--vm-bar-height);
+    line-height: var(--vm-bar-height);
+    padding: 0 12px !important;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--vm-muted) !important;
+    transition: color 0.12s, box-shadow 0.12s, background-color 0.12s;
+}
+html.vis-edit-modern #menu_body > .ui-tabs-nav > li.ui-state-hover > a,
+html.vis-edit-modern #menu_body > .ui-tabs-nav > li:hover > a,
+html.vis-edit-modern #menu_sf .menu-tab.ui-state-hover > .menu-tab-text,
+html.vis-edit-modern #menu_sf .menu-tab.sfHover > .menu-tab-text,
+html.vis-edit-modern #menu_sf .menu-tab:hover > .menu-tab-text {
+    color: var(--vm-text) !important;
+    background: var(--vm-hover);
+}
+html.vis-edit-modern #menu_body > .ui-tabs-nav > li.ui-tabs-active {
+    margin: 0 2px 0 0;
+    padding: 0 !important;
+}
+html.vis-edit-modern #menu_body > .ui-tabs-nav > li.ui-tabs-active > a {
+    color: var(--vm-text) !important;
+    font-weight: 600;
+    box-shadow: inset 0 -2px 0 var(--vm-accent);
+}
+
+html.vis-edit-modern #menu_sf {
+    margin: 0 !important;
+    vertical-align: top;
+}
+html.vis-edit-modern #menu_sf > #menu {
+    float: none;
+    height: var(--vm-bar-height) !important;
+    padding: 0;
+}
+
+/* dropdowns of Setup / Help */
+html.vis-edit-modern #menu ul {
+    top: calc(var(--vm-bar-height) - 2px);
+    min-width: 220px;
+    padding: 4px;
+    background: var(--vm-surface);
+    border: 1px solid var(--vm-border);
+    border-radius: 8px;
+    box-shadow: var(--vm-shadow-lg);
+    color: var(--vm-text);
+}
+html.vis-edit-modern #menu ul ul {
+    top: -5px;
+    left: calc(100% + 4px);
+}
+html.vis-edit-modern #menu ul > li.menu-item {
+    width: 230px;
+    height: 32px;
+    line-height: 32px;
+    margin: 0;
+    padding: 0 10px !important;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    color: var(--vm-text);
+    font-size: 13px;
+    font-weight: 400;
+    box-sizing: border-box;
+}
+html.vis-edit-modern #menu ul > li.menu-item > a {
+    padding-left: 0;
+}
+html.vis-edit-modern #menu ul > li.menu-item.ui-state-hover,
+html.vis-edit-modern #menu ul > li.menu-item.sfHover,
+html.vis-edit-modern #menu ul > li.menu-item:hover {
+    background: var(--vm-accent-soft);
+    color: var(--vm-text);
+}
+html.vis-edit-modern #menu ul > li.menu-item.ui-state-active {
+    margin: 0;
+    color: var(--vm-accent);
+    font-weight: 600;
+}
+html.vis-edit-modern #menu ul > li.menu-item .ui-icon {
+    margin-top: 8px !important;
+    opacity: 0.6;
+}
+
+/* undo button next to the menu */
+html.vis-edit-modern #button_undo {
+    top: 6px;
+    left: 4px;
+    height: 28px !important;
+    width: 32px;
+    vertical-align: top;
+}
+
+/* right side: project [user], save state, exit */
+html.vis-edit-modern #menu_body > table {
+    height: var(--vm-bar-height);
+    margin-right: 6px;
+    border-spacing: 4px 0;
+}
+html.vis-edit-modern #menu_body > table > tbody > tr > td {
+    vertical-align: middle;
+}
+html.vis-edit-modern #menu_body > table .ui-widget-header {
+    height: auto !important;
+    padding: 0 8px 0 0 !important;
+    background: transparent;
+    color: var(--vm-muted);
+    font-size: 13px;
+    font-weight: 500;
+}
+html.vis-edit-modern #menu_body > table .ui-widget-header .ui-icon {
+    vertical-align: -3px;
+    opacity: 0.7;
+}
+html.vis-edit-modern #menu_body #current-project {
+    color: var(--vm-text);
+    font-weight: 600;
+}
+html.vis-edit-modern #saving_progress,
+html.vis-edit-modern #exit_button,
+html.vis-edit-modern #exit_button_select,
+html.vis-edit-modern #logout_button {
+    height: 28px !important;
+    min-width: 28px;
+    vertical-align: middle;
+}
+html.vis-edit-modern #exit_button {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+html.vis-edit-modern #exit_button_select {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    margin-left: -1px;
+}
+
+/* ------------------------------------------------------------------ ribbon */
+html.vis-edit-modern #menu_body .ribbon_tab {
+    background: var(--vm-surface);
+    border: 0;
+    border-bottom: 1px solid var(--vm-border) !important;
+    border-radius: 0 !important;
+}
+html.vis-edit-modern #menu_body .ribbon_tab_content {
+    background: transparent;
+    border: 0;
+    color: var(--vm-text);
+    padding-left: 6px;
+}
+html.vis-edit-modern #menu_body .ribbon_field {
+    height: 32px;
+    margin: 0;
+    padding: 0 12px;
+    background: transparent !important;
+    border: 0;
+    border-right: 1px solid var(--vm-border);
+    border-radius: 0;
+    color: var(--vm-muted);
+    font-family: var(--vm-font);
+    font-size: 12px;
+    font-weight: 500;
+}
+html.vis-edit-modern #menu_body .ribbon_field:last-child {
+    border-right: 0;
+}
+html.vis-edit-modern #menu_body .ribbon_field td {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+/* small icon buttons in the ribbon (align, delete, copy, ...) */
+html.vis-edit-modern #menu_body .btn-iconbar {
+    width: 26px;
+    height: 26px;
+    top: 0;
+    border: 1px solid transparent;
+    border-radius: var(--vm-radius);
+    background: transparent;
+    transition: background-color 0.12s, border-color 0.12s;
+}
+html.vis-edit-modern #menu_body .btn-iconbar.ui-state-hover,
+html.vis-edit-modern #menu_body .btn-iconbar:hover {
+    background: var(--vm-hover-solid);
+    border-color: var(--vm-border);
+}
+html.vis-edit-modern #menu_body .btn-iconbar.ui-state-disabled {
+    opacity: 0.35;
+}
+html.vis-edit-modern #menu_body .icon-on-iconbar {
+    margin: 3px;
+    border: 0;
+}
+html.vis-edit-modern.vis-edit-modern-dark #menu_body .icon-on-iconbar {
+    filter: brightness(1.25);
+}
+
+/* ------------------------------------------------------------------ buttons */
+html.vis-edit-modern #menu_body .ui-button,
+html.vis-edit-modern #view_select .ui-button,
+html.vis-edit-modern #attr_wrap .ui-button,
+html.vis-edit-modern .ui-dialog .ui-button {
+    margin-right: 0;
+    background: var(--vm-surface);
+    border: 1px solid var(--vm-border-strong);
+    border-radius: var(--vm-radius);
+    color: var(--vm-text);
+    font-weight: 500;
+    box-shadow: var(--vm-shadow-sm);
+    transition: background-color 0.12s, border-color 0.12s, box-shadow 0.12s, color 0.12s;
+}
+html.vis-edit-modern #menu_body .ui-button .ui-button-text,
+html.vis-edit-modern #attr_wrap .ui-button .ui-button-text,
+html.vis-edit-modern .ui-dialog .ui-button .ui-button-text {
+    font-size: 12px;
+    line-height: 16px;
+}
+html.vis-edit-modern #menu_body .ui-button.ui-state-hover,
+html.vis-edit-modern #view_select .ui-button.ui-state-hover,
+html.vis-edit-modern #attr_wrap .ui-button.ui-state-hover,
+html.vis-edit-modern .ui-dialog .ui-button.ui-state-hover {
+    background: var(--vm-hover-solid);
+    border-color: var(--vm-border-strong);
+    color: var(--vm-text);
+}
+html.vis-edit-modern #menu_body .ui-button.ui-state-focus,
+html.vis-edit-modern #attr_wrap .ui-button.ui-state-focus,
+html.vis-edit-modern .ui-dialog .ui-button.ui-state-focus {
+    border-color: var(--vm-accent);
+    box-shadow: 0 0 0 3px var(--vm-accent-ring);
+}
+html.vis-edit-modern #menu_body .ui-button.ui-state-active,
+html.vis-edit-modern #view_select .ui-button.ui-state-active,
+html.vis-edit-modern #attr_wrap .ui-button.ui-state-active,
+html.vis-edit-modern .ui-dialog .ui-button.ui-state-active {
+    margin: 0;
+    background: var(--vm-accent-soft);
+    border-color: var(--vm-accent);
+    color: var(--vm-accent);
+}
+html.vis-edit-modern #menu_body .ui-button.ui-state-disabled,
+html.vis-edit-modern #attr_wrap .ui-button.ui-state-disabled,
+html.vis-edit-modern .ui-dialog .ui-button.ui-state-disabled {
+    opacity: 0.45;
+    box-shadow: none;
+}
+/* icon only buttons are flat */
+html.vis-edit-modern #menu_body .ui-button-icon-only:where(:not(#exit_button, #exit_button_select, #saving_progress)),
+html.vis-edit-modern #attr_wrap .ui-button-icon-only,
+html.vis-edit-modern .ui-dialog .ui-dialog-titlebar-close {
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+}
+html.vis-edit-modern #menu_body .ui-button-icon-only.ui-state-hover,
+html.vis-edit-modern #attr_wrap .ui-button-icon-only.ui-state-hover,
+html.vis-edit-modern .ui-dialog .ui-dialog-titlebar-close.ui-state-hover {
+    background: var(--vm-hover-solid);
+    border-color: var(--vm-border);
+}
+
+/* jQuery UI "custom-dark" uses a dark icon sprite for active elements - they are not dark anymore */
+html.vis-edit-modern.vis-edit-modern-dark #menu_body .ui-state-active .ui-icon,
+html.vis-edit-modern.vis-edit-modern-dark #view_select .ui-state-active .ui-icon,
+html.vis-edit-modern.vis-edit-modern-dark #attr_wrap .ui-state-active .ui-icon,
+html.vis-edit-modern.vis-edit-modern-dark #pan_add_wid > div .ui-state-active .ui-icon,
+html.vis-edit-modern.vis-edit-modern-dark #btn_prev_zoom.ui-state-active .ui-icon,
+html.vis-edit-modern.vis-edit-modern-dark #btn_prev_type.ui-state-active .ui-icon,
+html.vis-edit-modern.vis-edit-modern-dark #select_set-button.ui-state-active .ui-icon,
+html.vis-edit-modern.vis-edit-modern-dark .ui-dialog .ui-state-active .ui-icon,
+html.vis-edit-modern.vis-edit-modern-dark #menu ul .ui-state-active .ui-icon {
+    filter: invert(1);
+}
+
+/* "primary" look for the import / create buttons in dialogs */
+html.vis-edit-modern .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset > .ui-button:first-child {
+    background: var(--vm-accent-strong);
+    border-color: var(--vm-accent-strong);
+    color: #ffffff;
+}
+html.vis-edit-modern .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset > .ui-button:first-child.ui-state-hover {
+    background: var(--vm-accent);
+    border-color: var(--vm-accent);
+    color: #ffffff;
+}
+
+/* ------------------------------------------------------------------ inputs */
+html.vis-edit-modern #menu_body input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="file"]),
+html.vis-edit-modern #menu_body select,
+html.vis-edit-modern #menu_body textarea,
+html.vis-edit-modern #pan_add_wid #filter_set,
+html.vis-edit-modern #attr_wrap input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="file"]),
+html.vis-edit-modern #attr_wrap select,
+html.vis-edit-modern #attr_wrap textarea,
+html.vis-edit-modern .ui-dialog input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="file"]):not(.dialog-select-object-ids *),
+html.vis-edit-modern .ui-dialog select:not(.dialog-select-object-ids *),
+html.vis-edit-modern .ui-dialog textarea:not(.dialog-select-object-ids *) {
+    box-sizing: border-box;
+    min-height: 26px;
+    padding: 3px 8px;
+    background: var(--vm-input-bg);
+    border: 1px solid var(--vm-border-strong);
+    border-radius: var(--vm-radius);
+    color: var(--vm-text);
+    font-size: 12px;
+    outline: none;
+    box-shadow: none;
+    transition: border-color 0.12s, box-shadow 0.12s;
+}
+html.vis-edit-modern #menu_body input:focus,
+html.vis-edit-modern #menu_body select:focus,
+html.vis-edit-modern #menu_body textarea:focus,
+html.vis-edit-modern #pan_add_wid #filter_set:focus,
+html.vis-edit-modern #attr_wrap input:focus,
+html.vis-edit-modern #attr_wrap select:focus,
+html.vis-edit-modern #attr_wrap textarea:focus,
+html.vis-edit-modern .ui-dialog input:focus:not(.dialog-select-object-ids *),
+html.vis-edit-modern .ui-dialog select:focus:not(.dialog-select-object-ids *),
+html.vis-edit-modern .ui-dialog textarea:focus:not(.dialog-select-object-ids *) {
+    border-color: var(--vm-accent);
+    box-shadow: 0 0 0 3px var(--vm-accent-ring);
+}
+html.vis-edit-modern #menu_body input[type="checkbox"],
+html.vis-edit-modern #attr_wrap input[type="checkbox"],
+html.vis-edit-modern .ui-dialog input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    vertical-align: middle;
+}
+
+/* jQuery UI selectmenu and multiselect buttons look like inputs */
+html.vis-edit-modern #menu_body .ui-selectmenu-button,
+html.vis-edit-modern #menu_body button.ui-multiselect,
+html.vis-edit-modern #attr_wrap .ui-selectmenu-button,
+html.vis-edit-modern #attr_wrap button.ui-multiselect,
+html.vis-edit-modern .ui-dialog .ui-selectmenu-button,
+html.vis-edit-modern .ui-dialog button.ui-multiselect,
+html.vis-edit-modern #select_set-button {
+    box-sizing: border-box;
+    height: 26px !important;
+    margin: 0;
+    background: var(--vm-input-bg);
+    border: 1px solid var(--vm-border-strong);
+    border-radius: var(--vm-radius) !important;
+    color: var(--vm-text);
+    font-size: 12px;
+    font-weight: 400;
+    text-align: left;
+    box-shadow: none;
+}
+html.vis-edit-modern #menu_body .ui-selectmenu-button.ui-state-hover,
+html.vis-edit-modern #menu_body button.ui-multiselect.ui-state-hover,
+html.vis-edit-modern #attr_wrap .ui-selectmenu-button.ui-state-hover,
+html.vis-edit-modern #attr_wrap button.ui-multiselect.ui-state-hover,
+html.vis-edit-modern .ui-dialog .ui-selectmenu-button.ui-state-hover,
+html.vis-edit-modern #select_set-button.ui-state-hover {
+    background: var(--vm-input-bg);
+    border-color: var(--vm-muted);
+    color: var(--vm-text);
+}
+html.vis-edit-modern #menu_body .ui-selectmenu-button.ui-state-focus,
+html.vis-edit-modern #menu_body .ui-selectmenu-button.ui-state-active,
+html.vis-edit-modern #menu_body button.ui-multiselect.ui-state-active,
+html.vis-edit-modern #attr_wrap .ui-selectmenu-button.ui-state-focus,
+html.vis-edit-modern #attr_wrap .ui-selectmenu-button.ui-state-active,
+html.vis-edit-modern .ui-dialog .ui-selectmenu-button.ui-state-active,
+html.vis-edit-modern #select_set-button.ui-state-focus,
+html.vis-edit-modern #select_set-button.ui-state-active {
+    margin: 0;
+    background: var(--vm-input-bg);
+    border-color: var(--vm-accent);
+    box-shadow: 0 0 0 3px var(--vm-accent-ring);
+    color: var(--vm-text);
+}
+html.vis-edit-modern .ui-selectmenu-button span.ui-selectmenu-text {
+    padding: 4px 26px 4px 8px !important;
+    line-height: 16px;
+}
+html.vis-edit-modern button.ui-multiselect {
+    padding: 0 6px 0 8px;
+}
+
+/* ------------------------------------------------------------------ left panel: widget palette */
+html.vis-edit-modern #pan_add_wid {
+    background: var(--vm-surface);
+    border: 0;
+    border-right: 1px solid var(--vm-border);
+}
+html.vis-edit-modern #pan_add_wid > div.ui-state-default,
+html.vis-edit-modern #pan_attr > div.ui-state-default {
+    height: 22px !important;
+    padding: 7px 8px 7px 12px !important;
+    line-height: 22px;
+    background: var(--vm-surface);
+    border: 0;
+    border-bottom: 1px solid var(--vm-border);
+    border-radius: 0;
+    color: var(--vm-muted);
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+html.vis-edit-modern #btn_prev_zoom,
+html.vis-edit-modern #btn_prev_type {
+    margin: 0 0 0 2px;
+    padding: 2px;
+    border: 1px solid transparent;
+    border-radius: var(--vm-radius);
+    cursor: pointer;
+}
+html.vis-edit-modern #btn_prev_zoom:hover,
+html.vis-edit-modern #btn_prev_type:hover {
+    background: var(--vm-hover-solid);
+}
+html.vis-edit-modern #btn_prev_zoom.ui-state-active,
+html.vis-edit-modern #btn_prev_type.ui-state-active {
+    margin: 0 0 0 2px;
+    background: var(--vm-accent-soft);
+    border-color: var(--vm-accent);
+}
+html.vis-edit-modern #pan_add_wid .clear_input_div {
+    margin: 8px 8px 6px;
+}
+html.vis-edit-modern #pan_add_wid #filter_set {
+    height: 28px;
+}
+html.vis-edit-modern #pan_add_wid .clear_input {
+    color: var(--vm-muted);
+    font-size: 15px;
+    line-height: 1;
+}
+html.vis-edit-modern #select_set-button {
+    display: block;
+    width: calc(100% - 16px) !important;
+    height: 28px !important;
+    margin: 0 8px 8px;
+    padding: 0;
+}
+html.vis-edit-modern #select_set-button > span.ui-selectmenu-text {
+    padding-top: 5px !important;
+    padding-bottom: 5px !important;
+}
+html.vis-edit-modern #pan_add_wid .toolbox {
+    /* header 37px + filter 42px + set selector 36px */
+    height: calc(100% - 115px);
+    top: 0;
+    padding: 4px 2px;
+    box-sizing: border-box;
+    background: var(--vm-surface-2);
+    border: 0;
+    border-top: 1px solid var(--vm-border);
+}
+
+/* widget preview cards - only the card frame, never the preview content */
+html.vis-edit-modern #toolbox .wid-prev {
+    margin: 4px;
+    background-color: var(--vm-surface) !important;
+    border: 1px solid var(--vm-border);
+    border-radius: 8px;
+    box-shadow: var(--vm-shadow-sm);
+    transition: border-color 0.12s, box-shadow 0.12s;
+}
+html.vis-edit-modern #toolbox .wid-prev:hover {
+    border-color: var(--vm-accent);
+    box-shadow: 0 0 0 3px var(--vm-accent-ring);
+}
+html.vis-edit-modern #toolbox .wid-prev-name {
+    padding-top: 3px;
+    color: var(--vm-muted);
+    font-size: 11px;
+    font-weight: 600;
+}
+html.vis-edit-modern #toolbox .wid-prev-type {
+    color: var(--vm-muted);
+    font-size: 10px;
+}
+
+/* ------------------------------------------------------------------ view tabs above the canvas */
+html.vis-edit-modern #view_select {
+    /* 31px + top border of #vis_container = the 32px reserved by .vis_container_edit */
+    display: flex;
+    height: 31px;
+    box-sizing: border-box;
+    background: var(--vm-surface);
+    border: 0;
+}
+/* only the frame of the canvas, never the views inside */
+html.vis-edit-modern #vis_container {
+    border-color: var(--vm-border);
+}
+html.vis-edit-modern #view_select > .ui-button {
+    flex: none;
+    width: 30px;
+    height: 31px;
+    margin: 0;
+    background: transparent;
+    border: 0;
+    border-right: 1px solid var(--vm-border);
+    border-radius: 0;
+    box-shadow: none;
+}
+html.vis-edit-modern #view_select > .ui-button.ui-state-hover {
+    background: var(--vm-hover-solid);
+}
+html.vis-edit-modern #view_select_tabs_wrap {
+    height: 31px;
+    flex: none;
+    max-width: calc(100% - 92px);
+}
+html.vis-edit-modern #view_select_tabs {
+    height: 31px;
+    padding-top: 0;
+}
+html.vis-edit-modern #view_select .view-select-tab {
+    display: inline-block;
+    top: 0;
+    height: 31px;
+    margin: 0;
+    padding: 0 12px;
+    line-height: 31px;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    color: var(--vm-muted);
+    font-size: 13px;
+    font-weight: 500;
+    box-sizing: border-box;
+    transition: color 0.12s, background-color 0.12s;
+}
+html.vis-edit-modern #view_select .view-select-tab.ui-state-hover,
+html.vis-edit-modern #view_select .view-select-tab:hover {
+    background: var(--vm-hover);
+    color: var(--vm-text);
+}
+html.vis-edit-modern #view_select .view-select-tab.ui-state-active {
+    margin: 0;
+    background: transparent;
+    color: var(--vm-text);
+    font-weight: 600;
+    box-shadow: inset 0 -2px 0 var(--vm-accent);
+}
+
+/* ------------------------------------------------------------------ right panel: attributes */
+html.vis-edit-modern #attr_wrap {
+    background: var(--vm-surface);
+    color: var(--vm-text);
+}
+html.vis-edit-modern #pan_attr {
+    background: var(--vm-surface);
+    border: 0;
+    border-left: 1px solid var(--vm-border);
+    border-radius: 0;
+    color: var(--vm-text);
+}
+html.vis-edit-modern #btn_accordeon {
+    margin-top: 1px;
+}
+html.vis-edit-modern #pan_attr > .ui-tabs-nav {
+    display: block !important;
+    height: 33px;
+    margin: 0 !important;
+    padding: 0 6px;
+    background: var(--vm-surface) !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--vm-border) !important;
+    border-radius: 0 !important;
+}
+html.vis-edit-modern #pan_attr > .ui-tabs-nav > li {
+    height: 33px;
+    margin: 0 2px 0 0;
+    padding: 0;
+    top: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+}
+html.vis-edit-modern #pan_attr > .ui-tabs-nav > li > a {
+    height: 33px;
+    line-height: 33px;
+    padding: 0 10px !important;
+    color: var(--vm-muted);
+    font-size: 13px;
+    font-weight: 500;
+}
+html.vis-edit-modern #pan_attr > .ui-tabs-nav > li.ui-state-hover > a {
+    color: var(--vm-text);
+}
+html.vis-edit-modern #pan_attr > .ui-tabs-nav > li.ui-tabs-active {
+    margin: 0 2px 0 0;
+    padding: 0;
+}
+html.vis-edit-modern #pan_attr > .ui-tabs-nav > li.ui-tabs-active > a {
+    color: var(--vm-text);
+    font-weight: 600;
+    box-shadow: inset 0 -2px 0 var(--vm-accent);
+}
+html.vis-edit-modern #pan_attr > .ui-tabs-nav > li.ui-state-disabled > a {
+    opacity: 0.45;
+}
+html.vis-edit-modern #pan_attr .tab_attr {
+    /* header 37px + tabs 34px */
+    height: calc(100% - 71px);
+    width: 100%;
+    padding: 0 !important;
+    box-sizing: border-box;
+    background: var(--vm-surface);
+    border: 0 !important;
+    color: var(--vm-text);
+}
+
+/* inspector table */
+html.vis-edit-modern #attr_wrap .tab_attr table {
+    border-collapse: collapse;
+}
+html.vis-edit-modern #attr_wrap tr.vis-inspect-group {
+    background: var(--vm-surface-2);
+    border: 0;
+    color: var(--vm-muted);
+}
+html.vis-edit-modern #attr_wrap tr.vis-inspect-group > td {
+    height: 28px;
+    padding: 2px 6px 2px 12px;
+    border-top: 1px solid var(--vm-border);
+    border-bottom: 1px solid var(--vm-border);
+    color: var(--vm-muted);
+    font-size: 11px !important;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+html.vis-edit-modern #attr_wrap tr.vis-inspect-group > td + td,
+html.vis-edit-modern #attr_wrap tr.vis-inspect-group > td + td + td {
+    padding: 2px 4px;
+}
+/* view inspector (tab "View") uses a slightly different markup */
+html.vis-edit-modern #view_inspector td.ui-state-default {
+    height: 28px;
+    padding: 2px 4px 2px 12px;
+    background: var(--vm-surface-2);
+    border: 0;
+    border-top: 1px solid var(--vm-border);
+    border-bottom: 1px solid var(--vm-border);
+    border-radius: 0;
+    color: var(--vm-muted);
+    font-size: 11px !important;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    line-height: 24px;
+    text-transform: uppercase;
+    vertical-align: middle;
+}
+html.vis-edit-modern #view_inspector td.ui-state-default .view-group {
+    margin-top: 0;
+}
+html.vis-edit-modern #view_inspector tr > td {
+    padding: 3px 4px;
+    font-size: 12px !important;
+    vertical-align: middle;
+}
+html.vis-edit-modern #view_inspector td.vis-edit-td-caption,
+html.vis-edit-modern #view_inspector tr > td:first-child:not(.ui-state-default) {
+    padding-left: 12px;
+    color: var(--vm-text);
+}
+
+/* separator row between the widget attributes and the CSS groups */
+html.vis-edit-modern #attr_wrap td.ui-widget-header {
+    height: 6px !important;
+    padding: 0;
+    background: var(--vm-bg);
+    border: 0;
+}
+html.vis-edit-modern #attr_wrap tr.vis-edit-td-caption > td {
+    padding: 3px 4px;
+    font-size: 12px !important;
+    vertical-align: middle;
+}
+html.vis-edit-modern #attr_wrap tr.vis-edit-td-caption > td:first-child {
+    padding-left: 12px;
+    color: var(--vm-text);
+}
+html.vis-edit-modern #attr_wrap .vis-edit-td-field {
+    color: var(--vm-text);
+}
+html.vis-edit-modern #attr_wrap #inspect_oid_desc,
+html.vis-edit-modern #attr_wrap [id$="_desc"] {
+    color: var(--vm-muted);
+    font-size: 11px;
+}
+html.vis-edit-modern #attr_wrap .vis-edit-textbox {
+    width: 100%;
+}
+html.vis-edit-modern #attr_wrap .vis-edit-textbox-with-button {
+    width: calc(100% - 30px);
+}
+html.vis-edit-modern #attr_wrap .ui-button-icon-only {
+    width: 24px !important;
+    height: 24px !important;
+}
+
+/* CSS / scripts editor heads */
+html.vis-edit-modern #css_editor_head,
+html.vis-edit-modern #script_editor_head {
+    height: 40px;
+    box-sizing: border-box;
+    padding: 6px 8px;
+    gap: 6px;
+    align-items: center;
+    background: var(--vm-surface);
+    border-bottom: 1px solid var(--vm-border);
+    color: var(--vm-muted);
+    font-size: 12px;
+}
+html.vis-edit-modern #css_editor,
+html.vis-edit-modern #script_editor {
+    height: calc(100% - 40px);
+}
+html.vis-edit-modern #css_find,
+html.vis-edit-modern #script_find,
+html.vis-edit-modern #css_find_prev,
+html.vis-edit-modern #css_file_save,
+html.vis-edit-modern #script_file_save {
+    margin-left: 0;
+}
+
+/* splitters between the panels */
+html.vis-edit-modern #pan_add_wid > .ui-resizable-e,
+html.vis-edit-modern #pan_attr > .ui-resizable-w {
+    transition: background-size 0.12s;
+    background: linear-gradient(var(--vm-accent), var(--vm-accent)) center / 0 100% no-repeat;
+}
+html.vis-edit-modern #pan_add_wid > .ui-resizable-e:hover,
+html.vis-edit-modern #pan_attr > .ui-resizable-w:hover {
+    background-size: 2px 100%;
+}
+
+/* ------------------------------------------------------------------ loading screen */
+/* #waitScreen is shared with the runtime (styled in vis.css) - here only for the editor */
+html.vis-edit-modern #waitScreen {
+    position: fixed;
+    inset: 0;
+    width: auto;
+    height: auto;
+    background: var(--vm-bg);
+}
+html.vis-edit-modern #waitDialog {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    width: 420px;
+    max-width: calc(100% - 32px);
+    padding: 28px 28px 26px;
+    box-sizing: border-box;
+    background: var(--vm-surface);
+    border: 1px solid var(--vm-border);
+    border-radius: 14px;
+    box-shadow: var(--vm-shadow-lg);
+    transform: translate(-50%, -50%);
+    font-family: var(--vm-font);
+}
+/* brand on top of the card */
+html.vis-edit-modern #waitDialog::before {
+    content: "vis";
+    order: 0;
+    color: var(--vm-accent);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1;
+}
+html.vis-edit-modern #waitDialog .vis-wait-text {
+    position: static;
+    order: 1;
+    color: var(--vm-muted);
+    font-family: var(--vm-font);
+    font-size: 13px;
+    font-weight: 500;
+    font-variant: normal;
+    line-height: 1.7;
+}
+html.vis-edit-modern #waitDialog .vis-progressbar {
+    position: static;
+    order: 2;
+    width: 100%;
+    height: 6px !important; /* vis.js sets 19px inline */
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: var(--vm-surface-2);
+    border: 0;
+    border-radius: 999px;
+    box-shadow: inset 0 0 0 1px var(--vm-border);
+}
+html.vis-edit-modern #waitDialog .vis-progressbar .ui-progressbar-value {
+    height: 100%;
+    margin: 0;
+    background-color: var(--vm-accent);
+    background-image: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.45) 50%, transparent 100%);
+    background-size: 200% 100%;
+    background-repeat: no-repeat;
+    border: 0;
+    border-radius: 999px;
+    transition: width 0.3s ease;
+    animation: vm-progress-shimmer 1.4s linear infinite;
+}
+@keyframes vm-progress-shimmer {
+    from { background-position: 150% 0; }
+    to   { background-position: -50% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+    html.vis-edit-modern #waitDialog .vis-progressbar .ui-progressbar-value {
+        animation: none;
+    }
+}
+
+/* ------------------------------------------------------------------ dialogs */
+html.vis-edit-modern .ui-dialog {
+    padding: 0;
+    background: var(--vm-surface);
+    border: 1px solid var(--vm-border);
+    border-radius: var(--vm-radius-lg);
+    box-shadow: var(--vm-shadow-lg);
+    color: var(--vm-text);
+    font-size: 13px;
+}
+html.vis-edit-modern .ui-dialog .ui-dialog-titlebar {
+    padding: 12px 16px;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--vm-border);
+    border-radius: var(--vm-radius-lg) var(--vm-radius-lg) 0 0;
+    color: var(--vm-text);
+    font-size: 14px;
+    font-weight: 600;
+}
+html.vis-edit-modern .ui-dialog .ui-dialog-titlebar-close {
+    right: 10px;
+    width: 28px;
+    height: 28px;
+    margin-top: -14px;
+    border-radius: var(--vm-radius);
+}
+html.vis-edit-modern .ui-dialog .ui-dialog-content {
+    padding: 12px 16px;
+    background: var(--vm-surface);
+    border: 0;
+    color: var(--vm-text);
+}
+html.vis-edit-modern .ui-dialog .ui-dialog-buttonpane {
+    margin: 0;
+    padding: 6px 12px;
+    background: var(--vm-surface-2);
+    border: 0;
+    border-top: 1px solid var(--vm-border);
+    border-radius: 0 0 var(--vm-radius-lg) var(--vm-radius-lg);
+}
+html.vis-edit-modern .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset > .ui-button {
+    margin: 4px 0 4px 8px;
+}
+html.vis-edit-modern .ui-dialog .ui-dialog-buttonpane .ui-button-text-only .ui-button-text {
+    padding: 6px 14px;
+}
+html.vis-edit-modern .ui-widget-overlay {
+    background: rgba(10, 14, 22, 0.45);
+    opacity: 1;
+}
+
+/* ------------------------------------------------------------------ popup menus */
+html.vis-edit-modern body > .ui-selectmenu-menu .ui-menu,
+html.vis-edit-modern body > .ui-autocomplete,
+html.vis-edit-modern body > .ui-multiselect-menu,
+html.vis-edit-modern #context_menu,
+html.vis-edit-modern #context_menu ul,
+html.vis-edit-modern #context_menu_template,
+html.vis-edit-modern #exit_button_select_menu {
+    padding: 4px;
+    background: var(--vm-surface);
+    border: 1px solid var(--vm-border);
+    border-radius: 8px;
+    box-shadow: var(--vm-shadow-lg);
+    color: var(--vm-text);
+}
+html.vis-edit-modern body > .ui-selectmenu-menu .ui-menu .ui-menu-item,
+html.vis-edit-modern body > .ui-autocomplete .ui-menu-item,
+html.vis-edit-modern #context_menu .ui-menu-item,
+html.vis-edit-modern #context_menu_template .ui-menu-item,
+html.vis-edit-modern #exit_button_select_menu .ui-menu-item {
+    margin: 0;
+    padding: 5px 10px;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    color: var(--vm-text);
+    font-size: 13px !important;
+    font-weight: 400;
+}
+html.vis-edit-modern #context_menu .ui-menu-item,
+html.vis-edit-modern #exit_button_select_menu .ui-menu-item {
+    padding-left: 30px;
+}
+html.vis-edit-modern body > .ui-selectmenu-menu .ui-menu .ui-state-focus,
+html.vis-edit-modern body > .ui-selectmenu-menu .ui-menu .ui-state-active,
+html.vis-edit-modern body > .ui-autocomplete .ui-state-focus,
+html.vis-edit-modern body > .ui-autocomplete .ui-state-active,
+html.vis-edit-modern #context_menu .ui-state-focus,
+html.vis-edit-modern #context_menu .ui-state-active,
+html.vis-edit-modern #context_menu_template .ui-state-focus,
+html.vis-edit-modern #exit_button_select_menu .ui-state-focus {
+    margin: 0;
+    background: var(--vm-accent-soft);
+    border: 0;
+    color: var(--vm-text);
+}
+html.vis-edit-modern body > .ui-selectmenu-menu .ui-menu .ui-state-disabled,
+html.vis-edit-modern #context_menu .ui-state-disabled {
+    margin: 0 !important;
+    color: var(--vm-muted);
+    font-weight: 600;
+    opacity: 1;
+}
+html.vis-edit-modern body > .ui-selectmenu-menu .ui-menu-divider,
+html.vis-edit-modern #context_menu .ui-menu-divider {
+    margin: 4px 0;
+    border-top: 1px solid var(--vm-border);
+}
+
+/* the context menu is placed inside the view and would get the icons of the view theme */
+html.vis-edit-modern #context_menu .ui-icon {
+    background-image: url("../../../lib/css/themes/jquery-ui/custom-light/images/ui-icons_454545_256x240.png");
+}
+html.vis-edit-modern.vis-edit-modern-dark #context_menu .ui-icon {
+    background-image: url("../../../lib/css/themes/jquery-ui/custom-dark/images/ui-icons_cccccc_256x240.png");
+}
+
+/* multiselect popup (active widget, user groups) */
+html.vis-edit-modern body > .ui-multiselect-menu .ui-multiselect-header {
+    margin-bottom: 4px;
+    padding: 4px 6px;
+    background: var(--vm-surface-2);
+    border: 0;
+    border-radius: 5px;
+    color: var(--vm-text);
+    font-weight: 500;
+}
+html.vis-edit-modern body > .ui-multiselect-menu .ui-multiselect-header a {
+    color: var(--vm-accent);
+}
+html.vis-edit-modern body > .ui-multiselect-menu .ui-multiselect-filter input {
+    padding: 2px 6px;
+    background: var(--vm-input-bg);
+    border: 1px solid var(--vm-border-strong);
+    border-radius: var(--vm-radius);
+    color: var(--vm-text);
+}
+html.vis-edit-modern body > .ui-multiselect-menu .ui-multiselect-checkboxes label {
+    padding: 4px 6px;
+    border: 0;
+    border-radius: 5px;
+    color: var(--vm-text);
+}
+html.vis-edit-modern body > .ui-multiselect-menu .ui-multiselect-checkboxes label.ui-state-hover {
+    margin: 0;
+    background: var(--vm-accent-soft);
+    border: 0;
+}
+
+/* ------------------------------------------------------------------ code editor (ace) in the dark skin */
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm {
+    background-color: #16181c;
+    color: #d6dae0;
+}
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_gutter {
+    background: #1d2024;
+    color: #6b7380;
+}
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_print-margin {
+    background: #2a2e34;
+    width: 1px;
+}
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_cursor {
+    color: #e3e6ea;
+}
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_marker-layer .ace_selection {
+    background: rgba(75, 169, 226, 0.30);
+}
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm.ace_multiselect .ace_selection.ace_start {
+    box-shadow: 0 0 3px 0 #16181c;
+}
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_marker-layer .ace_active-line {
+    background: rgba(255, 255, 255, 0.04);
+}
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_gutter-active-line {
+    background-color: rgba(255, 255, 255, 0.06);
+}
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_marker-layer .ace_selected-word {
+    background: rgba(75, 169, 226, 0.15);
+    border: 1px solid rgba(75, 169, 226, 0.45);
+}
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_marker-layer .ace_bracket {
+    border: 1px solid #5c6370;
+}
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_invisible {
+    color: #3c424a;
+}
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_fold {
+    background-color: #4ba9e2;
+    border-color: #d6dae0;
+}
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_comment {
+    color: #6f7a88;
+}
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_keyword,
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_storage,
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_meta.ace_selector {
+    color: #c792ea;
+}
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_string,
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_string.ace_regexp {
+    color: #a5d6a7;
+}
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_constant,
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_constant.ace_numeric,
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_constant.ace_language,
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_constant.ace_buildin {
+    color: #f7a26b;
+}
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_support.ace_function,
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_entity.ace_name.ace_function {
+    color: #82aaff;
+}
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_support.ace_type,
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_support.ace_class,
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_support.ace_constant,
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_entity.ace_other.ace_attribute-name {
+    color: #ffcb6b;
+}
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_variable,
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_identifier {
+    color: #d6dae0;
+}
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_meta.ace_tag,
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_entity.ace_name.ace_tag {
+    color: #f07178;
+}
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_paren,
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_punctuation {
+    color: #89ddff;
+}
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_invalid {
+    background-color: rgba(240, 113, 120, 0.25);
+    color: #ffffff;
+}
+html.vis-edit-modern.vis-edit-modern-dark .ace-tm .ace_gutter-cell.ace_error {
+    background-color: rgba(240, 113, 120, 0.2);
+}
