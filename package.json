@@ -33,15 +33,16 @@
     "@alcalzone/release-script": "^5.2.1",
     "@alcalzone/release-script-plugin-iobroker": "^5.2.0",
     "@alcalzone/release-script-plugin-license": "^5.2.2",
-    "@iobroker/legacy-testing": "^4.0.0",
-    "@iobroker/vis-2-widgets-testing": "^2.0.0",
-    "chai": "^4.5.0",
+    "@iobroker/legacy-testing": "^4.0.1",
+    "@iobroker/vis-2-widgets-testing": "^2.0.1",
     "colorette": "^2.0.20",
-    "gulp": "^4.0.2",
-    "gulp-replace": "^1.1.4",
     "iobroker.web": "*",
-    "mocha": "^11.8.0",
-    "puppeteer": "^25.12.0"
+    "puppeteer": "^25.18.1",
+    "@types/node": "^18.19.130",
+    "@iobroker/eslint-config": "^2.3.4",
+    "@iobroker/build-tools": "^3.0.3",
+      "tsx": "^4.23.15",
+    "typescript": "~6.0.3"
   },
   "bugs": {
     "url": "https://github.com/iobroker/iobroker.vis/issues"
@@ -64,12 +65,13 @@
     "lint": "echo \"No linting configured\"",
     "install": "node main.js --install",
     "install-only": "npm install --ignore-scripts",
-    "prepublishOnly": "node node_modules/gulp/bin/gulp.js",
-    "build": "node node_modules/gulp/bin/gulp.js",
+    "prepublishOnly": "npm run build",
+    "build": "tsx tasks.ts",
     "release": "release-script",
     "release-patch": "release-script patch --yes",
     "release-minor": "release-script minor --yes",
-    "update-packages": "npx npm-check-updates --upgrade"
+    "update-packages": "npx npm-check-updates --upgrade",
+    "npm": "npm i --ignore-scripts"
   },
   "license": "MIT"
 }
