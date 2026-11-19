@@ -26,7 +26,7 @@ function startAdapter(options) {
 
     Object.assign(options, {
         name: adapterName,
-        ready: () => main()
+        ready: () => main(),
     });
 
     adapter = new utils.Adapter(options);
@@ -48,14 +48,20 @@ async function writeFile(fileName) {
     }
 
     // enable cache
-    index = index.replace('<!--html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html"--><html>',
-        '<html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html">');
+    index = index.replace(
+        '<!--html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html"--><html>',
+        '<html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html">',
+    );
 
-    const begin = '<!-- ---------------------------------------  DO NOT EDIT INSIDE THIS LINE - BEGIN ------------------------------------------- -->';
-    const end   = '<!-- ---------------------------------------  DO NOT EDIT INSIDE THIS LINE - END   ------------------------------------------- -->';
+    const begin =
+        '<!-- ---------------------------------------  DO NOT EDIT INSIDE THIS LINE - BEGIN ------------------------------------------- -->';
+    const end =
+        '<!-- ---------------------------------------  DO NOT EDIT INSIDE THIS LINE - END   ------------------------------------------- -->';
     let bigInsert = '';
     for (const w in config.widgetSets) {
-        if (!config.widgetSets.hasOwnProperty(w)) continue;
+        if (!Object.prototype.hasOwnProperty.call(config.widgetSets, w)) {
+            continue;
+        }
         let file;
         let name;
 
@@ -66,7 +72,6 @@ async function writeFile(fileName) {
         }
         file = fs.readFileSync(`${__dirname}/www/widgets/${name}`);
         // extract all css and js
-
 
         bigInsert += `<!-- --------------${name}--- START -->\n${file.toString()}\n<!-- --------------${name}--- END -->\n`;
     }
@@ -93,7 +98,7 @@ async function writeFile(fileName) {
             let data;
             try {
                 data = await adapter.readFileAsync(adapterName, fileName);
-            } catch (err) {
+            } catch {
                 // ignore
             }
             if (typeof data === 'object') {
@@ -122,8 +127,7 @@ function upload() {
             !(count % 100) && adapter.log.info(`${count} files uploaded...`);
         });
 
-        child.stderr.on('data', data =>
-            adapter.log.error(data.toString().replace('\n', '')));
+        child.stderr.on('data', data => adapter.log.error(data.toString().replace('\n', '')));
 
         child.on('exit', exitCode => {
             adapter.log.info(`Uploaded. ${exitCode ? `Exit - ${exitCode}` : 0}`);
@@ -160,13 +164,15 @@ async function generatePages() {
     let data;
     try {
         data = await adapter.readFileAsync(adapterName, 'js/config.js');
-    } catch (_e) {
-        //
+    } catch {
+        // ignore
     }
     if (typeof data === 'object') {
         data = data.file;
     }
-    const config = fs.existsSync(`${__dirname}/www/js/config.js`) ? fs.readFileSync(`${__dirname}/www/js/config.js`).toString('utf8') : '';
+    const config = fs.existsSync(`${__dirname}/www/js/config.js`)
+        ? fs.readFileSync(`${__dirname}/www/js/config.js`).toString('utf8')
+        : '';
     data = data ? data.toString('utf8') : '';
     if (!data || data !== config) {
         changed = true;
@@ -177,28 +183,27 @@ async function generatePages() {
     // create command variable
     const obj = await adapter.getObjectAsync('control.command');
     if (!obj) {
-        await adapter.setObjectAsync('control.command',
-        {
-                type: 'state',
-                common: {
-                    name: 'Command for vis',
-                    type: 'string',
-                    desc: 'Writing this variable akt as the trigger. Instance and data must be preset before \'command\' will be written. \'changedView\' will be signalled too',
-                    role: 'state',
-                    states: {
-                        alert: 'alert',
-                        changeView: 'changeView',
-                        refresh: 'refresh',
-                        reload: 'reload',
-                        dialog: 'dialog',
-                        popup: 'popup',
-                        playSound: 'playSound',
-                        changedView: 'changedView',
-                        tts: 'tts'
-                    }
+        await adapter.setObjectAsync('control.command', {
+            type: 'state',
+            common: {
+                name: 'Command for vis',
+                type: 'string',
+                desc: "Writing this variable akt as the trigger. Instance and data must be preset before 'command' will be written. 'changedView' will be signalled too",
+                role: 'state',
+                states: {
+                    alert: 'alert',
+                    changeView: 'changeView',
+                    refresh: 'refresh',
+                    reload: 'reload',
+                    dialog: 'dialog',
+                    popup: 'popup',
+                    playSound: 'playSound',
+                    changedView: 'changedView',
+                    tts: 'tts',
                 },
-                native: {}
-            });
+            },
+            native: {},
+        });
     }
 
     // Create common user CSS file
@@ -238,8 +243,7 @@ async function main() {
 }
 
 // If started as allInOne mode => return function to create instance
-// @ts-ignore
-if (module.parent) {
+if (require.main !== module) {
     module.exports = startAdapter;
 } else {
     // or start the instance directly

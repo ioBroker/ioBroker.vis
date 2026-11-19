@@ -1,0 +1,19 @@
+// Only for ESLint (type-aware rules) and the editor support: nothing is compiled.
+// The browser part (www/) is not linted.
+{
+    "compilerOptions": {
+        "noEmit": true,
+        "allowJs": true,
+        "checkJs": false,
+        "target": "es2023",
+        "lib": ["es2023"],
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
+        "types": ["node"],
+        "resolveJsonModule": true,
+        "skipLibCheck": true,
+        "strict": false
+    },
+    "include": ["main.js", "lib/**/*.js", "tasks.ts"],
+    "exclude": ["node_modules"]
+}

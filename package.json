@@ -41,7 +41,7 @@
     "@types/node": "^18.19.130",
     "@iobroker/eslint-config": "^2.3.4",
     "@iobroker/build-tools": "^3.0.3",
-      "tsx": "^4.23.15",
+    "tsx": "^4.23.15",
     "typescript": "~6.0.3"
   },
   "bugs": {
@@ -62,7 +62,7 @@
     "test:package": "mocha test/testPackageFiles.js --exit",
     "test:integration": "mocha --exit",
     "test": "mocha --exit",
-    "lint": "echo \"No linting configured\"",
+    "lint": "eslint -c eslint.config.mjs .",
     "prepublishOnly": "npm run build",
     "build": "tsx tasks.ts",
     "release": "release-script",
