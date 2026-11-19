@@ -33,6 +33,26 @@
     <link rel="stylesheet" type="text/css" href="css/styles.css" />
     <link rel="stylesheet" type="text/css" href="css/vis-editor.css" />
     <link rel="stylesheet" type="text/css" href="../../lib/css/iob/selectID.css" />
+    <!-- modern skin for the "Light" and "Dark" editor themes (editor only, not used by the runtime) -->
+    <link rel="stylesheet" type="text/css" href="css/vis-editor-modern.css" />
+    <script type="text/javascript">
+        // Apply the modern editor skin already for the loading screen (visEdit.js > editApplyModernTheme does it later again)
+        (function () {
+            var theme = 'custom-light';
+            try {
+                var config = JSON.parse(window.localStorage.getItem('visConfig') || '{}');
+                if (typeof config === 'string') {
+                    config = JSON.parse(config); // vis <= 1.5.5 stored it double encoded
+                }
+                theme = (config && config.editorTheme) || theme;
+            } catch (e) {
+                // ignore and use the default theme
+            }
+            if (theme === 'custom-light' || theme === 'custom-dark') {
+                document.documentElement.className += ' vis-edit-modern' + (theme === 'custom-dark' ? ' vis-edit-modern-dark' : '');
+            }
+        })();
+    </script>
 
     <script type="text/javascript" src="../../lib/js/jquery-1.11.2.min.js"></script>
     <script type="text/javascript" src="../../lib/js/jquery-ui-1.11.4.full.min.js"></script>

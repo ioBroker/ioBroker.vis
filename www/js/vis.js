@@ -616,7 +616,19 @@ var vis = {
             this.instance = app.settings.instance;
         }
 
-        this.instance = this.instance || window.localStorage.getItem(this.storageKeyInstance);
+        if (!this.instance) {
+            var storedInstance = window.localStorage.getItem(this.storageKeyInstance);
+            // vis <= 1.5.5 stored the instance JSON encoded ("\"934f12ab\""), now it is stored as plain string
+            if (storedInstance && storedInstance[0] === '"') {
+                try {
+                    storedInstance = JSON.parse(storedInstance);
+                    window.localStorage.setItem(this.storageKeyInstance, storedInstance);
+                } catch (e) {
+                    // keep it as it is
+                }
+            }
+            this.instance = storedInstance;
+        }
         if (typeof this.instance !== 'string') {
             this.instance = '';
         }
