@@ -210,6 +210,7 @@ Notice that these settings are valid only for reconnection and not for the first
 * (bluefox) Modern loading screen in the editor for the themes "Light" and "Dark"
 * (bluefox) Fixed the error "Unexpected non-whitespace character after JSON" if the browser instance ID was stored as plain text
 * (bluefox) Fixed changing of the browser instance ID in the editor
+* (bluefox) The pages with the installed widget sets are generated only at the start of the instance and not by "npm install" anymore
 
 ### 1.5.7 (2026-10-04)
 * (bluefox) Global `let`/`const` variables of widget sets are visible again if the widget sets are loaded dynamically (e.g. via cloud).
