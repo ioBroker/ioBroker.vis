@@ -2,26 +2,27 @@
  *
  *      iobroker vis Adapter (version 1). ioBroker.vis-2 is another adapter and has another license.
  *
- *      Copyright (c) 2014-2023, bluefox
+ *      Copyright (c) 2014-2026, bluefox
  *      Copyright (c) 2014, hobbyquaker
  *
  *      MIT License
  *
  */
-/* jshint -W097 */
-/* jshint strict: false */
-/* jslint node: true */
-'use strict';
+import * as utils from '@iobroker/adapter-core';
+import { spawn } from 'node:child_process';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { syncWidgetSets, type VisConfig } from './lib/install';
 
-const adapterName = require('./package.json').name.split('.').pop();
+// this file is compiled to build/main.js, the adapter files (www, package.json) are one level higher
+const adapterDir = join(__dirname, '..');
+const adapterName: string = JSON.parse(readFileSync(`${adapterDir}/package.json`, 'utf8'))
+    .name.split('.')
+    .pop();
 
-const utils = require('@iobroker/adapter-core'); // Get common adapter utils
-const fs = require('fs');
-const path = require('path');
-const syncWidgetSets = require('./lib/install.js');
-let adapter;
+let adapter: ioBroker.Adapter;
 
-function startAdapter(options) {
+function startAdapter(options?: Partial<utils.AdapterOptions>): ioBroker.Adapter {
     options = options || {};
 
     Object.assign(options, {
@@ -29,22 +30,32 @@ function startAdapter(options) {
         ready: () => main(),
     });
 
-    adapter = new utils.Adapter(options);
+    adapter = new utils.Adapter(options as utils.AdapterOptions);
 
     return adapter;
 }
 
-async function writeFile(fileName) {
-    const config = require(`${__dirname}/www/js/config.js`).config;
-    let index;
+/** Reads a file of the adapter from the ioBroker DB, returns undefined if it does not exist */
+async function readAdapterFile(fileName: string): Promise<string | Buffer | undefined> {
+    try {
+        const data = await adapter.readFileAsync(adapterName, fileName);
+        return data?.file;
+    } catch {
+        return undefined;
+    }
+}
+
+async function writeFile(fileName: string): Promise<boolean> {
+    const config: VisConfig = require(`${adapterDir}/www/js/config.js`).config;
+    let index: string;
     const srcFileNameParts = fileName.split('.');
     const ext = srcFileNameParts.pop();
     const srcFileName = `${srcFileNameParts.join('.')}.src.${ext}`;
-    if (fs.existsSync(`${__dirname}/www/${srcFileName}`)) {
-        index = fs.readFileSync(`${__dirname}/www/${srcFileName}`).toString();
+    if (existsSync(`${adapterDir}/www/${srcFileName}`)) {
+        index = readFileSync(`${adapterDir}/www/${srcFileName}`).toString();
     } else {
-        index = fs.readFileSync(`${__dirname}/www/${fileName}`).toString();
-        fs.writeFileSync(`${__dirname}/www/${srcFileName}`, index);
+        index = readFileSync(`${adapterDir}/www/${fileName}`).toString();
+        writeFileSync(`${adapterDir}/www/${srcFileName}`, index);
     }
 
     // enable cache
@@ -58,21 +69,9 @@ async function writeFile(fileName) {
     const end =
         '<!-- ---------------------------------------  DO NOT EDIT INSIDE THIS LINE - END   ------------------------------------------- -->';
     let bigInsert = '';
-    for (const w in config.widgetSets) {
-        if (!Object.prototype.hasOwnProperty.call(config.widgetSets, w)) {
-            continue;
-        }
-        let file;
-        let name;
-
-        if (typeof config.widgetSets[w] === 'object') {
-            name = `${config.widgetSets[w].name}.html`;
-        } else {
-            name = `${config.widgetSets[w]}.html`;
-        }
-        file = fs.readFileSync(`${__dirname}/www/widgets/${name}`);
-        // extract all css and js
-
+    for (const widgetSet of config.widgetSets) {
+        const name = `${typeof widgetSet === 'object' ? widgetSet.name : widgetSet}.html`;
+        const file = readFileSync(`${adapterDir}/www/widgets/${name}`);
         bigInsert += `<!-- --------------${name}--- START -->\n${file.toString()}\n<!-- --------------${name}--- END -->\n`;
     }
     let pos = index.indexOf(begin);
@@ -83,29 +82,9 @@ async function writeFile(fileName) {
             const _end = index.substring(pos);
             index = `${start}\n${bigInsert}\n${_end}`;
 
-            /*index = minify(index, {
-                removeAttributeQuotes: true,
-                removeComments: true,
-                collapseInlineTagWhitespace: true,
-                collapseWhitespace: true,
-                decodeEntities: true,
-                minifyCSS: true,
-                minifyJS: true,
-                removeRedundantAttributes: true,
-                removeScriptTypeAttributes: true,
-                removeStyleLinkTypeAttributes: true
-            });*/
-            let data;
-            try {
-                data = await adapter.readFileAsync(adapterName, fileName);
-            } catch {
-                // ignore
-            }
-            if (typeof data === 'object') {
-                data = data.file;
-            }
+            const data = await readAdapterFile(fileName);
             if (data && data !== index) {
-                fs.writeFileSync(`${__dirname}/www/${fileName}`, index);
+                writeFileSync(`${adapterDir}/www/${fileName}`, index);
                 await adapter.writeFileAsync(adapterName, fileName, index);
                 return true;
             }
@@ -114,20 +93,22 @@ async function writeFile(fileName) {
     return false;
 }
 
-function upload() {
+function upload(): Promise<number | null> {
     return new Promise(resolve => {
         adapter.log.info(`Upload ${adapter.name} anew, while changes detected...`);
 
-        const file = path.join(utils.controllerDir, 'iobroker.js');
-        const child = require('child_process').spawn('node', [file, 'upload', adapter.name, 'widgets']);
+        const file = join(utils.controllerDir, 'iobroker.js');
+        const child = spawn('node', [file, 'upload', adapter.name, 'widgets']);
         let count = 0;
-        child.stdout.on('data', data => {
+        child.stdout.on('data', (data: Buffer) => {
             count++;
             adapter.log.debug(data.toString().replace('\n', ''));
-            !(count % 100) && adapter.log.info(`${count} files uploaded...`);
+            if (!(count % 100)) {
+                adapter.log.info(`${count} files uploaded...`);
+            }
         });
 
-        child.stderr.on('data', data => adapter.log.error(data.toString().replace('\n', '')));
+        child.stderr.on('data', (data: Buffer) => adapter.log.error(data.toString().replace('\n', '')));
 
         child.on('exit', exitCode => {
             adapter.log.info(`Uploaded. ${exitCode ? `Exit - ${exitCode}` : 0}`);
@@ -136,20 +117,19 @@ function upload() {
     });
 }
 
-async function updateCacheManifest() {
+async function updateCacheManifest(): Promise<void> {
     adapter.log.info('Changes in index.html detected => update cache.manifest');
-    let data = fs.readFileSync(`${__dirname}/www/cache.manifest`).toString();
+    let data = readFileSync(`${adapterDir}/www/cache.manifest`).toString();
     const build = data.match(/# dev build ([0-9]+)/);
-    data = data.replace(/# dev build [0-9]+/, `# dev build ${parseInt(build[1] || 0, 10) + 1}`);
-    fs.writeFileSync(`${__dirname}/www/cache.manifest`, data);
+    data = data.replace(/# dev build [0-9]+/, `# dev build ${(build ? parseInt(build[1], 10) : 0) + 1}`);
+    writeFileSync(`${adapterDir}/www/cache.manifest`, data);
 
     await adapter.writeFileAsync(adapterName, 'cache.manifest', data);
 }
 
-// Update index.html
-async function checkFiles(configChanged) {
+// Update index.html and edit.html
+async function checkFiles(configChanged: boolean): Promise<void> {
     const indexChanged = await writeFile('index.html');
-    // Update edit.html
     const editChanged = await writeFile('edit.html');
     if (indexChanged || editChanged || configChanged) {
         await updateCacheManifest();
@@ -157,23 +137,15 @@ async function checkFiles(configChanged) {
     }
 }
 
-async function generatePages() {
+async function generatePages(): Promise<boolean> {
     let changed = !!syncWidgetSets(false);
 
     // upload config.js
-    let data;
-    try {
-        data = await adapter.readFileAsync(adapterName, 'js/config.js');
-    } catch {
-        // ignore
-    }
-    if (typeof data === 'object') {
-        data = data.file;
-    }
-    const config = fs.existsSync(`${__dirname}/www/js/config.js`)
-        ? fs.readFileSync(`${__dirname}/www/js/config.js`).toString('utf8')
+    const stored = await readAdapterFile('js/config.js');
+    const data = Buffer.isBuffer(stored) ? stored.toString('utf8') : stored || '';
+    const config = existsSync(`${adapterDir}/www/js/config.js`)
+        ? readFileSync(`${adapterDir}/www/js/config.js`).toString('utf8')
         : '';
-    data = data ? data.toString('utf8') : '';
     if (!data || data !== config) {
         changed = true;
         adapter.log.info('config.js changed. Upload.');
@@ -190,6 +162,8 @@ async function generatePages() {
                 type: 'string',
                 desc: "Writing this variable akt as the trigger. Instance and data must be preset before 'command' will be written. 'changedView' will be signalled too",
                 role: 'state',
+                read: true,
+                write: true,
                 states: {
                     alert: 'alert',
                     changeView: 'changeView',
@@ -207,16 +181,7 @@ async function generatePages() {
     }
 
     // Create common user CSS file
-    let cssData;
-    try {
-        cssData = await adapter.readFileAsync(adapterName, 'css/vis-common-user.css');
-        if (typeof cssData === 'object') {
-            cssData = cssData.file;
-        }
-    } catch {
-        cssData = null;
-    }
-
+    const cssData = await readAdapterFile('css/vis-common-user.css');
     if (cssData === null || cssData === undefined) {
         await adapter.writeFileAsync(adapterName, 'css/vis-common-user.css', '');
     }
@@ -224,7 +189,7 @@ async function generatePages() {
     return changed;
 }
 
-async function main() {
+async function main(): Promise<void> {
     const visObj = await adapter.getForeignObjectAsync(adapterName);
     if (!visObj || visObj.type !== 'meta') {
         await adapter.setForeignObjectAsync(adapterName, {
@@ -239,7 +204,7 @@ async function main() {
 
     const filesChanged = await generatePages();
     await checkFiles(filesChanged);
-    adapter.stop();
+    void adapter.stop?.();
 }
 
 // If started as allInOne mode => return function to create instance

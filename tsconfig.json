@@ -1,19 +1,21 @@
-// Only for ESLint (type-aware rules) and the editor support: nothing is compiled.
-// The browser part (www/) is not linted.
+// Type checking ("npm run check"), ESLint and editor support. The build uses tsconfig.build.json.
+// The browser part (www/) is not checked.
 {
     "compilerOptions": {
         "noEmit": true,
-        "allowJs": true,
-        "checkJs": false,
-        "target": "es2023",
+        "target": "es2022",
         "lib": ["es2023"],
         "module": "nodenext",
         "moduleResolution": "nodenext",
-        "types": ["node"],
+        "types": ["node", "@iobroker/types"],
         "resolveJsonModule": true,
         "skipLibCheck": true,
-        "strict": false
+        "strict": true,
+        "useUnknownInCatchVariables": false,
+        // only for the two small files in lib/ that forward to build/
+        "allowJs": true,
+        "checkJs": false
     },
-    "include": ["main.js", "lib/**/*.js", "tasks.ts"],
-    "exclude": ["node_modules"]
+    "include": ["src/**/*.ts", "tasks.ts", "lib/*.js"],
+    "exclude": ["node_modules", "build"]
 }

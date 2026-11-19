@@ -35,11 +35,11 @@
     "@alcalzone/release-script-plugin-license": "^5.2.2",
     "@iobroker/legacy-testing": "^4.0.1",
     "@iobroker/vis-2-widgets-testing": "^2.0.1",
-    "colorette": "^2.0.20",
     "iobroker.web": "*",
     "puppeteer": "^25.18.1",
-    "@types/node": "^18.19.130",
+    "@types/node": "^22.20.5",
     "@iobroker/eslint-config": "^2.3.4",
+    "@iobroker/types": "^7.2.4",
     "@iobroker/build-tools": "^3.0.3",
     "tsx": "^4.23.15",
     "typescript": "~6.0.3"
@@ -47,16 +47,16 @@
   "bugs": {
     "url": "https://github.com/iobroker/iobroker.vis/issues"
   },
-  "main": "main.js",
+  "main": "build/main.js",
   "files": [
     "admin/",
     "!admin/i18n/",
     "img/",
     "lib/",
     "www/",
+    "build/",
     "io-package.json",
-    "LICENSE",
-    "main.js"
+    "LICENSE"
   ],
   "scripts": {
     "test:package": "mocha test/testPackageFiles.js --exit",
@@ -64,7 +64,8 @@
     "test": "mocha --exit",
     "lint": "eslint -c eslint.config.mjs .",
     "prepublishOnly": "npm run build",
-    "build": "tsx tasks.ts",
+    "build": "tsc -p tsconfig.build.json && tsx tasks.ts",
+    "check": "tsc --noEmit -p tsconfig.json",
     "release": "release-script",
     "release-patch": "release-script patch --yes",
     "release-minor": "release-script minor --yes",

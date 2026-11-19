@@ -1,0 +1,14 @@
+// Compiles the backend: src/ => build/ (package.json > main: build/main.js)
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "noEmit": false,
+        "allowJs": false,
+        "rootDir": "./src",
+        "outDir": "./build",
+        "sourceMap": true,
+        "inlineSources": true,
+        "declaration": false
+    },
+    "include": ["src/**/*.ts"]
+}
