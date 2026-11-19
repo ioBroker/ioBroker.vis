@@ -128,7 +128,7 @@ export function syncWidgetSets(onlyLocal?: boolean): string | false {
                         } catch (e) {
                             console.warn(`Cannot parse "${outerDir}${dirs[d]}/io-package.json": ${e}`);
                         }
-                        sets.push({ path: `${outerDir}${dirs[d]}`, name: dirs[d].toLowerCase() });
+                        sets.push({ path: `${outerDir}${dirs[d]}`, name: dirs[d].toLowerCase(), pack });
                     }
                 }
             }
