@@ -1,6 +1,7 @@
 // Type checking ("npm run check"), ESLint and editor support. The build uses tsconfig.build.json.
 // The browser part (www/) is not checked.
 {
+    "extends": "@tsconfig/node22/tsconfig.json",
     "compilerOptions": {
         "noEmit": true,
         "target": "es2022",
