@@ -44,7 +44,7 @@
     "iobroker.web": "*",
     "puppeteer": "^25.18.1",
     "tsx": "^4.23.15",
-    "typescript": "~6.0.3"
+    "typescript": "~7.0.2"
   },
   "bugs": {
     "url": "https://github.com/iobroker/iobroker.vis/issues"
