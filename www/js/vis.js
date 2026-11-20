@@ -656,8 +656,18 @@ var vis = {
         var that = this;
         //this.loadRemote(this.loadWidgetSets, this.initNext);
         this.loadWidgetSets(function () {
-            that.initNext(onReady);
+            that.loadWebComponents(function () {
+                that.initNext(onReady);
+            });
         });
+    },
+    // The web components of the adapters become the widgets of the set "webcomponents", see js/visWebComponents.js
+    loadWebComponents:  function (callback) {
+        if (this.webComponents) {
+            this.webComponents.load(callback);
+        } else {
+            callback();
+        }
     },
     initNext:           function (onReady) {
         this.showWaitScreen(false);
@@ -3078,14 +3088,20 @@ var vis = {
                     }
                 }
                 if (!isUsed) {
-                    oids.push(id);
                     this.subscribing.active.splice(pos, 1);
+                    // a web component may still need it: then it unsubscribes it when it is done
+                    if (!this.webComponents || !this.webComponents.adoptState(id)) {
+                        oids.push(id);
+                    }
                 }
             }
         }
         oids.length && this.conn.unsubscribe(oids);
     },
     updateState:        function (id, state) {
+        // the web components have subscriptions of their own
+        this.webComponents && this.webComponents.onStateChange(id, state);
+
         if (!id.startsWith('local_')) {
             // not needed for local variables
             if (this.editMode) {
@@ -4001,6 +4017,8 @@ function main($, onReady) {
             return true;
         },
         onObjectChange: function(id, obj) {
+            vis.webComponents && vis.webComponents.onObjectChange(id, obj);
+
             if (!vis.objects || !vis.editMode) return;
             if (obj) {
                 vis.objects[id] = obj;

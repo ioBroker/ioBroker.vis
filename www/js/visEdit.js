@@ -2364,6 +2364,10 @@ vis = $.extend(true, vis, {
 
         var set = $tpl.data('vis-set');
         classTypes += set + ' ' + $tpl.data('vis-name');
+        // optional, more words to find the widget, separated by spaces
+        if ($tpl.attr('data-vis-keywords')) {
+            classTypes += ' ' + $tpl.attr('data-vis-keywords');
+        }
         classTypes = classTypes.toLowerCase().replace('ctrl', 'control').replace('val', 'value');
 
         return '<div id="prev_container_' + tpl + '" class="wid-prev ' + set + '_prev widget-filters" data-keywords="' + classTypes + '" data-tpl="' + tpl + '" title="' + types.join(', ') + '">' + type + '<div class="wid-prev-name" >' + $tpl.data('vis-name') + '</div>'  + beta + '<div class="vis-preview-informers-container">' + behaviorIcons.join('') + '</div></div>';

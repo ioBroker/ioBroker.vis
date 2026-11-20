@@ -316,7 +316,12 @@ vis = $.extend(true, vis, {
         if (init) {
             line.init = init;
         }
-        if (values.length && values[0] !== undefined) {
+        if (values.length && values[0] !== null && typeof values[0] === 'object') {
+            // [{value, label}]: the labels are given and not translated
+            for (var o = 0; o < values.length; o++) {
+                line.input += '<option value="' + this.escapeHtml(values[o].value) + '">' + this.escapeHtml(values[o].label === undefined ? values[o].value : values[o].label) + '</option>';
+            }
+        } else if (values.length && values[0] !== undefined) {
             for (var t = 0; t < values.length; t++) {
                 line.input += '<option value="' + values[t] + '">' + (notTranslate ? values[t] : _(values[t])) + '</option>';
             }
@@ -327,6 +332,40 @@ vis = $.extend(true, vis, {
         }
         line.input += '</select>';
         return line;
+    },
+    escapeHtml:         function (text) {
+        return String(text === undefined || text === null ? '' : text)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    },
+    // "hidden" and "disabled" of an attribute (data-vis-attrs-meta): a JS expression over "data", the attributes of
+    // the (first) widget, as in JSON-Config. Numbers and booleans are given as such, if the meta data says so.
+    isAttrConditionTrue: function (widgets, expression) {
+        var view   = this.getViewOfWidget(widgets[0]);
+        var widget = view && this.views[view] && this.views[view].widgets[widgets[0]];
+        if (!widget || !widget.data) return false;
+
+        var data = $.extend({}, widget.data);
+        var meta = $('#' + widget.tpl).data('vis-attrs-meta');
+        if (meta && typeof meta === 'object') {
+            for (var attr in meta) {
+                if (!meta.hasOwnProperty(attr) || !meta[attr] || data[attr] === undefined || data[attr] === null || data[attr] === '') continue;
+                if (meta[attr].valueType === 'number') {
+                    var num = parseFloat(String(data[attr]).replace(',', '.'));
+                    if (!isNaN(num)) data[attr] = num;
+                } else if (meta[attr].valueType === 'boolean') {
+                    data[attr] = data[attr] === true || data[attr] === 'true';
+                }
+            }
+        }
+        try {
+            return !!(new Function('data', 'return (' + expression + ');'))(data);
+        } catch (e) {
+            console.warn('Cannot evaluate "' + expression + '" for ' + widgets[0] + ': ' + e);
+            return false;
+        }
     },
     editStyle:          function (widAttr, options) {
         var that = this;
@@ -1346,6 +1385,11 @@ vis = $.extend(true, vis, {
             }
         }
 
+        // hidden by its condition (from data-vis-attrs-meta): the value and its default stay
+        if (widAttr.hidden && widgets.length && this.isAttrConditionTrue(widgets, widAttr.hidden)) {
+            return;
+        }
+
         // Depends on attribute type
         switch (widAttr.type) {
             case 'id':
@@ -1444,28 +1488,23 @@ vis = $.extend(true, vis, {
 
         if (typeof line === 'string') line = {input: line};
 
-        if (line[0]) {
-            line[0].attrName       = widAttr.clearName;
-            line[0].attrIndex      = widAttr.index;
-            line[0].type           = widAttr.type;
-            line[0].onChangeWidget = widAttr.onChangeWidget;
-            if (widAttr.title) {
-                line[0].attrTitle = widAttr.title;
-            }
-            if (widAttr.depends && widAttr.depends.length) {
-                line[0].depends = widAttr.depends;
-            }
-        } else {
-            line.attrName       = widAttr.clearName;
-            line.attrIndex      = widAttr.index;
-            line.type           = widAttr.type;
-            line.onChangeWidget = widAttr.onChangeWidget;
-            if (widAttr.title) {
-                line.attrTitle = widAttr.title;
-            }
-            if (widAttr.depends && widAttr.depends.length) {
-                line.depends = widAttr.depends;
-            }
+        var _line = line[0] || line;
+        _line.attrName       = widAttr.clearName;
+        _line.attrIndex      = widAttr.index;
+        _line.type           = widAttr.type;
+        _line.onChangeWidget = widAttr.onChangeWidget;
+        if (widAttr.title) {
+            _line.attrTitle = widAttr.title;
+        }
+        // label as HTML, instead of the translated name of the attribute (from data-vis-attrs-meta)
+        if (widAttr.label) {
+            _line.attrLabel = widAttr.label;
+        }
+        if (widAttr.disabled && widgets.length && this.isAttrConditionTrue(widgets, widAttr.disabled)) {
+            _line.attrDisabled = true;
+        }
+        if (widAttr.depends && widAttr.depends.length) {
+            _line.depends = widAttr.depends;
         }
 
         // <tr><td>title:</td><td><input /></td><td>button</td></tr>
@@ -1557,7 +1596,7 @@ vis = $.extend(true, vis, {
                         icon = '<div class="ui-icon ui-icon-notice" style="float: right"/>';
                     }
 
-                    var text = '<tr class="vis-edit-td-caption group-' + group + '" id="td_' + widAttr + '"><td ' + (title ? 'title="' + title + '"' : '') + '>' + (icon ? '<i>' : '') + _(line.attrName) + (line.attrIndex !== '' ? ('[' + line.attrIndex + ']') : '') + ':' + (icon ? '</i>' : '') + '</td><td class="vis-edit-td-field"';
+                    var text = '<tr class="vis-edit-td-caption group-' + group + '" id="td_' + widAttr + '"><td ' + (title ? 'title="' + title + '"' : '') + '>' + (icon ? '<i>' : '') + (line.attrLabel || _(line.attrName)) + (line.attrIndex !== '' ? ('[' + line.attrIndex + ']') : '') + ':' + (icon ? '</i>' : '') + '</td><td class="vis-edit-td-field"';
 
                     if (!line.button && !line.css) {
                         text += ' colspan="3"';
@@ -1619,6 +1658,11 @@ vis = $.extend(true, vis, {
 
                     // Set the value
                     this.setAttrValue(view, this.activeWidgets, widAttr, line.css, values);
+
+                    if (line.attrDisabled) {
+                        $input.prop('disabled', true);
+                        $widgetAttrs.find('#inspect_' + widAttr + '_btn').prop('disabled', true);
+                    }
 
                     var wdata = {
                         attr:           widAttr,
@@ -2113,6 +2157,13 @@ vis = $.extend(true, vis, {
             var group     = 'common';
             var groupMode = 'normal';
             var attrs = {};
+            // What the syntax of data-vis-attrs cannot carry, as JSON by attribute name:
+            // {label (HTML), title (HTML), default, options ([{value, label}] for select), hidden and disabled (JS over "data"), depends, valueType}
+            // Used for the web components, see visWebComponents.js
+            var attrsMeta = $widgetTpl.data('vis-attrs-meta');
+            if (!attrsMeta || typeof attrsMeta !== 'object') {
+                attrsMeta = null;
+            }
             for (var j = 0; j < widgetAttrs.length; j++) {
                 if (widgetAttrs[j].match(/^group\./)) {
                     group = widgetAttrs[j].substring('group.'.length);
@@ -2131,6 +2182,14 @@ vis = $.extend(true, vis, {
                 if (!widgetAttrs[j]) continue;
 
                 var a = this.extractAttributes(widgetAttrs[j], widgets[i]);
+                if (attrsMeta) {
+                    for (var m = 0; m < a.length; m++) {
+                        if (attrsMeta[a[m].clearName]) {
+                            // a copy: the editors change their options
+                            a[m] = $.extend(true, a[m], attrsMeta[a[m].clearName]);
+                        }
+                    }
+                }
                 if (groupMode === 'byindex') {
                     for (var k = 0; k < a.length; k++) {
                         attrs[group + '_§' + k] = attrs[group + '_§' + k] || {};

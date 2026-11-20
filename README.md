@@ -185,6 +185,17 @@ E.g., you can create two views "Landscape-Mobile" and "Portrait-Mobile" and thes
 
 There is a helper widget "basic - Screen Resolution" that shows actual screen resolution and best suitable default view for this resolution. 
 
+## Web components
+Adapters can bring [ioBroker web components](https://github.com/ioBroker/web-components): custom elements that vis, vis-2, admin and other hosts show alike. An adapter lists them in `common.webComponents` of its `io-package.json`.
+
+vis finds the web components of all installed adapters when the editor or the runtime starts (no restart of vis is required after the installation of such an adapter) and shows them as widgets of the widget set "webcomponents":
+- The settings of a component are the attributes of the widget, with their labels, defaults, options and the conditions "hidden" and "disabled".
+- The group "Web component" has the theme of the component: "auto" takes dark if the text color of the widget is light. Optionally, a primary color can be set.
+- The runtime loads the components only if a view shows one. A component that edits a value (`editsValue`) is not offered, as vis stores no values.
+- The event `iob-navigate` of a component opens the view of that name.
+
+A browser without ES modules and custom elements shows a hint instead of the component. The views and all other widgets work as before.
+
 ## Settings
 ### Reload if sleep longer than
 There is a rule that after some disconnection period, the whole VIS page will be reloaded to synchronize the project.
@@ -205,6 +216,9 @@ Notice that these settings are valid only for reconnection and not for the first
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Added support of ioBroker web components (`@iobroker/web-components`): the components of the installed adapters are shown as widgets of the set "webcomponents"
+
 ### 1.6.0 (2026-11-19)
 * (bluefox) Modern look of the editor for the themes "Light" and "Dark" (only the editor, the runtime and the views are not changed). "Dark-Hive" and "redmond" keep the classic look.
 * (bluefox) Modern loading screen in the editor for the themes "Light" and "Dark"
