@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis",
-    "version": "1.6.0",
+    "version": "1.6.1",
     "news": {
+      "1.6.1": {
+        "en": "Added support of ioBroker web components (`@iobroker/web-components`): the components of the installed adapters are shown as widgets of the set \"webcomponents\"",
+        "de": "Unterstützung von ioBroker-Webkomponenten hinzugefügt (`@iobroker /web-components`): Die Komponenten der installierten Adapter werden als Widgets angezeigt",
+        "ru": "Добавлена поддержка веб-компонентов IOBroker (`@iobroker /web-components`): компоненты установленных адаптеров отображаются в виде виджетов набора «webcomponents»",
+        "pt": "Adicionado suporte aos componentes web do IOBroker (`@iobroker /web-components`): os componentes dos adaptadores instalados são widgets do conjunto “webcomponents”",
+        "nl": "Ondersteuning toegevoegd voor IOBroker-webcomponenten (`@iobroker /web-components`): de componenten van de geïnstalleerde adapters worden weergegeven als widgets van de set „webcomponenten”",
+        "fr": "Ajout du support des composants Web IOBroker (`@iobroker /web-components`) : les composants des adaptateurs installés sont affichés sous forme de widgets du set « webcomponents »",
+        "it": "Aggiunto il supporto per i componenti web IOBroker (`@iobroker /web-components`): i componenti installati sono i widget del set «webcomponents»",
+        "es": "Soporte adicional de componentes web de IOBroker (`@iobroker /web-components`): los componentes de los adaptadores instalados se muestran como widgets del conjunto «webcomponents»",
+        "pl": "Dodano obsługę komponentów internetowych ioBroker (`@iobroker /web-components`): komponenty zainstalowanych adapterów są wyświetlane jako widżety zestawu „webcomponents”",
+        "uk": "Додана підтримка веб-компонентів IObroker (`@iobroker /web-components`): компоненти встановлених адаптерів відображаються як віджети набору «webcomponents»",
+        "zh-cn": "增加了对 ioBroker 网络组件（`@iobroker /web-components`）的支持：已安装适配器的组件显示为 “webcomponents” 集合的小部件"
+      },
       "1.6.0": {
         "en": "Modern look of the editor for the themes \"Light\" and \"Dark\" (only the editor, the runtime and the views are not changed). \"Dark-Hive\" and \"redmond\" keep the classic look.\nModern loading screen in the editor for the themes \"Light\" and \"Dark\"\nFixed the error \"Unexpected non-whitespace character after JSON\" if the browser instance ID was stored as plain text\nFixed changing of the browser instance ID in the editor\nThe pages with the installed widget sets are generated only at the start of the instance and not by \"npm install\" anymore\nBackend migrated to TypeScript\nFixed: the settings \"always\" and \"dependencies\" of widget sets found outside of the ioBroker \"node_modules\" directory were ignored",
         "de": "Modernes Editor-Look für die Themen „Light“ und „Dark“ (nur Editor, Laufzeit und Views unverändert). „Dark-Hive“ und „Redmond“ wirken klassisch.\nModernes Ladebild im Editor für die Themen „Hell“ und „Dunkel“\nFehler „Unerwartetes Leerzeichen nach JSON“ behoben, wenn die Instanz-ID im Klartext gespeichert wurde\nÄnderung der Browserinstanz-ID im Editor behoben\nDie Seiten mit den Widget-Sets werden erst zu Beginn der Instanz generiert und nicht mehr von „npm install“\nBackend zu TypeScript migriert\nBehoben: Die Einstellungen „immer“ und „Abhängigkeiten“ von Widget-Sets außerhalb von ioBroker wurden ignoriert",
@@ -80,19 +93,6 @@
         "pl": "Changed License: obecnie MIT, a kontrola licencji została usunięta",
         "uk": "Змінена ліцензія: тепер MIT, а також зняття ліцензії",
         "zh-cn": "修改的许可证:现在是投资条约,被取消许可证检查。"
-      },
-      "1.4.16": {
-        "en": "Corrected connection with \"only port\" URLs",
-        "de": "Korrigierte Verbindung mit \"nur Port\" URLs",
-        "ru": "Исправлена связь с URL-адресами \"только порт\"",
-        "pt": "Conexão correta com URLs \"apenas portas\"",
-        "nl": "Quality over Quantity (QoQ) Releases Vertaling:",
-        "fr": "Connexion corrigée avec des URLs \"uniquement port\"",
-        "it": "Collegamento corretto con URL \"solo porta\"",
-        "es": "Conexión corregida con URLs \"sólo puerto\"",
-        "pl": "Poprawne połączenie z „only port” URL",
-        "uk": "Виправлено підключення з URL-адресами \"тільки порт\"",
-        "zh-cn": "与“港口”URLs联系"
       }
     },
     "title": "Visualisation",

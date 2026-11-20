@@ -781,3 +781,8 @@ Short content:
 Licensees may copy, distribute, display and perform the work and make derivative works based on it only if they give the author or licensor the credits in the manner specified by these.
 Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
 (Free for non-commercial use).
+## 1.5.1 (2023-11-06)
+* (bluefox) Changed License: it is now MIT, and the license check was removed
+
+## 1.4.16 (2023-01-27)
+* (bluefox) Corrected connection with "only port" URLs

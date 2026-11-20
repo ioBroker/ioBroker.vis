@@ -216,7 +216,7 @@ Notice that these settings are valid only for reconnection and not for the first
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 1.6.1 (2026-11-20)
 * (bluefox) Added support of ioBroker web components (`@iobroker/web-components`): the components of the installed adapters are shown as widgets of the set "webcomponents"
 
 ### 1.6.0 (2026-11-19)
@@ -244,12 +244,6 @@ Notice that these settings are valid only for reconnection and not for the first
 * (agav99) Optimization for basic-view in widget8
 * (oweitman) Changed binding regex to accept umlauts
 * (mcm1957) Corrected first installation of vis
-
-### 1.5.1 (2023-11-06)
-* (bluefox) Changed License: it is now MIT, and the license check was removed
-
-### 1.4.16 (2023-01-27)
-* (bluefox) Corrected connection with "only port" URLs
 
 ## License
 The MIT License (MIT)
